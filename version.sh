@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 major_version='E'
-$username=`git config user.name`
+username=`git config user.name`
 pullnumber=`git ls-remote origin 'pull/*/head'|awk -F/ '{print $3}'|sort -n|tail -n1|awk '{printf("%05d\n", $1+1)}'`
 if [ "$(uname)" == "Darwin" ]; then
     year=`date -v "+120d" "+%Y"`
