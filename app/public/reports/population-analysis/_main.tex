@@ -1,0 +1,3020 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{book}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Black Rock City Census: 2013-2022 Population Analysis},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage[]{natbib}
+\bibliographystyle{plainnat}
+
+\title{Black Rock City Census: 2013-2022 Population Analysis}
+\author{}
+\date{\vspace{-2.5em}}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{1}
+\tableofcontents
+}
+\begin{figure}
+\centering
+\includegraphics{images/Logo.PNG}
+\caption{BRC Census Logo}
+\end{figure}
+
+\hypertarget{forward}{%
+\chapter*{Forward}\label{forward}}
+\addcontentsline{toc}{chapter}{Forward}
+
+It has been over three years since I last wrote the forward to a Black
+Rock City population report. It is hard to understate my excitement for the
+community to see the results. Not only is the release of the annual report this year a
+celebration of all the hard work of the many absolutely amazing volunteers of the Black Rock City
+Census, but the report this also represents a celebration of the return home
+for our community to the Black Rock Desert. This year also marks an important
+milestone for the Black Rock City Census -- a decade of data (although no data was collected
+in 2020 and 2021). The world has changed since Burning Man 2019,
+and burners have changed with it. The subsequent document details in what
+ways we have changed and in what ways we persevered as community and remained
+the same.
+
+\hypertarget{contributions-and-acknowledgments}{%
+\section*{Contributions and acknowledgments}\label{contributions-and-acknowledgments}}
+\addcontentsline{toc}{section}{Contributions and acknowledgments}
+
+\textbf{BRC Census General Coordination and Scientific Committee:} Andi ``Sonder'' Morency, Aaron ``Murrs'' Shev
+
+\textbf{Data Analysis:} Aaron ``Murrs'' Shev
+
+\textbf{Report coordination and visiualization:} Aaron ``Murrs'' Shev
+
+\textbf{Report editing and proofreading:}
+
+\textbf{Technical assistance:}
+
+\textbf{Special thanks and acknowledgements:}
+
+\begin{itemize}
+\item
+  The XXX volunteers of the 2022 Census Lab including: research collaborators,
+  volunteer coordinators, camp builders, gate samplers, key punchers, Census Lab hosts,
+  graphic designers, and many more!
+\item
+  Special thanks to Dana ``DV8'' DeVaul whose work on the 2018 population report was
+  the basis for many elements in this report.
+\item
+  We would also like to thank the Burning Man Communications Department and the Burning Man Tech Team
+\item
+  Additionally, we would like to extend our sincere thanks to all of the Burning Man participants who have taken the time to provide their data. This project would not exist without our respondents.
+\item
+  Finally, our thanks to Burning Man Project for the resources they provide both on playa and off playa and for believing in the project!
+\end{itemize}
+
+\hypertarget{for-more-information}{%
+\section*{For more information}\label{for-more-information}}
+\addcontentsline{toc}{section}{For more information}
+
+To contact the Census Lab, email \href{mailto:census@burningman.org}{\nolinkurl{census@burningman.org}}
+
+Census Lab Blog: \url{https://journal.burningman.org/author/census/}
+
+Census Lab Data Archive: \url{https://burningman.org/culture/history/brc-history/census-data/}
+
+Citation: Shev, A.B., Morency A., and the 2022 Census Lab. (2023). Black Rock City Census: 2013-2022 Population Analysis. Black Rock City Census.
+
+Copyright © 2023 Shev et al.~
+
+\hypertarget{introduction}{%
+\chapter{Introduction}\label{introduction}}
+
+\hypertarget{what-is-the-black-rock-city-census}{%
+\section{What is the Black Rock City Census}\label{what-is-the-black-rock-city-census}}
+
+The Census is a collaborative research project that started in 2002. Although
+the Black Rock City (BRC) Census project is technically a survey and not a
+literal census (where data is collected from every member of a population),
+our methodology allows us to report estimates that are representative of the
+entire population of Black Rock City (BRC) and not just on the individuals who
+participate actively in our data collection efforts.
+
+While BRC Census has been producing reports since 2002, it is hard to compare
+recent data with reports from earlier years (before 2013) because of important
+differences in methodology --- from a convenience sample of Census Lab
+visitors on-playa --- to a weighted online survey conducted post-event.
+The results in this report are estimates of the Black Rock City population.
+The true population values may differ from the presented estimates due to random
+variation in the sampling process. This report contains estimates from data
+collected in 2022 and, when possible, comparable estimates from 2013 through
+2018.
+
+The BRC Census project is made possible through the extensive collective effort
+of volunteers, academic researchers, and Burning Man Project. Our thanks to
+everyone whose contributions went into the creation of this report!
+
+\hypertarget{survey-design}{%
+\section{Survey Design}\label{survey-design}}
+
+Since 2013, the BRC Census team has collected data in two phases: a random
+sample of participants entering the Burning Man event and a more comprehensive
+online survey after the event. During the Burning Man event in Black Rock City,
+Census volunteers conduct the random sample by administering a short
+socio-demographic survey to randomly selected Burners who agree to participate.
+After the event, announcements about the online survey are sent out via email
+lists, social media, the Burning Man website and through other various
+outreach programs. Results from the online survey are biased due to
+self-selection of Burners choosing to participate. To adjust for this bias
+we choose weights for the online survey responses so that answers to key questions
+asked on both surveys match.
+
+\hypertarget{random-sample}{%
+\subsection{Random Sample}\label{random-sample}}
+
+The random sample is designed with a goal of surveying 5\% to 10\% of the population
+of Black Rock City in a given year. The survey collection is stratified by
+location participants entered Black Rock City: The main gate, the airport, or
+on the Burner Express Bus (a shuttle service running from San Francisco and
+Reno into Black Rock City). Participants are chosen in a pseudo-random fashion
+by skipping a pre-selected number of cars driving in through gate or
+participants entering on foot through the airport. Entire Burner Express Buses
+are randomly selected as a cluster sample.
+
+The random sample collects data on 10 questions by giving selected participants
+a short paper form to fill out:
+
+\begin{itemize}
+\tightlist
+\item
+  Day of arrival
+\item
+  Age
+\item
+  Number of prior Burning Man events attended
+\item
+  English as a first language
+\item
+  Gender
+\item
+  US Resident or not
+\item
+  Voting eligibility in the US
+\item
+  US political party affiliation
+\end{itemize}
+
+\hypertarget{online-survey}{%
+\subsection{Online Survey}\label{online-survey}}
+
+The online survey is live Tuesday the week following and remains available
+for approximately a month. The survey comprises questions in the random
+sample, demographic and socioeconomic questions, questions submitted by
+the Burning Man Organization, and questions submitted by academic researchers.
+Response rates for all surveys are given in the table below.
+
+\begin{verbatim}
+## Warning: package 'kableExtra' was built under R version 4.2.3
+\end{verbatim}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|l|l|l}
+\hline
+  & Survey responses (n) & BRC Population & Response rate\\
+\hline
+2013 & 11,919 & 68,000 & 17\%\\
+\hline
+2014 & 11,676 & 68,000 & 18\%\\
+\hline
+2015 & 9,585 & 70,000 & 14\%\\
+\hline
+2016 & 7,137 & 70,000 & 11\%\\
+\hline
+2017 & 9,168 & 70,000 & 13\%\\
+\hline
+2018 & 8,745 & 70,000 & 12\%\\
+\hline
+2019 & 7,737 & 80,000 & 10\%\\
+\hline
+2022 & 8,382 & 87,000 & 10\%\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{weighting}{%
+\subsection{Weighting}\label{weighting}}
+
+Results from the online survey are weighted to adjust for selection bias. Weights
+are chosen so that the distribution of responses for questions that appear in
+both the random sample and the online survey are nearly the same through a
+process called post stratification or raking. For example, in 2022, the random
+sample estimated 28.3\% of participants were virgins (attending their first burn),
+but only 24.1\%. After weighting the online survey we also estimate 28.3\%
+or participants are virgins.
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-3-1.pdf}
+
+\hypertarget{sociodemo}{%
+\chapter{Demographics and social characteristics}\label{sociodemo}}
+
+\hypertarget{burning-man-attendence}{%
+\section{Burning Man Attendence}\label{burning-man-attendence}}
+
+\hypertarget{propotion-of-virgins}{%
+\subsection{Propotion of Virgins}\label{propotion-of-virgins}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-6-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2013 & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Virgin & 61.4\% (60.4\%, 62.4\%) & 64.9\% (63.9\%, 65.8\%) & 64.2\% (63.2\%, 65.3\%) & 60.7\% (59.3\%, 62.1\%) & 63.8\% (62.7\%, 64.9\%) & 68.3\% (67.2\%, 69.4\%) & 74.1\% (73.1\%, 75.1\%) & 71.7\% (70.5\%, 72.8\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{number-of-burns-attended}{%
+\subsection{Number of burns attended}\label{number-of-burns-attended}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-7-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}r|>{}r|>{}r|>{}r|>{}r|>{}r|>{}r|>{}r}
+\hline
+  & 2013 & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Median Prior Burns Attended & 1 & 2 & 1 & 1 & 1 & 1 & 2 & 3\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{demographics}{%
+\section{Demographics}\label{demographics}}
+
+\hypertarget{age}{%
+\subsection{Age}\label{age}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-8-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}r|>{}r|>{}r|>{}r|>{}r|>{}r|>{}r|>{}r}
+\hline
+  & 2013 & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Median Age & 32 & 34 & 33 & 34 & 34 & 35 & 36 & 37\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{current-gender}{%
+\subsection{Current gender}\label{current-gender}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-9-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2013 & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Male & 58.3\% (57.3\%, 59.2\%) & 58.2\% (57.2\%, 59.1\%) & 58.5\% (57.5\%, 59.6\%) & 56.8\% (55.5\%, 58.2\%) & 58.0\% (56.9\%, 59.1\%) & 58.7\% (57.6\%, 59.8\%) & 56.0\% (54.9\%, 57.2\%) & 54.3\% (53.1\%, 55.5\%)\\
+\hline
+Female & 40.1\% (39.1\%, 41.0\%) & 40.6\% (39.7\%, 41.6\%) & 39.5\% (38.5\%, 40.6\%) & 41.4\% (40.1\%, 42.7\%) & 40.4\% (39.3\%, 41.5\%) & 39.6\% (38.5\%, 40.7\%) & 42.0\% (40.8\%, 43.1\%) & 43.6\% (42.4\%, 44.8\%)\\
+\hline
+Other identity & 1.7\% (1.4\%, 2.0\%) & 1.2\% (0.9\%, 1.5\%) & 2.0\% (1.6\%, 2.4\%) & 1.8\% (1.4\%, 2.2\%) & 1.6\% (1.4\%, 1.9\%) & 1.7\% (1.4\%, 2.0\%) & 2.0\% (1.7\%, 2.4\%) & 2.1\% (1.8\%, 2.4\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{sex-assigned-at-birth}{%
+\subsection{Sex assigned at birth}\label{sex-assigned-at-birth}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-10-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|l}
+\hline
+  & 2022\\
+\hline
+Male & 55.9\% (54.8\%, 57.1\%)\\
+\hline
+Female & 44.0\% (42.8\%, 45.2\%)\\
+\hline
+Intersex & < 0.1\% (--, --)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{gender-identity}{%
+\subsection{Gender identity}\label{gender-identity}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-11-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|l}
+\hline
+  & 2022\\
+\hline
+Male & 30.6\% (29.5\%, 31.8\%)\\
+\hline
+Female & 27.0\% (25.9\%, 28.0\%)\\
+\hline
+Cisgender male & 23.3\% (22.3\%, 24.4\%)\\
+\hline
+Cisgender female & 14.9\% (14.1\%, 15.7\%)\\
+\hline
+Transgender female & 1.8\% (1.5\%, 2.1\%)\\
+\hline
+Non-binary & 1.1\% (0.9\%, 1.3\%)\\
+\hline
+Gender queer & 0.5\% (0.4\%, 0.7\%)\\
+\hline
+Transgender male & 0.4\% (0.3\%, 0.6\%)\\
+\hline
+Other & 0.3\% (0.2\%, 0.5\%)\\
+\hline
+Two-spirit & < 0.1\% (--, --)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{chosen-pronouns}{%
+\subsection{Chosen pronouns}\label{chosen-pronouns}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-12-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|l}
+\hline
+  & 2022\\
+\hline
+He/him & 53.5\% (52.3\%, 54.6\%)\\
+\hline
+She/her & 42.9\% (41.7\%, 44.1\%)\\
+\hline
+They/them & 4.1\% (3.6\%, 4.5\%)\\
+\hline
+Other & 2.2\% (1.9\%, 2.6\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{personal-income-in-2021}{%
+\subsection{Personal income in 2021}\label{personal-income-in-2021}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-13-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+No income & 3.3\% (2.9\%, 3.8\%) & 2.9\% (2.5\%, 3.5\%) & 3.0\% (2.6\%, 3.5\%) & 3.2\% (2.8\%, 3.7\%) & 2.3\% (2.0\%, 2.7\%) & 2.9\% (2.5\%, 3.3\%)\\
+\hline
+Less than \$7,500 & 5.3\% (4.7\%, 5.8\%) & 4.7\% (4.1\%, 5.3\%) & 3.9\% (3.4\%, 4.4\%) & 3.3\% (2.9\%, 3.8\%) & 3.2\% (2.8\%, 3.7\%) & 2.7\% (2.4\%, 3.2\%)\\
+\hline
+\$7,500-\$14,999 & 6.8\% (6.3\%, 7.4\%) & 5.8\% (5.2\%, 6.5\%) & 6.4\% (5.8\%, 7.0\%) & 5.7\% (5.2\%, 6.3\%) & 4.7\% (4.2\%, 5.3\%) & 4.1\% (3.6\%, 4.6\%)\\
+\hline
+\$15,000-\$24,999 & 9.4\% (8.8\%, 10.1\%) & 8.5\% (7.7\%, 9.3\%) & 8.3\% (7.7\%, 9.0\%) & 7.9\% (7.3\%, 8.6\%) & 7.1\% (6.5\%, 7.7\%) & 5.3\% (4.8\%, 5.9\%)\\
+\hline
+\$25,000-\$34,999 & 9.6\% (8.9\%, 10.3\%) & 8.6\% (7.9\%, 9.4\%) & 8.6\% (8.0\%, 9.3\%) & 8.6\% (7.9\%, 9.2\%) & 7.3\% (6.7\%, 7.9\%) & 6.1\% (5.5\%, 6.7\%)\\
+\hline
+\$35,000-\$49,999 & 12.3\% (11.7\%, 13.1\%) & 12.5\% (11.6\%, 13.4\%) & 12.3\% (11.6\%, 13.1\%) & 11.0\% (10.3\%, 11.7\%) & 10.5\% (9.8\%, 11.2\%) & 9.4\% (8.7\%, 10.1\%)\\
+\hline
+\$50,000-\$74,999 & 16.9\% (16.1\%, 17.7\%) & 17.1\% (16.1\%, 18.2\%) & 17.4\% (16.6\%, 18.3\%) & 17.4\% (16.5\%, 18.3\%) & 17.2\% (16.4\%, 18.1\%) & 15.0\% (14.2\%, 15.9\%)\\
+\hline
+\$75,000-\$99,999 & 12.5\% (11.8\%, 13.2\%) & 12.3\% (11.5\%, 13.2\%) & 12.8\% (12.1\%, 13.6\%) & 12.6\% (11.9\%, 13.4\%) & 13.4\% (12.6\%, 14.2\%) & 13.3\% (12.5\%, 14.2\%)\\
+\hline
+\$100,000-\$149,999 & 12.9\% (12.2\%, 13.6\%) & 15.3\% (14.3\%, 16.2\%) & 14.1\% (13.4\%, 14.9\%) & 15.3\% (14.5\%, 16.1\%) & 16.7\% (15.8\%, 17.6\%) & 16.9\% (16.0\%, 17.8\%)\\
+\hline
+\$150,000-\$299,000 & 8.1\% (7.5\%, 8.7\%) & 8.8\% (8.1\%, 9.6\%) & 9.5\% (8.9\%, 10.1\%) & 10.2\% (9.5\%, 10.9\%) & 12.2\% (11.5\%, 13.0\%) & 16.6\% (15.7\%, 17.5\%)\\
+\hline
+\$300,000 or more & 2.9\% (2.6\%, 3.3\%) & 3.4\% (2.9\%, 3.9\%) & 3.6\% (3.2\%, 4.0\%) & 4.8\% (4.3\%, 5.3\%) & 5.2\% (4.7\%, 5.8\%) & 7.7\% (7.1\%, 8.4\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{household-income-in-2021}{%
+\subsection{Household income in 2021}\label{household-income-in-2021}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-14-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+No income & 1.3\% (1.1\%, 1.6\%) & 0.9\% (0.6\%, 1.3\%) & 1.3\% (1.0\%, 1.6\%) & 1.0\% (0.7\%, 1.3\%) & 0.8\% (0.6\%, 1.1\%) & 1.1\% (0.9\%, 1.4\%)\\
+\hline
+Less than \$7,500 & 2.1\% (1.8\%, 2.5\%) & 2.4\% (2.0\%, 2.9\%) & 2.0\% (1.7\%, 2.4\%) & 1.4\% (1.2\%, 1.8\%) & 1.4\% (1.1\%, 1.7\%) & 1.6\% (1.3\%, 1.9\%)\\
+\hline
+\$7,500-\$14,999 & 3.7\% (3.3\%, 4.2\%) & 2.7\% (2.3\%, 3.2\%) & 3.3\% (2.9\%, 3.7\%) & 3.2\% (2.8\%, 3.7\%) & 2.5\% (2.1\%, 2.9\%) & 2.4\% (2.0\%, 2.8\%)\\
+\hline
+\$15,000-\$24,999 & 5.1\% (4.7\%, 5.7\%) & 5.2\% (4.6\%, 5.9\%) & 4.5\% (4.0\%, 5.0\%) & 4.8\% (4.3\%, 5.4\%) & 4.2\% (3.8\%, 4.7\%) & 3.3\% (2.8\%, 3.7\%)\\
+\hline
+\$25,000-\$34,999 & 6.1\% (5.6\%, 6.7\%) & 5.8\% (5.2\%, 6.5\%) & 5.4\% (4.9\%, 6.0\%) & 5.3\% (4.8\%, 5.8\%) & 4.5\% (4.0\%, 5.0\%) & 4.5\% (4.0\%, 5.0\%)\\
+\hline
+\$35,000-\$49,999 & 9.0\% (8.3\%, 9.6\%) & 8.9\% (8.1\%, 9.7\%) & 9.3\% (8.6\%, 10.0\%) & 7.6\% (7.0\%, 8.2\%) & 7.2\% (6.6\%, 7.8\%) & 9.0\% (8.3\%, 9.8\%)\\
+\hline
+\$50,000-\$74,999 & 14.5\% (13.7\%, 15.3\%) & 14.5\% (13.5\%, 15.5\%) & 14.0\% (13.3\%, 14.8\%) & 13.4\% (12.6\%, 14.2\%) & 12.5\% (11.7\%, 13.3\%) & 12.9\% (12.1\%, 13.8\%)\\
+\hline
+\$75,000-\$99,999 & 14.1\% (13.3\%, 14.9\%) & 12.5\% (11.6\%, 13.4\%) & 12.7\% (11.9\%, 13.4\%) & 12.6\% (11.9\%, 13.4\%) & 12.5\% (11.7\%, 13.3\%) & 16.5\% (15.6\%, 17.4\%)\\
+\hline
+\$100,000-\$149,999 & 18.8\% (18.0\%, 19.7\%) & 19.8\% (18.7\%, 20.9\%) & 19.4\% (18.5\%, 20.3\%) & 20.1\% (19.2\%, 21.0\%) & 20.3\% (19.3\%, 21.2\%) & 25.5\% (24.4\%, 26.5\%)\\
+\hline
+\$150,000-\$299,000 & 17.9\% (17.1\%, 18.8\%) & 19.3\% (18.3\%, 20.4\%) & 18.7\% (17.8\%, 19.6\%) & 20.0\% (19.1\%, 20.9\%) & 21.4\% (20.5\%, 22.4\%) & 19.8\% (18.8\%, 20.8\%)\\
+\hline
+\$300,000 or more & 7.3\% (6.8\%, 7.9\%) & 8.1\% (7.4\%, 8.8\%) & 9.5\% (8.8\%, 10.1\%) & 10.6\% (9.9\%, 11.4\%) & 12.8\% (12.0\%, 13.6\%) & 3.4\% (3.0\%, 3.9\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{highest-level-of-education-completed}{%
+\subsection{Highest level of education completed}\label{highest-level-of-education-completed}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-15-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|l}
+\hline
+  & 2022\\
+\hline
+High school diploma 
+ or equivalent & 26.2\% (25.1\%, 27.3\%)\\
+\hline
+Some college & 15.4\% (14.5\%, 16.2\%)\\
+\hline
+Associate's degree & 8.6\% (7.9\%, 9.3\%)\\
+\hline
+Bachelor's degree & 52.0\% (50.8\%, 53.3\%)\\
+\hline
+Graduate degree (Master's, 
+ Doctorate, or equivalent) & 34.4\% (33.3\%, 35.6\%)\\
+\hline
+Technical/vocational 
+ certification & 7.9\% (7.3\%, 8.6\%)\\
+\hline
+Other & 1.1\% (0.9\%, 1.4\%)\\
+\hline
+None of these & 0.3\% (0.2\%, 0.4\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{residence}{%
+\section{Residence}\label{residence}}
+
+\hypertarget{residence-outside-of-black-rock-city}{%
+\subsection{Residence outside of Black Rock City}\label{residence-outside-of-black-rock-city}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-16-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2013 & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Within California & 42.0\% (41.1\%, 43.0\%) & 43.7\% (42.7\%, 44.7\%) & 39.0\% (38.0\%, 40.1\%) & 37.5\% (36.3\%, 38.8\%) & 35.4\% (34.4\%, 36.5\%) & 37.3\% (36.2\%, 38.4\%) & 38.2\% (37.1\%, 39.4\%) & 38.1\% (36.9\%, 39.2\%)\\
+\hline
+Within Nevada & 5.3\% (4.9\%, 5.8\%) & 5.4\% (5.0\%, 5.9\%) & 5.0\% (4.5\%, 5.5\%) & 4.4\% (3.9\%, 4.9\%) & 4.3\% (3.9\%, 4.7\%) & 4.6\% (4.1\%, 5.1\%) & 4.4\% (4.0\%, 5.0\%) & 4.3\% (3.9\%, 4.8\%)\\
+\hline
+Other location within U.S. & 34.8\% (33.8\%, 35.7\%) & 35.7\% (34.8\%, 36.7\%) & 36.7\% (35.6\%, 37.7\%) & 37.6\% (36.3\%, 38.9\%) & 36.8\% (35.7\%, 37.9\%) & 39.1\% (38.0\%, 40.2\%) & 40.7\% (39.5\%, 41.9\%) & 41.5\% (40.3\%, 42.7\%)\\
+\hline
+In Canada & 7.4\% (6.9\%, 8.0\%) & 4.9\% (4.5\%, 5.3\%) & 6.2\% (5.7\%, 6.7\%) & 6.6\% (5.9\%, 7.4\%) & 7.0\% (6.4\%, 7.7\%) & 6.2\% (5.7\%, 6.8\%) & 5.4\% (4.9\%, 5.9\%) & 4.4\% (4.0\%, 5.0\%)\\
+\hline
+Other & 10.5\% (9.8\%, 11.1\%) & 10.3\% (9.7\%, 10.9\%) & 13.1\% (12.4\%, 13.9\%) & 13.9\% (12.8\%, 15.0\%) & 16.5\% (15.6\%, 17.5\%) & 12.8\% (12.0\%, 13.6\%) & 11.3\% (10.5\%, 12.0\%) & 11.7\% (10.9\%, 12.5\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{voting-and-politics}{%
+\section{Voting and politics}\label{voting-and-politics}}
+
+\hypertarget{number-of-times-voted-in-last-four-federal-us-elections}{%
+\subsection{Number of times voted in last four Federal US elections}\label{number-of-times-voted-in-last-four-federal-us-elections}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-17-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2013 & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Did not vote & 9.1\% (8.5\%, 9.9\%) & 9.1\% (8.5\%, 9.8\%) & 12.1\% (11.2\%, 12.9\%) & 13.0\% (12.0\%, 14.0\%) & 7.8\% (7.1\%, 8.6\%) & 8.7\% (7.9\%, 9.5\%) & 7.1\% (6.4\%, 7.9\%) & 4.1\% (3.6\%, 4.6\%)\\
+\hline
+1 election & 8.7\% (8.2\%, 9.3\%) & 8.9\% (8.4\%, 9.5\%) & 8.5\% (7.9\%, 9.1\%) & 5.9\% (5.3\%, 6.5\%) & 7.6\% (7.0\%, 8.2\%) & 7.1\% (6.6\%, 7.7\%) & 5.1\% (4.6\%, 5.6\%) & 5.3\% (4.7\%, 5.8\%)\\
+\hline
+2 elections & 11.2\% (10.7\%, 11.8\%) & 11.0\% (10.4\%, 11.6\%) & 10.6\% (10.0\%, 11.2\%) & 9.5\% (8.8\%, 10.3\%) & 9.3\% (8.7\%, 9.9\%) & 8.3\% (7.7\%, 8.9\%) & 7.6\% (7.0\%, 8.2\%) & 6.4\% (5.8\%, 7.0\%)\\
+\hline
+3 elections & 9.2\% (8.8\%, 9.8\%) & 9.6\% (9.1\%, 10.2\%) & 7.2\% (6.7\%, 7.8\%) & 5.5\% (5.0\%, 6.1\%) & 6.6\% (6.1\%, 7.1\%) & 6.7\% (6.2\%, 7.3\%) & 6.0\% (5.5\%, 6.6\%) & 12.5\% (11.7\%, 13.2\%)\\
+\hline
+4 elections & 39.0\% (38.2\%, 39.8\%) & 42.8\% (41.9\%, 43.7\%) & 36.9\% (36.0\%, 37.8\%) & 38.5\% (37.4\%, 39.6\%) & 39.2\% (38.3\%, 40.1\%) & 42.5\% (41.5\%, 43.4\%) & 50.3\% (49.3\%, 51.3\%) & 49.0\% (48.0\%, 50.0\%)\\
+\hline
+Not eligible to vote & 22.7\% (21.8\%, 23.6\%) & 18.5\% (17.8\%, 19.3\%) & 24.8\% (23.8\%, 25.7\%) & 27.6\% (26.3\%, 28.9\%) & 29.5\% (28.4\%, 30.6\%) & 26.7\% (25.6\%, 27.8\%) & 24.0\% (22.9\%, 25.0\%) & 22.8\% (21.7\%, 23.9\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{political-party-affiliation}{%
+\subsection{Political party affiliation}\label{political-party-affiliation}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-18-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2013 & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Democratic Party & 33.5\% (32.6\%, 34.4\%) & 34.6\% (33.6\%, 35.5\%) & 31.4\% (30.5\%, 32.3\%) & 36.1\% (34.9\%, 37.4\%) & 51.7\% (50.5\%, 53.0\%) & 50.1\% (48.9\%, 51.4\%) & 57.0\% (55.7\%, 58.4\%) & 54.4\% (53.1\%, 55.8\%)\\
+\hline
+Republican Party & 5.2\% (4.8\%, 5.6\%) & 4.8\% (4.4\%, 5.2\%) & 4.4\% (4.0\%, 4.9\%) & 4.9\% (4.4\%, 5.5\%) & 5.4\% (4.9\%, 6.0\%) & 6.5\% (5.8\%, 7.2\%) & 5.8\% (5.2\%, 6.5\%) & 4.2\% (3.7\%, 4.7\%)\\
+\hline
+Libertarian Party & 3.7\% (3.4\%, 4.1\%) & 2.8\% (2.5\%, 3.1\%) & 3.0\% (2.7\%, 3.5\%) & 2.7\% (2.3\%, 3.2\%) & 4.1\% (3.6\%, 4.7\%) & 2.0\% (1.8\%, 2.3\%) & 2.3\% (1.9\%, 2.6\%) & 2.6\% (2.1\%, 3.2\%)\\
+\hline
+Green Party & 2.0\% (1.8\%, 2.3\%) & 2.2\% (1.9\%, 2.5\%) & 2.3\% (2.0\%, 2.7\%) & 2.2\% (1.8\%, 2.7\%) & 1.8\% (1.5\%, 2.1\%) & 4.0\% (3.4\%, 4.9\%) & 3.0\% (2.4\%, 3.8\%) & 3.0\% (2.5\%, 3.5\%)\\
+\hline
+Other US Party & 3.1\% (2.8\%, 3.6\%) & 2.8\% (2.4\%, 3.3\%) & 3.3\% (2.8\%, 3.9\%) & 3.6\% (2.9\%, 4.4\%) & 1.8\% (1.4\%, 2.2\%) & 1.4\% (1.2\%, 1.8\%) & 1.4\% (1.0\%, 1.8\%) & 1.7\% (1.4\%, 2.2\%)\\
+\hline
+None or unaffiliated & 29.7\% (28.8\%, 30.6\%) & 34.3\% (33.4\%, 35.3\%) & 30.7\% (29.7\%, 31.8\%) & 22.8\% (21.8\%, 23.9\%) & 35.1\% (33.9\%, 36.4\%) & 35.9\% (34.6\%, 37.2\%) & 30.5\% (29.3\%, 31.8\%) & 34.1\% (32.8\%, 35.4\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{political-views}{%
+\subsection{Political views}\label{political-views}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-19-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l}
+\hline
+  & 2019 & 2022\\
+\hline
+Liberal & 32.4\% (31.3\%, 33.5\%) & 29.7\% (28.6\%, 30.8\%)\\
+\hline
+Progressive & 19.9\% (19.0\%, 20.8\%) & 20.3\% (19.4\%, 21.3\%)\\
+\hline
+Socialist & 8.4\% (7.7\%, 9.0\%) & 9.2\% (8.5\%, 9.9\%)\\
+\hline
+Green & 5.6\% (5.1\%, 6.2\%) & 5.0\% (4.5\%, 5.6\%)\\
+\hline
+Centrist or moderate & 8.8\% (8.2\%, 9.5\%) & 2.6\% (2.2\%, 3.0\%)\\
+\hline
+Conservative & 2.8\% (2.5\%, 3.2\%) & 2.5\% (2.2\%, 2.9\%)\\
+\hline
+Libertarian & 5.9\% (5.3\%, 6.5\%) & 5.6\% (5.1\%, 6.2\%)\\
+\hline
+Anarchist & 2.4\% (2.0\%, 2.8\%) & 3.6\% (3.1\%, 4.1\%)\\
+\hline
+None or non-political & 11.6\% (10.8\%, 12.4\%) & 10.1\% (9.3\%, 10.8\%)\\
+\hline
+Other & 2.3\% (2.0\%, 2.7\%) & 11.5\% (10.7\%, 12.3\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{ethinicity-and-language}{%
+\section{Ethinicity and language}\label{ethinicity-and-language}}
+
+\hypertarget{ethnoracial-background}{%
+\subsection{Ethnoracial background}\label{ethnoracial-background}}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2013 & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\textasciicircum{}c\textasciicircum{}\\
+\hline
+White (non-hispanic) & 82.9\% (82.1\%, 83.6\%) & 81.1\% (80.3\%, 81.9\%) & 80.2\% (79.3\%, 81.1\%) & 79.1\% (77.9\%, 80.2\%) & 77.1\% (76.1\%, 78.1\%) & 76.6\% (75.6\%, 77.6\%) & 76.4\% (75.4\%, 77.4\%) & 80.5\% (79.5\%, 81.5\%)\\
+\hline
+Hispanic/Latino & 3.0\% (2.7\%, 3.3\%) & 4.1\% (3.7\%, 4.6\%) & 5.1\% (4.6\%, 5.6\%) & 4.4\% (3.8\%, 5.0\%) & 5.0\% (4.5\%, 5.6\%) & 5.4\% (4.9\%, 6.0\%) & 5.1\% (4.6\%, 5.7\%) & 9.6\% (8.9\%, 10.4\%)\\
+\hline
+Asian & 3.7\% (3.4\%, 4.1\%) & 3.9\% (3.5\%, 4.3\%) & 4.2\% (3.8\%, 4.7\%) & 5.7\% (5.0\%, 6.4\%) & 5.6\% (5.1\%, 6.2\%) & 5.8\% (5.2\%, 6.4\%) & 5.0\% (4.5\%, 5.6\%) & 8.0\% (7.4\%, 8.8\%)\\
+\hline
+Middle Eastern or North African\textasciicircum{}a\textasciicircum{} & -- & -- & -- & -- & 1.5\% (1.3\%, 1.9\%) & 1.2\% (1.0\%, 1.5\%) & 1.6\% (1.3\%, 2.0\%) & 3.0\% (2.6\%, 3.5\%)\\
+\hline
+Black (non-Hispanic) & 0.9\% (0.7\%, 1.1\%) & 0.7\% (0.6\%, 0.9\%) & 0.7\% (0.5\%, 0.9\%) & 1.1\% (0.8\%, 1.4\%) & 1.0\% (0.8\%, 1.2\%) & 1.0\% (0.8\%, 1.3\%) & 1.1\% (0.9\%, 1.4\%) & 2.2\% (1.9\%, 2.6\%)\\
+\hline
+Native American & 0.5\% (0.4\%, 0.7\%) & 0.4\% (0.3\%, 0.6\%) & 0.4\% (0.2\%, 0.6\%) & 0.4\% (0.2\%, 0.5\%) & 0.5\% (0.3\%, 0.7\%) & 0.5\% (0.3\%, 0.7\%) & 0.4\% (0.3\%, 0.6\%) & 1.4\% (1.2\%, 1.7\%)\\
+\hline
+Other\textasciicircum{}b\textasciicircum{} & 9.1\% (8.5\%, 9.7\%) & 9.7\% (9.1\%, 10.3\%) & 9.5\% (8.8\%, 10.1\%) & 9.4\% (8.7\%, 10.3\%) & 9.3\% (8.6\%, 10.0\%) & 9.4\% (8.8\%, 10.1\%) & 10.3\% (9.6\%, 11.1\%) & 3.3\% (2.9\%, 3.8\%)\\
+\hline
+\multicolumn{9}{l}{\rule{0pt}{1em}\textsuperscript{a} Middle eastern was not an option in 2013-2016.}\\
+\multicolumn{9}{l}{\rule{0pt}{1em}\textsuperscript{b} The "other or mixed" option in 2013-2019 changed to "other" in 2022.}\\
+\multicolumn{9}{l}{\rule{0pt}{1em}\textsuperscript{c} In 2022 the format changed to allow users to select multiple options.}\\
+\end{tabular}
+\end{table}
+
+\hypertarget{person-of-color}{%
+\subsection{Person of Color}\label{person-of-color}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-21-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2013 & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+No & 83.6\% (82.9\%, 84.3\%) & 84.3\% (83.6\%, 85.0\%) & 84.7\% (83.8\%, 85.5\%) & 83.7\% (82.6\%, 84.7\%) & 84.7\% (83.9\%, 85.6\%) & 83.4\% (82.5\%, 84.3\%) & 83.7\% (82.8\%, 84.6\%) & 81.7\% (80.7\%, 82.6\%)\\
+\hline
+Sometimes & 9.1\% (8.5\%, 9.7\%) & 8.0\% (7.4\%, 8.6\%) & 7.5\% (6.9\%, 8.2\%) & 7.2\% (6.5\%, 8.0\%) & 5.8\% (5.3\%, 6.4\%) & 6.1\% (5.6\%, 6.7\%) & 5.7\% (5.2\%, 6.3\%) & 5.0\% (4.5\%, 5.6\%)\\
+\hline
+Yes & 7.3\% (6.8\%, 7.8\%) & 7.7\% (7.2\%, 8.3\%) & 7.8\% (7.2\%, 8.4\%) & 9.1\% (8.3\%, 10.0\%) & 9.4\% (8.8\%, 10.1\%) & 10.5\% (9.8\%, 11.2\%) & 10.5\% (9.8\%, 11.3\%) & 13.3\% (12.5\%, 14.2\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{first-language-learned}{%
+\subsection{First language learned}\label{first-language-learned}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-22-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2013 & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+English & 87.7\% (87.1\%, 88.3\%) & 83.6\% (82.9\%, 84.4\%) & 80.1\% (79.2\%, 81.1\%) & 78.1\% (76.8\%, 79.3\%) & 77.5\% (76.4\%, 78.5\%) & 78.1\% (77.1\%, 79.2\%) & 77.6\% (76.5\%, 78.6\%) & 77.3\% (76.2\%, 78.4\%)\\
+\hline
+Spanish & 1.7\% (1.5\%, 2.0\%) & 2.7\% (2.4\%, 3.1\%) & 3.4\% (3.0\%, 3.9\%) & 2.8\% (2.4\%, 3.4\%) & 3.8\% (3.3\%, 4.3\%) & 3.5\% (3.1\%, 4.1\%) & 4.0\% (3.5\%, 4.6\%) & 5.1\% (4.5\%, 5.8\%)\\
+\hline
+French & 1.7\% (1.4\%, 2.0\%) & 2.9\% (2.5\%, 3.2\%) & 2.9\% (2.5\%, 3.3\%) & 3.6\% (3.0\%, 4.2\%) & 3.5\% (3.1\%, 4.1\%) & 3.2\% (2.8\%, 3.7\%) & 3.4\% (2.9\%, 3.9\%) & 2.6\% (2.1\%, 3.1\%)\\
+\hline
+German & 1.3\% (1.2\%, 1.6\%) & 1.6\% (1.3\%, 1.8\%) & 2.3\% (2.0\%, 2.7\%) & 2.6\% (2.2\%, 3.2\%) & 2.4\% (2.0\%, 2.8\%) & 2.7\% (2.3\%, 3.1\%) & 2.3\% (1.9\%, 2.7\%) & 2.5\% (2.1\%, 2.9\%)\\
+\hline
+Russian & 1.6\% (1.4\%, 1.9\%) & 2.0\% (1.7\%, 2.3\%) & 2.3\% (1.9\%, 2.7\%) & 2.2\% (1.8\%, 2.7\%) & 2.6\% (2.2\%, 3.1\%) & 3.0\% (2.5\%, 3.4\%) & 2.9\% (2.5\%, 3.3\%) & 2.4\% (2.0\%, 2.9\%)\\
+\hline
+Chinese & 0.6\% (0.5\%, 0.7\%) & 0.7\% (0.5\%, 0.9\%) & 1.1\% (0.9\%, 1.4\%) & 1.1\% (0.8\%, 1.5\%) & 1.1\% (0.9\%, 1.4\%) & 1.3\% (1.0\%, 1.6\%) & 1.2\% (0.9\%, 1.5\%) & 1.1\% (0.8\%, 1.4\%)\\
+\hline
+Portuguese & 0.5\% (0.3\%, 0.6\%) & 0.6\% (0.5\%, 0.8\%) & 0.7\% (0.5\%, 0.9\%) & 0.8\% (0.5\%, 1.1\%) & 0.9\% (0.7\%, 1.2\%) & 0.8\% (0.6\%, 1.1\%) & 0.7\% (0.5\%, 1.0\%) & 1.0\% (0.7\%, 1.3\%)\\
+\hline
+Dutch & 0.9\% (0.7\%, 1.1\%) & 0.6\% (0.5\%, 0.8\%) & 0.9\% (0.7\%, 1.2\%) & 0.8\% (0.6\%, 1.2\%) & 1.2\% (0.9\%, 1.5\%) & 0.8\% (0.6\%, 1.0\%) & 0.7\% (0.5\%, 0.9\%) & 0.8\% (0.6\%, 1.1\%)\\
+\hline
+Hebrew & 0.7\% (0.6\%, 0.9\%) & 0.9\% (0.7\%, 1.1\%) & 0.9\% (0.7\%, 1.1\%) & 1.0\% (0.7\%, 1.4\%) & 0.8\% (0.6\%, 1.1\%) & 0.5\% (0.4\%, 0.7\%) & 0.8\% (0.6\%, 1.1\%) & 0.8\% (0.6\%, 1.0\%)\\
+\hline
+Italian & 0.3\% (0.2\%, 0.4\%) & 0.6\% (0.5\%, 0.8\%) & 0.6\% (0.5\%, 0.8\%) & 1.0\% (0.7\%, 1.4\%) & 0.6\% (0.4\%, 0.9\%) & 0.6\% (0.5\%, 0.9\%) & 0.9\% (0.7\%, 1.2\%) & 0.7\% (0.5\%, 1.0\%)\\
+\hline
+Swedish & 0.2\% (0.2\%, 0.4\%) & 0.3\% (0.2\%, 0.5\%) & 0.3\% (0.2\%, 0.4\%) & 0.6\% (0.4\%, 0.9\%) & 0.4\% (0.2\%, 0.6\%) & 0.4\% (0.2\%, 0.6\%) & 0.4\% (0.3\%, 0.6\%) & 0.6\% (0.4\%, 0.8\%)\\
+\hline
+Farsi & 0.2\% (0.1\%, 0.2\%) & 0.2\% (0.1\%, 0.3\%) & 0.4\% (0.2\%, 0.6\%) & 0.5\% (0.3\%, 0.7\%) & 0.4\% (0.3\%, 0.6\%) & 0.3\% (0.2\%, 0.5\%) & 0.6\% (0.4\%, 0.8\%) & 0.4\% (0.2\%, 0.6\%)\\
+\hline
+Arabic & 0.1\% (0.1\%, 0.2\%) & 0.2\% (0.1\%, 0.4\%) & 0.4\% (0.3\%, 0.6\%) & 0.2\% (0.1\%, 0.5\%) & 0.4\% (0.3\%, 0.7\%) & 0.3\% (0.2\%, 0.5\%) & 0.3\% (0.2\%, 0.6\%) & 0.4\% (0.2\%, 0.6\%)\\
+\hline
+Polish & 0.2\% (0.1\%, 0.2\%) & 0.4\% (0.3\%, 0.5\%) & 0.4\% (0.3\%, 0.6\%) & 0.4\% (0.3\%, 0.7\%) & 0.4\% (0.3\%, 0.6\%) & 0.4\% (0.3\%, 0.6\%) & 0.3\% (0.2\%, 0.5\%) & 0.3\% (0.2\%, 0.5\%)\\
+\hline
+Hindi & 0.1\% (0.1\%, 0.2\%) & 0.2\% (0.1\%, 0.3\%) & 0.2\% (0.1\%, 0.3\%) & 0.2\% (0.1\%, 0.4\%) & 0.3\% (0.2\%, 0.4\%) & 0.1\% (0.1\%, 0.3\%) & 0.1\% (0.1\%, 0.3\%) & 0.3\% (0.1\%, 0.5\%)\\
+\hline
+Danish & 0.1\% (0.1\%, 0.2\%) & 0.1\% (0.1\%, 0.2\%) & < 0.1\% (--, --) & 0.1\% (0.1\%, 0.3\%) & 0.1\% (0.1\%, 0.3\%) & < 0.1\% (--, --) & < 0.1\% (--, --) & 0.1\% (0.1\%, 0.3\%)\\
+\hline
+Romanian & 0.1\% (0.1\%, 0.2\%) & 0.2\% (0.1\%, 0.3\%) & 0.1\% (0.1\%, 0.3\%) & 0.1\% (0.1\%, 0.3\%) & 0.1\% (0.1\%, 0.2\%) & 0.1\% (0.1\%, 0.3\%) & 0.2\% (0.1\%, 0.4\%) & 0.1\% (0.1\%, 0.3\%)\\
+\hline
+Tagalog & < 0.1\% (--, --) & 0.2\% (0.1\%, 0.3\%) & < 0.1\% (--, --) & 0.2\% (0.1\%, 0.5\%) & < 0.1\% (--, --) & 0.1\% (0.1\%, 0.3\%) & < 0.1\% (--, --) & 0.1\% (0.1\%, 0.3\%)\\
+\hline
+Punjabi & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & 0.1\% (0.1\%, 0.2\%) & < 0.1\% (--, --) & 0.1\% (0.0\%, 0.3\%)\\
+\hline
+Japanese & 0.1\% (0.1\%, 0.2\%) & 0.2\% (0.1\%, 0.4\%) & 0.1\% (0.1\%, 0.3\%) & 0.1\% (0.1\%, 0.3\%) & 0.2\% (0.1\%, 0.3\%) & 0.2\% (0.1\%, 0.4\%) & 0.1\% (0.1\%, 0.2\%) & 0.1\% (0.1\%, 0.2\%)\\
+\hline
+Norwegian & 0.1\% (0.1\%, 0.2\%) & < 0.1\% (--, --) & 0.1\% (0.1\%, 0.2\%) & 0.2\% (0.1\%, 0.3\%) & 0.1\% (0.1\%, 0.3\%) & 0.1\% (0.1\%, 0.3\%) & 0.2\% (0.1\%, 0.3\%) & < 0.1\% (--, --)\\
+\hline
+Urdu & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & 0.1\% (0.1\%, 0.3\%) & 0.1\% (0.1\%, 0.3\%) & < 0.1\% (--, --) & < 0.1\% (--, --)\\
+\hline
+Other & 1.5\% (1.3\%, 1.8\%) & 1.8\% (1.5\%, 2.1\%) & 2.6\% (2.2\%, 3.0\%) & 3.1\% (2.6\%, 3.7\%) & 3.0\% (2.6\%, 3.5\%) & 3.0\% (2.6\%, 3.5\%) & 3.2\% (2.7\%, 3.7\%) & 3.2\% (2.8\%, 3.8\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{spirituality}{%
+\section{Spirituality}\label{spirituality}}
+
+\hypertarget{how-do-you-describe-your-spirituality}{%
+\subsection{How do you describe your spirituality?}\label{how-do-you-describe-your-spirituality}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-23-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2013 & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Spiritual, but 
+ not religious & 49.2\% (48.3\%, 50.2\%) & 50.4\% (49.4\%, 51.4\%) & 45.7\% (44.6\%, 46.8\%) & 46.5\% (45.1\%, 47.8\%) & 46.3\% (45.2\%, 47.5\%) & 46.6\% (45.4\%, 47.7\%) & 47.7\% (46.5\%, 48.8\%) & 47.7\% (46.5\%, 48.9\%)\\
+\hline
+Atheist & 21.9\% (21.1\%, 22.7\%) & 21.3\% (20.5\%, 22.1\%) & 24.0\% (23.1\%, 25.0\%) & 24.8\% (23.7\%, 26.0\%) & 24.5\% (23.5\%, 25.5\%) & 23.2\% (22.2\%, 24.2\%) & 22.2\% (21.2\%, 23.2\%) & 23.2\% (22.2\%, 24.3\%)\\
+\hline
+Agnostic & 15.5\% (14.8\%, 16.2\%) & 14.6\% (13.9\%, 15.3\%) & 15.9\% (15.1\%, 16.7\%) & 14.7\% (13.8\%, 15.7\%) & 15.2\% (14.4\%, 16.0\%) & 15.7\% (14.9\%, 16.6\%) & 16.3\% (15.5\%, 17.2\%) & 16.3\% (15.4\%, 17.2\%)\\
+\hline
+Religious & 6.3\% (5.8\%, 6.8\%) & 5.5\% (5.0\%, 5.9\%) & 5.5\% (5.0\%, 6.0\%) & 6.1\% (5.4\%, 6.8\%) & 5.5\% (5.0\%, 6.1\%) & 5.4\% (4.9\%, 6.0\%) & 5.7\% (5.2\%, 6.3\%) & 5.4\% (4.8\%, 5.9\%)\\
+\hline
+Deist & 0.8\% (0.6\%, 1.0\%) & 0.8\% (0.7\%, 1.0\%) & 0.9\% (0.8\%, 1.2\%) & 0.8\% (0.6\%, 1.2\%) & 0.9\% (0.7\%, 1.2\%) & 0.7\% (0.5\%, 0.9\%) & 0.7\% (0.5\%, 0.9\%) & 0.4\% (0.3\%, 0.6\%)\\
+\hline
+I don't know & 6.3\% (5.8\%, 6.9\%) & 7.4\% (6.9\%, 8.0\%) & 8.0\% (7.4\%, 8.6\%) & 7.1\% (6.4\%, 7.8\%) & 7.5\% (6.9\%, 8.2\%) & 8.4\% (7.8\%, 9.1\%) & 7.4\% (6.8\%, 8.0\%) & 6.9\% (6.3\%, 7.6\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{religion-or-religious-denomination}{%
+\subsection{Religion or religious denomination}\label{religion-or-religious-denomination}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-24-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+No religion & 71.5\% (70.6\%, 72.4\%) & 71.3\% (70.2\%, 72.2\%) & 71.5\% (70.3\%, 72.7\%) & 71.7\% (70.7\%, 72.7\%) & 73.0\% (72.0\%, 74.0\%) & 72.2\% (71.2\%, 73.3\%) & 74.1\% (73.0\%, 75.2\%)\\
+\hline
+Jewish & 6.6\% (6.1\%, 7.1\%) & 6.5\% (6.0\%, 7.1\%) & 6.4\% (5.8\%, 7.1\%) & 6.0\% (5.5\%, 6.6\%) & 6.0\% (5.5\%, 6.5\%) & 6.4\% (5.9\%, 7.0\%) & 6.8\% (6.2\%, 7.4\%)\\
+\hline
+Catholic & 6.1\% (5.7\%, 6.6\%) & 7.1\% (6.6\%, 7.8\%) & 7.0\% (6.3\%, 7.8\%) & 7.0\% (6.4\%, 7.6\%) & 6.8\% (6.2\%, 7.4\%) & 6.5\% (6.0\%, 7.2\%) & 5.4\% (4.8\%, 6.0\%)\\
+\hline
+Protestant & 2.1\% (1.8\%, 2.3\%) & 2.3\% (2.0\%, 2.7\%) & 2.6\% (2.2\%, 3.1\%) & 2.7\% (2.3\%, 3.1\%) & 2.3\% (2.0\%, 2.7\%) & 3.6\% (3.1\%, 4.0\%) & 2.9\% (2.5\%, 3.3\%)\\
+\hline
+Other Christian & 3.8\% (3.4\%, 4.2\%) & 4.0\% (3.6\%, 4.5\%) & 4.6\% (4.1\%, 5.2\%) & 4.1\% (3.7\%, 4.6\%) & 4.1\% (3.7\%, 4.6\%) & 2.4\% (2.1\%, 2.8\%) & 2.3\% (1.9\%, 2.7\%)\\
+\hline
+Buddhist & 2.2\% (1.9\%, 2.5\%) & 1.8\% (1.5\%, 2.1\%) & 1.9\% (1.6\%, 2.3\%) & 1.9\% (1.6\%, 2.2\%) & 1.9\% (1.6\%, 2.2\%) & 1.3\% (1.1\%, 1.6\%) & 1.4\% (1.2\%, 1.8\%)\\
+\hline
+Pagan & 1.4\% (1.2\%, 1.7\%) & 1.2\% (0.9\%, 1.4\%) & 1.2\% (1.0\%, 1.6\%) & 1.4\% (1.2\%, 1.7\%) & 1.3\% (1.1\%, 1.6\%) & 1.6\% (1.3\%, 1.9\%) & 1.3\% (1.1\%, 1.6\%)\\
+\hline
+Pastafarian & 1.6\% (1.4\%, 1.9\%) & 1.6\% (1.3\%, 1.9\%) & 1.1\% (0.8\%, 1.3\%) & 1.2\% (1.0\%, 1.5\%) & 1.2\% (1.0\%, 1.5\%) & 0.8\% (0.6\%, 1.1\%) & 0.6\% (0.4\%, 0.8\%)\\
+\hline
+Hindu & 0.4\% (0.3\%, 0.5\%) & 0.5\% (0.3\%, 0.7\%) & 0.7\% (0.5\%, 1.0\%) & 0.4\% (0.3\%, 0.7\%) & 0.5\% (0.3\%, 0.7\%) & 0.5\% (0.3\%, 0.7\%) & 0.6\% (0.4\%, 0.9\%)\\
+\hline
+Muslim & 0.3\% (0.2\%, 0.5\%) & 0.5\% (0.3\%, 0.7\%) & 0.6\% (0.4\%, 0.9\%) & 0.6\% (0.4\%, 0.8\%) & 0.5\% (0.3\%, 0.7\%) & 0.5\% (0.4\%, 0.8\%) & 0.6\% (0.4\%, 0.9\%)\\
+\hline
+Other & 4.1\% (3.7\%, 4.5\%) & 3.2\% (2.8\%, 3.6\%) & 2.3\% (1.9\%, 2.7\%) & 3.0\% (2.6\%, 3.4\%) & 2.5\% (2.1\%, 2.9\%) & 4.1\% (3.6\%, 4.6\%) & 4.0\% (3.5\%, 4.5\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{disabilities}{%
+\section{Disabilities}\label{disabilities}}
+
+\hypertarget{identify-with-a-disability-status}{%
+\subsection{Identify with a disability status}\label{identify-with-a-disability-status}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-25-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l}
+\hline
+  & 2022\\
+\hline
+Sensory impairment & 3.4\% (3.0\%, 3.8\%)\\
+\hline
+Learning disability & 6.6\% (6.1\%, 7.3\%)\\
+\hline
+Long-term medical 
+ illness & 2.8\% (2.4\%, 3.2\%)\\
+\hline
+Long-term mental health 
+ condition & 12.7\% (11.9\%, 13.5\%)\\
+\hline
+Mobility impairment & 1.6\% (1.4\%, 1.9\%)\\
+\hline
+Sensory processing or 
+ integration disorder & 0.9\% (0.7\%, 1.1\%)\\
+\hline
+Temporary impairment resulting 
+ from illness or injury & 1.9\% (1.6\%, 2.3\%)\\
+\hline
+Disability not listed & 1.7\% (1.4\%, 2.0\%)\\
+\hline
+Do not identify with a 
+ disability or impairment & 71.3\% (70.2\%, 72.4\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{sexuality}{%
+\section{Sexuality}\label{sexuality}}
+
+\hypertarget{sexual-orientation}{%
+\subsection{Sexual orientation}\label{sexual-orientation}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-26-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2013 & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\textasciicircum{}c\textasciicircum{}\\
+\hline
+Heterosexual or 
+ straight & 68.5\% (67.6\%, 69.4\%) & 0.4\% (0.3\%, 0.6\%) & 67.6\% (66.7\%, 68.5\%) & 0.2\% (0.2\%, 0.4\%) & 66.5\% (65.4\%, 67.5\%) & 0.5\% (0.3\%, 0.7\%) & 66.5\% (65.2\%, 67.7\%) & 0.4\% (0.2\%, 0.6\%)\\
+\hline
+Bisexual or 
+ pansexual & -- & -- & -- & -- & -- & -- & -- & --\\
+\hline
+Bicurious or 
+ heteroflexible & 8.3\% (7.7\%, 8.9\%) & < 0.1\% (--, --) & 9.3\% (8.8\%, 9.9\%) & < 0.1\% (--, --) & 9.5\% (8.8\%, 10.2\%) & < 0.1\% (--, --) & 9.7\% (8.9\%, 10.5\%) & < 0.1\% (--, --)\\
+\hline
+Gay, lesbian, or 
+ homosexual & -- & -- & -- & -- & -- & -- & -- & --\\
+\hline
+Asexual & 11.0\% (10.4\%, 11.6\%) & 4.7\% (4.2\%, 5.2\%) & 11.1\% (10.4\%, 11.7\%) & 4.7\% (4.3\%, 5.2\%) & 11.2\% (10.6\%, 11.9\%) & 4.6\% (4.1\%, 5.1\%) & 11.7\% (10.9\%, 12.6\%) & 3.9\% (3.4\%, 4.5\%)\\
+\hline
+Demi-sexual & -- & -- & -- & -- & -- & -- & -- & --\\
+\hline
+Refuse labels & 7.2\% (6.7\%, 7.7\%) & < 0.1\% (--, --) & 7.1\% (6.6\%, 7.6\%) & < 0.1\% (--, --) & 7.8\% (7.2\%, 8.4\%) & < 0.1\% (--, --) & 7.8\% (7.2\%, 8.6\%) & < 0.1\% (--, --)\\
+\hline
+Other & -- & -- & -- & -- & -- & -- & -- & --\\
+\hline
+\multicolumn{9}{l}{\rule{0pt}{1em}\textsuperscript{a} 'Demi-sexual' and 'Other' choices were only shown in 2022.}\\
+\end{tabular}
+\end{table}
+
+\hypertarget{sexuality-labels}{%
+\subsection{Sexuality labels}\label{sexuality-labels}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-27-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l}
+\hline
+  & 2022\\
+\hline
+Open/curious & 27.8\% (26.7\%, 28.9\%)\\
+\hline
+Kinkster or BDSM participant & 17.6\% (16.7\%, 18.5\%)\\
+\hline
+Queer & 13.6\% (12.8\%, 14.4\%)\\
+\hline
+Sex/love addict & 7.0\% (6.3\%, 7.6\%)\\
+\hline
+Swinger & 4.7\% (4.2\%, 5.2\%)\\
+\hline
+Gray-sexual or demisexual & 3.0\% (2.6\%, 3.4\%)\\
+\hline
+Sex worker & 1.2\% (1.0\%, 1.5\%)\\
+\hline
+Other & 2.5\% (2.1\%, 2.8\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{relationships}{%
+\section{Relationships}\label{relationships}}
+
+\hypertarget{romantic-orientation}{%
+\subsection{Romantic Orientation}\label{romantic-orientation}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-28-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l}
+\hline
+  & 2022\\
+\hline
+Hetero-romantic & 68.9\% (67.7\%, 70.0\%)\\
+\hline
+Bi-romantic or Pan-romantic & 12.6\% (11.8\%, 13.4\%)\\
+\hline
+Homo-romantic & 8.4\% (7.7\%, 9.1\%)\\
+\hline
+Demi-romantic & 2.6\% (2.2\%, 3.0\%)\\
+\hline
+Aromantic & 0.4\% (0.2\%, 0.5\%)\\
+\hline
+Can't label & 6.0\% (5.4\%, 6.6\%)\\
+\hline
+Other & 1.2\% (1.0\%, 1.5\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{partner-in-the-default-world}{%
+\subsection{Partner in the default world}\label{partner-in-the-default-world}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-29-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+No, I am not in a relationship & 36.1\% (35.1\%, 37.2\%) & 35.9\% (34.6\%, 37.3\%) & 36.0\% (34.9\%, 37.1\%) & 34.4\% (33.3\%, 35.5\%) & 33.0\% (31.9\%, 34.1\%) & 25.6\% (24.5\%, 26.7\%)\\
+\hline
+Yes, and we are not married & 32.7\% (31.7\%, 33.8\%) & 31.4\% (30.1\%, 32.6\%) & 31.1\% (30.1\%, 32.2\%) & 31.7\% (30.7\%, 32.8\%) & 29.7\% (28.6\%, 30.8\%) & 36.8\% (35.6\%, 38.0\%)\\
+\hline
+Yes, and we are married & 22.7\% (21.8\%, 23.5\%) & 25.3\% (24.1\%, 26.4\%) & 25.4\% (24.5\%, 26.3\%) & 26.8\% (25.8\%, 27.8\%) & 30.3\% (29.3\%, 31.4\%) & 31.0\% (29.9\%, 32.1\%)\\
+\hline
+It's complicated & 8.5\% (7.9\%, 9.1\%) & 7.5\% (6.8\%, 8.2\%) & 7.5\% (6.9\%, 8.1\%) & 7.1\% (6.5\%, 7.7\%) & 7.0\% (6.4\%, 7.6\%) & 6.6\% (6.0\%, 7.2\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{relationship-labels}{%
+\subsection{Relationship labels}\label{relationship-labels}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-30-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l}
+\hline
+  & 2022\\
+\hline
+Monogamous & 55.2\% (54.0\%, 56.4\%)\\
+\hline
+Mostly monogamous & 21.0\% (20.1\%, 22.0\%)\\
+\hline
+Polyamorous & 13.3\% (12.5\%, 14.1\%)\\
+\hline
+Ethical non-monogamous & 12.2\% (11.5\%, 13.0\%)\\
+\hline
+Open & 11.7\% (10.9\%, 12.5\%)\\
+\hline
+Solo polyamorous & 3.4\% (3.0\%, 3.9\%)\\
+\hline
+Relationship anarchist & 3.4\% (3.0\%, 3.9\%)\\
+\hline
+Serial monogamous & 2.8\% (2.5\%, 3.2\%)\\
+\hline
+Don't ask, don't tell & 2.4\% (2.1\%, 2.8\%)\\
+\hline
+Power dynamic relationship & 1.2\% (1.0\%, 1.5\%)\\
+\hline
+Unicorn polyamorous & 1.1\% (0.9\%, 1.4\%)\\
+\hline
+Non-concensual non-monogamy & 1.0\% (0.8\%, 1.2\%)\\
+\hline
+Polyfidelity & 0.5\% (0.4\%, 0.7\%)\\
+\hline
+Polygamy & 0.5\% (0.3\%, 0.7\%)\\
+\hline
+Other & 1.3\% (1.0\%, 1.6\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{beyond-the-burn-regionals-media-and-volunteering}{%
+\chapter{Beyond the Burn -- Regionals, Media, and Volunteering}\label{beyond-the-burn-regionals-media-and-volunteering}}
+
+\hypertarget{regionals}{%
+\section{Regionals}\label{regionals}}
+
+\hypertarget{attended-any-regional-burning-man-eventsmixersgatherings}{%
+\subsection{Attended any regional Burning Man events/mixers/gatherings}\label{attended-any-regional-burning-man-eventsmixersgatherings}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-32-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2013 & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Attended at least 
+ one regional & 35.2\% (34.3\%, 36.2\%) & 36.9\% (36.0\%, 37.9\%) & 32.9\% (31.9\%, 33.9\%) & 32.3\% (31.1\%, 33.6\%) & 29.8\% (28.8\%, 30.8\%) & 31.5\% (30.4\%, 32.6\%) & 32.1\% (31.0\%, 33.2\%) & 32.3\% (31.2\%, 33.4\%)\\
+\hline
+Volunteered with 
+ a regional & 12.4\% (11.7\%, 13.0\%) & 14.4\% (13.7\%, 15.2\%) & 11.9\% (11.3\%, 12.6\%) & 11.0\% (10.3\%, 11.8\%) & 13.6\% (12.9\%, 14.3\%) & 13.6\% (12.8\%, 14.3\%) & 14.5\% (13.7\%, 15.4\%) & 13.7\% (12.9\%, 14.5\%)\\
+\hline
+Not attended, 
+ on e-mail list & 16.9\% (16.1\%, 17.6\%) & 16.4\% (15.7\%, 17.2\%) & 19.8\% (18.9\%, 20.7\%) & 18.2\% (17.1\%, 19.2\%) & 17.4\% (16.5\%, 18.3\%) & 18.0\% (17.1\%, 18.9\%) & 18.6\% (17.7\%, 19.5\%) & 14.7\% (13.9\%, 15.6\%)\\
+\hline
+Not connected 
+ to regional & 35.6\% (34.6\%, 36.5\%) & 32.2\% (31.3\%, 33.1\%) & 35.4\% (34.4\%, 36.5\%) & 38.5\% (37.2\%, 39.9\%) & 39.3\% (38.2\%, 40.4\%) & 37.0\% (35.8\%, 38.1\%) & 34.8\% (33.7\%, 35.9\%) & 39.3\% (38.1\%, 40.5\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{involvement-with-a-regional-burning-man-event}{%
+\subsection{Involvement with a regional Burning Man event}\label{involvement-with-a-regional-burning-man-event}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-33-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Staff/volunteer & -- & -- & -- & -- & 11.0\% (10.4\%, 11.8\%) & 10.5\% (9.8\%, 11.2\%)\\
+\hline
+Theme camp & 6.5\% (6.0\%, 7.0\%) & 5.9\% (5.3\%, 6.5\%) & 7.7\% (7.1\%, 8.2\%) & 7.6\% (7.1\%, 8.2\%) & 8.2\% (7.6\%, 8.9\%) & 7.5\% (7.0\%, 8.1\%)\\
+\hline
+Art project & 5.0\% (4.6\%, 5.5\%) & 4.0\% (3.5\%, 4.4\%) & 5.2\% (4.8\%, 5.7\%) & 5.3\% (4.8\%, 5.8\%) & 5.2\% (4.7\%, 5.8\%) & 5.5\% (5.0\%, 6.0\%)\\
+\hline
+Production & 6.1\% (5.6\%, 6.6\%) & 5.6\% (5.1\%, 6.2\%) & 6.8\% (6.3\%, 7.4\%) & 6.5\% (6.0\%, 7.1\%) & 5.4\% (4.9\%, 6.0\%) & 5.2\% (4.8\%, 5.7\%)\\
+\hline
+Performance & 2.9\% (2.6\%, 3.3\%) & 2.4\% (2.1\%, 2.9\%) & 3.1\% (2.8\%, 3.5\%) & 2.7\% (2.4\%, 3.1\%) & 2.4\% (2.1\%, 2.8\%) & 2.5\% (2.2\%, 2.9\%)\\
+\hline
+Medical services & -- & -- & -- & -- & 0.9\% (0.7\%, 1.1\%) & 0.8\% (0.7\%, 1.1\%)\\
+\hline
+Vendor & 0.1\% (0.1\%, 0.2\%) & 0.3\% (0.2\%, 0.4\%) & 0.2\% (0.1\%, 0.3\%) & 0.2\% (0.1\%, 0.3\%) & 0.1\% (0.1\%, 0.3\%) & < 0.1\% (--, --)\\
+\hline
+Other & 3.4\% (3.0\%, 3.8\%) & 4.0\% (3.5\%, 4.6\%) & 5.0\% (4.5\%, 5.4\%) & 4.4\% (4.0\%, 4.9\%) & 1.1\% (0.9\%, 1.4\%) & 0.7\% (0.6\%, 1.0\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{burning-man-media}{%
+\section{Burning Man Media}\label{burning-man-media}}
+
+--\textgreater{}
+
+\hypertarget{most-valuable-types-of-information-coming-from-burning-man-project}{%
+\subsection{Most valuable types of information coming from Burning Man Project}\label{most-valuable-types-of-information-coming-from-burning-man-project}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-34-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Black Rock City events & 58.0\% (57.0\%, 59.0\%) & 59.1\% (57.9\%, 60.2\%) & 57.8\% (56.5\%, 59.2\%) & 53.2\% (52.1\%, 54.4\%) & 56.4\% (55.2\%, 57.6\%) & 55.2\% (54.0\%, 56.4\%) & 45.8\% (44.6\%, 47.0\%)\\
+\hline
+Bay Area events & 17.5\% (16.7\%, 18.3\%) & 15.6\% (14.8\%, 16.5\%) & 14.5\% (13.6\%, 15.4\%) & 14.1\% (13.4\%, 14.9\%) & 14.3\% (13.5\%, 15.2\%) & 13.9\% (13.0\%, 14.7\%) & 10.6\% (9.9\%, 11.4\%)\\
+\hline
+Events around the world & 12.7\% (12.0\%, 13.4\%) & 14.0\% (13.2\%, 14.9\%) & 14.5\% (13.5\%, 15.5\%) & 13.5\% (12.7\%, 14.3\%) & 14.7\% (13.9\%, 15.6\%) & 12.5\% (11.7\%, 13.3\%) & 10.8\% (10.1\%, 11.6\%)\\
+\hline
+Burning Man Regional events & 25.5\% (24.6\%, 26.4\%) & 27.8\% (26.8\%, 28.9\%) & 29.3\% (28.1\%, 30.6\%) & 29.3\% (28.2\%, 30.3\%) & 29.2\% (28.1\%, 30.2\%) & 28.2\% (27.1\%, 29.3\%) & 24.8\% (23.8\%, 25.9\%)\\
+\hline
+Volunteer opportunits with 
+ teams or departments & 22.6\% (21.8\%, 23.5\%) & 21.4\% (20.4\%, 22.3\%) & 23.0\% (21.8\%, 24.1\%) & 25.8\% (24.8\%, 26.8\%) & 27.0\% (25.9\%, 28.0\%) & 28.3\% (27.2\%, 29.4\%) & 23.4\% (22.4\%, 24.4\%)\\
+\hline
+Opportunities to create 
+ or assist with art & -- & -- & -- & -- & -- & -- & 23.4\% (22.4\%, 24.5\%)\\
+\hline
+Black Rock City preparation 
+ information & 43.5\% (42.5\%, 44.5\%) & 42.2\% (41.1\%, 43.3\%) & 40.6\% (39.2\%, 41.9\%) & 40.4\% (39.3\%, 41.6\%) & 40.5\% (39.3\%, 41.7\%) & 29.3\% (28.2\%, 30.4\%) & 28.1\% (27.0\%, 29.2\%)\\
+\hline
+Information about camps & -- & -- & -- & -- & -- & 18.7\% (17.7\%, 19.6\%) & 16.3\% (15.4\%, 17.3\%)\\
+\hline
+Photos and videos from 
+ Black Rock City & 54.3\% (53.3\%, 55.3\%) & 52.4\% (51.2\%, 53.5\%) & 44.8\% (43.4\%, 46.2\%) & 43.3\% (42.1\%, 44.5\%) & 39.2\% (38.0\%, 40.3\%) & 28.4\% (27.3\%, 29.5\%) & 28.9\% (27.8\%, 30.0\%)\\
+\hline
+Stories about Burners from 
+ around the world & 28.5\% (27.6\%, 29.4\%) & 29.1\% (28.0\%, 30.2\%) & 32.3\% (31.0\%, 33.6\%) & 33.5\% (32.4\%, 34.6\%) & 32.7\% (31.6\%, 33.8\%) & 23.4\% (22.4\%, 24.5\%) & 17.1\% (16.2\%, 18.0\%)\\
+\hline
+Information about non-profit 
+ activities & -- & 6.9\% (6.3\%, 7.5\%) & 11.1\% (10.2\%, 12.0\%) & 13.7\% (13.0\%, 14.5\%) & 13.7\% (12.9\%, 14.5\%) & 9.3\% (8.6\%, 10.0\%) & 5.2\% (4.7\%, 5.7\%)\\
+\hline
+Information supporting R.I.D.E. & -- & -- & -- & -- & -- & -- & 9.9\% (9.3\%, 10.7\%)\\
+\hline
+Resources about sustainability 
+ at Burning Man & -- & -- & -- & -- & -- & -- & 11.5\% (10.8\%, 12.3\%)\\
+\hline
+Other & 1.8\% (1.5\%, 2.1\%) & 1.2\% (0.9\%, 1.4\%) & 0.9\% (0.7\%, 1.1\%) & 1.0\% (0.8\%, 1.2\%) & 1.1\% (0.9\%, 1.4\%) & 0.9\% (0.7\%, 1.2\%) & 0.7\% (0.5\%, 0.9\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{listened-to-bmir-burning-man-information-radio-this-year}{%
+\subsection{Listened to BMIR (Burning Man Information Radio) this year}\label{listened-to-bmir-burning-man-information-radio-this-year}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-35-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Black Rock City events & 58.0\% (57.0\%, 59.0\%) & 59.1\% (57.9\%, 60.2\%) & 57.8\% (56.5\%, 59.2\%) & 53.2\% (52.1\%, 54.4\%) & 56.4\% (55.2\%, 57.6\%) & 55.2\% (54.0\%, 56.4\%) & 45.8\% (44.6\%, 47.0\%)\\
+\hline
+Bay Area events & 17.5\% (16.7\%, 18.3\%) & 15.6\% (14.8\%, 16.5\%) & 14.5\% (13.6\%, 15.4\%) & 14.1\% (13.4\%, 14.9\%) & 14.3\% (13.5\%, 15.2\%) & 13.9\% (13.0\%, 14.7\%) & 10.6\% (9.9\%, 11.4\%)\\
+\hline
+Events around the world & 12.7\% (12.0\%, 13.4\%) & 14.0\% (13.2\%, 14.9\%) & 14.5\% (13.5\%, 15.5\%) & 13.5\% (12.7\%, 14.3\%) & 14.7\% (13.9\%, 15.6\%) & 12.5\% (11.7\%, 13.3\%) & 10.8\% (10.1\%, 11.6\%)\\
+\hline
+Burning Man Regional events & 25.5\% (24.6\%, 26.4\%) & 27.8\% (26.8\%, 28.9\%) & 29.3\% (28.1\%, 30.6\%) & 29.3\% (28.2\%, 30.3\%) & 29.2\% (28.1\%, 30.2\%) & 28.2\% (27.1\%, 29.3\%) & 24.8\% (23.8\%, 25.9\%)\\
+\hline
+Volunteer opportunits with 
+ teams or departments & 22.6\% (21.8\%, 23.5\%) & 21.4\% (20.4\%, 22.3\%) & 23.0\% (21.8\%, 24.1\%) & 25.8\% (24.8\%, 26.8\%) & 27.0\% (25.9\%, 28.0\%) & 28.3\% (27.2\%, 29.4\%) & 23.4\% (22.4\%, 24.4\%)\\
+\hline
+Opportunities to create 
+ or assist with art & -- & -- & -- & -- & -- & -- & 23.4\% (22.4\%, 24.5\%)\\
+\hline
+Black Rock City preparation 
+ information & 43.5\% (42.5\%, 44.5\%) & 42.2\% (41.1\%, 43.3\%) & 40.6\% (39.2\%, 41.9\%) & 40.4\% (39.3\%, 41.6\%) & 40.5\% (39.3\%, 41.7\%) & 29.3\% (28.2\%, 30.4\%) & 28.1\% (27.0\%, 29.2\%)\\
+\hline
+Information about camps & -- & -- & -- & -- & -- & 18.7\% (17.7\%, 19.6\%) & 16.3\% (15.4\%, 17.3\%)\\
+\hline
+Photos and videos from 
+ Black Rock City & 54.3\% (53.3\%, 55.3\%) & 52.4\% (51.2\%, 53.5\%) & 44.8\% (43.4\%, 46.2\%) & 43.3\% (42.1\%, 44.5\%) & 39.2\% (38.0\%, 40.3\%) & 28.4\% (27.3\%, 29.5\%) & 28.9\% (27.8\%, 30.0\%)\\
+\hline
+Stories about Burners from 
+ around the world & 28.5\% (27.6\%, 29.4\%) & 29.1\% (28.0\%, 30.2\%) & 32.3\% (31.0\%, 33.6\%) & 33.5\% (32.4\%, 34.6\%) & 32.7\% (31.6\%, 33.8\%) & 23.4\% (22.4\%, 24.5\%) & 17.1\% (16.2\%, 18.0\%)\\
+\hline
+Information about non-profit 
+ activities & -- & 6.9\% (6.3\%, 7.5\%) & 11.1\% (10.2\%, 12.0\%) & 13.7\% (13.0\%, 14.5\%) & 13.7\% (12.9\%, 14.5\%) & 9.3\% (8.6\%, 10.0\%) & 5.2\% (4.7\%, 5.7\%)\\
+\hline
+Information supporting R.I.D.E. & -- & -- & -- & -- & -- & -- & 9.9\% (9.3\%, 10.7\%)\\
+\hline
+Resources about sustainability 
+ at Burning Man & -- & -- & -- & -- & -- & -- & 11.5\% (10.8\%, 12.3\%)\\
+\hline
+Other & 1.8\% (1.5\%, 2.1\%) & 1.2\% (0.9\%, 1.4\%) & 0.9\% (0.7\%, 1.1\%) & 1.0\% (0.8\%, 1.2\%) & 1.1\% (0.9\%, 1.4\%) & 0.9\% (0.7\%, 1.2\%) & 0.7\% (0.5\%, 0.9\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{volunteerism-and-donations}{%
+\section{Volunteerism and donations}\label{volunteerism-and-donations}}
+
+\hypertarget{volunteered-in-the-last-year}{%
+\subsection{Volunteered in the last year}\label{volunteered-in-the-last-year}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-36-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Self-initiated good deeds & 36.9\% (35.6\%, 38.2\%) & 37.1\% (36.0\%, 38.3\%) & 35.3\% (34.2\%, 36.5\%) & 35.7\% (34.6\%, 36.9\%) & 33.2\% (32.1\%, 34.3\%)\\
+\hline
+Community groups or clubs & 27.7\% (26.6\%, 28.9\%) & 27.1\% (26.1\%, 28.1\%) & 25.3\% (24.3\%, 26.3\%) & 23.1\% (22.1\%, 24.1\%) & 21.5\% (20.5\%, 22.5\%)\\
+\hline
+Art Projects & 21.1\% (20.1\%, 22.2\%) & 23.0\% (22.1\%, 24.0\%) & 22.7\% (21.7\%, 23.6\%) & 23.0\% (22.0\%, 24.0\%) & 18.7\% (17.8\%, 19.6\%)\\
+\hline
+Black Rock City & 20.8\% (19.8\%, 21.8\%) & 23.7\% (22.8\%, 24.7\%) & 12.8\% (12.0\%, 13.5\%) & 15.4\% (14.6\%, 16.3\%) & 14.6\% (13.8\%, 15.4\%)\\
+\hline
+Human rights or poverty-
+ related initiatives & -- & -- & -- & 15.3\% (14.5\%, 16.1\%) & 13.5\% (12.7\%, 14.3\%)\\
+\hline
+Animals or environmental 
+ initiatives & 14.8\% (13.8\%, 15.8\%) & 15.6\% (14.8\%, 16.5\%) & 14.3\% (13.5\%, 15.1\%) & 13.3\% (12.5\%, 14.1\%) & 11.0\% (10.3\%, 11.8\%)\\
+\hline
+Schools or universities & 15.3\% (14.3\%, 16.3\%) & 14.6\% (13.8\%, 15.5\%) & 12.5\% (11.8\%, 13.3\%) & 13.5\% (12.7\%, 14.3\%) & 10.4\% (9.8\%, 11.2\%)\\
+\hline
+Health-related initiatives & -- & -- & -- & 10.7\% (10.0\%, 11.5\%) & 10.3\% (9.6\%, 11.0\%)\\
+\hline
+Burning Man Regionals & 11.6\% (10.8\%, 12.5\%) & 14.3\% (13.5\%, 15.1\%) & 10.3\% (9.6\%, 11.0\%) & 11.9\% (11.1\%, 12.7\%) & 9.6\% (9.0\%, 10.3\%)\\
+\hline
+Political campaigns or 
+ voter registration & 9.9\% (9.2\%, 10.6\%) & 11.4\% (10.7\%, 12.1\%) & 9.5\% (8.8\%, 10.1\%) & 9.9\% (9.2\%, 10.6\%) & 8.3\% (7.7\%, 8.9\%)\\
+\hline
+Religious or faith-based 
+ initiatives & -- & -- & -- & 3.0\% (2.6\%, 3.4\%) & 2.5\% (2.2\%, 2.9\%)\\
+\hline
+Fly Ranch Project & -- & -- & -- & 1.2\% (1.0\%, 1.5\%) & 1.0\% (0.8\%, 1.2\%)\\
+\hline
+Burners Without Borders & 1.0\% (0.8\%, 1.2\%) & 1.4\% (1.2\%, 1.7\%) & 1.2\% (1.0\%, 1.5\%) & 1.8\% (1.5\%, 2.2\%) & 0.9\% (0.7\%, 1.2\%)\\
+\hline
+Other non-profits and 
+ charities & 11.8\% (11.0\%, 12.7\%) & 11.5\% (10.8\%, 12.3\%) & 10.6\% (10.0\%, 11.3\%) & 8.0\% (7.4\%, 8.7\%) & 7.0\% (6.4\%, 7.6\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{approximate-average-hours-per-month-spent-on-volunteer-efforts-last-year}{%
+\subsection{Approximate average hours per month spent on volunteer efforts last year}\label{approximate-average-hours-per-month-spent-on-volunteer-efforts-last-year}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-37-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2018 & 2019 & 2022\\
+\hline
+10\textasciicircum{}th\textasciicircum{} percentile & 2 (2, 3) & 1 (1, 2) & 1 (1, 2)\\
+\hline
+25\textasciicircum{}th\textasciicircum{} percentile & 4 (4, 5) & 3 (3, 4) & 3 (3, 4)\\
+\hline
+Median & 8 (8, 10) & 7 (6, 8) & 6 (6, 8)\\
+\hline
+75\textasciicircum{}th\textasciicircum{} percentile & 20 (20, 25) & 15 (15, 17) & 18 (15, 20)\\
+\hline
+90\textasciicircum{}th\textasciicircum{} percentile & 40 (40, 50) & 40 (40, 50) & 40 (40, 50)\\
+\hline
+99\textasciicircum{}th\textasciicircum{} percentile & 200 (200, 300) & 200 (200, 300) & 200 (200, 300)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{made-a-charitable-donation-in-the-last-year}{%
+\subsection{Made a charitable donation in the last year}\label{made-a-charitable-donation-in-the-last-year}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-38-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l}
+\hline
+  & 2019 & 2022\\
+\hline
+Human rights or poverty-
+ related initiatives & 27.5\% (26.4\%, 28.5\%) & 28.2\% (27.1\%, 29.3\%)\\
+\hline
+Art Projects & 22.8\% (21.8\%, 23.8\%) & 19.8\% (18.9\%, 20.7\%)\\
+\hline
+Black Rock City & 9.5\% (8.8\%, 10.2\%) & 19.6\% (18.7\%, 20.6\%)\\
+\hline
+Animals or environmental 
+ initiatives & 20.9\% (20.0\%, 21.9\%) & 19.8\% (18.8\%, 20.7\%)\\
+\hline
+Health-related initiatives & 20.6\% (19.7\%, 21.6\%) & 18.8\% (17.9\%, 19.7\%)\\
+\hline
+Self-initiated good deeds & 18.6\% (17.7\%, 19.6\%) & 18.5\% (17.6\%, 19.4\%)\\
+\hline
+Community groups or clubs & 17.2\% (16.3\%, 18.1\%) & 17.3\% (16.5\%, 18.2\%)\\
+\hline
+Political campaigns or 
+ voter registration & 18.7\% (17.8\%, 19.6\%) & 15.7\% (14.9\%, 16.5\%)\\
+\hline
+Schools or universities & 13.5\% (12.7\%, 14.3\%) & 10.9\% (10.2\%, 11.6\%)\\
+\hline
+Religious or faith-based 
+ initiatives & 4.3\% (3.9\%, 4.8\%) & 3.8\% (3.3\%, 4.2\%)\\
+\hline
+Burning Man Regionals & 3.6\% (3.2\%, 4.1\%) & 3.4\% (3.0\%, 3.8\%)\\
+\hline
+Burners Without Borders & 1.5\% (1.2\%, 1.8\%) & 1.0\% (0.8\%, 1.2\%)\\
+\hline
+Fly Ranch Project & 0.8\% (0.6\%, 1.1\%) & 0.6\% (0.5\%, 0.8\%)\\
+\hline
+Other non-profits and 
+ charities & 8.2\% (7.6\%, 8.9\%) & 8.9\% (8.2\%, 9.6\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{inspiration-to-volunteer-donate-or-get-involved-after-going-to-black-rock-city}{%
+\subsection{Inspiration to volunteer, donate, or get involved after going to Black Rock City}\label{inspiration-to-volunteer-donate-or-get-involved-after-going-to-black-rock-city}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-39-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+No & 19.7\% (18.7\%, 20.7\%) & 19.9\% (18.9\%, 20.8\%) & 17.6\% (16.7\%, 18.5\%) & 16.3\% (15.4\%, 17.2\%) & 19.6\% (18.6\%, 20.5\%)\\
+\hline
+Sometimes & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --)\\
+\hline
+Yes & 49.8\% (48.4\%, 51.1\%) & 50.6\% (49.4\%, 51.8\%) & 50.9\% (49.7\%, 52.0\%) & 55.2\% (54.0\%, 56.4\%) & 49.9\% (48.6\%, 51.1\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{new-skills}{%
+\section{New skills}\label{new-skills}}
+
+\hypertarget{inspiration-to-practice-or-learn-skills-after-going-to-black-rock-city}{%
+\subsection{Inspiration to practice or learn skills after going to Black Rock City}\label{inspiration-to-practice-or-learn-skills-after-going-to-black-rock-city}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-40-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Art creation/crafting & 58.4\% (57.1\%, 59.8\%) & 56.2\% (55.0\%, 57.4\%) & 59.9\% (58.8\%, 61.1\%) & 60.8\% (59.6\%, 62.0\%) & 59.0\% (57.9\%, 60.2\%)\\
+\hline
+Self-awareness or 
+ emotional skills & 58.1\% (56.8\%, 59.4\%) & 57.6\% (56.4\%, 58.8\%) & 56.4\% (55.3\%, 57.6\%) & 51.8\% (50.6\%, 53.0\%) & 48.6\% (47.4\%, 49.8\%)\\
+\hline
+Self-care strategies & -- & -- & 43.0\% (41.8\%, 44.1\%) & 40.4\% (39.2\%, 41.6\%) & 39.5\% (38.3\%, 40.7\%)\\
+\hline
+Physical training & -- & -- & -- & 37.2\% (36.0\%, 38.4\%) & 34.2\% (33.1\%, 35.4\%)\\
+\hline
+Leadership or interpersonal skills & 37.0\% (35.7\%, 38.3\%) & 39.0\% (37.8\%, 40.2\%) & 40.3\% (39.2\%, 41.5\%) & 37.8\% (36.6\%, 38.9\%) & 34.0\% (32.9\%, 35.2\%)\\
+\hline
+Survival skills & -- & -- & 35.2\% (34.1\%, 36.3\%) & 29.0\% (28.0\%, 30.1\%) & 32.4\% (31.3\%, 33.6\%)\\
+\hline
+Performance art & 25.7\% (24.5\%, 26.9\%) & 24.7\% (23.6\%, 25.7\%) & 26.4\% (25.4\%, 27.5\%) & 29.7\% (28.6\%, 30.8\%) & 28.8\% (27.7\%, 29.9\%)\\
+\hline
+Community organizing or 
+ civic engagement & -- & -- & 24.4\% (23.4\%, 25.4\%) & 24.3\% (23.3\%, 25.3\%) & 23.5\% (22.5\%, 24.5\%)\\
+\hline
+Project management & 26.2\% (25.0\%, 27.4\%) & 26.7\% (25.7\%, 27.8\%) & 29.2\% (28.2\%, 30.3\%) & 25.8\% (24.7\%, 26.8\%) & 22.8\% (21.8\%, 23.9\%)\\
+\hline
+Carpentry or metal work & 26.1\% (24.9\%, 27.2\%) & 26.1\% (25.1\%, 27.2\%) & 26.6\% (25.6\%, 27.7\%) & 21.0\% (20.0\%, 22.0\%) & 19.8\% (18.9\%, 20.8\%)\\
+\hline
+Mediation skills & 26.6\% (25.4\%, 27.8\%) & 27.1\% (26.0\%, 28.2\%) & 24.4\% (23.4\%, 25.4\%) & 22.3\% (21.3\%, 23.3\%) & 17.5\% (16.6\%, 18.5\%)\\
+\hline
+Electrical engineering or 
+ electronics design & -- & -- & -- & 17.0\% (16.1\%, 17.9\%) & 15.4\% (14.5\%, 16.3\%)\\
+\hline
+Construction, heavy machinery, 
+ or mechanical work & 15.1\% (14.1\%, 16.1\%) & 15.6\% (14.7\%, 16.5\%) & 14.5\% (13.7\%, 15.4\%) & 15.7\% (14.8\%, 16.6\%) & 15.0\% (14.2\%, 15.9\%)\\
+\hline
+Graphic design & 10.6\% (9.8\%, 11.5\%) & 9.8\% (9.1\%, 10.6\%) & 10.3\% (9.6\%, 11.0\%) & 9.2\% (8.5\%, 9.9\%) & 8.1\% (7.5\%, 8.8\%)\\
+\hline
+Other & 4.2\% (3.7\%, 4.8\%) & 3.4\% (3.0\%, 3.9\%) & 3.0\% (2.6\%, 3.4\%) & 2.7\% (2.3\%, 3.1\%) & 2.5\% (2.2\%, 2.9\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{have-any-of-these-skills-proved-useful-in-the-default-world}{%
+\subsection{Have any of these skills proved useful in the default world?}\label{have-any-of-these-skills-proved-useful-in-the-default-world}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-41-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Very useful & 55.9\% (54.5\%, 57.4\%) & 58.2\% (56.9\%, 59.5\%) & 58.4\% (57.2\%, 59.6\%) & 61.0\% (59.8\%, 62.3\%) & 61.9\% (60.6\%, 63.1\%)\\
+\hline
+Somewhat useful & 32.0\% (30.6\%, 33.3\%) & 30.8\% (29.6\%, 32.0\%) & 33.1\% (32.0\%, 34.3\%) & 30.8\% (29.7\%, 32.0\%) & 30.5\% (29.4\%, 31.7\%)\\
+\hline
+May be at some point & 11.7\% (10.8\%, 12.7\%) & 10.8\% (10.0\%, 11.7\%) & 8.2\% (7.5\%, 8.9\%) & 7.7\% (7.1\%, 8.4\%) & 7.3\% (6.7\%, 8.0\%)\\
+\hline
+Not at all & 0.4\% (0.3\%, 0.6\%) & 0.2\% (0.1\%, 0.4\%) & 0.3\% (0.2\%, 0.4\%) & 0.4\% (0.3\%, 0.6\%) & 0.3\% (0.2\%, 0.5\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{how-are-you-using-these-skills-outside-of-black-rock-city}{%
+\subsection{How are you using these skills outside of Black Rock City?}\label{how-are-you-using-these-skills-outside-of-black-rock-city}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-42-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2017 & 2018 & 2019 & 2022\\
+\hline
+I am creating things for 
+ myself or my family & 66.0\% (64.7\%, 67.2\%) & 66.8\% (65.6\%, 67.9\%) & 67.6\% (66.4\%, 68.8\%) & 60.4\% (59.2\%, 61.6\%)\\
+\hline
+I am using my time at home to create things that 
+ I will bring to Black Rock City & 43.1\% (41.9\%, 44.4\%) & 45.5\% (44.3\%, 46.7\%) & 46.2\% (45.0\%, 47.5\%) & 38.3\% (37.2\%, 39.5\%)\\
+\hline
+I am creating things for 
+ my home community & 34.8\% (33.6\%, 36.0\%) & 34.0\% (32.9\%, 35.2\%) & 36.3\% (35.1\%, 37.5\%) & 33.1\% (32.0\%, 34.2\%)\\
+\hline
+I am teaching those skills to 
+ members of my home community & 29.7\% (28.6\%, 30.9\%) & 30.1\% (29.0\%, 31.3\%) & 29.1\% (28.0\%, 30.3\%) & 25.1\% (24.1\%, 26.2\%)\\
+\hline
+I am not using these skills 
+ outside of Black Rock City & -- & 6.3\% (5.7\%, 7.0\%) & 5.2\% (4.7\%, 5.8\%) & 4.9\% (4.4\%, 5.5\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{impact-of-these-new-skills-outside-of-black-rock-city}{%
+\subsection{Impact of these new skills outside of Black Rock City}\label{impact-of-these-new-skills-outside-of-black-rock-city}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-43-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2018 & 2019 & 2022\\
+\hline
+I feel more fulfilled as 
+ an individual & 79.2\% (78.2\%, 80.2\%) & 79.6\% (78.5\%, 80.6\%) & 69.4\% (68.3\%, 70.5\%)\\
+\hline
+I am developing new and 
+ fulfilling relationships 
+ in my home community & 39.3\% (38.1\%, 40.5\%) & 40.0\% (38.7\%, 41.2\%) & 35.0\% (33.9\%, 36.2\%)\\
+\hline
+These skills are not 
+ impacting my life outside of 
+ Black Rock City & 7.3\% (6.7\%, 8.0\%) & 6.7\% (6.1\%, 7.4\%) & 6.4\% (5.8\%, 7.0\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{perspectives-on-burning-man}{%
+\chapter{Perspectives on Burning Man}\label{perspectives-on-burning-man}}
+
+\hypertarget{burner-identity-and-the-10-principles}{%
+\section{Burner Identity and the 10 Principles}\label{burner-identity-and-the-10-principles}}
+
+\hypertarget{do-you-identify-as-a-burner}{%
+\subsection{Do you identify as a Burner?}\label{do-you-identify-as-a-burner}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-45-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+No & 4.1\% (3.5\%, 4.7\%) & 3.8\% (3.3\%, 4.3\%) & 3.8\% (3.4\%, 4.3\%) & 3.7\% (3.3\%, 4.2\%) & 3.6\% (3.1\%, 4.0\%)\\
+\hline
+Sort of & 23.4\% (22.3\%, 24.6\%) & 22.6\% (21.6\%, 23.7\%) & 21.4\% (20.5\%, 22.4\%) & 19.3\% (18.3\%, 20.2\%) & 18.5\% (17.6\%, 19.5\%)\\
+\hline
+Yes & 72.5\% (71.2\%, 73.7\%) & 73.6\% (72.5\%, 74.7\%) & 74.7\% (73.7\%, 75.8\%) & 77.0\% (76.0\%, 78.0\%) & 77.9\% (76.9\%, 78.9\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{which-of-the-10-principles-do-you-practice-most-frequently-in-your-everyday-life}{%
+\subsection{Which of the 10 Principles do you practice most frequently in your everyday life?}\label{which-of-the-10-principles-do-you-practice-most-frequently-in-your-everyday-life}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-46-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Decommodification & 47.0\% (45.6\%, 48.3\%) & 40.4\% (39.3\%, 41.5\%) & 55.0\% (53.8\%, 56.1\%) & 56.4\% (55.2\%, 57.5\%) & 58.7\% (57.5\%, 59.9\%)\\
+\hline
+Immediacy & 26.6\% (25.5\%, 27.8\%) & 22.9\% (21.9\%, 23.8\%) & 28.6\% (27.6\%, 29.6\%) & 30.7\% (29.6\%, 31.8\%) & 30.7\% (29.6\%, 31.8\%)\\
+\hline
+Radical Self-expression & 25.2\% (24.1\%, 26.4\%) & 20.8\% (19.9\%, 21.8\%) & 29.4\% (28.3\%, 30.4\%) & 30.5\% (29.5\%, 31.6\%) & 28.8\% (27.7\%, 29.9\%)\\
+\hline
+Gifting & 14.6\% (13.7\%, 15.6\%) & 11.3\% (10.5\%, 12.0\%) & 16.1\% (15.3\%, 17.0\%) & 17.0\% (16.1\%, 17.9\%) & 17.0\% (16.1\%, 17.9\%)\\
+\hline
+Leave No Trace & 15.6\% (14.6\%, 16.6\%) & 12.1\% (11.4\%, 12.9\%) & 16.4\% (15.6\%, 17.3\%) & 18.4\% (17.5\%, 19.3\%) & 16.0\% (15.1\%, 16.9\%)\\
+\hline
+Radical Inclusion & 19.1\% (18.1\%, 20.2\%) & 17.1\% (16.3\%, 18.0\%) & 19.4\% (18.5\%, 20.3\%) & 19.3\% (18.3\%, 20.2\%) & 15.0\% (14.2\%, 15.9\%)\\
+\hline
+Communal Effort & 12.7\% (11.8\%, 13.6\%) & 10.7\% (10.0\%, 11.5\%) & 12.6\% (11.8\%, 13.4\%) & 12.8\% (12.0\%, 13.6\%) & 14.5\% (13.7\%, 15.4\%)\\
+\hline
+Civic Resposibility & 11.0\% (10.2\%, 11.9\%) & 10.7\% (10.1\%, 11.4\%) & 11.1\% (10.4\%, 11.9\%) & 10.3\% (9.6\%, 11.0\%) & 12.6\% (11.8\%, 13.5\%)\\
+\hline
+Participation & 12.9\% (12.0\%, 13.8\%) & 11.1\% (10.4\%, 11.9\%) & 12.4\% (11.7\%, 13.2\%) & 12.0\% (11.2\%, 12.8\%) & 12.4\% (11.6\%, 13.3\%)\\
+\hline
+Radical Self-reliance & 9.6\% (8.8\%, 10.5\%) & 6.4\% (5.9\%, 7.0\%) & 8.0\% (7.4\%, 8.7\%) & 7.6\% (7.0\%, 8.3\%) & 7.9\% (7.3\%, 8.6\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{which-of-the-10-principles-are-the-most-difficult-to-practice-in-every-day-life}{%
+\subsection{Which of the 10 Principles are the most difficult to practice in every day life?}\label{which-of-the-10-principles-are-the-most-difficult-to-practice-in-every-day-life}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-47-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Decommodification & 47.0\% (45.6\%, 48.3\%) & 40.4\% (39.3\%, 41.5\%) & 55.0\% (53.8\%, 56.1\%) & 56.4\% (55.2\%, 57.5\%) & 58.7\% (57.5\%, 59.9\%)\\
+\hline
+Immediacy & 26.6\% (25.5\%, 27.8\%) & 22.9\% (21.9\%, 23.8\%) & 28.6\% (27.6\%, 29.6\%) & 30.7\% (29.6\%, 31.8\%) & 30.7\% (29.6\%, 31.8\%)\\
+\hline
+Radical Self-expression & 25.2\% (24.1\%, 26.4\%) & 20.8\% (19.9\%, 21.8\%) & 29.4\% (28.3\%, 30.4\%) & 30.5\% (29.5\%, 31.6\%) & 28.8\% (27.7\%, 29.9\%)\\
+\hline
+Gifting & 14.6\% (13.7\%, 15.6\%) & 11.3\% (10.5\%, 12.0\%) & 16.1\% (15.3\%, 17.0\%) & 17.0\% (16.1\%, 17.9\%) & 17.0\% (16.1\%, 17.9\%)\\
+\hline
+Leave No Trace & 15.6\% (14.6\%, 16.6\%) & 12.1\% (11.4\%, 12.9\%) & 16.4\% (15.6\%, 17.3\%) & 18.4\% (17.5\%, 19.3\%) & 16.0\% (15.1\%, 16.9\%)\\
+\hline
+Radical Inclusion & 19.1\% (18.1\%, 20.2\%) & 17.1\% (16.3\%, 18.0\%) & 19.4\% (18.5\%, 20.3\%) & 19.3\% (18.3\%, 20.2\%) & 15.0\% (14.2\%, 15.9\%)\\
+\hline
+Communal Effort & 12.7\% (11.8\%, 13.6\%) & 10.7\% (10.0\%, 11.5\%) & 12.6\% (11.8\%, 13.4\%) & 12.8\% (12.0\%, 13.6\%) & 14.5\% (13.7\%, 15.4\%)\\
+\hline
+Civic Resposibility & 11.0\% (10.2\%, 11.9\%) & 10.7\% (10.1\%, 11.4\%) & 11.1\% (10.4\%, 11.9\%) & 10.3\% (9.6\%, 11.0\%) & 12.6\% (11.8\%, 13.5\%)\\
+\hline
+Participation & 12.9\% (12.0\%, 13.8\%) & 11.1\% (10.4\%, 11.9\%) & 12.4\% (11.7\%, 13.2\%) & 12.0\% (11.2\%, 12.8\%) & 12.4\% (11.6\%, 13.3\%)\\
+\hline
+Radical Self-reliance & 9.6\% (8.8\%, 10.5\%) & 6.4\% (5.9\%, 7.0\%) & 8.0\% (7.4\%, 8.7\%) & 7.6\% (7.0\%, 8.3\%) & 7.9\% (7.3\%, 8.6\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{importance-of-the-10-principles}{%
+\subsection{Importance of the 10 Principles}\label{importance-of-the-10-principles}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-48-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Not important & 0.7\% (0.5\%, 1.0\%) & 1.4\% (1.1\%, 1.7\%) & 1.2\% (1.0\%, 1.5\%) & 0.9\% (0.7\%, 1.2\%) & 0.8\% (0.6\%, 1.1\%) & 0.9\% (0.7\%, 1.1\%)\\
+\hline
+Slightly important & 1.9\% (1.6\%, 2.2\%) & 3.6\% (3.1\%, 4.1\%) & 4.0\% (3.6\%, 4.5\%) & 2.6\% (2.3\%, 3.0\%) & 2.4\% (2.0\%, 2.8\%) & 2.5\% (2.1\%, 2.8\%)\\
+\hline
+Moderately important & 10.2\% (9.6\%, 10.9\%) & 15.7\% (14.8\%, 16.8\%) & 16.0\% (15.1\%, 16.9\%) & 13.7\% (12.8\%, 14.5\%) & 10.8\% (10.1\%, 11.6\%) & 12.5\% (11.7\%, 13.3\%)\\
+\hline
+Important & 39.7\% (38.6\%, 40.8\%) & 44.3\% (42.9\%, 45.6\%) & 42.5\% (41.3\%, 43.7\%) & 40.9\% (39.8\%, 42.1\%) & 38.8\% (37.7\%, 40.0\%) & 40.1\% (38.9\%, 41.3\%)\\
+\hline
+Very important & 47.4\% (46.3\%, 48.5\%) & 35.1\% (33.8\%, 36.4\%) & 36.3\% (35.1\%, 37.4\%) & 41.9\% (40.7\%, 43.0\%) & 47.2\% (46.0\%, 48.4\%) & 44.1\% (42.9\%, 45.3\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{ten-principles-essential-to-creating-an-authentic-burning-man-experience}{%
+\subsection{Ten principles essential to creating an authentic Burning Man experience}\label{ten-principles-essential-to-creating-an-authentic-burning-man-experience}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-49-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Not essential & 0.5\% (0.3\%, 0.7\%) & 0.7\% (0.5\%, 1.0\%) & 0.5\% (0.3\%, 0.6\%) & 0.5\% (0.4\%, 0.7\%) & 0.5\% (0.4\%, 0.8\%) & 0.6\% (0.4\%, 0.8\%)\\
+\hline
+Slightly essential & 1.1\% (0.9\%, 1.3\%) & 1.1\% (0.9\%, 1.5\%) & 1.2\% (1.0\%, 1.4\%) & 0.8\% (0.6\%, 1.0\%) & 0.8\% (0.7\%, 1.1\%) & 0.8\% (0.7\%, 1.1\%)\\
+\hline
+Moderately essential & 4.7\% (4.3\%, 5.2\%) & 4.0\% (3.5\%, 4.5\%) & 4.0\% (3.6\%, 4.5\%) & 3.5\% (3.1\%, 4.0\%) & 3.3\% (2.9\%, 3.7\%) & 3.4\% (3.0\%, 3.8\%)\\
+\hline
+Essential & 23.9\% (22.9\%, 24.8\%) & 20.7\% (19.6\%, 21.8\%) & 21.0\% (20.0\%, 22.0\%) & 17.4\% (16.5\%, 18.2\%) & 16.2\% (15.3\%, 17.1\%) & 18.9\% (18.0\%, 19.8\%)\\
+\hline
+Very essential & 69.8\% (68.8\%, 70.8\%) & 73.5\% (72.3\%, 74.7\%) & 73.4\% (72.3\%, 74.4\%) & 77.9\% (76.9\%, 78.8\%) & 79.2\% (78.2\%, 80.1\%) & 76.3\% (75.3\%, 77.3\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{incorporating-the-10-principles-in-the-workplace}{%
+\subsection{Incorporating the 10 principles in the workplace}\label{incorporating-the-10-principles-in-the-workplace}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-50-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+I have modeled my 
+ professional activities 
+ on them & 6.4\% (5.7\%, 7.0\%) & 64.1\% (62.9\%, 65.3\%) & 26.2\% (25.1\%, 27.3\%) & 17.2\% (16.4\%, 18.1\%) & 28.6\% (27.5\%, 29.7\%)\\
+\hline
+No, I am not & 29.4\% (28.2\%, 30.7\%) & 8.3\% (7.7\%, 9.0\%) & 64.8\% (63.6\%, 65.9\%) & 6.4\% (5.7\%, 7.0\%) & 64.1\% (62.9\%, 65.3\%)\\
+\hline
+NA & 64.2\% (62.9\%, 65.5\%) & 28.3\% (27.2\%, 29.4\%) & 9.6\% (8.9\%, 10.3\%) & 29.4\% (28.2\%, 30.7\%) & 8.3\% (7.7\%, 9.0\%)\\
+\hline
+I try to practice them 
+ at my workplace & 7.3\% (6.7\%, 7.9\%) & 63.3\% (62.2\%, 64.5\%) & 53.2\% (51.9\%, 54.4\%) & 64.2\% (62.9\%, 65.5\%) & 28.3\% (27.2\%, 29.4\%)\\
+\hline
+Not applicable & 28.6\% (27.5\%, 29.7\%) & 9.1\% (8.4\%, 9.8\%) & 20.0\% (19.1\%, 21.0\%) & 7.3\% (6.7\%, 7.9\%) & 63.3\% (62.2\%, 64.5\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{children-at-burning-man}{%
+\section{Children at Burning Man}\label{children-at-burning-man}}
+
+\hypertarget{have-you-ever-brought-children-under-18-to-black-rock-city}{%
+\subsection{Have you ever brought children under 18 to Black Rock City?}\label{have-you-ever-brought-children-under-18-to-black-rock-city}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-51-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+No, but I would & 59.4\% (58.4\%, 60.3\%) & 63.6\% (62.5\%, 64.7\%) & 57.5\% (56.1\%, 58.8\%) & 61.0\% (59.8\%, 62.2\%) & 61.9\% (60.7\%, 63.1\%) & 61.6\% (60.4\%, 62.9\%) & 57.2\% (56.0\%, 58.4\%)\\
+\hline
+No, and I would not & 36.4\% (35.5\%, 37.4\%) & 33.6\% (32.5\%, 34.7\%) & 39.3\% (37.9\%, 40.6\%) & 35.6\% (34.4\%, 36.8\%) & 34.7\% (33.5\%, 35.9\%) & 34.2\% (33.0\%, 35.4\%) & < 0.1\% (--, --)\\
+\hline
+Yes, and I would again & 3.9\% (3.5\%, 4.3\%) & 2.7\% (2.3\%, 3.1\%) & 3.1\% (2.7\%, 3.6\%) & 3.3\% (2.9\%, 3.7\%) & 3.2\% (2.8\%, 3.6\%) & 4.0\% (3.5\%, 4.5\%) & 3.7\% (3.4\%, 4.2\%)\\
+\hline
+Yes, but I would not again & 0.4\% (0.3\%, 0.5\%) & 0.1\% (0.1\%, 0.2\%) & 0.1\% (0.1\%, 0.4\%) & < 0.1\% (--, --) & 0.2\% (0.1\%, 0.4\%) & 0.2\% (0.1\%, 0.3\%) & 0.2\% (0.1\%, 0.3\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{do-you-think-that-burning-man-event-attendance-should-be-restricted-to-participants-aged-18-or-older}{%
+\subsection{Do you think that Burning Man event attendance should be restricted to participants aged 18 or older?}\label{do-you-think-that-burning-man-event-attendance-should-be-restricted-to-participants-aged-18-or-older}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-52-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+No, all ages & 77.3\% (76.4\%, 78.3\%) & 63.4\% (62.1\%, 64.8\%) & 68.7\% (67.5\%, 69.8\%) & 70.1\% (69.0\%, 71.2\%) & 70.8\% (69.6\%, 71.9\%) & < 0.1\% (--, --)\\
+\hline
+Yes, only 18+ & 10.8\% (10.1\%, 11.5\%) & 17.7\% (16.6\%, 18.7\%) & 13.7\% (12.9\%, 14.6\%) & 12.2\% (11.5\%, 13.1\%) & 12.7\% (11.8\%, 13.5\%) & < 0.1\% (--, --)\\
+\hline
+No opinion & 11.9\% (11.2\%, 12.6\%) & 18.9\% (17.8\%, 20.0\%) & 17.6\% (16.7\%, 18.6\%) & 17.6\% (16.7\%, 18.6\%) & 16.6\% (15.6\%, 17.5\%) & < 0.1\% (--, --)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{burning-man-projects-nonprofit-activites}{%
+\section{Burning Man Project's Nonprofit Activites}\label{burning-man-projects-nonprofit-activites}}
+
+\hypertarget{familiarity-with-programs-and-affiliates-of-the-nonprofit-burning-man-project}{%
+\subsection{Familiarity with programs and affiliates of the nonprofit Burning Man Project}\label{familiarity-with-programs-and-affiliates-of-the-nonprofit-burning-man-project}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-53-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Burners Without Borders & 49.1\% (48.0\%, 50.2\%) & 26.3\% (25.3\%, 27.3\%) & -- & 36.8\% (35.6\%, 38.1\%) & 37.1\% (35.7\%, 38.4\%) & 25.3\% (24.0\%, 26.5\%)\\
+\hline
+Burning Man Arts & 37.9\% (36.8\%, 39.0\%) & 38.5\% (37.4\%, 39.6\%) & -- & 33.4\% (32.1\%, 34.7\%) & -- & 53.7\% (52.6\%, 54.8\%)\\
+\hline
+Black Rock Labs (formerly 
+ Black Rock Solar) & 13.0\% (12.3\%, 13.8\%) & 42.5\% (41.4\%, 43.6\%) & -- & 29.8\% (28.5\%, 31.1\%) & -- & 33.1\% (32.1\%, 34.2\%)\\
+\hline
+Burning Man Regional Network & 40.9\% (39.8\%, 42.1\%) & 35.3\% (34.2\%, 36.4\%) & 22.2\% (21.3\%, 23.2\%) & 28.0\% (26.8\%, 29.1\%) & -- & 13.1\% (12.3\%, 14.0\%)\\
+\hline
+Fly Ranch Project & 34.0\% (32.9\%, 35.1\%) & -- & 46.1\% (44.8\%, 47.4\%) & 24.5\% (23.4\%, 25.7\%) & -- & 38.3\% (37.3\%, 39.4\%)\\
+\hline
+Philosophical Center & 25.1\% (24.1\%, 26.1\%) & -- & 39.2\% (37.9\%, 40.5\%) & 47.6\% (46.2\%, 48.9\%) & -- & 32.0\% (31.0\%, 33.1\%)\\
+\hline
+Burning Man Regional 
+ Network & 35.3\% (34.2\%, 36.4\%) & -- & 14.7\% (13.7\%, 15.8\%) & 37.7\% (36.4\%, 39.0\%) & -- & 29.6\% (28.6\%, 30.7\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{should-the-burning-man-project-be-involved-in-faciliating-and-producing-year-round-activites}{%
+\subsection{Should the Burning Man Project be involved in faciliating and producing year-round activites?}\label{should-the-burning-man-project-be-involved-in-faciliating-and-producing-year-round-activites}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-54-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Yes & 51.5\% (50.4\%, 52.7\%) & 64.3\% (63.0\%, 65.6\%) & 62.2\% (61.0\%, 63.4\%) & 61.3\% (60.1\%, 62.4\%) & 63.3\% (62.1\%, 64.5\%) & 62.7\% (61.5\%, 63.9\%)\\
+\hline
+No & 19.3\% (18.4\%, 20.2\%) & 14.8\% (13.8\%, 15.8\%) & 15.7\% (14.8\%, 16.7\%) & 16.6\% (15.7\%, 17.5\%) & 15.9\% (15.0\%, 16.8\%) & 16.2\% (15.3\%, 17.2\%)\\
+\hline
+I don't care & 29.2\% (28.2\%, 30.2\%) & 20.9\% (19.8\%, 22.0\%) & 22.1\% (21.1\%, 23.1\%) & 22.1\% (21.1\%, 23.2\%) & 20.8\% (19.8\%, 21.8\%) & 21.1\% (20.1\%, 22.1\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{how-would-you-distribute-1000-to-donate-to-programs-of-the-nonprofit-burning-man-project}{%
+\subsection{How would you distribute \$1,000 to donate to programs of the nonprofit Burning man Project?}\label{how-would-you-distribute-1000-to-donate-to-programs-of-the-nonprofit-burning-man-project}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-55-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+BRC art & \$20 (\$20, \$21) & \$13 (\$12, \$13) & \$8 (\$7, \$8) & \$164 (\$159, \$170) & \$128 (\$123, \$133) & \$16 (\$15, \$16)\\
+\hline
+Sustainability 
+ efforts & \$9 (\$9, \$10) & \$17 (\$16, \$18) & \$3 (\$2, \$3) & \$67 (\$63, \$71) & \$121 (\$117, \$126) & \$13 (\$12, \$13)\\
+\hline
+BRC planning and 
+ infrastructure & \$16 (\$15, \$16) & \$15 (\$14, \$15) & \$16 (\$15, \$16) & \$153 (\$147, \$158) & \$91 (\$86, \$95) & \$18 (\$17, \$18)\\
+\hline
+Low income 
+ ticket program & \$13 (\$12, \$13) & \$9 (\$8, \$9) & \$6 (\$6, \$7) & \$142 (\$137, \$147) & \$85 (\$81, \$89) & \$15 (\$15, \$16)\\
+\hline
+Disaster relief and 
+ community building & \$18 (\$17, \$18) & \$3 (\$3, \$4) & \$15 (\$14, \$15) & \$167 (\$161, \$173) & \$74 (\$71, \$78) & \$7 (\$6, \$7)\\
+\hline
+Public art 
+ in the US & \$15 (\$15, \$16) & \$17 (\$17, \$18) & \$14 (\$13, \$14) & \$127 (\$123, \$132) & \$61 (\$58, \$65) & \$2 (\$2, \$2)\\
+\hline
+Public art 
+ abroad & \$7 (\$6, \$7) & \$10 (\$10, \$11) & \$17 (\$16, \$17) & \$62 (\$58, \$65) & \$60 (\$57, \$63) & \$16 (\$16, \$17)\\
+\hline
+Other & \$2 (\$2, \$2) & \$17 (\$17, \$18) & \$13 (\$13, \$14) & \$78 (\$75, \$82) & \$41 (\$39, \$44) & \$12 (\$12, \$13)\\
+\hline
+BRC multimedia & \$16 (\$16, \$17) & \$14 (\$14, \$15) & \$6 (\$6, \$6) & \$34 (\$31, \$38) & \$57 (\$53, \$62) & \$15 (\$14, \$16)\\
+\hline
+R.I.D.E. 
+ efforts & \$12 (\$12, \$13) & \$17 (\$17, \$18) & \$8 (\$8, \$8) & \$150 (\$145, \$155) & \$20 (\$20, \$21) & \$13 (\$12, \$13)\\
+\hline
+Regional 
+ network & \$15 (\$14, \$16) & \$13 (\$12, \$13) & \$2 (\$1, \$2) & \$130 (\$126, \$135) & \$9 (\$9, \$10) & \$17 (\$16, \$18)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{sustainability}{%
+\section{Sustainability}\label{sustainability}}
+
+\hypertarget{what-new-sustainability-projects-did-you-notice-while-in-brc-in-2022}{%
+\subsection{What new sustainability projects did you notice while in BRC in 2022?}\label{what-new-sustainability-projects-did-you-notice-while-in-brc-in-2022}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-57-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l}
+\hline
+  & 2022\\
+\hline
+More solar power and battery 
+ technologies at camps & 40.9\% (39.7\%, 42.1\%)\\
+\hline
+The Solar-powered Man & 28.5\% (27.4\%, 29.5\%)\\
+\hline
+Camps reducing their 
+ environmental impact & 22.2\% (21.3\%, 23.3\%)\\
+\hline
+More art projects with 
+ ecological or sustainability-related 
+ conceptual themes & 21.3\% (20.3\%, 22.3\%)\\
+\hline
+Honoraria and other 
+ art projects reducing 
+ their environmental impact & 15.8\% (15.0\%, 16.7\%)\\
+\hline
+Fewer gas and diesel generators 
+ around the city & 14.4\% (13.6\%, 15.3\%)\\
+\hline
+I heard or was engaged in more 
+ conversations around environmental sustainability 
+ than previous years & 13.5\% (12.7\%, 14.3\%)\\
+\hline
+Solar-powered trailers 
+ in staff locations & 11.5\% (10.8\%, 12.2\%)\\
+\hline
+More MOOP sweeps & 10.4\% (9.7\%, 11.2\%)\\
+\hline
+More educational programming 
+ from camps or projects 
+ about sustainability & 9.3\% (8.6\%, 10.0\%)\\
+\hline
+More electric mutant vehicles & 8.3\% (7.6\%, 9.0\%)\\
+\hline
+Other & 3.3\% (2.9\%, 3.7\%)\\
+\hline
+I didn't notice anything new & 22.3\% (21.4\%, 23.4\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{how-did-you-and-your-camp-or-project-begin-to-address-sustainability-in-black-rock-city}{%
+\subsection{How did you (and your camp or project) begin to address sustainability in Black Rock City?}\label{how-did-you-and-your-camp-or-project-begin-to-address-sustainability-in-black-rock-city}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-58-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l}
+\hline
+  & 2022\\
+\hline
+Camps reducing their 
+ environmental impact & 22.2\% (21.3\%, 23.3\%)\\
+\hline
+More art projects with 
+ ecological or sustainability-related 
+ conceptual themes & 21.3\% (20.3\%, 22.3\%)\\
+\hline
+Honoraria and other 
+ art projects reducing 
+ their environmental impact & 15.8\% (15.0\%, 16.7\%)\\
+\hline
+Fewer gas and diesel generators 
+ around the city & 14.4\% (13.6\%, 15.3\%)\\
+\hline
+I heard or was engaged in more 
+ conversations around environmental sustainability 
+ than previous years & 13.5\% (12.7\%, 14.3\%)\\
+\hline
+Solar-powered trailers 
+ in staff locations & 11.5\% (10.8\%, 12.2\%)\\
+\hline
+More MOOP sweeps & 10.4\% (9.7\%, 11.2\%)\\
+\hline
+More educational programming 
+ from camps or projects 
+ about sustainability & 9.3\% (8.6\%, 10.0\%)\\
+\hline
+More electric mutant vehicles & 8.3\% (7.6\%, 9.0\%)\\
+\hline
+Other & 3.3\% (2.9\%, 3.7\%)\\
+\hline
+I didn't notice anything new & 22.3\% (21.4\%, 23.4\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{how-important-to-you-is-it-that-the-burning-man-project-visibly-engages-in-best-practices-in-environmental-sustainability}{%
+\subsection{How important to you is it that the Burning Man Project visibly engages in best practices in environmental sustainability?}\label{how-important-to-you-is-it-that-the-burning-man-project-visibly-engages-in-best-practices-in-environmental-sustainability}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-59-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l}
+\hline
+  & 2022\\
+\hline
+Essential & 59.4\% (58.2\%, 60.6\%)\\
+\hline
+Very important & 29.6\% (28.5\%, 30.8\%)\\
+\hline
+Somewhat important & 8.7\% (8.0\%, 9.4\%)\\
+\hline
+Not important & 2.3\% (1.9\%, 2.6\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{radical-inclusion-diversity-and-equity-r.i.d.e.}{%
+\section{Radical Inclusion, Diversity, and Equity (R.I.D.E.)}\label{radical-inclusion-diversity-and-equity-r.i.d.e.}}
+
+\hypertarget{how-did-you-see-r.i.d.e.-in-action-while-in-brc}{%
+\subsection{How did you see R.I.D.E. in action while in BRC}\label{how-did-you-see-r.i.d.e.-in-action-while-in-brc}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-60-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l}
+\hline
+  & 2022\\
+\hline
+I saw a more diverse BRC citizenry & 45.6\% (44.4\%, 46.8\%)\\
+\hline
+I saw more art projects related to 
+ diversity and Radical Inclusion or 
+ led by Artists of Color & 38.9\% (37.8\%, 40.1\%)\\
+\hline
+I saw new content from theme camps 
+ centering or celebrating Burners of Color, 
+ Queer Burners, Burners with diverse mobility and 
+ access needs, and other communities & 36.4\% (35.3\%, 37.6\%)\\
+\hline
+I saw camps, art projects, or mutant vehicles 
+ be more accessible for Burners with  
+ diverse mobility and access needs & 15.4\% (14.5\%, 16.2\%)\\
+\hline
+I was engaged in or noticed more 
+ conversations related to R.I.D.E. & 13.7\% (12.9\%, 14.5\%)\\
+\hline
+Other & 3.2\% (2.8\%, 3.6\%)\\
+\hline
+I didn't notice anything new or different & 22.1\% (21.1\%, 23.1\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{how-did-you-personally-work-to-create-a-more-diverse-and-welcoming-black-rock-city}{%
+\subsection{How did you personally work to create a more diverse and welcoming Black Rock City?}\label{how-did-you-personally-work-to-create-a-more-diverse-and-welcoming-black-rock-city}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-61-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l}
+\hline
+  & 2022\\
+\hline
+Off-playa, I support diversity and 
+ inclusion in my home community & 48.9\% (47.7\%, 50.2\%)\\
+\hline
+The camp or project(s) I am involved in 
+ welcomed new BIPOC participants or 
+ members of under-represented groups & 27.7\% (26.6\%, 28.7\%)\\
+\hline
+I visited the expanded queerborhoods 
+ in the 4:30 and 7:30 sectors & 23.6\% (22.6\%, 24.6\%)\\
+\hline
+I was engaged in or noticed more 
+ conversations related to R.I.D.E. & 13.6\% (12.9\%, 14.4\%)\\
+\hline
+My camp or project offers financial assistance 
+ to low-income Burners or 
+ other under-represented groups & 10.9\% (10.2\%, 11.7\%)\\
+\hline
+I attended events on topics related to 
+ diversity and Radical Inclusion & 8.8\% (8.2\%, 9.5\%)\\
+\hline
+I visited the Multicultural People of Color 
+ Neighborhood at 6:30+C/D & 7.2\% (6.6\%, 7.8\%)\\
+\hline
+I made my camp more accessible for 
+ Burners with mobility and access needs & 6.1\% (5.6\%, 6.7\%)\\
+\hline
+My camp, art collective, or group 
+ organized a R.I.D.E.-related event 
+ on playa & 4.1\% (3.7\%, 4.6\%)\\
+\hline
+Other & 2.6\% (2.3\%, 3.1\%)\\
+\hline
+I did not do this & 17.5\% (16.6\%, 18.5\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{travel-logistics}{%
+\chapter{Travel Logistics}\label{travel-logistics}}
+
+\hypertarget{arrival-and-departure}{%
+\section{Arrival and Departure}\label{arrival-and-departure}}
+
+\hypertarget{arrival-date}{%
+\subsection{Arrival date}\label{arrival-date}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-63-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l}
+\hline
+  & 2022\\
+\hline
+Before Wed 8/24 & 9.2\% (8.6\%, 9.8\%)\\
+\hline
+Wed 8/24 (pre-event) & 7.0\% (6.5\%, 7.6\%)\\
+\hline
+Thu 8/25 (pre-event) & 10.2\% (9.6\%, 10.9\%)\\
+\hline
+Fri 8/26 (pre-event) & 12.2\% (11.5\%, 12.9\%)\\
+\hline
+Sat 8/27 (pre-event) & 13.2\% (12.5\%, 14.0\%)\\
+\hline
+Sun 8/28 & 29.1\% (28.0\%, 30.3\%)\\
+\hline
+Mon 8/29 & 10.8\% (10.0\%, 11.6\%)\\
+\hline
+Tue 8/30 & 4.2\% (3.7\%, 4.7\%)\\
+\hline
+Wed 8/31 & 2.8\% (2.4\%, 3.3\%)\\
+\hline
+Thu 9/01 & 1.0\% (0.7\%, 1.3\%)\\
+\hline
+Fri 9/02 & 0.2\% (0.1\%, 0.3\%)\\
+\hline
+Sat 9/03 & < 0.1\% (--, --)\\
+\hline
+Sun 9/04 & < 0.1\% (--, --)\\
+\hline
+Mon 9/05 & < 0.1\% (--, --)\\
+\hline
+Tue 9/06 & < 0.1\% (--, --)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{point-of-entry}{%
+\subsection{Point of entry}\label{point-of-entry}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-64-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Gate in a vehicle & 91.7\% (91.0\%, 92.3\%) & 89.6\% (88.8\%, 90.5\%) & 86.9\% (86.0\%, 87.8\%) & 87.0\% (86.1\%, 87.8\%) & 85.2\% (84.3\%, 86.1\%) & 85.6\% (84.7\%, 86.4\%)\\
+\hline
+Gate in a Burner Express Bus & 5.7\% (5.1\%, 6.3\%) & 7.5\% (6.8\%, 8.2\%) & 9.8\% (9.1\%, 10.6\%) & 9.7\% (9.0\%, 10.5\%) & 11.0\% (10.2\%, 11.8\%) & 10.8\% (10.1\%, 11.6\%)\\
+\hline
+Point 1 & 1.2\% (1.0\%, 1.5\%) & 0.9\% (0.8\%, 1.2\%) & 1.2\% (1.0\%, 1.4\%) & 1.7\% (1.4\%, 2.0\%) & 2.2\% (1.8\%, 2.6\%) & 2.4\% (2.1\%, 2.8\%)\\
+\hline
+BRC airport & 0.8\% (0.6\%, 1.1\%) & 1.1\% (0.8\%, 1.5\%) & 1.4\% (1.2\%, 1.8\%) & 1.1\% (0.8\%, 1.3\%) & 1.1\% (0.8\%, 1.4\%) & 0.8\% (0.6\%, 1.1\%)\\
+\hline
+Gate with another shuttle service & 0.3\% (0.2\%, 0.4\%) & 0.6\% (0.4\%, 0.9\%) & 0.3\% (0.2\%, 0.5\%) & 0.3\% (0.2\%, 0.4\%) & 0.4\% (0.2\%, 0.6\%) & 0.1\% (0.1\%, 0.3\%)\\
+\hline
+Other & 0.3\% (0.2\%, 0.4\%) & 0.2\% (0.1\%, 0.5\%) & 0.4\% (0.2\%, 0.6\%) & 0.3\% (0.2\%, 0.5\%) & 0.2\% (0.1\%, 0.4\%) & 0.2\% (0.1\%, 0.4\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{departure-date}{%
+\subsection{Departure date}\label{departure-date}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-65-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l}
+\hline
+  & 2022\\
+\hline
+Before Sun 8/28 & < 0.1\% (--, --)\\
+\hline
+Sun 8/28 & 4.9\% (4.4\%, 5.4\%)\\
+\hline
+Mon 8/29 & 7.8\% (7.2\%, 8.5\%)\\
+\hline
+Tue 8/30 & 2.0\% (1.7\%, 2.3\%)\\
+\hline
+Wed 8/31 & 0.6\% (0.4\%, 0.7\%)\\
+\hline
+Thu 9/01 & 0.8\% (0.6\%, 1.0\%)\\
+\hline
+Fri 9/02 & 2.6\% (2.3\%, 3.0\%)\\
+\hline
+Sat 9/03 & 9.6\% (8.9\%, 10.3\%)\\
+\hline
+Sun 9/04 & 29.0\% (27.9\%, 30.2\%)\\
+\hline
+Mon 9/05 & 27.8\% (26.7\%, 28.9\%)\\
+\hline
+Tue 9/06 & 11.0\% (10.3\%, 11.7\%)\\
+\hline
+After Tue 9/06 (post-event) & 3.4\% (3.0\%, 3.8\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{point-of-departure}{%
+\subsection{Point of departure}\label{point-of-departure}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-66-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2018 & 2019 & 2022\\
+\hline
+Gate in the same vehicle & 78.0\% (77.0\%, 79.0\%) & 76.6\% (75.5\%, 77.6\%) & 76.8\% (75.8\%, 77.8\%)\\
+\hline
+Gate in a different vehicle & 10.1\% (9.4\%, 10.9\%) & 10.3\% (9.6\%, 11.1\%) & 11.3\% (10.5\%, 12.1\%)\\
+\hline
+Gate in a Burner Express Bus & 8.3\% (7.7\%, 9.0\%) & 9.3\% (8.5\%, 10.0\%) & 8.0\% (7.4\%, 8.7\%)\\
+\hline
+Point 1 & 2.0\% (1.7\%, 2.3\%) & 2.3\% (1.9\%, 2.7\%) & 2.6\% (2.3\%, 3.0\%)\\
+\hline
+BRC airport & 1.0\% (0.8\%, 1.2\%) & 0.9\% (0.7\%, 1.2\%) & 0.7\% (0.5\%, 0.9\%)\\
+\hline
+Gate with another shuttle service & 0.3\% (0.2\%, 0.5\%) & 0.5\% (0.3\%, 0.7\%) & 0.1\% (0.1\%, 0.2\%)\\
+\hline
+Other & 0.3\% (0.2\%, 0.4\%) & 0.2\% (0.1\%, 0.4\%) & 0.4\% (0.3\%, 0.6\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{flying-to-black-rock-city}{%
+\section{Flying to Black Rock City}\label{flying-to-black-rock-city}}
+
+\hypertarget{did-you-fly-in-an-airplane-to-get-at-least-part-of-the-way-to-black-rock-city-this-year}{%
+\subsection{Did you fly in an airplane to get (at least part of the way) to Black Rock City this year?}\label{did-you-fly-in-an-airplane-to-get-at-least-part-of-the-way-to-black-rock-city-this-year}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-67-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Flew (at least partway) 
+ to Black Rock City & 27.5\% (26.6\%, 28.4\%) & 32.3\% (31.2\%, 33.4\%) & 34.4\% (33.0\%, 35.7\%) & 35.9\% (34.7\%, 37.2\%) & 28.8\% (27.7\%, 29.9\%) & 30.0\% (28.8\%, 31.2\%) & 26.3\% (25.2\%, 27.4\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{if-you-flew-what-was-your-final-arrival-airport}{%
+\subsection{If you flew, What was your final arrival airport?}\label{if-you-flew-what-was-your-final-arrival-airport}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-68-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Reno & 35.4\% (33.7\%, 37.2\%) & 39.6\% (37.6\%, 41.6\%) & 39.0\% (36.6\%, 41.4\%) & 36.5\% (34.4\%, 38.6\%) & 39.4\% (37.1\%, 41.6\%) & 41.9\% (39.6\%, 44.2\%) & 47.5\% (45.1\%, 49.9\%)\\
+\hline
+San Francisco & 33.3\% (31.5\%, 35.0\%) & 28.8\% (27.0\%, 30.7\%) & 32.7\% (30.3\%, 35.1\%) & 33.0\% (30.8\%, 35.3\%) & 29.5\% (27.3\%, 31.7\%) & 27.6\% (25.5\%, 29.7\%) & 22.4\% (20.4\%, 24.6\%)\\
+\hline
+Salt Lake City & 1.3\% (0.9\%, 1.8\%) & 1.5\% (1.1\%, 2.1\%) & 1.6\% (1.2\%, 2.3\%) & 2.0\% (1.5\%, 2.8\%) & 2.0\% (1.5\%, 2.9\%) & 2.3\% (1.7\%, 3.1\%) & 7.2\% (6.1\%, 8.6\%)\\
+\hline
+Los Angeles & 9.4\% (8.4\%, 10.5\%) & 10.9\% (9.7\%, 12.3\%) & 7.0\% (5.8\%, 8.6\%) & 8.3\% (7.1\%, 9.7\%) & 6.8\% (5.6\%, 8.2\%) & 7.6\% (6.5\%, 8.9\%) & 5.9\% (4.8\%, 7.2\%)\\
+\hline
+Sacramento & 3.7\% (3.1\%, 4.5\%) & 3.6\% (2.9\%, 4.5\%) & 3.2\% (2.5\%, 4.1\%) & 3.2\% (2.5\%, 4.1\%) & 4.5\% (3.7\%, 5.6\%) & 6.1\% (5.0\%, 7.4\%) & 5.2\% (4.2\%, 6.3\%)\\
+\hline
+BRC (88NV) & 3.2\% (2.6\%, 4.0\%) & 2.7\% (2.1\%, 3.4\%) & 3.3\% (2.5\%, 4.3\%) & 4.0\% (3.2\%, 4.9\%) & 3.7\% (2.9\%, 4.6\%) & 3.5\% (2.7\%, 4.5\%) & 3.0\% (2.3\%, 3.9\%)\\
+\hline
+Other & 13.7\% (12.5\%, 15.0\%) & 12.9\% (11.6\%, 14.3\%) & 13.2\% (11.6\%, 15.0\%) & 13.0\% (11.5\%, 14.6\%) & 14.1\% (12.5\%, 15.9\%) & 11.0\% (9.5\%, 12.5\%) & 8.7\% (7.4\%, 10.2\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{vehicle-logistics}{%
+\section{Vehicle Logistics}\label{vehicle-logistics}}
+
+\hypertarget{how-many-people-were-in-your-vehicle-when-you-arrived-at-the-gate}{%
+\subsection{How many people were in your vehicle when you arrived at the Gate?}\label{how-many-people-were-in-your-vehicle-when-you-arrived-at-the-gate}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-69-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2013 & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+1 & 11.9\% (11.3\%, 12.5\%) & 12.8\% (12.1\%, 13.5\%) & 9.1\% (8.6\%, 9.8\%) & 10.5\% (9.7\%, 11.3\%) & 12.0\% (11.2\%, 12.7\%) & 13.5\% (12.7\%, 14.3\%) & 13.9\% (13.0\%, 14.8\%) & 17.4\% (16.5\%, 18.3\%)\\
+\hline
+2 & 41.3\% (40.3\%, 42.3\%) & 44.6\% (43.6\%, 45.6\%) & 36.5\% (35.5\%, 37.5\%) & 40.1\% (38.8\%, 41.4\%) & 41.9\% (40.7\%, 43.1\%) & 43.6\% (42.4\%, 44.9\%) & 43.2\% (42.0\%, 44.5\%) & 51.3\% (50.0\%, 52.5\%)\\
+\hline
+3 & 18.7\% (18.0\%, 19.5\%) & 19.8\% (19.1\%, 20.7\%) & 15.3\% (14.6\%, 16.1\%) & 17.2\% (16.2\%, 18.3\%) & 16.5\% (15.6\%, 17.5\%) & 15.2\% (14.4\%, 16.1\%) & 15.2\% (14.3\%, 16.1\%) & 16.7\% (15.7\%, 17.7\%)\\
+\hline
+4 & 13.2\% (12.5\%, 13.9\%) & 11.8\% (11.2\%, 12.4\%) & 10.3\% (9.7\%, 11.0\%) & 11.1\% (10.2\%, 12.0\%) & 9.3\% (8.6\%, 10.1\%) & 9.3\% (8.6\%, 10.1\%) & 8.8\% (8.2\%, 9.6\%) & 8.8\% (8.1\%, 9.6\%)\\
+\hline
+5 & 5.6\% (5.1\%, 6.1\%) & 5.3\% (4.9\%, 5.8\%) & 4.9\% (4.5\%, 5.4\%) & 4.4\% (3.9\%, 5.1\%) & 3.7\% (3.3\%, 4.3\%) & 3.6\% (3.1\%, 4.1\%) & 3.2\% (2.8\%, 3.7\%) & 3.8\% (3.3\%, 4.3\%)\\
+\hline
+6-7 & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & 1.7\% (1.4\%, 2.1\%)\\
+\hline
+8-9 & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & 0.2\% (0.1\%, 0.4\%)\\
+\hline
+10-19 & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & 0.1\% (0.1\%, 0.3\%)\\
+\hline
+20 or more & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{were-any-people-in-your-vehicle-under-age-18}{%
+\subsection{Were any people in your vehicle under age 18?}\label{were-any-people-in-your-vehicle-under-age-18}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-70-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2013 & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+NA & 1.3\% (1.0\%, 1.6\%) & 1.2\% (0.9\%, 1.6\%) & 1.3\% (1.1\%, 1.5\%) & 0.7\% (0.6\%, 1.0\%) & 0.8\% (0.6\%, 1.0\%) & 0.4\% (0.2\%, 0.7\%) & 1.1\% (0.9\%, 1.5\%) & 0.9\% (0.6\%, 1.5\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{in-what-type-of-vehicle-did-you-travel-to-black-rock-city}{%
+\subsection{In what type of vehicle did you travel to Black Rock City}\label{in-what-type-of-vehicle-did-you-travel-to-black-rock-city}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-71-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l}
+\hline
+  & 2022\\
+\hline
+Pick-up truck & 21.4\% (20.4\%, 22.5\%)\\
+\hline
+Moving truck or box truck & 20.9\% (19.9\%, 22.0\%)\\
+\hline
+SUV & 17.9\% (16.9\%, 18.8\%)\\
+\hline
+Car & 17.5\% (16.5\%, 18.5\%)\\
+\hline
+Bus & 8.2\% (7.6\%, 9.0\%)\\
+\hline
+RV & 4.7\% (4.3\%, 5.3\%)\\
+\hline
+Semi-truck towing trailer & 1.3\% (1.1\%, 1.6\%)\\
+\hline
+Full-size van & 1.3\% (1.0\%, 1.6\%)\\
+\hline
+Mini-van & 0.7\% (0.5\%, 0.9\%)\\
+\hline
+Motorcycle & < 0.1\% (--, --)\\
+\hline
+Other & 6.0\% (5.4\%, 6.6\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{was-your-vehicle-towing-a-trailer}{%
+\subsection{Was your vehicle towing a trailer}\label{was-your-vehicle-towing-a-trailer}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-72-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l}
+\hline
+  & 2022\\
+\hline
+No trailer & 74.7\% (73.6\%, 75.8\%)\\
+\hline
+Small & 2.8\% (2.4\%, 3.2\%)\\
+\hline
+Medium & 6.9\% (6.3\%, 7.5\%)\\
+\hline
+Large & 9.2\% (8.5\%, 9.9\%)\\
+\hline
+Very large & < 0.1\% (--, --)\\
+\hline
+I don't remember & 6.4\% (5.9\%, 7.0\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{what-kind-of-fuel-did-your-vehicle-run-on}{%
+\subsection{What kind of fuel did your vehicle run on?}\label{what-kind-of-fuel-did-your-vehicle-run-on}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-73-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l}
+\hline
+  & 2022\\
+\hline
+Regular gasoline & 81.8\% (80.9\%, 82.8\%)\\
+\hline
+Premium gasoline & 4.8\% (4.3\%, 5.4\%)\\
+\hline
+Diesel & 11.2\% (10.5\%, 12.0\%)\\
+\hline
+Bio-diesel or other bio-fuel & 0.2\% (0.1\%, 0.3\%)\\
+\hline
+Battery powered & 0.2\% (0.1\%, 0.4\%)\\
+\hline
+I don't know & 1.7\% (1.4\%, 2.1\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{approximately-how-many-miles-to-the-gallon-did-your-vehicle-get-on-the-way-to-black-rock-city}{%
+\subsection{Approximately how many miles to the gallon did your vehicle get on the way to Black Rock City?}\label{approximately-how-many-miles-to-the-gallon-did-your-vehicle-get-on-the-way-to-black-rock-city}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-74-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|l}
+\hline
+  & 2019 & 2022\\
+\hline
+Mean (Miles per gallon) & 19.0 (18.6, 19.3) & 18.9 (18.6, 19.2)\\
+\hline
+25\textasciicircum{}th\textasciicircum{} percentile & 12 (12, 13) & 12 (12, 13)\\
+\hline
+Median & 18 (18, 19) & 18 (18, 19)\\
+\hline
+75\textasciicircum{}th\textasciicircum{} percentile & 25 (25, 26) & 24 (24, 25)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{route-to-brc}{%
+\section{Route to BRC}\label{route-to-brc}}
+
+\hypertarget{how-many-total-miles-did-you-drive-to-get-to-black-rock-city}{%
+\subsection{How many total miles did you drive to get to Black Rock City?}\label{how-many-total-miles-did-you-drive-to-get-to-black-rock-city}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-75-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|l|l|l|l|l}
+\hline
+  & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Mean (Miles) & 1170.1 (1144.5, 1195.6) & 1205.7 (1169.7, 1241.6) & 1214.2 (1181.2, 1247.2) & 1281.1 (1238.3, 1324.0) & 1145.9 (1118.6, 1173.3) & 1190.4 (1162.8, 1218.0)\\
+\hline
+25\textasciicircum{}th\textasciicircum{} percentile & 680 (680, 700) & 680 (680, 700) & 680 (680, 700) & 680 (680, 700) & 680 (680, 700) & 680 (680, 700)\\
+\hline
+Median & 800 (800, 900) & 800 (800, 930) & 800 (800, 900) & 900 (800, 998) & 770 (750, 800) & 900 (850, 998)\\
+\hline
+75\textasciicircum{}th\textasciicircum{} percentil & 1342 (1342, 1360) & 1342 (1342, 1400) & 1342 (1342, 1400) & 1342 (1342, 1400) & 1339.2 (1300, 1342) & 1342 (1342, 1400)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{route-through-nevada-to-black-rock-city}{%
+\subsection{Route through Nevada to Black Rock City}\label{route-through-nevada-to-black-rock-city}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-76-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l}
+\hline
+  & 2019 & 2022\\
+\hline
+From San Francisco or 
+ Sacrament to RENO 
+ to BRC via I-80 & 34.7\% (33.4\%, 36.0\%) & 31.2\% (30.0\%, 32.4\%)\\
+\hline
+From Reno, NV & 21.7\% (20.6\%, 22.8\%) & 22.9\% (21.9\%, 24.0\%)\\
+\hline
+From Washington, Oregon, 
+ Northern California 
+ on Route 447 & 12.8\% (12.0\%, 13.8\%) & 12.3\% (11.5\%, 13.1\%)\\
+\hline
+From the Utah border 
+ via I-80 & 8.2\% (7.5\%, 9.0\%) & 9.7\% (8.9\%, 10.5\%)\\
+\hline
+From Los Angeles 
+ or San Diego DIRECT 
+ to BRC via US-395 & 6.0\% (5.4\%, 6.7\%) & 6.0\% (5.4\%, 6.7\%)\\
+\hline
+From Los Angeles or 
+ San Diego to RENO 
+ to BRC via US-395 & 4.3\% (3.8\%, 4.9\%) & 5.1\% (4.6\%, 5.7\%)\\
+\hline
+From Las Vegas, NV & 3.9\% (3.4\%, 4.5\%) & 4.9\% (4.4\%, 5.5\%)\\
+\hline
+Different route & 5.0\% (4.4\%, 5.6\%) & 4.5\% (4.0\%, 5.0\%)\\
+\hline
+From the Arizona border 
+ via US-93/US-95 & 1.4\% (1.1\%, 1.8\%) & 1.6\% (1.4\%, 2.0\%)\\
+\hline
+From Central or 
+ Southern California 
+ via US-6/US-95 & 0.9\% (0.7\%, 1.2\%) & 0.7\% (0.5\%, 1.0\%)\\
+\hline
+From Southern California 
+ to Las Vegas 
+ to BRC via I-15 & 0.2\% (0.1\%, 0.4\%) & 0.3\% (0.2\%, 0.5\%)\\
+\hline
+I don't know & 0.7\% (0.5\%, 1.0\%) & 0.7\% (0.5\%, 1.0\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{visiting-nevada}{%
+\section{Visiting Nevada}\label{visiting-nevada}}
+
+\hypertarget{did-you-stop-at-any-locations-in-gerlach}{%
+\subsection{Did you stop at any locations in Gerlach?}\label{did-you-stop-at-any-locations-in-gerlach}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-77-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l}
+\hline
+  & 2022\\
+\hline
+Roadside vendors (non-food) & 9.4\% (8.7\%, 10.1\%)\\
+\hline
+Roadside vendors (food) & 6.7\% (6.1\%, 7.4\%)\\
+\hline
+Bruno's Country Club & 4.5\% (4.1\%, 5.0\%)\\
+\hline
+High Rock Pizza & 3.3\% (2.9\%, 3.8\%)\\
+\hline
+The Gerlach Burning Man Project office & 3.3\% (2.9\%, 3.7\%)\\
+\hline
+Miners Club & 2.2\% (1.9\%, 2.5\%)\\
+\hline
+The Oasis & 2.0\% (1.7\%, 2.3\%)\\
+\hline
+The 360 & 1.1\% (0.9\%, 1.3\%)\\
+\hline
+Joe's Gerlach Club & 1.0\% (0.8\%, 1.2\%)\\
+\hline
+Granite Point RV Park & 0.4\% (0.3\%, 0.5\%)\\
+\hline
+The Desert Club (Hotel) & 0.2\% (0.1\%, 0.4\%)\\
+\hline
+Other & 6.2\% (5.7\%, 6.8\%)\\
+\hline
+I did not stop & 57.3\% (56.1\%, 58.5\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{did-you-visit-any-parks-or-recreation-areas-this-year-on-your-way-to-or-from-black-rock-city}{%
+\subsection{Did you visit any parks or recreation areas this year on your way to or from Black Rock City?}\label{did-you-visit-any-parks-or-recreation-areas-this-year-on-your-way-to-or-from-black-rock-city}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-78-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Yes, one place & 16.9\% (16.0\%, 17.8\%) & 15.7\% (14.7\%, 16.8\%) & 16.8\% (15.9\%, 17.9\%) & 14.9\% (14.1\%, 15.8\%) & 16.8\% (15.8\%, 17.8\%) & 13.6\% (12.7\%, 14.4\%)\\
+\hline
+Yes, more than one place & 10.2\% (9.5\%, 11.0\%) & 9.0\% (8.2\%, 9.9\%) & 10.4\% (9.6\%, 11.2\%) & 9.0\% (8.3\%, 9.7\%) & 9.1\% (8.4\%, 9.9\%) & 6.6\% (6.1\%, 7.3\%)\\
+\hline
+No & 71.1\% (70.0\%, 72.2\%) & 73.5\% (72.2\%, 74.8\%) & 71.3\% (70.1\%, 72.4\%) & 74.9\% (73.8\%, 76.0\%) & 72.8\% (71.7\%, 73.9\%) & 77.5\% (76.4\%, 78.5\%)\\
+\hline
+Not sure & 1.8\% (1.5\%, 2.2\%) & 1.8\% (1.4\%, 2.2\%) & 1.5\% (1.2\%, 1.9\%) & 1.2\% (0.9\%, 1.5\%) & 1.3\% (1.0\%, 1.6\%) & 2.3\% (2.0\%, 2.8\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{reasons-for-visiting-public-lands-near-black-rock-city-going-to-or-from-the-burning-man-event}{%
+\subsection{Reasons for visiting public lands near Black Rock City going to or from the Burning Man event}\label{reasons-for-visiting-public-lands-near-black-rock-city-going-to-or-from-the-burning-man-event}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-79-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2017 & 2018 & 2019 & 2022\\
+\hline
+Burning Man only & 86.3\% (85.0\%, 87.4\%) & 89.8\% (88.9\%, 90.7\%) & 87.9\% (86.9\%, 88.9\%) & 63.8\% (62.6\%, 64.9\%)\\
+\hline
+Camping & 5.8\% (5.0\%, 6.6\%) & 4.4\% (3.8\%, 5.1\%) & 4.3\% (3.7\%, 5.0\%) & 2.7\% (2.3\%, 3.1\%)\\
+\hline
+Boating or swimming & 3.7\% (3.1\%, 4.3\%) & 2.9\% (2.4\%, 3.4\%) & 3.9\% (3.3\%, 4.5\%) & 1.9\% (1.6\%, 2.3\%)\\
+\hline
+Hotsprings & 4.3\% (3.7\%, 5.0\%) & 3.1\% (2.7\%, 3.7\%) & 3.4\% (2.9\%, 4.1\%) & 1.7\% (1.4\%, 2.0\%)\\
+\hline
+Hiking & 4.4\% (3.7\%, 5.2\%) & 2.7\% (2.3\%, 3.3\%) & 3.9\% (3.3\%, 4.6\%) & 1.3\% (1.0\%, 1.6\%)\\
+\hline
+Wind sailing & 0.1\% (0.0\%, 0.3\%) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --)\\
+\hline
+Other & 2.2\% (1.8\%, 2.7\%) & 1.6\% (1.3\%, 2.0\%) & 1.5\% (1.2\%, 1.9\%) & 1.2\% (0.9\%, 1.5\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+--\textgreater{}
+
+\hypertarget{do-you-intend-to-come-back-to-the-black-rock-desert-outside-of-the-burning-man-event}{%
+\subsection{Do you intend to come back to the Black Rock Desert outside of the Burning Man event?}\label{do-you-intend-to-come-back-to-the-black-rock-desert-outside-of-the-burning-man-event}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-80-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2017 & 2018 & 2019 & 2022\\
+\hline
+Yes & 17.1\% (16.1\%, 18.2\%) & 17.5\% (16.6\%, 18.5\%) & 18.8\% (17.8\%, 19.8\%) & 18.9\% (18.0\%, 19.8\%)\\
+\hline
+Maybe & 37.7\% (36.3\%, 39.1\%) & 36.1\% (34.9\%, 37.4\%) & 35.6\% (34.4\%, 36.8\%) & 31.6\% (30.5\%, 32.7\%)\\
+\hline
+No & 45.1\% (43.7\%, 46.6\%) & 46.4\% (45.1\%, 47.6\%) & 45.6\% (44.4\%, 46.9\%) & 49.5\% (48.3\%, 50.7\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{expenses}{%
+\section{Expenses}\label{expenses}}
+
+\hypertarget{how-much-did-you-spend-this-year-to-travel-to-and-from-black-rock-city}{%
+\subsection{How much did you spend this year to travel to and from Black Rock City?}\label{how-much-did-you-spend-this-year-to-travel-to-and-from-black-rock-city}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-81-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+1\% & 150 (150, 200) & 130 (100, 200) & 150 (100, 200) & 200 (200, 250) & 200 (200, 250) & 250 (200, 300)\\
+\hline
+10\% & 500 (500, 600) & 500 (500, 600) & 500 (500, 600) & 500 (500, 600) & 550 (500, 600) & 800 (800, 900)\\
+\hline
+25\% & 800 (800, 900) & 900 (900, 1000) & 1000 (1000, 1200) & 1000 (1000, 1150) & 1000 (1000, 1200) & 1375 (1250, 1500)\\
+\hline
+50\% (median) & 1500 (1500, 1700) & 1500 (1500, 1700) & 1500 (1500, 1700) & 1500 (1500, 1655) & 1600 (1500, 1800) & 2000 (2000, 2300)\\
+\hline
+75\% & 2500 (2500, 3000) & 2500 (2500, 3000) & 2500 (2500, 3000) & 2500 (2500, 3000) & 2500 (2500, 3000) & 3500 (3500, 4000)\\
+\hline
+90\% & 4000 (4000, 4500) & 4000 (4000, 4500) & 4000 (4000, 4800) & 4000 (4000, 4500) & 4000 (4000, 4500) & 6000 (6000, 7000)\\
+\hline
+99\% & 10000 (10000, 13200) & 10000 (10000, 15000) & 12000 (11000, 15000) & 10000 (10000, 13000) & 10700 (10000, 14000) & 18000 (15000, 20000)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{how-much-did-you-spend-in-nevada}{%
+\subsection{How much did you spend in Nevada?}\label{how-much-did-you-spend-in-nevada}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-82-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Average fuel spending & \textbackslash{}\$123.9 (117.4, 130.4) & \textbackslash{}\$112.1 (104.1, 120.0) & \textbackslash{}\$111.4 (105.6, 117.2) & \textbackslash{}\$127.8 (120.0, 135.6) & \textbackslash{}\$133.5 (124.2, 142.9) & \textbackslash{}\$239.5 (213.5, 265.6)\\
+\hline
+Average food spending & \textbackslash{}\$149.5 (137.4, 161.7) & \textbackslash{}\$154.4 (131.9, 176.8) & \textbackslash{}\$153.9 (135.9, 171.8) & \textbackslash{}\$152.9 (140.5, 165.4) & \textbackslash{}\$163.0 (145.9, 180.0) & \textbackslash{}\$231.3 (196.3, 266.3)\\
+\hline
+Average lodging spending & \textbackslash{}\$113.3 (84.9, 141.6) & \textbackslash{}\$134.2 (45.4, 223.0) & \textbackslash{}\$139.2 (66.7, 211.8) & \textbackslash{}\$136.6 (80.0, 193.3) & \textbackslash{}\$164.3 (67.4, 261.2) & \textbackslash{}\$332.8 (85.3, 580.3)\\
+\hline
+Average survival spending & \textbackslash{}\$89.3 (78.9, 99.7) & \textbackslash{}\$97.4 (76.5, 118.4) & \textbackslash{}\$100.6 (79.0, 122.1) & \textbackslash{}\$95.7 (76.4, 115.1) & \textbackslash{}\$100.7 (82.6, 118.8) & \textbackslash{}\$267.1 (66.8, 467.4)\\
+\hline
+Average fun spending & \textbackslash{}\$102.1 (81.7, 122.6) & \textbackslash{}\$96.8 (72.4, 121.2) & \textbackslash{}\$106.0 (76.9, 135.0) & \textbackslash{}\$107.3 (79.8, 134.9) & \textbackslash{}\$110.0 (85.1, 135.0) & \textbackslash{}\$260.5 (96.9, 424.2)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{camp-logistics}{%
+\chapter{Camp Logistics}\label{camp-logistics}}
+
+\hypertarget{camp-details}{%
+\section{Camp Details}\label{camp-details}}
+
+\hypertarget{how-many-people-were-in-your-camp}{%
+\subsection{How many people were in your camp?}\label{how-many-people-were-in-your-camp}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-84-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2013 & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+1 & 2.2\% (1.9\%, 2.5\%) & 1.3\% (1.1\%, 1.5\%) & 1.7\% (1.4\%, 2.1\%) & 2.0\% (1.6\%, 2.5\%) & 2.0\% (1.7\%, 2.4\%) & 2.2\% (1.8\%, 2.6\%) & 1.5\% (1.2\%, 1.9\%) & 1.8\% (1.5\%, 2.2\%)\\
+\hline
+2 & 6.9\% (6.4\%, 7.4\%) & 5.6\% (5.2\%, 6.1\%) & 6.6\% (6.0\%, 7.2\%) & 7.6\% (6.9\%, 8.4\%) & 5.8\% (5.3\%, 6.5\%) & 5.1\% (4.6\%, 5.7\%) & 4.6\% (4.1\%, 5.2\%) & 4.3\% (3.9\%, 4.9\%)\\
+\hline
+3-5 & 9.7\% (9.1\%, 10.3\%) & 8.8\% (8.2\%, 9.3\%) & 7.8\% (7.2\%, 8.4\%) & 7.8\% (7.0\%, 8.6\%) & 6.7\% (6.0\%, 7.4\%) & 6.4\% (5.8\%, 7.1\%) & 5.0\% (4.4\%, 5.6\%) & 4.7\% (4.2\%, 5.3\%)\\
+\hline
+6-9 & 9.3\% (8.7\%, 9.8\%) & 8.5\% (7.9\%, 9.0\%) & 8.3\% (7.6\%, 8.9\%) & 6.5\% (5.9\%, 7.3\%) & 6.9\% (6.3\%, 7.6\%) & 6.3\% (5.7\%, 6.9\%) & 4.9\% (4.4\%, 5.5\%) & 5.1\% (4.6\%, 5.7\%)\\
+\hline
+10-19 & 17.7\% (16.9\%, 18.5\%) & 16.5\% (15.8\%, 17.3\%) & 16.3\% (15.4\%, 17.2\%) & 15.3\% (14.4\%, 16.3\%) & 13.7\% (12.9\%, 14.6\%) & 14.1\% (13.2\%, 14.9\%) & 14.2\% (13.3\%, 15.1\%) & 13.6\% (12.8\%, 14.5\%)\\
+\hline
+20-29 & 12.8\% (12.1\%, 13.4\%) & 13.9\% (13.2\%, 14.6\%) & 13.0\% (12.3\%, 13.9\%) & 13.0\% (12.2\%, 14.0\%) & 12.5\% (11.7\%, 13.3\%) & 13.2\% (12.4\%, 14.0\%) & 15.1\% (14.2\%, 16.0\%) & 14.6\% (13.8\%, 15.5\%)\\
+\hline
+30-49 & 16.5\% (15.8\%, 17.3\%) & 17.3\% (16.6\%, 18.1\%) & 18.0\% (17.1\%, 18.9\%) & 17.4\% (16.4\%, 18.5\%) & 18.8\% (17.8\%, 19.8\%) & 17.9\% (17.0\%, 18.9\%) & 20.1\% (19.1\%, 21.2\%) & 20.0\% (19.0\%, 20.9\%)\\
+\hline
+50-99 & 13.2\% (12.6\%, 13.9\%) & 15.1\% (14.4\%, 15.8\%) & 14.5\% (13.7\%, 15.4\%) & 17.4\% (16.4\%, 18.4\%) & 17.3\% (16.4\%, 18.3\%) & 17.1\% (16.2\%, 18.1\%) & 18.9\% (17.9\%, 19.9\%) & 19.3\% (18.3\%, 20.2\%)\\
+\hline
+100-199 & 8.7\% (8.2\%, 9.2\%) & 9.0\% (8.4\%, 9.6\%) & 10.3\% (9.6\%, 11.0\%) & 9.8\% (9.0\%, 10.7\%) & 12.1\% (11.2\%, 13.0\%) & 13.1\% (12.3\%, 13.9\%) & 11.6\% (10.8\%, 12.4\%) & 12.6\% (11.9\%, 13.5\%)\\
+\hline
+200+ & 3.2\% (2.9\%, 3.6\%) & 4.0\% (3.6\%, 4.4\%) & 3.6\% (3.2\%, 4.1\%) & 3.2\% (2.7\%, 3.6\%) & 4.2\% (3.7\%, 4.8\%) & 4.6\% (4.1\%, 5.1\%) & 4.1\% (3.6\%, 4.6\%) & 3.9\% (3.4\%, 4.4\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{did-you-stay-in-an-rv-or-camper-trailer-in-black-rock-city-this-year-and-was-it-pumped-on-playa}{%
+\subsection{Did you stay in an RV or camper-trailer in Black Rock City this year, and was it pumped on playa?}\label{did-you-stay-in-an-rv-or-camper-trailer-in-black-rock-city-this-year-and-was-it-pumped-on-playa}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-85-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Yes and pumped & 9.7\% (9.0\%, 10.4\%) & 11.5\% (10.7\%, 12.4\%) & 10.4\% (9.6\%, 11.2\%) & 11.9\% (11.2\%, 12.7\%) & 12.5\% (11.7\%, 13.4\%) & 12.9\% (12.1\%, 13.7\%)\\
+\hline
+Yes and not pumped & 16.3\% (15.5\%, 17.2\%) & 16.3\% (15.3\%, 17.4\%) & 16.5\% (15.6\%, 17.4\%) & 16.2\% (15.3\%, 17.1\%) & 16.1\% (15.2\%, 17.0\%) & 17.8\% (16.9\%, 18.7\%)\\
+\hline
+Yes and don't know if pumped & 0.5\% (0.4\%, 0.7\%) & 0.6\% (0.4\%, 0.9\%) & 0.5\% (0.3\%, 0.7\%) & 0.5\% (0.3\%, 0.8\%) & 0.6\% (0.4\%, 0.8\%) & 0.5\% (0.4\%, 0.8\%)\\
+\hline
+No & 73.2\% (72.1\%, 74.2\%) & 71.5\% (70.2\%, 72.8\%) & 72.4\% (71.3\%, 73.5\%) & 71.1\% (70.0\%, 72.2\%) & 70.6\% (69.4\%, 71.7\%) & 68.7\% (67.6\%, 69.8\%)\\
+\hline
+Not sure & 0.3\% (0.2\%, 0.5\%) & < 0.1\% (--, --) & 0.2\% (0.2\%, 0.4\%) & 0.3\% (0.2\%, 0.4\%) & 0.2\% (0.1\%, 0.4\%) & 0.2\% (0.1\%, 0.3\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{how-many-adults-stayed-in-the-rvcamper-trailer-including-you}{%
+\subsection{How many adults stayed in the RV/camper-trailer including you?}\label{how-many-adults-stayed-in-the-rvcamper-trailer-including-you}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-86-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+1 & 8.8\% (7.6\%, 10.1\%) & 8.9\% (7.5\%, 10.4\%) & 10.1\% (8.9\%, 11.4\%) & 10.4\% (9.2\%, 11.8\%) & 10.9\% (9.5\%, 12.4\%) & 10.3\% (9.2\%, 11.5\%)\\
+\hline
+2 & 43.0\% (40.8\%, 45.2\%) & 42.4\% (39.9\%, 45.0\%) & 47.6\% (45.2\%, 50.0\%) & 48.6\% (46.3\%, 50.9\%) & 49.0\% (46.6\%, 51.3\%) & 48.7\% (46.5\%, 50.8\%)\\
+\hline
+3 & 13.9\% (12.4\%, 15.5\%) & 17.1\% (15.2\%, 19.1\%) & 15.9\% (14.2\%, 17.8\%) & 15.0\% (13.4\%, 16.8\%) & 14.8\% (13.2\%, 16.6\%) & 16.0\% (14.5\%, 17.7\%)\\
+\hline
+4 & 15.4\% (13.9\%, 17.1\%) & 14.6\% (12.8\%, 16.6\%) & 13.4\% (11.7\%, 15.3\%) & 13.7\% (12.0\%, 15.5\%) & 14.6\% (13.0\%, 16.4\%) & 14.6\% (13.0\%, 16.3\%)\\
+\hline
+5 & 9.8\% (8.5\%, 11.2\%) & 8.7\% (7.2\%, 10.5\%) & 5.4\% (4.3\%, 6.7\%) & 6.9\% (5.7\%, 8.4\%) & 5.2\% (4.3\%, 6.4\%) & 6.1\% (5.1\%, 7.3\%)\\
+\hline
+6 & 4.8\% (3.9\%, 5.9\%) & 4.2\% (3.2\%, 5.4\%) & 4.4\% (3.4\%, 5.7\%) & 3.2\% (2.5\%, 4.3\%) & 3.5\% (2.7\%, 4.6\%) & 3.3\% (2.6\%, 4.3\%)\\
+\hline
+7 & 2.0\% (1.4\%, 2.8\%) & 2.0\% (1.3\%, 3.0\%) & 1.2\% (0.7\%, 2.0\%) & 0.6\% (0.3\%, 1.1\%) & 1.0\% (0.6\%, 1.6\%) & 0.5\% (0.3\%, 1.0\%)\\
+\hline
+8 & 1.4\% (0.9\%, 2.2\%) & 1.3\% (0.7\%, 2.3\%) & 0.7\% (0.4\%, 1.3\%) & 0.9\% (0.5\%, 1.5\%) & 0.6\% (0.3\%, 1.1\%) & 0.3\% (0.1\%, 0.9\%)\\
+\hline
+9 & 0.2\% (0.1\%, 0.4\%) & 0.2\% (0.1\%, 0.6\%) & 0.2\% (0.1\%, 0.6\%) & 0.1\% (0.0\%, 0.4\%) & 0.3\% (0.1\%, 0.7\%) & < 0.1\% (--, --)\\
+\hline
+10+ & 0.8\% (0.5\%, 1.3\%) & 0.7\% (0.4\%, 1.5\%) & 1.1\% (0.7\%, 1.9\%) & 0.5\% (0.3\%, 1.0\%) & 0.2\% (0.1\%, 0.6\%) & < 0.1\% (--, --)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{how-many-of-your-family-members-were-in-black-rock-city-this-year}{%
+\subsection{How many of your family members were in Black Rock City this year?}\label{how-many-of-your-family-members-were-in-black-rock-city-this-year}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-87-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2013 & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+0 & 66.0\% (65.1\%, 67.0\%) & 65.4\% (64.4\%, 66.3\%) & 68.4\% (67.3\%, 69.5\%) & 67.4\% (66.1\%, 68.7\%) & 66.4\% (65.2\%, 67.5\%) & 65.7\% (64.5\%, 66.9\%) & 63.9\% (62.7\%, 65.1\%) & 55.3\% (54.1\%, 56.5\%)\\
+\hline
+1 & 23.1\% (22.3\%, 24.0\%) & 22.9\% (22.0\%, 23.7\%) & 21.9\% (20.9\%, 22.8\%) & 22.8\% (21.6\%, 23.9\%) & 23.3\% (22.3\%, 24.4\%) & 23.7\% (22.7\%, 24.8\%) & 25.1\% (24.0\%, 26.2\%) & 32.9\% (31.8\%, 34.1\%)\\
+\hline
+2 & 5.7\% (5.2\%, 6.2\%) & 6.2\% (5.8\%, 6.8\%) & 5.1\% (4.6\%, 5.7\%) & 5.0\% (4.4\%, 5.6\%) & 5.7\% (5.2\%, 6.3\%) & 5.3\% (4.8\%, 5.8\%) & 5.9\% (5.4\%, 6.6\%) & 6.2\% (5.7\%, 6.8\%)\\
+\hline
+3 & 2.5\% (2.2\%, 2.8\%) & 2.8\% (2.5\%, 3.2\%) & 2.3\% (2.0\%, 2.6\%) & 2.7\% (2.3\%, 3.2\%) & 2.4\% (2.0\%, 2.7\%) & 2.8\% (2.3\%, 3.3\%) & 2.7\% (2.4\%, 3.2\%) & 2.9\% (2.5\%, 3.3\%)\\
+\hline
+4+ & 2.7\% (2.4\%, 3.0\%) & 2.7\% (2.4\%, 3.0\%) & 2.3\% (2.0\%, 2.7\%) & 2.2\% (1.9\%, 2.6\%) & 2.2\% (1.9\%, 2.6\%) & 2.5\% (2.2\%, 2.9\%) & 2.3\% (2.0\%, 2.7\%) & 2.7\% (2.3\%, 3.0\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{camp-placement}{%
+\section{Camp Placement}\label{camp-placement}}
+
+\hypertarget{was-your-camp-assigned-a-location-by-the-burning-man-placement-team-before-the-event}{%
+\subsection{Was your camp assigned a location by the Burning Man Placement Team before the event?}\label{was-your-camp-assigned-a-location-by-the-burning-man-placement-team-before-the-event}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-88-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2013 & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+0 & 66.0\% (65.1\%, 67.0\%) & 65.4\% (64.4\%, 66.3\%) & 68.4\% (67.3\%, 69.5\%) & 67.4\% (66.1\%, 68.7\%) & 66.4\% (65.2\%, 67.5\%) & 65.7\% (64.5\%, 66.9\%) & 63.9\% (62.7\%, 65.1\%) & 55.3\% (54.1\%, 56.5\%)\\
+\hline
+1 & 23.1\% (22.3\%, 24.0\%) & 22.9\% (22.0\%, 23.7\%) & 21.9\% (20.9\%, 22.8\%) & 22.8\% (21.6\%, 23.9\%) & 23.3\% (22.3\%, 24.4\%) & 23.7\% (22.7\%, 24.8\%) & 25.1\% (24.0\%, 26.2\%) & 32.9\% (31.8\%, 34.1\%)\\
+\hline
+2 & 5.7\% (5.2\%, 6.2\%) & 6.2\% (5.8\%, 6.8\%) & 5.1\% (4.6\%, 5.7\%) & 5.0\% (4.4\%, 5.6\%) & 5.7\% (5.2\%, 6.3\%) & 5.3\% (4.8\%, 5.8\%) & 5.9\% (5.4\%, 6.6\%) & 6.2\% (5.7\%, 6.8\%)\\
+\hline
+3 & 2.5\% (2.2\%, 2.8\%) & 2.8\% (2.5\%, 3.2\%) & 2.3\% (2.0\%, 2.6\%) & 2.7\% (2.3\%, 3.2\%) & 2.4\% (2.0\%, 2.7\%) & 2.8\% (2.3\%, 3.3\%) & 2.7\% (2.4\%, 3.2\%) & 2.9\% (2.5\%, 3.3\%)\\
+\hline
+4+ & 2.7\% (2.4\%, 3.0\%) & 2.7\% (2.4\%, 3.0\%) & 2.3\% (2.0\%, 2.7\%) & 2.2\% (1.9\%, 2.6\%) & 2.2\% (1.9\%, 2.6\%) & 2.5\% (2.2\%, 2.9\%) & 2.3\% (2.0\%, 2.7\%) & 2.7\% (2.3\%, 3.0\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{what-most-determined-where-you-chose-to-camp-in-black-rock-city-this-year}{%
+\subsection{What most determined where you chose to camp in Black Rock City this year?}\label{what-most-determined-where-you-chose-to-camp-in-black-rock-city-this-year}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-89-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Space available & 27.2\% (26.3\%, 28.1\%) & 54.5\% (52.5\%, 56.4\%) & 52.4\% (50.0\%, 54.9\%) & 53.4\% (50.9\%, 55.9\%) & 54.6\% (52.1\%, 57.1\%) & 51.8\% (48.8\%, 54.7\%) & 8.6\% (7.9\%, 9.3\%)\\
+\hline
+Friends' choice & 40.4\% (39.4\%, 41.4\%) & 39.3\% (37.4\%, 41.3\%) & 34.8\% (32.5\%, 37.3\%) & 33.0\% (30.7\%, 35.4\%) & 33.9\% (31.6\%, 36.4\%) & 30.8\% (28.2\%, 33.6\%) & 6.5\% (5.9\%, 7.2\%)\\
+\hline
+Quiet & 14.0\% (13.3\%, 14.8\%) & 20.9\% (19.3\%, 22.5\%) & 27.6\% (25.5\%, 29.8\%) & 26.6\% (24.4\%, 28.8\%) & 26.2\% (24.0\%, 28.5\%) & 29.3\% (26.7\%, 32.1\%) & 5.8\% (5.2\%, 6.4\%)\\
+\hline
+Same as last year & 26.9\% (25.9\%, 27.8\%) & 17.9\% (16.4\%, 19.4\%) & 18.3\% (16.6\%, 20.2\%) & 18.9\% (17.1\%, 20.9\%) & 20.1\% (18.2\%, 22.2\%) & 22.8\% (20.4\%, 25.3\%) & 3.4\% (3.0\%, 3.9\%)\\
+\hline
+Nice neighbors & 16.3\% (15.5\%, 17.0\%) & 16.8\% (15.4\%, 18.3\%) & 18.2\% (16.3\%, 20.3\%) & 14.1\% (12.5\%, 15.8\%) & 16.7\% (14.8\%, 18.7\%) & 16.9\% (14.8\%, 19.2\%) & 2.5\% (2.2\%, 3.0\%)\\
+\hline
+Nearby attractions & 16.3\% (15.6\%, 17.1\%) & 14.9\% (13.5\%, 16.3\%) & 12.6\% (11.1\%, 14.4\%) & 11.4\% (9.9\%, 13.0\%) & 10.9\% (9.4\%, 12.6\%) & 11.2\% (9.5\%, 13.3\%) & 2.4\% (2.0\%, 2.8\%)\\
+\hline
+Favorable playa surface conditions & 8.5\% (8.0\%, 9.1\%) & 9.3\% (8.2\%, 10.5\%) & 7.5\% (6.4\%, 8.9\%) & 5.2\% (4.2\%, 6.3\%) & 5.0\% (4.1\%, 6.2\%) & 7.5\% (6.0\%, 9.2\%) & 1.2\% (0.9\%, 1.4\%)\\
+\hline
+Different than last year & 5.3\% (4.8\%, 5.7\%) & 4.4\% (3.7\%, 5.3\%) & 3.5\% (2.8\%, 4.4\%) & 3.4\% (2.7\%, 4.3\%) & 4.4\% (3.5\%, 5.6\%) & 4.4\% (3.3\%, 5.8\%) & 0.8\% (0.6\%, 1.0\%)\\
+\hline
+Access to all-night parties & 3.6\% (3.2\%, 4.0\%) & 3.0\% (2.3\%, 3.8\%) & 1.9\% (1.3\%, 2.8\%) & 1.3\% (0.8\%, 2.1\%) & 1.8\% (1.1\%, 2.8\%) & 2.2\% (1.4\%, 3.4\%) & 0.4\% (0.2\%, 0.6\%)\\
+\hline
+I don't know & 9.6\% (9.0\%, 10.2\%) & 3.6\% (3.0\%, 4.4\%) & 4.7\% (3.7\%, 5.9\%) & 5.3\% (4.2\%, 6.6\%) & 4.4\% (3.4\%, 5.7\%) & 5.8\% (4.5\%, 7.3\%) & 1.5\% (1.2\%, 1.8\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{tickets}{%
+\section{Tickets}\label{tickets}}
+
+\hypertarget{where-did-you-get-your-ticket-for-the-event}{%
+\subsection{Where did you get your ticket for the event?}\label{where-did-you-get-your-ticket-for-the-event}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-90-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l}
+\hline
+  & 2022\\
+\hline
+Main sale or OMG sale & 38.9\% (37.7\%, 40.0\%)\\
+\hline
+STEP & 13.8\% (12.9\%, 14.8\%)\\
+\hline
+Ticket Aid/Low Income 
+ Ticket Program & 11.4\% (10.6\%, 12.2\%)\\
+\hline
+Stranger & 7.8\% (7.3\%, 8.4\%)\\
+\hline
+Stewards sales & 6.7\% (6.0\%, 7.3\%)\\
+\hline
+Someone I know & 5.3\% (4.7\%, 5.9\%)\\
+\hline
+Third party reseller & 4.6\% (4.2\%, 5.2\%)\\
+\hline
+FOMO sale & 3.7\% (3.3\%, 4.3\%)\\
+\hline
+Gifted ticket & 3.1\% (2.7\%, 3.6\%)\\
+\hline
+No ticket & 2.1\% (1.7\%, 2.5\%)\\
+\hline
+Burner Express Bus Plus & 1.0\% (0.8\%, 1.3\%)\\
+\hline
+2021 Invitation to the 
+ Future Ticket & 0.4\% (0.2\%, 0.6\%)\\
+\hline
+Staff or volunteer 
+ credential & < 0.1\% (--, --)\\
+\hline
+Other & 1.3\% (1.0\%, 1.5\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{paid-face-value-for-a-ticket}{%
+\subsection{Paid face value for a ticket}\label{paid-face-value-for-a-ticket}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-91-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+More than face value & 1.9\% (1.6\%, 2.1\%) & 2.6\% (2.3\%, 3.1\%) & 2.5\% (2.1\%, 3.0\%) & 1.8\% (1.4\%, 2.2\%) & 2.3\% (2.0\%, 2.7\%) & 1.4\% (1.1\%, 1.7\%) & 2.9\% (2.4\%, 3.4\%)\\
+\hline
+Face value & 79.1\% (78.2\%, 79.9\%) & 86.7\% (85.9\%, 87.5\%) & 86.5\% (85.6\%, 87.4\%) & 85.7\% (84.7\%, 86.5\%) & 85.3\% (84.4\%, 86.1\%) & 91.4\% (90.7\%, 92.1\%) & 91.2\% (90.4\%, 91.9\%)\\
+\hline
+Less than face value & 3.8\% (3.5\%, 4.2\%) & 1.3\% (1.1\%, 1.6\%) & 1.7\% (1.4\%, 2.1\%) & 0.9\% (0.7\%, 1.1\%) & 1.0\% (0.8\%, 1.2\%) & 0.7\% (0.5\%, 1.0\%) & 2.5\% (2.1\%, 3.0\%)\\
+\hline
+Gift or did not pay & 9.8\% (9.2\%, 10.5\%) & 8.1\% (7.5\%, 8.8\%) & 8.0\% (7.3\%, 8.7\%) & 10.4\% (9.7\%, 11.2\%) & 10.1\% (9.4\%, 10.9\%) & 5.8\% (5.2\%, 6.4\%) & 2.0\% (1.7\%, 2.4\%)\\
+\hline
+I don't know & 0.2\% (0.2\%, 0.4\%) & 0.2\% (0.1\%, 0.3\%) & 0.2\% (0.1\%, 0.5\%) & 0.2\% (0.1\%, 0.4\%) & 0.2\% (0.1\%, 0.4\%) & 0.2\% (0.1\%, 0.3\%) & 0.8\% (0.6\%, 1.1\%)\\
+\hline
+Other & 5.2\% (4.7\%, 5.7\%) & 1.0\% (0.8\%, 1.2\%) & 1.0\% (0.8\%, 1.3\%) & 1.1\% (0.9\%, 1.4\%) & 1.1\% (0.8\%, 1.3\%) & 0.5\% (0.3\%, 0.8\%) & 0.6\% (0.4\%, 0.9\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{generators}{%
+\section{Generators}\label{generators}}
+
+\hypertarget{how-did-you-generate-electricity-in-your-camp}{%
+\subsection{How did you generate electricity in your camp?}\label{how-did-you-generate-electricity-in-your-camp}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-92-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2013 & 2014 & 2015 & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+I used my camp's generator & 36.5\% (35.5\%, 37.4\%) & 43.9\% (42.9\%, 44.8\%) & 45.3\% (44.2\%, 46.5\%) & 46.0\% (44.7\%, 47.4\%) & 50.0\% (48.7\%, 51.3\%) & 50.7\% (49.4\%, 51.9\%) & 53.0\% (51.7\%, 54.3\%) & 51.9\% (50.7\%, 53.1\%)\\
+\hline
+I used batteries & 59.3\% (58.3\%, 60.3\%) & 58.5\% (57.5\%, 59.4\%) & 49.6\% (48.4\%, 50.7\%) & 53.8\% (52.4\%, 55.2\%) & 50.3\% (49.1\%, 51.6\%) & 48.8\% (47.5\%, 50.0\%) & 48.8\% (47.5\%, 50.0\%) & 46.9\% (45.7\%, 48.1\%)\\
+\hline
+I used solar power & 30.1\% (29.2\%, 31.0\%) & 34.2\% (33.3\%, 35.1\%) & 35.5\% (34.4\%, 36.6\%) & 40.0\% (38.7\%, 41.3\%) & 40.7\% (39.4\%, 41.9\%) & 39.9\% (38.7\%, 41.1\%) & 42.6\% (41.3\%, 43.8\%) & 46.4\% (45.2\%, 47.6\%)\\
+\hline
+I used my vehicle's generator & 20.7\% (19.9\%, 21.5\%) & 19.4\% (18.6\%, 20.2\%) & 19.1\% (18.2\%, 20.0\%) & 20.0\% (18.9\%, 21.2\%) & 18.5\% (17.5\%, 19.6\%) & 18.2\% (17.3\%, 19.2\%) & 17.8\% (16.8\%, 18.8\%) & 20.0\% (19.0\%, 21.0\%)\\
+\hline
+I used the BRC grid & 4.3\% (3.9\%, 4.7\%) & 6.0\% (5.5\%, 6.5\%) & 4.3\% (3.9\%, 4.8\%) & 4.4\% (3.9\%, 4.9\%) & 5.3\% (4.8\%, 5.8\%) & 6.2\% (5.6\%, 6.8\%) & 6.3\% (5.7\%, 6.9\%) & 4.4\% (4.0\%, 4.9\%)\\
+\hline
+I didn't use any power & 12.2\% (11.5\%, 12.9\%) & 8.4\% (7.8\%, 8.9\%) & 8.5\% (7.8\%, 9.2\%) & 6.3\% (5.6\%, 7.1\%) & 5.3\% (4.7\%, 6.0\%) & 5.2\% (4.7\%, 5.8\%) & 4.3\% (3.8\%, 4.9\%) & 3.8\% (3.4\%, 4.4\%)\\
+\hline
+I used another camp's power & 2.5\% (2.2\%, 2.8\%) & 2.6\% (2.3\%, 3.0\%) & 1.8\% (1.5\%, 2.2\%) & 2.3\% (2.0\%, 2.8\%) & 2.0\% (1.6\%, 2.4\%) & 1.5\% (1.2\%, 1.8\%) & 1.7\% (1.4\%, 2.1\%) & 1.8\% (1.5\%, 2.1\%)\\
+\hline
+I used wind power & 0.9\% (0.7\%, 1.1\%) & 0.6\% (0.5\%, 0.8\%) & 0.6\% (0.5\%, 0.8\%) & 0.9\% (0.7\%, 1.2\%) & 0.4\% (0.3\%, 0.6\%) & 0.4\% (0.3\%, 0.6\%) & 0.6\% (0.4\%, 0.8\%) & 0.3\% (0.2\%, 0.5\%)\\
+\hline
+Other & 2.4\% (2.1\%, 2.7\%) & 2.0\% (1.7\%, 2.3\%) & 1.7\% (1.4\%, 2.0\%) & 1.4\% (1.1\%, 1.7\%) & 1.8\% (1.5\%, 2.1\%) & 1.9\% (1.6\%, 2.3\%) & 2.2\% (1.9\%, 2.7\%) & 2.7\% (2.4\%, 3.1\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{what-was-the-primary-type-of-fuel-you-used-to-run-your-vehicles-generator}{%
+\subsection{What was the primary type of fuel you used to run your vehicle's generator?}\label{what-was-the-primary-type-of-fuel-you-used-to-run-your-vehicles-generator}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-93-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Gasoline & 79.9\% (77.2\%, 82.3\%) & 80.0\% (77.2\%, 82.6\%) & 80.1\% (77.6\%, 82.4\%) & 84.7\% (82.3\%, 86.8\%) & 81.3\% (79.1\%, 83.3\%)\\
+\hline
+Diesel & 8.1\% (6.6\%, 10.0\%) & 6.6\% (5.2\%, 8.4\%) & 7.7\% (6.3\%, 9.4\%) & 5.4\% (4.2\%, 7.0\%) & 7.1\% (5.8\%, 8.6\%)\\
+\hline
+Biodisel & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --)\\
+\hline
+Propane & 7.4\% (5.8\%, 9.3\%) & 6.7\% (5.4\%, 8.4\%) & 8.0\% (6.5\%, 9.9\%) & 6.9\% (5.5\%, 8.6\%) & 7.8\% (6.5\%, 9.4\%)\\
+\hline
+I don't know & 4.3\% (3.2\%, 5.7\%) & 6.3\% (4.7\%, 8.4\%) & 4.0\% (3.0\%, 5.4\%) & 3.0\% (2.2\%, 4.2\%) & 3.3\% (2.4\%, 4.4\%)\\
+\hline
+Other & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & 0.3\% (0.1\%, 0.8\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{approximately-how-many-hours-per-day-did-you-run-your-vehicles-generator}{%
+\subsection{Approximately how many hours per day did you run your vehicle's generator?}\label{approximately-how-many-hours-per-day-did-you-run-your-vehicles-generator}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-94-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Average hours & 3.0 (3.0, 3.1) & 3.8 (3.7, 3.8) & 3.3 (3.3, 3.4) & 3.9 (3.9, 4.0) & 4.7 (4.7, 4.7)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{what-was-the-primary-type-of-fuel-you-used-to-run-your-camps-generator}{%
+\subsection{What was the primary type of fuel you used to run your camp's generator?}\label{what-was-the-primary-type-of-fuel-you-used-to-run-your-camps-generator}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-95-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Gasoline & 59.2\% (57.2\%, 61.2\%) & 59.7\% (57.9\%, 61.4\%) & 59.0\% (57.3\%, 60.7\%) & 60.1\% (58.4\%, 61.8\%) & 56.0\% (54.4\%, 57.7\%)\\
+\hline
+Diesel & 12.4\% (11.1\%, 13.9\%) & 12.8\% (11.6\%, 14.0\%) & 13.3\% (12.2\%, 14.6\%) & 14.3\% (13.1\%, 15.6\%) & 17.1\% (15.9\%, 18.4\%)\\
+\hline
+Biodisel & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --)\\
+\hline
+Other & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & < 0.1\% (--, --) & 0.3\% (0.2\%, 0.6\%)\\
+\hline
+Multiple types & 0.8\% (0.6\%, 1.2\%) & 1.0\% (0.7\%, 1.5\%) & 1.1\% (0.7\%, 1.5\%) & 0.7\% (0.5\%, 1.1\%) & 0.9\% (0.7\%, 1.3\%)\\
+\hline
+I don't know & 23.7\% (22.0\%, 25.5\%) & 23.1\% (21.6\%, 24.8\%) & 22.9\% (21.4\%, 24.4\%) & 21.7\% (20.2\%, 23.1\%) & 21.3\% (19.9\%, 22.8\%)\\
+\hline
+Propane & 3.1\% (2.4\%, 3.8\%) & 3.0\% (2.4\%, 3.7\%) & 3.4\% (2.9\%, 4.1\%) & 2.9\% (2.4\%, 3.5\%) & 4.0\% (3.4\%, 4.7\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{approximately-how-many-hours-per-day-did-you-run-your-camps-generators}{%
+\subsection{Approximately how many hours per day did you run your camp's generators?}\label{approximately-how-many-hours-per-day-did-you-run-your-camps-generators}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-96-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+Average hours & 10.5 (10.4, 10.6) & 11.6 (11.6, 11.7) & 11.2 (11.1, 11.2) & 11.9 (11.9, 12.0) & 12.0 (11.9, 12.0)\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{what-was-the-total-output-of-your-camps-generator}{%
+\subsection{What was the total output of your camp's generator?}\label{what-was-the-total-output-of-your-camps-generator}}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-97-1}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{}l|>{}l|>{}l|>{}l|>{}l|>{}l}
+\hline
+  & 2016 & 2017 & 2018 & 2019 & 2022\\
+\hline
+<1kW & 2.5\% (2.0\%, 3.2\%) & 2.1\% (1.7\%, 2.6\%) & 2.1\% (1.6\%, 2.6\%) & 2.2\% (1.7\%, 2.8\%) & 2.0\% (1.6\%, 2.6\%)\\
+\hline
+1kW-<2kW & 7.0\% (6.0\%, 8.0\%) & 6.6\% (5.7\%, 7.5\%) & 6.9\% (6.1\%, 7.8\%) & 5.9\% (5.1\%, 6.8\%) & 5.4\% (4.7\%, 6.2\%)\\
+\hline
+2kW-<4kW & 9.2\% (8.1\%, 10.4\%) & 9.0\% (8.1\%, 10.0\%) & 9.1\% (8.2\%, 10.2\%) & 10.1\% (9.1\%, 11.2\%) & 8.1\% (7.2\%, 9.1\%)\\
+\hline
+4kW-<10kW & 6.9\% (6.0\%, 7.9\%) & 6.7\% (5.9\%, 7.6\%) & 7.2\% (6.3\%, 8.2\%) & 6.8\% (5.9\%, 7.7\%) & 6.0\% (5.3\%, 6.8\%)\\
+\hline
+10kW-<20kW & 2.6\% (2.1\%, 3.3\%) & 3.0\% (2.5\%, 3.7\%) & 3.0\% (2.5\%, 3.7\%) & 2.8\% (2.3\%, 3.4\%) & 2.7\% (2.3\%, 3.3\%)\\
+\hline
+20kW-<40kW & 2.5\% (1.9\%, 3.3\%) & 3.0\% (2.4\%, 3.6\%) & 2.6\% (2.1\%, 3.2\%) & 3.1\% (2.5\%, 3.7\%) & 3.2\% (2.7\%, 3.8\%)\\
+\hline
+40kW+ & 3.9\% (3.3\%, 4.6\%) & 5.1\% (4.4\%, 5.9\%) & 5.9\% (5.2\%, 6.8\%) & 5.4\% (4.7\%, 6.3\%) & 6.7\% (6.0\%, 7.6\%)\\
+\hline
+Don't know & 65.5\% (63.6\%, 67.3\%) & 64.6\% (62.9\%, 66.3\%) & 63.2\% (61.5\%, 64.9\%) & 63.7\% (62.0\%, 65.4\%) & 65.8\% (64.2\%, 67.3\%)\\
+\hline
+\end{tabular}
+\end{table}
+
+  \bibliography{book.bib,packages.bib}
+
+\end{document}
