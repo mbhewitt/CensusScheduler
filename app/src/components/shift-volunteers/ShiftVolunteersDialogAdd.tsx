@@ -395,7 +395,8 @@ export const ShiftVolunteersDialogAdd = ({
           );
       }
 
-      // if the volunteer has been added already, display an error
+      // if the volunteer has been added already
+      // then display an error
       if (!volunteerSlotAvailable) {
         enqueueSnackbar(
           <SnackbarText>
@@ -412,7 +413,8 @@ export const ShiftVolunteersDialogAdd = ({
         );
         return;
       }
-      // if there's a shift time conflict and a volunteer is signed in, display an error
+      // if there's a shift time conflict and a volunteer is signed in
+      // then display an error
       if (!volunteerShiftAvailable && isAuthenticated && !isCoreCrew) {
         enqueueSnackbar(
           <SnackbarText>
@@ -425,7 +427,8 @@ export const ShiftVolunteersDialogAdd = ({
         );
         return;
       }
-      // if there's a training time conflict and a volunteer is signed in, display an error
+      // if there's a training time conflict and a volunteer is signed in
+      // then display an error
       if (
         volunteerTrainingAvailable === false &&
         isAuthenticated &&
@@ -442,7 +445,8 @@ export const ShiftVolunteersDialogAdd = ({
         );
         return;
       }
-      // if there's a shift time conflict and an admin is signed in, display a warning
+      // if there's a shift time conflict and an admin is signed in
+      // then display a warning
       if (!volunteerShiftAvailable && isAuthenticated && isCoreCrew) {
         enqueueSnackbar(
           <SnackbarText>
@@ -651,7 +655,8 @@ export const ShiftVolunteersDialogAdd = ({
 
                         field.onChange(positionSelected);
                         positionList.forEach((positionItem) => {
-                          // if there are less than or equal to zero slots available, display warning notification
+                          // if there are less than or equal to zero slots available
+                          // then display warning notification
                           if (
                             positionItem.shiftPositionId === positionSelected &&
                             positionItem.freeSlots <= 0
