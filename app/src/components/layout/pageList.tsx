@@ -5,6 +5,7 @@ import {
   Help as HelpIcon,
   Home as HomeIcon,
   QuestionAnswer as QuestionAnswerIcon,
+  Verified as VerifiedIcon,
 } from "@mui/icons-material";
 
 export const pageListDefault = [
@@ -40,5 +41,10 @@ export const pageListAdmin = [
     icon: <Groups3Icon />,
     label: "Volunteers",
     path: "/volunteers",
+  },
+  {
+    icon: <VerifiedIcon />,
+    label: "Roles",
+    path: "/roles",
   },
 ];
