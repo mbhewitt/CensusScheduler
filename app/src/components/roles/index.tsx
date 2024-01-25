@@ -12,6 +12,7 @@ import {
   CircularProgress,
   Container,
   IconButton,
+  Switch,
   TextField,
 } from "@mui/material";
 import Image from "next/image";
@@ -56,7 +57,23 @@ export const Roles = () => {
       try {
         await fetch("/api/socket");
 
-        socket.on("res-shift-volunteer-add", ({ name }) => {
+        socket.on(
+          "res-role-display-toggle",
+          ({ checked, name }: { checked: boolean; name: string }) => {
+            if (data) {
+              const dataMutate = structuredClone(data);
+              const roleItemUpdate = dataMutate.roleList.find(
+                (roles: string) => roles === name
+              );
+              if (roleItemUpdate) {
+                roleItemUpdate.display = checked;
+              }
+
+              mutate(dataMutate);
+            }
+          }
+        );
+        socket.on("res-role-create", ({ name }) => {
           if (data) {
             const dataMutate = structuredClone(data);
             dataMutate.roleList.push({
@@ -87,6 +104,52 @@ export const Roles = () => {
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
+  // handle on change
+  const handleOnChange = async ({
+    checked,
+    name,
+  }: {
+    checked: boolean;
+    name: string;
+  }) => {
+    try {
+      await trigger({
+        body: {
+          checked,
+          name,
+        },
+        method: "PATCH",
+      });
+      socket.emit("req-role-display-toggle", {
+        checked,
+        name,
+      });
+      enqueueSnackbar(
+        <SnackbarText>
+          Display for <strong>{name}</strong> role has been set to{" "}
+          <strong>{checked ? "on" : "off"}</strong>
+        </SnackbarText>,
+        {
+          variant: "success",
+        }
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        enqueueSnackbar(
+          <SnackbarText>
+            <strong>{error.message}</strong>
+          </SnackbarText>,
+          {
+            persist: true,
+            variant: "error",
+          }
+        );
+      }
+
+      throw error;
+    }
+  };
+
   // prepare datatable
   const columnList = [
     {
@@ -116,13 +179,7 @@ export const Roles = () => {
     if (name === "Admin") {
       return [
         name,
-        <IconButton disabled key={name}>
-          {display ? (
-            <VisibilityIcon color="disabled" />
-          ) : (
-            <VisibilityOffIcon color="primary" />
-          )}
-        </IconButton>,
+        <Switch disabled checked={display} key={`${name}-switch`} />,
         <IconButton disabled key={name}>
           <DeleteIcon color="disabled" />
         </IconButton>,
@@ -131,14 +188,17 @@ export const Roles = () => {
 
     return [
       name,
-      <IconButton key={name}>
-        {display ? (
-          <VisibilityIcon color="primary" />
-        ) : (
-          <VisibilityOffIcon color="primary" />
-        )}
-      </IconButton>,
-      <IconButton key={name}>
+      <Switch
+        checked={display}
+        onChange={(event) =>
+          handleOnChange({
+            checked: event.target.checked,
+            name,
+          })
+        }
+        key={`${name}-switch`}
+      />,
+      <IconButton key={`${name}-delete`}>
         <DeleteIcon color="primary" />
       </IconButton>,
     ];
@@ -170,7 +230,7 @@ export const Roles = () => {
       // update database
       await trigger({ body: dataForm, method: "POST" });
       // emit shift update
-      socket.emit("req-shift-volunteer-add", {
+      socket.emit("req-role-create", {
         dataForm,
       });
 

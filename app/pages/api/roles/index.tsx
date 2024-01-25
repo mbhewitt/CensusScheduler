@@ -53,6 +53,22 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
         message: "Success",
       });
     }
+    // patch - update role display
+    case "PATCH": {
+      const { checked, name } = JSON.parse(req.body);
+
+      await pool.query<RowDataPacket[]>(
+        `UPDATE op_roles
+        SET display=?
+        WHERE roles=?`,
+        [Number(checked), name]
+      );
+
+      return res.status(200).json({
+        statusCode: 200,
+        message: "Success",
+      });
+    }
     // default - send an error message
     default: {
       return res.status(404).json({
