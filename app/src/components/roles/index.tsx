@@ -16,7 +16,9 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import { useSnackbar } from "notistack";
+import { useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import io from "socket.io-client";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
@@ -36,16 +38,51 @@ interface IFormValues {
   name: string;
 }
 
+const socket = io();
 const defaultValues: IFormValues = {
   name: "",
 };
 export const Roles = () => {
-  const { data, error } = useSWR("/api/roles", fetcherGet);
+  const { data, error, mutate } = useSWR("/api/roles", fetcherGet);
   const { isMutating, trigger } = useSWRMutation("/api/roles", fetcherTrigger);
   const { control, handleSubmit, reset } = useForm({
     defaultValues,
   });
   const { enqueueSnackbar } = useSnackbar();
+
+  // listen for socket events
+  useEffect(() => {
+    (async () => {
+      try {
+        await fetch("/api/socket");
+
+        socket.on("res-shift-volunteer-add", ({ name }) => {
+          if (data) {
+            const dataMutate = structuredClone(data);
+            dataMutate.roleList.push({
+              name,
+            });
+
+            mutate(dataMutate);
+          }
+        });
+      } catch (error) {
+        if (error instanceof Error) {
+          enqueueSnackbar(
+            <SnackbarText>
+              <strong>{error.message}</strong>
+            </SnackbarText>,
+            {
+              persist: true,
+              variant: "error",
+            }
+          );
+        }
+
+        throw error;
+      }
+    })();
+  }, [data, enqueueSnackbar, mutate]);
 
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
@@ -130,7 +167,12 @@ export const Roles = () => {
         return;
       }
 
+      // update database
       await trigger({ body: dataForm, method: "POST" });
+      // emit shift update
+      socket.emit("req-shift-volunteer-add", {
+        dataForm,
+      });
 
       reset(defaultValues);
       enqueueSnackbar(
