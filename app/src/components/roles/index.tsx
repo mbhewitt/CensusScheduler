@@ -1,4 +1,8 @@
-import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
+import {
+  Add as AddIcon,
+  Delete as DeleteIcon,
+  Groups3 as Groups3Icon,
+} from "@mui/icons-material";
 import {
   Button,
   Card,
@@ -207,6 +211,13 @@ export const Roles = () => {
       },
     },
     {
+      name: "Edit",
+      options: {
+        filter: false,
+        sort: false,
+      },
+    },
+    {
       name: "Delete",
       options: {
         filter: false,
@@ -221,7 +232,10 @@ export const Roles = () => {
       return [
         name,
         <Switch disabled checked={display} key={`${name}-switch`} />,
-        <IconButton disabled key={name}>
+        <IconButton disabled key={`${name}-edit`}>
+          <Groups3Icon color="disabled" />
+        </IconButton>,
+        <IconButton disabled key={`${name}-delete`}>
           <DeleteIcon color="disabled" />
         </IconButton>,
       ];
@@ -239,6 +253,9 @@ export const Roles = () => {
         }
         key={`${name}-switch`}
       />,
+      <IconButton key={`${name}-edit`}>
+        <Groups3Icon color="primary" />
+      </IconButton>,
       <IconButton
         key={`${name}-delete`}
         onClick={() =>
