@@ -52,6 +52,16 @@ export const Roles = () => {
       try {
         await fetch("/api/socket");
 
+        socket.on("res-role-create", ({ name }) => {
+          if (data) {
+            const dataMutate = structuredClone(data);
+            dataMutate.roleList.push({
+              name,
+            });
+
+            mutate(dataMutate);
+          }
+        });
         socket.on(
           "res-role-display-toggle",
           ({ checked, name }: { checked: boolean; name: string }) => {
@@ -68,16 +78,6 @@ export const Roles = () => {
             }
           }
         );
-        socket.on("res-role-create", ({ name }) => {
-          if (data) {
-            const dataMutate = structuredClone(data);
-            dataMutate.roleList.push({
-              name,
-            });
-
-            mutate(dataMutate);
-          }
-        });
         socket.on("res-role-delete", ({ name }) => {
           if (data) {
             const dataMutate = structuredClone(data);

@@ -24,9 +24,9 @@ const socket = (_req: NextApiRequest, res: INextApiResponseWithSocket) => {
       socket.on("req-shift-volunteer-add", (data) => {
         socket.broadcast.emit("res-shift-volunteer-add", data);
       });
-      // check in/out volunteers
-      socket.on("req-check-in", (data) => {
-        socket.broadcast.emit("res-check-in", data);
+      // toggle check in
+      socket.on("req-check-in-toggle", (data) => {
+        socket.broadcast.emit("res-check-in-toggle", data);
       });
       // remove shift volunteer
       socket.on("req-shift-volunteer-remove", (data) => {

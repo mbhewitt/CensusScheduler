@@ -11,7 +11,7 @@ const volunteerShiftTrainings = async (
     // get - get all shift volunteer trainings
     case "GET": {
       const { shiftboardId, shiftPositionId } = req.query;
-      const [dataDb] = await pool.query<RowDataPacket[]>(
+      const [dataDbTrainingList] = await pool.query<RowDataPacket[]>(
         `WITH prereq AS (SELECT prerequisite, start_time FROM op_shifts WHERE shift_position_id=?),
         shift_cat AS (SELECT shift_category FROM op_shifts s1 JOIN op_volunteer_shifts USING (shift_position_id)
         JOIN prereq p
@@ -24,7 +24,7 @@ const volunteerShiftTrainings = async (
         WHERE NOT EXISTS (SELECT * FROM shift_cat c WHERE c.shift_category=s1.shift_category)`,
         [shiftPositionId, shiftboardId]
       );
-      const trainingList = dataDb.map(
+      const trainingList = dataDbTrainingList.map(
         ({
           date,
           datename,

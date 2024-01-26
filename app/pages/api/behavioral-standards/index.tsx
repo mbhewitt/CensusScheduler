@@ -8,13 +8,13 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
   const { isBehavioralStandardsSigned, shiftboardId } = JSON.parse(req.body);
 
   if (req.method === "POST") {
-    const [dataDbRoleItem] = await pool.query<RowDataPacket[]>(
+    const [dataDbVolunteerRoleList] = await pool.query<RowDataPacket[]>(
       `SELECT *
       FROM op_volunteer_roles
       WHERE roles=? AND shiftboard_id=?`,
       [BEHAVIORAL_STANDARDS_TEXT, shiftboardId]
     );
-    const roleItem = dataDbRoleItem[0];
+    const dataDbVolunteerRoleItem = dataDbVolunteerRoleList[0];
     const [addRole, deleteRole] = [
       isBehavioralStandardsSigned === true,
       isBehavioralStandardsSigned === false,
@@ -22,7 +22,7 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // if behavioral standards row exists
     // then update behavioral standards row
-    if (roleItem) {
+    if (dataDbVolunteerRoleItem) {
       await pool.query<RowDataPacket[]>(
         `UPDATE op_volunteer_roles
         SET add_role=?, delete_role=?

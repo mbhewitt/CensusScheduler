@@ -171,7 +171,6 @@ export const CreateAccount = () => {
         </Box>
         <Box component="section">
           <Card
-            elevation={0}
             sx={{
               margin: "auto",
               width: theme.spacing(50),

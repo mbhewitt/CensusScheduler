@@ -226,7 +226,7 @@ export const VolunteerShiftsDialogAdd = ({
       );
       let noShowShift: string;
       let noShowTraining: string | undefined;
-      let trainingVolunteerAvailable: boolean | undefined;
+      let isTrainingVolunteerAvailable: boolean | undefined;
 
       // evaluate the check-in type and value for shift and training
       const checkInTypeShift = checkInGet({
@@ -272,12 +272,12 @@ export const VolunteerShiftsDialogAdd = ({
       }
 
       // check if the shift has been added already
-      const shiftSlotAvailable =
+      const isShiftSlotAvailable =
         !dataVolunteerShiftList.volunteerShiftList.some(
           (shift: IDataVolunteerShiftItem) => shift.shiftId === shiftAdd.shiftId
         );
       // check if there are any shift or training time conflicts
-      const shiftVolunteerAvailable =
+      const isShiftVolunteerAvailable =
         !dataVolunteerShiftList.volunteerShiftList.some(
           (volunteerShiftItem: IDataVolunteerShiftItem) =>
             dayjs(shiftAdd.startTime).isBetween(
@@ -288,7 +288,7 @@ export const VolunteerShiftsDialogAdd = ({
             )
         );
       if (trainingAdd) {
-        trainingVolunteerAvailable =
+        isTrainingVolunteerAvailable =
           !dataVolunteerShiftList.volunteerShiftList.some(
             (volunteerShiftItem: IDataVolunteerShiftItem) =>
               dayjs(trainingAdd.startTime).isBetween(
@@ -301,7 +301,7 @@ export const VolunteerShiftsDialogAdd = ({
       }
 
       // if shift has been added already, display an error
-      if (!shiftSlotAvailable) {
+      if (!isShiftSlotAvailable) {
         enqueueSnackbar(
           <SnackbarText>
             <strong>
@@ -317,7 +317,7 @@ export const VolunteerShiftsDialogAdd = ({
         return;
       }
       // if there's a shift time conflict and a volunteer is signed in, display an error
-      if (!shiftVolunteerAvailable && isAuthenticated && !isCoreCrew) {
+      if (!isShiftVolunteerAvailable && isAuthenticated && !isCoreCrew) {
         enqueueSnackbar(
           <SnackbarText>
             <strong>Shift time conflict</strong>
@@ -331,7 +331,7 @@ export const VolunteerShiftsDialogAdd = ({
       }
       // if there's a training time conflict and a volunteer is signed in, display an error
       if (
-        trainingVolunteerAvailable === false &&
+        isTrainingVolunteerAvailable === false &&
         isAuthenticated &&
         !isCoreCrew
       ) {
@@ -347,7 +347,7 @@ export const VolunteerShiftsDialogAdd = ({
         return;
       }
       // if there's a shift time conflict and an admin is signed in, display a warning
-      if (!shiftVolunteerAvailable && isAuthenticated && isCoreCrew) {
+      if (!isShiftVolunteerAvailable && isAuthenticated && isCoreCrew) {
         enqueueSnackbar(
           <SnackbarText>
             <strong>
@@ -362,7 +362,7 @@ export const VolunteerShiftsDialogAdd = ({
           }
         );
       } else if (
-        trainingVolunteerAvailable === false &&
+        isTrainingVolunteerAvailable === false &&
         isAuthenticated &&
         isCoreCrew
       ) {
@@ -396,8 +396,8 @@ export const VolunteerShiftsDialogAdd = ({
       }
 
       if (
-        (shiftSlotAvailable && shiftVolunteerAvailable) ||
-        (!shiftVolunteerAvailable && isAuthenticated && isCoreCrew)
+        (isShiftSlotAvailable && isShiftVolunteerAvailable) ||
+        (!isShiftVolunteerAvailable && isAuthenticated && isCoreCrew)
       ) {
         // update database
         await trigger({
