@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import { useSnackbar } from "notistack";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import io from "socket.io-client";
 import useSWR from "swr";
@@ -27,6 +27,7 @@ import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
+import { RolesDialogDelete } from "src/components/roles/RolesDialogDelete";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IRoleItem {
@@ -47,6 +48,12 @@ export const Roles = () => {
   const { isMutating, trigger } = useSWRMutation("/api/roles", fetcherTrigger);
   const { control, handleSubmit, reset } = useForm({
     defaultValues,
+  });
+  const [isDialogDeleteOpen, setIsDialogDeleteOpen] = useState({
+    isOpen: false,
+    role: {
+      name: "",
+    },
   });
   const { enqueueSnackbar } = useSnackbar();
 
@@ -159,42 +166,6 @@ export const Roles = () => {
       throw error;
     }
   };
-  // handle delete
-  const handleDelete = async ({ name }: { name: string }) => {
-    try {
-      await trigger({
-        body: {
-          name,
-        },
-        method: "DELETE",
-      });
-      socket.emit("req-role-delete", {
-        name,
-      });
-      enqueueSnackbar(
-        <SnackbarText>
-          <strong>{name}</strong> role has been deleted
-        </SnackbarText>,
-        {
-          variant: "success",
-        }
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        enqueueSnackbar(
-          <SnackbarText>
-            <strong>{error.message}</strong>
-          </SnackbarText>,
-          {
-            persist: true,
-            variant: "error",
-          }
-        );
-      }
-
-      throw error;
-    }
-  };
   // prepare datatable
   const columnList = [
     {
@@ -259,8 +230,9 @@ export const Roles = () => {
       <IconButton
         key={`${name}-delete`}
         onClick={() =>
-          handleDelete({
-            name,
+          setIsDialogDeleteOpen({
+            isOpen: true,
+            role: { name },
           })
         }
       >
@@ -268,7 +240,7 @@ export const Roles = () => {
       </IconButton>,
     ];
   });
-  const optionListCustom = {};
+  const optionListCustom = { filter: false };
 
   // handle form submission
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
@@ -388,6 +360,20 @@ export const Roles = () => {
           </form>
         </Card>
       </Container>
+
+      {/* delete dialog */}
+      <RolesDialogDelete
+        handleDialogDeleteClose={() =>
+          setIsDialogDeleteOpen({
+            isOpen: false,
+            role: {
+              name: "",
+            },
+          })
+        }
+        isDialogDeleteOpen={isDialogDeleteOpen.isOpen}
+        role={isDialogDeleteOpen.role}
+      />
     </>
   );
 };
