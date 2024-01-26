@@ -20,7 +20,7 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
         roleList,
       });
     }
-    // post - create a role
+    // post - create role
     case "POST": {
       const { name } = JSON.parse(req.body);
       const [dataDb] = await pool.query<RowDataPacket[]>(
@@ -62,6 +62,22 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
         SET display=?
         WHERE roles=?`,
         [Number(checked), name]
+      );
+
+      return res.status(200).json({
+        statusCode: 200,
+        message: "Success",
+      });
+    }
+    // delete - delete role
+    case "DELETE": {
+      const { name } = JSON.parse(req.body);
+
+      await pool.query<RowDataPacket[]>(
+        `UPDATE op_roles
+        SET add_role=0, delete_role=1
+        WHERE roles=?`,
+        [name]
       );
 
       return res.status(200).json({

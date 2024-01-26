@@ -1,9 +1,4 @@
-import {
-  Add as AddIcon,
-  Delete as DeleteIcon,
-  Visibility as VisibilityIcon,
-  VisibilityOff as VisibilityOffIcon,
-} from "@mui/icons-material";
+import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import {
   Button,
   Card,
@@ -83,6 +78,17 @@ export const Roles = () => {
             mutate(dataMutate);
           }
         });
+        socket.on("res-role-delete", ({ name }) => {
+          if (data) {
+            const dataMutate = structuredClone(data);
+            const roleListNew = dataMutate.roleList.filter(
+              (roleItem: IRoleItem) => roleItem.name !== name
+            );
+            dataMutate.roleList = roleListNew;
+
+            mutate(dataMutate);
+          }
+        });
       } catch (error) {
         if (error instanceof Error) {
           enqueueSnackbar(
@@ -104,8 +110,8 @@ export const Roles = () => {
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
-  // handle on change
-  const handleOnChange = async ({
+  // handle display toggle
+  const handleDisplayToggle = async ({
     checked,
     name,
   }: {
@@ -149,7 +155,42 @@ export const Roles = () => {
       throw error;
     }
   };
+  // handle delete
+  const handleDelete = async ({ name }: { name: string }) => {
+    try {
+      await trigger({
+        body: {
+          name,
+        },
+        method: "DELETE",
+      });
+      socket.emit("req-role-delete", {
+        name,
+      });
+      enqueueSnackbar(
+        <SnackbarText>
+          <strong>{name}</strong> role has been deleted
+        </SnackbarText>,
+        {
+          variant: "success",
+        }
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        enqueueSnackbar(
+          <SnackbarText>
+            <strong>{error.message}</strong>
+          </SnackbarText>,
+          {
+            persist: true,
+            variant: "error",
+          }
+        );
+      }
 
+      throw error;
+    }
+  };
   // prepare datatable
   const columnList = [
     {
@@ -191,14 +232,21 @@ export const Roles = () => {
       <Switch
         checked={display}
         onChange={(event) =>
-          handleOnChange({
+          handleDisplayToggle({
             checked: event.target.checked,
             name,
           })
         }
         key={`${name}-switch`}
       />,
-      <IconButton key={`${name}-delete`}>
+      <IconButton
+        key={`${name}-delete`}
+        onClick={() =>
+          handleDelete({
+            name,
+          })
+        }
+      >
         <DeleteIcon color="primary" />
       </IconButton>,
     ];
