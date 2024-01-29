@@ -1,4 +1,4 @@
-cd OnPlayaVolunteerInterface
+cd CensusScheduler
 git checkout main
 git pull
 sudo docker system prune -fa
