@@ -5,3 +5,5 @@ Census Scheduler Volunteer Management when there is no internet access. The prim
 see https://github.com/mbhewitt/CensusScheduler/blob/main/OPS_Install.md for server install and https://github.com/mbhewitt/CensusScheduler/blob/main/Tablet_setup.md for tablet setup.
 
 Please bear with us as a lot of this documentation needs updating/creating.
+
+Last years user guide https://drive.google.com/file/d/1RehPXupj1sRA0ulmJesnFBjExJ4slAes/view?usp=drivesdk
