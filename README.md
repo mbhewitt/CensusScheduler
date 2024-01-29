@@ -1,8 +1,10 @@
 # CensusScheduler
 
-Census Scheduler Volunteer Management when there is no internet access.
+Census Scheduler Volunteer Management when there is no internet access. The primary goal is a system that can run a server for volunteer mangement that uses tablets as the primary interface.
 
 
+
+# Notes for implementation  
 3 cases of check-in types:
 
 - Up to 1 hour before start of shift
