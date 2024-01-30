@@ -2,6 +2,7 @@ import {
   Add as AddIcon,
   Delete as DeleteIcon,
   Groups3 as Groups3Icon,
+  MoreHoriz as MoreHorizIcon,
 } from "@mui/icons-material";
 import {
   Button,
@@ -10,7 +11,10 @@ import {
   CardContent,
   CircularProgress,
   Container,
-  IconButton,
+  ListItemIcon,
+  ListItemText,
+  MenuItem,
+  MenuList,
   Switch,
   TextField,
 } from "@mui/material";
@@ -25,6 +29,7 @@ import useSWRMutation from "swr/mutation";
 import { DataTable } from "src/components/general/DataTable";
 import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
+import { MoreMenu } from "src/components/general/MoreMenu";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import { RolesDialogDelete } from "src/components/roles/RolesDialogDelete";
@@ -182,14 +187,7 @@ export const Roles = () => {
       },
     },
     {
-      name: "Edit",
-      options: {
-        filter: false,
-        sort: false,
-      },
-    },
-    {
-      name: "Delete",
+      name: "Actions",
       options: {
         filter: false,
         sort: false,
@@ -198,17 +196,25 @@ export const Roles = () => {
   ];
   const dataTable = data.roleList.map(({ display, name }: IRoleItem) => {
     // if role name is admin
-    // then disable actions
+    // then disable display and delete actions
     if (name === "Admin") {
       return [
         name,
         <Switch disabled checked={display} key={`${name}-switch`} />,
-        <IconButton disabled key={`${name}-edit`}>
-          <Groups3Icon color="disabled" />
-        </IconButton>,
-        <IconButton disabled key={`${name}-delete`}>
-          <DeleteIcon color="disabled" />
-        </IconButton>,
+        <MoreMenu
+          Icon={<MoreHorizIcon />}
+          key={`${name}-menu`}
+          MenuList={
+            <MenuList>
+              <MenuItem>
+                <ListItemIcon>
+                  <Groups3Icon />
+                </ListItemIcon>
+                <ListItemText>View volunteers</ListItemText>
+              </MenuItem>
+            </MenuList>
+          }
+        />,
       ];
     }
 
@@ -224,20 +230,33 @@ export const Roles = () => {
         }
         key={`${name}-switch`}
       />,
-      <IconButton key={`${name}-edit`}>
-        <Groups3Icon color="primary" />
-      </IconButton>,
-      <IconButton
-        key={`${name}-delete`}
-        onClick={() =>
-          setIsDialogDeleteOpen({
-            isOpen: true,
-            role: { name },
-          })
+      <MoreMenu
+        Icon={<MoreHorizIcon />}
+        key={`${name}-menu`}
+        MenuList={
+          <MenuList>
+            <MenuItem>
+              <ListItemIcon>
+                <Groups3Icon />
+              </ListItemIcon>
+              <ListItemText>View volunteers</ListItemText>
+            </MenuItem>
+            <MenuItem
+              onClick={() =>
+                setIsDialogDeleteOpen({
+                  isOpen: true,
+                  role: { name },
+                })
+              }
+            >
+              <ListItemIcon>
+                <DeleteIcon />
+              </ListItemIcon>
+              <ListItemText>Delete</ListItemText>
+            </MenuItem>
+          </MenuList>
         }
-      >
-        <DeleteIcon color="primary" />
-      </IconButton>,
+      />,
     ];
   });
   const optionListCustom = { filter: false };
