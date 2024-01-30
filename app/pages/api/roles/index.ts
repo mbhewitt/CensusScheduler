@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
 
-const contact = async (req: NextApiRequest, res: NextApiResponse) => {
+const roles = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     // get - get all roles
     case "GET": {
@@ -95,4 +95,4 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default contact;
+export default roles;

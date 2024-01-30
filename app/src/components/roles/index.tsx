@@ -19,6 +19,7 @@ import {
   TextField,
 } from "@mui/material";
 import Image from "next/image";
+import Link from "next/link";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
@@ -148,7 +149,7 @@ export const Roles = () => {
       });
       enqueueSnackbar(
         <SnackbarText>
-          Display for <strong>{name}</strong> role has been set to{" "}
+          <strong>{name}</strong> role display has been set to{" "}
           <strong>{checked ? "on" : "off"}</strong>
         </SnackbarText>,
         {
@@ -206,12 +207,14 @@ export const Roles = () => {
           key={`${name}-menu`}
           MenuList={
             <MenuList>
-              <MenuItem>
-                <ListItemIcon>
-                  <Groups3Icon />
-                </ListItemIcon>
-                <ListItemText>View volunteers</ListItemText>
-              </MenuItem>
+              <Link href={`/roles/${encodeURI(name)}`}>
+                <MenuItem>
+                  <ListItemIcon>
+                    <Groups3Icon />
+                  </ListItemIcon>
+                  <ListItemText>View volunteers</ListItemText>
+                </MenuItem>
+              </Link>
             </MenuList>
           }
         />,
@@ -235,12 +238,14 @@ export const Roles = () => {
         key={`${name}-menu`}
         MenuList={
           <MenuList>
-            <MenuItem>
-              <ListItemIcon>
-                <Groups3Icon />
-              </ListItemIcon>
-              <ListItemText>View volunteers</ListItemText>
-            </MenuItem>
+            <Link href={`/roles/${encodeURI(name)}`}>
+              <MenuItem>
+                <ListItemIcon>
+                  <Groups3Icon />
+                </ListItemIcon>
+                <ListItemText>View volunteers</ListItemText>
+              </MenuItem>
+            </Link>
             <MenuItem
               onClick={() =>
                 setIsDialogDeleteOpen({

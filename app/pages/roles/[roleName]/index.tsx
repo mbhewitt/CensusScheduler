@@ -1,27 +1,28 @@
 import Head from "next/head";
 import { useContext } from "react";
 
+import { RoleVolunteers } from "src/components/role-volunteers";
 import { SignIn } from "src/components/sign-in";
-import { VolunteerAccount } from "src/components/volunteers/VolunteerAccount";
 import { SessionContext } from "src/state/session/context";
 
-const VolunteerAccountPage = () => {
+const RoleVolunteersPage = () => {
   const {
     sessionState: {
       settings: { isAuthenticated },
+      user: { isCoreCrew },
     },
   } = useContext(SessionContext);
 
   return (
     <>
       <Head>
-        <title>Census | Account</title>
+        <title>Census | Role</title>
         <meta name="description" content="" />
         <link rel="icon" href="/general/favicon.ico" />
       </Head>
-      {isAuthenticated ? <VolunteerAccount /> : <SignIn />}
+      {isAuthenticated && isCoreCrew ? <RoleVolunteers /> : <SignIn />}
     </>
   );
 };
 
-export default VolunteerAccountPage;
+export default RoleVolunteersPage;
