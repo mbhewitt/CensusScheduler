@@ -5,24 +5,20 @@ import {
   MoreHoriz as MoreHorizIcon,
 } from "@mui/icons-material";
 import {
+  Box,
   Button,
-  Card,
-  CardActions,
-  CardContent,
-  CircularProgress,
   Container,
   ListItemIcon,
   ListItemText,
   MenuItem,
   MenuList,
+  Stack,
   Switch,
-  TextField,
 } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import io from "socket.io-client";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
@@ -33,6 +29,7 @@ import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
+import { RolesDialogCreate } from "src/components/roles/RolesDialogCreate";
 import { RolesDialogDelete } from "src/components/roles/RolesDialogDelete";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
@@ -41,20 +38,11 @@ interface IRoleItem {
   name: string;
 }
 
-interface IFormValues {
-  name: string;
-}
-
 const socket = io();
-const defaultValues: IFormValues = {
-  name: "",
-};
 export const Roles = () => {
   const { data, error, mutate } = useSWR("/api/roles", fetcherGet);
-  const { isMutating, trigger } = useSWRMutation("/api/roles", fetcherTrigger);
-  const { control, handleSubmit, reset } = useForm({
-    defaultValues,
-  });
+  const { trigger } = useSWRMutation("/api/roles", fetcherTrigger);
+  const [isDialogCreateOpen, setIsDialogCreateOpen] = useState(false);
   const [isDialogDeleteOpen, setIsDialogDeleteOpen] = useState({
     isOpen: false,
     role: {
@@ -266,61 +254,6 @@ export const Roles = () => {
   });
   const optionListCustom = { filter: false };
 
-  // handle form submission
-  const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
-    try {
-      const isRoleAvailable = data.roleList.some(
-        ({ name }: { name: string }) => name === dataForm.name
-      );
-
-      // if the role has been added already
-      // then display an error
-      if (isRoleAvailable) {
-        enqueueSnackbar(
-          <SnackbarText>
-            <strong>{dataForm.name}</strong> role has been added already
-          </SnackbarText>,
-          {
-            persist: true,
-            variant: "error",
-          }
-        );
-        return;
-      }
-
-      // update database
-      await trigger({ body: dataForm, method: "POST" });
-      // emit shift update
-      socket.emit("req-role-create", {
-        dataForm,
-      });
-
-      reset(defaultValues);
-      enqueueSnackbar(
-        <SnackbarText>
-          <strong>{dataForm.name}</strong> role has been created
-        </SnackbarText>,
-        {
-          variant: "success",
-        }
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        enqueueSnackbar(
-          <SnackbarText>
-            <strong>{error.message}</strong>
-          </SnackbarText>,
-          {
-            persist: true,
-            variant: "error",
-          }
-        );
-      }
-
-      throw error;
-    }
-  };
-
   return (
     <>
       <Hero
@@ -338,52 +271,33 @@ export const Roles = () => {
         text="Roles"
       />
       <Container component="main">
-        <DataTable
-          columnList={columnList}
-          dataTable={dataTable}
-          optionListCustom={optionListCustom}
-        />
-        <Card>
-          <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-            <CardContent>
-              <Controller
-                control={control}
-                name="name"
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    autoComplete="off"
-                    disabled={isMutating}
-                    fullWidth
-                    label="Name"
-                    required
-                    variant="standard"
-                  />
-                )}
-              />
-            </CardContent>
-            <CardActions
-              sx={{
-                justifyContent: "flex-end",
-                pb: 2,
-                pt: 0,
-                pr: 2,
+        <Box component="section">
+          <Stack direction="row" justifyContent="flex-end" sx={{ mb: 2 }}>
+            <Button
+              onClick={() => {
+                setIsDialogCreateOpen(true);
               }}
+              startIcon={<AddIcon />}
+              type="button"
+              variant="contained"
             >
-              <Button
-                disabled={isMutating}
-                startIcon={
-                  isMutating ? <CircularProgress size="sm" /> : <AddIcon />
-                }
-                type="submit"
-                variant="contained"
-              >
-                Create role
-              </Button>
-            </CardActions>
-          </form>
-        </Card>
+              Create
+            </Button>
+          </Stack>
+          <DataTable
+            columnList={columnList}
+            dataTable={dataTable}
+            optionListCustom={optionListCustom}
+          />
+        </Box>
       </Container>
+
+      {/* create dialog */}
+      <RolesDialogCreate
+        handleDialogCreateClose={() => setIsDialogCreateOpen(false)}
+        isDialogCreateOpen={isDialogCreateOpen}
+        roleList={data.roleList}
+      />
 
       {/* delete dialog */}
       <RolesDialogDelete
