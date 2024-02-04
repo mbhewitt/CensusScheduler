@@ -17,7 +17,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     // get - get all shift volunteers
     case "GET": {
       const { shiftId } = req.query;
-      const [dataDb] = await pool.query<RowDataPacket[]>(
+      const [dataDbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT date, datename, details, end_time, free_slots, noshow, playa_name, position, role, s.shift_position_id, shift, shiftboard_id, shortname, start_time, total_slots, world_name
         FROM op_shifts AS s
         JOIN op_volunteer_shifts AS vs
@@ -28,9 +28,9 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         ORDER BY playa_name, world_name`,
         [shiftId]
       );
-      const shiftVolunteerFirst = dataDb[0];
+      const shiftVolunteerItem = dataDbShiftVolunteerList[0];
       const positionMap: { [key: string]: string } = {};
-      const positionList = dataDb
+      const positionList = dataDbShiftVolunteerList
         .reduce(
           (
             positionTotal: IDataPositionItem[],
@@ -68,7 +68,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             Number(a.position > b.position) - Number(a.position < b.position)
         );
 
-      const shiftVolunteerList = dataDb.reduce(
+      const shiftVolunteerList = dataDbShiftVolunteerList.reduce(
         (
           volunteerTotal,
           {
@@ -97,17 +97,17 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       );
 
       return res.status(200).json({
-        date: new Date(shiftVolunteerFirst.date).toLocaleDateString("en-US", {
+        date: new Date(shiftVolunteerItem.date).toLocaleDateString("en-US", {
           month: "short",
           day: "2-digit",
         }),
-        dateName: shiftVolunteerFirst.datename,
-        endTime: shiftVolunteerFirst.end_time,
+        dateName: shiftVolunteerItem.datename,
+        endTime: shiftVolunteerItem.end_time,
         positionList,
-        shift: shiftVolunteerFirst.shift,
+        shift: shiftVolunteerItem.shift,
         shiftVolunteerList,
-        shortName: shiftVolunteerFirst.shortname,
-        startTime: shiftVolunteerFirst.start_time,
+        shortName: shiftVolunteerItem.shortname,
+        startTime: shiftVolunteerItem.start_time,
       });
     }
     // post - add a volunteer to a shift

@@ -43,13 +43,13 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
       // if adding a shift to a volunteer
       // then get all shifts and positions
       if (filter === "positions") {
-        const [dataDb] = await pool.query<RowDataPacket[]>(
+        const [dataDbShiftList] = await pool.query<RowDataPacket[]>(
           `SELECT date, datename, details, end_time, free_slots, position, role, shift_id, shift_position_id, shift, shortname, start_time, total_slots
           FROM op_shifts
           WHERE delete_shift=false AND off_playa=false
           ORDER BY start_time`
         );
-        const shiftList = dataDb.reduce(
+        const shiftList = dataDbShiftList.reduce(
           (
             rowList: IDataShiftPositionListItem[],
             rowItem: IDataDbShiftPositionListItem | RowDataPacket
@@ -102,13 +102,13 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       // get all shifts
-      const [dataDb] = await pool.query<RowDataPacket[]>(
+      const [dataDbShiftList] = await pool.query<RowDataPacket[]>(
         `SELECT category, date, datename, free_slots, shift_id, shift, shortname, total_slots, year
         FROM op_shifts
         WHERE delete_shift=false AND off_playa=false
         ORDER BY start_time`
       );
-      const shiftList = dataDb.reduce(
+      const shiftList = dataDbShiftList.reduce(
         (
           rowList: IDataShiftItem[],
           rowItem: IDataDbShiftItem | RowDataPacket

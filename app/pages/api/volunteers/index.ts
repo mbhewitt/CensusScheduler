@@ -162,6 +162,59 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         dataVolunteerList,
       });
     }
+    // create volunteer account
+    case "POST": {
+      const {
+        email,
+        emergencyContact,
+        location,
+        passcodeCreate,
+        phone,
+        playaName,
+        worldName,
+      } = JSON.parse(req.body);
+      const generateShiftboardId = () =>
+        Math.floor(Math.random() * 1000000 + 1);
+      const insertAccount = async (): Promise<IVolunteerAccount> => {
+        const shiftboardIdRandom = generateShiftboardId();
+        const [dataDbVolunteerList] = await pool.query<RowDataPacket[]>(
+          `SELECT shiftboard_id
+          FROM op_volunteers
+          WHERE shiftboard_id=${shiftboardIdRandom}`
+        );
+
+        // if shiftboard ID exists already
+        // then execute function recursively
+        if (dataDbVolunteerList.length > 0) {
+          return insertAccount();
+        }
+        await pool.query<RowDataPacket[]>(
+          `INSERT IGNORE INTO op_volunteers (email, emergency_contact, location, new_account, passcode, phone, playa_name, shiftboard_id, world_name)
+          VALUES (?, ?, ?, 1, ?, ?, ?, ?, ?)`,
+          [
+            email,
+            emergencyContact,
+            location,
+            passcodeCreate,
+            phone,
+            playaName,
+            shiftboardIdRandom,
+            worldName,
+          ]
+        );
+
+        return {
+          email,
+          isCoreCrew: false,
+          playaName,
+          shiftboardId: shiftboardIdRandom,
+          worldName,
+        };
+      };
+      const account = await insertAccount();
+
+      return res.status(200).json(account);
+    }
     // patch
     case "PATCH": {
       const { update } = req.query;
@@ -216,59 +269,6 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         statusCode: 200,
         message: "Success",
       });
-    }
-    // create volunteer account
-    case "POST": {
-      const {
-        email,
-        emergencyContact,
-        location,
-        passcodeCreate,
-        phone,
-        playaName,
-        worldName,
-      } = JSON.parse(req.body);
-      const generateShiftboardId = () =>
-        Math.floor(Math.random() * 1000000 + 1);
-      const insertAccount = async (): Promise<IVolunteerAccount> => {
-        const shiftboardIdRandom = generateShiftboardId();
-        const [dataDb] = await pool.query<RowDataPacket[]>(
-          `SELECT shiftboard_id
-          FROM op_volunteers
-          WHERE shiftboard_id=${shiftboardIdRandom}`
-        );
-
-        // if shiftboard ID exists already
-        // then execute function recursively
-        if (dataDb.length > 0) {
-          return insertAccount();
-        }
-        await pool.query<RowDataPacket[]>(
-          `INSERT IGNORE INTO op_volunteers (email, emergency_contact, location, new_account, passcode, phone, playa_name, shiftboard_id, world_name)
-          VALUES (?, ?, ?, 1, ?, ?, ?, ?, ?)`,
-          [
-            email,
-            emergencyContact,
-            location,
-            passcodeCreate,
-            phone,
-            playaName,
-            shiftboardIdRandom,
-            worldName,
-          ]
-        );
-
-        return {
-          email,
-          isCoreCrew: false,
-          playaName,
-          shiftboardId: shiftboardIdRandom,
-          worldName,
-        };
-      };
-      const account = await insertAccount();
-
-      return res.status(200).json(account);
     }
 
     // default - send an error message

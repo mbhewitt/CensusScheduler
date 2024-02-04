@@ -108,31 +108,6 @@ export const ShiftVolunteers = () => {
         await fetch("/api/socket");
 
         socket.on(
-          "res-check-in",
-          ({
-            checked,
-            shiftboardId,
-          }: {
-            checked: boolean;
-            shiftboardId: number | string;
-          }) => {
-            if (dataShiftVolunteerList) {
-              const dataMutate = structuredClone(dataShiftVolunteerList);
-              const shiftboardIdNum = Number(shiftboardId);
-              const shiftVolunteerItemUpdate =
-                dataMutate.shiftVolunteerList.find(
-                  (volunteerItem: IDataShiftVolunteerItem) =>
-                    volunteerItem.shiftboardId === shiftboardIdNum
-                );
-              if (shiftVolunteerItemUpdate) {
-                shiftVolunteerItemUpdate.noShow = checked ? "" : "Yes";
-              }
-
-              mutateShiftVolunteerList(dataMutate);
-            }
-          }
-        );
-        socket.on(
           "res-shift-volunteer-add",
           ({
             noShow,
@@ -152,6 +127,31 @@ export const ShiftVolunteers = () => {
                 shiftboardId,
                 worldName,
               });
+
+              mutateShiftVolunteerList(dataMutate);
+            }
+          }
+        );
+        socket.on(
+          "res-check-in-toggle",
+          ({
+            checked,
+            shiftboardId,
+          }: {
+            checked: boolean;
+            shiftboardId: number | string;
+          }) => {
+            if (dataShiftVolunteerList) {
+              const dataMutate = structuredClone(dataShiftVolunteerList);
+              const shiftboardIdNum = Number(shiftboardId);
+              const shiftVolunteerItemUpdate =
+                dataMutate.shiftVolunteerList.find(
+                  (volunteerItem: IDataShiftVolunteerItem) =>
+                    volunteerItem.shiftboardId === shiftboardIdNum
+                );
+              if (shiftVolunteerItemUpdate) {
+                shiftVolunteerItemUpdate.noShow = checked ? "" : "Yes";
+              }
 
               mutateShiftVolunteerList(dataMutate);
             }
@@ -190,7 +190,8 @@ export const ShiftVolunteers = () => {
   if (errorShiftVolunteerList) return <ErrorPage />;
   if (!dataShiftVolunteerList) return <Loading />;
 
-  const handleOnChange = async ({
+  // handle check in toggle
+  const handleCheckInToggle = async ({
     checked,
     playaName,
     position,
@@ -207,7 +208,7 @@ export const ShiftVolunteers = () => {
         },
         method: "PATCH",
       });
-      socket.emit("req-check-in", {
+      socket.emit("req-check-in-toggle", {
         checked,
         shiftboardId,
         shiftPositionId,
@@ -317,7 +318,7 @@ export const ShiftVolunteers = () => {
           checked={noShow === ""}
           disabled={!isCheckInAvailable}
           onChange={(event) =>
-            handleOnChange({
+            handleCheckInToggle({
               checked: event.target.checked,
               playaName,
               position,

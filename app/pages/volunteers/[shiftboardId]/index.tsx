@@ -5,7 +5,7 @@ import { SignIn } from "src/components/sign-in";
 import { VolunteerAccount } from "src/components/volunteers/VolunteerAccount";
 import { SessionContext } from "src/state/session/context";
 
-const VolunteersPage = () => {
+const VolunteerAccountPage = () => {
   const {
     sessionState: {
       settings: { isAuthenticated },
@@ -24,4 +24,4 @@ const VolunteersPage = () => {
   );
 };
 
-export default VolunteersPage;
+export default VolunteerAccountPage;

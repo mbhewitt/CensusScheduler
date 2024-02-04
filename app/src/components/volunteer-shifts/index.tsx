@@ -99,30 +99,6 @@ export const VolunteerShifts = () => {
         await fetch("/api/socket");
 
         socket.on(
-          "res-check-in",
-          ({
-            checked,
-            shiftPositionId,
-          }: {
-            checked: boolean;
-            shiftPositionId: string;
-          }) => {
-            if (data) {
-              const dataMutate = structuredClone(data);
-              const volunteerShiftItemUpdate =
-                dataMutate.volunteerShiftList.find(
-                  (volunteerShiftItem: IDataVolunteerShiftItem) =>
-                    volunteerShiftItem.shiftPositionId === shiftPositionId
-                );
-              if (volunteerShiftItemUpdate) {
-                volunteerShiftItemUpdate.noShow = checked ? "" : "Yes";
-              }
-
-              mutate(dataMutate);
-            }
-          }
-        );
-        socket.on(
           "res-shift-volunteer-add",
           ({
             date,
@@ -148,6 +124,30 @@ export const VolunteerShifts = () => {
                 shiftPositionId,
                 startTime,
               });
+
+              mutate(dataMutate);
+            }
+          }
+        );
+        socket.on(
+          "res-check-in-toggle",
+          ({
+            checked,
+            shiftPositionId,
+          }: {
+            checked: boolean;
+            shiftPositionId: string;
+          }) => {
+            if (data) {
+              const dataMutate = structuredClone(data);
+              const volunteerShiftItemUpdate =
+                dataMutate.volunteerShiftList.find(
+                  (volunteerShiftItem: IDataVolunteerShiftItem) =>
+                    volunteerShiftItem.shiftPositionId === shiftPositionId
+                );
+              if (volunteerShiftItemUpdate) {
+                volunteerShiftItemUpdate.noShow = checked ? "" : "Yes";
+              }
 
               mutate(dataMutate);
             }
@@ -201,7 +201,8 @@ export const VolunteerShifts = () => {
   if (!data) return <Loading />;
 
   const { playaName, worldName } = data;
-  const handleOnChange = async ({
+  // handle check in toggle
+  const handleCheckInToggle = async ({
     checked,
     position,
     shiftPositionId,
@@ -215,7 +216,7 @@ export const VolunteerShifts = () => {
         },
         method: "PATCH",
       });
-      socket.emit("req-check-in", {
+      socket.emit("req-check-in-toggle", {
         checked,
         shiftboardId,
         shiftPositionId,
@@ -356,7 +357,7 @@ export const VolunteerShifts = () => {
           checked={noShow === ""}
           disabled={!isCheckInAvailable}
           onChange={(event) =>
-            handleOnChange({
+            handleCheckInToggle({
               checked: event.target.checked,
               position,
               shiftPositionId,

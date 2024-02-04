@@ -341,7 +341,7 @@ export const ShiftVolunteersDialogAdd = ({
             trainingItem.shiftPositionId === dataForm.trainingPositionId
         ) ?? undefined;
       let noShowTraining: string | undefined;
-      let volunteerTrainingAvailable: boolean | undefined;
+      let isVolunteerTrainingAvailable: boolean | undefined;
 
       // evaluate the check-in type and value for training
       if (trainingAdd) {
@@ -367,12 +367,12 @@ export const ShiftVolunteersDialogAdd = ({
       }
 
       // check if the volunteer has been added already
-      const volunteerSlotAvailable = !shiftVolunteerList.some(
+      const isVolunteerSlotAvailable = !shiftVolunteerList.some(
         (volunteer) =>
           volunteer.shiftboardId === Number(dataForm.volunteer?.shiftboardId)
       );
       // check if there are any shift or training time conflicts
-      const volunteerShiftAvailable =
+      const isVolunteerShiftAvailable =
         !dataVolunteerShiftList.volunteerShiftList.some(
           (volunteerShiftItem: IDataVolunteerShiftItem) =>
             dayjs(startTime).isBetween(
@@ -383,7 +383,7 @@ export const ShiftVolunteersDialogAdd = ({
             )
         );
       if (trainingAdd) {
-        volunteerTrainingAvailable =
+        isVolunteerTrainingAvailable =
           !dataVolunteerShiftList.volunteerShiftList.some(
             (volunteerShiftItem: IDataVolunteerShiftItem) =>
               dayjs(trainingAdd.startTime).isBetween(
@@ -395,8 +395,9 @@ export const ShiftVolunteersDialogAdd = ({
           );
       }
 
-      // if the volunteer has been added already, display an error
-      if (!volunteerSlotAvailable) {
+      // if the volunteer has been added already
+      // then display an error
+      if (!isVolunteerSlotAvailable) {
         enqueueSnackbar(
           <SnackbarText>
             <strong>
@@ -412,8 +413,9 @@ export const ShiftVolunteersDialogAdd = ({
         );
         return;
       }
-      // if there's a shift time conflict and a volunteer is signed in, display an error
-      if (!volunteerShiftAvailable && isAuthenticated && !isCoreCrew) {
+      // if there's a shift time conflict and a volunteer is signed in
+      // then display an error
+      if (!isVolunteerShiftAvailable && isAuthenticated && !isCoreCrew) {
         enqueueSnackbar(
           <SnackbarText>
             <strong>Shift time conflict</strong>
@@ -425,9 +427,10 @@ export const ShiftVolunteersDialogAdd = ({
         );
         return;
       }
-      // if there's a training time conflict and a volunteer is signed in, display an error
+      // if there's a training time conflict and a volunteer is signed in
+      // then display an error
       if (
-        volunteerTrainingAvailable === false &&
+        isVolunteerTrainingAvailable === false &&
         isAuthenticated &&
         !isCoreCrew
       ) {
@@ -442,8 +445,9 @@ export const ShiftVolunteersDialogAdd = ({
         );
         return;
       }
-      // if there's a shift time conflict and an admin is signed in, display a warning
-      if (!volunteerShiftAvailable && isAuthenticated && isCoreCrew) {
+      // if there's a shift time conflict and an admin is signed in
+      // then display a warning
+      if (!isVolunteerShiftAvailable && isAuthenticated && isCoreCrew) {
         enqueueSnackbar(
           <SnackbarText>
             <strong>
@@ -458,7 +462,7 @@ export const ShiftVolunteersDialogAdd = ({
           }
         );
       } else if (
-        volunteerTrainingAvailable === false &&
+        isVolunteerTrainingAvailable === false &&
         isAuthenticated &&
         isCoreCrew
       ) {
@@ -492,8 +496,8 @@ export const ShiftVolunteersDialogAdd = ({
 
       // add shift position
       if (
-        (volunteerSlotAvailable && volunteerShiftAvailable) ||
-        (!volunteerShiftAvailable && isAuthenticated && isCoreCrew)
+        (isVolunteerSlotAvailable && isVolunteerShiftAvailable) ||
+        (!isVolunteerShiftAvailable && isAuthenticated && isCoreCrew)
       ) {
         // update database
         await trigger({
@@ -651,7 +655,8 @@ export const ShiftVolunteersDialogAdd = ({
 
                         field.onChange(positionSelected);
                         positionList.forEach((positionItem) => {
-                          // if there are less than or equal to zero slots available, display warning notification
+                          // if there are less than or equal to zero slots available
+                          // then display warning notification
                           if (
                             positionItem.shiftPositionId === positionSelected &&
                             positionItem.freeSlots <= 0

@@ -14,7 +14,7 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
     // get - get all volunteer shifts
     case "GET": {
       const { shiftboardId } = req.query;
-      const [dataDb] = await pool.query<RowDataPacket[]>(
+      const [dataDbVolunteerShiftList] = await pool.query<RowDataPacket[]>(
         `SELECT date, datename, end_time, noshow, playa_name, position, s.shift_position_id, shift_id, shift, start_time, world_name
         FROM op_shifts AS s
         JOIN op_volunteer_shifts AS vs
@@ -25,13 +25,13 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
         ORDER BY start_time`,
         [shiftboardId]
       );
-      let [volunteerShiftFirst] = dataDb;
+      let [volunteerShiftItem] = dataDbVolunteerShiftList;
       let volunteerShiftList: IDataVolunteerShiftItem[] = [];
 
       // if a volunteer shift is found
       // then prepare volunteer shift list
-      if (volunteerShiftFirst) {
-        volunteerShiftList = dataDb.map(
+      if (volunteerShiftItem) {
+        volunteerShiftList = dataDbVolunteerShiftList.map(
           ({
             date,
             datename,
@@ -59,20 +59,20 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
         );
         // else send volunteer information
       } else {
-        const [dataDb] = await pool.query<RowDataPacket[]>(
+        const [dataDbVolunteerShiftList] = await pool.query<RowDataPacket[]>(
           `SELECT playa_name, world_name
           FROM op_volunteers
           WHERE shiftboard_id=?`,
           [shiftboardId]
         );
 
-        [volunteerShiftFirst] = dataDb;
+        [volunteerShiftItem] = dataDbVolunteerShiftList;
       }
 
       return res.status(200).json({
-        playaName: volunteerShiftFirst.playa_name,
+        playaName: volunteerShiftItem.playa_name,
         volunteerShiftList,
-        worldName: volunteerShiftFirst.world_name,
+        worldName: volunteerShiftItem.world_name,
       });
     }
     // post - add a volunteer to a shift

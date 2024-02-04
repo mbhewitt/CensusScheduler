@@ -1,4 +1,7 @@
-import { SpeakerNotes, SpeakerNotesOff } from "@mui/icons-material";
+import {
+  SpeakerNotes as SpeakerNotesIcon,
+  SpeakerNotesOff as SpeakerNotesOffIcon,
+} from "@mui/icons-material";
 import { Chip, Container, Typography } from "@mui/material";
 import { green, grey, red } from "@mui/material/colors";
 import { FilterType } from "mui-datatables";
@@ -190,9 +193,9 @@ export const Volunteers = () => {
           <Typography sx={{ color: grey[500], fontSize: "14px" }}>0</Typography>
         ),
         isNotes ? (
-          <SpeakerNotes color="primary" />
+          <SpeakerNotesIcon color="primary" />
         ) : (
-          <SpeakerNotesOff color="disabled" />
+          <SpeakerNotesOffIcon color="disabled" />
         ),
       ];
     }

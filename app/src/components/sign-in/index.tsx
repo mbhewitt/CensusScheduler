@@ -143,7 +143,6 @@ export const SignIn = () => {
       />
       <Container component="main">
         <Card
-          elevation={0}
           sx={{
             margin: "auto",
             width: theme.spacing(50),
