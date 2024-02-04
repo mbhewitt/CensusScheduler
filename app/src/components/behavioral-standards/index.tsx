@@ -485,7 +485,7 @@ export const BehavioralStandards = () => {
                 onClick={handleDecline}
                 startIcon={
                   isMutating ? (
-                    <CircularProgress size="sm" />
+                    <CircularProgress size="1rem" />
                   ) : (
                     <NotInterestedIcon />
                   )
@@ -499,7 +499,7 @@ export const BehavioralStandards = () => {
                 disabled={isMutating || !isSigned}
                 onClick={handleSign}
                 startIcon={
-                  isMutating ? <CircularProgress size="sm" /> : <CheckIcon />
+                  isMutating ? <CircularProgress size="1rem" /> : <CheckIcon />
                 }
                 type="button"
                 variant="contained"

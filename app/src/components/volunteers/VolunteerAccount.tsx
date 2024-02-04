@@ -346,7 +346,7 @@ export const VolunteerAccount = () => {
                 <Button
                   disabled={isMutating}
                   startIcon={
-                    isMutating ? <CircularProgress size="sm" /> : <SendIcon />
+                    isMutating ? <CircularProgress size="1rem" /> : <SendIcon />
                   }
                   type="submit"
                   variant="contained"
@@ -423,7 +423,7 @@ export const VolunteerAccount = () => {
                           disabled={isMutating}
                           startIcon={
                             isMutating ? (
-                              <CircularProgress size="sm" />
+                              <CircularProgress size="1rem" />
                             ) : (
                               <SendIcon />
                             )

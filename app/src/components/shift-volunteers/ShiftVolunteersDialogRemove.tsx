@@ -119,7 +119,11 @@ export const ShiftVolunteersDialogRemove = ({
             disabled={isMutating}
             onClick={handleVolunteerRemove}
             startIcon={
-              isMutating ? <CircularProgress size="sm" /> : <PersonRemoveIcon />
+              isMutating ? (
+                <CircularProgress size="1rem" />
+              ) : (
+                <PersonRemoveIcon />
+              )
             }
             type="submit"
             variant="contained"

@@ -233,7 +233,7 @@ export const SignIn = () => {
                 }}
                 startIcon={
                   isMutating ? (
-                    <CircularProgress size="sm" />
+                    <CircularProgress size="1rem" />
                   ) : (
                     <PersonAddIcon />
                   )
@@ -246,7 +246,7 @@ export const SignIn = () => {
               <Button
                 disabled={isMutating}
                 startIcon={
-                  isMutating ? <CircularProgress size="sm" /> : <LoginIcon />
+                  isMutating ? <CircularProgress size="1rem" /> : <LoginIcon />
                 }
                 type="submit"
                 variant="contained"
