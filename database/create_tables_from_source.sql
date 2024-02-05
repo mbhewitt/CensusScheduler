@@ -110,3 +110,16 @@ create table op_messages (timestamp timestamp DEFAULT CURRENT_TIMESTAMP ON UPDAT
    row_id bigint auto_increment not null, primary key(row_id));
 
 
+create table op_shift_category (
+   category varchar(128),shift_category varchar(128),shift_category_id bigint auto_increment not null, 
+   create_category bool, delete_category bool, update_category bool,
+   primary key (shift_category_id), key(category),unique(shift_category));
+
+create table op_shift_name (
+   core bool, off_playa bool, shift_category_id bigint, shift_name_id bigint auto_increment not null,
+   details longtext, shortname varchar(64),
+   create_shift bool, delete_shift bool, update_category bool,
+   foreign key (shift_category_id) references op_shift_category(shift_category_id),
+   primary key (shift_name_id));
+    
+
