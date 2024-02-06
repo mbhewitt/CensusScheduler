@@ -2,7 +2,15 @@ import {
   SpeakerNotes as SpeakerNotesIcon,
   SpeakerNotesOff as SpeakerNotesOffIcon,
 } from "@mui/icons-material";
-import { Chip, Container, Typography } from "@mui/material";
+import {
+  Box,
+  Chip,
+  Container,
+  Divider,
+  Stack,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { green, grey, red } from "@mui/material/colors";
 import { FilterType } from "mui-datatables";
 import Image from "next/image";
@@ -43,6 +51,7 @@ const sortCompareShiftCount = (order: string) => {
 export const Volunteers = () => {
   const { data, error } = useSWR("/api/volunteers", fetcherGet);
   const router = useRouter();
+  const theme = useTheme();
 
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
@@ -231,11 +240,35 @@ export const Volunteers = () => {
         text="Volunteers"
       />
       <Container component="main">
-        <DataTable
-          columnList={columnList}
-          dataTable={dataTable}
-          optionListCustom={optionListCustom}
-        />
+        <Box component="section">
+          <Stack direction="row" sx={{ mb: 2 }}>
+            <Typography component="p" variant="h6">
+              Att.
+              <br />
+              Abs.
+              <br />
+              Rem.
+            </Typography>
+            <Divider
+              flexItem
+              orientation="vertical"
+              sx={{ marginX: theme.spacing(2) }}
+              variant="middle"
+            />
+            <Typography component="p" variant="h6">
+              Attended
+              <br />
+              Absent
+              <br />
+              Remaining
+            </Typography>
+          </Stack>
+          <DataTable
+            columnList={columnList}
+            dataTable={dataTable}
+            optionListCustom={optionListCustom}
+          />
+        </Box>
       </Container>
     </>
   );
