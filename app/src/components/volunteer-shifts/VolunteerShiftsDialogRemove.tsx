@@ -113,7 +113,7 @@ export const VolunteerShiftsDialogRemove = ({
             disabled={isMutating}
             onClick={handleVolunteerRemove}
             startIcon={
-              isMutating ? <CircularProgress size="sm" /> : <EventBusyIcon />
+              isMutating ? <CircularProgress size="1rem" /> : <EventBusyIcon />
             }
             type="submit"
             variant="contained"

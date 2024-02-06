@@ -754,7 +754,11 @@ export const ShiftVolunteersDialogAdd = ({
             <Button
               disabled={isMutating}
               startIcon={
-                isMutating ? <CircularProgress size="sm" /> : <PersonAddIcon />
+                isMutating ? (
+                  <CircularProgress size="1rem" />
+                ) : (
+                  <PersonAddIcon />
+                )
               }
               type="submit"
               variant="contained"

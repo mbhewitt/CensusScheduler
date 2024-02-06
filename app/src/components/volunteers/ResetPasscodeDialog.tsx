@@ -180,7 +180,11 @@ export const ResetPasscodeDialog = ({
             <Button
               disabled={isMutating}
               startIcon={
-                isMutating ? <CircularProgress size="sm" /> : <LockResetIcon />
+                isMutating ? (
+                  <CircularProgress size="1rem" />
+                ) : (
+                  <LockResetIcon />
+                )
               }
               type="submit"
               variant="contained"

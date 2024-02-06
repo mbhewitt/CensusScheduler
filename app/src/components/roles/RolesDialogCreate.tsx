@@ -131,7 +131,7 @@ export const RolesDialogCreate = ({
             <Button
               disabled={isMutating}
               startIcon={
-                isMutating ? <CircularProgress size="sm" /> : <AddIcon />
+                isMutating ? <CircularProgress size="1rem" /> : <AddIcon />
               }
               type="submit"
               variant="contained"

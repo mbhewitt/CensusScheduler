@@ -771,7 +771,7 @@ export const VolunteerShiftsDialogAdd = ({
               disabled={isMutating}
               startIcon={
                 isMutating ? (
-                  <CircularProgress size="sm" />
+                  <CircularProgress size="1rem" />
                 ) : (
                   <EventAvailableIcon />
                 )

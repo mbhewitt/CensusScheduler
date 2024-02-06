@@ -276,7 +276,7 @@ export const Contact = () => {
               <Button
                 disabled={isMutating}
                 startIcon={
-                  isMutating ? <CircularProgress size="sm" /> : <SendIcon />
+                  isMutating ? <CircularProgress size="1rem" /> : <SendIcon />
                 }
                 type="submit"
                 variant="contained"

@@ -105,7 +105,7 @@ export const RolesDialogDelete = ({
             disabled={isMutating}
             onClick={handleRoleDelete}
             startIcon={
-              isMutating ? <CircularProgress size="sm" /> : <DeleteIcon />
+              isMutating ? <CircularProgress size="1rem" /> : <DeleteIcon />
             }
             type="submit"
             variant="contained"
