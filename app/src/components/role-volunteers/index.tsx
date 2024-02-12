@@ -32,6 +32,7 @@ import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
+import { RoleVolunteersDialogAdd } from "src/components/role-volunteers/RoleVolunteersDialogAdd";
 import { RoleVolunteersDialogRemove } from "src/components/role-volunteers/RoleVolunteersDialogRemove";
 import { fetcherGet } from "src/utils/fetcher";
 
@@ -46,9 +47,9 @@ const socket = io();
 export const RoleVolunteers = () => {
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
-  const { roleName } = router.query;
+  const { roleName: roleNameQuery } = router.query;
   const { data, error, mutate } = useSWR(
-    isMounted ? `/api/roles/${encodeURI(roleName as string)}` : null,
+    isMounted ? `/api/roles/${encodeURI(roleNameQuery as string)}` : null,
     fetcherGet
   );
   const [isDialogAddOpen, setIsDialogAddOpen] = useState(false);
@@ -75,6 +76,22 @@ export const RoleVolunteers = () => {
       try {
         await fetch("/api/socket");
 
+        socket.on(
+          "res-role-volunteer-add",
+          ({ playaName, roleName, shiftboardId, worldName }) => {
+            if (data && roleName === roleNameQuery) {
+              const dataMutate = structuredClone(data);
+              dataMutate.dataRoleVolunteerList.push({
+                playaName,
+                roleName,
+                shiftboardId,
+                worldName,
+              });
+
+              mutate(dataMutate);
+            }
+          }
+        );
         socket.on("res-role-volunteer-remove", ({ shiftboardId }) => {
           if (data) {
             const dataMutate = structuredClone(data);
@@ -104,7 +121,7 @@ export const RoleVolunteers = () => {
         throw error;
       }
     })();
-  }, [data, enqueueSnackbar, mutate]);
+  }, [data, enqueueSnackbar, mutate, roleNameQuery]);
 
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
@@ -228,7 +245,7 @@ export const RoleVolunteers = () => {
           >
             <Box>
               <Typography component="h2" variant="h4">
-                {roleName}
+                {roleNameQuery}
               </Typography>
             </Box>
             <Button
@@ -249,6 +266,14 @@ export const RoleVolunteers = () => {
           />
         </Box>
       </Container>
+
+      {/* add dialog */}
+      <RoleVolunteersDialogAdd
+        handleDialogAddClose={() => setIsDialogAddOpen(false)}
+        isDialogAddOpen={isDialogAddOpen}
+        roleName={roleNameQuery as string}
+        roleVolunteerList={data.dataRoleVolunteerList}
+      />
 
       {/* remove dialog */}
       <RoleVolunteersDialogRemove

@@ -32,6 +32,39 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         dataRoleVolunteerList,
       });
     }
+    // post - add role volunteer
+    case "POST": {
+      const { shiftboardId } = JSON.parse(req.body);
+      const [dataDbRoleVolunteerList] = await pool.query<RowDataPacket[]>(
+        `SELECT *
+        FROM op_volunteer_roles
+        WHERE roles=? AND shiftboard_id=?`,
+        [roleName, shiftboardId]
+      );
+      const dataDbRoleVolunteerItem = dataDbRoleVolunteerList[0];
+
+      // if role volunteer row exists
+      // then update role volunteer row
+      if (dataDbRoleVolunteerItem) {
+        await pool.query<RowDataPacket[]>(
+          `UPDATE op_volunteer_roles
+          SET add_role=1, delete_role=0
+          WHERE roles=? AND shiftboard_id=?`,
+          [roleName, shiftboardId]
+        );
+        // else insert role volunteer row
+      } else {
+        await pool.query(
+          "INSERT INTO op_volunteer_roles (add_role, delete_role, roles, shiftboard_id) VALUES (1, 0, ?, ?)",
+          [roleName, shiftboardId]
+        );
+      }
+
+      return res.status(200).json({
+        statusCode: 200,
+        message: "Success",
+      });
+    }
     // delete - remove role volunteer
     case "DELETE": {
       const { shiftboardId } = JSON.parse(req.body);
