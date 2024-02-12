@@ -83,43 +83,94 @@ insert into op_volunteer_roles (shiftboard_id,roles) (
 
 insert into op_volunteer_roles (shiftboard_id,roles) (
    select shiftboard_id,'Admin' from shiftboard_rinfo2 r where r.roles like '%Core Crew%' or r.roles like '%Lead%' or r.roles like '%Training%');
+###need to modify op_volunteer_roles to use role_id
 
 drop table if exists op_roles;
-create table op_roles (roles varchar(50) not null, create_role boolean default false, delete_role boolean default false, display boolean default true, primary key(roles));
+create table op_roles (
+   role varchar(128) not null, create_role boolean default false, delete_role boolean default false, display boolean default true,
+   role_id bigint auto_increment not null, 
+   primary key(role_id),key(role));
 
-insert into op_roles (roles,display) select role,display from shiftboard_roles;
-insert ignore into op_roles (roles) select distinct roles from op_volunteer_roles;
+insert into op_roles (role,display) select role,display from shiftboard_roles;
+insert ignore into op_roles (role) select distinct roles from op_volunteer_roles;
 
 drop table if exists op_volunteer_shifts;
-create table op_volunteer_shifts (
-   select distinct concat(date,event_code,subject) shift_position_id, shiftboard_id,id shiftboard_shift_id, 
-         case when noshow='' and date>=now() then 'X' else noshow end noshow
-         from shiftboard2 where left(date,4)=left(date_sub(now(),interval 5 month),4)
+create table op_volenteer_shifts (
+   shift_position_id bigint,shift_time_id bigint,shiftboard_id bigint not null, shiftboard_shift_id bigint not null,
+   noshow varchar(5), volunteer_shift_id bigint auto_increment not null,
+   add_shift boolean default false,remove_shift boolean default false,update_shift boolean default false,
+   foreign key (shift_position_id) references op_shift_positions(shift_position_id),
+   foreign key (shift_time_id) references op_shift_times(shift_time_id),
+   foreign key (shiftboard_id) references op_volunteers(shiftboard_id),
+   primary key (volunteer_shift_id),
+   unique (shift_position_id,shift_time_id,shiftboard_shift_id), 
+   key (shift_position_id);
    );
-alter table op_volunteer_shifts 
-   modify shiftboard_shift_id bigint default 0, 
-   add add_shift boolean default false,
-   add remove_shift boolean default false,
-   add update_shift boolean default false,
-   add primary key (shiftboard_id,shift_position_id,shiftboard_shift_id), 
-   add key (shift_position_id);
+insert into op_volenteer_shifts (shift_position_id,shift_time_id,shiftboard_id,shiftboard_shift_id,noshow)
+   select distinct shift_position_id, shift_time_id, shiftboard_id,id shiftboard_shift_id, 
+         case when noshow='' and date>=now() then 'X' else noshow end noshow
+         from shiftboard2 s join op_shift_times t on (t.date=s.date and t.shift=s.shift and t.shift_name_id=v.shift_
+         where left(date,4)=left(date_sub(now(),interval 5 month),4)
+   );
 
 drop table if exists op_messages;
 create table op_messages (timestamp timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,name text,
    email text,`to` text,message longtext, wants_reply boolean default false, sent boolean default false, 
    row_id bigint auto_increment not null, primary key(row_id));
 
-
+drop table if exists op_shift_category;
 create table op_shift_category (
    category varchar(128),shift_category varchar(128),shift_category_id bigint auto_increment not null, 
-   create_category bool, delete_category bool, update_category bool,
+   create_category bool default false, delete_category bool default false, update_category bool default false,
    primary key (shift_category_id), key(category),unique(shift_category));
+insert into op_shift_category (category,shift_category) 
+   (select distinct category, shift_category from subject_category);
 
+drop table if exists op_shift_name;
 create table op_shift_name (
    core bool, off_playa bool, shift_category_id bigint, shift_name_id bigint auto_increment not null,
-   details longtext, shortname varchar(64),
-   create_shift bool, delete_shift bool, update_category bool,
+   shift_details longtext, shortname varchar(64),
+   create_shift bool default false, delete_shift bool default false, update_category bool default false,
    foreign key (shift_category_id) references op_shift_category(shift_category_id),
    primary key (shift_name_id));
+insert into op_shift_name (core,off_playa,shift_category_id,shift_details,shortname)
+   (select distinct core, off_playa,shift_category_id,'',shortname 
+      from subject_category s join op_shift_category c on (s.category=c.category)
+   ); 
     
+drop table if exists op_position_type;
+create table op_position_type (
+   position varchar(128), role_id bigint, lead bool,critical bool,position_category varchar(128), prerequisite_id bigint,
+   position_details longtext, position_type_id bigint auto_increment not null,
+   start_time_offset int default 0, end_time_offset int default 0,
+   create_position bool default false, delete_position bool default false, update_position bool default false,
+   foreign key (role_id) references op_roles(role_id),
+   foreign key (prerequisite_id) references op_shift_category(shift_category_id),
+   unique ( position),
+   primary key (position_type_id));
+insert into op_position_type (position, role_id, lead,critical,position_category, prerequisite_id, position_details)
+   (select distinct subject,role_id,lead,critical,RoleCategory,prerequisite_id,'' 
+      from subject_category c join shiftboard2 z on z.subject=c.subject 
+      join op_roles r on (c.role=r.role) 
+      join op_shift_category s on (c.SubCategoryPreReq=s.op_shift_category)
+   );
 
+drop table if exists op_shift_times;
+create table op_shift_times (
+   year varchar(4), datename varchar(64), date date, shift varchar(100),shift_name_id bigint, 
+   shift_instance varchar(64),start_time datetime, end_time datetime, notes longtext,
+   shift_time_id bigint auto_increment not null,
+   add_shift_time bool default false, remove_shift_time bool default false, update_shift_time bool default false,
+   foreign key (shift_name_id) references op_shift_name(shift_name_id),
+   primary key (shift_time_id));
+   
+drop table if exists op_shift_position;
+create table op_shift_position (
+   position_type_id bigint, shift_name_id bigint, total_slots int, wap_points int, 
+   shift_position_id bigint auto_increment not null,
+   add_shift_position bool default false, remove_shift_position bool default false, update_shift_position bool default false,
+   foreign key (position_type_id) references op_position_type(position_type),
+   foreign key (shift_name_id) references op_shift_name(shift_name_id),
+   primary key (shift_position_id));
+   
+   
