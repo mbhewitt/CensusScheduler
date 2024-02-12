@@ -1,4 +1,7 @@
-import { Add as AddIcon } from "@mui/icons-material";
+import {
+  Add as AddIcon,
+  HighlightOff as HighlightOffIcon,
+} from "@mui/icons-material";
 import {
   Button,
   CircularProgress,
@@ -128,6 +131,18 @@ export const RolesDialogCreate = ({
             )}
           />
           <DialogActions>
+            <Button
+              disabled={isMutating}
+              startIcon={<HighlightOffIcon />}
+              onClick={() => {
+                handleDialogCreateClose();
+                reset(defaultValues);
+              }}
+              type="button"
+              variant="outlined"
+            >
+              Cancel
+            </Button>
             <Button
               disabled={isMutating}
               startIcon={

@@ -1,4 +1,7 @@
-import { PersonAdd as PersonAddIcon } from "@mui/icons-material";
+import {
+  HighlightOff as HighlightOffIcon,
+  PersonAdd as PersonAddIcon,
+} from "@mui/icons-material";
 import {
   Autocomplete,
   Button,
@@ -181,6 +184,18 @@ export const RoleVolunteersDialogAdd = ({
             )}
           />
           <DialogActions>
+            <Button
+              disabled={isMutating}
+              startIcon={<HighlightOffIcon />}
+              onClick={() => {
+                handleDialogAddClose();
+                reset(defaultValues);
+              }}
+              type="button"
+              variant="outlined"
+            >
+              Cancel
+            </Button>
             <Button
               disabled={isMutating}
               startIcon={
