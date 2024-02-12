@@ -171,14 +171,12 @@ export const Roles = () => {
     {
       name: "Display",
       options: {
-        filter: false,
         sort: false,
       },
     },
     {
       name: "Actions",
       options: {
-        filter: false,
         sort: false,
       },
     },
