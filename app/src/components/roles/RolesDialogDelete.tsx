@@ -9,15 +9,22 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
+  List,
+  ListItem,
+  ListItemText,
   Typography,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import io from "socket.io-client";
+import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
 import { DialogHeader } from "src/components/general/DialogHeader";
+import { ErrorAlert } from "src/components/general/ErrorAlert";
+import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
-import { fetcherTrigger } from "src/utils/fetcher";
+import { IDataRoleVolunteerItem } from "src/components/types";
+import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IRolesDialogDeleteProps {
   handleDialogDeleteClose: () => void;
@@ -33,6 +40,10 @@ export const RolesDialogDelete = ({
   isDialogDeleteOpen,
   role: { name },
 }: IRolesDialogDeleteProps) => {
+  const { data, error } = useSWR(
+    name ? `/api/roles/${encodeURI(name)}` : null,
+    fetcherGet
+  );
   const { isMutating, trigger } = useSWRMutation("/api/roles", fetcherTrigger);
   const { enqueueSnackbar } = useSnackbar();
 
@@ -75,6 +86,39 @@ export const RolesDialogDelete = ({
     }
   };
 
+  if (error)
+    return (
+      <Dialog
+        fullWidth
+        onClose={handleDialogDeleteClose}
+        open={isDialogDeleteOpen}
+      >
+        <DialogHeader
+          handleDialogClose={handleDialogDeleteClose}
+          text="Delete role"
+        />
+        <DialogContent>
+          <ErrorAlert />
+        </DialogContent>
+      </Dialog>
+    );
+  if (!data)
+    return (
+      <Dialog
+        fullWidth
+        onClose={handleDialogDeleteClose}
+        open={isDialogDeleteOpen}
+      >
+        <DialogHeader
+          handleDialogClose={handleDialogDeleteClose}
+          text="Delete role"
+        />
+        <DialogContent>
+          <Loading />
+        </DialogContent>
+      </Dialog>
+    );
+
   return (
     <Dialog
       fullWidth
@@ -86,11 +130,41 @@ export const RolesDialogDelete = ({
         text="Delete role"
       />
       <DialogContent>
-        <DialogContentText>
-          <Typography component="span">
-            Are you sure you want to delete <strong>{name}</strong> role?
-          </Typography>
-        </DialogContentText>
+        {data.dataRoleVolunteerList && data.dataRoleVolunteerList.length > 0 ? (
+          <>
+            <DialogContentText>
+              <Typography component="span">
+                Before doing so, the <strong>{name}</strong> role must be
+                removed from the following volunteers:
+              </Typography>
+            </DialogContentText>
+            <List sx={{ pl: 2, listStyleType: "disc" }}>
+              {data.dataRoleVolunteerList.map(
+                ({
+                  playaName,
+                  shiftboardId,
+                  worldName,
+                }: IDataRoleVolunteerItem) => {
+                  return (
+                    <ListItem
+                      disablePadding
+                      key={shiftboardId}
+                      sx={{ display: "list-item", pl: 0 }}
+                    >
+                      <ListItemText primary={`${playaName} "${worldName}"`} />
+                    </ListItem>
+                  );
+                }
+              )}
+            </List>
+          </>
+        ) : (
+          <DialogContentText>
+            <Typography component="span">
+              Are you sure you want to delete <strong>{name}</strong> role?
+            </Typography>
+          </DialogContentText>
+        )}
         <DialogActions>
           <Button
             disabled={isMutating}
@@ -102,7 +176,11 @@ export const RolesDialogDelete = ({
             Cancel
           </Button>
           <Button
-            disabled={isMutating}
+            disabled={
+              (data.dataRoleVolunteerList &&
+                data.dataRoleVolunteerList.length > 0) ||
+              isMutating
+            }
             onClick={handleRoleDelete}
             startIcon={
               isMutating ? <CircularProgress size="1rem" /> : <DeleteIcon />

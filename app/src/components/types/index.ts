@@ -6,6 +6,12 @@ export interface IDataPositionItem {
   shiftPositionId: string;
   totalSlots: number;
 }
+export interface IDataRoleVolunteerItem {
+  playaName: string;
+  roleName: string;
+  shiftboardId: number;
+  worldName: string;
+}
 export interface IDataShiftItem {
   category: string;
   date: string;
