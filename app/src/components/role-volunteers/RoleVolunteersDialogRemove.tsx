@@ -92,7 +92,7 @@ export const RoleVolunteersDialogRemove = ({
     >
       <DialogHeader
         handleDialogClose={handleDialogRemoveClose}
-        text="Remove role"
+        text="Remove role volunteer"
       />
       <DialogContent>
         <DialogContentText>

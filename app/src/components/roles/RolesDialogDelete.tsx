@@ -40,7 +40,10 @@ export const RolesDialogDelete = ({
   isDialogDeleteOpen,
   role: { name },
 }: IRolesDialogDeleteProps) => {
-  const { data, error } = useSWR(`/api/roles/${encodeURI(name)}`, fetcherGet);
+  const { data, error } = useSWR(
+    name ? `/api/roles/${encodeURI(name)}` : null,
+    fetcherGet
+  );
   const { isMutating, trigger } = useSWRMutation("/api/roles", fetcherTrigger);
   const { enqueueSnackbar } = useSnackbar();
 
