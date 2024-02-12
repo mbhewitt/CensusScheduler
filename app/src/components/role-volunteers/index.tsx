@@ -21,27 +21,33 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
+import io from "socket.io-client";
 import useSWR from "swr";
 
 import { DataTable } from "src/components/general/DataTable";
 import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
+import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
+import { RoleVolunteersDialogRemove } from "src/components/role-volunteers/RoleVolunteersDialogRemove";
 import { fetcherGet } from "src/utils/fetcher";
 
 interface IDataVolunteerItem {
   playaName: string;
+  roleName: string;
   shiftboardId: number;
   worldName: string;
 }
 
+const socket = io();
 export const RoleVolunteers = () => {
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
   const { roleName } = router.query;
-  const { data, error } = useSWR(
+  const { data, error, mutate } = useSWR(
     isMounted ? `/api/roles/${encodeURI(roleName as string)}` : null,
     fetcherGet
   );
@@ -50,17 +56,55 @@ export const RoleVolunteers = () => {
     isOpen: false,
     volunteer: {
       playaName: "",
-      roleName,
+      roleName: "",
       shiftboardId: 0,
       worldName: "",
     },
   });
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     if (router.isReady) {
       setIsMounted(true);
     }
   }, [router.isReady]);
+
+  // listen for socket events
+  useEffect(() => {
+    (async () => {
+      try {
+        await fetch("/api/socket");
+
+        socket.on("res-role-volunteer-remove", ({ shiftboardId }) => {
+          if (data) {
+            const dataMutate = structuredClone(data);
+            const roleVolunteerListNew =
+              dataMutate.dataRoleVolunteerList.filter(
+                (roleVolunteerItem: IDataVolunteerItem) =>
+                  roleVolunteerItem.shiftboardId !== shiftboardId
+              );
+            dataMutate.dataRoleVolunteerList = roleVolunteerListNew;
+
+            mutate(dataMutate);
+          }
+        });
+      } catch (error) {
+        if (error instanceof Error) {
+          enqueueSnackbar(
+            <SnackbarText>
+              <strong>{error.message}</strong>
+            </SnackbarText>,
+            {
+              persist: true,
+              variant: "error",
+            }
+          );
+        }
+
+        throw error;
+      }
+    })();
+  }, [data, enqueueSnackbar, mutate]);
 
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
@@ -89,7 +133,7 @@ export const RoleVolunteers = () => {
     },
   ];
   const dataTable = data.dataRoleVolunteerList.map(
-    ({ playaName, shiftboardId, worldName }: IDataVolunteerItem) => {
+    ({ playaName, roleName, shiftboardId, worldName }: IDataVolunteerItem) => {
       return [
         shiftboardId,
         playaName,
@@ -205,6 +249,23 @@ export const RoleVolunteers = () => {
           />
         </Box>
       </Container>
+
+      {/* remove dialog */}
+      <RoleVolunteersDialogRemove
+        handleDialogRemoveClose={() =>
+          setIsDialogRemoveOpen({
+            isOpen: false,
+            volunteer: {
+              playaName: "",
+              roleName: "",
+              shiftboardId: 0,
+              worldName: "",
+            },
+          })
+        }
+        isDialogRemoveOpen={isDialogRemoveOpen.isOpen}
+        volunteer={isDialogRemoveOpen.volunteer}
+      />
     </>
   );
 };

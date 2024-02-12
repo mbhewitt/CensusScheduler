@@ -44,6 +44,10 @@ const socket = (_req: NextApiRequest, res: INextApiResponseWithSocket) => {
       socket.on("req-role-delete", (data) => {
         socket.broadcast.emit("res-role-delete", data);
       });
+      // remove role volunteer
+      socket.on("req-role-volunteer-remove", (data) => {
+        socket.broadcast.emit("res-role-volunteer-remove", data);
+      });
     });
 
     res.socket.server.io = io;
