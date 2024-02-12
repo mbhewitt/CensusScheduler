@@ -2,7 +2,7 @@ import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
-import { IDataVolunteerShiftCountItem } from "src/components/types";
+import { IVolunteerShiftCountItem } from "src/components/types";
 
 interface IVolunteerAccount {
   email: string;
@@ -101,7 +101,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           const dataVolunteerMap = dbVolunteerList.reduce(
             (
               dbVolunteerTotal: {
-                [key: string]: IDataVolunteerShiftCountItem;
+                [key: string]: IVolunteerShiftCountItem;
               },
               {
                 noshow,

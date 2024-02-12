@@ -11,7 +11,7 @@ import {
 import { useTheme } from "@mui/material/styles";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
-import { MUIDataTableColumn } from "mui-datatables";
+import { MUITableColumn } from "mui-datatables";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useContext, useEffect } from "react";
@@ -22,7 +22,7 @@ import { DataTable } from "src/components/general/DataTable";
 import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { Hero } from "src/components/layout/Hero";
-import type { IDataShiftItem } from "src/components/types";
+import type { IShiftItem } from "src/components/types";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { fetcherGet } from "src/utils/fetcher";
 
@@ -43,7 +43,7 @@ export const Shifts = () => {
 
   dayjs.extend(isSameOrAfter);
 
-  const [columnList, setColumnList] = useImmer<MUIDataTableColumn[]>([
+  const [columnList, setColumnList] = useImmer<MUITableColumn[]>([
     {
       name: "Shiftboard ID - hidden", // hide for row click
       options: {
@@ -173,7 +173,7 @@ export const Shifts = () => {
       const dateFilterList: string[] = [];
       const shortNameFilterList: string[] = [];
 
-      data.forEach((shiftItem: IDataShiftItem) => {
+      data.forEach((shiftItem: IShiftItem) => {
         dateFilterList.push(`${shiftItem.dateName} ${shiftItem.date}`);
         shortNameFilterList.push(shiftItem.shortName);
       });
@@ -249,7 +249,7 @@ export const Shifts = () => {
       shortName,
       totalSlots,
       year,
-    }: IDataShiftItem) => {
+    }: IShiftItem) => {
       const filledSlots = totalSlots - freeSlots;
 
       return [
@@ -271,7 +271,7 @@ export const Shifts = () => {
   let shiftDateToggle = false;
   const optionListCustom = {
     onFilterChange: (
-      _: MUIDataTableColumn | null | string,
+      _: MUITableColumn | null | string,
       filterList: string[][]
     ) => {
       sessionStorage.setItem("filterListState", JSON.stringify(filterList));

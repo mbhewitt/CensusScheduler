@@ -21,7 +21,7 @@ import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
-import { IDataRoleVolunteerItem } from "src/components/types";
+import { IRoleVolunteerItem } from "src/components/types";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IRolesDialogDeleteProps {
@@ -121,11 +121,7 @@ export const RolesDialogDelete = ({
           </DialogContentText>
           <List sx={{ pl: 2, listStyleType: "disc" }}>
             {data.map(
-              ({
-                playaName,
-                shiftboardId,
-                worldName,
-              }: IDataRoleVolunteerItem) => {
+              ({ playaName, shiftboardId, worldName }: IRoleVolunteerItem) => {
                 return (
                   <ListItem
                     disablePadding

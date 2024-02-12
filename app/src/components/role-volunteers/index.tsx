@@ -34,7 +34,7 @@ import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import { RoleVolunteersDialogAdd } from "src/components/role-volunteers/RoleVolunteersDialogAdd";
 import { RoleVolunteersDialogRemove } from "src/components/role-volunteers/RoleVolunteersDialogRemove";
-import { IDataRoleVolunteerItem } from "src/components/types";
+import { IRoleVolunteerItem } from "src/components/types";
 import { fetcherGet } from "src/utils/fetcher";
 
 const socket = io();
@@ -90,7 +90,7 @@ export const RoleVolunteers = () => {
           if (data) {
             const dataMutate = structuredClone(data);
             const roleVolunteerListNew = dataMutate.filter(
-              (roleVolunteerItem: IDataRoleVolunteerItem) =>
+              (roleVolunteerItem: IRoleVolunteerItem) =>
                 roleVolunteerItem.shiftboardId !== shiftboardId
             );
 
@@ -142,12 +142,7 @@ export const RoleVolunteers = () => {
     },
   ];
   const dataTable = data.map(
-    ({
-      playaName,
-      roleName,
-      shiftboardId,
-      worldName,
-    }: IDataRoleVolunteerItem) => {
+    ({ playaName, roleName, shiftboardId, worldName }: IRoleVolunteerItem) => {
       return [
         shiftboardId,
         playaName,

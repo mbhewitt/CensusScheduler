@@ -7,10 +7,7 @@ import {
   shiftVolunteerCheckIn,
   shiftVolunteerRemove,
 } from "pages/api/general/shiftVolunteers";
-import type {
-  IDataPositionItem,
-  IDataShiftVolunteerItem,
-} from "src/components/types";
+import type { IPositionItem, IShiftVolunteerItem } from "src/components/types";
 
 const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
@@ -33,7 +30,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       const positionList = dbShiftVolunteerList
         .reduce(
           (
-            positionTotal: IDataPositionItem[],
+            positionTotal: IPositionItem[],
             {
               details,
               free_slots,
@@ -93,7 +90,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
 
           return volunteerTotal;
         },
-        [] as IDataShiftVolunteerItem[]
+        [] as IShiftVolunteerItem[]
       );
 
       return res.status(200).json({

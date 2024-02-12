@@ -7,7 +7,7 @@ import {
   shiftVolunteerCheckIn,
   shiftVolunteerRemove,
 } from "pages/api/general/shiftVolunteers";
-import type { IDataVolunteerShiftItem } from "src/components/types";
+import type { IVolunteerShiftItem } from "src/components/types";
 
 const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
@@ -26,7 +26,7 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
         [shiftboardId]
       );
       let [volunteerShiftItem] = dbVolunteerShiftList;
-      let volunteerShiftList: IDataVolunteerShiftItem[] = [];
+      let volunteerShiftList: IVolunteerShiftItem[] = [];
 
       // if a volunteer shift is found
       // then prepare volunteer shift list

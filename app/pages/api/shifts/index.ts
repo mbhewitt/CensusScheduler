@@ -2,10 +2,7 @@ import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
-import type {
-  IDataShiftItem,
-  IDataShiftPositionListItem,
-} from "src/components/types";
+import type { IShiftItem, IShiftPositionListItem } from "src/components/types";
 
 interface IDbShiftItem {
   date: string;
@@ -51,7 +48,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
         );
         const resShiftList = dbShiftList.reduce(
           (
-            rowList: IDataShiftPositionListItem[],
+            rowList: IShiftPositionListItem[],
             rowItem: IDbShiftPositionListItem | RowDataPacket
           ) => {
             const rowListLast = rowList[rowList.length - 1];
@@ -107,7 +104,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
         ORDER BY start_time`
       );
       const resShiftList = dbShiftList.reduce(
-        (rowList: IDataShiftItem[], rowItem: IDbShiftItem | RowDataPacket) => {
+        (rowList: IShiftItem[], rowItem: IDbShiftItem | RowDataPacket) => {
           const rowListLast = rowList[rowList.length - 1];
 
           if (!rowListLast || rowListLast.shiftId !== rowItem.shift_id) {

@@ -40,7 +40,7 @@ import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { SnackbarText } from "src/components/general/SnackbarText";
-import type { IDataVolunteerShiftItem } from "src/components/types";
+import type { IVolunteerShiftItem } from "src/components/types";
 import { VolunteerShiftsDialogAdd } from "src/components/volunteer-shifts/VolunteerShiftsDialogAdd";
 import { VolunteerShiftsDialogRemove } from "src/components/volunteer-shifts/VolunteerShiftsDialogRemove";
 import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
@@ -142,7 +142,7 @@ export const VolunteerShifts = () => {
               const dataMutate = structuredClone(data);
               const volunteerShiftItemUpdate =
                 dataMutate.volunteerShiftList.find(
-                  (volunteerShiftItem: IDataVolunteerShiftItem) =>
+                  (volunteerShiftItem: IVolunteerShiftItem) =>
                     volunteerShiftItem.shiftPositionId === shiftPositionId
                 );
               if (volunteerShiftItemUpdate) {
@@ -157,7 +157,7 @@ export const VolunteerShifts = () => {
           if (data) {
             const dataMutate = structuredClone(data);
             const volunteerShiftListNew = dataMutate.volunteerShiftList.filter(
-              (volunteerShiftItem: IDataVolunteerShiftItem) =>
+              (volunteerShiftItem: IVolunteerShiftItem) =>
                 volunteerShiftItem.shiftPositionId !== shiftPositionId
             );
             dataMutate.volunteerShiftList = volunteerShiftListNew;
@@ -314,7 +314,7 @@ export const VolunteerShifts = () => {
       shiftId,
       shiftPositionId,
       startTime,
-    }: IDataVolunteerShiftItem) => {
+    }: IVolunteerShiftItem) => {
       // evaluate the check-in type and available features
       const checkInType = checkInGet({
         dateTime: dateTimeValue,
