@@ -186,6 +186,7 @@ export const CreateAccount = () => {
                       {Object.keys(errors).map((errorItem) => {
                         return (
                           <ListItem
+                            disablePadding
                             key={errorItem}
                             sx={{ display: "list-item", pl: 0 }}
                           >
