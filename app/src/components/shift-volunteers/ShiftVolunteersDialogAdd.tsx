@@ -204,7 +204,7 @@ export const ShiftVolunteersDialogAdd = ({
 
       // display volunteer list
       if (isAuthenticated && isCoreCrew) {
-        volunteerListDisplay = dataVolunteerList.dataVolunteerList.map(
+        volunteerListDisplay = dataVolunteerList.map(
           ({ playaName, shiftboardId, worldName }: IDataVolunteerItem) => ({
             label: `${playaName} "${worldName}"`,
             shiftboardId,
@@ -223,7 +223,7 @@ export const ShiftVolunteersDialogAdd = ({
 
       const volunteerSelected =
         volunteerWatch &&
-        dataVolunteerList.dataVolunteerList.find(
+        dataVolunteerList.find(
           (dataVolunteerItem: IDataVolunteerItem) =>
             dataVolunteerItem.shiftboardId === volunteerWatch?.shiftboardId
         );
@@ -300,7 +300,7 @@ export const ShiftVolunteersDialogAdd = ({
       noShowShift = "";
 
       // display volunteer list
-      volunteerListDisplay = dataVolunteerList.dataVolunteerList.map(
+      volunteerListDisplay = dataVolunteerList.map(
         ({ playaName, shiftboardId, worldName }: IDataVolunteerItem) => ({
           label: `${playaName} "${worldName}"`,
           shiftboardId,
@@ -368,7 +368,7 @@ export const ShiftVolunteersDialogAdd = ({
   // handle form submission
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
-      const volunteerAdd = dataVolunteerList.dataVolunteerList.find(
+      const volunteerAdd = dataVolunteerList.find(
         (volunteerItem: IDataVolunteerItem) =>
           volunteerItem.shiftboardId === dataForm.volunteer?.shiftboardId
       );

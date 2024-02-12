@@ -11,7 +11,7 @@ interface IVolunteerAccount {
   shiftboardId: number;
   worldName: string;
 }
-interface IDataDbVolunteerItem {
+interface IDbVolunteerItem {
   noshow: string;
   notes: string;
   playa_name: string;
@@ -24,19 +24,19 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     // get
     case "GET": {
       const { filter } = req.query;
-      let dataVolunteerList = [];
+      let resVolunteerList = [];
 
       switch (filter) {
         // get core volunteers
         case "core": {
-          const [dataDbVolunteerList] = await pool.query<RowDataPacket[]>(
+          const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
             `SELECT playa_name, shiftboard_id, world_name
             FROM op_volunteers
             WHERE core_crew=true
             ORDER BY playa_name`
           );
 
-          dataVolunteerList = dataDbVolunteerList.map(
+          resVolunteerList = dbVolunteerList.map(
             ({ playa_name, shiftboard_id, world_name }) => ({
               playaName: playa_name,
               shiftboardId: shiftboard_id,
@@ -48,26 +48,26 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         }
         // get all volunteers
         case "all": {
-          const [dataDbVolunteerList] = await pool.query<RowDataPacket[]>(
+          const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
             `SELECT email, new_account, phone, playa_name, shiftboard_id, world_name
             FROM op_volunteers
             ORDER BY playa_name`
           );
-          const [dataDbVolunteerRoleList] = await pool.query<RowDataPacket[]>(
+          const [dbVolunteerRoleList] = await pool.query<RowDataPacket[]>(
             `SELECT *
             FROM op_volunteer_roles
             ORDER BY shiftboard_id`
           );
           const dataVolunteerRoleMap: { [key: string]: string[] } = {};
 
-          dataDbVolunteerRoleList.forEach(({ shiftboard_id, roles }) => {
+          dbVolunteerRoleList.forEach(({ shiftboard_id, roles }) => {
             if (dataVolunteerRoleMap[shiftboard_id]) {
               dataVolunteerRoleMap[shiftboard_id].push(roles);
             } else {
               dataVolunteerRoleMap[shiftboard_id] = [roles];
             }
           });
-          dataVolunteerList = dataDbVolunteerList.map(
+          resVolunteerList = dbVolunteerList.map(
             ({
               email,
               new_account,
@@ -90,7 +90,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         }
         // get all volunteers and their shift counts
         default: {
-          const [dataDbVolunteerList] = await pool.query<RowDataPacket[]>(
+          const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
             `SELECT noshow, notes, playa_name, v.shiftboard_id, world_name
             FROM op_volunteers AS v
             LEFT JOIN op_volunteer_shifts AS vs
@@ -98,9 +98,9 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             ORDER BY playa_name, world_name`
           );
 
-          const dataVolunteerMap = dataDbVolunteerList.reduce(
+          const dataVolunteerMap = dbVolunteerList.reduce(
             (
-              dataDbVolunteerTotal: {
+              dbVolunteerTotal: {
                 [key: string]: IDataVolunteerShiftCountItem;
               },
               {
@@ -109,13 +109,12 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
                 playa_name,
                 shiftboard_id,
                 world_name,
-              }: IDataDbVolunteerItem | RowDataPacket
+              }: IDbVolunteerItem | RowDataPacket
             ) => {
-              const dataDbVolunteerTotalNew =
-                structuredClone(dataDbVolunteerTotal);
+              const dbVolunteerTotalNew = structuredClone(dbVolunteerTotal);
 
-              if (!dataDbVolunteerTotalNew[`id${shiftboard_id}`]) {
-                dataDbVolunteerTotalNew[`id${shiftboard_id}`] = {
+              if (!dbVolunteerTotalNew[`id${shiftboard_id}`]) {
+                dbVolunteerTotalNew[`id${shiftboard_id}`] = {
                   attendedCount: 0,
                   isNotes: Boolean(notes),
                   noShowCount: 0,
@@ -127,40 +126,32 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
               }
               switch (noshow) {
                 case "Yes":
-                  dataDbVolunteerTotalNew[
-                    `id${shiftboard_id}`
-                  ].noShowCount += 1;
+                  dbVolunteerTotalNew[`id${shiftboard_id}`].noShowCount += 1;
 
                   break;
                 case "":
-                  dataDbVolunteerTotalNew[
-                    `id${shiftboard_id}`
-                  ].attendedCount += 1;
+                  dbVolunteerTotalNew[`id${shiftboard_id}`].attendedCount += 1;
 
                   break;
                 case "X":
-                  dataDbVolunteerTotalNew[
-                    `id${shiftboard_id}`
-                  ].remainingCount += 1;
+                  dbVolunteerTotalNew[`id${shiftboard_id}`].remainingCount += 1;
 
                   break;
                 default:
               }
 
-              return dataDbVolunteerTotalNew;
+              return dbVolunteerTotalNew;
             },
             {}
           );
 
-          dataVolunteerList = Object.keys(dataVolunteerMap).map(
+          resVolunteerList = Object.keys(dataVolunteerMap).map(
             (shiftboardId) => dataVolunteerMap[shiftboardId]
           );
         }
       }
 
-      return res.status(200).json({
-        dataVolunteerList,
-      });
+      return res.status(200).json(resVolunteerList);
     }
     // create volunteer account
     case "POST": {
@@ -177,7 +168,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         Math.floor(Math.random() * 1000000 + 1);
       const insertAccount = async (): Promise<IVolunteerAccount> => {
         const shiftboardIdRandom = generateShiftboardId();
-        const [dataDbVolunteerList] = await pool.query<RowDataPacket[]>(
+        const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
           `SELECT shiftboard_id
           FROM op_volunteers
           WHERE shiftboard_id=${shiftboardIdRandom}`
@@ -185,7 +176,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
 
         // if shiftboard ID exists already
         // then execute function recursively
-        if (dataDbVolunteerList.length > 0) {
+        if (dbVolunteerList.length > 0) {
           return insertAccount();
         }
         await pool.query<RowDataPacket[]>(
@@ -211,9 +202,9 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           worldName,
         };
       };
-      const account = await insertAccount();
+      const resAccount = await insertAccount();
 
-      return res.status(200).json(account);
+      return res.status(200).json(resAccount);
     }
     // patch
     case "PATCH": {
@@ -249,7 +240,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
 
           await pool.query<RowDataPacket[]>(
             `UPDATE op_volunteers
-            SET email=?, emergency_contact=?, location=?, needs_update=1, notes=?, phone=?, playa_name=?, world_name=?
+            SET email=?, emergency_contact=?, location=?, needs_update=true, notes=?, phone=?, playa_name=?, world_name=?
             WHERE shiftboard_id=?`,
             [
               email,

@@ -56,10 +56,7 @@ export const Contact = () => {
     },
   } = useContext(SessionContext);
   const [isMounted, setIsMounted] = useState(false);
-  const { data: volunteerCoreList, error: volunteerCoreError } = useSWR(
-    "/api/volunteers?filter=core",
-    fetcherGet
-  );
+  const { data, error } = useSWR("/api/volunteers?filter=core", fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     "/api/contact",
     fetcherTrigger
@@ -90,8 +87,8 @@ export const Contact = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, isMounted]);
 
-  if (volunteerCoreError) return <ErrorPage />;
-  if (!volunteerCoreList) return <Loading />;
+  if (error) return <ErrorPage />;
+  if (!data) return <Loading />;
 
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
@@ -210,7 +207,7 @@ export const Contact = () => {
                             </MenuItem>
                           ))}
                           <ListSubheader>Core volunteers</ListSubheader>
-                          {volunteerCoreList.dataVolunteerList.map(
+                          {data.map(
                             ({ playaName, worldName }: IDataVolunteerItem) => (
                               <MenuItem
                                 key={`${playaName}-${worldName}`}

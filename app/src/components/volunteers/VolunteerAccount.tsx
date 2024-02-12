@@ -102,7 +102,7 @@ export const VolunteerAccount = () => {
         phone,
         playaName,
         worldName,
-      } = data.volunteerItem;
+      } = data;
 
       reset({
         email,
@@ -119,7 +119,7 @@ export const VolunteerAccount = () => {
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
-  const { isNewAccount, playaName, roleList, worldName } = data.volunteerItem;
+  const { isNewAccount, playaName, roleList, worldName } = data;
 
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {

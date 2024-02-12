@@ -86,7 +86,7 @@ export const RoleVolunteersDialogAdd = ({
   // handle form submission
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
-      const roleVolunteerAdd = data.dataVolunteerList.find(
+      const roleVolunteerAdd = data.find(
         (dataVolunteerItem: IDataVolunteerItem) =>
           dataVolunteerItem.shiftboardId === dataForm.volunteer?.shiftboardId
       );
@@ -172,7 +172,7 @@ export const RoleVolunteersDialogAdd = ({
                 value.shiftboardId === ""
               }
               onChange={(_, data) => field.onChange(data)}
-              options={data.dataVolunteerList.map(
+              options={data.map(
                 ({
                   playaName,
                   shiftboardId,

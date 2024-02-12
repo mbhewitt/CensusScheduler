@@ -173,7 +173,7 @@ export const Shifts = () => {
       const dateFilterList: string[] = [];
       const shortNameFilterList: string[] = [];
 
-      data.shiftList.forEach((shiftItem: IDataShiftItem) => {
+      data.forEach((shiftItem: IDataShiftItem) => {
         dateFilterList.push(`${shiftItem.dateName} ${shiftItem.date}`);
         shortNameFilterList.push(shiftItem.shortName);
       });
@@ -221,7 +221,7 @@ export const Shifts = () => {
     purple[100],
   ];
   let colorIndexCurrent = 0;
-  const colorMap = data.shiftList.reduce(
+  const colorMap = data.reduce(
     (
       shiftListTotal: { [key: string]: string },
       { category }: { category: string }
@@ -238,7 +238,7 @@ export const Shifts = () => {
     {}
   );
 
-  const dataTable = data.shiftList.map(
+  const dataTable = data.map(
     ({
       category,
       date,

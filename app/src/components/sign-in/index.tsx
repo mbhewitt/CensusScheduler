@@ -163,7 +163,7 @@ export const SignIn = () => {
                         value.shiftboardId === ""
                       }
                       onChange={(_, data) => field.onChange(data)}
-                      options={data.dataVolunteerList.map(
+                      options={data.map(
                         ({
                           playaName,
                           shiftboardId,

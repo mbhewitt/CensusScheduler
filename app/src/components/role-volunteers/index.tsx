@@ -75,7 +75,7 @@ export const RoleVolunteers = () => {
           ({ playaName, roleName, shiftboardId, worldName }) => {
             if (data && roleName === roleNameQuery) {
               const dataMutate = structuredClone(data);
-              dataMutate.dataRoleVolunteerList.push({
+              dataMutate.push({
                 playaName,
                 roleName,
                 shiftboardId,
@@ -89,14 +89,12 @@ export const RoleVolunteers = () => {
         socket.on("res-role-volunteer-remove", ({ shiftboardId }) => {
           if (data) {
             const dataMutate = structuredClone(data);
-            const roleVolunteerListNew =
-              dataMutate.dataRoleVolunteerList.filter(
-                (roleVolunteerItem: IDataRoleVolunteerItem) =>
-                  roleVolunteerItem.shiftboardId !== shiftboardId
-              );
-            dataMutate.dataRoleVolunteerList = roleVolunteerListNew;
+            const roleVolunteerListNew = dataMutate.filter(
+              (roleVolunteerItem: IDataRoleVolunteerItem) =>
+                roleVolunteerItem.shiftboardId !== shiftboardId
+            );
 
-            mutate(dataMutate);
+            mutate(roleVolunteerListNew);
           }
         });
       } catch (error) {
@@ -143,7 +141,7 @@ export const RoleVolunteers = () => {
       options: { searchable: false, sort: false },
     },
   ];
-  const dataTable = data.dataRoleVolunteerList.map(
+  const dataTable = data.map(
     ({
       playaName,
       roleName,
@@ -271,7 +269,7 @@ export const RoleVolunteers = () => {
         handleDialogAddClose={() => setIsDialogAddOpen(false)}
         isDialogAddOpen={isDialogAddOpen}
         roleName={roleNameQuery as string}
-        roleVolunteerList={data.dataRoleVolunteerList}
+        roleVolunteerList={data}
       />
 
       {/* remove dialog */}

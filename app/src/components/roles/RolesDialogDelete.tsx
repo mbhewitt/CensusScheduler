@@ -111,7 +111,7 @@ export const RolesDialogDelete = ({
       isDialogOpen={isDialogDeleteOpen}
       text="Delete role"
     >
-      {data.dataRoleVolunteerList && data.dataRoleVolunteerList.length > 0 ? (
+      {data && data.length > 0 ? (
         <>
           <DialogContentText>
             <Typography component="span">
@@ -120,7 +120,7 @@ export const RolesDialogDelete = ({
             </Typography>
           </DialogContentText>
           <List sx={{ pl: 2, listStyleType: "disc" }}>
-            {data.dataRoleVolunteerList.map(
+            {data.map(
               ({
                 playaName,
                 shiftboardId,
@@ -157,11 +157,7 @@ export const RolesDialogDelete = ({
           Cancel
         </Button>
         <Button
-          disabled={
-            (data.dataRoleVolunteerList &&
-              data.dataRoleVolunteerList.length > 0) ||
-            isMutating
-          }
+          disabled={(data && data.length > 0) || isMutating}
           onClick={handleRoleDelete}
           startIcon={
             isMutating ? <CircularProgress size="1rem" /> : <DeleteIcon />

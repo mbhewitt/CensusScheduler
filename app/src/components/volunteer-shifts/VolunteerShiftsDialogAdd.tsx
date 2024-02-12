@@ -136,7 +136,7 @@ export const VolunteerShiftsDialogAdd = ({
     );
 
   // update position list based on selected shift
-  const dataShiftSelected = dataShiftList.shiftList.find(
+  const dataShiftSelected = dataShiftList.find(
     (dataShiftItem: IDataShiftPositionListItem) =>
       dataShiftItem.shiftId === shiftIdWatch
   );
@@ -232,7 +232,7 @@ export const VolunteerShiftsDialogAdd = ({
   // handle form submission
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
-      const shiftAdd = dataShiftList.shiftList.find(
+      const shiftAdd = dataShiftList.find(
         (shiftItem: IDataShiftPositionListItem) =>
           shiftItem.shiftId === dataForm.shiftId
       );
@@ -515,7 +515,7 @@ export const VolunteerShiftsDialogAdd = ({
                     labelId="shiftId"
                     onChange={(event) => {
                       const shiftId = event.target.value;
-                      const dataShiftSelected = dataShiftList.shiftList.find(
+                      const dataShiftSelected = dataShiftList.find(
                         (dataShiftItem: IDataShiftPositionListItem) =>
                           dataShiftItem.shiftId === shiftId
                       );
@@ -548,7 +548,7 @@ export const VolunteerShiftsDialogAdd = ({
                     }}
                     required
                   >
-                    {dataShiftList.shiftList.map(
+                    {dataShiftList.map(
                       ({
                         date,
                         dateName,
@@ -578,9 +578,7 @@ export const VolunteerShiftsDialogAdd = ({
                                 ({ freeSlots, role }) =>
                                   freeSlots > 0 &&
                                   (role === "" ||
-                                    dataVolunteerInfo.volunteerItem.roleList.includes(
-                                      role
-                                    ))
+                                    dataVolunteerInfo.roleList.includes(role))
                               );
                             }
                             break;
@@ -687,9 +685,7 @@ export const VolunteerShiftsDialogAdd = ({
                                 (isAuthenticated && isCoreCrew) ||
                                 (freeSlots > 0 &&
                                   (role === "" ||
-                                    dataVolunteerInfo.volunteerItem.roleList.includes(
-                                      role
-                                    )));
+                                    dataVolunteerInfo.roleList.includes(role)));
                               break;
                             case SHIFT_DURING: {
                               isPositionAvailable = true;

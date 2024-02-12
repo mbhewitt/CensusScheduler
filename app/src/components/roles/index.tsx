@@ -60,7 +60,7 @@ export const Roles = () => {
         socket.on("res-role-create", ({ name }) => {
           if (data) {
             const dataMutate = structuredClone(data);
-            dataMutate.roleList.push({
+            dataMutate.push({
               name,
             });
 
@@ -72,7 +72,7 @@ export const Roles = () => {
           ({ checked, name }: { checked: boolean; name: string }) => {
             if (data) {
               const dataMutate = structuredClone(data);
-              const roleItemUpdate = dataMutate.roleList.find(
+              const roleItemUpdate = dataMutate.find(
                 (roles: string) => roles === name
               );
               if (roleItemUpdate) {
@@ -86,12 +86,11 @@ export const Roles = () => {
         socket.on("res-role-delete", ({ name }) => {
           if (data) {
             const dataMutate = structuredClone(data);
-            const roleListNew = dataMutate.roleList.filter(
+            const roleListNew = dataMutate.filter(
               (roleItem: IRoleItem) => roleItem.name !== name
             );
-            dataMutate.roleList = roleListNew;
 
-            mutate(dataMutate);
+            mutate(roleListNew);
           }
         });
       } catch (error) {
@@ -181,7 +180,7 @@ export const Roles = () => {
       },
     },
   ];
-  const dataTable = data.roleList.map(({ display, name }: IRoleItem) => {
+  const dataTable = data.map(({ display, name }: IRoleItem) => {
     // if role name is admin
     // then disable display and delete actions
     if (name === "Admin") {
@@ -294,7 +293,7 @@ export const Roles = () => {
       <RolesDialogCreate
         handleDialogCreateClose={() => setIsDialogCreateOpen(false)}
         isDialogCreateOpen={isDialogCreateOpen}
-        roleList={data.roleList}
+        roleList={data}
       />
 
       {/* delete dialog */}

@@ -172,7 +172,7 @@ export const Volunteers = () => {
       },
     },
   ];
-  const dataTable = data.dataVolunteerList.map(
+  const dataTable = data.map(
     ({
       attendedCount,
       isNotes,
