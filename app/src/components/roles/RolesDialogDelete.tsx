@@ -5,9 +5,7 @@ import {
 import {
   Button,
   CircularProgress,
-  Dialog,
   DialogActions,
-  DialogContent,
   DialogContentText,
   List,
   ListItem,
@@ -19,7 +17,7 @@ import io from "socket.io-client";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { DialogHeader } from "src/components/general/DialogHeader";
+import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
@@ -88,110 +86,92 @@ export const RolesDialogDelete = ({
 
   if (error)
     return (
-      <Dialog
-        fullWidth
-        onClose={handleDialogDeleteClose}
-        open={isDialogDeleteOpen}
+      <DialogContainer
+        handleDialogClose={handleDialogDeleteClose}
+        isDialogOpen={isDialogDeleteOpen}
+        text="Delete role"
       >
-        <DialogHeader
-          handleDialogClose={handleDialogDeleteClose}
-          text="Delete role"
-        />
-        <DialogContent>
-          <ErrorAlert />
-        </DialogContent>
-      </Dialog>
+        <ErrorAlert />
+      </DialogContainer>
     );
   if (!data)
     return (
-      <Dialog
-        fullWidth
-        onClose={handleDialogDeleteClose}
-        open={isDialogDeleteOpen}
+      <DialogContainer
+        handleDialogClose={handleDialogDeleteClose}
+        isDialogOpen={isDialogDeleteOpen}
+        text="Delete role"
       >
-        <DialogHeader
-          handleDialogClose={handleDialogDeleteClose}
-          text="Delete role"
-        />
-        <DialogContent>
-          <Loading />
-        </DialogContent>
-      </Dialog>
+        <Loading />
+      </DialogContainer>
     );
 
   return (
-    <Dialog
-      fullWidth
-      onClose={handleDialogDeleteClose}
-      open={isDialogDeleteOpen}
+    <DialogContainer
+      handleDialogClose={handleDialogDeleteClose}
+      isDialogOpen={isDialogDeleteOpen}
+      text="Delete role"
     >
-      <DialogHeader
-        handleDialogClose={handleDialogDeleteClose}
-        text="Delete role"
-      />
-      <DialogContent>
-        {data.dataRoleVolunteerList && data.dataRoleVolunteerList.length > 0 ? (
-          <>
-            <DialogContentText>
-              <Typography component="span">
-                Before doing so, the <strong>{name}</strong> role must be
-                removed from the following volunteers:
-              </Typography>
-            </DialogContentText>
-            <List sx={{ pl: 2, listStyleType: "disc" }}>
-              {data.dataRoleVolunteerList.map(
-                ({
-                  playaName,
-                  shiftboardId,
-                  worldName,
-                }: IDataRoleVolunteerItem) => {
-                  return (
-                    <ListItem
-                      disablePadding
-                      key={shiftboardId}
-                      sx={{ display: "list-item", pl: 0 }}
-                    >
-                      <ListItemText primary={`${playaName} "${worldName}"`} />
-                    </ListItem>
-                  );
-                }
-              )}
-            </List>
-          </>
-        ) : (
+      {data.dataRoleVolunteerList && data.dataRoleVolunteerList.length > 0 ? (
+        <>
           <DialogContentText>
             <Typography component="span">
-              Are you sure you want to delete <strong>{name}</strong> role?
+              Before doing so, the <strong>{name}</strong> role must be removed
+              from the following volunteers:
             </Typography>
           </DialogContentText>
-        )}
-        <DialogActions>
-          <Button
-            disabled={isMutating}
-            startIcon={<HighlightOffIcon />}
-            onClick={handleDialogDeleteClose}
-            type="button"
-            variant="outlined"
-          >
-            Cancel
-          </Button>
-          <Button
-            disabled={
-              (data.dataRoleVolunteerList &&
-                data.dataRoleVolunteerList.length > 0) ||
-              isMutating
-            }
-            onClick={handleRoleDelete}
-            startIcon={
-              isMutating ? <CircularProgress size="1rem" /> : <DeleteIcon />
-            }
-            type="submit"
-            variant="contained"
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </DialogContent>
-    </Dialog>
+          <List sx={{ pl: 2, listStyleType: "disc" }}>
+            {data.dataRoleVolunteerList.map(
+              ({
+                playaName,
+                shiftboardId,
+                worldName,
+              }: IDataRoleVolunteerItem) => {
+                return (
+                  <ListItem
+                    disablePadding
+                    key={shiftboardId}
+                    sx={{ display: "list-item", pl: 0 }}
+                  >
+                    <ListItemText primary={`${playaName} "${worldName}"`} />
+                  </ListItem>
+                );
+              }
+            )}
+          </List>
+        </>
+      ) : (
+        <DialogContentText>
+          <Typography component="span">
+            Are you sure you want to delete <strong>{name}</strong> role?
+          </Typography>
+        </DialogContentText>
+      )}
+      <DialogActions>
+        <Button
+          disabled={isMutating}
+          startIcon={<HighlightOffIcon />}
+          onClick={handleDialogDeleteClose}
+          type="button"
+          variant="outlined"
+        >
+          Cancel
+        </Button>
+        <Button
+          disabled={
+            (data.dataRoleVolunteerList &&
+              data.dataRoleVolunteerList.length > 0) ||
+            isMutating
+          }
+          onClick={handleRoleDelete}
+          startIcon={
+            isMutating ? <CircularProgress size="1rem" /> : <DeleteIcon />
+          }
+          type="submit"
+          variant="contained"
+        >
+          Delete
+        </Button>
+      </DialogActions>
+    </DialogContainer>
   );
 };

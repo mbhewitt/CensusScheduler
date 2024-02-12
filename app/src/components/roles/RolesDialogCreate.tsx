@@ -5,9 +5,7 @@ import {
 import {
   Button,
   CircularProgress,
-  Dialog,
   DialogActions,
-  DialogContent,
   TextField,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
@@ -15,7 +13,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import io from "socket.io-client";
 import useSWRMutation from "swr/mutation";
 
-import { DialogHeader } from "src/components/general/DialogHeader";
+import { DialogContainer } from "src/components/general/DialogContainer";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { fetcherTrigger } from "src/utils/fetcher";
 
@@ -104,58 +102,52 @@ export const RolesDialogCreate = ({
   };
 
   return (
-    <Dialog
-      fullWidth
-      onClose={handleDialogCreateClose}
-      open={isDialogCreateOpen}
+    <DialogContainer
+      handleDialogClose={handleDialogCreateClose}
+      isDialogOpen={isDialogCreateOpen}
+      text="Create role"
     >
-      <DialogHeader
-        handleDialogClose={handleDialogCreateClose}
-        text="Create role"
-      />
-      <DialogContent>
-        <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-          <Controller
-            control={control}
-            name="name"
-            render={({ field }) => (
-              <TextField
-                {...field}
-                autoComplete="off"
-                disabled={isMutating}
-                fullWidth
-                label="Name"
-                required
-                variant="standard"
-              />
-            )}
-          />
-          <DialogActions>
-            <Button
+      <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+        <Controller
+          control={control}
+          name="name"
+          render={({ field }) => (
+            <TextField
+              {...field}
+              autoComplete="off"
               disabled={isMutating}
-              startIcon={<HighlightOffIcon />}
-              onClick={() => {
-                handleDialogCreateClose();
-                reset(defaultValues);
-              }}
-              type="button"
-              variant="outlined"
-            >
-              Cancel
-            </Button>
-            <Button
-              disabled={isMutating}
-              startIcon={
-                isMutating ? <CircularProgress size="1rem" /> : <AddIcon />
-              }
-              type="submit"
-              variant="contained"
-            >
-              Create
-            </Button>
-          </DialogActions>
-        </form>
-      </DialogContent>
-    </Dialog>
+              fullWidth
+              label="Name"
+              required
+              variant="standard"
+            />
+          )}
+        />
+        <DialogActions>
+          <Button
+            disabled={isMutating}
+            startIcon={<HighlightOffIcon />}
+            onClick={() => {
+              handleDialogCreateClose();
+              reset(defaultValues);
+            }}
+            type="button"
+            variant="outlined"
+          >
+            Cancel
+          </Button>
+          <Button
+            disabled={isMutating}
+            startIcon={
+              isMutating ? <CircularProgress size="1rem" /> : <AddIcon />
+            }
+            type="submit"
+            variant="contained"
+          >
+            Create
+          </Button>
+        </DialogActions>
+      </form>
+    </DialogContainer>
   );
 };

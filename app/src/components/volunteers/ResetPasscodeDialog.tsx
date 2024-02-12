@@ -6,9 +6,7 @@ import {
   Alert,
   Button,
   CircularProgress,
-  Dialog,
   DialogActions,
-  DialogContent,
   DialogContentText,
   List,
   ListItem,
@@ -20,7 +18,7 @@ import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 
-import { DialogHeader } from "src/components/general/DialogHeader";
+import { DialogContainer } from "src/components/general/DialogContainer";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { IVolunteerAccountFormValues } from "src/components/types";
 import { ResetPasscodeForm } from "src/components/volunteers/ResetPasscodeForm";
@@ -106,95 +104,82 @@ export const ResetPasscodeDialog = ({
   };
 
   return (
-    <Dialog
-      fullWidth
-      onClose={() => {
+    <DialogContainer
+      handleDialogClose={() => {
         handleResetPasscodeDialogClose();
         reset(defaultValues);
       }}
-      open={isResetPasscodeDialogOpen}
+      isDialogOpen={isResetPasscodeDialogOpen}
+      text="Reset passcode"
     >
-      <DialogHeader
-        handleDialogClose={() => {
-          handleResetPasscodeDialogClose();
-          reset(defaultValues);
-        }}
-        text="Reset passcode"
-      />
-      <DialogContent>
-        <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-          <DialogContentText paragraph>
-            <Typography component="span">
-              Enter a new passcode for{" "}
-              <strong>
-                {playaName} &quot;{worldName}&quot;
-              </strong>
-            </Typography>
-          </DialogContentText>
-          {/* handle errors */}
-          {Object.keys(errors).length > 0 && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              Whoops! Looks like there are some input errors
-              <List sx={{ pl: 2, listStyleType: "disc" }}>
-                {Object.keys(errors).map((errorItem) => {
-                  return (
-                    <ListItem
-                      disablePadding
-                      key={errorItem}
-                      sx={{ display: "list-item", pl: 0 }}
-                    >
-                      {
-                        errors[errorItem as keyof IVolunteerAccountFormValues]
-                          ?.message
-                      }
-                    </ListItem>
-                  );
-                })}
-              </List>
-            </Alert>
-          )}
-          <Stack spacing={2}>
-            <ResetPasscodeForm
-              control={control}
-              errors={errors}
-              getValues={getValues}
-              isMutating={isMutating}
-              isPasscodeConfirmVisible={isPasscodeConfirmVisible}
-              isPasscodeCreateVisible={isPasscodeCreateVisible}
-              setIsPasscodeConfirmVisible={setIsPasscodeConfirmVisible}
-              setIsPasscodeCreateVisible={setIsPasscodeCreateVisible}
-            />
-          </Stack>
-          <DialogActions>
-            <Button
-              disabled={isMutating}
-              onClick={() => {
-                handleResetPasscodeDialogClose();
-                reset(defaultValues);
-              }}
-              startIcon={<HighlightOffIcon />}
-              type="button"
-              variant="outlined"
-            >
-              Cancel
-            </Button>
-            <Button
-              disabled={isMutating}
-              startIcon={
-                isMutating ? (
-                  <CircularProgress size="1rem" />
-                ) : (
-                  <LockResetIcon />
-                )
-              }
-              type="submit"
-              variant="contained"
-            >
-              Reset passcode
-            </Button>
-          </DialogActions>
-        </form>
-      </DialogContent>
-    </Dialog>
+      <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+        <DialogContentText paragraph>
+          <Typography component="span">
+            Enter a new passcode for{" "}
+            <strong>
+              {playaName} &quot;{worldName}&quot;
+            </strong>
+          </Typography>
+        </DialogContentText>
+        {/* handle errors */}
+        {Object.keys(errors).length > 0 && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            Whoops! Looks like there are some input errors
+            <List sx={{ pl: 2, listStyleType: "disc" }}>
+              {Object.keys(errors).map((errorItem) => {
+                return (
+                  <ListItem
+                    disablePadding
+                    key={errorItem}
+                    sx={{ display: "list-item", pl: 0 }}
+                  >
+                    {
+                      errors[errorItem as keyof IVolunteerAccountFormValues]
+                        ?.message
+                    }
+                  </ListItem>
+                );
+              })}
+            </List>
+          </Alert>
+        )}
+        <Stack spacing={2}>
+          <ResetPasscodeForm
+            control={control}
+            errors={errors}
+            getValues={getValues}
+            isMutating={isMutating}
+            isPasscodeConfirmVisible={isPasscodeConfirmVisible}
+            isPasscodeCreateVisible={isPasscodeCreateVisible}
+            setIsPasscodeConfirmVisible={setIsPasscodeConfirmVisible}
+            setIsPasscodeCreateVisible={setIsPasscodeCreateVisible}
+          />
+        </Stack>
+        <DialogActions>
+          <Button
+            disabled={isMutating}
+            onClick={() => {
+              handleResetPasscodeDialogClose();
+              reset(defaultValues);
+            }}
+            startIcon={<HighlightOffIcon />}
+            type="button"
+            variant="outlined"
+          >
+            Cancel
+          </Button>
+          <Button
+            disabled={isMutating}
+            startIcon={
+              isMutating ? <CircularProgress size="1rem" /> : <LockResetIcon />
+            }
+            type="submit"
+            variant="contained"
+          >
+            Reset passcode
+          </Button>
+        </DialogActions>
+      </form>
+    </DialogContainer>
   );
 };

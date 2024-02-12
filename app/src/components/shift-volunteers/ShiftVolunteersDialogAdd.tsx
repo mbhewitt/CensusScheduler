@@ -6,9 +6,7 @@ import {
   Autocomplete,
   Button,
   CircularProgress,
-  Dialog,
   DialogActions,
-  DialogContent,
   FormControl,
   FormHelperText,
   Grid,
@@ -27,7 +25,7 @@ import io from "socket.io-client";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { DialogHeader } from "src/components/general/DialogHeader";
+import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
@@ -147,8 +145,51 @@ export const ShiftVolunteersDialogAdd = ({
   ]);
 
   if (errorVolunteerInfo || errorVolunteerShiftList || errorTrainingList)
-    return <ErrorAlert />;
-  if (!dataVolunteerList) return <Loading />;
+    return (
+      <DialogContainer
+        handleDialogClose={() => {
+          handleDialogAddClose();
+
+          if (isAuthenticated) {
+            const positionItemFirstDisplay = positionItemFirstGet(positionList);
+
+            reset({
+              volunteer: { label: `${playaName} "${worldName}"`, shiftboardId },
+              shiftPositionId: positionItemFirstDisplay?.shiftPositionId ?? "",
+            });
+          } else {
+            reset(defaultValues);
+          }
+        }}
+        isDialogOpen={isDialogAddOpen}
+        text="Add volunteer"
+      >
+        <ErrorAlert />
+      </DialogContainer>
+    );
+  if (!dataVolunteerList)
+    return (
+      <DialogContainer
+        handleDialogClose={() => {
+          handleDialogAddClose();
+
+          if (isAuthenticated) {
+            const positionItemFirstDisplay = positionItemFirstGet(positionList);
+
+            reset({
+              volunteer: { label: `${playaName} "${worldName}"`, shiftboardId },
+              shiftPositionId: positionItemFirstDisplay?.shiftPositionId ?? "",
+            });
+          } else {
+            reset(defaultValues);
+          }
+        }}
+        isDialogOpen={isDialogAddOpen}
+        text="Add volunteer"
+      >
+        <Loading />
+      </DialogContainer>
+    );
 
   // evaluate check-in type and available positions
   let volunteerListDisplay: IVolunteer[] = [];
@@ -574,9 +615,8 @@ export const ShiftVolunteersDialogAdd = ({
   };
 
   return (
-    <Dialog
-      fullWidth
-      onClose={() => {
+    <DialogContainer
+      handleDialogClose={() => {
         handleDialogAddClose();
 
         if (isAuthenticated) {
@@ -590,184 +630,160 @@ export const ShiftVolunteersDialogAdd = ({
           reset(defaultValues);
         }
       }}
-      open={isDialogAddOpen}
+      isDialogOpen={isDialogAddOpen}
+      text="Add volunteer"
     >
-      <DialogHeader
-        handleDialogClose={() => {
-          handleDialogAddClose();
-
-          if (isAuthenticated) {
-            const positionItemFirstDisplay = positionItemFirstGet(positionList);
-
-            reset({
-              volunteer: { label: `${playaName} "${worldName}"`, shiftboardId },
-              shiftPositionId: positionItemFirstDisplay?.shiftPositionId ?? "",
-            });
-          } else {
-            reset(defaultValues);
-          }
-        }}
-        text="Add volunteer"
-      />
-      <DialogContent>
-        <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <Controller
-                control={control}
-                name="volunteer"
-                render={({ field }) => (
-                  <Autocomplete
+      <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
+            <Controller
+              control={control}
+              name="volunteer"
+              render={({ field }) => (
+                <Autocomplete
+                  {...field}
+                  fullWidth
+                  isOptionEqualToValue={(option, value: IVolunteer) =>
+                    option.shiftboardId === value.shiftboardId ||
+                    value.shiftboardId === ""
+                  }
+                  onChange={(_, data) => field.onChange(data)}
+                  options={volunteerListDisplay}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Name"
+                      required
+                      variant="standard"
+                    />
+                  )}
+                />
+              )}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <Controller
+              control={control}
+              name="shiftPositionId"
+              render={({ field }) => (
+                <FormControl fullWidth variant="standard">
+                  <InputLabel id="position">Position *</InputLabel>
+                  <Select
                     {...field}
-                    fullWidth
-                    isOptionEqualToValue={(option, value: IVolunteer) =>
-                      option.shiftboardId === value.shiftboardId ||
-                      value.shiftboardId === ""
-                    }
-                    onChange={(_, data) => field.onChange(data)}
-                    options={volunteerListDisplay}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Name"
-                        required
-                        variant="standard"
-                      />
-                    )}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={6}>
+                    disabled={!volunteerWatch}
+                    label="Position *"
+                    labelId="position"
+                    onChange={(event) => {
+                      const positionSelected = event.target.value;
+
+                      field.onChange(positionSelected);
+                      positionList.forEach((positionItem) => {
+                        // if there are less than or equal to zero slots available
+                        // then display warning notification
+                        if (
+                          positionItem.shiftPositionId === positionSelected &&
+                          positionItem.freeSlots <= 0
+                        ) {
+                          enqueueSnackbar(
+                            <SnackbarText>
+                              There are{" "}
+                              <strong>{positionItem.freeSlots}</strong> openings
+                              available for{" "}
+                              <strong>{positionItem.position}</strong>
+                            </SnackbarText>,
+                            {
+                              variant: "warning",
+                            }
+                          );
+                        }
+                      });
+                    }}
+                    required
+                  >
+                    {positionListDisplay}
+                  </Select>
+                </FormControl>
+              )}
+            />
+          </Grid>
+          {dataTrainingList && dataTrainingList.length > 0 && (
+            <Grid item xs={12}>
               <Controller
                 control={control}
-                name="shiftPositionId"
+                name="trainingPositionId"
                 render={({ field }) => (
-                  <FormControl fullWidth variant="standard">
-                    <InputLabel id="position">Position *</InputLabel>
+                  <FormControl
+                    error={trainingListDisplay.length === 0}
+                    fullWidth
+                    variant="standard"
+                  >
+                    <InputLabel id="training">Training</InputLabel>
                     <Select
                       {...field}
-                      disabled={!volunteerWatch}
-                      label="Position *"
-                      labelId="position"
-                      onChange={(event) => {
-                        const positionSelected = event.target.value;
-
-                        field.onChange(positionSelected);
-                        positionList.forEach((positionItem) => {
-                          // if there are less than or equal to zero slots available
-                          // then display warning notification
-                          if (
-                            positionItem.shiftPositionId === positionSelected &&
-                            positionItem.freeSlots <= 0
-                          ) {
-                            enqueueSnackbar(
-                              <SnackbarText>
-                                There are{" "}
-                                <strong>{positionItem.freeSlots}</strong>{" "}
-                                openings available for{" "}
-                                <strong>{positionItem.position}</strong>
-                              </SnackbarText>,
-                              {
-                                variant: "warning",
-                              }
-                            );
-                          }
-                        });
-                      }}
-                      required
+                      disabled={trainingListDisplay.length === 0}
+                      label="Training"
+                      labelId="training"
                     >
-                      {positionListDisplay}
+                      {trainingListDisplay}
                     </Select>
+                    {trainingListDisplay.length === 0 && (
+                      <FormHelperText>Please see a staff member</FormHelperText>
+                    )}
                   </FormControl>
                 )}
               />
             </Grid>
-            {dataTrainingList && dataTrainingList.length > 0 && (
-              <Grid item xs={12}>
-                <Controller
-                  control={control}
-                  name="trainingPositionId"
-                  render={({ field }) => (
-                    <FormControl
-                      error={trainingListDisplay.length === 0}
-                      fullWidth
-                      variant="standard"
-                    >
-                      <InputLabel id="training">Training</InputLabel>
-                      <Select
-                        {...field}
-                        disabled={trainingListDisplay.length === 0}
-                        label="Training"
-                        labelId="training"
-                      >
-                        {trainingListDisplay}
-                      </Select>
-                      {trainingListDisplay.length === 0 && (
-                        <FormHelperText>
-                          Please see a staff member
-                        </FormHelperText>
-                      )}
-                    </FormControl>
-                  )}
-                />
-              </Grid>
-            )}
-            <Grid item xs={12}>
-              <Typography gutterBottom>Position Details:</Typography>
-              {
-                positionList.find(
-                  (positionItem) =>
-                    positionItem.shiftPositionId === shiftPositionIdWatch
-                )?.details
-              }
-            </Grid>
+          )}
+          <Grid item xs={12}>
+            <Typography gutterBottom>Position Details:</Typography>
+            {
+              positionList.find(
+                (positionItem) =>
+                  positionItem.shiftPositionId === shiftPositionIdWatch
+              )?.details
+            }
           </Grid>
-          <DialogActions>
-            <Button
-              disabled={isMutating}
-              startIcon={<HighlightOffIcon />}
-              onClick={() => {
-                handleDialogAddClose();
+        </Grid>
+        <DialogActions>
+          <Button
+            disabled={isMutating}
+            startIcon={<HighlightOffIcon />}
+            onClick={() => {
+              handleDialogAddClose();
 
-                if (isAuthenticated) {
-                  const positionItemFirstDisplay =
-                    positionItemFirstGet(positionList);
+              if (isAuthenticated) {
+                const positionItemFirstDisplay =
+                  positionItemFirstGet(positionList);
 
-                  reset({
-                    volunteer: {
-                      label: `${playaName} "${worldName}"`,
-                      shiftboardId,
-                    },
-                    shiftPositionId:
-                      positionItemFirstDisplay?.shiftPositionId ?? "",
-                  });
-                } else {
-                  reset(defaultValues);
-                }
-              }}
-              type="button"
-              variant="outlined"
-            >
-              Cancel
-            </Button>
-            <Button
-              disabled={isMutating}
-              startIcon={
-                isMutating ? (
-                  <CircularProgress size="1rem" />
-                ) : (
-                  <PersonAddIcon />
-                )
+                reset({
+                  volunteer: {
+                    label: `${playaName} "${worldName}"`,
+                    shiftboardId,
+                  },
+                  shiftPositionId:
+                    positionItemFirstDisplay?.shiftPositionId ?? "",
+                });
+              } else {
+                reset(defaultValues);
               }
-              type="submit"
-              variant="contained"
-            >
-              Add
-            </Button>
-          </DialogActions>
-        </form>
-      </DialogContent>
-    </Dialog>
+            }}
+            type="button"
+            variant="outlined"
+          >
+            Cancel
+          </Button>
+          <Button
+            disabled={isMutating}
+            startIcon={
+              isMutating ? <CircularProgress size="1rem" /> : <PersonAddIcon />
+            }
+            type="submit"
+            variant="contained"
+          >
+            Add
+          </Button>
+        </DialogActions>
+      </form>
+    </DialogContainer>
   );
 };
