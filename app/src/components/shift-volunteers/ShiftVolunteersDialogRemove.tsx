@@ -5,9 +5,7 @@ import {
 import {
   Button,
   CircularProgress,
-  Dialog,
   DialogActions,
-  DialogContent,
   DialogContentText,
   Typography,
 } from "@mui/material";
@@ -15,7 +13,7 @@ import { useSnackbar } from "notistack";
 import io from "socket.io-client";
 import useSWRMutation from "swr/mutation";
 
-import { DialogHeader } from "src/components/general/DialogHeader";
+import { DialogContainer } from "src/components/general/DialogContainer";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { fetcherTrigger } from "src/utils/fetcher";
 
@@ -86,52 +84,42 @@ export const ShiftVolunteersDialogRemove = ({
   };
 
   return (
-    <Dialog
-      fullWidth
-      onClose={handleDialogRemoveClose}
-      open={isDialogRemoveOpen}
+    <DialogContainer
+      handleDialogClose={handleDialogRemoveClose}
+      isDialogOpen={isDialogRemoveOpen}
+      text="Remove volunteer"
     >
-      <DialogHeader
-        handleDialogClose={handleDialogRemoveClose}
-        text="Remove volunteer"
-      />
-      <DialogContent>
-        <DialogContentText>
-          <Typography component="span">
-            Are you sure you want to remove{" "}
-            <strong>
-              {playaName} &quot;{worldName}&quot;
-            </strong>{" "}
-            for <strong>{position}</strong>?
-          </Typography>
-        </DialogContentText>
-        <DialogActions>
-          <Button
-            disabled={isMutating}
-            startIcon={<HighlightOffIcon />}
-            onClick={handleDialogRemoveClose}
-            type="button"
-            variant="outlined"
-          >
-            Cancel
-          </Button>
-          <Button
-            disabled={isMutating}
-            onClick={handleVolunteerRemove}
-            startIcon={
-              isMutating ? (
-                <CircularProgress size="1rem" />
-              ) : (
-                <PersonRemoveIcon />
-              )
-            }
-            type="submit"
-            variant="contained"
-          >
-            Remove
-          </Button>
-        </DialogActions>
-      </DialogContent>
-    </Dialog>
+      <DialogContentText>
+        <Typography component="span">
+          Are you sure you want to remove{" "}
+          <strong>
+            {playaName} &quot;{worldName}&quot;
+          </strong>{" "}
+          for <strong>{position}</strong>?
+        </Typography>
+      </DialogContentText>
+      <DialogActions>
+        <Button
+          disabled={isMutating}
+          startIcon={<HighlightOffIcon />}
+          onClick={handleDialogRemoveClose}
+          type="button"
+          variant="outlined"
+        >
+          Cancel
+        </Button>
+        <Button
+          disabled={isMutating}
+          onClick={handleVolunteerRemove}
+          startIcon={
+            isMutating ? <CircularProgress size="1rem" /> : <PersonRemoveIcon />
+          }
+          type="submit"
+          variant="contained"
+        >
+          Remove
+        </Button>
+      </DialogActions>
+    </DialogContainer>
   );
 };

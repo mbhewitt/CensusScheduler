@@ -6,9 +6,7 @@ import {
   Autocomplete,
   Button,
   CircularProgress,
-  Dialog,
   DialogActions,
-  DialogContent,
   TextField,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
@@ -17,8 +15,8 @@ import io from "socket.io-client";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { DialogHeader } from "src/components/general/DialogHeader";
-import { ErrorPage } from "src/components/general/ErrorPage";
+import { DialogContainer } from "src/components/general/DialogContainer";
+import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import type { IDataVolunteerItem } from "src/components/types";
@@ -64,8 +62,26 @@ export const RoleVolunteersDialogAdd = ({
   });
   const { enqueueSnackbar } = useSnackbar();
 
-  if (error) return <ErrorPage />;
-  if (!data) return <Loading />;
+  if (error)
+    return (
+      <DialogContainer
+        handleDialogClose={handleDialogAddClose}
+        isDialogOpen={isDialogAddOpen}
+        text="Add role volunteer"
+      >
+        <ErrorAlert />
+      </DialogContainer>
+    );
+  if (!data)
+    return (
+      <DialogContainer
+        handleDialogClose={handleDialogAddClose}
+        isDialogOpen={isDialogAddOpen}
+        text="Add role volunteer"
+      >
+        <Loading />
+      </DialogContainer>
+    );
 
   // handle form submission
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
@@ -138,81 +154,75 @@ export const RoleVolunteersDialogAdd = ({
   };
 
   return (
-    <Dialog fullWidth onClose={handleDialogAddClose} open={isDialogAddOpen}>
-      <DialogHeader
-        handleDialogClose={handleDialogAddClose}
-        text="Add role volunteer"
-      />
-      <DialogContent>
-        <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-          <Controller
-            control={control}
-            name="volunteer"
-            render={({ field }) => (
-              <Autocomplete
-                {...field}
-                fullWidth
-                isOptionEqualToValue={(option, value: IVolunteer) =>
-                  option.shiftboardId === value.shiftboardId ||
-                  value.shiftboardId === ""
-                }
-                onChange={(_, data) => field.onChange(data)}
-                options={data.dataVolunteerList.map(
-                  ({
-                    playaName,
-                    shiftboardId,
-                    worldName,
-                  }: IDataVolunteerItem) => ({
-                    label: `${playaName} "${worldName}"`,
-                    shiftboardId,
-                  })
-                )}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Name"
-                    required
-                    variant="standard"
-                  />
-                )}
-                renderOption={(props, option) => (
-                  <li {...props} key={option.shiftboardId}>
-                    {option.label}
-                  </li>
-                )}
-              />
-            )}
-          />
-          <DialogActions>
-            <Button
-              disabled={isMutating}
-              startIcon={<HighlightOffIcon />}
-              onClick={() => {
-                handleDialogAddClose();
-                reset(defaultValues);
-              }}
-              type="button"
-              variant="outlined"
-            >
-              Cancel
-            </Button>
-            <Button
-              disabled={isMutating}
-              startIcon={
-                isMutating ? (
-                  <CircularProgress size="1rem" />
-                ) : (
-                  <PersonAddIcon />
-                )
+    <DialogContainer
+      handleDialogClose={handleDialogAddClose}
+      isDialogOpen={isDialogAddOpen}
+      text="Add role volunteer"
+    >
+      <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+        <Controller
+          control={control}
+          name="volunteer"
+          render={({ field }) => (
+            <Autocomplete
+              {...field}
+              fullWidth
+              isOptionEqualToValue={(option, value: IVolunteer) =>
+                option.shiftboardId === value.shiftboardId ||
+                value.shiftboardId === ""
               }
-              type="submit"
-              variant="contained"
-            >
-              Add
-            </Button>
-          </DialogActions>
-        </form>
-      </DialogContent>
-    </Dialog>
+              onChange={(_, data) => field.onChange(data)}
+              options={data.dataVolunteerList.map(
+                ({
+                  playaName,
+                  shiftboardId,
+                  worldName,
+                }: IDataVolunteerItem) => ({
+                  label: `${playaName} "${worldName}"`,
+                  shiftboardId,
+                })
+              )}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Name"
+                  required
+                  variant="standard"
+                />
+              )}
+              renderOption={(props, option) => (
+                <li {...props} key={option.shiftboardId}>
+                  {option.label}
+                </li>
+              )}
+            />
+          )}
+        />
+        <DialogActions>
+          <Button
+            disabled={isMutating}
+            startIcon={<HighlightOffIcon />}
+            onClick={() => {
+              handleDialogAddClose();
+              reset(defaultValues);
+            }}
+            type="button"
+            variant="outlined"
+          >
+            Cancel
+          </Button>
+          <Button
+            disabled={isMutating}
+            startIcon={
+              isMutating ? <CircularProgress size="1rem" /> : <PersonAddIcon />
+            }
+            type="submit"
+            variant="contained"
+          >
+            Add
+          </Button>
+        </DialogActions>
+      </form>
+    </DialogContainer>
   );
 };

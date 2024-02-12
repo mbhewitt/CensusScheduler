@@ -5,9 +5,7 @@ import {
 import {
   Button,
   CircularProgress,
-  Dialog,
   DialogActions,
-  DialogContent,
   FormControl,
   FormHelperText,
   Grid,
@@ -24,7 +22,7 @@ import io from "socket.io-client";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { DialogHeader } from "src/components/general/DialogHeader";
+import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
@@ -111,9 +109,31 @@ export const VolunteerShiftsDialogAdd = ({
     errorShiftList ||
     errorTrainingList
   )
-    return <ErrorAlert />;
+    return (
+      <DialogContainer
+        handleDialogClose={() => {
+          handleDialogAddClose();
+          reset(defaultValues);
+        }}
+        isDialogOpen={isDialogAddOpen}
+        text="Add volunteer shift"
+      >
+        <ErrorAlert />
+      </DialogContainer>
+    );
   if (!dataVolunteerInfo || !dataVolunteerShiftList || !dataShiftList)
-    return <Loading />;
+    return (
+      <DialogContainer
+        handleDialogClose={() => {
+          handleDialogAddClose();
+          reset(defaultValues);
+        }}
+        isDialogOpen={isDialogAddOpen}
+        text="Add volunteer shift"
+      >
+        <Loading />
+      </DialogContainer>
+    );
 
   // update position list based on selected shift
   const dataShiftSelected = dataShiftList.shiftList.find(
@@ -472,116 +492,212 @@ export const VolunteerShiftsDialogAdd = ({
   };
 
   return (
-    <Dialog
-      fullWidth
-      onClose={() => {
+    <DialogContainer
+      handleDialogClose={() => {
         handleDialogAddClose();
         reset(defaultValues);
       }}
-      open={isDialogAddOpen}
+      isDialogOpen={isDialogAddOpen}
+      text="Add volunteer shift"
     >
-      <DialogHeader
-        handleDialogClose={() => {
-          handleDialogAddClose();
-          reset(defaultValues);
-        }}
-        text="Add shift"
-      />
-      <DialogContent>
-        <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <Controller
-                control={control}
-                name="shiftId"
-                render={({ field }) => (
-                  <FormControl fullWidth variant="standard">
-                    <InputLabel id="shiftId">Shift date and time *</InputLabel>
-                    <Select
-                      {...field}
-                      label="Shift date and time *"
-                      labelId="shiftId"
-                      onChange={(event) => {
-                        const shiftId = event.target.value;
-                        const dataShiftSelected = dataShiftList.shiftList.find(
-                          (dataShiftItem: IDataShiftPositionListItem) =>
-                            dataShiftItem.shiftId === shiftId
-                        );
-                        const positionItemFirst =
-                          dataShiftSelected.positionList.find(
-                            ({ freeSlots }: { freeSlots: number }) =>
-                              freeSlots > 0
-                          ) || dataShiftSelected.positionList[0];
+      <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
+            <Controller
+              control={control}
+              name="shiftId"
+              render={({ field }) => (
+                <FormControl fullWidth variant="standard">
+                  <InputLabel id="shiftId">Shift date and time *</InputLabel>
+                  <Select
+                    {...field}
+                    label="Shift date and time *"
+                    labelId="shiftId"
+                    onChange={(event) => {
+                      const shiftId = event.target.value;
+                      const dataShiftSelected = dataShiftList.shiftList.find(
+                        (dataShiftItem: IDataShiftPositionListItem) =>
+                          dataShiftItem.shiftId === shiftId
+                      );
+                      const positionItemFirst =
+                        dataShiftSelected.positionList.find(
+                          ({ freeSlots }: { freeSlots: number }) =>
+                            freeSlots > 0
+                        ) || dataShiftSelected.positionList[0];
 
-                        field.onChange(shiftId);
-                        setValue(
-                          "shiftPositionId",
-                          positionItemFirst.shiftPositionId
-                        );
+                      field.onChange(shiftId);
+                      setValue(
+                        "shiftPositionId",
+                        positionItemFirst.shiftPositionId
+                      );
 
-                        // if there are less than or equal to zero slots available, display warning notification
-                        if (positionItemFirst.freeSlots <= 0) {
-                          enqueueSnackbar(
-                            <SnackbarText>
-                              There are{" "}
-                              <strong>{positionItemFirst.freeSlots}</strong>{" "}
-                              openings available for{" "}
-                              <strong>{positionItemFirst.position}</strong>
-                            </SnackbarText>,
-                            {
-                              variant: "warning",
+                      // if there are less than or equal to zero slots available, display warning notification
+                      if (positionItemFirst.freeSlots <= 0) {
+                        enqueueSnackbar(
+                          <SnackbarText>
+                            There are{" "}
+                            <strong>{positionItemFirst.freeSlots}</strong>{" "}
+                            openings available for{" "}
+                            <strong>{positionItemFirst.position}</strong>
+                          </SnackbarText>,
+                          {
+                            variant: "warning",
+                          }
+                        );
+                      }
+                    }}
+                    required
+                  >
+                    {dataShiftList.shiftList.map(
+                      ({
+                        date,
+                        dateName,
+                        endTime,
+                        freeSlots,
+                        positionList,
+                        shift,
+                        shiftId,
+                        shortName,
+                        startTime,
+                        totalSlots,
+                      }: IDataShiftPositionListItem) => {
+                        // evaluate the check-in type and available positions
+                        const checkInType = checkInGet({
+                          dateTime: dateTimeValue,
+                          endTime: dayjs(endTime),
+                          startTime: dayjs(startTime),
+                        });
+                        let isShiftAvailable = false;
+
+                        switch (checkInType) {
+                          case SHIFT_FUTURE:
+                            if (isAuthenticated && isCoreCrew) {
+                              isShiftAvailable = true;
+                            } else if (isAuthenticated) {
+                              isShiftAvailable = positionList.some(
+                                ({ freeSlots, role }) =>
+                                  freeSlots > 0 &&
+                                  (role === "" ||
+                                    dataVolunteerInfo.volunteerItem.roleList.includes(
+                                      role
+                                    ))
+                              );
                             }
-                          );
+                            break;
+                          case SHIFT_DURING: {
+                            isShiftAvailable = true;
+                            break;
+                          }
+                          case SHIFT_PAST: {
+                            if (isAuthenticated && isCoreCrew) {
+                              isShiftAvailable = true;
+                            } else if (isAuthenticated) {
+                              return null;
+                            }
+                            break;
+                          }
+                          default: {
+                            throw new Error(
+                              `Unknown check-in type: ${checkInType}`
+                            );
+                          }
                         }
-                      }}
-                      required
-                    >
-                      {dataShiftList.shiftList.map(
+
+                        return (
+                          <MenuItem
+                            disabled={!isShiftAvailable}
+                            key={`${shiftId}`}
+                            value={shiftId}
+                          >
+                            {`${dateName} ${date} at ${shift} - ${shortName}: ${
+                              totalSlots - freeSlots
+                            }/${totalSlots}`}
+                          </MenuItem>
+                        );
+                      }
+                    )}
+                  </Select>
+                </FormControl>
+              )}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <Controller
+              control={control}
+              name="shiftPositionId"
+              render={({ field }) => (
+                <FormControl fullWidth variant="standard">
+                  <InputLabel id="position">Position *</InputLabel>
+                  <Select
+                    {...field}
+                    disabled={shiftIdWatch === ""}
+                    label="Position *"
+                    labelId="position"
+                    onChange={(event) => {
+                      const positionSelected = event.target.value;
+
+                      field.onChange(positionSelected);
+                      if (dataShiftSelected) {
+                        dataShiftSelected.positionList.forEach(
+                          (positionItem: IDataPositionItem) => {
+                            // if there are less than or equal to zero slots available, display warning notification
+                            if (
+                              positionItem.shiftPositionId ===
+                                positionSelected &&
+                              positionItem.freeSlots <= 0
+                            ) {
+                              enqueueSnackbar(
+                                <SnackbarText>
+                                  There are{" "}
+                                  <strong>{positionItem.freeSlots}</strong>{" "}
+                                  openings available for{" "}
+                                  <strong>{positionItem.position}</strong>
+                                </SnackbarText>,
+                                {
+                                  variant: "warning",
+                                }
+                              );
+                            }
+                          }
+                        );
+                      }
+                    }}
+                    required
+                  >
+                    {dataShiftSelected &&
+                      dataShiftSelected.positionList.map(
                         ({
-                          date,
-                          dateName,
-                          endTime,
                           freeSlots,
-                          positionList,
-                          shift,
-                          shiftId,
-                          shortName,
-                          startTime,
+                          position,
+                          role,
+                          shiftPositionId,
                           totalSlots,
-                        }: IDataShiftPositionListItem) => {
+                        }: IDataPositionItem) => {
                           // evaluate the check-in type and available positions
                           const checkInType = checkInGet({
                             dateTime: dateTimeValue,
-                            endTime: dayjs(endTime),
-                            startTime: dayjs(startTime),
+                            endTime: dayjs(dataShiftSelected.endTime),
+                            startTime: dayjs(dataShiftSelected.startTime),
                           });
-                          let isShiftAvailable = false;
+                          let isPositionAvailable = false;
 
                           switch (checkInType) {
                             case SHIFT_FUTURE:
-                              if (isAuthenticated && isCoreCrew) {
-                                isShiftAvailable = true;
-                              } else if (isAuthenticated) {
-                                isShiftAvailable = positionList.some(
-                                  ({ freeSlots, role }) =>
-                                    freeSlots > 0 &&
-                                    (role === "" ||
-                                      dataVolunteerInfo.volunteerItem.roleList.includes(
-                                        role
-                                      ))
-                                );
-                              }
+                              isPositionAvailable =
+                                (isAuthenticated && isCoreCrew) ||
+                                (freeSlots > 0 &&
+                                  (role === "" ||
+                                    dataVolunteerInfo.volunteerItem.roleList.includes(
+                                      role
+                                    )));
                               break;
                             case SHIFT_DURING: {
-                              isShiftAvailable = true;
+                              isPositionAvailable = true;
                               break;
                             }
                             case SHIFT_PAST: {
-                              if (isAuthenticated && isCoreCrew) {
-                                isShiftAvailable = true;
-                              } else if (isAuthenticated) {
-                                return null;
-                              }
+                              isPositionAvailable =
+                                isAuthenticated && isCoreCrew;
                               break;
                             }
                             default: {
@@ -593,197 +709,89 @@ export const VolunteerShiftsDialogAdd = ({
 
                           return (
                             <MenuItem
-                              disabled={!isShiftAvailable}
-                              key={`${shiftId}`}
-                              value={shiftId}
+                              disabled={!isPositionAvailable}
+                              key={`${shiftPositionId}`}
+                              value={shiftPositionId}
                             >
-                              {`${dateName} ${date} at ${shift} - ${shortName}: ${
-                                totalSlots - freeSlots
-                              }/${totalSlots}`}
+                              {position}: {totalSlots - freeSlots}/{totalSlots}
                             </MenuItem>
                           );
                         }
                       )}
-                    </Select>
-                  </FormControl>
-                )}
-              />
-            </Grid>
-            <Grid item xs={6}>
+                  </Select>
+                </FormControl>
+              )}
+            />
+          </Grid>
+          {dataTrainingList && dataTrainingList.length > 0 && (
+            <Grid item xs={12}>
               <Controller
                 control={control}
-                name="shiftPositionId"
+                name="trainingPositionId"
                 render={({ field }) => (
-                  <FormControl fullWidth variant="standard">
-                    <InputLabel id="position">Position *</InputLabel>
+                  <FormControl
+                    error={trainingListDisplay.length === 0}
+                    fullWidth
+                    variant="standard"
+                  >
+                    <InputLabel id="training">Training</InputLabel>
                     <Select
                       {...field}
-                      disabled={shiftIdWatch === ""}
-                      label="Position *"
-                      labelId="position"
-                      onChange={(event) => {
-                        const positionSelected = event.target.value;
-
-                        field.onChange(positionSelected);
-                        if (dataShiftSelected) {
-                          dataShiftSelected.positionList.forEach(
-                            (positionItem: IDataPositionItem) => {
-                              // if there are less than or equal to zero slots available, display warning notification
-                              if (
-                                positionItem.shiftPositionId ===
-                                  positionSelected &&
-                                positionItem.freeSlots <= 0
-                              ) {
-                                enqueueSnackbar(
-                                  <SnackbarText>
-                                    There are{" "}
-                                    <strong>{positionItem.freeSlots}</strong>{" "}
-                                    openings available for{" "}
-                                    <strong>{positionItem.position}</strong>
-                                  </SnackbarText>,
-                                  {
-                                    variant: "warning",
-                                  }
-                                );
-                              }
-                            }
-                          );
-                        }
-                      }}
-                      required
+                      disabled={trainingListDisplay.length === 0}
+                      label="Training"
+                      labelId="training"
                     >
-                      {dataShiftSelected &&
-                        dataShiftSelected.positionList.map(
-                          ({
-                            freeSlots,
-                            position,
-                            role,
-                            shiftPositionId,
-                            totalSlots,
-                          }: IDataPositionItem) => {
-                            // evaluate the check-in type and available positions
-                            const checkInType = checkInGet({
-                              dateTime: dateTimeValue,
-                              endTime: dayjs(dataShiftSelected.endTime),
-                              startTime: dayjs(dataShiftSelected.startTime),
-                            });
-                            let isPositionAvailable = false;
-
-                            switch (checkInType) {
-                              case SHIFT_FUTURE:
-                                isPositionAvailable =
-                                  (isAuthenticated && isCoreCrew) ||
-                                  (freeSlots > 0 &&
-                                    (role === "" ||
-                                      dataVolunteerInfo.volunteerItem.roleList.includes(
-                                        role
-                                      )));
-                                break;
-                              case SHIFT_DURING: {
-                                isPositionAvailable = true;
-                                break;
-                              }
-                              case SHIFT_PAST: {
-                                isPositionAvailable =
-                                  isAuthenticated && isCoreCrew;
-                                break;
-                              }
-                              default: {
-                                throw new Error(
-                                  `Unknown check-in type: ${checkInType}`
-                                );
-                              }
-                            }
-
-                            return (
-                              <MenuItem
-                                disabled={!isPositionAvailable}
-                                key={`${shiftPositionId}`}
-                                value={shiftPositionId}
-                              >
-                                {position}: {totalSlots - freeSlots}/
-                                {totalSlots}
-                              </MenuItem>
-                            );
-                          }
-                        )}
+                      {trainingListDisplay}
                     </Select>
+                    {trainingListDisplay.length === 0 && (
+                      <FormHelperText>Please see a staff member</FormHelperText>
+                    )}
                   </FormControl>
                 )}
               />
             </Grid>
-            {dataTrainingList && dataTrainingList.length > 0 && (
-              <Grid item xs={12}>
-                <Controller
-                  control={control}
-                  name="trainingPositionId"
-                  render={({ field }) => (
-                    <FormControl
-                      error={trainingListDisplay.length === 0}
-                      fullWidth
-                      variant="standard"
-                    >
-                      <InputLabel id="training">Training</InputLabel>
-                      <Select
-                        {...field}
-                        disabled={trainingListDisplay.length === 0}
-                        label="Training"
-                        labelId="training"
-                      >
-                        {trainingListDisplay}
-                      </Select>
-                      {trainingListDisplay.length === 0 && (
-                        <FormHelperText>
-                          Please see a staff member
-                        </FormHelperText>
-                      )}
-                    </FormControl>
-                  )}
-                />
-              </Grid>
-            )}
-            {dataShiftSelected && (
-              <Grid item xs={12}>
-                <Typography gutterBottom>Position Details:</Typography>
-                {
-                  dataShiftSelected.positionList.find(
-                    (positionItem: IDataPositionItem) =>
-                      positionItem.shiftPositionId === shiftPositionIdWatch
-                  )?.details
-                }
-              </Grid>
-            )}
-          </Grid>
-          <DialogActions>
-            <Button
-              disabled={isMutating}
-              startIcon={<HighlightOffIcon />}
-              onClick={() => {
-                handleDialogAddClose();
-                reset(defaultValues);
-              }}
-              type="button"
-              variant="outlined"
-            >
-              Cancel
-            </Button>
-            <Button
-              disabled={isMutating}
-              startIcon={
-                isMutating ? (
-                  <CircularProgress size="1rem" />
-                ) : (
-                  <EventAvailableIcon />
-                )
+          )}
+          {dataShiftSelected && (
+            <Grid item xs={12}>
+              <Typography gutterBottom>Position Details:</Typography>
+              {
+                dataShiftSelected.positionList.find(
+                  (positionItem: IDataPositionItem) =>
+                    positionItem.shiftPositionId === shiftPositionIdWatch
+                )?.details
               }
-              type="submit"
-              variant="contained"
-            >
-              Add
-            </Button>
-          </DialogActions>
-        </form>
-      </DialogContent>
-    </Dialog>
+            </Grid>
+          )}
+        </Grid>
+        <DialogActions>
+          <Button
+            disabled={isMutating}
+            startIcon={<HighlightOffIcon />}
+            onClick={() => {
+              handleDialogAddClose();
+              reset(defaultValues);
+            }}
+            type="button"
+            variant="outlined"
+          >
+            Cancel
+          </Button>
+          <Button
+            disabled={isMutating}
+            startIcon={
+              isMutating ? (
+                <CircularProgress size="1rem" />
+              ) : (
+                <EventAvailableIcon />
+              )
+            }
+            type="submit"
+            variant="contained"
+          >
+            Add
+          </Button>
+        </DialogActions>
+      </form>
+    </DialogContainer>
   );
 };

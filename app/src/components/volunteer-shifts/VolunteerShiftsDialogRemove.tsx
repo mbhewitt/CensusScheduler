@@ -5,9 +5,7 @@ import {
 import {
   Button,
   CircularProgress,
-  Dialog,
   DialogActions,
-  DialogContent,
   DialogContentText,
   Typography,
 } from "@mui/material";
@@ -15,7 +13,7 @@ import { useSnackbar } from "notistack";
 import io from "socket.io-client";
 import useSWRMutation from "swr/mutation";
 
-import { DialogHeader } from "src/components/general/DialogHeader";
+import { DialogContainer } from "src/components/general/DialogContainer";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { fetcherTrigger } from "src/utils/fetcher";
 
@@ -83,45 +81,39 @@ export const VolunteerShiftsDialogRemove = ({
   };
 
   return (
-    <Dialog
-      fullWidth
-      onClose={handleDialogRemoveClose}
-      open={isDialogRemoveOpen}
+    <DialogContainer
+      handleDialogClose={handleDialogRemoveClose}
+      isDialogOpen={isDialogRemoveOpen}
+      text="Remove volunteer shift"
     >
-      <DialogHeader
-        handleDialogClose={handleDialogRemoveClose}
-        text="Remove shift"
-      />
-      <DialogContent>
-        <DialogContentText>
-          <Typography component="span">
-            Are you sure you want to remove <strong>{day}</strong> at{" "}
-            <strong>{time}</strong> for <strong>{position}</strong>?
-          </Typography>
-        </DialogContentText>
-        <DialogActions>
-          <Button
-            disabled={isMutating}
-            startIcon={<HighlightOffIcon />}
-            onClick={handleDialogRemoveClose}
-            type="button"
-            variant="outlined"
-          >
-            Cancel
-          </Button>
-          <Button
-            disabled={isMutating}
-            onClick={handleVolunteerRemove}
-            startIcon={
-              isMutating ? <CircularProgress size="1rem" /> : <EventBusyIcon />
-            }
-            type="submit"
-            variant="contained"
-          >
-            Remove
-          </Button>
-        </DialogActions>
-      </DialogContent>
-    </Dialog>
+      <DialogContentText>
+        <Typography component="span">
+          Are you sure you want to remove <strong>{day}</strong> at{" "}
+          <strong>{time}</strong> for <strong>{position}</strong>?
+        </Typography>
+      </DialogContentText>
+      <DialogActions>
+        <Button
+          disabled={isMutating}
+          startIcon={<HighlightOffIcon />}
+          onClick={handleDialogRemoveClose}
+          type="button"
+          variant="outlined"
+        >
+          Cancel
+        </Button>
+        <Button
+          disabled={isMutating}
+          onClick={handleVolunteerRemove}
+          startIcon={
+            isMutating ? <CircularProgress size="1rem" /> : <EventBusyIcon />
+          }
+          type="submit"
+          variant="contained"
+        >
+          Remove
+        </Button>
+      </DialogActions>
+    </DialogContainer>
   );
 };
