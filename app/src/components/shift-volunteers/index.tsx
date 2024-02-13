@@ -37,10 +37,7 @@ import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import { ShiftVolunteersDialogAdd } from "src/components/shift-volunteers/ShiftVolunteersDialogAdd";
 import { ShiftVolunteersDialogRemove } from "src/components/shift-volunteers/ShiftVolunteersDialogRemove";
-import {
-  IDataPositionItem,
-  IDataShiftVolunteerItem,
-} from "src/components/types";
+import { IPositionItem, IShiftVolunteerItem } from "src/components/types";
 import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
@@ -146,7 +143,7 @@ export const ShiftVolunteers = () => {
               const shiftboardIdNum = Number(shiftboardId);
               const shiftVolunteerItemUpdate =
                 dataMutate.shiftVolunteerList.find(
-                  (volunteerItem: IDataShiftVolunteerItem) =>
+                  (volunteerItem: IShiftVolunteerItem) =>
                     volunteerItem.shiftboardId === shiftboardIdNum
                 );
               if (shiftVolunteerItemUpdate) {
@@ -161,7 +158,7 @@ export const ShiftVolunteers = () => {
           if (dataShiftVolunteerList) {
             const dataMutate = structuredClone(dataShiftVolunteerList);
             const volunteerListNew = dataMutate.shiftVolunteerList.filter(
-              (volunteerItem: IDataShiftVolunteerItem) =>
+              (volunteerItem: IShiftVolunteerItem) =>
                 volunteerItem.shiftboardId !== shiftboardId
             );
             dataMutate.shiftVolunteerList = volunteerListNew;
@@ -257,7 +254,7 @@ export const ShiftVolunteers = () => {
         (isAuthenticated && isCoreCrew) ||
         (isAuthenticated &&
           dataShiftVolunteerList.positionList.some(
-            (positionItem: IDataPositionItem) => positionItem.freeSlots > 0
+            (positionItem: IPositionItem) => positionItem.freeSlots > 0
           ));
       break;
     }
@@ -309,7 +306,7 @@ export const ShiftVolunteers = () => {
       shiftboardId,
       shiftPositionId,
       worldName,
-    }: IDataShiftVolunteerItem) => {
+    }: IShiftVolunteerItem) => {
       return [
         playaName,
         worldName,
@@ -432,7 +429,7 @@ export const ShiftVolunteers = () => {
               </Typography>
               <Typography component="h3" variant="h6">
                 {dataShiftVolunteerList.positionList.map(
-                  ({ freeSlots, position, totalSlots }: IDataPositionItem) => {
+                  ({ freeSlots, position, totalSlots }: IPositionItem) => {
                     return (
                       <Fragment key={position}>
                         {position}: {totalSlots - freeSlots} / {totalSlots}

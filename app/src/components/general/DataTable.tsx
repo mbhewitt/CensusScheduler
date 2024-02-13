@@ -1,5 +1,5 @@
 import { createTheme, ThemeProvider } from "@mui/material";
-import MUIDataTable, {
+import MUITable, {
   FilterType,
   MUIDataTableColumn,
   MUIDataTableOptions,
@@ -8,7 +8,7 @@ import MUIDataTable, {
 
 import { CENSUS_PINK } from "src/constants";
 
-interface IDataTableProps {
+interface ITableProps {
   columnList: MUIDataTableColumn[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dataTable: any[];
@@ -19,13 +19,13 @@ export const DataTable = ({
   columnList,
   dataTable,
   optionListCustom,
-}: IDataTableProps) => {
+}: ITableProps) => {
   const theme = createTheme({
     components: {
       MuiPopover: {
         styleOverrides: {
           root: {
-            "[class*='MUIDataTableFilter-root']": {
+            "[class*='MUITableFilter-root']": {
               minWidth: "400px",
             },
           },
@@ -34,7 +34,7 @@ export const DataTable = ({
       MuiTableCell: {
         styleOverrides: {
           root: {
-            "&.center [class*='MUIDataTableHeadCell-contentWrapper']": {
+            "&.center [class*='MUITableHeadCell-contentWrapper']": {
               justifyContent: "center",
               ".MuiButton-root": {
                 marginLeft: 0,
@@ -46,7 +46,7 @@ export const DataTable = ({
             ".MuiButton-root": {
               fontWeight: 700,
             },
-            "[class*='MUIDataTableHeadCell-sortAction']": {
+            "[class*='MUITableHeadCell-sortAction']": {
               alignItems: "center",
             },
           },
@@ -75,7 +75,7 @@ export const DataTable = ({
 
   return (
     <ThemeProvider theme={theme}>
-      <MUIDataTable
+      <MUITable
         title=""
         columns={columnList}
         data={dataTable}

@@ -7,14 +7,14 @@ import {
   shiftVolunteerCheckIn,
   shiftVolunteerRemove,
 } from "pages/api/general/shiftVolunteers";
-import type { IDataVolunteerShiftItem } from "src/components/types";
+import type { IVolunteerShiftItem } from "src/components/types";
 
 const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     // get - get all volunteer shifts
     case "GET": {
       const { shiftboardId } = req.query;
-      const [dataDbVolunteerShiftList] = await pool.query<RowDataPacket[]>(
+      const [dbVolunteerShiftList] = await pool.query<RowDataPacket[]>(
         `SELECT date, datename, end_time, noshow, playa_name, position, s.shift_position_id, shift_id, shift, start_time, world_name
         FROM op_shifts AS s
         JOIN op_volunteer_shifts AS vs
@@ -25,13 +25,13 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
         ORDER BY start_time`,
         [shiftboardId]
       );
-      let [volunteerShiftItem] = dataDbVolunteerShiftList;
-      let volunteerShiftList: IDataVolunteerShiftItem[] = [];
+      let [volunteerShiftItem] = dbVolunteerShiftList;
+      let volunteerShiftList: IVolunteerShiftItem[] = [];
 
       // if a volunteer shift is found
       // then prepare volunteer shift list
       if (volunteerShiftItem) {
-        volunteerShiftList = dataDbVolunteerShiftList.map(
+        volunteerShiftList = dbVolunteerShiftList.map(
           ({
             date,
             datename,
@@ -59,14 +59,14 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
         );
         // else send volunteer information
       } else {
-        const [dataDbVolunteerShiftList] = await pool.query<RowDataPacket[]>(
+        const [dbVolunteerShiftList] = await pool.query<RowDataPacket[]>(
           `SELECT playa_name, world_name
           FROM op_volunteers
           WHERE shiftboard_id=?`,
           [shiftboardId]
         );
 
-        [volunteerShiftItem] = dataDbVolunteerShiftList;
+        [volunteerShiftItem] = dbVolunteerShiftList;
       }
 
       return res.status(200).json({

@@ -7,17 +7,14 @@ import {
   shiftVolunteerCheckIn,
   shiftVolunteerRemove,
 } from "pages/api/general/shiftVolunteers";
-import type {
-  IDataPositionItem,
-  IDataShiftVolunteerItem,
-} from "src/components/types";
+import type { IPositionItem, IShiftVolunteerItem } from "src/components/types";
 
 const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     // get - get all shift volunteers
     case "GET": {
       const { shiftId } = req.query;
-      const [dataDbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
+      const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT date, datename, details, end_time, free_slots, noshow, playa_name, position, role, s.shift_position_id, shift, shiftboard_id, shortname, start_time, total_slots, world_name
         FROM op_shifts AS s
         JOIN op_volunteer_shifts AS vs
@@ -28,12 +25,12 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         ORDER BY playa_name, world_name`,
         [shiftId]
       );
-      const shiftVolunteerItem = dataDbShiftVolunteerList[0];
+      const shiftVolunteerItem = dbShiftVolunteerList[0];
       const positionMap: { [key: string]: string } = {};
-      const positionList = dataDbShiftVolunteerList
+      const positionList = dbShiftVolunteerList
         .reduce(
           (
-            positionTotal: IDataPositionItem[],
+            positionTotal: IPositionItem[],
             {
               details,
               free_slots,
@@ -68,7 +65,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             Number(a.position > b.position) - Number(a.position < b.position)
         );
 
-      const shiftVolunteerList = dataDbShiftVolunteerList.reduce(
+      const shiftVolunteerList = dbShiftVolunteerList.reduce(
         (
           volunteerTotal,
           {
@@ -93,7 +90,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
 
           return volunteerTotal;
         },
-        [] as IDataShiftVolunteerItem[]
+        [] as IShiftVolunteerItem[]
       );
 
       return res.status(200).json({

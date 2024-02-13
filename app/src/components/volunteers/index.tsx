@@ -21,7 +21,7 @@ import { DataTable } from "src/components/general/DataTable";
 import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { Hero } from "src/components/layout/Hero";
-import type { IDataVolunteerShiftCountItem } from "src/components/types";
+import type { IVolunteerShiftCountItem } from "src/components/types";
 import { fetcherGet } from "src/utils/fetcher";
 
 const setCellHeaderPropsCenter = () => ({
@@ -172,7 +172,7 @@ export const Volunteers = () => {
       },
     },
   ];
-  const dataTable = data.dataVolunteerList.map(
+  const dataTable = data.map(
     ({
       attendedCount,
       isNotes,
@@ -181,7 +181,7 @@ export const Volunteers = () => {
       remainingCount,
       shiftboardId,
       worldName,
-    }: IDataVolunteerShiftCountItem) => {
+    }: IVolunteerShiftCountItem) => {
       return [
         shiftboardId,
         playaName,

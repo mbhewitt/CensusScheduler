@@ -21,7 +21,7 @@ import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
-import { IDataRoleVolunteerItem } from "src/components/types";
+import { IRoleVolunteerItem } from "src/components/types";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IRolesDialogDeleteProps {
@@ -111,7 +111,7 @@ export const RolesDialogDelete = ({
       isDialogOpen={isDialogDeleteOpen}
       text="Delete role"
     >
-      {data.dataRoleVolunteerList && data.dataRoleVolunteerList.length > 0 ? (
+      {data && data.length > 0 ? (
         <>
           <DialogContentText>
             <Typography component="span">
@@ -120,12 +120,8 @@ export const RolesDialogDelete = ({
             </Typography>
           </DialogContentText>
           <List sx={{ pl: 2, listStyleType: "disc" }}>
-            {data.dataRoleVolunteerList.map(
-              ({
-                playaName,
-                shiftboardId,
-                worldName,
-              }: IDataRoleVolunteerItem) => {
+            {data.map(
+              ({ playaName, shiftboardId, worldName }: IRoleVolunteerItem) => {
                 return (
                   <ListItem
                     disablePadding
@@ -157,11 +153,7 @@ export const RolesDialogDelete = ({
           Cancel
         </Button>
         <Button
-          disabled={
-            (data.dataRoleVolunteerList &&
-              data.dataRoleVolunteerList.length > 0) ||
-            isMutating
-          }
+          disabled={(data && data.length > 0) || isMutating}
           onClick={handleRoleDelete}
           startIcon={
             isMutating ? <CircularProgress size="1rem" /> : <DeleteIcon />

@@ -58,7 +58,7 @@ export const shiftVolunteerCheckIn = async (
 
   await pool.query<RowDataPacket[]>(
     `UPDATE op_volunteer_shifts
-    SET noshow=?, update_shift=1
+    SET noshow=?, update_shift=true
     WHERE shift_position_id=?
     AND shiftboard_id=?`,
     [checked ? "" : "Yes", shiftPositionId, shiftboardId]

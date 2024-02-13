@@ -28,7 +28,7 @@ import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
-import type { IDataVolunteerItem } from "src/components/types";
+import type { IVolunteerItem } from "src/components/types";
 import { GENERAL_ROLE_LIST } from "src/constants";
 import { SessionContext } from "src/state/session/context";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
@@ -56,10 +56,7 @@ export const Contact = () => {
     },
   } = useContext(SessionContext);
   const [isMounted, setIsMounted] = useState(false);
-  const { data: volunteerCoreList, error: volunteerCoreError } = useSWR(
-    "/api/volunteers?filter=core",
-    fetcherGet
-  );
+  const { data, error } = useSWR("/api/volunteers?filter=core", fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     "/api/contact",
     fetcherTrigger
@@ -90,8 +87,8 @@ export const Contact = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, isMounted]);
 
-  if (volunteerCoreError) return <ErrorPage />;
-  if (!volunteerCoreList) return <Loading />;
+  if (error) return <ErrorPage />;
+  if (!data) return <Loading />;
 
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
@@ -210,8 +207,8 @@ export const Contact = () => {
                             </MenuItem>
                           ))}
                           <ListSubheader>Core volunteers</ListSubheader>
-                          {volunteerCoreList.dataVolunteerList.map(
-                            ({ playaName, worldName }: IDataVolunteerItem) => (
+                          {data.map(
+                            ({ playaName, worldName }: IVolunteerItem) => (
                               <MenuItem
                                 key={`${playaName}-${worldName}`}
                                 value={`${playaName} "${worldName}"`}

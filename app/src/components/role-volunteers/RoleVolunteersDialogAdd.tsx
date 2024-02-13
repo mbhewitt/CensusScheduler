@@ -19,7 +19,7 @@ import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
-import type { IDataVolunteerItem } from "src/components/types";
+import type { IVolunteerItem } from "src/components/types";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IVolunteer {
@@ -29,7 +29,7 @@ interface IVolunteer {
 interface IFormValues {
   volunteer: null | IVolunteer;
 }
-interface IDataRoleVolunteerItem {
+interface IRoleVolunteerItem {
   roleName: string;
   playaName: string;
   shiftboardId: number;
@@ -39,7 +39,7 @@ interface IRoleVolunteersDialogAddProps {
   handleDialogAddClose: () => void;
   isDialogAddOpen: boolean;
   roleName: string;
-  roleVolunteerList: IDataRoleVolunteerItem[];
+  roleVolunteerList: IRoleVolunteerItem[];
 }
 
 const socket = io();
@@ -86,8 +86,8 @@ export const RoleVolunteersDialogAdd = ({
   // handle form submission
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
-      const roleVolunteerAdd = data.dataVolunteerList.find(
-        (dataVolunteerItem: IDataVolunteerItem) =>
+      const roleVolunteerAdd = data.find(
+        (dataVolunteerItem: IVolunteerItem) =>
           dataVolunteerItem.shiftboardId === dataForm.volunteer?.shiftboardId
       );
       const isRoleVolunteerAvailable = roleVolunteerList.some(
@@ -172,12 +172,8 @@ export const RoleVolunteersDialogAdd = ({
                 value.shiftboardId === ""
               }
               onChange={(_, data) => field.onChange(data)}
-              options={data.dataVolunteerList.map(
-                ({
-                  playaName,
-                  shiftboardId,
-                  worldName,
-                }: IDataVolunteerItem) => ({
+              options={data.map(
+                ({ playaName, shiftboardId, worldName }: IVolunteerItem) => ({
                   label: `${playaName} "${worldName}"`,
                   shiftboardId,
                 })

@@ -2,12 +2,9 @@ import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
-import type {
-  IDataShiftItem,
-  IDataShiftPositionListItem,
-} from "src/components/types";
+import type { IShiftItem, IShiftPositionListItem } from "src/components/types";
 
-interface IDataDbShiftItem {
+interface IDbShiftItem {
   date: string;
   datename: string;
   category: string;
@@ -18,7 +15,7 @@ interface IDataDbShiftItem {
   total_slots: number;
   year: number;
 }
-interface IDataDbShiftPositionListItem {
+interface IDbShiftPositionListItem {
   date: string;
   datename: string;
   details: string;
@@ -43,16 +40,16 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
       // if adding a shift to a volunteer
       // then get all shifts and positions
       if (filter === "positions") {
-        const [dataDbShiftList] = await pool.query<RowDataPacket[]>(
+        const [dbShiftList] = await pool.query<RowDataPacket[]>(
           `SELECT date, datename, details, end_time, free_slots, position, role, shift_id, shift_position_id, shift, shortname, start_time, total_slots
           FROM op_shifts
           WHERE delete_shift=false AND off_playa=false
           ORDER BY start_time`
         );
-        const shiftList = dataDbShiftList.reduce(
+        const resShiftList = dbShiftList.reduce(
           (
-            rowList: IDataShiftPositionListItem[],
-            rowItem: IDataDbShiftPositionListItem | RowDataPacket
+            rowList: IShiftPositionListItem[],
+            rowItem: IDbShiftPositionListItem | RowDataPacket
           ) => {
             const rowListLast = rowList[rowList.length - 1];
             const positionNew = {
@@ -96,23 +93,18 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
           []
         );
 
-        return res.status(200).json({
-          shiftList,
-        });
+        return res.status(200).json(resShiftList);
       }
 
       // get all shifts
-      const [dataDbShiftList] = await pool.query<RowDataPacket[]>(
+      const [dbShiftList] = await pool.query<RowDataPacket[]>(
         `SELECT category, date, datename, free_slots, shift_id, shift, shortname, total_slots, year
         FROM op_shifts
         WHERE delete_shift=false AND off_playa=false
         ORDER BY start_time`
       );
-      const shiftList = dataDbShiftList.reduce(
-        (
-          rowList: IDataShiftItem[],
-          rowItem: IDataDbShiftItem | RowDataPacket
-        ) => {
+      const resShiftList = dbShiftList.reduce(
+        (rowList: IShiftItem[], rowItem: IDbShiftItem | RowDataPacket) => {
           const rowListLast = rowList[rowList.length - 1];
 
           if (!rowListLast || rowListLast.shiftId !== rowItem.shift_id) {
@@ -141,9 +133,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
         []
       );
 
-      return res.status(200).json({
-        shiftList,
-      });
+      return res.status(200).json(resShiftList);
     }
     // default - send an error message
     default: {

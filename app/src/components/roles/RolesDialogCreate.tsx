@@ -20,14 +20,14 @@ import { fetcherTrigger } from "src/utils/fetcher";
 interface IFormValues {
   name: string;
 }
-interface IDataRoleItem {
+interface IRoleItem {
   display: boolean;
   name: string;
 }
 interface IRolesDialogCreateProps {
   handleDialogCreateClose: () => void;
   isDialogCreateOpen: boolean;
-  roleList: IDataRoleItem[];
+  roleList: IRoleItem[];
 }
 
 const socket = io();

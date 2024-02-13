@@ -29,7 +29,7 @@ import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
-import type { IDataVolunteerItem } from "src/components/types";
+import type { IVolunteerItem } from "src/components/types";
 import { SIGN_IN } from "src/constants";
 import { SessionContext } from "src/state/session/context";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
@@ -163,12 +163,12 @@ export const SignIn = () => {
                         value.shiftboardId === ""
                       }
                       onChange={(_, data) => field.onChange(data)}
-                      options={data.dataVolunteerList.map(
+                      options={data.map(
                         ({
                           playaName,
                           shiftboardId,
                           worldName,
-                        }: IDataVolunteerItem) => ({
+                        }: IVolunteerItem) => ({
                           label: `${playaName} "${worldName}"`,
                           shiftboardId,
                         })

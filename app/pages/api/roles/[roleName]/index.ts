@@ -8,7 +8,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     // get - get all role volunteers
     case "GET": {
-      const [dataDbRoleVolunteerList] = await pool.query<RowDataPacket[]>(
+      const [dbRoleVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT playa_name, roles, vr.shiftboard_id, world_name
         FROM op_volunteer_roles AS vr
         JOIN op_volunteers AS v
@@ -17,7 +17,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         ORDER BY playa_name`,
         [roleName]
       );
-      const dataRoleVolunteerList = dataDbRoleVolunteerList.map(
+      const resRoleVolunteerList = dbRoleVolunteerList.map(
         ({ playa_name, roles, shiftboard_id, world_name }) => {
           return {
             playaName: playa_name,
@@ -28,27 +28,25 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         }
       );
 
-      return res.status(200).json({
-        dataRoleVolunteerList,
-      });
+      return res.status(200).json(resRoleVolunteerList);
     }
     // post - add role volunteer
     case "POST": {
       const { shiftboardId } = JSON.parse(req.body);
-      const [dataDbRoleVolunteerList] = await pool.query<RowDataPacket[]>(
+      const [dbRoleVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT *
         FROM op_volunteer_roles
         WHERE roles=? AND shiftboard_id=?`,
         [roleName, shiftboardId]
       );
-      const dataDbRoleVolunteerItem = dataDbRoleVolunteerList[0];
+      const dbRoleVolunteerItem = dbRoleVolunteerList[0];
 
       // if role volunteer row exists
       // then update role volunteer row
-      if (dataDbRoleVolunteerItem) {
+      if (dbRoleVolunteerItem) {
         await pool.query<RowDataPacket[]>(
           `UPDATE op_volunteer_roles
-          SET add_role=1, delete_role=0
+          SET add_role=true, delete_role=false
           WHERE roles=? AND shiftboard_id=?`,
           [roleName, shiftboardId]
         );
@@ -71,7 +69,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
 
       await pool.query<RowDataPacket[]>(
         `UPDATE op_volunteer_roles
-        SET add_role=0, delete_role=1
+        SET add_role=false, delete_role=true
         WHERE roles=? AND shiftboard_id=?`,
         [roleName, shiftboardId]
       );

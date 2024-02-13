@@ -1,4 +1,4 @@
-export interface IDataPositionItem {
+export interface IPositionItem {
   details: string;
   freeSlots: number;
   position: string;
@@ -6,13 +6,13 @@ export interface IDataPositionItem {
   shiftPositionId: string;
   totalSlots: number;
 }
-export interface IDataRoleVolunteerItem {
+export interface IRoleVolunteerItem {
   playaName: string;
   roleName: string;
   shiftboardId: number;
   worldName: string;
 }
-export interface IDataShiftItem {
+export interface IShiftItem {
   category: string;
   date: string;
   dateName: string;
@@ -23,19 +23,19 @@ export interface IDataShiftItem {
   totalSlots: number;
   year: number;
 }
-export interface IDataShiftPositionListItem {
+export interface IShiftPositionListItem {
   date: string;
   dateName: string;
   endTime: string;
   freeSlots: number;
-  positionList: IDataPositionItem[];
+  positionList: IPositionItem[];
   shift: string;
   shiftId: string;
   shortName: string;
   startTime: string;
   totalSlots: number;
 }
-export interface IDataShiftVolunteerItem {
+export interface IShiftVolunteerItem {
   noShow: string;
   playaName: string;
   position: string;
@@ -43,7 +43,7 @@ export interface IDataShiftVolunteerItem {
   shiftPositionId: string;
   worldName: string;
 }
-export interface IDataTrainingItem {
+export interface ITrainingItem {
   date: string;
   dateName: string;
   endTime: string;
@@ -54,14 +54,14 @@ export interface IDataTrainingItem {
   startTime: string;
   totalSlots: number;
 }
-export interface IDataVolunteerItem {
+export interface IVolunteerItem {
   email: string;
   phone: string;
   playaName: string;
   shiftboardId: number | string;
   worldName: string;
 }
-export interface IDataVolunteerShiftItem {
+export interface IVolunteerShiftItem {
   date: string;
   dateName: string;
   endTime: string;
@@ -72,7 +72,7 @@ export interface IDataVolunteerShiftItem {
   shiftPositionId: string;
   startTime: string;
 }
-export interface IDataVolunteerShiftCountItem {
+export interface IVolunteerShiftCountItem {
   attendedCount: number;
   isNotes: boolean;
   noShowCount: number;

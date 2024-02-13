@@ -27,10 +27,10 @@ import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import type {
-  IDataPositionItem,
-  IDataShiftPositionListItem,
-  IDataTrainingItem,
-  IDataVolunteerShiftItem,
+  IPositionItem,
+  IShiftPositionListItem,
+  ITrainingItem,
+  IVolunteerShiftItem,
 } from "src/components/types";
 import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
@@ -136,8 +136,8 @@ export const VolunteerShiftsDialogAdd = ({
     );
 
   // update position list based on selected shift
-  const dataShiftSelected = dataShiftList.shiftList.find(
-    (dataShiftItem: IDataShiftPositionListItem) =>
+  const dataShiftSelected = dataShiftList.find(
+    (dataShiftItem: IShiftPositionListItem) =>
       dataShiftItem.shiftId === shiftIdWatch
   );
 
@@ -157,7 +157,7 @@ export const VolunteerShiftsDialogAdd = ({
         shiftPositionId,
         startTime,
         totalSlots,
-      }: IDataTrainingItem) => {
+      }: ITrainingItem) => {
         // evaluate the check-in type and available trainings
         const checkInType = checkInGet({
           dateTime: dateTimeValue,
@@ -232,16 +232,16 @@ export const VolunteerShiftsDialogAdd = ({
   // handle form submission
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
-      const shiftAdd = dataShiftList.shiftList.find(
-        (shiftItem: IDataShiftPositionListItem) =>
+      const shiftAdd = dataShiftList.find(
+        (shiftItem: IShiftPositionListItem) =>
           shiftItem.shiftId === dataForm.shiftId
       );
       const positionAdd = shiftAdd.positionList.find(
-        (positionItem: IDataPositionItem) =>
+        (positionItem: IPositionItem) =>
           positionItem.shiftPositionId === dataForm.shiftPositionId
       );
       const trainingAdd = dataTrainingList.find(
-        (trainingItem: IDataTrainingItem) =>
+        (trainingItem: ITrainingItem) =>
           trainingItem.shiftPositionId === dataForm.trainingPositionId
       );
       let noShowShift: string;
@@ -294,12 +294,12 @@ export const VolunteerShiftsDialogAdd = ({
       // check if the shift has been added already
       const isShiftSlotAvailable =
         !dataVolunteerShiftList.volunteerShiftList.some(
-          (shift: IDataVolunteerShiftItem) => shift.shiftId === shiftAdd.shiftId
+          (shift: IVolunteerShiftItem) => shift.shiftId === shiftAdd.shiftId
         );
       // check if there are any shift or training time conflicts
       const isShiftVolunteerAvailable =
         !dataVolunteerShiftList.volunteerShiftList.some(
-          (volunteerShiftItem: IDataVolunteerShiftItem) =>
+          (volunteerShiftItem: IVolunteerShiftItem) =>
             dayjs(shiftAdd.startTime).isBetween(
               dayjs(volunteerShiftItem.startTime),
               dayjs(volunteerShiftItem.endTime),
@@ -310,7 +310,7 @@ export const VolunteerShiftsDialogAdd = ({
       if (trainingAdd) {
         isTrainingVolunteerAvailable =
           !dataVolunteerShiftList.volunteerShiftList.some(
-            (volunteerShiftItem: IDataVolunteerShiftItem) =>
+            (volunteerShiftItem: IVolunteerShiftItem) =>
               dayjs(trainingAdd.startTime).isBetween(
                 dayjs(volunteerShiftItem.startTime),
                 dayjs(volunteerShiftItem.endTime),
@@ -515,8 +515,8 @@ export const VolunteerShiftsDialogAdd = ({
                     labelId="shiftId"
                     onChange={(event) => {
                       const shiftId = event.target.value;
-                      const dataShiftSelected = dataShiftList.shiftList.find(
-                        (dataShiftItem: IDataShiftPositionListItem) =>
+                      const dataShiftSelected = dataShiftList.find(
+                        (dataShiftItem: IShiftPositionListItem) =>
                           dataShiftItem.shiftId === shiftId
                       );
                       const positionItemFirst =
@@ -548,7 +548,7 @@ export const VolunteerShiftsDialogAdd = ({
                     }}
                     required
                   >
-                    {dataShiftList.shiftList.map(
+                    {dataShiftList.map(
                       ({
                         date,
                         dateName,
@@ -560,7 +560,7 @@ export const VolunteerShiftsDialogAdd = ({
                         shortName,
                         startTime,
                         totalSlots,
-                      }: IDataShiftPositionListItem) => {
+                      }: IShiftPositionListItem) => {
                         // evaluate the check-in type and available positions
                         const checkInType = checkInGet({
                           dateTime: dateTimeValue,
@@ -578,9 +578,7 @@ export const VolunteerShiftsDialogAdd = ({
                                 ({ freeSlots, role }) =>
                                   freeSlots > 0 &&
                                   (role === "" ||
-                                    dataVolunteerInfo.volunteerItem.roleList.includes(
-                                      role
-                                    ))
+                                    dataVolunteerInfo.roleList.includes(role))
                               );
                             }
                             break;
@@ -639,7 +637,7 @@ export const VolunteerShiftsDialogAdd = ({
                       field.onChange(positionSelected);
                       if (dataShiftSelected) {
                         dataShiftSelected.positionList.forEach(
-                          (positionItem: IDataPositionItem) => {
+                          (positionItem: IPositionItem) => {
                             // if there are less than or equal to zero slots available, display warning notification
                             if (
                               positionItem.shiftPositionId ===
@@ -672,7 +670,7 @@ export const VolunteerShiftsDialogAdd = ({
                           role,
                           shiftPositionId,
                           totalSlots,
-                        }: IDataPositionItem) => {
+                        }: IPositionItem) => {
                           // evaluate the check-in type and available positions
                           const checkInType = checkInGet({
                             dateTime: dateTimeValue,
@@ -687,9 +685,7 @@ export const VolunteerShiftsDialogAdd = ({
                                 (isAuthenticated && isCoreCrew) ||
                                 (freeSlots > 0 &&
                                   (role === "" ||
-                                    dataVolunteerInfo.volunteerItem.roleList.includes(
-                                      role
-                                    )));
+                                    dataVolunteerInfo.roleList.includes(role)));
                               break;
                             case SHIFT_DURING: {
                               isPositionAvailable = true;
@@ -756,7 +752,7 @@ export const VolunteerShiftsDialogAdd = ({
               <Typography gutterBottom>Position Details:</Typography>
               {
                 dataShiftSelected.positionList.find(
-                  (positionItem: IDataPositionItem) =>
+                  (positionItem: IPositionItem) =>
                     positionItem.shiftPositionId === shiftPositionIdWatch
                 )?.details
               }

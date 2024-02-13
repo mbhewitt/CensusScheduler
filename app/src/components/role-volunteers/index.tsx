@@ -34,7 +34,7 @@ import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import { RoleVolunteersDialogAdd } from "src/components/role-volunteers/RoleVolunteersDialogAdd";
 import { RoleVolunteersDialogRemove } from "src/components/role-volunteers/RoleVolunteersDialogRemove";
-import { IDataRoleVolunteerItem } from "src/components/types";
+import { IRoleVolunteerItem } from "src/components/types";
 import { fetcherGet } from "src/utils/fetcher";
 
 const socket = io();
@@ -75,7 +75,7 @@ export const RoleVolunteers = () => {
           ({ playaName, roleName, shiftboardId, worldName }) => {
             if (data && roleName === roleNameQuery) {
               const dataMutate = structuredClone(data);
-              dataMutate.dataRoleVolunteerList.push({
+              dataMutate.push({
                 playaName,
                 roleName,
                 shiftboardId,
@@ -89,14 +89,12 @@ export const RoleVolunteers = () => {
         socket.on("res-role-volunteer-remove", ({ shiftboardId }) => {
           if (data) {
             const dataMutate = structuredClone(data);
-            const roleVolunteerListNew =
-              dataMutate.dataRoleVolunteerList.filter(
-                (roleVolunteerItem: IDataRoleVolunteerItem) =>
-                  roleVolunteerItem.shiftboardId !== shiftboardId
-              );
-            dataMutate.dataRoleVolunteerList = roleVolunteerListNew;
+            const roleVolunteerListNew = dataMutate.filter(
+              (roleVolunteerItem: IRoleVolunteerItem) =>
+                roleVolunteerItem.shiftboardId !== shiftboardId
+            );
 
-            mutate(dataMutate);
+            mutate(roleVolunteerListNew);
           }
         });
       } catch (error) {
@@ -143,13 +141,8 @@ export const RoleVolunteers = () => {
       options: { searchable: false, sort: false },
     },
   ];
-  const dataTable = data.dataRoleVolunteerList.map(
-    ({
-      playaName,
-      roleName,
-      shiftboardId,
-      worldName,
-    }: IDataRoleVolunteerItem) => {
+  const dataTable = data.map(
+    ({ playaName, roleName, shiftboardId, worldName }: IRoleVolunteerItem) => {
       return [
         shiftboardId,
         playaName,
@@ -271,7 +264,7 @@ export const RoleVolunteers = () => {
         handleDialogAddClose={() => setIsDialogAddOpen(false)}
         isDialogAddOpen={isDialogAddOpen}
         roleName={roleNameQuery as string}
-        roleVolunteerList={data.dataRoleVolunteerList}
+        roleVolunteerList={data}
       />
 
       {/* remove dialog */}
