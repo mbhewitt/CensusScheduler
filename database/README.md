@@ -57,7 +57,6 @@
 
 - **year** -- burn year
 - **date** -- date the shift happens
-- **shift** -- shift time text (dont use)
 - **shift_name_id** -- foreign key to op_shift_name
 - **shift_instance** -- a keyword to link the shiftboard shifts to the censusscheuduler
 - **start_time_lt** -- local time text of the start time
