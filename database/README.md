@@ -1,6 +1,77 @@
 # Useful Tables in database
 
-## op_shifts -- info table about every shift/position.
+## op_dates -- ref table translating date to date_name
+
+- **year** -- burn year
+- **date** -- date
+- **datename** -- what we call the name on playa allows for date references between years
+
+## op_position_type -- details on the positions in shifts
+
+- **position** -- name of the position
+- **role_id** -- foreign key to op_roles, if the position has a role restriction 
+- **lead** -- if the position is a lead position
+- **critical** -- if the position is critical to the success of the shift
+- **prerequisite_id** -- foreign key to op_shift_category, if the position has a shift that is a prereq to it
+- **position_details** -- description of the position
+- **position_type_id** -- the row id
+- **start_time_offset** -- if the position actually starts this number of minutes before the shift start time
+- **end_time_offset** -- if the position actually ends this number of minutes after the shift end time
+- **create_position** -- 'bool', if the position is created on playa
+- **delete_position** --  'bool', if the position is deleted on playa
+- **update_position** --  'bool', if the position is updated on playa
+
+## op_shift_category -- the category a shift falls into
+
+- **category** -- name of the category
+- **shift_category** -- name of the shift category
+- **shift_category_id** -- row id
+- **create_category**  -- 'bool', if the category is created on playa
+- **delete_category** --  'bool', if the category is deleted on playa
+- **update_category** --  'bool', if the category is updated on playa
+
+## op_shift_name -- the name of a shift type, shift_times and shift_position are subtables of this one
+
+- **core** -- bool if shift is part of the core mission
+- **off_playa** -- bool if the shift takes place off playa
+- **shift_category_id** -- foreign key to op_shfit_category
+- **shift_name_id** -- rowid
+- **shift_details** -- description of the shift type
+- **shift_name** -- name of the shift type
+- **create_shift** -- `Bool`, if this is an addition to the table onplaya this should be set to true
+- **delete_shift** -- `Bool`, if true mark this shift for deletion
+- **update_shift** -- `Bool`, if true we made a change to a shift
+
+## op_shift_position -- links the position into the shift name table
+
+- **position_type_id** -- foreign key to op_position_type
+- **total_slots** -- number of slots needed for this position type
+- **shift_name_id** -- foreign key to op_shift_name
+- **wap_points** -- number of points associated with this position on this shift
+- **shift_position_id** -- rowid
+- **add_shift_position** -- `Bool`, if this is an addition to the table onplaya this should be set to true
+- **remove_shift_position** --  `Bool`, if true mark this shift for deletion
+- **update_shift_position** --  `Bool`, if true we made a change to a shift
+
+## op_shift_times -- adds particular times to the shift name table
+
+- **year** -- burn year
+- **date** -- date the shift happens
+- **shift** -- shift time text (dont use)
+- **shift_name_id** -- foreign key to op_shift_name
+- **shift_instance** -- a keyword to link the shiftboard shifts to the censusscheuduler
+- **start_time_lt** -- local time text of the start time
+- **end_time_lt** -- local time text of the end time
+- **start_time** -- datetime
+- **end_time** -- datetime
+- **shift_times_id** -- rowid
+- **notes** -- onplaya notes changes
+- **add_shift_time** -- 
+- **remove_shift_time** -- 
+- **update_shift_time** -- 
+
+
+## op_shifts -- info table about every shift/position. (deprecated)
 
 - **year** -- burn year from the end of the last Burn until the start of the next burn so 2022-09-15 would have a burn year of 2023
 - **datename** -- Each day of a given burn is named (examples PreFri, Mon, BurnSat) makes it easier to translate between years
@@ -34,25 +105,30 @@
 ## op_volunteer_roles -- table containing all the roles assigned to each shiftboard member (Long not Wide)
 
 - **shiftboard_id** -- the id identifying a particular individual
-- **roles** -- the role assigned to the `shiftboard_id` matches role in `op_shifts` and in `op_roles`
-- **delete_role** -- the role is deleted onplaya
+- **role_id** -- foreign key to op_roles
+- **remove_role** -- the role is removed onplaya
 - **add_role** -- the role is added onplaya
 
 ## op_roles -- table containing all the valid roles to use 
 
-- **roles** -- the role name
+- **role_id** -- rowid
+- **role** -- the role name
+- **display** -- if the role should be displayed
+- **role_src** -- source of the role name
 - **delete_role** -- the role is deleted onplaya
-- **add_role** -- the role is added onplaya
+- **create_role** -- the role is added onplaya
+- **update_role** -- if the role is updated on playa
 - **display** -- if false this role is not to be shown to users
 
 ## op_volunteer_shifts -- table linking op_volunteers to op_shifts -- a 0 for shiftboard_id is how shiftboard identifies open slots.
 
-- **shift_position_id** -- uniquly identifies a shift and position on the shift
+- **shift_position_id** -- foreign key to op_shift_position
+- **shift_times_id** -- foreign key to op_shift_times
 - **shiftboard_id** -- the id of the individual
 - **shiftboard_shift_id** -- a integer of the position of the shift in shiftboard leave `NULL` if unknown, used for making changes in shiftboard
 - **noshow** -- If someone did not show up for a shift this is set to `Yes` otherwise '', set to `X` to denote that it is unknown yet
 - **add_shift** -- `Bool`, if this is an addition to the table onplaya this should be set to true
-- **delete_shift** -- `Bool`, if true mark this row for deletion
+- **remove_shift** -- `Bool`, if true mark this row for deletion
 - **update_shift** -- `Bool`, if true we made a change to noshow
 
 ## op_volunteers -- table containing everything about each person
@@ -65,8 +141,6 @@
 - **passcode** -- used as a password for updating their shifts
 - **account_id** -- seperate `shiftboard_id` for making updates to shiftboard
 - **core_crew** -- `Bool`, if true this is a admin
-- **new_account** -- `Bool`, if this account was created on playa
-- **needs_update** -- `Bool`, if `playa_name`-`phone` is changed
 - **new_shiftboard_id** -- if it is a new acount what is their real `shiftboard_id` assigned after the event
 - **score** -- score from previous years reviews for person
 - **rs_shifts** -- number of random sampling shifts someone has done in prior years
@@ -74,6 +148,10 @@
 - **notes** -- notes about volunteer from onplaya.
 - **location** -- how to find them on playa
 - **emergency_contact** -- Who to contact in case of emergency.
+- **create_volunteer** -- `Bool`, if this account was created on playa
+- **update_volunteer** -- `Bool`, if `playa_name`-`phone` is changed
+- **delete_volunteer** -- 'bool', if volunteer is removed on playa
+ 
 
 ## op_messages -- any messages for census which can be questions, or reminders to fill out census, etc
 
@@ -83,7 +161,7 @@
 - **wants_reply** -- if true they want a reply
 - **row_id** -- row id
 
-# Basic operations on database
+# Basic operations on database (need to update)
 
 ## show who is on a shift and if they are checked in
 
