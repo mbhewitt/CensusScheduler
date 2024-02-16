@@ -52,6 +52,9 @@ insert ignore into op_volunteers (shiftboard_id,playa_name,world_name,email,phon
       where r.roles like '%Core Crew%'
    );
 
+alter table op_volunteers modify passcode varchar(6);
+insert ignore into op_volunteers (shiftboard_id,playa_name,passcode) values (1,"Admin","123456");
+
 CREATE TABLE `op_roles` (
   `role_id` bigint NOT NULL AUTO_INCREMENT,
   `role` varchar(64) DEFAULT NULL,
@@ -61,8 +64,8 @@ CREATE TABLE `op_roles` (
   PRIMARY KEY (`role_id`),
   UNIQUE KEY `role` (`role`)
 );
-insert into op_roles (role_id,role,display,role_src) select id,role,display,role_src from shiftboard_roles;
-
+insert ignore into op_roles (role_id,role,display,role_src) values (0,"SuperAdmin",1,"tablet"),(1,"Admin",1,"tablet");
+insert ignore into op_roles (role_id,role,display,role_src) select id,role,display,role_src from shiftboard_roles;
 
 
 CREATE TABLE `op_volunteer_roles` (
@@ -95,6 +98,8 @@ insert into op_volunteer_roles ( shiftboard_id,role_id) (
 insert into op_volunteer_roles (shiftboard_id,role_id) (
    select shiftboard_id,role_id from shiftboard_rinfo2 r join op_roles on (op_roles.role='Admin') where r.roles like '%Core Crew%' or r.roles like '%Lead%' or r.roles like '%Training%'
 );
+
+insert ignore into op_volunteer_roles (shiftboard_id,role_id) values (1,0),(1,1);
 
 create table op_messages (timestamp timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,name text,
    email text,`to` text,message longtext, wants_reply boolean default false, sent boolean default false, 
