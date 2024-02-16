@@ -99,7 +99,7 @@ CREATE TABLE `op_roles` (
   `update_role` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`role_id`),
   UNIQUE KEY `role` (`role`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000015 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1000013 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -198,48 +198,6 @@ CREATE TABLE `op_shift_times` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `op_shifts`
---
-
-DROP TABLE IF EXISTS `op_shifts`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `op_shifts` (
-  `year` varchar(4) DEFAULT NULL,
-  `datename` varchar(64) CHARACTER SET latin1 DEFAULT NULL,
-  `date` date DEFAULT NULL,
-  `shift` varchar(100) CHARACTER SET latin1 DEFAULT NULL,
-  `position` varchar(100) CHARACTER SET latin1 DEFAULT NULL,
-  `total_slots` decimal(32,0) DEFAULT NULL,
-  `free_slots` decimal(32,0) DEFAULT NULL,
-  `role` varchar(100) CHARACTER SET latin1 DEFAULT NULL,
-  `category` varchar(16) CHARACTER SET latin1 DEFAULT NULL,
-  `core` tinyint(1) DEFAULT '0',
-  `lead` tinyint(1) DEFAULT '0',
-  `critical` tinyint(1) DEFAULT '0',
-  `position_category` varchar(128) CHARACTER SET latin1 DEFAULT NULL,
-  `prerequisite` varchar(128) CHARACTER SET latin1 DEFAULT NULL,
-  `off_playa` tinyint(1) DEFAULT '1',
-  `shift_category` varchar(128) CHARACTER SET latin1 DEFAULT NULL,
-  `shift_id` varchar(110) CHARACTER SET latin1 DEFAULT NULL,
-  `shift_position_id` varchar(210) CHARACTER SET latin1 NOT NULL,
-  `details` text CHARACTER SET latin1,
-  `wap_points` float DEFAULT '0',
-  `start_time_lt` varchar(111) CHARACTER SET latin1 DEFAULT NULL,
-  `end_time_lt` varchar(111) CHARACTER SET latin1 DEFAULT NULL,
-  `shiftname` varchar(230) CHARACTER SET latin1 DEFAULT NULL,
-  `shortname` varchar(64) CHARACTER SET latin1 DEFAULT NULL,
-  `create_shift` tinyint(1) DEFAULT '0',
-  `delete_shift` tinyint(1) DEFAULT '0',
-  `update_shift` tinyint(1) DEFAULT '0',
-  `notes` longtext,
-  PRIMARY KEY (`shift_position_id`),
-  KEY `shift_id` (`shift_id`),
-  KEY `year` (`year`,`off_playa`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `op_volunteer_roles`
 --
 
@@ -294,7 +252,7 @@ CREATE TABLE `op_volunteers` (
   `world_name` text,
   `email` text,
   `phone` text,
-  `passcode` varchar(4) CHARACTER SET latin1 DEFAULT NULL,
+  `passcode` varchar(6) DEFAULT NULL,
   `account_id` varchar(10) CHARACTER SET latin1 DEFAULT NULL,
   `core_crew` int NOT NULL DEFAULT '0',
   `new_shiftboard_id` int NOT NULL DEFAULT '0',
@@ -321,6 +279,9 @@ CREATE TABLE `op_volunteers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
+insert ignore into op_volunteers (shiftboard_id,playa_name,passcode) values (1,'Admin','123456');
+insert ignore into op_roles (role_id,role,display,role_src) values (0,'SuperAdmin',1,'tablet'),(1,'Admin',1,'tablet');
+insert ignore into op_volunteer_roles (shiftboard_id,role_id) values (1,0),(1,1);
 alter table op_volunteers add timestamp timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 alter table op_volunteer_shifts add timestamp timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 alter table op_shift_times add end_time timestamp,add start_time timestamp;
