@@ -2,8 +2,8 @@ drop table if exists op_volunteer_shifts;
 drop table if exists op_shift_times;
 drop table if exists op_shift_position;
 drop table if exists op_shift_name;
-drop table if exists op_volunteers;
 drop table if exists op_volunteer_roles;
+drop table if exists op_volunteers;
 drop table if exists op_position_type;
 drop table if exists op_roles;
 drop table if exists op_messages;
@@ -70,6 +70,7 @@ CREATE TABLE `op_volunteer_roles` (
   `role_id` bigint,
   `add_role` tinyint(1) DEFAULT '0',
   `remove_role` tinyint(1) DEFAULT '0',
+   foreign key (shiftboard_id) references op_volunteers(shiftboard_id),
    foreign key (role_id) references op_roles(role_id),
   PRIMARY KEY (`shiftboard_id`,`role_id`),
   KEY `role_id` (`role_id`)
@@ -84,15 +85,15 @@ select shiftboard_id, SUBSTRING_INDEX(SUBSTRING_INDEX(roles, ',', numbers.n), ',
 from numbers inner join shiftboard_rinfo2 on CHAR_LENGTH(roles) -CHAR_LENGTH(REPLACE(roles, ',', ''))>=numbers.n-1);
 
 delete from tmp_volunteer_roles where roles='';
-insert into op_volunteer_roles ( shiftboard_id,role_id) (
+insert ignore into op_volunteer_roles ( shiftboard_id,role_id) (
    select shiftboard_id,role_id from tmp_volunteer_roles join op_roles on (op_roles.role=tmp_volunteer_roles.roles)
 );
 
-insert into op_volunteer_roles ( shiftboard_id,role_id) (
+insert ignore into op_volunteer_roles ( shiftboard_id,role_id) (
    select shiftboard_id,role_id from volunteer_flags join op_roles on (op_roles.role=volunteer_flags.flag_name) where flag_value=1 and year=left(date_sub(now(),interval 5 month),4)
 );
 
-insert into op_volunteer_roles (shiftboard_id,role_id) (
+insert ignore into op_volunteer_roles (shiftboard_id,role_id) (
    select shiftboard_id,role_id from shiftboard_rinfo2 r join op_roles on (op_roles.role='Admin') where r.roles like '%Core Crew%' or r.roles like '%Lead%' or r.roles like '%Training%'
 );
 
@@ -208,13 +209,14 @@ CREATE TABLE `op_volunteer_shifts` (
   `add_shift` tinyint(1) DEFAULT '0',
   `remove_shift` tinyint(1) DEFAULT '0',
   `update_shift` tinyint(1) DEFAULT '0',
+  foreign key (shiftboard_id) references op_volunteers(shiftboard_id),
   foreign key (shift_position_id) references op_shift_position(shift_position_id),
   foreign key (shift_times_id) references op_shift_times(shift_times_id),
   PRIMARY KEY (`shiftboard_id`,`shift_position_id`,`shiftboard_shift_id`),
   KEY `shift_position_id` (`shift_position_id`)
 );
 
-insert into op_volunteer_shifts (shift_position_id,shift_times_id, shiftboard_id,shiftboard_shift_id,noshow) (
+insert ignore into op_volunteer_shifts (shift_position_id,shift_times_id, shiftboard_id,shiftboard_shift_id,noshow) (
    select shift_position_id, shift_times_id, shiftboard_id,id shiftboard_shift_id,
       case when noshow='' and s.date>=now() then 'X' else noshow end noshow
    from shiftboard2 s join subject_category sc using (subject)
