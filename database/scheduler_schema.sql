@@ -211,7 +211,8 @@ CREATE TABLE `op_volunteer_roles` (
   `remove_role` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`shiftboard_id`,`role_id`),
   KEY `role_id` (`role_id`),
-  CONSTRAINT `op_volunteer_roles_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `op_roles` (`role_id`)
+  CONSTRAINT `op_volunteer_roles_ibfk_1` FOREIGN KEY (`shiftboard_id`) REFERENCES `op_volunteers` (`shiftboard_id`),
+  CONSTRAINT `op_volunteer_roles_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `op_roles` (`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -234,8 +235,9 @@ CREATE TABLE `op_volunteer_shifts` (
   PRIMARY KEY (`shiftboard_id`,`shift_position_id`,`shiftboard_shift_id`),
   KEY `shift_times_id` (`shift_times_id`),
   KEY `shift_position_id` (`shift_position_id`),
-  CONSTRAINT `op_volunteer_shifts_ibfk_1` FOREIGN KEY (`shift_position_id`) REFERENCES `op_shift_position` (`shift_position_id`),
-  CONSTRAINT `op_volunteer_shifts_ibfk_2` FOREIGN KEY (`shift_times_id`) REFERENCES `op_shift_times` (`shift_times_id`)
+  CONSTRAINT `op_volunteer_shifts_ibfk_1` FOREIGN KEY (`shiftboard_id`) REFERENCES `op_volunteers` (`shiftboard_id`),
+  CONSTRAINT `op_volunteer_shifts_ibfk_2` FOREIGN KEY (`shift_position_id`) REFERENCES `op_shift_position` (`shift_position_id`),
+  CONSTRAINT `op_volunteer_shifts_ibfk_3` FOREIGN KEY (`shift_times_id`) REFERENCES `op_shift_times` (`shift_times_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
