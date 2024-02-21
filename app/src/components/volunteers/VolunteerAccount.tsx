@@ -119,7 +119,7 @@ export const VolunteerAccount = () => {
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
-  const { isNewAccount, playaName, roleList, worldName } = data;
+  const { isVolunteerCreated, playaName, roleList, worldName } = data;
 
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
@@ -200,7 +200,7 @@ export const VolunteerAccount = () => {
         )}
 
         {/* only new accounts are allowed to update their profile */}
-        {!isNewAccount && (
+        {!isVolunteerCreated && (
           <Box component="section">
             <Card>
               <CardContent>
@@ -261,7 +261,7 @@ export const VolunteerAccount = () => {
                       render={({ field }) => (
                         <TextField
                           {...field}
-                          disabled={!isNewAccount || isMutating}
+                          disabled={!isVolunteerCreated || isMutating}
                           fullWidth
                           label="Default world name"
                           required
@@ -277,7 +277,7 @@ export const VolunteerAccount = () => {
                       render={({ field }) => (
                         <TextField
                           {...field}
-                          disabled={!isNewAccount || isMutating}
+                          disabled={!isVolunteerCreated || isMutating}
                           fullWidth
                           label="Email"
                           required
@@ -294,7 +294,7 @@ export const VolunteerAccount = () => {
                       render={({ field }) => (
                         <TextField
                           {...field}
-                          disabled={!isNewAccount || isMutating}
+                          disabled={!isVolunteerCreated || isMutating}
                           fullWidth
                           label="Phone"
                           type="phone"
@@ -359,9 +359,9 @@ export const VolunteerAccount = () => {
         </Box>
 
         {/* volunteer shifts */}
-        <Box component="section">
+        {/* <Box component="section">
           <VolunteerShifts />
-        </Box>
+        </Box> */}
 
         {/* admin */}
         {isAuthenticated && isCoreCrew && (

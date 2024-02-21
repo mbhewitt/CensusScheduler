@@ -16,12 +16,13 @@ export interface IShiftItem {
   category: string;
   date: string;
   dateName: string;
-  freeSlots: number;
-  shiftId: string;
-  shift: string;
-  shortName: string;
+  endTime: string;
+  filledSlots: number;
+  shiftName: string;
+  shiftTimesId: number;
+  startTime: string;
   totalSlots: number;
-  year: number;
+  year: string;
 }
 export interface IShiftPositionListItem {
   date: string;

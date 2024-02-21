@@ -2,14 +2,13 @@ import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
-import { BEHAVIORAL_STANDARDS_TEXT } from "src/constants";
+import { BEHAVIORAL_STANDARDS_ID } from "src/constants";
 
 const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { passcode, shiftboardId } = JSON.parse(req.body);
-
   switch (req.method) {
     // check email and passcode credentials
     case "POST": {
+      const { passcode, shiftboardId } = JSON.parse(req.body);
       const [dbVolunteerItem] = await pool.query<RowDataPacket[]>(
         `SELECT core_crew, email, playa_name, shiftboard_id, world_name
         FROM op_volunteers
@@ -27,16 +26,18 @@ const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
         });
       }
 
-      const [dbRoleList] = await pool.query<RowDataPacket[]>(
-        `SELECT roles
-        FROM op_volunteer_roles
-        WHERE shiftboard_id=? AND delete_role=false
-        ORDER BY roles`,
-        [shiftboardId]
+      const [dbBehavioralStandardsSignedList] = await pool.query<
+        RowDataPacket[]
+      >(
+        `SELECT *
+        FROM op_volunteer_roles AS vr
+        JOIN op_roles AS r
+        ON vr.role_id=r.role_id
+        WHERE vr.shiftboard_id=? AND vr.role_id=? AND vr.remove_role=false`,
+        [shiftboardId, BEHAVIORAL_STANDARDS_ID]
       );
-      const isBehavioralStandardsSigned = dbRoleList
-        .map(({ roles }) => roles)
-        .includes(BEHAVIORAL_STANDARDS_TEXT);
+      const isBehavioralStandardsSigned =
+        dbBehavioralStandardsSignedList.length > 0;
 
       // else send the volunteer
       return res.status(200).json({

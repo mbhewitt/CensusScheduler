@@ -11,7 +11,7 @@ import {
 import { useTheme } from "@mui/material/styles";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
-import { MUITableColumn } from "mui-datatables";
+import { MUIDataTableColumn } from "mui-datatables";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useContext, useEffect } from "react";
@@ -43,9 +43,9 @@ export const Shifts = () => {
 
   dayjs.extend(isSameOrAfter);
 
-  const [columnList, setColumnList] = useImmer<MUITableColumn[]>([
+  const [columnList, setColumnList] = useImmer<MUIDataTableColumn[]>([
     {
-      name: "Shiftboard ID - hidden", // hide for row click
+      name: "Shift Times ID - hidden", // hide for row click
       options: {
         display: false,
         filter: false,
@@ -171,16 +171,20 @@ export const Shifts = () => {
     // then customize the filter options display for date and name columns
     if (data) {
       const dateFilterList: string[] = [];
-      const shortNameFilterList: string[] = [];
+      const shiftNameFilterList: string[] = [];
 
       data.forEach((shiftItem: IShiftItem) => {
-        dateFilterList.push(`${shiftItem.dateName} ${shiftItem.date}`);
-        shortNameFilterList.push(shiftItem.shortName);
+        dateFilterList.push(
+          shiftItem.dateName
+            ? `${shiftItem.date} - ${shiftItem.dateName}`
+            : shiftItem.date
+        );
+        shiftNameFilterList.push(shiftItem.shiftName);
       });
 
       const dateFilterListDisplay = [...new Set(dateFilterList)];
-      const shortNameFilterListDisplay = [
-        ...new Set(shortNameFilterList),
+      const shiftNameFilterListDisplay = [
+        ...new Set(shiftNameFilterList),
       ].sort();
 
       setColumnList((prevColumnList) =>
@@ -196,7 +200,7 @@ export const Shifts = () => {
               case columnNameNameHidden:
                 prevColumnItem.options.filterOptions = {
                   ...prevColumnItem.options.filterOptions,
-                  names: shortNameFilterListDisplay,
+                  names: shiftNameFilterListDisplay,
                 };
                 break;
               default:
@@ -243,24 +247,23 @@ export const Shifts = () => {
       category,
       date,
       dateName,
-      freeSlots,
-      shift,
-      shiftId,
-      shortName,
+      endTime,
+      filledSlots,
+      shiftName,
+      shiftTimesId,
+      startTime,
       totalSlots,
       year,
     }: IShiftItem) => {
-      const filledSlots = totalSlots - freeSlots;
-
       return [
-        shiftId,
+        shiftTimesId,
         `${date} ${year}`,
-        `${dateName} ${date}`,
-        shift,
-        shortName,
+        dateName ? `${date} - ${dateName}` : date,
+        `${startTime} - ${endTime}`,
+        shiftName,
         <Chip
-          key={`${shortName}-chip`}
-          label={shortName}
+          key={`${shiftTimesId}-chip`}
+          label={shiftName}
           sx={{ backgroundColor: colorMap[category] }}
         />,
         `${filledSlots} / ${totalSlots}`,
@@ -271,7 +274,7 @@ export const Shifts = () => {
   let shiftDateToggle = false;
   const optionListCustom = {
     onFilterChange: (
-      _: MUITableColumn | null | string,
+      _: MUIDataTableColumn | null | string,
       filterList: string[][]
     ) => {
       sessionStorage.setItem("filterListState", JSON.stringify(filterList));

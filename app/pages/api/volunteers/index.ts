@@ -49,7 +49,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         // get all volunteers
         case "all": {
           const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
-            `SELECT email, new_account, phone, playa_name, shiftboard_id, world_name
+            `SELECT create_volunteer, email, phone, playa_name, shiftboard_id, world_name
             FROM op_volunteers
             ORDER BY playa_name`
           );
@@ -69,15 +69,15 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           });
           resVolunteerList = dbVolunteerList.map(
             ({
+              create_volunteer,
               email,
-              new_account,
               phone,
               playa_name,
               shiftboard_id,
               world_name,
             }) => ({
               email,
-              isNewAccount: Boolean(new_account),
+              isVolunteerCreated: Boolean(create_volunteer),
               phone,
               playaName: playa_name,
               roleList: dataVolunteerRoleMap[shiftboard_id],
@@ -180,8 +180,8 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           return insertAccount();
         }
         await pool.query<RowDataPacket[]>(
-          `INSERT IGNORE INTO op_volunteers (email, emergency_contact, location, new_account, passcode, phone, playa_name, shiftboard_id, world_name)
-          VALUES (?, ?, ?, 1, ?, ?, ?, ?, ?)`,
+          `INSERT IGNORE INTO op_volunteers (create_volunteer, email, emergency_contact, location, passcode, phone, playa_name, shiftboard_id, world_name)
+          VALUES (true, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
             email,
             emergencyContact,

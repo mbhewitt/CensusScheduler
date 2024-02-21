@@ -5,15 +5,17 @@ import { pool } from "lib/database";
 import type { IShiftItem, IShiftPositionListItem } from "src/components/types";
 
 interface IDbShiftItem {
-  date: string;
-  datename: string;
-  category: string;
-  free_slots: number;
-  shift_id: string;
-  shift: string;
-  shortname: string;
+  category: null | string;
+  date: Date;
+  datename: null | string;
+  end_time: Date;
+  position_type_id: number;
+  shift_name: string;
+  shift_times_id: number;
+  shiftboard_id: number;
+  start_time: Date;
   total_slots: number;
-  year: number;
+  year: string;
 }
 interface IDbShiftPositionListItem {
   date: string;
@@ -98,35 +100,74 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
 
       // get all shifts
       const [dbShiftList] = await pool.query<RowDataPacket[]>(
-        `SELECT category, date, datename, free_slots, shift_id, shift, shortname, total_slots, year
-        FROM op_shifts
-        WHERE delete_shift=false AND off_playa=false
-        ORDER BY start_time`
+        `SELECT sc.category, st.date, d.datename, st.end_time, sp.position_type_id, sn.shift_name, st.shift_times_id, vs.shiftboard_id, st.start_time, sp.total_slots, st.year
+        FROM op_shift_times AS st
+        JOIN op_shift_name AS sn
+        ON st.shift_name_id=sn.shift_name_id
+        LEFT JOIN op_shift_category AS sc
+        ON sc.shift_category_id=sn.shift_category_id
+        LEFT JOIN op_dates AS d
+        ON d.date=st.date
+        JOIN op_shift_position AS sp
+        ON sp.shift_name_id=sn.shift_name_id
+        LEFT JOIN op_volunteer_shifts AS vs
+        ON vs.shift_position_id=sp.shift_position_id AND vs.shift_times_id=st.shift_times_id
+        WHERE st.remove_shift_time=false AND sn.delete_shift=false AND sn.off_playa=false
+        ORDER BY st.start_time`
       );
+      const shiftPositionIdMap: { [key: string]: boolean } = {};
       const resShiftList = dbShiftList.reduce(
         (rowList: IShiftItem[], rowItem: IDbShiftItem | RowDataPacket) => {
+          const shiftPositionIdItem = `${rowItem.shift_times_id}${rowItem.position_type_id}`;
           const rowListLast = rowList[rowList.length - 1];
 
-          if (!rowListLast || rowListLast.shiftId !== rowItem.shift_id) {
+          // if the database row has a new shift times ID
+          // then create a new object
+          if (
+            !rowListLast ||
+            rowListLast.shiftTimesId !== rowItem.shift_times_id
+          ) {
+            shiftPositionIdMap[shiftPositionIdItem] = true;
+
             const rowItemNew = {
-              category: rowItem.category,
+              category: rowItem.category ?? "",
               date: new Date(rowItem.date).toLocaleDateString("en-US", {
                 month: "short",
                 day: "2-digit",
               }),
-              dateName: rowItem.datename,
-              freeSlots: Number(rowItem.free_slots),
-              shift: rowItem.shift,
-              shiftId: rowItem.shift_id,
-              shortName: rowItem.shortname,
-              totalSlots: Number(rowItem.total_slots),
-              year: Number(rowItem.year),
+              dateName: rowItem.datename ?? "",
+              endTime: new Date(rowItem.end_time).toLocaleTimeString("en-US", {
+                hour12: false,
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+              filledSlots: rowItem.shiftboard_id ? 1 : 0,
+              shiftName: rowItem.shift_name,
+              shiftTimesId: rowItem.shift_times_id,
+              startTime: new Date(rowItem.start_time).toLocaleTimeString(
+                "en-US",
+                {
+                  hour12: false,
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }
+              ),
+              totalSlots: rowItem.total_slots,
+              year: rowItem.year,
             };
 
             return [...rowList, rowItemNew];
           }
-          rowListLast.freeSlots += Number(rowItem.free_slots);
-          rowListLast.totalSlots += Number(rowItem.total_slots);
+          // if the database row has the same shift times ID
+          // but has a new position ID
+          // then add to the total slots
+          if (!shiftPositionIdMap[shiftPositionIdItem]) {
+            shiftPositionIdMap[shiftPositionIdItem] = true;
+            rowListLast.totalSlots += rowItem.total_slots;
+          }
+          // if the volunteer ID exists
+          // then add to the filled slots
+          if (rowItem.shiftboard_id) rowListLast.filledSlots += 1;
 
           return rowList;
         },
