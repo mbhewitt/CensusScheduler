@@ -1,5 +1,5 @@
 import {
-  HighlightOff as HighlightOffIcon,
+  Close as CloseIcon,
   LockReset as LockResetIcon,
 } from "@mui/icons-material";
 import {
@@ -142,7 +142,7 @@ export const ResetPasscodeDialog = ({
               handleResetPasscodeDialogClose();
               reset(defaultValues);
             }}
-            startIcon={<HighlightOffIcon />}
+            startIcon={<CloseIcon />}
             type="button"
             variant="outlined"
           >

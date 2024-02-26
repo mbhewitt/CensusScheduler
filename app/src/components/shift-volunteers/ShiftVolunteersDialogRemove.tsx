@@ -1,5 +1,5 @@
 import {
-  HighlightOff as HighlightOffIcon,
+  Close as CloseIcon,
   PersonRemove as PersonRemoveIcon,
 } from "@mui/icons-material";
 import {
@@ -108,7 +108,7 @@ export const ShiftVolunteersDialogRemove = ({
       <DialogActions>
         <Button
           disabled={isMutating}
-          startIcon={<HighlightOffIcon />}
+          startIcon={<CloseIcon />}
           onClick={handleDialogRemoveClose}
           type="button"
           variant="outlined"

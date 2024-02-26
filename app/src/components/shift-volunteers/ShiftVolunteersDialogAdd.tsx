@@ -1,5 +1,5 @@
 import {
-  HighlightOff as HighlightOffIcon,
+  Close as CloseIcon,
   PersonAdd as PersonAddIcon,
 } from "@mui/icons-material";
 import {
@@ -834,7 +834,7 @@ export const ShiftVolunteersDialogAdd = ({
         <DialogActions>
           <Button
             disabled={isMutating}
-            startIcon={<HighlightOffIcon />}
+            startIcon={<CloseIcon />}
             onClick={() => {
               handleDialogAddClose();
               handleFormReset();

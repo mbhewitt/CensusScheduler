@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
 import { IVolunteerShiftCountItem } from "src/components/types";
+import { generateId } from "src/utils/generateId";
 
 interface IVolunteerAccount {
   email: string;
@@ -88,14 +89,13 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         playaName,
         worldName,
       } = JSON.parse(req.body);
-      const generateShiftboardId = () =>
-        Math.floor(Math.random() * 1000000 + 1);
       const insertAccount = async (): Promise<IVolunteerAccount> => {
-        const shiftboardIdRandom = generateShiftboardId();
+        const shiftboardIdNew = generateId();
         const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
           `SELECT shiftboard_id
           FROM op_volunteers
-          WHERE shiftboard_id=${shiftboardIdRandom}`
+          WHERE shiftboard_id=?`,
+          [shiftboardIdNew]
         );
         const dbVolunteerFirst = dbVolunteerList[0];
 
@@ -114,7 +114,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             passcodeCreate,
             phone,
             playaName,
-            shiftboardIdRandom,
+            shiftboardIdNew,
             worldName,
           ]
         );
@@ -123,7 +123,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           email,
           isCoreCrew: false,
           playaName,
-          shiftboardId: shiftboardIdRandom,
+          shiftboardId: shiftboardIdNew,
           worldName,
         };
       };

@@ -4,24 +4,27 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { pool } from "lib/database";
 
 const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { roleName } = req.query;
+  const { roleId } = req.query;
+
   switch (req.method) {
     // get - get all role volunteers
     case "GET": {
       const [dbRoleVolunteerList] = await pool.query<RowDataPacket[]>(
-        `SELECT playa_name, roles, vr.shiftboard_id, world_name
+        `SELECT v.playa_name, r.role, vr.shiftboard_id, v.world_name
         FROM op_volunteer_roles AS vr
         JOIN op_volunteers AS v
         ON vr.shiftboard_id=v.shiftboard_id
-        WHERE roles=? AND delete_role=false
-        ORDER BY playa_name`,
-        [roleName]
+        JOIN op_roles AS r
+        ON r.role_id=vr.role_id
+        WHERE r.role_id=? AND r.delete_role=false
+        ORDER BY v.playa_name`,
+        [roleId]
       );
       const resRoleVolunteerList = dbRoleVolunteerList.map(
-        ({ playa_name, roles, shiftboard_id, world_name }) => {
+        ({ playa_name, role, shiftboard_id, world_name }) => {
           return {
             playaName: playa_name,
-            roleName: roles,
+            roleName: role,
             shiftboardId: shiftboard_id,
             worldName: world_name,
           };
@@ -37,7 +40,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         `SELECT *
         FROM op_volunteer_roles
         WHERE roles=? AND shiftboard_id=?`,
-        [roleName, shiftboardId]
+        [roleId, shiftboardId]
       );
       const dbRoleVolunteerFirst = dbRoleVolunteerList[0];
 
@@ -48,19 +51,19 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           `UPDATE op_volunteer_roles
           SET add_role=true, delete_role=false
           WHERE roles=? AND shiftboard_id=?`,
-          [roleName, shiftboardId]
+          [roleId, shiftboardId]
         );
         // else insert role volunteer row
       } else {
         await pool.query(
           "INSERT INTO op_volunteer_roles (add_role, delete_role, roles, shiftboard_id) VALUES (true, false, ?, ?)",
-          [roleName, shiftboardId]
+          [roleId, shiftboardId]
         );
       }
 
       return res.status(200).json({
         statusCode: 200,
-        message: "Success",
+        message: "OK",
       });
     }
     // delete - remove role volunteer
@@ -71,12 +74,12 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         `UPDATE op_volunteer_roles
         SET add_role=false, delete_role=true
         WHERE roles=? AND shiftboard_id=?`,
-        [roleName, shiftboardId]
+        [roleId, shiftboardId]
       );
 
       return res.status(200).json({
         statusCode: 200,
-        message: "Success",
+        message: "OK",
       });
     }
     // default - send an error message

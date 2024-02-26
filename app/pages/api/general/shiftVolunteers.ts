@@ -39,7 +39,7 @@ export const shiftVolunteerAdd = async (
 
   return res.status(200).json({
     statusCode: 200,
-    message: "Success",
+    message: "OK",
   });
 };
 // shift volunteer check-in
@@ -61,7 +61,7 @@ export const shiftVolunteerCheckIn = async (
 
   return res.status(200).json({
     statusCode: 200,
-    message: "Success",
+    message: "OK",
   });
 };
 // shift volunteer remove
@@ -81,6 +81,6 @@ export const shiftVolunteerRemove = async (
 
   return res.status(200).json({
     statusCode: 200,
-    message: "Success",
+    message: "OK",
   });
 };

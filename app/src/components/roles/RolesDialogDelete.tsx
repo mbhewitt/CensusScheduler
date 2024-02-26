@@ -1,10 +1,6 @@
-import {
-  Delete as DeleteIcon,
-  HighlightOff as HighlightOffIcon,
-} from "@mui/icons-material";
+import { Close as CloseIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import {
   Button,
-  CircularProgress,
   DialogActions,
   DialogContentText,
   List,
@@ -12,56 +8,42 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
+import axios from "axios";
 import { useSnackbar } from "notistack";
-import io from "socket.io-client";
-import useSWR from "swr";
-import useSWRMutation from "swr/mutation";
+import useSWR, { useSWRConfig } from "swr";
 
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
-import { IRoleVolunteerItem } from "src/components/types";
-import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
+import { IRoleItem, IRoleVolunteerItem } from "src/components/types";
+import { fetcherGet } from "src/utils/fetcher";
 
 interface IRolesDialogDeleteProps {
   handleDialogDeleteClose: () => void;
   isDialogDeleteOpen: boolean;
-  role: {
-    name: string;
-  };
+  role: IRoleItem;
 }
 
-const socket = io();
 export const RolesDialogDelete = ({
   handleDialogDeleteClose,
   isDialogDeleteOpen,
-  role: { name },
+  role: { roleId, roleName },
 }: IRolesDialogDeleteProps) => {
-  const { data, error } = useSWR(
-    name ? `/api/roles/${encodeURI(name)}` : null,
-    fetcherGet
-  );
-  const { isMutating, trigger } = useSWRMutation("/api/roles", fetcherTrigger);
+  const { data, error } = useSWR(`/api/role-volunteers/${roleId}`, fetcherGet);
+  const { mutate } = useSWRConfig();
   const { enqueueSnackbar } = useSnackbar();
 
   // handle role delete
   const handleRoleDelete = async () => {
     try {
-      await trigger({
-        body: {
-          name,
-        },
-        method: "DELETE",
-      });
-      socket.emit("req-role-delete", {
-        name,
-      });
+      await axios.delete(`/api/roles/${roleId}`);
+      mutate("/api/roles");
 
       handleDialogDeleteClose();
       enqueueSnackbar(
         <SnackbarText>
-          <strong>{name}</strong> role has been deleted
+          <strong>{roleName}</strong> role has been deleted
         </SnackbarText>,
         {
           variant: "success",
@@ -115,8 +97,8 @@ export const RolesDialogDelete = ({
         <>
           <DialogContentText>
             <Typography component="span">
-              Before doing so, the <strong>{name}</strong> role must be removed
-              from the following volunteers:
+              Before doing so, the <strong>{roleName}</strong> role must be
+              removed from the following volunteers:
             </Typography>
           </DialogContentText>
           <List sx={{ pl: 2, listStyleType: "disc" }}>
@@ -138,14 +120,13 @@ export const RolesDialogDelete = ({
       ) : (
         <DialogContentText>
           <Typography component="span">
-            Are you sure you want to delete <strong>{name}</strong> role?
+            Are you sure you want to delete <strong>{roleName}</strong> role?
           </Typography>
         </DialogContentText>
       )}
       <DialogActions>
         <Button
-          disabled={isMutating}
-          startIcon={<HighlightOffIcon />}
+          startIcon={<CloseIcon />}
           onClick={handleDialogDeleteClose}
           type="button"
           variant="outlined"
@@ -153,11 +134,9 @@ export const RolesDialogDelete = ({
           Cancel
         </Button>
         <Button
-          disabled={(data && data.length > 0) || isMutating}
+          disabled={data && data.length > 0}
           onClick={handleRoleDelete}
-          startIcon={
-            isMutating ? <CircularProgress size="1rem" /> : <DeleteIcon />
-          }
+          startIcon={<DeleteIcon />}
           type="submit"
           variant="contained"
         >

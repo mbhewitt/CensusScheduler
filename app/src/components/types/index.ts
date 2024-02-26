@@ -8,6 +8,11 @@ export interface IPositionItem {
   shiftPositionId: number;
   totalSlots: number;
 }
+export interface IRoleItem {
+  display: boolean;
+  roleId: number;
+  roleName: string;
+}
 export interface IRoleVolunteerItem {
   playaName: string;
   roleName: string;

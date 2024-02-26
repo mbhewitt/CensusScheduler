@@ -15,13 +15,12 @@ import {
   Stack,
   Switch,
 } from "@mui/material";
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useSnackbar } from "notistack";
-import { useEffect, useState } from "react";
-import io from "socket.io-client";
-import useSWR from "swr";
-import useSWRMutation from "swr/mutation";
+import { useState } from "react";
+import useSWR, { useSWRConfig } from "swr";
 
 import { DataTable } from "src/components/general/DataTable";
 import { ErrorPage } from "src/components/general/ErrorPage";
@@ -31,87 +30,23 @@ import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import { RolesDialogCreate } from "src/components/roles/RolesDialogCreate";
 import { RolesDialogDelete } from "src/components/roles/RolesDialogDelete";
+import { IRoleItem } from "src/components/types";
 import { SUPER_ADMIN_ID } from "src/constants";
-import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
+import { fetcherGet } from "src/utils/fetcher";
 
-interface IRoleItem {
-  display: boolean;
-  id: number;
-  name: string;
-}
-
-const socket = io();
 export const Roles = () => {
-  const { data, error, mutate } = useSWR("/api/roles", fetcherGet);
-  const { trigger } = useSWRMutation("/api/roles", fetcherTrigger);
+  const { data, error } = useSWR("/api/roles", fetcherGet);
+  const { mutate } = useSWRConfig();
   const [isDialogCreateOpen, setIsDialogCreateOpen] = useState(false);
   const [isDialogDeleteOpen, setIsDialogDeleteOpen] = useState({
     isOpen: false,
     role: {
-      name: "",
+      display: true,
+      roleId: 0,
+      roleName: "",
     },
   });
   const { enqueueSnackbar } = useSnackbar();
-
-  // listen for socket events
-  useEffect(() => {
-    (async () => {
-      try {
-        await fetch("/api/socket");
-
-        socket.on("res-role-create", ({ name }) => {
-          if (data) {
-            const dataMutate = structuredClone(data);
-            dataMutate.push({
-              name,
-            });
-
-            mutate(dataMutate);
-          }
-        });
-        socket.on(
-          "res-role-display-toggle",
-          ({ checked, name }: { checked: boolean; name: string }) => {
-            if (data) {
-              const dataMutate = structuredClone(data);
-              const roleItemUpdate = dataMutate.find(
-                (roles: string) => roles === name
-              );
-              if (roleItemUpdate) {
-                roleItemUpdate.display = checked;
-              }
-
-              mutate(dataMutate);
-            }
-          }
-        );
-        socket.on("res-role-delete", ({ name }) => {
-          if (data) {
-            const dataMutate = structuredClone(data);
-            const roleListNew = dataMutate.filter(
-              (roleItem: IRoleItem) => roleItem.name !== name
-            );
-
-            mutate(roleListNew);
-          }
-        });
-      } catch (error) {
-        if (error instanceof Error) {
-          enqueueSnackbar(
-            <SnackbarText>
-              <strong>{error.message}</strong>
-            </SnackbarText>,
-            {
-              persist: true,
-              variant: "error",
-            }
-          );
-        }
-
-        throw error;
-      }
-    })();
-  }, [data, enqueueSnackbar, mutate]);
 
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
@@ -119,26 +54,23 @@ export const Roles = () => {
   // handle display toggle
   const handleDisplayToggle = async ({
     checked,
-    name,
+    roleId,
+    roleName,
   }: {
     checked: boolean;
-    name: string;
+    roleId: number;
+    roleName: string;
   }) => {
     try {
-      await trigger({
-        body: {
-          checked,
-          name,
-        },
-        method: "PATCH",
-      });
-      socket.emit("req-role-display-toggle", {
+      await axios.patch(`/api/roles/${roleId}`, {
         checked,
-        name,
+        roleId,
       });
+      mutate("/api/roles");
+
       enqueueSnackbar(
         <SnackbarText>
-          <strong>{name}</strong> role display has been set to{" "}
+          <strong>{roleName}</strong> role display has been set to{" "}
           <strong>{checked ? "on" : "off"}</strong>
         </SnackbarText>,
         {
@@ -189,20 +121,20 @@ export const Roles = () => {
       },
     },
   ];
-  const dataTable = data.map(({ display, id, name }: IRoleItem) => {
+  const dataTable = data.map(({ display, roleId, roleName }: IRoleItem) => {
     // if role ID is super admin
     // then disable display and delete actions
-    if (id === SUPER_ADMIN_ID) {
+    if (roleId === SUPER_ADMIN_ID) {
       return [
-        id,
-        name,
-        <Switch disabled checked={display} key={`${name}-switch`} />,
+        roleId,
+        roleName,
+        <Switch disabled checked={display} key={`${roleId}-switch`} />,
         <MoreMenu
           Icon={<MoreHorizIcon />}
-          key={`${name}-menu`}
+          key={`${roleId}-menu`}
           MenuList={
             <MenuList>
-              <Link href={`/roles/${id}`}>
+              <Link href={`/roles/${roleId}`}>
                 <MenuItem>
                   <ListItemIcon>
                     <Groups3Icon />
@@ -217,24 +149,25 @@ export const Roles = () => {
     }
 
     return [
-      id,
-      name,
+      roleId,
+      roleName,
       <Switch
         checked={display}
         onChange={(event) =>
           handleDisplayToggle({
             checked: event.target.checked,
-            name,
+            roleId,
+            roleName,
           })
         }
-        key={`${name}-switch`}
+        key={`${roleId}-switch`}
       />,
       <MoreMenu
         Icon={<MoreHorizIcon />}
-        key={`${name}-menu`}
+        key={`${roleId}-menu`}
         MenuList={
           <MenuList>
-            <Link href={`/roles/${id}`}>
+            <Link href={`/roles/${roleId}`}>
               <MenuItem>
                 <ListItemIcon>
                   <Groups3Icon />
@@ -246,7 +179,7 @@ export const Roles = () => {
               onClick={() =>
                 setIsDialogDeleteOpen({
                   isOpen: true,
-                  role: { name },
+                  role: { display, roleId, roleName },
                 })
               }
             >
@@ -313,7 +246,9 @@ export const Roles = () => {
           setIsDialogDeleteOpen({
             isOpen: false,
             role: {
-              name: "",
+              display: true,
+              roleId: 0,
+              roleName: "",
             },
           })
         }

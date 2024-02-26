@@ -1,6 +1,6 @@
 import {
+  Close as CloseIcon,
   EventBusy as EventBusyIcon,
-  HighlightOff as HighlightOffIcon,
 } from "@mui/icons-material";
 import {
   Button,
@@ -95,7 +95,7 @@ export const VolunteerShiftsDialogRemove = ({
       <DialogActions>
         <Button
           disabled={isMutating}
-          startIcon={<HighlightOffIcon />}
+          startIcon={<CloseIcon />}
           onClick={handleDialogRemoveClose}
           type="button"
           variant="outlined"

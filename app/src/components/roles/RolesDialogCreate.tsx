@@ -1,21 +1,12 @@
-import {
-  Add as AddIcon,
-  HighlightOff as HighlightOffIcon,
-} from "@mui/icons-material";
-import {
-  Button,
-  CircularProgress,
-  DialogActions,
-  TextField,
-} from "@mui/material";
+import { Add as AddIcon, Close as CloseIcon } from "@mui/icons-material";
+import { Button, DialogActions, TextField } from "@mui/material";
+import axios from "axios";
 import { useSnackbar } from "notistack";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import io from "socket.io-client";
-import useSWRMutation from "swr/mutation";
+import { useSWRConfig } from "swr";
 
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { SnackbarText } from "src/components/general/SnackbarText";
-import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IFormValues {
   name: string;
@@ -30,7 +21,6 @@ interface IRolesDialogCreateProps {
   roleList: IRoleItem[];
 }
 
-const socket = io();
 const defaultValues: IFormValues = {
   name: "",
 };
@@ -39,7 +29,7 @@ export const RolesDialogCreate = ({
   isDialogCreateOpen,
   roleList,
 }: IRolesDialogCreateProps) => {
-  const { isMutating, trigger } = useSWRMutation("/api/roles", fetcherTrigger);
+  const { mutate } = useSWRConfig();
   const { control, handleSubmit, reset } = useForm({
     defaultValues,
   });
@@ -68,11 +58,8 @@ export const RolesDialogCreate = ({
       }
 
       // update database
-      await trigger({ body: dataForm, method: "POST" });
-      // emit shift update
-      socket.emit("req-role-create", {
-        dataForm,
-      });
+      await axios.post("/api/roles", dataForm);
+      mutate("/api/roles");
 
       handleDialogCreateClose();
       reset(defaultValues);
@@ -115,7 +102,6 @@ export const RolesDialogCreate = ({
             <TextField
               {...field}
               autoComplete="off"
-              disabled={isMutating}
               fullWidth
               label="Name"
               required
@@ -125,8 +111,7 @@ export const RolesDialogCreate = ({
         />
         <DialogActions>
           <Button
-            disabled={isMutating}
-            startIcon={<HighlightOffIcon />}
+            startIcon={<CloseIcon />}
             onClick={() => {
               handleDialogCreateClose();
               reset(defaultValues);
@@ -136,14 +121,7 @@ export const RolesDialogCreate = ({
           >
             Cancel
           </Button>
-          <Button
-            disabled={isMutating}
-            startIcon={
-              isMutating ? <CircularProgress size="1rem" /> : <AddIcon />
-            }
-            type="submit"
-            variant="contained"
-          >
+          <Button startIcon={<AddIcon />} type="submit" variant="contained">
             Create
           </Button>
         </DialogActions>
