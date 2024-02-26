@@ -49,7 +49,7 @@ const defaultValues: IFormValues = {
 };
 export const SignIn = () => {
   const { sessionDispatch } = useContext(SessionContext);
-  const { data, error } = useSWR("/api/volunteers?filter=all", fetcherGet);
+  const { data, error } = useSWR("/api/volunteers?filter=dropdown", fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     "/api/sign-in",
     fetcherTrigger

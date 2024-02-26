@@ -193,7 +193,7 @@ export const VolunteerAccount = () => {
                 }}
               >
                 <ManageAccountsIcon sx={{ mr: 0.5 }} />
-                {playaName} &quot;{worldName}&quot;
+                Account
               </Typography>
             </Breadcrumbs>
           </Box>

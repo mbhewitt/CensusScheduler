@@ -20,12 +20,12 @@ import { fetcherTrigger } from "src/utils/fetcher";
 interface IShiftVolunteersDialogRemoveProps {
   handleDialogRemoveClose: () => void;
   isDialogRemoveOpen: boolean;
-  shiftId: string | string[] | undefined;
   volunteer: {
     playaName: string;
     position: string;
     shiftboardId: number;
-    shiftPositionId: string;
+    shiftPositionId: number;
+    shiftTimesId: number;
     worldName: string;
   };
 }
@@ -34,11 +34,17 @@ const socket = io();
 export const ShiftVolunteersDialogRemove = ({
   handleDialogRemoveClose,
   isDialogRemoveOpen,
-  shiftId,
-  volunteer: { playaName, position, shiftboardId, shiftPositionId, worldName },
+  volunteer: {
+    playaName,
+    position,
+    shiftboardId,
+    shiftPositionId,
+    shiftTimesId,
+    worldName,
+  },
 }: IShiftVolunteersDialogRemoveProps) => {
   const { isMutating, trigger } = useSWRMutation(
-    `/api/shift-volunteers/${shiftId}`,
+    `/api/shift-volunteers/${shiftTimesId}`,
     fetcherTrigger
   );
   const { enqueueSnackbar } = useSnackbar();
@@ -46,12 +52,13 @@ export const ShiftVolunteersDialogRemove = ({
   const handleVolunteerRemove = async () => {
     try {
       await trigger({
-        body: { shiftboardId, shiftPositionId },
+        body: { shiftboardId, shiftPositionId, shiftTimesId },
         method: "DELETE",
       });
       socket.emit("req-shift-volunteer-remove", {
         shiftboardId,
         shiftPositionId,
+        shiftTimesId,
       });
 
       handleDialogRemoveClose();

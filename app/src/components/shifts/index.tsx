@@ -173,13 +173,9 @@ export const Shifts = () => {
       const dateFilterList: string[] = [];
       const shiftNameFilterList: string[] = [];
 
-      data.forEach((shiftItem: IShiftItem) => {
-        dateFilterList.push(
-          shiftItem.dateName
-            ? `${shiftItem.date} - ${shiftItem.dateName}`
-            : shiftItem.date
-        );
-        shiftNameFilterList.push(shiftItem.shiftName);
+      data.forEach(({ date, dateName, shiftName }: IShiftItem) => {
+        dateFilterList.push(dateName ? `${date} - ${dateName}` : date);
+        shiftNameFilterList.push(shiftName);
       });
 
       const dateFilterListDisplay = [...new Set(dateFilterList)];
@@ -258,8 +254,12 @@ export const Shifts = () => {
       return [
         shiftTimesId,
         `${date} ${year}`,
-        dateName ? `${date} - ${dateName}` : date,
-        `${startTime} - ${endTime}`,
+        dateName
+          ? `${dayjs(date).format("MMM DD")} - ${dateName}`
+          : dayjs(date).format("MMM DD"),
+        `${dayjs(startTime).format("HH:mm")} - ${dayjs(endTime).format(
+          "HH:mm"
+        )}`,
         shiftName,
         <Chip
           key={`${shiftTimesId}-chip`}

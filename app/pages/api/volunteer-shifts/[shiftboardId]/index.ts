@@ -15,65 +15,72 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
     case "GET": {
       const { shiftboardId } = req.query;
       const [dbVolunteerShiftList] = await pool.query<RowDataPacket[]>(
-        `SELECT date, datename, end_time, noshow, playa_name, position, s.shift_position_id, shift_id, shift, start_time, world_name
-        FROM op_shifts AS s
-        JOIN op_volunteer_shifts AS vs
-        ON (s.shift_position_id=vs.shift_position_id AND s.delete_shift=false AND vs.delete_shift=false)
-        JOIN op_volunteers
-        USING (shiftboard_id)
-        WHERE shiftboard_id=?
-        ORDER BY start_time`,
+        `SELECT st.end_time, vs.shift_position_id, vs.shift_times_id, st.start_time
+        FROM op_volunteer_shifts AS vs
+        JOIN op_shift_times AS st
+        ON st.shift_times_id=vs.shift_times_id
+        WHERE vs.remove_shift=false AND vs.shiftboard_id=?`,
         [shiftboardId]
       );
-      let [volunteerShiftItem] = dbVolunteerShiftList;
-      let volunteerShiftList: IVolunteerShiftItem[] = [];
+      const resVolunteerShiftList = dbVolunteerShiftList.map(
+        ({ end_time, shift_position_id, shift_times_id, start_time }) => ({
+          endTime: end_time,
+          shiftPositionId: shift_position_id,
+          shiftTimesId: shift_times_id,
+          startTime: start_time,
+        })
+      );
+      // let [volunteerShiftItem] = dbVolunteerShiftList;
+      // let volunteerShiftList: IVolunteerShiftItem[] = [];
 
-      // if a volunteer shift is found
-      // then prepare volunteer shift list
-      if (volunteerShiftItem) {
-        volunteerShiftList = dbVolunteerShiftList.map(
-          ({
-            date,
-            datename,
-            end_time,
-            noshow,
-            position,
-            shift,
-            shift_id,
-            shift_position_id,
-            start_time,
-          }) => ({
-            date: new Date(date).toLocaleDateString("en-US", {
-              month: "short",
-              day: "2-digit",
-            }),
-            dateName: datename,
-            endTime: end_time,
-            noShow: noshow,
-            position,
-            shift,
-            shiftId: shift_id,
-            shiftPositionId: shift_position_id,
-            startTime: start_time,
-          })
-        );
-        // else send volunteer information
-      } else {
-        const [dbVolunteerShiftList] = await pool.query<RowDataPacket[]>(
-          `SELECT playa_name, world_name
-          FROM op_volunteers
-          WHERE shiftboard_id=?`,
-          [shiftboardId]
-        );
+      // // if a volunteer shift is found
+      // // then prepare volunteer shift list
+      // if (volunteerShiftItem) {
+      //   volunteerShiftList = dbVolunteerShiftList.map(
+      //     ({
+      //       date,
+      //       datename,
+      //       end_time,
+      //       noshow,
+      //       position,
+      //       shift,
+      //       shift_id,
+      //       shift_position_id,
+      //       start_time,
+      //     }) => ({
+      //       date: new Date(date).toLocaleDateString("en-US", {
+      //         month: "short",
+      //         day: "2-digit",
+      //       }),
+      //       dateName: datename,
+      //       endTime: end_time,
+      //       noShow: noshow,
+      //       position,
+      //       shift,
+      //       shiftId: shift_id,
+      //       shiftPositionId: shift_position_id,
+      //       startTime: start_time,
+      //     })
+      //   );
+      //   // else send volunteer information
+      // } else {
+      //   const [dbVolunteerShiftList] = await pool.query<RowDataPacket[]>(
+      //     `SELECT playa_name, world_name
+      //     FROM op_volunteers
+      //     WHERE shiftboard_id=?`,
+      //     [shiftboardId]
+      //   );
 
-        [volunteerShiftItem] = dbVolunteerShiftList;
-      }
+      //   [volunteerShiftItem] = dbVolunteerShiftList;
+      // }
 
-      return res.status(200).json({
-        playaName: volunteerShiftItem.playa_name,
-        volunteerShiftList,
-        worldName: volunteerShiftItem.world_name,
-      });
+      // return res.status(200).json({
+      //   playaName: volunteerShiftItem.playa_name,
+      //   volunteerShiftList,
+      //   worldName: volunteerShiftItem.world_name,
+      // });
+
+      return res.status(200).json(resVolunteerShiftList);
     }
     // post - add a volunteer to a shift
     case "POST": {

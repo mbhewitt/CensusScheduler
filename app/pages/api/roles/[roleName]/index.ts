@@ -53,7 +53,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         // else insert role volunteer row
       } else {
         await pool.query(
-          "INSERT INTO op_volunteer_roles (add_role, delete_role, roles, shiftboard_id) VALUES (1, 0, ?, ?)",
+          "INSERT INTO op_volunteer_roles (add_role, delete_role, roles, shiftboard_id) VALUES (true, false, ?, ?)",
           [roleName, shiftboardId]
         );
       }

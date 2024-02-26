@@ -1,9 +1,11 @@
 export interface IPositionItem {
-  details: string;
-  freeSlots: number;
+  filledSlots: number;
   position: string;
-  role: string;
-  shiftPositionId: string;
+  positionDetails: string;
+  positionTypeId: number;
+  prerequisiteId: number;
+  roleRequiredId: number;
+  shiftPositionId: number;
   totalSlots: number;
 }
 export interface IRoleVolunteerItem {
@@ -18,6 +20,7 @@ export interface IShiftItem {
   dateName: string;
   endTime: string;
   filledSlots: number;
+  shiftCategoryId: number;
   shiftName: string;
   shiftTimesId: number;
   startTime: string;
@@ -28,7 +31,7 @@ export interface IShiftPositionListItem {
   date: string;
   dateName: string;
   endTime: string;
-  freeSlots: number;
+  filledSlots: number;
   positionList: IPositionItem[];
   shift: string;
   shiftId: string;
@@ -41,19 +44,9 @@ export interface IShiftVolunteerItem {
   playaName: string;
   position: string;
   shiftboardId: number;
-  shiftPositionId: string;
+  shiftPositionId: number;
+  shiftTimesId: number;
   worldName: string;
-}
-export interface ITrainingItem {
-  date: string;
-  dateName: string;
-  endTime: string;
-  freeSlots: number;
-  position: string;
-  shift: string;
-  shiftPositionId: string;
-  startTime: string;
-  totalSlots: number;
 }
 export interface IVolunteerItem {
   email: string;

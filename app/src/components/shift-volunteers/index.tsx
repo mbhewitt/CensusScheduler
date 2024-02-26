@@ -43,14 +43,14 @@ import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
 import { checkInGet } from "src/utils/checkInGet";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
-import { positionItemFirstGet } from "src/utils/positionItemFirstGet";
 
 interface ISwitchValues {
   checked: boolean;
   playaName: string;
   position: string;
   shiftboardId: number;
-  shiftPositionId: string;
+  shiftPositionId: number;
+  shiftTimesId: number;
   worldName: string;
 }
 
@@ -75,19 +75,24 @@ export const ShiftVolunteers = () => {
       playaName: "",
       position: "",
       shiftboardId: 0,
-      shiftPositionId: "",
+      shiftPositionId: 0,
+      shiftTimesId: 0,
       worldName: "",
     },
   });
   const router = useRouter();
-  const { shiftId } = router.query;
+  const { shiftTimesId: shiftTimesQuery } = router.query;
   const {
-    data: dataShiftVolunteerList,
-    error: errorShiftVolunteerList,
-    mutate: mutateShiftVolunteerList,
-  } = useSWR(isMounted ? `/api/shift-volunteers/${shiftId}` : null, fetcherGet);
+    data: dataShiftVolunteerItem,
+    error: errorShiftVolunteerItem,
+    mutate: mutateShiftVolunteerItem,
+  } = useSWR(
+    isMounted ? `/api/shift-volunteers/${shiftTimesQuery}` : null,
+    fetcherGet
+  );
+  console.log("dataShiftVolunteerItem: ", dataShiftVolunteerItem);
   const { trigger } = useSWRMutation(
-    `/api/shift-volunteers/${shiftId}`,
+    `/api/shift-volunteers/${shiftTimesQuery}`,
     fetcherTrigger
   );
   const { enqueueSnackbar } = useSnackbar();
@@ -110,22 +115,24 @@ export const ShiftVolunteers = () => {
             noShow,
             playaName,
             position,
-            shiftPositionid,
             shiftboardId,
+            shiftPositionId,
+            shiftTimesId,
             worldName,
           }) => {
-            if (dataShiftVolunteerList) {
-              const dataMutate = structuredClone(dataShiftVolunteerList);
+            if (dataShiftVolunteerItem) {
+              const dataMutate = structuredClone(dataShiftVolunteerItem);
               dataMutate.shiftVolunteerList.push({
                 noShow,
                 playaName,
                 position,
-                shiftPositionid,
                 shiftboardId,
+                shiftPositionId,
+                shiftTimesId,
                 worldName,
               });
 
-              mutateShiftVolunteerList(dataMutate);
+              mutateShiftVolunteerItem(dataMutate);
             }
           }
         );
@@ -138,8 +145,8 @@ export const ShiftVolunteers = () => {
             checked: boolean;
             shiftboardId: number | string;
           }) => {
-            if (dataShiftVolunteerList) {
-              const dataMutate = structuredClone(dataShiftVolunteerList);
+            if (dataShiftVolunteerItem) {
+              const dataMutate = structuredClone(dataShiftVolunteerItem);
               const shiftboardIdNum = Number(shiftboardId);
               const shiftVolunteerItemUpdate =
                 dataMutate.shiftVolunteerList.find(
@@ -150,20 +157,20 @@ export const ShiftVolunteers = () => {
                 shiftVolunteerItemUpdate.noShow = checked ? "" : "Yes";
               }
 
-              mutateShiftVolunteerList(dataMutate);
+              mutateShiftVolunteerItem(dataMutate);
             }
           }
         );
         socket.on("res-shift-volunteer-remove", ({ shiftboardId }) => {
-          if (dataShiftVolunteerList) {
-            const dataMutate = structuredClone(dataShiftVolunteerList);
+          if (dataShiftVolunteerItem) {
+            const dataMutate = structuredClone(dataShiftVolunteerItem);
             const volunteerListNew = dataMutate.shiftVolunteerList.filter(
               (volunteerItem: IShiftVolunteerItem) =>
                 volunteerItem.shiftboardId !== shiftboardId
             );
             dataMutate.shiftVolunteerList = volunteerListNew;
 
-            mutateShiftVolunteerList(dataMutate);
+            mutateShiftVolunteerItem(dataMutate);
           }
         });
       } catch (error) {
@@ -182,10 +189,10 @@ export const ShiftVolunteers = () => {
         throw error;
       }
     })();
-  }, [dataShiftVolunteerList, enqueueSnackbar, mutateShiftVolunteerList]);
+  }, [dataShiftVolunteerItem, enqueueSnackbar, mutateShiftVolunteerItem]);
 
-  if (errorShiftVolunteerList) return <ErrorPage />;
-  if (!dataShiftVolunteerList) return <Loading />;
+  if (errorShiftVolunteerItem) return <ErrorPage />;
+  if (!dataShiftVolunteerItem) return <Loading />;
 
   // handle check in toggle
   const handleCheckInToggle = async ({
@@ -194,14 +201,16 @@ export const ShiftVolunteers = () => {
     position,
     shiftboardId,
     shiftPositionId,
+    shiftTimesId,
     worldName,
   }: ISwitchValues) => {
     try {
       await trigger({
         body: {
           checked,
-          shiftPositionId,
           shiftboardId,
+          shiftPositionId,
+          shiftTimesId,
         },
         method: "PATCH",
       });
@@ -209,6 +218,7 @@ export const ShiftVolunteers = () => {
         checked,
         shiftboardId,
         shiftPositionId,
+        shiftTimesId,
       });
       enqueueSnackbar(
         <SnackbarText>
@@ -242,8 +252,8 @@ export const ShiftVolunteers = () => {
   // evaluate the check-in type and available features
   const checkInType = checkInGet({
     dateTime: dateTimeValue,
-    endTime: dayjs(dataShiftVolunteerList.endTime),
-    startTime: dayjs(dataShiftVolunteerList.startTime),
+    endTime: dayjs(dataShiftVolunteerItem.endTime),
+    startTime: dayjs(dataShiftVolunteerItem.startTime),
   });
   let isVolunteerAddAvailable = false;
   let isCheckInAvailable = false;
@@ -253,8 +263,8 @@ export const ShiftVolunteers = () => {
       isVolunteerAddAvailable =
         (isAuthenticated && isCoreCrew) ||
         (isAuthenticated &&
-          dataShiftVolunteerList.positionList.some(
-            (positionItem: IPositionItem) => positionItem.freeSlots > 0
+          dataShiftVolunteerItem.shiftPositionList.some(
+            (positionItem: IPositionItem) => positionItem.filledSlots > 0
           ));
       break;
     }
@@ -295,16 +305,16 @@ export const ShiftVolunteers = () => {
       options: { filter: false, searchable: false, sort: false },
     });
   }
-  const volunteerListDataTable = structuredClone(
-    dataShiftVolunteerList.shiftVolunteerList
-  );
-  const dataTable = volunteerListDataTable.map(
+  const dataTable = structuredClone(
+    dataShiftVolunteerItem.shiftVolunteerList
+  ).map(
     ({
       noShow,
       playaName,
       position,
       shiftboardId,
       shiftPositionId,
+      shiftTimesId,
       worldName,
     }: IShiftVolunteerItem) => {
       return [
@@ -321,6 +331,7 @@ export const ShiftVolunteers = () => {
               position,
               shiftboardId,
               shiftPositionId,
+              shiftTimesId,
               worldName,
             })
           }
@@ -351,6 +362,7 @@ export const ShiftVolunteers = () => {
                         position,
                         shiftboardId,
                         shiftPositionId,
+                        shiftTimesId,
                         worldName,
                       },
                     })
@@ -421,18 +433,23 @@ export const ShiftVolunteers = () => {
           >
             <Box>
               <Typography component="h2" gutterBottom variant="h4">
-                {dataShiftVolunteerList.dateName} {dataShiftVolunteerList.date}
+                {dataShiftVolunteerItem.dateName
+                  ? `${dayjs(dataShiftVolunteerItem.date).format("MMM DD")} - ${
+                      dataShiftVolunteerItem.dateName
+                    }`
+                  : dayjs(dataShiftVolunteerItem.date).format("MMM DD")}
                 <br />
-                {dataShiftVolunteerList.shift}
+                {dayjs(dataShiftVolunteerItem.startTime).format("HH:mm")} -{" "}
+                {dayjs(dataShiftVolunteerItem.endTime).format("HH:mm")}
                 <br />
-                {dataShiftVolunteerList.shortName}
+                {dataShiftVolunteerItem.shiftName}
               </Typography>
               <Typography component="h3" variant="h6">
-                {dataShiftVolunteerList.positionList.map(
-                  ({ freeSlots, position, totalSlots }: IPositionItem) => {
+                {dataShiftVolunteerItem.shiftPositionList.map(
+                  ({ filledSlots, position, totalSlots }: IPositionItem) => {
                     return (
                       <Fragment key={position}>
-                        {position}: {totalSlots - freeSlots} / {totalSlots}
+                        {position}: {filledSlots} / {totalSlots}
                         <br />
                       </Fragment>
                     );
@@ -444,25 +461,6 @@ export const ShiftVolunteers = () => {
               disabled={!isVolunteerAddAvailable}
               onClick={() => {
                 setIsDialogAddOpen(true);
-
-                // if there are less than or equal to zero slots available, display warning notification
-                const positionItemFirstDisplay = positionItemFirstGet(
-                  dataShiftVolunteerList.positionList
-                );
-
-                if (positionItemFirstDisplay.freeSlots <= 0) {
-                  enqueueSnackbar(
-                    <SnackbarText>
-                      There are{" "}
-                      <strong>{positionItemFirstDisplay.freeSlots}</strong>{" "}
-                      openings available for{" "}
-                      <strong>{positionItemFirstDisplay.position}</strong>
-                    </SnackbarText>,
-                    {
-                      variant: "warning",
-                    }
-                  );
-                }
               }}
               startIcon={<PersonAddIcon />}
               type="button"
@@ -481,16 +479,16 @@ export const ShiftVolunteers = () => {
         {/* add dialog */}
         <ShiftVolunteersDialogAdd
           checkInType={checkInType}
-          date={dataShiftVolunteerList.date}
-          dateName={dataShiftVolunteerList.dateName}
-          endTime={dataShiftVolunteerList.endTime}
+          date={dataShiftVolunteerItem.date}
+          dateName={dataShiftVolunteerItem.dateName}
+          endTime={dataShiftVolunteerItem.endTime}
           handleDialogAddClose={() => setIsDialogAddOpen(false)}
           isDialogAddOpen={isDialogAddOpen}
-          positionList={dataShiftVolunteerList.positionList}
-          shift={dataShiftVolunteerList.shift}
-          shiftId={shiftId}
-          shiftVolunteerList={dataShiftVolunteerList.shiftVolunteerList}
-          startTime={dataShiftVolunteerList.startTime}
+          shiftName={dataShiftVolunteerItem.shiftName}
+          shiftPositionList={dataShiftVolunteerItem.shiftPositionList}
+          shiftTimesId={shiftTimesQuery}
+          shiftVolunteerList={dataShiftVolunteerItem.shiftVolunteerList}
+          startTime={dataShiftVolunteerItem.startTime}
         />
 
         {/* remove dialog */}
@@ -502,13 +500,13 @@ export const ShiftVolunteers = () => {
                 playaName: "",
                 position: "",
                 shiftboardId: 0,
-                shiftPositionId: "",
+                shiftPositionId: 0,
+                shiftTimesId: 0,
                 worldName: "",
               },
             })
           }
           isDialogRemoveOpen={isDialogRemoveOpen.isOpen}
-          shiftId={shiftId}
           volunteer={isDialogRemoveOpen.volunteer}
         />
       </Container>
