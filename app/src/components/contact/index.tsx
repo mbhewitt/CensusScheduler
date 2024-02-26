@@ -56,7 +56,10 @@ export const Contact = () => {
     },
   } = useContext(SessionContext);
   const [isMounted, setIsMounted] = useState(false);
-  const { data, error } = useSWR("/api/volunteers?filter=core", fetcherGet);
+  const { data, error } = useSWR(
+    "/api/volunteers/dropdown?filter=core",
+    fetcherGet
+  );
   const { isMutating, trigger } = useSWRMutation(
     "/api/contact",
     fetcherTrigger

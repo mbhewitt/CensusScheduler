@@ -4,7 +4,6 @@ import { pool } from "lib/database";
 
 const contact = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
-    // check email and passcode credentials
     case "POST": {
       const { email, isReplyWanted, message, name, to } = JSON.parse(req.body);
 

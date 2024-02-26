@@ -57,6 +57,7 @@ const sortCompareShiftCount = (order: string) => {
 
 export const Volunteers = () => {
   const { data, error } = useSWR("/api/volunteers", fetcherGet);
+  console.log("data: ", data);
   const theme = useTheme();
 
   if (error) return <ErrorPage />;

@@ -108,7 +108,7 @@ export const ShiftVolunteersDialogAdd = ({
   )?.prerequisiteId;
   const trainingTimesIdWatch = watch("trainingTimesId", 0);
   const { data: dataVolunteerList, error: errorVolunteerList } = useSWR(
-    "/api/volunteers?filter=dropdown",
+    "/api/volunteers/dropdown",
     fetcherGet
   );
   const { data: dataTrainingList, error: errorShiftList } = useSWR(

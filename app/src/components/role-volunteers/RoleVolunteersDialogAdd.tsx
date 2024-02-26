@@ -52,7 +52,7 @@ export const RoleVolunteersDialogAdd = ({
   roleName,
   roleVolunteerList,
 }: IRoleVolunteersDialogAddProps) => {
-  const { data, error } = useSWR("/api/volunteers?filter=all", fetcherGet);
+  const { data, error } = useSWR("/api/volunteers/dropdown", fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     `/api/roles/${roleName}`,
     fetcherTrigger

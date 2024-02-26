@@ -45,5 +45,8 @@ export const BURNING_MAN_BROWN = "#2f2f2f";
 export const CENSUS_PINK = "#ed008c";
 
 // behavioral standards
-export const BEHAVIORAL_STANDARDS_ID = 1000012;
 export const BEHAVIORAL_STANDARDS_SET = "behavioralStandardsSet";
+
+// role row IDs
+export const BEHAVIORAL_STANDARDS_ID = 1000012;
+export const CORE_CREW_ID = 13184;

@@ -12,151 +12,68 @@ interface IVolunteerAccount {
   worldName: string;
 }
 interface IDbVolunteerItem {
+  noshow: string;
+  notes: null | string;
   playa_name: string;
-  role: string;
-  role_id: number;
   shiftboard_id: number;
   world_name: string;
-}
-interface IRoleItem {
-  roleId: number;
-  roleName: string;
-}
-interface IResVolunteerItem {
-  playaName: string;
-  roleList: IRoleItem[];
-  shiftboardId: number;
-  worldName: string;
 }
 
 const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
-    // get
+    // get - get all volunteers and their shift counts WIP
     case "GET": {
-      const { filter } = req.query;
-      let resVolunteerList: IResVolunteerItem[] = [];
+      const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
+        `SELECT noshow, notes, playa_name, v.shiftboard_id, world_name
+        FROM op_volunteers AS v
+        LEFT JOIN op_volunteer_shifts AS vs
+        ON v.shiftboard_id = vs.shiftboard_id
+        ORDER BY playa_name, world_name`
+      );
+      const resVolunteerList = dbVolunteerList.reduce(
+        (
+          rowList: IVolunteerShiftCountItem[],
+          {
+            noshow,
+            notes,
+            playa_name,
+            shiftboard_id,
+            world_name,
+          }: IDbVolunteerItem | RowDataPacket
+        ) => {
+          const rowListLast = rowList[rowList.length - 1];
 
-      switch (filter) {
-        // get core volunteers
-        case "core": {
-          const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
-            `SELECT playa_name, shiftboard_id, world_name
-            FROM op_volunteers
-            WHERE core_crew=true
-            ORDER BY playa_name`
-          );
+          if (rowListLast && rowListLast.shiftboardId === shiftboard_id) {
+            switch (noshow) {
+              case "Yes":
+                rowListLast.noShowCount += 1;
+                break;
+              case "":
+                rowListLast.attendedCount += 1;
+                break;
+              case "X":
+                rowListLast.remainingCount += 1;
+                break;
+              default:
+            }
 
-          resVolunteerList = dbVolunteerList.map(
-            ({ playa_name, shiftboard_id, world_name }) => ({
-              playaName: playa_name,
-              shiftboardId: shiftboard_id,
-              worldName: world_name,
-            })
-          );
+            return rowList;
+          }
 
-          break;
-        }
-        // get all volunteers for dropdown
-        case "dropdown": {
-          const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
-            `SELECT v.playa_name, r.role, r.role_id, v.shiftboard_id, v.world_name
-            FROM op_volunteers AS v
-            JOIN op_volunteer_roles AS vr
-            ON vr.shiftboard_id=v.shiftboard_id
-            JOIN op_roles AS r
-            ON r.role_id=vr.role_id
-            ORDER BY playa_name`
-          );
-          const volunteerMap: { [key: string]: boolean } = {};
+          const rowItemNew = {
+            attendedCount: 0,
+            isNotes: Boolean(notes),
+            noShowCount: 0,
+            playaName: playa_name,
+            remainingCount: 0,
+            shiftboardId: shiftboard_id,
+            worldName: world_name,
+          };
 
-          resVolunteerList = dbVolunteerList.reduce(
-            (
-              rowList: IResVolunteerItem[],
-              rowItem: IDbVolunteerItem | RowDataPacket
-            ) => {
-              const rowListLast = rowList[rowList.length - 1];
-
-              if (!volunteerMap[rowItem.shiftboard_id]) {
-                const rowItemNew = {
-                  playaName: rowItem.playa_name,
-                  roleList: [
-                    { roleId: rowItem.role_id, roleName: rowItem.role },
-                  ],
-                  shiftboardId: rowItem.shiftboard_id,
-                  worldName: rowItem.world_name ?? "",
-                };
-
-                volunteerMap[rowItem.shiftboard_id] = true;
-
-                return [...rowList, rowItemNew];
-              }
-              rowListLast.roleList.push({
-                roleId: rowItem.role_id,
-                roleName: rowItem.role,
-              });
-
-              return rowList;
-            },
-            []
-          );
-
-          break;
-        }
-        // get all volunteers and their shift counts WIP
-        default: {
-          // const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
-          //   `SELECT noshow, notes, playa_name, v.shiftboard_id, world_name
-          //   FROM op_volunteers AS v
-          //   LEFT JOIN op_volunteer_shifts AS vs
-          //   ON v.shiftboard_id = vs.shiftboard_id
-          //   ORDER BY playa_name, world_name`
-          // );
-          // const dataVolunteerMap = dbVolunteerList.reduce(
-          //   (
-          //     dbVolunteerTotal: {
-          //       [key: string]: IVolunteerShiftCountItem;
-          //     },
-          //     {
-          //       noshow,
-          //       notes,
-          //       playa_name,
-          //       shiftboard_id,
-          //       world_name,
-          //     }: IDbVolunteerItem | RowDataPacket
-          //   ) => {
-          //     const dbVolunteerTotalNew = structuredClone(dbVolunteerTotal);
-          //     if (!dbVolunteerTotalNew[`id${shiftboard_id}`]) {
-          //       dbVolunteerTotalNew[`id${shiftboard_id}`] = {
-          //         attendedCount: 0,
-          //         isNotes: Boolean(notes),
-          //         noShowCount: 0,
-          //         playaName: playa_name,
-          //         remainingCount: 0,
-          //         shiftboardId: shiftboard_id,
-          //         worldName: world_name,
-          //       };
-          //     }
-          //     switch (noshow) {
-          //       case "Yes":
-          //         dbVolunteerTotalNew[`id${shiftboard_id}`].noShowCount += 1;
-          //         break;
-          //       case "":
-          //         dbVolunteerTotalNew[`id${shiftboard_id}`].attendedCount += 1;
-          //         break;
-          //       case "X":
-          //         dbVolunteerTotalNew[`id${shiftboard_id}`].remainingCount += 1;
-          //         break;
-          //       default:
-          //     }
-          //     return dbVolunteerTotalNew;
-          //   },
-          //   {}
-          // );
-          // resVolunteerList = Object.keys(dataVolunteerMap).map(
-          //   (shiftboardId) => dataVolunteerMap[shiftboardId]
-          // );
-        }
-      }
+          return [...rowList, rowItemNew];
+        },
+        []
+      );
 
       return res.status(200).json(resVolunteerList);
     }
