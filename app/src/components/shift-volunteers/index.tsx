@@ -90,7 +90,6 @@ export const ShiftVolunteers = () => {
     isMounted ? `/api/shift-volunteers/${shiftTimesQuery}` : null,
     fetcherGet
   );
-  console.log("dataShiftVolunteerItem: ", dataShiftVolunteerItem);
   const { trigger } = useSWRMutation(
     `/api/shift-volunteers/${shiftTimesQuery}`,
     fetcherTrigger

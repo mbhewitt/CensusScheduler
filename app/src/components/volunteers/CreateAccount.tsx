@@ -3,7 +3,6 @@ import {
   PersonAdd as PersonAddIcon,
 } from "@mui/icons-material";
 import {
-  Alert,
   Box,
   Breadcrumbs,
   Button,
@@ -12,8 +11,6 @@ import {
   CardContent,
   CircularProgress,
   Container,
-  List,
-  ListItem,
   Stack,
   TextField,
   Typography,
@@ -27,6 +24,7 @@ import { useContext, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 
+import { ErrorForm } from "src/components/general/ErrorForm";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import { IVolunteerAccountFormValues } from "src/components/types";
@@ -180,27 +178,9 @@ export const CreateAccount = () => {
               <CardContent>
                 {/* handle errors */}
                 {Object.keys(errors).length > 0 && (
-                  <Alert severity="error" sx={{ mb: 2 }}>
-                    Whoops! Looks like there are some input errors
-                    <List sx={{ pl: 2, listStyleType: "disc" }}>
-                      {Object.keys(errors).map((errorItem) => {
-                        return (
-                          <ListItem
-                            disablePadding
-                            key={errorItem}
-                            sx={{ display: "list-item", pl: 0 }}
-                          >
-                            {
-                              errors[
-                                errorItem as keyof IVolunteerAccountFormValues
-                              ]?.message
-                            }
-                          </ListItem>
-                        );
-                      })}
-                    </List>
-                  </Alert>
+                  <ErrorForm errors={errors} />
                 )}
+
                 <Stack spacing={2}>
                   <Controller
                     control={control}

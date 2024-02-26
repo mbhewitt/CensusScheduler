@@ -77,7 +77,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
 
       return res.status(200).json(resVolunteerList);
     }
-    // create volunteer account
+    // post - create volunteer account
     case "POST": {
       const {
         email,
@@ -129,61 +129,6 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       const resAccount = await insertAccount();
 
       return res.status(200).json(resAccount);
-    }
-    // patch
-    case "PATCH": {
-      const { update } = req.query;
-
-      switch (update) {
-        // reset volunteer passcode
-        case "passcode": {
-          const { passcode, shiftboardId } = JSON.parse(req.body);
-
-          await pool.query<RowDataPacket[]>(
-            `UPDATE op_volunteers
-            SET passcode=?
-            WHERE shiftboard_id=?`,
-            [passcode, shiftboardId]
-          );
-
-          break;
-        }
-
-        // update volunteer profile
-        default: {
-          const {
-            email,
-            emergencyContact,
-            location,
-            notes,
-            phone,
-            playaName,
-            shiftboardId,
-            worldName,
-          } = JSON.parse(req.body);
-
-          await pool.query<RowDataPacket[]>(
-            `UPDATE op_volunteers
-            SET email=?, emergency_contact=?, location=?, needs_update=true, notes=?, phone=?, playa_name=?, world_name=?
-            WHERE shiftboard_id=?`,
-            [
-              email,
-              emergencyContact,
-              location,
-              notes,
-              phone,
-              playaName,
-              worldName,
-              shiftboardId,
-            ]
-          );
-        }
-      }
-
-      return res.status(200).json({
-        statusCode: 200,
-        message: "Success",
-      });
     }
 
     // default - send an error message

@@ -79,7 +79,7 @@ export const VolunteerAccount = () => {
     fetcherGet
   );
   const { isMutating, trigger } = useSWRMutation(
-    "/api/volunteers",
+    `/api/volunteers/${shiftboardId}`,
     fetcherTrigger
   );
   const { control, handleSubmit, reset } = useForm({
@@ -106,9 +106,9 @@ export const VolunteerAccount = () => {
 
       reset({
         email,
-        emergencyContact: emergencyContact ?? "",
-        location: location ?? "",
-        notes: notes ?? "",
+        emergencyContact,
+        location,
+        notes,
         phone,
         playaName,
         worldName,
@@ -123,7 +123,7 @@ export const VolunteerAccount = () => {
 
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
-      await trigger({ body: { ...dataForm, shiftboardId }, method: "PATCH" });
+      await trigger({ body: { ...dataForm }, method: "PATCH" });
 
       enqueueSnackbar(
         <SnackbarText>
