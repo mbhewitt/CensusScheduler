@@ -32,14 +32,6 @@ const socket = (_req: NextApiRequest, res: INextApiResponseWithSocket) => {
       socket.on("req-shift-volunteer-remove", (data) => {
         socket.broadcast.emit("res-shift-volunteer-remove", data);
       });
-      // add role volunteer
-      socket.on("req-role-volunteer-add", (data) => {
-        socket.broadcast.emit("res-role-volunteer-add", data);
-      });
-      // remove role volunteer
-      socket.on("req-role-volunteer-remove", (data) => {
-        socket.broadcast.emit("res-role-volunteer-remove", data);
-      });
     });
 
     res.socket.server.io = io;

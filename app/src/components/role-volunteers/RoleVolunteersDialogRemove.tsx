@@ -4,54 +4,45 @@ import {
 } from "@mui/icons-material";
 import {
   Button,
-  CircularProgress,
   DialogActions,
   DialogContentText,
   Typography,
 } from "@mui/material";
+import axios from "axios";
 import { useSnackbar } from "notistack";
-import io from "socket.io-client";
-import useSWRMutation from "swr/mutation";
+import { useSWRConfig } from "swr";
 
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { SnackbarText } from "src/components/general/SnackbarText";
-import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IRoleVolunteersDialogRemoveProps {
   handleDialogRemoveClose: () => void;
   isDialogRemoveOpen: boolean;
   volunteer: {
     playaName: string;
+    roleId: number;
     roleName: string;
     shiftboardId: number;
     worldName: string;
   };
 }
 
-const socket = io();
 export const RoleVolunteersDialogRemove = ({
   handleDialogRemoveClose,
   isDialogRemoveOpen,
-  volunteer: { playaName, roleName, shiftboardId, worldName },
+  volunteer: { playaName, roleId, roleName, shiftboardId, worldName },
 }: IRoleVolunteersDialogRemoveProps) => {
-  const { isMutating, trigger } = useSWRMutation(
-    `/api/roles/${roleName}`,
-    fetcherTrigger
-  );
+  const { mutate } = useSWRConfig();
   const { enqueueSnackbar } = useSnackbar();
 
   // handle role volunteer remove
   const handleRoleVolunteerRemove = async () => {
     try {
-      await trigger({
-        body: {
-          shiftboardId,
-        },
-        method: "DELETE",
+      // update database
+      await axios.delete(`/api/role-volunteers/${roleId}`, {
+        data: shiftboardId,
       });
-      socket.emit("req-role-volunteer-remove", {
-        shiftboardId,
-      });
+      mutate(`/api/role-volunteers/${roleId}`);
 
       handleDialogRemoveClose();
       enqueueSnackbar(
@@ -99,7 +90,6 @@ export const RoleVolunteersDialogRemove = ({
       </DialogContentText>
       <DialogActions>
         <Button
-          disabled={isMutating}
           startIcon={<CloseIcon />}
           onClick={handleDialogRemoveClose}
           type="button"
@@ -108,11 +98,8 @@ export const RoleVolunteersDialogRemove = ({
           Cancel
         </Button>
         <Button
-          disabled={isMutating}
           onClick={handleRoleVolunteerRemove}
-          startIcon={
-            isMutating ? <CircularProgress size="1rem" /> : <PersonRemoveIcon />
-          }
+          startIcon={<PersonRemoveIcon />}
           type="submit"
           variant="contained"
         >

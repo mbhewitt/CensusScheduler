@@ -15,6 +15,7 @@ export interface IRoleItem {
 }
 export interface IRoleVolunteerItem {
   playaName: string;
+  roleId: number;
   roleName: string;
   shiftboardId: number;
   worldName: string;

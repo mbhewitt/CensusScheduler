@@ -134,7 +134,7 @@ export const Roles = () => {
           key={`${roleId}-menu`}
           MenuList={
             <MenuList>
-              <Link href={`/roles/${roleId}`}>
+              <Link href={`/role-volunteers/${roleId}`}>
                 <MenuItem>
                   <ListItemIcon>
                     <Groups3Icon />
@@ -167,7 +167,7 @@ export const Roles = () => {
         key={`${roleId}-menu`}
         MenuList={
           <MenuList>
-            <Link href={`/roles/${roleId}`}>
+            <Link href={`/role-volunteers/${roleId}`}>
               <MenuItem>
                 <ListItemIcon>
                   <Groups3Icon />
