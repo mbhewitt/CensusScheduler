@@ -19,7 +19,7 @@ import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorForm } from "src/components/general/ErrorForm";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { IVolunteerAccountFormValues } from "src/components/types";
-import { ResetPasscodeForm } from "src/components/volunteers/ResetPasscodeForm";
+import { ResetPasscodeForm } from "src/components/volunteers/account/ResetPasscodeForm";
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IResetPasscodeDialogProps {

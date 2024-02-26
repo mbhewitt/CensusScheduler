@@ -17,7 +17,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         WHERE vr.shiftboard_id=? AND vr.remove_role=false`,
         [shiftboardId]
       );
-      const [dbVolunteerItem] = await pool.query<RowDataPacket[]>(
+      const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT create_volunteer, email, emergency_contact, location, notes, phone, playa_name, shiftboard_id, world_name
         FROM op_volunteers
         WHERE shiftboard_id=?
@@ -25,7 +25,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         [shiftboardId]
       );
       const resRoleList = dbRoleList.map(({ role }) => role);
-      const dbVolunteerFirst = dbVolunteerItem[0];
+      const dbVolunteerFirst = dbVolunteerList[0];
       const resVolunteerItem = {
         email: dbVolunteerFirst.email ?? "",
         emergencyContact: dbVolunteerFirst.emergency_contact ?? "",

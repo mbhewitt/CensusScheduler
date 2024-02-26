@@ -11,16 +11,17 @@ export const shiftVolunteerAdd = async (
   const { noShow, shiftboardId, shiftPositionId, shiftTimesId } = JSON.parse(
     req.body
   );
-  const [shiftVolunteer] = await pool.query<RowDataPacket[]>(
+  const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
     `SELECT *
     FROM op_volunteer_shifts
     WHERE shift_position_id=? AND shift_times_id=? AND shiftboard_id=?`,
     [shiftPositionId, shiftTimesId, shiftboardId]
   );
+  const dbShiftVolunteerFirst = dbShiftVolunteerList[0];
 
   // if volunteer exists in shift already
   // then update add_shift and remove_shift fields
-  if (shiftVolunteer[0]) {
+  if (dbShiftVolunteerFirst) {
     await pool.query<RowDataPacket[]>(
       `UPDATE op_volunteer_shifts
       SET noshow=?, add_shift=true, remove_shift=false

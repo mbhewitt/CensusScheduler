@@ -39,11 +39,11 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         WHERE roles=? AND shiftboard_id=?`,
         [roleName, shiftboardId]
       );
-      const dbRoleVolunteerItem = dbRoleVolunteerList[0];
+      const dbRoleVolunteerFirst = dbRoleVolunteerList[0];
 
       // if role volunteer row exists
       // then update role volunteer row
-      if (dbRoleVolunteerItem) {
+      if (dbRoleVolunteerFirst) {
         await pool.query<RowDataPacket[]>(
           `UPDATE op_volunteer_roles
           SET add_role=true, delete_role=false

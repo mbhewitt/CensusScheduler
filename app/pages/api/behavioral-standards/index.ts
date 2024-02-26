@@ -18,7 +18,7 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
         WHERE vr.role_id=? AND shiftboard_id=?`,
         [BEHAVIORAL_STANDARDS_ID, shiftboardId]
       );
-      const dbVolunteerRoleItem = dbVolunteerRoleList[0];
+      const dbVolunteerRoleFirst = dbVolunteerRoleList[0];
       const [addRole, removeRole] = [
         isBehavioralStandardsSigned === true,
         isBehavioralStandardsSigned === false,
@@ -26,7 +26,7 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
 
       // if behavioral standards row exists
       // then update behavioral standards row
-      if (dbVolunteerRoleItem) {
+      if (dbVolunteerRoleFirst) {
         await pool.query<RowDataPacket[]>(
           `UPDATE op_volunteer_roles
           SET add_role=?, remove_role=?

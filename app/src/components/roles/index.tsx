@@ -31,10 +31,12 @@ import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import { RolesDialogCreate } from "src/components/roles/RolesDialogCreate";
 import { RolesDialogDelete } from "src/components/roles/RolesDialogDelete";
+import { SUPER_ADMIN_ID } from "src/constants";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IRoleItem {
   display: boolean;
+  id: number;
   name: string;
 }
 
@@ -162,6 +164,13 @@ export const Roles = () => {
   // prepare datatable
   const columnList = [
     {
+      name: "Role ID - hidden", // hide for row click
+      options: {
+        display: false,
+        filter: false,
+      },
+    },
+    {
       name: "Name",
       options: {
         sortThirdClickReset: true,
@@ -180,11 +189,12 @@ export const Roles = () => {
       },
     },
   ];
-  const dataTable = data.map(({ display, name }: IRoleItem) => {
-    // if role name is admin
+  const dataTable = data.map(({ display, id, name }: IRoleItem) => {
+    // if role ID is super admin
     // then disable display and delete actions
-    if (name === "Admin") {
+    if (id === SUPER_ADMIN_ID) {
       return [
+        id,
         name,
         <Switch disabled checked={display} key={`${name}-switch`} />,
         <MoreMenu
@@ -192,7 +202,7 @@ export const Roles = () => {
           key={`${name}-menu`}
           MenuList={
             <MenuList>
-              <Link href={`/roles/${encodeURI(name)}`}>
+              <Link href={`/roles/${id}`}>
                 <MenuItem>
                   <ListItemIcon>
                     <Groups3Icon />
@@ -207,6 +217,7 @@ export const Roles = () => {
     }
 
     return [
+      id,
       name,
       <Switch
         checked={display}
@@ -223,7 +234,7 @@ export const Roles = () => {
         key={`${name}-menu`}
         MenuList={
           <MenuList>
-            <Link href={`/roles/${encodeURI(name)}`}>
+            <Link href={`/roles/${id}`}>
               <MenuItem>
                 <ListItemIcon>
                   <Groups3Icon />

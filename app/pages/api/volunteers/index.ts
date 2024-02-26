@@ -97,10 +97,11 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           FROM op_volunteers
           WHERE shiftboard_id=${shiftboardIdRandom}`
         );
+        const dbVolunteerFirst = dbVolunteerList[0];
 
         // if shiftboard ID exists already
         // then execute function recursively
-        if (dbVolunteerList.length > 0) {
+        if (dbVolunteerFirst) {
           return insertAccount();
         }
         await pool.query<RowDataPacket[]>(

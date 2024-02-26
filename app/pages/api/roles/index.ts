@@ -8,12 +8,12 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
     // get - get all roles
     case "GET": {
       const [dbRoleList] = await pool.query<RowDataPacket[]>(
-        `SELECT display, roles
+        `SELECT display, role, role_id
         FROM op_roles
         WHERE delete_role=false`
       );
-      const resRoleList = dbRoleList.map(({ display, roles }) => {
-        return { display: Boolean(display), name: roles };
+      const resRoleList = dbRoleList.map(({ display, role, role_id }) => {
+        return { display: Boolean(display), name: role, id: role_id };
       });
 
       return res.status(200).json(resRoleList);
@@ -22,16 +22,16 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
     case "POST": {
       const { name } = JSON.parse(req.body);
       const [dbRoleList] = await pool.query<RowDataPacket[]>(
-        `SELECT *
+        `SELECT role_id
         FROM op_roles
         WHERE roles=?`,
         [name]
       );
-      const dbRoleItem = dbRoleList[0];
+      const dbRoleFirst = dbRoleList[0];
 
       // if role row exists
       // then update role row
-      if (dbRoleItem) {
+      if (dbRoleFirst) {
         await pool.query<RowDataPacket[]>(
           `UPDATE op_roles
           SET add_role=true, delete_role=false, display=true

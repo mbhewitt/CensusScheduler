@@ -38,8 +38,8 @@ import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import { VolunteerShifts } from "src/components/volunteer-shifts";
-import { DeveloperMode } from "src/components/volunteers/DeveloperMode";
-import { ResetPasscodeDialog } from "src/components/volunteers/ResetPasscodeDialog";
+import { DeveloperMode } from "src/components/volunteers/account/DeveloperMode";
+import { ResetPasscodeDialog } from "src/components/volunteers/account/ResetPasscodeDialog";
 import { SessionContext } from "src/state/session/context";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
@@ -62,7 +62,7 @@ const defaultValues: IFormValues = {
   playaName: "",
   worldName: "",
 };
-export const VolunteerAccount = () => {
+export const Account = () => {
   const {
     sessionState: {
       settings: { isAuthenticated },
