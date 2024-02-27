@@ -87,11 +87,11 @@ export const ShiftVolunteers = () => {
     error: errorShiftVolunteerItem,
     mutate: mutateShiftVolunteerItem,
   } = useSWR(
-    isMounted ? `/api/shift-volunteers/${shiftTimesQuery}` : null,
+    isMounted ? `/api/shift-account/${shiftTimesQuery}` : null,
     fetcherGet
   );
   const { trigger } = useSWRMutation(
-    `/api/shift-volunteers/${shiftTimesQuery}`,
+    `/api/shift-account/${shiftTimesQuery}`,
     fetcherTrigger
   );
   const { enqueueSnackbar } = useSnackbar();
@@ -344,7 +344,7 @@ export const ShiftVolunteers = () => {
             key={`${shiftboardId}-menu`}
             MenuList={
               <MenuList>
-                <Link href={`/volunteers/${shiftboardId}`}>
+                <Link href={`/account/${shiftboardId}`}>
                   <MenuItem>
                     <ListItemIcon>
                       <ManageAccountsIcon />

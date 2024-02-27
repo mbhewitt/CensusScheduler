@@ -43,7 +43,7 @@ export const RoleVolunteers = () => {
     fetcherGet
   );
   const { data: dataRoleVolunteerList, error: errorRoleVolunteerList } = useSWR(
-    isMounted ? `/api/role-volunteers/${roleId}` : null,
+    isMounted ? `/api/role-account/${roleId}` : null,
     fetcherGet
   );
   const [isDialogAddOpen, setIsDialogAddOpen] = useState(false);
@@ -107,7 +107,7 @@ export const RoleVolunteers = () => {
           key={`${shiftboardId}-menu`}
           MenuList={
             <MenuList>
-              <Link href={`/volunteers/${shiftboardId}`}>
+              <Link href={`/account/${shiftboardId}`}>
                 <MenuItem>
                   <ListItemIcon>
                     <ManageAccountsIcon />

@@ -24,11 +24,11 @@ import { useContext, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 
+import { ResetPasscodeForm } from "src/components/account/ResetPasscodeForm";
 import { ErrorForm } from "src/components/general/ErrorForm";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import { IVolunteerAccountFormValues } from "src/components/types";
-import { ResetPasscodeForm } from "src/components/volunteers/account/ResetPasscodeForm";
 import { SIGN_IN } from "src/constants";
 import { SessionContext } from "src/state/session/context";
 import { fetcherTrigger } from "src/utils/fetcher";
@@ -46,7 +46,7 @@ const defaultValues: IVolunteerAccountFormValues = {
 export const CreateAccount = () => {
   const { sessionDispatch } = useContext(SessionContext);
   const { isMutating, trigger } = useSWRMutation(
-    "/api/volunteers",
+    "/api/account",
     fetcherTrigger
   );
   const {
@@ -107,7 +107,7 @@ export const CreateAccount = () => {
           variant: "success",
         }
       );
-      router.push(`/volunteers/${dataVolunteerItem.shiftboardId}`);
+      router.push(`/account/${dataVolunteerItem.shiftboardId}`);
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(

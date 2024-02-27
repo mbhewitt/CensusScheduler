@@ -77,7 +77,7 @@ export const VolunteerShiftsDialogAdd = ({
     },
   } = useContext(DeveloperModeContext);
   const { data: dataVolunteerInfo, error: errorVolunteerInfo } = useSWR(
-    `/api/volunteers/${shiftboardId}`,
+    `/api/account/${shiftboardId}`,
     fetcherGet
   );
   const { data: dataVolunteerShiftList, error: errorVolunteerShiftList } =

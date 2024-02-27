@@ -33,13 +33,13 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
+import { DeveloperMode } from "src/components/account/DeveloperMode";
+import { ResetPasscodeDialog } from "src/components/account/ResetPasscodeDialog";
 import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import { VolunteerShifts } from "src/components/volunteer-shifts";
-import { DeveloperMode } from "src/components/volunteers/account/DeveloperMode";
-import { ResetPasscodeDialog } from "src/components/volunteers/account/ResetPasscodeDialog";
 import { SessionContext } from "src/state/session/context";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
@@ -75,11 +75,11 @@ export const Account = () => {
   const router = useRouter();
   const { shiftboardId } = router.query;
   const { data, error } = useSWR(
-    isMounted ? `/api/volunteers/${shiftboardId}` : null,
+    isMounted ? `/api/account/${shiftboardId}` : null,
     fetcherGet
   );
   const { isMutating, trigger } = useSWRMutation(
-    `/api/volunteers/${shiftboardId}`,
+    `/api/account/${shiftboardId}`,
     fetcherTrigger
   );
   const { control, handleSubmit, reset } = useForm({

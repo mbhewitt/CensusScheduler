@@ -39,10 +39,10 @@ export const RoleVolunteersDialogRemove = ({
   const handleRoleVolunteerRemove = async () => {
     try {
       // update database
-      await axios.delete(`/api/role-volunteers/${roleId}`, {
+      await axios.delete(`/api/role-account/${roleId}`, {
         data: shiftboardId,
       });
-      mutate(`/api/role-volunteers/${roleId}`);
+      mutate(`/api/role-account/${roleId}`);
 
       handleDialogRemoveClose();
       enqueueSnackbar(

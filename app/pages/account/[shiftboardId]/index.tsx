@@ -1,8 +1,8 @@
 import Head from "next/head";
 import { useContext } from "react";
 
+import { Account } from "src/components/account";
 import { SignIn } from "src/components/sign-in";
-import { Account } from "src/components/volunteers/account";
 import { SessionContext } from "src/state/session/context";
 
 const AccountPage = () => {

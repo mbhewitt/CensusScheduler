@@ -17,7 +17,7 @@ const SignInPage = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push(`/volunteers/${shiftboardId}`);
+      router.push(`/account/${shiftboardId}`);
     }
   }, [isAuthenticated, router, shiftboardId]);
 

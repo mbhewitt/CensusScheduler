@@ -118,7 +118,7 @@ export const BehavioralStandards = () => {
           variant: "success",
         }
       );
-      router.push(`/volunteers/${shiftboardId}`);
+      router.push(`/account/${shiftboardId}`);
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(

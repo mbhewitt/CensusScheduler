@@ -105,10 +105,10 @@ export const RoleVolunteersDialogAdd = ({
       }
 
       // update database
-      await axios.post(`/api/role-volunteers/${roleId}`, {
+      await axios.post(`/api/role-account/${roleId}`, {
         shiftboardId: dataForm.volunteer?.shiftboardId,
       });
-      mutate(`/api/role-volunteers/${roleId}`);
+      mutate(`/api/role-account/${roleId}`);
 
       handleDialogAddClose();
       reset(defaultValues);

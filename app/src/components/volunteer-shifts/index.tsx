@@ -370,7 +370,7 @@ export const VolunteerShifts = () => {
           key={`${shiftboardId}-menu`}
           MenuList={
             <MenuList>
-              <Link href={`/shifts/shift-volunteers/${shiftId}`}>
+              <Link href={`/shifts/shift-account/${shiftId}`}>
                 <MenuItem>
                   <ListItemIcon>
                     <Groups3Icon />

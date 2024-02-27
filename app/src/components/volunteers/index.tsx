@@ -224,7 +224,7 @@ export const Volunteers = () => {
           key={`${shiftboardId}-menu`}
           MenuList={
             <MenuList>
-              <Link href={`/volunteers/${shiftboardId}`}>
+              <Link href={`/account/${shiftboardId}`}>
                 <MenuItem>
                   <ListItemIcon>
                     <ManageAccountsIcon />

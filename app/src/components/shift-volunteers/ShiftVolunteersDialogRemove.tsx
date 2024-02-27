@@ -44,7 +44,7 @@ export const ShiftVolunteersDialogRemove = ({
   },
 }: IShiftVolunteersDialogRemoveProps) => {
   const { isMutating, trigger } = useSWRMutation(
-    `/api/shift-volunteers/${shiftTimesId}`,
+    `/api/shift-account/${shiftTimesId}`,
     fetcherTrigger
   );
   const { enqueueSnackbar } = useSnackbar();

@@ -1,6 +1,6 @@
 import Head from "next/head";
 
-import { CreateAccount } from "src/components/volunteers/account/CreateAccount";
+import { CreateAccount } from "src/components/account/CreateAccount";
 
 const CreateAccountPage = () => {
   return (

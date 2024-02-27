@@ -15,11 +15,11 @@ import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 
+import { ResetPasscodeForm } from "src/components/account/ResetPasscodeForm";
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorForm } from "src/components/general/ErrorForm";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { IVolunteerAccountFormValues } from "src/components/types";
-import { ResetPasscodeForm } from "src/components/volunteers/account/ResetPasscodeForm";
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IResetPasscodeDialogProps {
@@ -42,7 +42,7 @@ export const ResetPasscodeDialog = ({
   worldName,
 }: IResetPasscodeDialogProps) => {
   const { isMutating, trigger } = useSWRMutation(
-    `/api/volunteers/${shiftboardId}?update=passcode`,
+    `/api/account/${shiftboardId}?update=passcode`,
     fetcherTrigger
   );
   const {
