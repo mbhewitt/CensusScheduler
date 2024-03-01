@@ -25,7 +25,7 @@ export const DataTable = ({
       MuiPopover: {
         styleOverrides: {
           root: {
-            "[class*='MUITableFilter-root']": {
+            "[class*='MUIDataTableFilter-root']": {
               minWidth: "400px",
             },
           },

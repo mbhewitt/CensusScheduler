@@ -25,7 +25,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         ON sp.shift_name_id=sn.shift_name_id
         JOIN op_position_type AS pt
         ON pt.position_type_id=sp.position_type_id
-        WHERE st.shift_times_id=? AND st.remove_shift_time=false`,
+        WHERE st.remove_shift_time=false AND st.shift_times_id=?`,
         [shiftTimesId]
       );
       const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
@@ -53,7 +53,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           total_slots,
         }) => ({
           filledSlots: 0,
-          position,
+          positionName: position,
           positionDetails: position_details,
           positionTypeId: position_type_id,
           prerequisiteId: prerequisite_id ?? 0,
@@ -75,7 +75,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           }) => ({
             noShow: noshow,
             playaName: playa_name,
-            position,
+            positionName: position,
             shiftboardId: shiftboard_id,
             shiftPositionId: shift_position_id,
             shiftTimesId: shift_times_id,

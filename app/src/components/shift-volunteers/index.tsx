@@ -42,12 +42,13 @@ import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
 import { checkInGet } from "src/utils/checkInGet";
+import { dateNameFormat, timeFormat } from "src/utils/dateTimeFormat";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface ISwitchValues {
   checked: boolean;
   playaName: string;
-  position: string;
+  positionName: string;
   shiftboardId: number;
   shiftPositionId: number;
   shiftTimesId: number;
@@ -73,7 +74,7 @@ export const ShiftVolunteers = () => {
     isOpen: false,
     volunteer: {
       playaName: "",
-      position: "",
+      positionName: "",
       shiftboardId: 0,
       shiftPositionId: 0,
       shiftTimesId: 0,
@@ -87,11 +88,11 @@ export const ShiftVolunteers = () => {
     error: errorShiftVolunteerItem,
     mutate: mutateShiftVolunteerItem,
   } = useSWR(
-    isMounted ? `/api/shift-account/${shiftTimesQuery}` : null,
+    isMounted ? `/api/shift-volunteers/${shiftTimesQuery}` : null,
     fetcherGet
   );
   const { trigger } = useSWRMutation(
-    `/api/shift-account/${shiftTimesQuery}`,
+    `/api/shift-volunteers/${shiftTimesQuery}`,
     fetcherTrigger
   );
   const { enqueueSnackbar } = useSnackbar();
@@ -113,7 +114,7 @@ export const ShiftVolunteers = () => {
           ({
             noShow,
             playaName,
-            position,
+            positionName,
             shiftboardId,
             shiftPositionId,
             shiftTimesId,
@@ -124,7 +125,7 @@ export const ShiftVolunteers = () => {
               dataMutate.shiftVolunteerList.push({
                 noShow,
                 playaName,
-                position,
+                positionName,
                 shiftboardId,
                 shiftPositionId,
                 shiftTimesId,
@@ -197,7 +198,7 @@ export const ShiftVolunteers = () => {
   const handleCheckInToggle = async ({
     checked,
     playaName,
-    position,
+    positionName,
     shiftboardId,
     shiftPositionId,
     shiftTimesId,
@@ -224,7 +225,7 @@ export const ShiftVolunteers = () => {
           <strong>
             {playaName} &quot;{worldName}&quot;
           </strong>{" "}
-          for <strong>{position}</strong> has{" "}
+          for <strong>{positionName}</strong> has{" "}
           <strong>checked {checked ? "in" : "out"}</strong>
         </SnackbarText>,
         {
@@ -310,7 +311,7 @@ export const ShiftVolunteers = () => {
     ({
       noShow,
       playaName,
-      position,
+      positionName,
       shiftboardId,
       shiftPositionId,
       shiftTimesId,
@@ -319,7 +320,7 @@ export const ShiftVolunteers = () => {
       return [
         playaName,
         worldName,
-        position,
+        positionName,
         <Switch
           checked={noShow === ""}
           disabled={!isCheckInAvailable}
@@ -327,7 +328,7 @@ export const ShiftVolunteers = () => {
             handleCheckInToggle({
               checked: event.target.checked,
               playaName,
-              position,
+              positionName,
               shiftboardId,
               shiftPositionId,
               shiftTimesId,
@@ -358,7 +359,7 @@ export const ShiftVolunteers = () => {
                       isOpen: true,
                       volunteer: {
                         playaName,
-                        position,
+                        positionName,
                         shiftboardId,
                         shiftPositionId,
                         shiftTimesId,
@@ -432,23 +433,28 @@ export const ShiftVolunteers = () => {
           >
             <Box>
               <Typography component="h2" gutterBottom variant="h4">
-                {dataShiftVolunteerItem.dateName
-                  ? `${dayjs(dataShiftVolunteerItem.date).format("MMM DD")} - ${
-                      dataShiftVolunteerItem.dateName
-                    }`
-                  : dayjs(dataShiftVolunteerItem.date).format("MMM DD")}
+                {dateNameFormat(
+                  dataShiftVolunteerItem.date,
+                  dataShiftVolunteerItem.dateName
+                )}
                 <br />
-                {dayjs(dataShiftVolunteerItem.startTime).format("HH:mm")} -{" "}
-                {dayjs(dataShiftVolunteerItem.endTime).format("HH:mm")}
+                {timeFormat(
+                  dataShiftVolunteerItem.startTime,
+                  dataShiftVolunteerItem.endTime
+                )}
                 <br />
                 {dataShiftVolunteerItem.shiftName}
               </Typography>
               <Typography component="h3" variant="h6">
                 {dataShiftVolunteerItem.shiftPositionList.map(
-                  ({ filledSlots, position, totalSlots }: IPositionItem) => {
+                  ({
+                    filledSlots,
+                    positionName,
+                    totalSlots,
+                  }: IPositionItem) => {
                     return (
-                      <Fragment key={position}>
-                        {position}: {filledSlots} / {totalSlots}
+                      <Fragment key={positionName}>
+                        {positionName}: {filledSlots} / {totalSlots}
                         <br />
                       </Fragment>
                     );
@@ -497,7 +503,7 @@ export const ShiftVolunteers = () => {
               isOpen: false,
               volunteer: {
                 playaName: "",
-                position: "",
+                positionName: "",
                 shiftboardId: 0,
                 shiftPositionId: 0,
                 shiftTimesId: 0,

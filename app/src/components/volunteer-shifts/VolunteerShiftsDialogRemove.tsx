@@ -15,16 +15,20 @@ import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { SnackbarText } from "src/components/general/SnackbarText";
+import { dateNameFormat, timeFormat } from "src/utils/dateTimeFormat";
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IVolunteerShiftsDialogRemoveProps {
   handleDialogRemoveClose: () => void;
   isDialogRemoveOpen: boolean;
   shift: {
-    day: string;
-    time: string;
-    position: string;
-    shiftPositionId: string;
+    date: string;
+    dateName: string;
+    endTime: string;
+    positionName: string;
+    shiftPositionId: number;
+    shiftTimesId: number;
+    startTime: string;
   };
   shiftboardId: string | string[] | undefined;
 }
@@ -33,7 +37,15 @@ const socket = io();
 export const VolunteerShiftsDialogRemove = ({
   handleDialogRemoveClose,
   isDialogRemoveOpen,
-  shift: { day, time, position, shiftPositionId },
+  shift: {
+    date,
+    dateName,
+    endTime,
+    positionName,
+    shiftPositionId,
+    shiftTimesId,
+    startTime,
+  },
   shiftboardId,
 }: IVolunteerShiftsDialogRemoveProps) => {
   const { isMutating, trigger } = useSWRMutation(
@@ -45,19 +57,20 @@ export const VolunteerShiftsDialogRemove = ({
   const handleVolunteerRemove = async () => {
     try {
       await trigger({
-        body: { shiftboardId, shiftPositionId },
+        body: { shiftPositionId, shiftTimesId, shiftboardId },
         method: "DELETE",
       });
       socket.emit("req-shift-volunteer-remove", {
         shiftboardId,
-        shiftPositionId,
+        shiftTimesId,
       });
 
       handleDialogRemoveClose();
       enqueueSnackbar(
         <SnackbarText>
-          <strong>{day}</strong> at <strong>{time}</strong> for{" "}
-          <strong>{position}</strong> has been removed
+          <strong>{dateNameFormat(date, dateName)}</strong> at{" "}
+          <strong>{timeFormat(startTime, endTime)}</strong> for{" "}
+          <strong>{positionName}</strong> has been removed
         </SnackbarText>,
         {
           variant: "success",
@@ -88,8 +101,10 @@ export const VolunteerShiftsDialogRemove = ({
     >
       <DialogContentText>
         <Typography component="span">
-          Are you sure you want to remove <strong>{day}</strong> at{" "}
-          <strong>{time}</strong> for <strong>{position}</strong>?
+          Are you sure you want to remove{" "}
+          <strong>{dateNameFormat(date, dateName)}</strong> at{" "}
+          <strong>{timeFormat(startTime, endTime)}</strong> for{" "}
+          <strong>{positionName}</strong>?
         </Typography>
       </DialogContentText>
       <DialogActions>

@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
 import { IRoleItem } from "src/components/types";
-import { generateId } from "src/utils/generateId";
+import { idGenerate } from "src/utils/idGenerate";
 
 const roles = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
@@ -54,7 +54,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
 
       // check if role id exists
       const checkRoleId = async () => {
-        roleIdNew = generateId();
+        roleIdNew = idGenerate();
         const [dbRoleList] = await pool.query<RowDataPacket[]>(
           `SELECT role_id
           FROM op_roles

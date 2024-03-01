@@ -359,9 +359,9 @@ export const Account = () => {
         </Box>
 
         {/* volunteer shifts */}
-        {/* <Box component="section">
+        <Box component="section">
           <VolunteerShifts />
-        </Box> */}
+        </Box>
 
         {/* admin */}
         {isAuthenticated && isCoreCrew && (

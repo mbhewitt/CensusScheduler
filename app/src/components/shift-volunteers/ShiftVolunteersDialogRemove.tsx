@@ -22,7 +22,7 @@ interface IShiftVolunteersDialogRemoveProps {
   isDialogRemoveOpen: boolean;
   volunteer: {
     playaName: string;
-    position: string;
+    positionName: string;
     shiftboardId: number;
     shiftPositionId: number;
     shiftTimesId: number;
@@ -36,7 +36,7 @@ export const ShiftVolunteersDialogRemove = ({
   isDialogRemoveOpen,
   volunteer: {
     playaName,
-    position,
+    positionName,
     shiftboardId,
     shiftPositionId,
     shiftTimesId,
@@ -44,7 +44,7 @@ export const ShiftVolunteersDialogRemove = ({
   },
 }: IShiftVolunteersDialogRemoveProps) => {
   const { isMutating, trigger } = useSWRMutation(
-    `/api/shift-account/${shiftTimesId}`,
+    `/api/shift-volunteers/${shiftTimesId}`,
     fetcherTrigger
   );
   const { enqueueSnackbar } = useSnackbar();
@@ -67,7 +67,7 @@ export const ShiftVolunteersDialogRemove = ({
           <strong>
             {playaName} &quot;{worldName}&quot;
           </strong>{" "}
-          for <strong>{position}</strong> has been removed
+          for <strong>{positionName}</strong> has been removed
         </SnackbarText>,
         {
           variant: "success",
@@ -102,7 +102,7 @@ export const ShiftVolunteersDialogRemove = ({
           <strong>
             {playaName} &quot;{worldName}&quot;
           </strong>{" "}
-          for <strong>{position}</strong>?
+          for <strong>{positionName}</strong>?
         </Typography>
       </DialogContentText>
       <DialogActions>

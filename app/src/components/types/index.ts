@@ -1,6 +1,6 @@
 export interface IPositionItem {
   filledSlots: number;
-  position: string;
+  positionName: string;
   positionDetails: string;
   positionTypeId: number;
   prerequisiteId: number;
@@ -48,7 +48,7 @@ export interface IShiftPositionListItem {
 export interface IShiftVolunteerItem {
   noShow: string;
   playaName: string;
-  position: string;
+  positionName: string;
   shiftboardId: number;
   shiftPositionId: number;
   shiftTimesId: number;
@@ -62,14 +62,14 @@ export interface IVolunteerItem {
   worldName: string;
 }
 export interface IVolunteerShiftItem {
+  category: string;
   date: string;
   dateName: string;
   endTime: string;
   noShow: string;
-  position: string;
-  shift: string;
-  shiftId: string;
-  shiftPositionId: string;
+  positionName: string;
+  shiftPositionId: number;
+  shiftTimesId: number;
   startTime: string;
 }
 export interface IVolunteerShiftCountItem {

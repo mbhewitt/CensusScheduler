@@ -1,13 +1,4 @@
 import { Chip, Container, lighten } from "@mui/material";
-import {
-  blue,
-  green,
-  orange,
-  purple,
-  red,
-  teal,
-  yellow,
-} from "@mui/material/colors";
 import { useTheme } from "@mui/material/styles";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
@@ -24,6 +15,8 @@ import { Loading } from "src/components/general/Loading";
 import { Hero } from "src/components/layout/Hero";
 import type { IShiftItem } from "src/components/types";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
+import { colorMapGet } from "src/utils/colorMapGet";
+import { dateNameFormat, timeFormat } from "src/utils/dateTimeFormat";
 import { fetcherGet } from "src/utils/fetcher";
 
 export const Shifts = () => {
@@ -39,7 +32,7 @@ export const Shifts = () => {
   // set up variables to manipulate columns
   const columnNameDateHidden = "Date - hidden";
   const columnNameDate = "Date";
-  const columnNameNameHidden = "Name - hidden";
+  const columnNameShiftNameHidden = "Shift name - hidden";
 
   dayjs.extend(isSameOrAfter);
 
@@ -72,7 +65,7 @@ export const Shifts = () => {
       options: { filter: false, sortThirdClickReset: true },
     },
     {
-      name: columnNameNameHidden, // hide for filter dialog
+      name: columnNameShiftNameHidden, // hide for filter dialog
       label: "Name",
       options: {
         display: false,
@@ -174,7 +167,9 @@ export const Shifts = () => {
       const shiftNameFilterList: string[] = [];
 
       data.forEach(({ date, dateName, shiftName }: IShiftItem) => {
-        dateFilterList.push(dateName ? `${date} - ${dateName}` : date);
+        dateFilterList.push(
+          dateName ? dateNameFormat(date, dateName) : dateNameFormat(date, null)
+        );
         shiftNameFilterList.push(shiftName);
       });
 
@@ -193,7 +188,7 @@ export const Shifts = () => {
                   names: dateFilterListDisplay,
                 };
                 break;
-              case columnNameNameHidden:
+              case columnNameShiftNameHidden:
                 prevColumnItem.options.filterOptions = {
                   ...prevColumnItem.options.filterOptions,
                   names: shiftNameFilterListDisplay,
@@ -211,33 +206,7 @@ export const Shifts = () => {
   if (!data) return <Loading />;
 
   // prepare datatable
-  const colorList = [
-    red[100],
-    orange[100],
-    yellow[100],
-    green[100],
-    teal[100],
-    blue[100],
-    purple[100],
-  ];
-  let colorIndexCurrent = 0;
-  const colorMap = data.reduce(
-    (
-      shiftListTotal: { [key: string]: string },
-      { category }: { category: string }
-    ) => {
-      const shiftListTotalNew = structuredClone(shiftListTotal);
-
-      if (!shiftListTotalNew[category]) {
-        shiftListTotalNew[category] = colorList[colorIndexCurrent];
-        colorIndexCurrent += 1;
-      }
-
-      return shiftListTotalNew;
-    },
-    {}
-  );
-
+  const colorMapDisplay = colorMapGet(data);
   const dataTable = data.map(
     ({
       category,
@@ -254,17 +223,13 @@ export const Shifts = () => {
       return [
         shiftTimesId,
         `${date} ${year}`,
-        dateName
-          ? `${dayjs(date).format("MMM DD")} - ${dateName}`
-          : dayjs(date).format("MMM DD"),
-        `${dayjs(startTime).format("HH:mm")} - ${dayjs(endTime).format(
-          "HH:mm"
-        )}`,
+        dateNameFormat(date, dateName),
+        timeFormat(startTime, endTime),
         shiftName,
         <Chip
           key={`${shiftTimesId}-chip`}
           label={shiftName}
-          sx={{ backgroundColor: colorMap[category] }}
+          sx={{ backgroundColor: colorMapDisplay[category] }}
         />,
         `${filledSlots} / ${totalSlots}`,
       ];
@@ -280,7 +245,7 @@ export const Shifts = () => {
       sessionStorage.setItem("filterListState", JSON.stringify(filterList));
     },
     onRowClick: (row: string[]) => {
-      router.push(`/shifts/shift-account/${row[0]}`);
+      router.push(`/shifts/shift-volunteers/${row[0]}`);
     },
     rowHover: true,
     rowsPerPage: 200,

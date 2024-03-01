@@ -40,6 +40,7 @@ import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
 import { checkInGet } from "src/utils/checkInGet";
+import { dateNameFormat, timeFormat } from "src/utils/dateTimeFormat";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IFormValues {
@@ -116,10 +117,10 @@ export const ShiftVolunteersDialogAdd = ({
     fetcherGet
   );
   const { isMutating, trigger } = useSWRMutation(
-    `/api/shift-account/${shiftTimesId}`,
+    `/api/shift-volunteers/${shiftTimesId}`,
     fetcherTrigger
   );
-  const { data: dataVolunteerShiftItem, error: errorVolunteerShiftList } =
+  const { data: dataVolunteerShiftList, error: errorVolunteerShiftList } =
     useSWR(
       volunteerWatch
         ? `/api/volunteer-shifts/${volunteerWatch?.shiftboardId}`
@@ -129,7 +130,7 @@ export const ShiftVolunteersDialogAdd = ({
   const { data: dataTrainingVolunteerList, error: errorTrainingVolunteerList } =
     useSWR(
       trainingTimesIdWatch
-        ? `/api/shift-account/${trainingTimesIdWatch}`
+        ? `/api/shift-volunteers/${trainingTimesIdWatch}`
         : null,
       fetcherGet
     );
@@ -138,6 +139,7 @@ export const ShiftVolunteersDialogAdd = ({
 
   const volunteerSelected =
     volunteerWatch &&
+    dataVolunteerList &&
     dataVolunteerList.find(
       (dataVolunteerItem: IVolunteerItem) =>
         dataVolunteerItem.shiftboardId === volunteerWatch?.shiftboardId
@@ -167,12 +169,11 @@ export const ShiftVolunteersDialogAdd = ({
   }, [isAuthenticated, playaName, reset, shiftboardId, worldName]);
 
   useEffect(() => {
-    const dateNameDisplay = dateName
-      ? `${dayjs(date).format("MMM DD")} - ${dateName}`
-      : dayjs(date).format("MMM DD");
-
-    if (dataVolunteerShiftItem) {
-      const isVolunteerShiftAvailable = !dataVolunteerShiftItem.some(
+    if (dataVolunteerShiftList) {
+      const isVolunteerSlotAvailable = !shiftVolunteerList.some(
+        (volunteer) => volunteer.shiftboardId === Number(shiftboardId)
+      );
+      const isVolunteerShiftAvailable = !dataVolunteerShiftList.some(
         (volunteerShiftItem: IVolunteerShiftItem) =>
           dayjs(startTime).isBetween(
             dayjs(volunteerShiftItem.startTime),
@@ -182,15 +183,16 @@ export const ShiftVolunteersDialogAdd = ({
           )
       );
 
-      // if there is a shift time conflict
+      // if a slot is available there is a shift time conflict
       // then display warning notification
-      if (!isVolunteerShiftAvailable) {
+      if (isVolunteerSlotAvailable && !isVolunteerShiftAvailable) {
         enqueueSnackbar(
           <SnackbarText>
             Adding{" "}
-            <strong>{`${dateNameDisplay}, ${dayjs(startTime).format(
-              "HH:mm"
-            )} - ${dayjs(endTime).format("HH:mm")}, ${shiftName}`}</strong>{" "}
+            <strong>{`${dateNameFormat(date, dateName)}, ${timeFormat(
+              startTime,
+              endTime
+            )}, ${shiftName}`}</strong>{" "}
             shift will cause a time conflict for{" "}
             <strong>
               {volunteerSelected.playaName} &quot;{volunteerSelected.worldName}
@@ -204,12 +206,14 @@ export const ShiftVolunteersDialogAdd = ({
       }
     }
   }, [
+    dataVolunteerShiftList,
     date,
     dateName,
-    dataVolunteerShiftItem,
     endTime,
     enqueueSnackbar,
+    shiftboardId,
     shiftName,
+    shiftVolunteerList,
     startTime,
     volunteerSelected,
   ]);
@@ -283,7 +287,7 @@ export const ShiftVolunteersDialogAdd = ({
       shiftPositionList.forEach(
         ({
           filledSlots,
-          position,
+          positionName,
           roleRequiredId,
           shiftPositionId,
           totalSlots,
@@ -301,7 +305,7 @@ export const ShiftVolunteersDialogAdd = ({
                 key={`${shiftPositionId}-position`}
                 value={shiftPositionId}
               >
-                {position}: {filledSlots} / {totalSlots}
+                {positionName}: {filledSlots} / {totalSlots}
               </MenuItem>
             );
           }
@@ -338,7 +342,7 @@ export const ShiftVolunteersDialogAdd = ({
         dataTrainingVolunteerList.shiftPositionList.forEach(
           ({
             filledSlots,
-            position,
+            positionName,
             roleRequiredId,
             shiftPositionId,
             totalSlots,
@@ -357,7 +361,7 @@ export const ShiftVolunteersDialogAdd = ({
                   key={`${shiftPositionId}-position`}
                   value={shiftPositionId}
                 >
-                  {position}: {filledSlots} / {totalSlots}
+                  {positionName}: {filledSlots} / {totalSlots}
                 </MenuItem>
               );
             }
@@ -382,9 +386,9 @@ export const ShiftVolunteersDialogAdd = ({
 
       // display shift position list
       shiftPositionListDisplay = shiftPositionList.map(
-        ({ filledSlots, position, shiftPositionId, totalSlots }) => (
+        ({ filledSlots, positionName, shiftPositionId, totalSlots }) => (
           <MenuItem key={`${shiftPositionId}-position`} value={shiftPositionId}>
-            {position}: {filledSlots} / {totalSlots}
+            {positionName}: {filledSlots} / {totalSlots}
           </MenuItem>
         )
       );
@@ -407,10 +411,9 @@ export const ShiftVolunteersDialogAdd = ({
           ) {
             trainingListDisplay.push(
               <MenuItem key={`${shiftTimesId}-training`} value={shiftTimesId}>
-                {`${dayjs(date).format("MMM DD")}, ${dayjs(startTime).format(
-                  "HH:mm"
-                )} - ${dayjs(endTime).format(
-                  "HH:mm"
+                {`${dateNameFormat(date, null)}, ${timeFormat(
+                  startTime,
+                  endTime
                 )}, ${shiftName}: ${filledSlots} / ${totalSlots}`}
               </MenuItem>
             );
@@ -424,7 +427,7 @@ export const ShiftVolunteersDialogAdd = ({
           dataTrainingVolunteerList.shiftPositionList.map(
             ({
               filledSlots,
-              position,
+              positionName,
               shiftPositionId,
               totalSlots,
             }: IPositionItem) => (
@@ -432,7 +435,7 @@ export const ShiftVolunteersDialogAdd = ({
                 key={`${shiftPositionId}-position`}
                 value={shiftPositionId}
               >
-                {position}: {filledSlots} / {totalSlots}
+                {positionName}: {filledSlots} / {totalSlots}
               </MenuItem>
             )
           );
@@ -520,7 +523,7 @@ export const ShiftVolunteersDialogAdd = ({
           <strong>
             {volunteerAdd.playaName} &quot;{volunteerAdd.worldName}&quot;
           </strong>{" "}
-          for <strong>{shiftPositionAdd?.position}</strong> has been added
+          for <strong>{shiftPositionAdd?.positionName}</strong> has been added
         </SnackbarText>,
         {
           variant: "success",
@@ -543,7 +546,7 @@ export const ShiftVolunteersDialogAdd = ({
         socket.emit("req-shift-volunteer-add", {
           noShow: noShowShift,
           playaName: volunteerAdd.playaName,
-          position: shiftPositionAdd?.position,
+          positionName: shiftPositionAdd?.positionName,
           shiftboardId: dataForm.volunteer?.shiftboardId,
           shiftPositionId: dataForm.shiftPositionId,
           shiftTimesId,
@@ -566,7 +569,7 @@ export const ShiftVolunteersDialogAdd = ({
           socket.emit("req-shift-volunteer-add", {
             noShow: noShowTraining,
             playaName: volunteerAdd.playaName,
-            position: trainingPositionAdd.position,
+            positionName: trainingPositionAdd.positionName,
             shiftboardId: dataForm.volunteer?.shiftboardId,
             shiftPositionId: dataForm.trainingPositionId,
             shiftTimesId: dataForm.trainingTimesId,
@@ -670,7 +673,7 @@ export const ShiftVolunteersDialogAdd = ({
                                 shiftPositionFound.filledSlots}
                             </strong>{" "}
                             openings available for{" "}
-                            <strong>{shiftPositionFound.position}</strong>
+                            <strong>{shiftPositionFound.positionName}</strong>
                           </SnackbarText>,
                           {
                             variant: "warning",
@@ -711,17 +714,12 @@ export const ShiftVolunteersDialogAdd = ({
                               dataTrainingItem.shiftTimesId ===
                               trainingTimesIdSelected
                           );
-                          const dateNameDisplay = trainingItemFound.dateName
-                            ? `${dayjs(trainingItemFound.date).format(
-                                "MMM DD"
-                              )} - ${trainingItemFound.dateName}`
-                            : dayjs(trainingItemFound.date).format("MMM DD");
                           const isVolunteerTrainingAvailable =
-                            !dataVolunteerShiftItem.some(
-                              (dataVolunteerShiftItem: IVolunteerShiftItem) =>
+                            !dataVolunteerShiftList.some(
+                              (dataVolunteerShiftList: IVolunteerShiftItem) =>
                                 dayjs(trainingItemFound.startTime).isBetween(
-                                  dayjs(dataVolunteerShiftItem.startTime),
-                                  dayjs(dataVolunteerShiftItem.endTime),
+                                  dayjs(dataVolunteerShiftList.startTime),
+                                  dayjs(dataVolunteerShiftList.endTime),
                                   null,
                                   "[]"
                                 )
@@ -733,11 +731,13 @@ export const ShiftVolunteersDialogAdd = ({
                             enqueueSnackbar(
                               <SnackbarText>
                                 Adding{" "}
-                                <strong>{`${dateNameDisplay}, ${dayjs(
-                                  trainingItemFound.startTime
-                                ).format("HH:mm")} - ${dayjs(
+                                <strong>{`${dateNameFormat(
+                                  trainingItemFound.date,
+                                  trainingItemFound.dateName
+                                )}, ${timeFormat(
+                                  trainingItemFound.startTime,
                                   trainingItemFound.endTime
-                                ).format("HH:mm")}, ${
+                                )}, ${
                                   trainingItemFound.shiftName
                                 }`}</strong>{" "}
                                 shift will cause a time conflict for{" "}

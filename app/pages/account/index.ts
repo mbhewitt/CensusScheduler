@@ -2,7 +2,7 @@ import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
-import { generateId } from "src/utils/generateId";
+import { idGenerate } from "src/utils/idGenerate";
 
 interface IVolunteerAccount {
   email: string;
@@ -26,7 +26,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         worldName,
       } = JSON.parse(req.body);
       const insertAccount = async (): Promise<IVolunteerAccount> => {
-        const shiftboardIdNew = generateId();
+        const shiftboardIdNew = idGenerate();
         const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
           `SELECT shiftboard_id
           FROM op_volunteers
