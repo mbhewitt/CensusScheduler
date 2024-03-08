@@ -14,16 +14,19 @@ import Link from "next/link";
 import { useContext } from "react";
 
 import { pageListAdmin, pageListDefault } from "src/components/layout/pageList";
+import { CORE_CREW_ID } from "src/constants";
 import { EasterEggContext } from "src/state/easter-egg/context";
 import { SessionContext } from "src/state/session/context";
+import { checkRole } from "src/utils/checkRole";
 
 export const Footer = () => {
   const {
     sessionState: {
       settings: { isAuthenticated },
-      user: { isCoreCrew },
+      user: { roleList },
     },
   } = useContext(SessionContext);
+  const isCoreCrew = checkRole(CORE_CREW_ID, roleList);
   const { setIsEasterEggOpen } = useContext(EasterEggContext);
   const theme = useTheme();
 

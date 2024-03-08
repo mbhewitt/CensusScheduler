@@ -29,22 +29,29 @@ import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import type {
-  IPositionItem,
-  IShiftItem,
-  IShiftVolunteerItem,
-  IVolunteerItem,
-  IVolunteerShiftItem,
+  IResPositionItem,
+  IResShiftItem,
+  IResShiftVolunteerItem,
+  IResVolunteerDropdownItem,
+  IResVolunteerShiftItem,
+  IVolunteerOption,
   TCheckInTypes,
 } from "src/components/types";
-import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
+import {
+  CORE_CREW_ID,
+  SHIFT_DURING,
+  SHIFT_FUTURE,
+  SHIFT_PAST,
+} from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
 import { checkInGet } from "src/utils/checkInGet";
+import { checkRole } from "src/utils/checkRole";
 import { dateNameFormat, timeFormat } from "src/utils/dateTimeFormat";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IFormValues {
-  volunteer: null | IVolunteer;
+  volunteer: null | IVolunteerOption;
   shiftPositionId: number | "";
   trainingPositionId: number | "";
   trainingTimesId: number | "";
@@ -57,14 +64,10 @@ interface IShiftVolunteersDialogAddProps {
   handleDialogAddClose: () => void;
   isDialogAddOpen: boolean;
   shiftName: string;
-  shiftPositionList: IPositionItem[];
+  shiftPositionList: IResPositionItem[];
   shiftTimesId: string | string[] | undefined;
-  shiftVolunteerList: IShiftVolunteerItem[];
+  shiftVolunteerList: IResShiftVolunteerItem[];
   startTime: string;
-}
-interface IVolunteer {
-  label: string;
-  shiftboardId: string;
 }
 
 const socket = io();
@@ -95,9 +98,10 @@ export const ShiftVolunteersDialogAdd = ({
   const {
     sessionState: {
       settings: { isAuthenticated },
-      user: { isCoreCrew, playaName, shiftboardId, worldName },
+      user: { playaName, roleList, shiftboardId, worldName },
     },
   } = useContext(SessionContext);
+  const isCoreCrew = checkRole(CORE_CREW_ID, roleList);
   const { control, handleSubmit, reset, watch } = useForm({
     defaultValues,
   });
@@ -141,7 +145,7 @@ export const ShiftVolunteersDialogAdd = ({
     volunteerWatch &&
     dataVolunteerList &&
     dataVolunteerList.find(
-      (dataVolunteerItem: IVolunteerItem) =>
+      (dataVolunteerItem: IResVolunteerDropdownItem) =>
         dataVolunteerItem.shiftboardId === volunteerWatch?.shiftboardId
     );
   const handleFormReset = () => {
@@ -174,7 +178,7 @@ export const ShiftVolunteersDialogAdd = ({
         (volunteer) => volunteer.shiftboardId === Number(shiftboardId)
       );
       const isVolunteerShiftAvailable = !dataVolunteerShiftList.some(
-        (volunteerShiftItem: IVolunteerShiftItem) =>
+        (volunteerShiftItem: IResVolunteerShiftItem) =>
           dayjs(startTime).isBetween(
             dayjs(volunteerShiftItem.startTime),
             dayjs(volunteerShiftItem.endTime),
@@ -251,7 +255,7 @@ export const ShiftVolunteersDialogAdd = ({
     );
 
   // evaluate check-in type and available shifts and positions
-  let volunteerListDisplay: IVolunteer[] = [];
+  let volunteerListDisplay: IVolunteerOption[] = [];
   let shiftPositionListDisplay: JSX.Element[] = [];
   const trainingList = dataTrainingList.filter(
     ({ shiftCategoryId }: { shiftCategoryId: number }) =>
@@ -269,7 +273,11 @@ export const ShiftVolunteersDialogAdd = ({
       // display volunteer list
       if (isAuthenticated && isCoreCrew) {
         volunteerListDisplay = dataVolunteerList.map(
-          ({ playaName, shiftboardId, worldName }: IVolunteerItem) => ({
+          ({
+            playaName,
+            shiftboardId,
+            worldName,
+          }: IResVolunteerDropdownItem) => ({
             label: `${playaName} "${worldName}"`,
             shiftboardId,
           })
@@ -322,7 +330,7 @@ export const ShiftVolunteersDialogAdd = ({
           shiftTimesId,
           startTime,
           totalSlots,
-        }: IShiftItem) => {
+        }: IResShiftItem) => {
           if (
             (isAuthenticated && isCoreCrew) ||
             (totalSlots - filledSlots > 0 &&
@@ -346,7 +354,7 @@ export const ShiftVolunteersDialogAdd = ({
             roleRequiredId,
             shiftPositionId,
             totalSlots,
-          }: IPositionItem) => {
+          }: IResPositionItem) => {
             if (
               (isAuthenticated && isCoreCrew) ||
               (totalSlots - filledSlots > 0 &&
@@ -378,7 +386,11 @@ export const ShiftVolunteersDialogAdd = ({
 
       // display volunteer list
       volunteerListDisplay = dataVolunteerList.map(
-        ({ playaName, shiftboardId, worldName }: IVolunteerItem) => ({
+        ({
+          playaName,
+          shiftboardId,
+          worldName,
+        }: IResVolunteerDropdownItem) => ({
           label: `${playaName} "${worldName}"`,
           shiftboardId,
         })
@@ -403,7 +415,7 @@ export const ShiftVolunteersDialogAdd = ({
           shiftTimesId,
           startTime,
           totalSlots,
-        }: IShiftItem) => {
+        }: IResShiftItem) => {
           if (
             (isAuthenticated && isCoreCrew) ||
             (totalSlots - filledSlots > 0 &&
@@ -430,7 +442,7 @@ export const ShiftVolunteersDialogAdd = ({
               positionName,
               shiftPositionId,
               totalSlots,
-            }: IPositionItem) => (
+            }: IResPositionItem) => (
               <MenuItem
                 key={`${shiftPositionId}-position`}
                 value={shiftPositionId}
@@ -452,7 +464,7 @@ export const ShiftVolunteersDialogAdd = ({
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
       const volunteerAdd = dataVolunteerList.find(
-        (volunteerItem: IVolunteerItem) =>
+        (volunteerItem: IResVolunteerDropdownItem) =>
           volunteerItem.shiftboardId === dataForm.volunteer?.shiftboardId
       );
       const shiftPositionAdd = shiftPositionList.find(
@@ -460,12 +472,12 @@ export const ShiftVolunteersDialogAdd = ({
           shiftPositionItem.shiftPositionId === dataForm.shiftPositionId
       );
       const trainingAdd = dataTrainingList.find(
-        (trainingItem: IShiftItem) =>
+        (trainingItem: IResShiftItem) =>
           trainingItem.shiftTimesId === dataForm.trainingTimesId
       );
       const trainingPositionAdd =
         dataTrainingVolunteerList.shiftPositionList.find(
-          (trainingPositionItem: IPositionItem) =>
+          (trainingPositionItem: IResPositionItem) =>
             trainingPositionItem.shiftPositionId === dataForm.trainingPositionId
         );
       let noShowTraining: string | undefined;
@@ -617,9 +629,9 @@ export const ShiftVolunteersDialogAdd = ({
                 <Autocomplete
                   {...field}
                   fullWidth
-                  isOptionEqualToValue={(option, value: IVolunteer) =>
+                  isOptionEqualToValue={(option, value: IVolunteerOption) =>
                     option.shiftboardId === value.shiftboardId ||
-                    value.shiftboardId === ""
+                    value.shiftboardId === 0
                   }
                   onChange={(_, data) => field.onChange(data)}
                   options={volunteerListDisplay}
@@ -710,13 +722,15 @@ export const ShiftVolunteersDialogAdd = ({
                           field.onChange(trainingTimesIdSelected);
 
                           const trainingItemFound = dataTrainingList.find(
-                            (dataTrainingItem: IShiftItem) =>
+                            (dataTrainingItem: IResShiftItem) =>
                               dataTrainingItem.shiftTimesId ===
                               trainingTimesIdSelected
                           );
                           const isVolunteerTrainingAvailable =
                             !dataVolunteerShiftList.some(
-                              (dataVolunteerShiftList: IVolunteerShiftItem) =>
+                              (
+                                dataVolunteerShiftList: IResVolunteerShiftItem
+                              ) =>
                                 dayjs(trainingItemFound.startTime).isBetween(
                                   dayjs(dataVolunteerShiftList.startTime),
                                   dayjs(dataVolunteerShiftList.endTime),
@@ -781,7 +795,7 @@ export const ShiftVolunteersDialogAdd = ({
 
                           const trainingPositionFound =
                             dataTrainingVolunteerList.shiftPositionList.find(
-                              (trainingPositionItem: IPositionItem) =>
+                              (trainingPositionItem: IResPositionItem) =>
                                 trainingPositionItem.shiftPositionId ===
                                 trainingPositionSelected
                             );

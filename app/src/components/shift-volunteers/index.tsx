@@ -37,32 +37,33 @@ import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import { ShiftVolunteersDialogAdd } from "src/components/shift-volunteers/ShiftVolunteersDialogAdd";
 import { ShiftVolunteersDialogRemove } from "src/components/shift-volunteers/ShiftVolunteersDialogRemove";
-import { IPositionItem, IShiftVolunteerItem } from "src/components/types";
-import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
+import type {
+  IResPositionItem,
+  IResShiftVolunteerItem,
+  ISwitchValues,
+} from "src/components/types";
+import {
+  CORE_CREW_ID,
+  SHIFT_DURING,
+  SHIFT_FUTURE,
+  SHIFT_PAST,
+} from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
 import { checkInGet } from "src/utils/checkInGet";
+import { checkRole } from "src/utils/checkRole";
 import { dateNameFormat, timeFormat } from "src/utils/dateTimeFormat";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
-
-interface ISwitchValues {
-  checked: boolean;
-  playaName: string;
-  positionName: string;
-  shiftboardId: number;
-  shiftPositionId: number;
-  shiftTimesId: number;
-  worldName: string;
-}
 
 const socket = io();
 export const ShiftVolunteers = () => {
   const {
     sessionState: {
       settings: { isAuthenticated },
-      user: { isCoreCrew },
+      user: { roleList },
     },
   } = useContext(SessionContext);
+  const isCoreCrew = checkRole(CORE_CREW_ID, roleList);
   const {
     developerModeState: {
       dateTime: { value: dateTimeValue },
@@ -150,7 +151,7 @@ export const ShiftVolunteers = () => {
               const shiftboardIdNum = Number(shiftboardId);
               const shiftVolunteerItemUpdate =
                 dataMutate.shiftVolunteerList.find(
-                  (volunteerItem: IShiftVolunteerItem) =>
+                  (volunteerItem: IResShiftVolunteerItem) =>
                     volunteerItem.shiftboardId === shiftboardIdNum
                 );
               if (shiftVolunteerItemUpdate) {
@@ -165,7 +166,7 @@ export const ShiftVolunteers = () => {
           if (dataShiftVolunteerItem) {
             const dataMutate = structuredClone(dataShiftVolunteerItem);
             const volunteerListNew = dataMutate.shiftVolunteerList.filter(
-              (volunteerItem: IShiftVolunteerItem) =>
+              (volunteerItem: IResShiftVolunteerItem) =>
                 volunteerItem.shiftboardId !== shiftboardId
             );
             dataMutate.shiftVolunteerList = volunteerListNew;
@@ -264,7 +265,7 @@ export const ShiftVolunteers = () => {
         (isAuthenticated && isCoreCrew) ||
         (isAuthenticated &&
           dataShiftVolunteerItem.shiftPositionList.some(
-            (positionItem: IPositionItem) => positionItem.filledSlots > 0
+            (positionItem: IResPositionItem) => positionItem.filledSlots > 0
           ));
       break;
     }
@@ -316,7 +317,7 @@ export const ShiftVolunteers = () => {
       shiftPositionId,
       shiftTimesId,
       worldName,
-    }: IShiftVolunteerItem) => {
+    }: IResShiftVolunteerItem) => {
       return [
         playaName,
         worldName,
@@ -451,7 +452,7 @@ export const ShiftVolunteers = () => {
                     filledSlots,
                     positionName,
                     totalSlots,
-                  }: IPositionItem) => {
+                  }: IResPositionItem) => {
                     return (
                       <Fragment key={positionName}>
                         {positionName}: {filledSlots} / {totalSlots}

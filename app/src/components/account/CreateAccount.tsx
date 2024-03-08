@@ -9,29 +9,30 @@ import {
   Card,
   CardActions,
   CardContent,
-  CircularProgress,
   Container,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
 import { useContext, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import useSWRMutation from "swr/mutation";
 
 import { ResetPasscodeForm } from "src/components/account/ResetPasscodeForm";
 import { ErrorForm } from "src/components/general/ErrorForm";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
-import { IVolunteerAccountFormValues } from "src/components/types";
+import type {
+  IResVolunteerAccount,
+  IVolunteerAccountFormValues,
+} from "src/components/types";
 import { SIGN_IN } from "src/constants";
 import { SessionContext } from "src/state/session/context";
-import { fetcherTrigger } from "src/utils/fetcher";
 
 const defaultValues: IVolunteerAccountFormValues = {
   email: "",
@@ -45,10 +46,6 @@ const defaultValues: IVolunteerAccountFormValues = {
 };
 export const CreateAccount = () => {
   const { sessionDispatch } = useContext(SessionContext);
-  const { isMutating, trigger } = useSWRMutation(
-    "/api/account",
-    fetcherTrigger
-  );
   const {
     control,
     formState: { errors },
@@ -70,24 +67,29 @@ export const CreateAccount = () => {
     dataFormInitial
   ) => {
     // trim whitespace
-    const dataFormFinal = Object.keys(dataFormInitial).reduce(
-      (dataFormAcc, dataFormKey) => {
-        return {
-          ...dataFormAcc,
-          [dataFormKey]:
-            dataFormInitial[
-              dataFormKey as keyof IVolunteerAccountFormValues
-            ]?.trim(),
-        };
-      },
-      {}
-    );
+    const dataFormFinal: IVolunteerAccountFormValues = Object.keys(
+      dataFormInitial
+    ).reduce((dataFormAcc, dataFormKey) => {
+      return {
+        ...dataFormAcc,
+        [dataFormKey]:
+          dataFormInitial[
+            dataFormKey as keyof IVolunteerAccountFormValues
+          ]?.trim(),
+      };
+    }, {});
 
     try {
-      const dataVolunteerItem = await trigger({
-        body: dataFormFinal,
-        method: "POST",
-      });
+      const { data: dataVolunteerItem }: { data: IResVolunteerAccount } =
+        await axios.post("/api/account", {
+          email: dataFormFinal.email,
+          emergencyContact: dataFormFinal.emergencyContact,
+          location: dataFormFinal.location,
+          passcodeCreate: dataFormFinal.passcodeCreate,
+          phone: dataFormFinal.phone,
+          playaName: dataFormFinal.playaName,
+          worldName: dataFormFinal.worldName,
+        });
 
       sessionDispatch({
         payload: dataVolunteerItem,
@@ -188,7 +190,6 @@ export const CreateAccount = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
-                        disabled={isMutating}
                         error={Object.hasOwn(errors, "playaName")}
                         fullWidth
                         helperText={errors.playaName?.message}
@@ -213,7 +214,6 @@ export const CreateAccount = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
-                        disabled={isMutating}
                         error={Object.hasOwn(errors, "worldName")}
                         fullWidth
                         helperText={errors.worldName?.message}
@@ -238,7 +238,6 @@ export const CreateAccount = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
-                        disabled={isMutating}
                         error={Object.hasOwn(errors, "email")}
                         fullWidth
                         helperText={errors.email?.message}
@@ -263,7 +262,6 @@ export const CreateAccount = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
-                        disabled={isMutating}
                         fullWidth
                         label="Phone"
                         type="tel"
@@ -277,7 +275,6 @@ export const CreateAccount = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
-                        disabled={isMutating}
                         fullWidth
                         helperText="How to find you on playa and any other relevant info"
                         label="Location"
@@ -291,7 +288,6 @@ export const CreateAccount = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
-                        disabled={isMutating}
                         fullWidth
                         helperText="How to reach your emergency contact on or off playa"
                         label="Emergency contact"
@@ -303,7 +299,6 @@ export const CreateAccount = () => {
                     control={control}
                     errors={errors}
                     getValues={getValues}
-                    isMutating={isMutating}
                     isPasscodeConfirmVisible={isPasscodeConfirmVisible}
                     isPasscodeCreateVisible={isPasscodeCreateVisible}
                     setIsPasscodeConfirmVisible={setIsPasscodeConfirmVisible}
@@ -320,14 +315,7 @@ export const CreateAccount = () => {
                 }}
               >
                 <Button
-                  disabled={isMutating}
-                  startIcon={
-                    isMutating ? (
-                      <CircularProgress size="1rem" />
-                    ) : (
-                      <PersonAddIcon />
-                    )
-                  }
+                  startIcon={<PersonAddIcon />}
                   type="submit"
                   variant="contained"
                 >

@@ -2,6 +2,7 @@ import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
+import type { IResVolunteerDropdownItem } from "src/components/types";
 import { CORE_CREW_ID } from "src/constants";
 
 interface IDbVolunteerItem {
@@ -10,16 +11,6 @@ interface IDbVolunteerItem {
   role_id: number;
   shiftboard_id: number;
   world_name: string;
-}
-interface IRoleItem {
-  roleId: number;
-  roleName: string;
-}
-interface IResVolunteerItem {
-  playaName: string;
-  roleList: IRoleItem[];
-  shiftboardId: number;
-  worldName: string;
 }
 
 const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -64,7 +55,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
 
       const resVolunteerList = dbVolunteerList.reduce(
         (
-          rowList: IResVolunteerItem[],
+          rowList: IResVolunteerDropdownItem[],
           {
             playa_name,
             role,

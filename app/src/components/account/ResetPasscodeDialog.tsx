@@ -19,7 +19,7 @@ import { ResetPasscodeForm } from "src/components/account/ResetPasscodeForm";
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorForm } from "src/components/general/ErrorForm";
 import { SnackbarText } from "src/components/general/SnackbarText";
-import { IVolunteerAccountFormValues } from "src/components/types";
+import type { IVolunteerAccountFormValues } from "src/components/types";
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IResetPasscodeDialogProps {
@@ -128,7 +128,6 @@ export const ResetPasscodeDialog = ({
             control={control}
             errors={errors}
             getValues={getValues}
-            isMutating={isMutating}
             isPasscodeConfirmVisible={isPasscodeConfirmVisible}
             isPasscodeCreateVisible={isPasscodeCreateVisible}
             setIsPasscodeConfirmVisible={setIsPasscodeConfirmVisible}

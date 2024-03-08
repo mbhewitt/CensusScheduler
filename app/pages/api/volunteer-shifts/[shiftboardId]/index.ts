@@ -7,7 +7,7 @@ import {
   shiftVolunteerCheckIn,
   shiftVolunteerRemove,
 } from "pages/api/general/shiftVolunteers";
-import type { IVolunteerShiftItem } from "src/components/types";
+import type { IResVolunteerShiftItem } from "src/components/types";
 
 const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
@@ -33,7 +33,7 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
         ORDER BY st.start_time`,
         [shiftboardId]
       );
-      const resVolunteerShiftList: IVolunteerShiftItem[] =
+      const resVolunteerShiftList: IResVolunteerShiftItem[] =
         dbVolunteerShiftList.map(
           ({
             category,

@@ -28,7 +28,7 @@ import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
-import type { IVolunteerItem } from "src/components/types";
+import type { IResVolunteerDropdownItem } from "src/components/types";
 import { GENERAL_ROLE_LIST } from "src/constants";
 import { SessionContext } from "src/state/session/context";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
@@ -211,7 +211,10 @@ export const Contact = () => {
                           ))}
                           <ListSubheader>Core volunteers</ListSubheader>
                           {data.map(
-                            ({ playaName, worldName }: IVolunteerItem) => (
+                            ({
+                              playaName,
+                              worldName,
+                            }: IResVolunteerDropdownItem) => (
                               <MenuItem
                                 key={`${playaName}-${worldName}`}
                                 value={`${playaName} "${worldName}"`}

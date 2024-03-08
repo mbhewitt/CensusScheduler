@@ -40,7 +40,9 @@ import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import { VolunteerShifts } from "src/components/volunteer-shifts";
+import { CORE_CREW_ID } from "src/constants";
 import { SessionContext } from "src/state/session/context";
+import { checkRole } from "src/utils/checkRole";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IFormValues {
@@ -66,7 +68,6 @@ export const Account = () => {
   const {
     sessionState: {
       settings: { isAuthenticated },
-      user: { isCoreCrew },
     },
   } = useContext(SessionContext);
   const [isMounted, setIsMounted] = useState(false);
@@ -120,6 +121,7 @@ export const Account = () => {
   if (!data) return <Loading />;
 
   const { isVolunteerCreated, playaName, roleList, worldName } = data;
+  const isCoreCrew = checkRole(CORE_CREW_ID, roleList);
 
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {

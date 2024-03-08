@@ -2,6 +2,7 @@ import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
+import type { IResVolunteerAccount } from "src/components/types";
 
 const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   const { shiftboardId } = req.query;
@@ -26,7 +27,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       );
       const resRoleList = dbRoleList.map(({ role }) => role);
       const dbVolunteerFirst = dbVolunteerList[0];
-      const resVolunteerItem = {
+      const resVolunteerItem: IResVolunteerAccount = {
         email: dbVolunteerFirst.email ?? "",
         emergencyContact: dbVolunteerFirst.emergency_contact ?? "",
         isVolunteerCreated: Boolean(dbVolunteerFirst.create_volunteer),
@@ -34,6 +35,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         notes: dbVolunteerFirst.notes ?? "",
         phone: dbVolunteerFirst.phone ?? "",
         playaName: dbVolunteerFirst.playa_name ?? "",
+        shiftboardId: dbVolunteerFirst.shiftboard_id ?? 0,
         roleList: resRoleList,
         worldName: dbVolunteerFirst.world_name ?? "",
       };

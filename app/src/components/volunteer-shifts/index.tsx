@@ -31,31 +31,34 @@ import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { SnackbarText } from "src/components/general/SnackbarText";
-import type { IVolunteerShiftItem } from "src/components/types";
+import type {
+  IResVolunteerShiftItem,
+  ISwitchValues,
+} from "src/components/types";
 import { VolunteerShiftsDialogRemove } from "src/components/volunteer-shifts/VolunteerShiftsDialogRemove";
-import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
+import {
+  CORE_CREW_ID,
+  SHIFT_DURING,
+  SHIFT_FUTURE,
+  SHIFT_PAST,
+} from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
 import { checkInGet } from "src/utils/checkInGet";
+import { checkRole } from "src/utils/checkRole";
 import { colorMapGet } from "src/utils/colorMapGet";
 import { dateNameFormat, timeFormat } from "src/utils/dateTimeFormat";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
-
-interface ISwitchValues {
-  checked: boolean;
-  positionName: string;
-  shiftPositionId: number;
-  shiftTimesId: number;
-}
 
 const socket = io();
 export const VolunteerShifts = () => {
   const {
     sessionState: {
       settings: { isAuthenticated },
-      user: { isCoreCrew, playaName, worldName },
+      user: { roleList, playaName, worldName },
     },
   } = useContext(SessionContext);
+  const isCoreCrew = checkRole(CORE_CREW_ID, roleList);
   const {
     developerModeState: {
       dateTime: { value: dateTimeValue },
@@ -105,7 +108,7 @@ export const VolunteerShifts = () => {
             if (data) {
               const dataMutate = structuredClone(data);
               const volunteerShiftItemFound = dataMutate.find(
-                (volunteerShiftItem: IVolunteerShiftItem) =>
+                (volunteerShiftItem: IResVolunteerShiftItem) =>
                   volunteerShiftItem.shiftTimesId === shiftTimesId
               );
               if (volunteerShiftItemFound) {
@@ -120,7 +123,7 @@ export const VolunteerShifts = () => {
           if (data) {
             const dataMutate = structuredClone(data);
             const volunteerShiftListNew = dataMutate.filter(
-              (volunteerShiftItem: IVolunteerShiftItem) =>
+              (volunteerShiftItem: IResVolunteerShiftItem) =>
                 volunteerShiftItem.shiftTimesId !== shiftTimesId
             );
             dataMutate.volunteerShiftList = volunteerShiftListNew;
@@ -174,9 +177,12 @@ export const VolunteerShifts = () => {
   // handle check in toggle
   const handleCheckInToggle = async ({
     checked,
+    playaName,
     positionName,
+    shiftboardId,
     shiftPositionId,
     shiftTimesId,
+    worldName,
   }: ISwitchValues) => {
     try {
       await trigger({
@@ -261,7 +267,7 @@ export const VolunteerShifts = () => {
       shiftPositionId,
       shiftTimesId,
       startTime,
-    }: IVolunteerShiftItem) => {
+    }: IResVolunteerShiftItem) => {
       // evaluate the check-in type and available features
       const checkInType = checkInGet({
         dateTime: dateTimeValue,
@@ -306,9 +312,12 @@ export const VolunteerShifts = () => {
           onChange={(event) =>
             handleCheckInToggle({
               checked: event.target.checked,
+              playaName,
               positionName,
+              shiftboardId: Number(shiftboardId),
               shiftPositionId,
               shiftTimesId,
+              worldName,
             })
           }
           key={`${shiftboardId}-switch`}

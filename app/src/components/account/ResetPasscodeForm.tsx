@@ -11,14 +11,13 @@ import {
   UseFormGetValues,
 } from "react-hook-form";
 
-import { IVolunteerAccountFormValues } from "src/components/types";
+import type { IVolunteerAccountFormValues } from "src/components/types";
 
-interface ResetPasscodeFormProps {
+interface IResetPasscodeFormProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<IVolunteerAccountFormValues, any>;
   errors: FieldErrors<IVolunteerAccountFormValues>;
   getValues: UseFormGetValues<IVolunteerAccountFormValues>;
-  isMutating: boolean;
   isPasscodeConfirmVisible: boolean;
   isPasscodeCreateVisible: boolean;
   setIsPasscodeConfirmVisible: Dispatch<SetStateAction<boolean>>;
@@ -29,12 +28,11 @@ export const ResetPasscodeForm = ({
   control,
   errors,
   getValues,
-  isMutating,
   isPasscodeConfirmVisible,
   isPasscodeCreateVisible,
   setIsPasscodeConfirmVisible,
   setIsPasscodeCreateVisible,
-}: ResetPasscodeFormProps) => {
+}: IResetPasscodeFormProps) => {
   return (
     <>
       <Stack alignItems="center" direction="row">
@@ -44,7 +42,6 @@ export const ResetPasscodeForm = ({
           render={({ field }) => (
             <TextField
               {...field}
-              disabled={isMutating}
               error={Object.hasOwn(errors, "passcodeCreate")}
               fullWidth
               helperText={
@@ -87,7 +84,6 @@ export const ResetPasscodeForm = ({
           render={({ field }) => (
             <TextField
               {...field}
-              disabled={isMutating}
               fullWidth
               error={Object.hasOwn(errors, "passcodeConfirm")}
               helperText={errors.passcodeConfirm?.message}

@@ -2,17 +2,10 @@ import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
+import type { IResVolunteerAccount } from "src/components/types";
 import { idGenerate } from "src/utils/idGenerate";
 
-interface IVolunteerAccount {
-  email: string;
-  isCoreCrew: boolean;
-  playaName: string;
-  shiftboardId: number;
-  worldName: string;
-}
-
-const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
+const account = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     // post - create volunteer account
     case "POST": {
@@ -24,8 +17,8 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         phone,
         playaName,
         worldName,
-      } = JSON.parse(req.body);
-      const insertAccount = async (): Promise<IVolunteerAccount> => {
+      } = req.body;
+      const insertAccount = async (): Promise<IResVolunteerAccount> => {
         const shiftboardIdNew = idGenerate();
         const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
           `SELECT shiftboard_id
@@ -57,8 +50,13 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
 
         return {
           email,
-          isCoreCrew: false,
+          emergencyContact,
+          isVolunteerCreated: true,
+          location,
+          notes: "",
+          phone,
           playaName,
+          roleList: [],
           shiftboardId: shiftboardIdNew,
           worldName,
         };
@@ -78,4 +76,4 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default volunteers;
+export default account;

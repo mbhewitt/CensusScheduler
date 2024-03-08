@@ -2,11 +2,11 @@ import { Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { ReactNode } from "react";
 
-interface ISnackbarText {
+interface ISnackbarTextProps {
   children: ReactNode;
 }
 
-export const SnackbarText = ({ children }: ISnackbarText) => {
+export const SnackbarText = ({ children }: ISnackbarTextProps) => {
   const theme = useTheme();
 
   return (

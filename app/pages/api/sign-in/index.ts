@@ -2,7 +2,7 @@ import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
-import { BEHAVIORAL_STANDARDS_ID } from "src/constants";
+import type { IResVolunteerAccount } from "src/components/types";
 
 const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
@@ -10,7 +10,7 @@ const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
     case "POST": {
       const { passcode, shiftboardId } = JSON.parse(req.body);
       const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
-        `SELECT core_crew, email, playa_name, shiftboard_id, world_name
+        `SELECT core_crew, email, emergency_contact, playa_name, shiftboard_id, world_name
         FROM op_volunteers
         WHERE shiftboard_id=? AND passcode=?`,
         [shiftboardId, passcode]
@@ -26,28 +26,30 @@ const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
         });
       }
 
-      const [dbBehavioralStandardsSignedList] = await pool.query<
-        RowDataPacket[]
-      >(
-        `SELECT *
+      // else send the volunteer
+      const [dbRoleList] = await pool.query<RowDataPacket[]>(
+        `SELECT role
         FROM op_volunteer_roles AS vr
         JOIN op_roles AS r
         ON vr.role_id=r.role_id
-        WHERE vr.shiftboard_id=? AND vr.role_id=? AND vr.remove_role=false`,
-        [shiftboardId, BEHAVIORAL_STANDARDS_ID]
+        WHERE vr.shiftboard_id=? AND vr.remove_role=false`,
+        [shiftboardId]
       );
-      const isBehavioralStandardsSigned =
-        dbBehavioralStandardsSignedList.length > 0;
-
-      // else send the volunteer
-      return res.status(200).json({
+      const resRoleList = dbRoleList.map(({ role }) => role);
+      const resAccount: IResVolunteerAccount = {
         email: volunteerFirst.email,
-        isBehavioralStandardsSigned,
-        isCoreCrew: Boolean(volunteerFirst.core_crew),
+        emergencyContact: volunteerFirst.emergency_contact,
+        isVolunteerCreated: volunteerFirst.create_volunteer,
+        location: volunteerFirst.location,
+        notes: volunteerFirst.notes,
+        phone: volunteerFirst.phone,
         playaName: volunteerFirst.playa_name,
+        roleList: resRoleList,
         shiftboardId: volunteerFirst.shiftboard_id,
         worldName: volunteerFirst.world_name,
-      });
+      };
+
+      return res.status(200).json(resAccount);
     }
     // default - send an error message
     default: {

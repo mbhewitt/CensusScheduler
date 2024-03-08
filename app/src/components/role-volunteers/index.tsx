@@ -31,7 +31,7 @@ import { MoreMenu } from "src/components/general/MoreMenu";
 import { Hero } from "src/components/layout/Hero";
 import { RoleVolunteersDialogAdd } from "src/components/role-volunteers/RoleVolunteersDialogAdd";
 import { RoleVolunteersDialogRemove } from "src/components/role-volunteers/RoleVolunteersDialogRemove";
-import { IRoleVolunteerItem } from "src/components/types";
+import type { IResRoleVolunteerItem } from "src/components/types";
 import { fetcherGet } from "src/utils/fetcher";
 
 export const RoleVolunteers = () => {
@@ -43,7 +43,7 @@ export const RoleVolunteers = () => {
     fetcherGet
   );
   const { data: dataRoleVolunteerList, error: errorRoleVolunteerList } = useSWR(
-    isMounted ? `/api/role-account/${roleId}` : null,
+    isMounted ? `/api/role-volunteers/${roleId}` : null,
     fetcherGet
   );
   const [isDialogAddOpen, setIsDialogAddOpen] = useState(false);
@@ -97,7 +97,7 @@ export const RoleVolunteers = () => {
       roleName,
       shiftboardId,
       worldName,
-    }: IRoleVolunteerItem) => {
+    }: IResRoleVolunteerItem) => {
       return [
         shiftboardId,
         playaName,

@@ -1,13 +1,13 @@
 import { Alert, List, ListItem } from "@mui/material";
 import { FieldErrors } from "react-hook-form";
 
-import { IVolunteerAccountFormValues } from "src/components/types";
+import type { IVolunteerAccountFormValues } from "src/components/types";
 
-interface ErrorFormProps {
+interface IErrorFormProps {
   errors: FieldErrors<IVolunteerAccountFormValues>;
 }
 
-export const ErrorForm = ({ errors }: ErrorFormProps) => {
+export const ErrorForm = ({ errors }: IErrorFormProps) => {
   return (
     <Alert severity="error" sx={{ mb: 2 }}>
       Whoops! Looks like there are some input errors:

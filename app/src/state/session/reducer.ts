@@ -1,3 +1,4 @@
+import type { IResVolunteerAccount } from "src/components/types";
 import {
   ACCOUNT_TYPE_ADMIN,
   ACCOUNT_TYPE_AUTHENTICATED,
@@ -12,13 +13,6 @@ import {
 interface IBehavioralStandardsPayload {
   isBehavioralStandardsSigned: boolean;
 }
-interface ISessionPayload extends IBehavioralStandardsPayload {
-  email: string;
-  isCoreCrew: boolean;
-  playaName: string;
-  shiftboardId: string;
-  worldName: string;
-}
 export interface ISessionState {
   developerMode: {
     accountType: string;
@@ -27,10 +21,10 @@ export interface ISessionState {
   settings: {
     isAuthenticated: boolean;
   };
-  user: ISessionPayload;
+  user: IResVolunteerAccount;
 }
 export type ISessionAction =
-  | { payload: ISessionPayload; type: typeof SIGN_IN }
+  | { payload: IResVolunteerAccount; type: typeof SIGN_IN }
   | { type: typeof SIGN_OUT }
   | {
       payload: IBehavioralStandardsPayload;
@@ -145,10 +139,14 @@ export const sessionReducer = (
         },
         user: {
           email: "",
-          isBehavioralStandardsSigned: false,
-          isCoreCrew: false,
+          emergencyContact: "",
+          isVolunteerCreated: false,
+          location: "",
+          notes: "",
+          phone: "",
           playaName: "",
-          shiftboardId: "",
+          roleList: [],
+          shiftboardId: 0,
           worldName: "",
         },
       };

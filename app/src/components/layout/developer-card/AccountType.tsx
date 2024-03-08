@@ -1,7 +1,7 @@
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useContext } from "react";
 
-import { TAccountActions } from "src/components/types";
+import type { TAccountActions } from "src/components/types";
 import { ACCOUNT_TYPE_LIST } from "src/constants";
 import { SessionContext } from "src/state/session/context";
 

@@ -1,6 +1,6 @@
-import { IPositionItem } from "src/components/types";
+import type { IResPositionItem } from "src/components/types";
 
-export const positionItemFirstGet = (positionList: IPositionItem[]) =>
+export const positionItemFirstGet = (positionList: IResPositionItem[]) =>
   positionList.find(
     ({
       filledSlots,

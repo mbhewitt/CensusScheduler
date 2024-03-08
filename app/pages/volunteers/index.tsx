@@ -3,15 +3,18 @@ import { useContext } from "react";
 
 import { SignIn } from "src/components/sign-in";
 import { Volunteers } from "src/components/volunteers";
+import { CORE_CREW_ID } from "src/constants";
 import { SessionContext } from "src/state/session/context";
+import { checkRole } from "src/utils/checkRole";
 
 const VolunteersPage = () => {
   const {
     sessionState: {
       settings: { isAuthenticated },
-      user: { isCoreCrew },
+      user: { roleList },
     },
   } = useContext(SessionContext);
+  const isCoreCrew = checkRole(CORE_CREW_ID, roleList);
 
   return (
     <>

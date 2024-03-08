@@ -13,7 +13,7 @@ import { DataTable } from "src/components/general/DataTable";
 import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { Hero } from "src/components/layout/Hero";
-import type { IShiftItem } from "src/components/types";
+import type { IResShiftItem } from "src/components/types";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { colorMapGet } from "src/utils/colorMapGet";
 import { dateNameFormat, timeFormat } from "src/utils/dateTimeFormat";
@@ -166,7 +166,7 @@ export const Shifts = () => {
       const dateFilterList: string[] = [];
       const shiftNameFilterList: string[] = [];
 
-      data.forEach(({ date, dateName, shiftName }: IShiftItem) => {
+      data.forEach(({ date, dateName, shiftName }: IResShiftItem) => {
         dateFilterList.push(
           dateName ? dateNameFormat(date, dateName) : dateNameFormat(date, null)
         );
@@ -219,7 +219,7 @@ export const Shifts = () => {
       startTime,
       totalSlots,
       year,
-    }: IShiftItem) => {
+    }: IResShiftItem) => {
       return [
         shiftTimesId,
         `${date} ${year}`,

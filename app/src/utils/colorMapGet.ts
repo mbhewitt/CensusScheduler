@@ -8,9 +8,9 @@ import {
   yellow,
 } from "@mui/material/colors";
 
-import { IShiftItem } from "src/components/types";
+import type { IResShiftItem } from "src/components/types";
 
-export const colorMapGet = (data: IShiftItem[]) => {
+export const colorMapGet = (data: IResShiftItem[]) => {
   const colorList = [
     red[100],
     orange[100],

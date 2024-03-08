@@ -12,28 +12,22 @@ import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
-import type { IVolunteerItem } from "src/components/types";
+import type {
+  IResRoleVolunteerItem,
+  IResVolunteerDropdownItem,
+  IVolunteerOption,
+} from "src/components/types";
 import { fetcherGet } from "src/utils/fetcher";
 
-interface IVolunteer {
-  label: string;
-  shiftboardId: string;
-}
 interface IFormValues {
-  volunteer: null | IVolunteer;
-}
-interface IRoleVolunteerItem {
-  roleName: string;
-  playaName: string;
-  shiftboardId: number;
-  worldName: string;
+  volunteer: null | IVolunteerOption;
 }
 interface IRoleVolunteersDialogAddProps {
   handleDialogAddClose: () => void;
   isDialogAddOpen: boolean;
   roleId: string | string[] | undefined;
   roleName: string;
-  roleVolunteerList: IRoleVolunteerItem[];
+  roleVolunteerList: IResRoleVolunteerItem[];
 }
 
 const defaultValues: IFormValues = {
@@ -78,7 +72,7 @@ export const RoleVolunteersDialogAdd = ({
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
       const roleVolunteerAdd = data.find(
-        (dataVolunteerItem: IVolunteerItem) =>
+        (dataVolunteerItem: IResVolunteerDropdownItem) =>
           dataVolunteerItem.shiftboardId === dataForm.volunteer?.shiftboardId
       );
       const isRoleVolunteerAvailable = roleVolunteerList.some(
@@ -154,13 +148,17 @@ export const RoleVolunteersDialogAdd = ({
             <Autocomplete
               {...field}
               fullWidth
-              isOptionEqualToValue={(option, value: IVolunteer) =>
+              isOptionEqualToValue={(option, value: IVolunteerOption) =>
                 option.shiftboardId === value.shiftboardId ||
-                value.shiftboardId === ""
+                value.shiftboardId === 0
               }
               onChange={(_, data) => field.onChange(data)}
               options={data.map(
-                ({ playaName, shiftboardId, worldName }: IVolunteerItem) => ({
+                ({
+                  playaName,
+                  shiftboardId,
+                  worldName,
+                }: IResVolunteerDropdownItem) => ({
                   label: `${playaName} "${worldName}"`,
                   shiftboardId,
                 })

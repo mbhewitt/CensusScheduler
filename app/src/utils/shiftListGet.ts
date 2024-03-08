@@ -1,6 +1,6 @@
 import { RowDataPacket } from "mysql2";
 
-import { IShiftItem } from "src/components/types";
+import type { IResShiftItem } from "src/components/types";
 
 interface IDbShiftItem {
   category: null | string;
@@ -21,7 +21,7 @@ export const shiftListGet = (dbShiftList: RowDataPacket[]) => {
   const shiftPositionIdMap: { [key: string]: boolean } = {};
 
   return dbShiftList.reduce(
-    (rowList: IShiftItem[], rowItem: IDbShiftItem | RowDataPacket) => {
+    (rowList: IResShiftItem[], rowItem: IDbShiftItem | RowDataPacket) => {
       const shiftPositionIdItem = `${rowItem.shift_times_id}${rowItem.position_type_id}`;
       const rowListLast = rowList[rowList.length - 1];
 

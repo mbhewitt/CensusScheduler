@@ -28,9 +28,14 @@ import { useContext, useEffect, useState } from "react";
 import IdleTimer from "react-idle-timer";
 
 import { pageListAdmin, pageListDefault } from "src/components/layout/pageList";
-import { IDLE_MINUTES } from "src/constants";
+import {
+  BEHAVIORAL_STANDARDS_ID,
+  CORE_CREW_ID,
+  IDLE_MINUTES,
+} from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
+import { checkRole } from "src/utils/checkRole";
 import { signOut } from "src/utils/signOut";
 
 export const Header = () => {
@@ -38,15 +43,14 @@ export const Header = () => {
     sessionDispatch,
     sessionState: {
       settings: { isAuthenticated },
-      user: {
-        isBehavioralStandardsSigned,
-        isCoreCrew,
-        playaName,
-        shiftboardId,
-        worldName,
-      },
+      user: { playaName, roleList, shiftboardId, worldName },
     },
   } = useContext(SessionContext);
+  const isBehavioralStandardsSigned = checkRole(
+    BEHAVIORAL_STANDARDS_ID,
+    roleList
+  );
+  const isCoreCrew = checkRole(CORE_CREW_ID, roleList);
 
   const {
     developerModeState: {

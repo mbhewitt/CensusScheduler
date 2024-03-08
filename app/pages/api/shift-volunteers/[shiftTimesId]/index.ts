@@ -7,7 +7,10 @@ import {
   shiftVolunteerCheckIn,
   shiftVolunteerRemove,
 } from "pages/api/general/shiftVolunteers";
-import type { IPositionItem, IShiftVolunteerItem } from "src/components/types";
+import type {
+  IResPositionItem,
+  IResShiftVolunteerItem,
+} from "src/components/types";
 
 const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
@@ -42,7 +45,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         [shiftTimesId]
       );
       const resShiftPositionFirst = dbShiftPositionList[0];
-      const resShiftPositionList: IPositionItem[] = dbShiftPositionList.map(
+      const resShiftPositionList: IResPositionItem[] = dbShiftPositionList.map(
         ({
           position_details,
           position_type_id,
@@ -62,7 +65,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           totalSlots: total_slots,
         })
       );
-      const resShiftVolunteerList: IShiftVolunteerItem[] =
+      const resShiftVolunteerList: IResShiftVolunteerItem[] =
         dbShiftVolunteerList.map(
           ({
             noshow,

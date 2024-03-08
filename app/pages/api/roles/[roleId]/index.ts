@@ -2,7 +2,7 @@ import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
-import { IRoleItem } from "src/components/types";
+import type { IResRoleItem } from "src/components/types";
 
 const roles = async (req: NextApiRequest, res: NextApiResponse) => {
   const { roleId } = req.query;
@@ -17,7 +17,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
         ORDER BY role`,
         [roleId]
       );
-      const resRoleList: IRoleItem[] = dbRoleList.map(
+      const resRoleList: IResRoleItem[] = dbRoleList.map(
         ({ display, role, role_id }) => {
           return { display: Boolean(display), roleId: role_id, roleName: role };
         }

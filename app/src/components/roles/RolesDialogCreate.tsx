@@ -7,18 +7,15 @@ import { useSWRConfig } from "swr";
 
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { SnackbarText } from "src/components/general/SnackbarText";
+import type { IResRoleItem } from "src/components/types";
 
 interface IFormValues {
-  name: string;
-}
-interface IRoleItem {
-  display: boolean;
   name: string;
 }
 interface IRolesDialogCreateProps {
   handleDialogCreateClose: () => void;
   isDialogCreateOpen: boolean;
-  roleList: IRoleItem[];
+  roleList: IResRoleItem[];
 }
 
 const defaultValues: IFormValues = {
@@ -39,7 +36,7 @@ export const RolesDialogCreate = ({
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
       const isRoleAvailable = roleList.some(
-        ({ name }: { name: string }) => name === dataForm.name
+        ({ roleName }) => roleName === dataForm.name
       );
 
       // if the role has been added already
