@@ -11,7 +11,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     // get - get volunteer account
     case "GET": {
       const [dbRoleList] = await pool.query<RowDataPacket[]>(
-        `SELECT r.role
+        `SELECT r.role, r.role_id
         FROM op_roles as r
         JOIN op_volunteer_roles AS vr
         ON r.role_id=vr.role_id
@@ -25,7 +25,10 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         ORDER BY playa_name`,
         [shiftboardId]
       );
-      const resRoleList = dbRoleList.map(({ role }) => role);
+      const resRoleList = dbRoleList.map(({ role, role_id }) => ({
+        roleId: role_id,
+        roleName: role,
+      }));
       const dbVolunteerFirst = dbVolunteerList[0];
       const resVolunteerItem: IResVolunteerAccount = {
         email: dbVolunteerFirst.email ?? "",

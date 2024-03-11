@@ -28,14 +28,17 @@ const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
 
       // else send the volunteer
       const [dbRoleList] = await pool.query<RowDataPacket[]>(
-        `SELECT role
+        `SELECT r.role, r.role_id
         FROM op_volunteer_roles AS vr
         JOIN op_roles AS r
         ON vr.role_id=r.role_id
         WHERE vr.shiftboard_id=? AND vr.remove_role=false`,
         [shiftboardId]
       );
-      const resRoleList = dbRoleList.map(({ role }) => role);
+      const resRoleList = dbRoleList.map(({ role, role_id }) => ({
+        roleId: role_id,
+        roleName: role,
+      }));
       const resAccount: IResVolunteerAccount = {
         email: volunteerFirst.email,
         emergencyContact: volunteerFirst.emergency_contact,

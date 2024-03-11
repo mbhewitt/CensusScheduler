@@ -62,6 +62,8 @@ export const Roles = () => {
     roleName: string;
   }) => {
     try {
+      // update database
+      // workaround to handle dynamic routing
       await axios.patch(`/api/roles/${roleId}`, {
         checked,
         roleId,
@@ -134,7 +136,7 @@ export const Roles = () => {
           key={`${roleId}-menu`}
           MenuList={
             <MenuList>
-              <Link href={`/role-account/${roleId}`}>
+              <Link href={`/role-volunteers/${roleId}`}>
                 <MenuItem>
                   <ListItemIcon>
                     <Groups3Icon />
@@ -167,7 +169,7 @@ export const Roles = () => {
         key={`${roleId}-menu`}
         MenuList={
           <MenuList>
-            <Link href={`/role-account/${roleId}`}>
+            <Link href={`/role-volunteers/${roleId}`}>
               <MenuItem>
                 <ListItemIcon>
                   <Groups3Icon />

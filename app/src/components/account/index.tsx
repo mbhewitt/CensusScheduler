@@ -39,6 +39,7 @@ import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
+import type { IResVolunteerRoleItem } from "src/components/types";
 import { VolunteerShifts } from "src/components/volunteer-shifts";
 import { CORE_CREW_ID } from "src/constants";
 import { SessionContext } from "src/state/session/context";
@@ -380,14 +381,16 @@ export const Account = () => {
                     <List disablePadding>
                       {roleList.length ? (
                         <>
-                          {roleList.map((roleItem: string) => (
-                            <ListItem disablePadding key={`${roleItem}-item`}>
-                              <ListItemIcon sx={{ minWidth: "auto", pr: 1 }}>
-                                <VerifiedIcon color="secondary" />
-                              </ListItemIcon>
-                              <ListItemText>{roleItem}</ListItemText>
-                            </ListItem>
-                          ))}
+                          {roleList.map(
+                            ({ roleId, roleName }: IResVolunteerRoleItem) => (
+                              <ListItem disablePadding key={`${roleId}-item`}>
+                                <ListItemIcon sx={{ minWidth: "auto", pr: 1 }}>
+                                  <VerifiedIcon color="secondary" />
+                                </ListItemIcon>
+                                <ListItemText>{roleName}</ListItemText>
+                              </ListItem>
+                            )
+                          )}
                         </>
                       ) : (
                         <ListItem disablePadding>None</ListItem>
