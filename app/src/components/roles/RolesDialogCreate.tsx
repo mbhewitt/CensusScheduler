@@ -1,13 +1,18 @@
 import { Add as AddIcon, Close as CloseIcon } from "@mui/icons-material";
-import { Button, DialogActions, TextField } from "@mui/material";
-import axios from "axios";
+import {
+  Button,
+  CircularProgress,
+  DialogActions,
+  TextField,
+} from "@mui/material";
 import { useSnackbar } from "notistack";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { useSWRConfig } from "swr";
+import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import type { IResRoleItem } from "src/components/types";
+import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IFormValues {
   name: string;
@@ -26,7 +31,7 @@ export const RolesDialogCreate = ({
   isDialogCreateOpen,
   roleList,
 }: IRolesDialogCreateProps) => {
-  const { mutate } = useSWRConfig();
+  const { isMutating, trigger } = useSWRMutation("/api/roles", fetcherTrigger);
   const { control, handleSubmit, reset } = useForm({
     defaultValues,
   });
@@ -55,8 +60,10 @@ export const RolesDialogCreate = ({
       }
 
       // update database
-      await axios.post("/api/roles", dataForm);
-      mutate("/api/roles");
+      await trigger({
+        body: dataForm,
+        method: "POST",
+      });
 
       handleDialogCreateClose();
       reset(defaultValues);
@@ -108,7 +115,10 @@ export const RolesDialogCreate = ({
         />
         <DialogActions>
           <Button
-            startIcon={<CloseIcon />}
+            disabled={isMutating}
+            startIcon={
+              isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
+            }
             onClick={() => {
               handleDialogCreateClose();
               reset(defaultValues);
@@ -118,7 +128,14 @@ export const RolesDialogCreate = ({
           >
             Cancel
           </Button>
-          <Button startIcon={<AddIcon />} type="submit" variant="contained">
+          <Button
+            disabled={isMutating}
+            startIcon={
+              isMutating ? <CircularProgress size="1rem" /> : <AddIcon />
+            }
+            type="submit"
+            variant="contained"
+          >
             Create
           </Button>
         </DialogActions>

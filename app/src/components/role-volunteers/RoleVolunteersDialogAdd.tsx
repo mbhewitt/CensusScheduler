@@ -2,11 +2,17 @@ import {
   Close as CloseIcon,
   PersonAdd as PersonAddIcon,
 } from "@mui/icons-material";
-import { Autocomplete, Button, DialogActions, TextField } from "@mui/material";
-import axios from "axios";
+import {
+  Autocomplete,
+  Button,
+  CircularProgress,
+  DialogActions,
+  TextField,
+} from "@mui/material";
 import { useSnackbar } from "notistack";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import useSWR, { useSWRConfig } from "swr";
+import useSWR from "swr";
+import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
@@ -17,7 +23,7 @@ import type {
   IResVolunteerDropdownItem,
   IVolunteerOption,
 } from "src/components/types";
-import { fetcherGet } from "src/utils/fetcher";
+import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IFormValues {
   volunteer: null | IVolunteerOption;
@@ -41,7 +47,10 @@ export const RoleVolunteersDialogAdd = ({
   roleVolunteerList,
 }: IRoleVolunteersDialogAddProps) => {
   const { data, error } = useSWR("/api/volunteers/dropdown", fetcherGet);
-  const { mutate } = useSWRConfig();
+  const { isMutating, trigger } = useSWRMutation(
+    `/api/role-volunteers/${roleId}`,
+    fetcherTrigger
+  );
   const { control, handleSubmit, reset } = useForm({
     defaultValues,
   });
@@ -99,10 +108,12 @@ export const RoleVolunteersDialogAdd = ({
       }
 
       // update database
-      await axios.post(`/api/role-account/${roleId}`, {
-        shiftboardId: dataForm.volunteer?.shiftboardId,
+      await trigger({
+        body: {
+          shiftboardId: dataForm.volunteer?.shiftboardId,
+        },
+        method: "POST",
       });
-      mutate(`/api/role-account/${roleId}`);
 
       handleDialogAddClose();
       reset(defaultValues);
@@ -181,7 +192,10 @@ export const RoleVolunteersDialogAdd = ({
         />
         <DialogActions>
           <Button
-            startIcon={<CloseIcon />}
+            disabled={isMutating}
+            startIcon={
+              isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
+            }
             onClick={() => {
               handleDialogAddClose();
               reset(defaultValues);
@@ -192,7 +206,10 @@ export const RoleVolunteersDialogAdd = ({
             Cancel
           </Button>
           <Button
-            startIcon={<PersonAddIcon />}
+            disabled={isMutating}
+            startIcon={
+              isMutating ? <CircularProgress size="1rem" /> : <PersonAddIcon />
+            }
             type="submit"
             variant="contained"
           >

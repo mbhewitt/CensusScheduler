@@ -108,7 +108,9 @@ export const ShiftVolunteersDialogRemove = ({
       <DialogActions>
         <Button
           disabled={isMutating}
-          startIcon={<CloseIcon />}
+          startIcon={
+            isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
+          }
           onClick={handleDialogRemoveClose}
           type="button"
           variant="outlined"

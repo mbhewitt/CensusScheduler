@@ -247,7 +247,6 @@ export const Account = () => {
                       render={({ field }) => (
                         <TextField
                           {...field}
-                          disabled={isMutating}
                           fullWidth
                           label="Playa / preferred name"
                           required
@@ -263,7 +262,7 @@ export const Account = () => {
                       render={({ field }) => (
                         <TextField
                           {...field}
-                          disabled={!isVolunteerCreated || isMutating}
+                          disabled={!isVolunteerCreated}
                           fullWidth
                           label="Default world name"
                           required
@@ -279,7 +278,7 @@ export const Account = () => {
                       render={({ field }) => (
                         <TextField
                           {...field}
-                          disabled={!isVolunteerCreated || isMutating}
+                          disabled={!isVolunteerCreated}
                           fullWidth
                           label="Email"
                           required
@@ -296,7 +295,7 @@ export const Account = () => {
                       render={({ field }) => (
                         <TextField
                           {...field}
-                          disabled={!isVolunteerCreated || isMutating}
+                          disabled={!isVolunteerCreated}
                           fullWidth
                           label="Phone"
                           type="phone"
@@ -312,7 +311,6 @@ export const Account = () => {
                       render={({ field }) => (
                         <TextField
                           {...field}
-                          disabled={isMutating}
                           fullWidth
                           label="Location"
                           variant="standard"
@@ -327,7 +325,6 @@ export const Account = () => {
                       render={({ field }) => (
                         <TextField
                           {...field}
-                          disabled={isMutating}
                           fullWidth
                           label="Emergency contact"
                           variant="standard"
@@ -413,7 +410,6 @@ export const Account = () => {
                         render={({ field }) => (
                           <TextField
                             {...field}
-                            disabled={isMutating}
                             fullWidth
                             multiline
                             variant="standard"

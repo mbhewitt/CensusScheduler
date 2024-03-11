@@ -141,7 +141,9 @@ export const ResetPasscodeDialog = ({
               handleResetPasscodeDialogClose();
               reset(defaultValues);
             }}
-            startIcon={<CloseIcon />}
+            startIcon={
+              isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
+            }
             type="button"
             variant="outlined"
           >

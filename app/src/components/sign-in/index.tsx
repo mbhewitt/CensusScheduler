@@ -196,7 +196,6 @@ export const SignIn = () => {
                       <TextField
                         {...field}
                         autoComplete="off"
-                        disabled={isMutating}
                         fullWidth
                         label="Passcode"
                         required

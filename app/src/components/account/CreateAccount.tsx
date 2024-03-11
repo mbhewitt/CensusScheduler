@@ -1,4 +1,5 @@
 import {
+  Close as CloseIcon,
   Login as LoginIcon,
   PersonAdd as PersonAddIcon,
 } from "@mui/icons-material";
@@ -9,19 +10,20 @@ import {
   Card,
   CardActions,
   CardContent,
+  CircularProgress,
   Container,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
 import { useContext, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import useSWRMutation from "swr/mutation";
 
 import { ResetPasscodeForm } from "src/components/account/ResetPasscodeForm";
 import { ErrorForm } from "src/components/general/ErrorForm";
@@ -33,6 +35,7 @@ import type {
 } from "src/components/types";
 import { SIGN_IN } from "src/constants";
 import { SessionContext } from "src/state/session/context";
+import { fetcherTrigger } from "src/utils/fetcher";
 
 const defaultValues: IVolunteerAccountFormValues = {
   email: "",
@@ -57,6 +60,10 @@ export const CreateAccount = () => {
     mode: "onBlur",
   });
   const router = useRouter();
+  const { isMutating, trigger } = useSWRMutation(
+    "/api/account",
+    fetcherTrigger
+  );
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
   const [isPasscodeCreateVisible, setIsPasscodeCreateVisible] = useState(false);
@@ -81,14 +88,17 @@ export const CreateAccount = () => {
 
     try {
       const { data: dataVolunteerItem }: { data: IResVolunteerAccount } =
-        await axios.post("/api/account", {
-          email: dataFormFinal.email,
-          emergencyContact: dataFormFinal.emergencyContact,
-          location: dataFormFinal.location,
-          passcodeCreate: dataFormFinal.passcodeCreate,
-          phone: dataFormFinal.phone,
-          playaName: dataFormFinal.playaName,
-          worldName: dataFormFinal.worldName,
+        await trigger({
+          body: {
+            email: dataFormFinal.email,
+            emergencyContact: dataFormFinal.emergencyContact,
+            location: dataFormFinal.location,
+            passcodeCreate: dataFormFinal.passcodeCreate,
+            phone: dataFormFinal.phone,
+            playaName: dataFormFinal.playaName,
+            worldName: dataFormFinal.worldName,
+          },
+          method: "POST",
         });
 
       sessionDispatch({
@@ -315,7 +325,32 @@ export const CreateAccount = () => {
                 }}
               >
                 <Button
-                  startIcon={<PersonAddIcon />}
+                  disabled={isMutating}
+                  startIcon={
+                    isMutating ? (
+                      <CircularProgress size="1rem" />
+                    ) : (
+                      <CloseIcon />
+                    )
+                  }
+                  onClick={() => {
+                    reset(defaultValues);
+                    router.push("/sign-in");
+                  }}
+                  type="button"
+                  variant="outlined"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  disabled={isMutating}
+                  startIcon={
+                    isMutating ? (
+                      <CircularProgress size="1rem" />
+                    ) : (
+                      <PersonAddIcon />
+                    )
+                  }
                   type="submit"
                   variant="contained"
                 >

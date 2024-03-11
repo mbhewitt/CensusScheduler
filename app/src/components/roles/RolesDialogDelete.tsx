@@ -1,6 +1,7 @@
 import { Close as CloseIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import {
   Button,
+  CircularProgress,
   DialogActions,
   DialogContentText,
   List,
@@ -8,16 +9,16 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import axios from "axios";
 import { useSnackbar } from "notistack";
-import useSWR, { useSWRConfig } from "swr";
+import useSWR from "swr";
+import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import type { IResRoleItem, IResRoleVolunteerItem } from "src/components/types";
-import { fetcherGet } from "src/utils/fetcher";
+import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IRolesDialogDeleteProps {
   handleDialogDeleteClose: () => void;
@@ -30,15 +31,19 @@ export const RolesDialogDelete = ({
   isDialogDeleteOpen,
   role: { roleId, roleName },
 }: IRolesDialogDeleteProps) => {
-  const { data, error } = useSWR(`/api/role-account/${roleId}`, fetcherGet);
-  const { mutate } = useSWRConfig();
+  const { data, error } = useSWR(`/api/role-volunteers/${roleId}`, fetcherGet);
+  const { isMutating, trigger } = useSWRMutation(
+    `/api/roles/${roleId}`,
+    fetcherTrigger
+  );
   const { enqueueSnackbar } = useSnackbar();
 
   // handle role delete
   const handleRoleDelete = async () => {
     try {
-      await axios.delete(`/api/roles/${roleId}`);
-      mutate("/api/roles");
+      await trigger({
+        method: "DELETE",
+      });
 
       handleDialogDeleteClose();
       enqueueSnackbar(
@@ -130,7 +135,10 @@ export const RolesDialogDelete = ({
       )}
       <DialogActions>
         <Button
-          startIcon={<CloseIcon />}
+          disabled={isMutating}
+          startIcon={
+            isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
+          }
           onClick={handleDialogDeleteClose}
           type="button"
           variant="outlined"
@@ -138,9 +146,11 @@ export const RolesDialogDelete = ({
           Cancel
         </Button>
         <Button
-          disabled={data && data.length > 0}
+          disabled={isMutating || (data && data.length > 0)}
           onClick={handleRoleDelete}
-          startIcon={<DeleteIcon />}
+          startIcon={
+            isMutating ? <CircularProgress size="1rem" /> : <DeleteIcon />
+          }
           type="submit"
           variant="contained"
         >

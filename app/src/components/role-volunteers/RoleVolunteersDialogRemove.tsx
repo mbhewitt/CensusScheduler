@@ -4,16 +4,17 @@ import {
 } from "@mui/icons-material";
 import {
   Button,
+  CircularProgress,
   DialogActions,
   DialogContentText,
   Typography,
 } from "@mui/material";
-import axios from "axios";
 import { useSnackbar } from "notistack";
-import { useSWRConfig } from "swr";
+import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { SnackbarText } from "src/components/general/SnackbarText";
+import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IRoleVolunteersDialogRemoveProps {
   handleDialogRemoveClose: () => void;
@@ -32,17 +33,22 @@ export const RoleVolunteersDialogRemove = ({
   isDialogRemoveOpen,
   volunteer: { playaName, roleId, roleName, shiftboardId, worldName },
 }: IRoleVolunteersDialogRemoveProps) => {
-  const { mutate } = useSWRConfig();
+  const { isMutating, trigger } = useSWRMutation(
+    `/api/role-volunteers/${roleId}`,
+    fetcherTrigger
+  );
   const { enqueueSnackbar } = useSnackbar();
 
   // handle role volunteer remove
   const handleRoleVolunteerRemove = async () => {
     try {
       // update database
-      await axios.delete(`/api/role-account/${roleId}`, {
-        data: shiftboardId,
+      await trigger({
+        body: {
+          shiftboardId,
+        },
+        method: "DELETE",
       });
-      mutate(`/api/role-account/${roleId}`);
 
       handleDialogRemoveClose();
       enqueueSnackbar(
@@ -90,7 +96,10 @@ export const RoleVolunteersDialogRemove = ({
       </DialogContentText>
       <DialogActions>
         <Button
-          startIcon={<CloseIcon />}
+          disabled={isMutating}
+          startIcon={
+            isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
+          }
           onClick={handleDialogRemoveClose}
           type="button"
           variant="outlined"
@@ -98,8 +107,11 @@ export const RoleVolunteersDialogRemove = ({
           Cancel
         </Button>
         <Button
+          disabled={isMutating}
           onClick={handleRoleVolunteerRemove}
-          startIcon={<PersonRemoveIcon />}
+          startIcon={
+            isMutating ? <CircularProgress size="1rem" /> : <PersonRemoveIcon />
+          }
           type="submit"
           variant="contained"
         >

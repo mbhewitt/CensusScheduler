@@ -152,7 +152,6 @@ export const Contact = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
-                        disabled={isMutating}
                         fullWidth
                         label="Name"
                         required
@@ -168,7 +167,6 @@ export const Contact = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
-                        disabled={isMutating}
                         fullWidth
                         label="Email"
                         required
@@ -185,13 +183,7 @@ export const Contact = () => {
                     render={({ field }) => (
                       <FormControl fullWidth variant="standard">
                         <InputLabel id="to">To *</InputLabel>
-                        <Select
-                          {...field}
-                          disabled={isMutating}
-                          label="To *"
-                          labelId="to"
-                          required
-                        >
+                        <Select {...field} label="To *" labelId="to" required>
                           <MenuItem
                             key="Send me a reminder"
                             value="Send me a reminder"
@@ -241,7 +233,6 @@ export const Contact = () => {
                             {...field}
                             checked={value}
                             color="secondary"
-                            disabled={isMutating}
                           />
                         }
                         label="Reply wanted after Burning Man"
@@ -256,7 +247,6 @@ export const Contact = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
-                        disabled={isMutating}
                         fullWidth
                         label="Message"
                         multiline
