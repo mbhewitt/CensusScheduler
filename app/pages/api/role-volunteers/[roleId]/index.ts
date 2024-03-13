@@ -38,7 +38,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     // post - add role volunteer
     case "POST": {
-      const { shiftboardId } = req.body;
+      const { shiftboardId } = JSON.parse(req.body);
       const [dbRoleVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT role_id
         FROM op_volunteer_roles
@@ -72,7 +72,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     // delete - remove role volunteer
     case "DELETE": {
-      const shiftboardId = req.body;
+      const shiftboardId = JSON.parse(req.body);
 
       await pool.query<RowDataPacket[]>(
         `UPDATE op_volunteer_roles

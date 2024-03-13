@@ -17,7 +17,7 @@ const account = async (req: NextApiRequest, res: NextApiResponse) => {
         phone,
         playaName,
         worldName,
-      } = req.body;
+      } = JSON.parse(req.body);
       const insertAccount = async (): Promise<IResVolunteerAccount> => {
         const shiftboardIdNew = idGenerate();
         const [dbVolunteerList] = await pool.query<RowDataPacket[]>(

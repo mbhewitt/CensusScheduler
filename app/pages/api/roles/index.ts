@@ -25,7 +25,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     // post - create role
     case "POST": {
-      const { name } = req.body;
+      const { name } = JSON.parse(req.body);
       let roleIdNew;
       // check if role name exists
       const [dbRoleList] = await pool.query<RowDataPacket[]>(
