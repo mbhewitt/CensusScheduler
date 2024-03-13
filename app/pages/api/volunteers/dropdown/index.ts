@@ -2,7 +2,10 @@ import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
-import type { IResVolunteerDropdownItem } from "src/components/types";
+import type {
+  IResVolunteerDropdownItem,
+  IResVolunteerRoleItem,
+} from "src/components/types";
 import { CORE_CREW_ID } from "src/constants";
 
 interface IDbVolunteerItem {
@@ -77,10 +80,17 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
 
           const rowItemNew = {
             playaName: playa_name,
-            roleList: [{ roleId: role_id, roleName: role }],
+            roleList: [] as IResVolunteerRoleItem[],
             shiftboardId: shiftboard_id,
             worldName: world_name ?? "",
           };
+
+          if (role_id) {
+            rowItemNew.roleList.push({
+              roleId: role_id,
+              roleName: role,
+            });
+          }
 
           return [...rowList, rowItemNew];
         },

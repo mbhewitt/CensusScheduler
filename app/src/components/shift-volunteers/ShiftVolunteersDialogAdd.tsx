@@ -476,7 +476,7 @@ export const ShiftVolunteersDialogAdd = ({
           trainingItem.shiftTimesId === dataForm.trainingTimesId
       );
       const trainingPositionAdd =
-        dataTrainingVolunteerList.shiftPositionList.find(
+        dataTrainingVolunteerList?.shiftPositionList.find(
           (trainingPositionItem: IResPositionItem) =>
             trainingPositionItem.shiftPositionId === dataForm.trainingPositionId
         );
