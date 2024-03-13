@@ -31,10 +31,14 @@ const sessionInitial: ISessionState = {
   },
   user: {
     email: "",
-    isBehavioralStandardsSigned: false,
-    isCoreCrew: false,
+    emergencyContact: "",
+    isVolunteerCreated: false,
+    location: "",
+    notes: "",
+    phone: "",
     playaName: "",
-    shiftboardId: "",
+    roleList: [],
+    shiftboardId: 0,
     worldName: "",
   },
   settings: {

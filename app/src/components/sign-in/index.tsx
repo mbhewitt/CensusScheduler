@@ -29,17 +29,16 @@ import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
-import type { IVolunteerItem } from "src/components/types";
+import type {
+  IResVolunteerDropdownItem,
+  IVolunteerOption,
+} from "src/components/types";
 import { SIGN_IN } from "src/constants";
 import { SessionContext } from "src/state/session/context";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
-interface IVolunteer {
-  label: string;
-  shiftboardId: string;
-}
 interface IFormValues {
-  volunteer: null | IVolunteer;
+  volunteer: null | IVolunteerOption;
   passcode: string;
 }
 
@@ -49,7 +48,7 @@ const defaultValues: IFormValues = {
 };
 export const SignIn = () => {
   const { sessionDispatch } = useContext(SessionContext);
-  const { data, error } = useSWR("/api/volunteers?filter=all", fetcherGet);
+  const { data, error } = useSWR("/api/volunteers/dropdown", fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     "/api/sign-in",
     fetcherTrigger
@@ -158,9 +157,9 @@ export const SignIn = () => {
                     <Autocomplete
                       {...field}
                       fullWidth
-                      isOptionEqualToValue={(option, value: IVolunteer) =>
+                      isOptionEqualToValue={(option, value: IVolunteerOption) =>
                         option.shiftboardId === value.shiftboardId ||
-                        value.shiftboardId === ""
+                        value.shiftboardId === 0
                       }
                       onChange={(_, data) => field.onChange(data)}
                       options={data.map(
@@ -168,7 +167,7 @@ export const SignIn = () => {
                           playaName,
                           shiftboardId,
                           worldName,
-                        }: IVolunteerItem) => ({
+                        }: IResVolunteerDropdownItem) => ({
                           label: `${playaName} "${worldName}"`,
                           shiftboardId,
                         })
@@ -197,7 +196,6 @@ export const SignIn = () => {
                       <TextField
                         {...field}
                         autoComplete="off"
-                        disabled={isMutating}
                         fullWidth
                         label="Passcode"
                         required

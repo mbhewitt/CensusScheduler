@@ -1,9 +1,9 @@
 import {
+  Close as CloseIcon,
   Login as LoginIcon,
   PersonAdd as PersonAddIcon,
 } from "@mui/icons-material";
 import {
-  Alert,
   Box,
   Breadcrumbs,
   Button,
@@ -12,8 +12,6 @@ import {
   CardContent,
   CircularProgress,
   Container,
-  List,
-  ListItem,
   Stack,
   TextField,
   Typography,
@@ -27,10 +25,14 @@ import { useContext, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 
+import { ResetPasscodeForm } from "src/components/account/ResetPasscodeForm";
+import { ErrorForm } from "src/components/general/ErrorForm";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
-import { IVolunteerAccountFormValues } from "src/components/types";
-import { ResetPasscodeForm } from "src/components/volunteers/ResetPasscodeForm";
+import type {
+  IResVolunteerAccount,
+  IVolunteerAccountFormValues,
+} from "src/components/types";
 import { SIGN_IN } from "src/constants";
 import { SessionContext } from "src/state/session/context";
 import { fetcherTrigger } from "src/utils/fetcher";
@@ -47,10 +49,6 @@ const defaultValues: IVolunteerAccountFormValues = {
 };
 export const CreateAccount = () => {
   const { sessionDispatch } = useContext(SessionContext);
-  const { isMutating, trigger } = useSWRMutation(
-    "/api/volunteers",
-    fetcherTrigger
-  );
   const {
     control,
     formState: { errors },
@@ -62,6 +60,10 @@ export const CreateAccount = () => {
     mode: "onBlur",
   });
   const router = useRouter();
+  const { isMutating, trigger } = useSWRMutation(
+    "/api/account",
+    fetcherTrigger
+  );
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
   const [isPasscodeCreateVisible, setIsPasscodeCreateVisible] = useState(false);
@@ -72,24 +74,33 @@ export const CreateAccount = () => {
     dataFormInitial
   ) => {
     // trim whitespace
-    const dataFormFinal = Object.keys(dataFormInitial).reduce(
-      (dataFormAcc, dataFormKey) => {
-        return {
-          ...dataFormAcc,
-          [dataFormKey]:
-            dataFormInitial[
-              dataFormKey as keyof IVolunteerAccountFormValues
-            ]?.trim(),
-        };
-      },
-      {}
-    );
+    const dataFormFinal: IVolunteerAccountFormValues = Object.keys(
+      dataFormInitial
+    ).reduce((dataFormAcc, dataFormKey) => {
+      return {
+        ...dataFormAcc,
+        [dataFormKey]:
+          dataFormInitial[
+            dataFormKey as keyof IVolunteerAccountFormValues
+          ]?.trim(),
+      };
+    }, {});
 
     try {
-      const dataVolunteerItem = await trigger({
-        body: dataFormFinal,
-        method: "POST",
-      });
+      // update database
+      const { data: dataVolunteerItem }: { data: IResVolunteerAccount } =
+        await trigger({
+          body: {
+            email: dataFormFinal.email,
+            emergencyContact: dataFormFinal.emergencyContact,
+            location: dataFormFinal.location,
+            passcodeCreate: dataFormFinal.passcodeCreate,
+            phone: dataFormFinal.phone,
+            playaName: dataFormFinal.playaName,
+            worldName: dataFormFinal.worldName,
+          },
+          method: "POST",
+        });
 
       sessionDispatch({
         payload: dataVolunteerItem,
@@ -109,7 +120,7 @@ export const CreateAccount = () => {
           variant: "success",
         }
       );
-      router.push(`/volunteers/${dataVolunteerItem.shiftboardId}`);
+      router.push(`/account/${dataVolunteerItem.shiftboardId}`);
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(
@@ -180,27 +191,9 @@ export const CreateAccount = () => {
               <CardContent>
                 {/* handle errors */}
                 {Object.keys(errors).length > 0 && (
-                  <Alert severity="error" sx={{ mb: 2 }}>
-                    Whoops! Looks like there are some input errors
-                    <List sx={{ pl: 2, listStyleType: "disc" }}>
-                      {Object.keys(errors).map((errorItem) => {
-                        return (
-                          <ListItem
-                            disablePadding
-                            key={errorItem}
-                            sx={{ display: "list-item", pl: 0 }}
-                          >
-                            {
-                              errors[
-                                errorItem as keyof IVolunteerAccountFormValues
-                              ]?.message
-                            }
-                          </ListItem>
-                        );
-                      })}
-                    </List>
-                  </Alert>
+                  <ErrorForm errors={errors} />
                 )}
+
                 <Stack spacing={2}>
                   <Controller
                     control={control}
@@ -208,7 +201,6 @@ export const CreateAccount = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
-                        disabled={isMutating}
                         error={Object.hasOwn(errors, "playaName")}
                         fullWidth
                         helperText={errors.playaName?.message}
@@ -233,7 +225,6 @@ export const CreateAccount = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
-                        disabled={isMutating}
                         error={Object.hasOwn(errors, "worldName")}
                         fullWidth
                         helperText={errors.worldName?.message}
@@ -258,7 +249,6 @@ export const CreateAccount = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
-                        disabled={isMutating}
                         error={Object.hasOwn(errors, "email")}
                         fullWidth
                         helperText={errors.email?.message}
@@ -283,7 +273,6 @@ export const CreateAccount = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
-                        disabled={isMutating}
                         fullWidth
                         label="Phone"
                         type="tel"
@@ -297,7 +286,6 @@ export const CreateAccount = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
-                        disabled={isMutating}
                         fullWidth
                         helperText="How to find you on playa and any other relevant info"
                         label="Location"
@@ -311,7 +299,6 @@ export const CreateAccount = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
-                        disabled={isMutating}
                         fullWidth
                         helperText="How to reach your emergency contact on or off playa"
                         label="Emergency contact"
@@ -323,7 +310,6 @@ export const CreateAccount = () => {
                     control={control}
                     errors={errors}
                     getValues={getValues}
-                    isMutating={isMutating}
                     isPasscodeConfirmVisible={isPasscodeConfirmVisible}
                     isPasscodeCreateVisible={isPasscodeCreateVisible}
                     setIsPasscodeConfirmVisible={setIsPasscodeConfirmVisible}
@@ -339,6 +325,24 @@ export const CreateAccount = () => {
                   pr: 2,
                 }}
               >
+                <Button
+                  disabled={isMutating}
+                  startIcon={
+                    isMutating ? (
+                      <CircularProgress size="1rem" />
+                    ) : (
+                      <CloseIcon />
+                    )
+                  }
+                  onClick={() => {
+                    reset(defaultValues);
+                    router.push("/sign-in");
+                  }}
+                  type="button"
+                  variant="outlined"
+                >
+                  Cancel
+                </Button>
                 <Button
                   disabled={isMutating}
                   startIcon={

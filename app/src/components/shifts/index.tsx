@@ -1,17 +1,8 @@
 import { Chip, Container, lighten } from "@mui/material";
-import {
-  blue,
-  green,
-  orange,
-  purple,
-  red,
-  teal,
-  yellow,
-} from "@mui/material/colors";
 import { useTheme } from "@mui/material/styles";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
-import { MUITableColumn } from "mui-datatables";
+import { MUIDataTableColumn } from "mui-datatables";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useContext, useEffect } from "react";
@@ -22,8 +13,10 @@ import { DataTable } from "src/components/general/DataTable";
 import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { Hero } from "src/components/layout/Hero";
-import type { IShiftItem } from "src/components/types";
+import type { IResShiftItem } from "src/components/types";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
+import { colorMapGet } from "src/utils/colorMapGet";
+import { dateNameFormat, timeFormat } from "src/utils/dateTimeFormat";
 import { fetcherGet } from "src/utils/fetcher";
 
 export const Shifts = () => {
@@ -39,13 +32,13 @@ export const Shifts = () => {
   // set up variables to manipulate columns
   const columnNameDateHidden = "Date - hidden";
   const columnNameDate = "Date";
-  const columnNameNameHidden = "Name - hidden";
+  const columnNameShiftNameHidden = "Shift name - hidden";
 
   dayjs.extend(isSameOrAfter);
 
-  const [columnList, setColumnList] = useImmer<MUITableColumn[]>([
+  const [columnList, setColumnList] = useImmer<MUIDataTableColumn[]>([
     {
-      name: "Shiftboard ID - hidden", // hide for row click
+      name: "Shift Times ID - hidden", // hide for row click
       options: {
         display: false,
         filter: false,
@@ -72,7 +65,7 @@ export const Shifts = () => {
       options: { filter: false, sortThirdClickReset: true },
     },
     {
-      name: columnNameNameHidden, // hide for filter dialog
+      name: columnNameShiftNameHidden, // hide for filter dialog
       label: "Name",
       options: {
         display: false,
@@ -171,16 +164,18 @@ export const Shifts = () => {
     // then customize the filter options display for date and name columns
     if (data) {
       const dateFilterList: string[] = [];
-      const shortNameFilterList: string[] = [];
+      const shiftNameFilterList: string[] = [];
 
-      data.forEach((shiftItem: IShiftItem) => {
-        dateFilterList.push(`${shiftItem.dateName} ${shiftItem.date}`);
-        shortNameFilterList.push(shiftItem.shortName);
+      data.forEach(({ date, dateName, shiftName }: IResShiftItem) => {
+        dateFilterList.push(
+          dateName ? dateNameFormat(date, dateName) : dateNameFormat(date, null)
+        );
+        shiftNameFilterList.push(shiftName);
       });
 
       const dateFilterListDisplay = [...new Set(dateFilterList)];
-      const shortNameFilterListDisplay = [
-        ...new Set(shortNameFilterList),
+      const shiftNameFilterListDisplay = [
+        ...new Set(shiftNameFilterList),
       ].sort();
 
       setColumnList((prevColumnList) =>
@@ -193,10 +188,10 @@ export const Shifts = () => {
                   names: dateFilterListDisplay,
                 };
                 break;
-              case columnNameNameHidden:
+              case columnNameShiftNameHidden:
                 prevColumnItem.options.filterOptions = {
                   ...prevColumnItem.options.filterOptions,
-                  names: shortNameFilterListDisplay,
+                  names: shiftNameFilterListDisplay,
                 };
                 break;
               default:
@@ -211,57 +206,30 @@ export const Shifts = () => {
   if (!data) return <Loading />;
 
   // prepare datatable
-  const colorList = [
-    red[100],
-    orange[100],
-    yellow[100],
-    green[100],
-    teal[100],
-    blue[100],
-    purple[100],
-  ];
-  let colorIndexCurrent = 0;
-  const colorMap = data.reduce(
-    (
-      shiftListTotal: { [key: string]: string },
-      { category }: { category: string }
-    ) => {
-      const shiftListTotalNew = structuredClone(shiftListTotal);
-
-      if (!shiftListTotalNew[category]) {
-        shiftListTotalNew[category] = colorList[colorIndexCurrent];
-        colorIndexCurrent += 1;
-      }
-
-      return shiftListTotalNew;
-    },
-    {}
-  );
-
+  const colorMapDisplay = colorMapGet(data);
   const dataTable = data.map(
     ({
       category,
       date,
       dateName,
-      freeSlots,
-      shift,
-      shiftId,
-      shortName,
+      endTime,
+      filledSlots,
+      shiftName,
+      shiftTimesId,
+      startTime,
       totalSlots,
       year,
-    }: IShiftItem) => {
-      const filledSlots = totalSlots - freeSlots;
-
+    }: IResShiftItem) => {
       return [
-        shiftId,
+        shiftTimesId,
         `${date} ${year}`,
-        `${dateName} ${date}`,
-        shift,
-        shortName,
+        dateNameFormat(date, dateName),
+        timeFormat(startTime, endTime),
+        shiftName,
         <Chip
-          key={`${shortName}-chip`}
-          label={shortName}
-          sx={{ backgroundColor: colorMap[category] }}
+          key={`${shiftTimesId}-chip`}
+          label={shiftName}
+          sx={{ backgroundColor: colorMapDisplay[category] }}
         />,
         `${filledSlots} / ${totalSlots}`,
       ];
@@ -271,7 +239,7 @@ export const Shifts = () => {
   let shiftDateToggle = false;
   const optionListCustom = {
     onFilterChange: (
-      _: MUITableColumn | null | string,
+      _: MUIDataTableColumn | null | string,
       filterList: string[][]
     ) => {
       sessionStorage.setItem("filterListState", JSON.stringify(filterList));

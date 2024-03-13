@@ -46,4 +46,8 @@ export const CENSUS_PINK = "#ed008c";
 
 // behavioral standards
 export const BEHAVIORAL_STANDARDS_SET = "behavioralStandardsSet";
-export const BEHAVIORAL_STANDARDS_TEXT = "Signed Behavioral Standards";
+
+// roles
+export const BEHAVIORAL_STANDARDS_ID = 1000012;
+export const CORE_CREW_ID = 13184;
+export const SUPER_ADMIN_ID = 1;

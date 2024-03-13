@@ -28,7 +28,7 @@ import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
-import type { IVolunteerItem } from "src/components/types";
+import type { IResVolunteerDropdownItem } from "src/components/types";
 import { GENERAL_ROLE_LIST } from "src/constants";
 import { SessionContext } from "src/state/session/context";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
@@ -56,7 +56,10 @@ export const Contact = () => {
     },
   } = useContext(SessionContext);
   const [isMounted, setIsMounted] = useState(false);
-  const { data, error } = useSWR("/api/volunteers?filter=core", fetcherGet);
+  const { data, error } = useSWR(
+    "/api/volunteers/dropdown?filter=core",
+    fetcherGet
+  );
   const { isMutating, trigger } = useSWRMutation(
     "/api/contact",
     fetcherTrigger
@@ -149,7 +152,6 @@ export const Contact = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
-                        disabled={isMutating}
                         fullWidth
                         label="Name"
                         required
@@ -165,7 +167,6 @@ export const Contact = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
-                        disabled={isMutating}
                         fullWidth
                         label="Email"
                         required
@@ -182,13 +183,7 @@ export const Contact = () => {
                     render={({ field }) => (
                       <FormControl fullWidth variant="standard">
                         <InputLabel id="to">To *</InputLabel>
-                        <Select
-                          {...field}
-                          disabled={isMutating}
-                          label="To *"
-                          labelId="to"
-                          required
-                        >
+                        <Select {...field} label="To *" labelId="to" required>
                           <MenuItem
                             key="Send me a reminder"
                             value="Send me a reminder"
@@ -208,7 +203,10 @@ export const Contact = () => {
                           ))}
                           <ListSubheader>Core volunteers</ListSubheader>
                           {data.map(
-                            ({ playaName, worldName }: IVolunteerItem) => (
+                            ({
+                              playaName,
+                              worldName,
+                            }: IResVolunteerDropdownItem) => (
                               <MenuItem
                                 key={`${playaName}-${worldName}`}
                                 value={`${playaName} "${worldName}"`}
@@ -235,7 +233,6 @@ export const Contact = () => {
                             {...field}
                             checked={value}
                             color="secondary"
-                            disabled={isMutating}
                           />
                         }
                         label="Reply wanted after Burning Man"
@@ -250,7 +247,6 @@ export const Contact = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
-                        disabled={isMutating}
                         fullWidth
                         label="Message"
                         multiline

@@ -1,5 +1,5 @@
 import {
-  HighlightOff as HighlightOffIcon,
+  Close as CloseIcon,
   PersonRemove as PersonRemoveIcon,
 } from "@mui/icons-material";
 import {
@@ -20,12 +20,12 @@ import { fetcherTrigger } from "src/utils/fetcher";
 interface IShiftVolunteersDialogRemoveProps {
   handleDialogRemoveClose: () => void;
   isDialogRemoveOpen: boolean;
-  shiftId: string | string[] | undefined;
   volunteer: {
     playaName: string;
-    position: string;
+    positionName: string;
     shiftboardId: number;
-    shiftPositionId: string;
+    shiftPositionId: number;
+    shiftTimesId: number;
     worldName: string;
   };
 }
@@ -34,11 +34,17 @@ const socket = io();
 export const ShiftVolunteersDialogRemove = ({
   handleDialogRemoveClose,
   isDialogRemoveOpen,
-  shiftId,
-  volunteer: { playaName, position, shiftboardId, shiftPositionId, worldName },
+  volunteer: {
+    playaName,
+    positionName,
+    shiftboardId,
+    shiftPositionId,
+    shiftTimesId,
+    worldName,
+  },
 }: IShiftVolunteersDialogRemoveProps) => {
   const { isMutating, trigger } = useSWRMutation(
-    `/api/shift-volunteers/${shiftId}`,
+    `/api/shift-volunteers/${shiftTimesId}`,
     fetcherTrigger
   );
   const { enqueueSnackbar } = useSnackbar();
@@ -46,12 +52,13 @@ export const ShiftVolunteersDialogRemove = ({
   const handleVolunteerRemove = async () => {
     try {
       await trigger({
-        body: { shiftboardId, shiftPositionId },
+        body: { shiftboardId, shiftPositionId, shiftTimesId },
         method: "DELETE",
       });
       socket.emit("req-shift-volunteer-remove", {
         shiftboardId,
         shiftPositionId,
+        shiftTimesId,
       });
 
       handleDialogRemoveClose();
@@ -60,7 +67,7 @@ export const ShiftVolunteersDialogRemove = ({
           <strong>
             {playaName} &quot;{worldName}&quot;
           </strong>{" "}
-          for <strong>{position}</strong> has been removed
+          for <strong>{positionName}</strong> has been removed
         </SnackbarText>,
         {
           variant: "success",
@@ -95,13 +102,15 @@ export const ShiftVolunteersDialogRemove = ({
           <strong>
             {playaName} &quot;{worldName}&quot;
           </strong>{" "}
-          for <strong>{position}</strong>?
+          for <strong>{positionName}</strong>?
         </Typography>
       </DialogContentText>
       <DialogActions>
         <Button
           disabled={isMutating}
-          startIcon={<HighlightOffIcon />}
+          startIcon={
+            isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
+          }
           onClick={handleDialogRemoveClose}
           type="button"
           variant="outlined"

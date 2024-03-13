@@ -33,14 +33,17 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
+import { DeveloperMode } from "src/components/account/DeveloperMode";
+import { ResetPasscodeDialog } from "src/components/account/ResetPasscodeDialog";
 import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
+import type { IResVolunteerRoleItem } from "src/components/types";
 import { VolunteerShifts } from "src/components/volunteer-shifts";
-import { DeveloperMode } from "src/components/volunteers/DeveloperMode";
-import { ResetPasscodeDialog } from "src/components/volunteers/ResetPasscodeDialog";
+import { CORE_CREW_ID } from "src/constants";
 import { SessionContext } from "src/state/session/context";
+import { checkRole } from "src/utils/checkRole";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IFormValues {
@@ -62,11 +65,10 @@ const defaultValues: IFormValues = {
   playaName: "",
   worldName: "",
 };
-export const VolunteerAccount = () => {
+export const Account = () => {
   const {
     sessionState: {
       settings: { isAuthenticated },
-      user: { isCoreCrew },
     },
   } = useContext(SessionContext);
   const [isMounted, setIsMounted] = useState(false);
@@ -75,11 +77,11 @@ export const VolunteerAccount = () => {
   const router = useRouter();
   const { shiftboardId } = router.query;
   const { data, error } = useSWR(
-    isMounted ? `/api/volunteers/${shiftboardId}` : null,
+    isMounted ? `/api/account/${shiftboardId}` : null,
     fetcherGet
   );
   const { isMutating, trigger } = useSWRMutation(
-    "/api/volunteers",
+    `/api/account/${shiftboardId}`,
     fetcherTrigger
   );
   const { control, handleSubmit, reset } = useForm({
@@ -106,9 +108,9 @@ export const VolunteerAccount = () => {
 
       reset({
         email,
-        emergencyContact: emergencyContact ?? "",
-        location: location ?? "",
-        notes: notes ?? "",
+        emergencyContact,
+        location,
+        notes,
         phone,
         playaName,
         worldName,
@@ -119,11 +121,12 @@ export const VolunteerAccount = () => {
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
-  const { isNewAccount, playaName, roleList, worldName } = data;
+  const { isVolunteerCreated, playaName, roleList, worldName } = data;
+  const isCoreCrew = checkRole(CORE_CREW_ID, roleList);
 
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
-      await trigger({ body: { ...dataForm, shiftboardId }, method: "PATCH" });
+      await trigger({ body: { ...dataForm }, method: "PATCH" });
 
       enqueueSnackbar(
         <SnackbarText>
@@ -193,14 +196,14 @@ export const VolunteerAccount = () => {
                 }}
               >
                 <ManageAccountsIcon sx={{ mr: 0.5 }} />
-                {playaName} &quot;{worldName}&quot;
+                Account
               </Typography>
             </Breadcrumbs>
           </Box>
         )}
 
         {/* only new accounts are allowed to update their profile */}
-        {!isNewAccount && (
+        {!isVolunteerCreated && (
           <Box component="section">
             <Card>
               <CardContent>
@@ -245,7 +248,6 @@ export const VolunteerAccount = () => {
                       render={({ field }) => (
                         <TextField
                           {...field}
-                          disabled={isMutating}
                           fullWidth
                           label="Playa / preferred name"
                           required
@@ -261,7 +263,7 @@ export const VolunteerAccount = () => {
                       render={({ field }) => (
                         <TextField
                           {...field}
-                          disabled={!isNewAccount || isMutating}
+                          disabled={!isVolunteerCreated}
                           fullWidth
                           label="Default world name"
                           required
@@ -277,7 +279,7 @@ export const VolunteerAccount = () => {
                       render={({ field }) => (
                         <TextField
                           {...field}
-                          disabled={!isNewAccount || isMutating}
+                          disabled={!isVolunteerCreated}
                           fullWidth
                           label="Email"
                           required
@@ -294,7 +296,7 @@ export const VolunteerAccount = () => {
                       render={({ field }) => (
                         <TextField
                           {...field}
-                          disabled={!isNewAccount || isMutating}
+                          disabled={!isVolunteerCreated}
                           fullWidth
                           label="Phone"
                           type="phone"
@@ -310,7 +312,6 @@ export const VolunteerAccount = () => {
                       render={({ field }) => (
                         <TextField
                           {...field}
-                          disabled={isMutating}
                           fullWidth
                           label="Location"
                           variant="standard"
@@ -325,7 +326,6 @@ export const VolunteerAccount = () => {
                       render={({ field }) => (
                         <TextField
                           {...field}
-                          disabled={isMutating}
                           fullWidth
                           label="Emergency contact"
                           variant="standard"
@@ -381,14 +381,16 @@ export const VolunteerAccount = () => {
                     <List disablePadding>
                       {roleList.length ? (
                         <>
-                          {roleList.map((roleItem: string) => (
-                            <ListItem disablePadding key={`${roleItem}-item`}>
-                              <ListItemIcon sx={{ minWidth: "auto", pr: 1 }}>
-                                <VerifiedIcon color="secondary" />
-                              </ListItemIcon>
-                              <ListItemText>{roleItem}</ListItemText>
-                            </ListItem>
-                          ))}
+                          {roleList.map(
+                            ({ roleId, roleName }: IResVolunteerRoleItem) => (
+                              <ListItem disablePadding key={`${roleId}-item`}>
+                                <ListItemIcon sx={{ minWidth: "auto", pr: 1 }}>
+                                  <VerifiedIcon color="secondary" />
+                                </ListItemIcon>
+                                <ListItemText>{roleName}</ListItemText>
+                              </ListItem>
+                            )
+                          )}
                         </>
                       ) : (
                         <ListItem disablePadding>None</ListItem>
@@ -411,7 +413,6 @@ export const VolunteerAccount = () => {
                         render={({ field }) => (
                           <TextField
                             {...field}
-                            disabled={isMutating}
                             fullWidth
                             multiline
                             variant="standard"

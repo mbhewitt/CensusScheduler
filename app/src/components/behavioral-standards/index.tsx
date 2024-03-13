@@ -1,6 +1,6 @@
 import {
   Check as CheckIcon,
-  NotInterested as NotInterestedIcon,
+  Close as CloseIcon,
   Warning as WarningIcon,
 } from "@mui/icons-material";
 import {
@@ -118,7 +118,7 @@ export const BehavioralStandards = () => {
           variant: "success",
         }
       );
-      router.push(`/volunteers/${shiftboardId}`);
+      router.push(`/account/${shiftboardId}`);
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(
@@ -484,11 +484,7 @@ export const BehavioralStandards = () => {
                 disabled={isMutating}
                 onClick={handleDecline}
                 startIcon={
-                  isMutating ? (
-                    <CircularProgress size="1rem" />
-                  ) : (
-                    <NotInterestedIcon />
-                  )
+                  isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
                 }
                 type="button"
                 variant="outlined"

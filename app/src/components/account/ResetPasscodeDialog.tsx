@@ -1,15 +1,12 @@
 import {
-  HighlightOff as HighlightOffIcon,
+  Close as CloseIcon,
   LockReset as LockResetIcon,
 } from "@mui/icons-material";
 import {
-  Alert,
   Button,
   CircularProgress,
   DialogActions,
   DialogContentText,
-  List,
-  ListItem,
   Stack,
   Typography,
 } from "@mui/material";
@@ -18,10 +15,11 @@ import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 
+import { ResetPasscodeForm } from "src/components/account/ResetPasscodeForm";
 import { DialogContainer } from "src/components/general/DialogContainer";
+import { ErrorForm } from "src/components/general/ErrorForm";
 import { SnackbarText } from "src/components/general/SnackbarText";
-import { IVolunteerAccountFormValues } from "src/components/types";
-import { ResetPasscodeForm } from "src/components/volunteers/ResetPasscodeForm";
+import type { IVolunteerAccountFormValues } from "src/components/types";
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IResetPasscodeDialogProps {
@@ -44,7 +42,7 @@ export const ResetPasscodeDialog = ({
   worldName,
 }: IResetPasscodeDialogProps) => {
   const { isMutating, trigger } = useSWRMutation(
-    "/api/volunteers?update=passcode",
+    `/api/account/${shiftboardId}?update=passcode`,
     fetcherTrigger
   );
   const {
@@ -68,7 +66,7 @@ export const ResetPasscodeDialog = ({
   ) => {
     try {
       await trigger({
-        body: { passcode: dataForm.passcodeCreate, shiftboardId },
+        body: { passcode: dataForm.passcodeCreate },
         method: "PATCH",
       });
 
@@ -121,34 +119,15 @@ export const ResetPasscodeDialog = ({
             </strong>
           </Typography>
         </DialogContentText>
+
         {/* handle errors */}
-        {Object.keys(errors).length > 0 && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            Whoops! Looks like there are some input errors
-            <List sx={{ pl: 2, listStyleType: "disc" }}>
-              {Object.keys(errors).map((errorItem) => {
-                return (
-                  <ListItem
-                    disablePadding
-                    key={errorItem}
-                    sx={{ display: "list-item", pl: 0 }}
-                  >
-                    {
-                      errors[errorItem as keyof IVolunteerAccountFormValues]
-                        ?.message
-                    }
-                  </ListItem>
-                );
-              })}
-            </List>
-          </Alert>
-        )}
+        {Object.keys(errors).length > 0 && <ErrorForm errors={errors} />}
+
         <Stack spacing={2}>
           <ResetPasscodeForm
             control={control}
             errors={errors}
             getValues={getValues}
-            isMutating={isMutating}
             isPasscodeConfirmVisible={isPasscodeConfirmVisible}
             isPasscodeCreateVisible={isPasscodeCreateVisible}
             setIsPasscodeConfirmVisible={setIsPasscodeConfirmVisible}
@@ -162,7 +141,9 @@ export const ResetPasscodeDialog = ({
               handleResetPasscodeDialogClose();
               reset(defaultValues);
             }}
-            startIcon={<HighlightOffIcon />}
+            startIcon={
+              isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
+            }
             type="button"
             variant="outlined"
           >

@@ -28,7 +28,7 @@ import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { Hero } from "src/components/layout/Hero";
-import type { IVolunteerShiftCountItem } from "src/components/types";
+import type { IResVolunteerShiftCountItem } from "src/components/types";
 import { fetcherGet } from "src/utils/fetcher";
 
 const setCellHeaderPropsCenter = () => ({
@@ -194,7 +194,7 @@ export const Volunteers = () => {
       remainingCount,
       shiftboardId,
       worldName,
-    }: IVolunteerShiftCountItem) => {
+    }: IResVolunteerShiftCountItem) => {
       return [
         shiftboardId,
         playaName,
@@ -224,7 +224,7 @@ export const Volunteers = () => {
           key={`${shiftboardId}-menu`}
           MenuList={
             <MenuList>
-              <Link href={`/volunteers/${shiftboardId}`}>
+              <Link href={`/account/${shiftboardId}`}>
                 <MenuItem>
                   <ListItemIcon>
                     <ManageAccountsIcon />

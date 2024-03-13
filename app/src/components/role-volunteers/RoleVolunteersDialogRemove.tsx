@@ -1,5 +1,5 @@
 import {
-  HighlightOff as HighlightOffIcon,
+  Close as CloseIcon,
   PersonRemove as PersonRemoveIcon,
 } from "@mui/icons-material";
 import {
@@ -10,7 +10,6 @@ import {
   Typography,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import io from "socket.io-client";
 import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "src/components/general/DialogContainer";
@@ -22,20 +21,20 @@ interface IRoleVolunteersDialogRemoveProps {
   isDialogRemoveOpen: boolean;
   volunteer: {
     playaName: string;
+    roleId: number;
     roleName: string;
     shiftboardId: number;
     worldName: string;
   };
 }
 
-const socket = io();
 export const RoleVolunteersDialogRemove = ({
   handleDialogRemoveClose,
   isDialogRemoveOpen,
-  volunteer: { playaName, roleName, shiftboardId, worldName },
+  volunteer: { playaName, roleId, roleName, shiftboardId, worldName },
 }: IRoleVolunteersDialogRemoveProps) => {
   const { isMutating, trigger } = useSWRMutation(
-    `/api/roles/${roleName}`,
+    `/api/role-volunteers/${roleId}`,
     fetcherTrigger
   );
   const { enqueueSnackbar } = useSnackbar();
@@ -43,14 +42,12 @@ export const RoleVolunteersDialogRemove = ({
   // handle role volunteer remove
   const handleRoleVolunteerRemove = async () => {
     try {
+      // update database
       await trigger({
         body: {
           shiftboardId,
         },
         method: "DELETE",
-      });
-      socket.emit("req-role-volunteer-remove", {
-        shiftboardId,
       });
 
       handleDialogRemoveClose();
@@ -100,7 +97,9 @@ export const RoleVolunteersDialogRemove = ({
       <DialogActions>
         <Button
           disabled={isMutating}
-          startIcon={<HighlightOffIcon />}
+          startIcon={
+            isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
+          }
           onClick={handleDialogRemoveClose}
           type="button"
           variant="outlined"
