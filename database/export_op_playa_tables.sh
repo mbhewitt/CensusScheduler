@@ -10,7 +10,7 @@ mysqldump -u root -y census --no-data op_dates op_messages op_position_type op_r
 #echo "(left(now(),4),'OffPlaya',left(now(),10),'01:00 - 23:00','Test Subject4',2,2,'',NULL,0,0,0,NULL,NULL,0,NULL,concat(left(now(),10),'Test'),concat(left(now(),10),'Test','Test Subject4'),'No Description only test',0,concat(left(now(),10),' 01:00'),concat(left(now(),10),' 23:00'),'2023 Test Shift','Test SHift'),">>$SFILE
 #echo "(left(date_add(now(), interval 1 day),4),'OffPlaya',left(date_add(now(), interval 1 day),10),'01:00 - 23:00','Test Subject3',2,2,'',NULL,0,0,0,NULL,NULL,0,NULL,concat(left(date_add(now(), interval 1 day),10),'Test'),concat(left(date_add(now(), interval 1 day),10),'Test','Test Subject3'),'No Description only test',0,concat(left(date_add(now(), interval 1 day),10),' 01:00'),concat(left(date_add(now(), interval 1 day),10),' 23:00'),'2023 Test Shift after','Test SHift');">>$SFILE
 
-echo "insert ignore into op_volunteers (shiftboard_id,playa_name,passcode) values (1,'Admin','123456');" >>$SFILE
+echo "insert ignore into op_volunteers (shiftboard_id,playa_name,world_name,passcode) values (1,'Admin','Admin','123456');" >>$SFILE
 echo "insert ignore into op_roles (role_id,role,display,role_src) values (0,'SuperAdmin',1,'tablet'),(1,'Admin',1,'tablet');" >>$SFILE
 echo "insert ignore into op_volunteer_roles (shiftboard_id,role_id) values (1,0),(1,1);" >>$SFILE
 

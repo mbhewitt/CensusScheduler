@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  database:
+    build:
+      context: database
+      dockerfile: Dockerfile
+    container_name: census-database
+    image: burning-man/census-database
+    ports:
+      - "3306:3306"
+    restart: always
+  dnsmasq:
+    build:
+      context: dnsmasq
+      dockerfile: Dockerfile
+    container_name: census-dnsmasq
+    image: burning-man/census-dnsmasq
+    cap_add: ['NET_ADMIN']
+    ports:
+      - "192.168.11.11:53:53"
+      - "192.168.11.11:53:53/udp"
+    restart: always
+  httpd:
+    build:
+      context: httpd
+      dockerfile: Dockerfile
+    container_name: census-nginx
+    image: burning-man/census-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+  census:
+    build:
+      context: app
+      dockerfile: Dockerfile
+    container_name: census-app
+    env_file:
+      - ./app/.env.production
+    image: burning-man/census-app
+    ports:
+      - "3000:3000"
+    restart: always
+
