@@ -14,7 +14,7 @@ const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
         FROM op_volunteers
         WHERE passcode=?
         AND shiftboard_id=?`,
-        [shiftboardId, passcode]
+        [passcode, shiftboardId]
       );
       const volunteerFirst = dbVolunteerList[0];
 
