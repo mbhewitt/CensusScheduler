@@ -3,7 +3,6 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
 import {
-  shiftVolunteerAdd,
   shiftVolunteerCheckIn,
   shiftVolunteerRemove,
 } from "pages/api/general/shiftVolunteers";
@@ -29,7 +28,8 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
         ON sc.shift_category_id=sn.shift_category_id
         LEFT JOIN op_dates AS d
         ON d.date=st.date
-        WHERE vs.shiftboard_id=? AND vs.remove_shift=false
+        WHERE vs.remove_shift=false
+        AND vs.shiftboard_id=?
         ORDER BY st.start_time`,
         [shiftboardId]
       );
@@ -59,10 +59,6 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
         );
 
       return res.status(200).json(resVolunteerShiftList);
-    }
-    // post - add a volunteer to a shift
-    case "POST": {
-      return shiftVolunteerAdd(pool, req, res);
     }
     // patch - check a volunteer into a shift
     case "PATCH": {
