@@ -14,15 +14,19 @@ const shiftTrainings = async (req: NextApiRequest, res: NextApiResponse) => {
         FROM op_shift_times AS st
         JOIN op_shift_name AS sn
         ON st.shift_name_id=sn.shift_name_id
+        AND sn.delete_shift=false
+        AND sn.off_playa=false
         LEFT JOIN op_shift_category AS sc
         ON sc.shift_category_id=sn.shift_category_id
+        AND sc.shift_category_id=?
         LEFT JOIN op_dates AS d
         ON d.date=st.date
         JOIN op_shift_position AS sp
         ON sp.shift_name_id=sn.shift_name_id
         LEFT JOIN op_volunteer_shifts AS vs
         ON vs.shift_position_id=sp.shift_position_id AND vs.shift_times_id=st.shift_times_id
-        WHERE sn.delete_shift=false AND sn.off_playa=false AND vs.remove_shift=false AND st.remove_shift_time=false AND sc.shift_category_id=?
+        AND vs.remove_shift=false
+        WHERE st.remove_shift_time=false
         ORDER BY st.start_time`,
         [prerequisiteId]
       );

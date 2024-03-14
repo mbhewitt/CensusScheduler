@@ -17,7 +17,8 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         ON vr.shiftboard_id=v.shiftboard_id
         JOIN op_roles AS r
         ON r.role_id=vr.role_id
-        WHERE vr.remove_role=false AND r.role_id=?
+        AND r.role_id=?
+        WHERE vr.remove_role=false
         ORDER BY v.playa_name`,
         [roleId]
       );
@@ -42,7 +43,8 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       const [dbRoleVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT role_id
         FROM op_volunteer_roles
-        WHERE role_id=? AND shiftboard_id=?`,
+        WHERE role_id=?
+        AND shiftboard_id=?`,
         [roleId, shiftboardId]
       );
       const dbRoleVolunteerFirst = dbRoleVolunteerList[0];
@@ -53,7 +55,8 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         await pool.query<RowDataPacket[]>(
           `UPDATE op_volunteer_roles
           SET add_role=true, remove_role=false
-          WHERE roles=? AND shiftboard_id=?`,
+          WHERE roles=?
+          AND shiftboard_id=?`,
           [roleId, shiftboardId]
         );
         // else insert role volunteer row

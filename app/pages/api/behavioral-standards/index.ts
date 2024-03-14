@@ -15,7 +15,8 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
         FROM op_volunteer_roles AS vr
         JOIN op_roles AS r
         ON vr.role_id=r.role_id
-        WHERE vr.role_id=? AND shiftboard_id=?`,
+        WHERE vr.role_id=?
+        AND vr.shiftboard_id=?`,
         [BEHAVIORAL_STANDARDS_ID, shiftboardId]
       );
       const dbVolunteerRoleFirst = dbVolunteerRoleList[0];
@@ -30,7 +31,8 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
         await pool.query<RowDataPacket[]>(
           `UPDATE op_volunteer_roles
           SET add_role=?, remove_role=?
-          WHERE role_id=? AND shiftboard_id=?`,
+          WHERE role_id=?
+          AND shiftboard_id=?`,
           [addRole, removeRole, BEHAVIORAL_STANDARDS_ID, shiftboardId]
         );
         // else insert behavioral standards row

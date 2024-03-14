@@ -20,7 +20,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         `SELECT noshow, notes, playa_name, v.shiftboard_id, world_name
         FROM op_volunteers AS v
         LEFT JOIN op_volunteer_shifts AS vs
-        ON v.shiftboard_id = vs.shiftboard_id
+        ON vs.shiftboard_id=v.shiftboard_id
         ORDER BY playa_name, world_name`
       );
       const resVolunteerList = dbVolunteerList.reduce(

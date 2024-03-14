@@ -12,7 +12,8 @@ const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
       const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT core_crew, email, emergency_contact, playa_name, shiftboard_id, world_name
         FROM op_volunteers
-        WHERE shiftboard_id=? AND passcode=?`,
+        WHERE passcode=?
+        AND shiftboard_id=?`,
         [shiftboardId, passcode]
       );
       const volunteerFirst = dbVolunteerList[0];
@@ -32,7 +33,8 @@ const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
         FROM op_volunteer_roles AS vr
         JOIN op_roles AS r
         ON vr.role_id=r.role_id
-        WHERE vr.shiftboard_id=? AND vr.remove_role=false`,
+        AND vr.remove_role=false
+        WHERE vr.shiftboard_id=?`,
         [shiftboardId]
       );
       const resRoleList = dbRoleList.map(({ role, role_id }) => ({

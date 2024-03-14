@@ -3,7 +3,6 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
 import {
-  shiftVolunteerAdd,
   shiftVolunteerCheckIn,
   shiftVolunteerRemove,
 } from "pages/api/general/shiftVolunteers";
@@ -28,7 +27,8 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         ON sp.shift_name_id=sn.shift_name_id
         JOIN op_position_type AS pt
         ON pt.position_type_id=sp.position_type_id
-        WHERE st.remove_shift_time=false AND st.shift_times_id=?`,
+        WHERE st.remove_shift_time=false
+        AND st.shift_times_id=?`,
         [shiftTimesId]
       );
       const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
@@ -40,7 +40,8 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         ON pt.position_type_id=sp.position_type_id
         JOIN op_volunteers AS v
         ON v.shiftboard_id=vs.shiftboard_id
-        WHERE vs.shift_times_id=? AND vs.remove_shift=false
+        WHERE vs.remove_shift=false
+        AND vs.shift_times_id=?
         ORDER BY v.playa_name`,
         [shiftTimesId]
       );
@@ -107,7 +108,38 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     // post - add a volunteer to a shift
     case "POST": {
-      return shiftVolunteerAdd(pool, req, res);
+      const { noShow, shiftboardId, shiftPositionId, shiftTimesId } =
+        JSON.parse(req.body);
+      const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
+        `SELECT *
+        FROM op_volunteer_shifts
+        WHERE shift_position_id=? AND shift_times_id=? AND shiftboard_id=?`,
+        [shiftPositionId, shiftTimesId, shiftboardId]
+      );
+      const dbShiftVolunteerFirst = dbShiftVolunteerList[0];
+
+      // if volunteer exists in shift already
+      // then update add_shift and remove_shift fields
+      if (dbShiftVolunteerFirst) {
+        await pool.query<RowDataPacket[]>(
+          `UPDATE op_volunteer_shifts
+          SET noshow=?, add_shift=true, remove_shift=false
+          WHERE shift_position_id=? AND shift_times_id=? AND shiftboard_id=?`,
+          [noShow, shiftPositionId, shiftTimesId, shiftboardId]
+        );
+      } else {
+        // else insert them into the table
+        await pool.query<RowDataPacket[]>(
+          `INSERT INTO op_volunteer_shifts (add_shift, noshow, shift_position_id, shift_times_id, shiftboard_id)
+          VALUES (true, ?, ?, ?, ?)`,
+          [noShow, shiftPositionId, shiftTimesId, shiftboardId]
+        );
+      }
+
+      return res.status(200).json({
+        statusCode: 200,
+        message: "OK",
+      });
     }
     // patch - check a volunteer into a shift
     case "PATCH": {

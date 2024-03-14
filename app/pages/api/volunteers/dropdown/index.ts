@@ -33,7 +33,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             ON vr.shiftboard_id=v.shiftboard_id
             JOIN op_roles AS r
             ON r.role_id=vr.role_id
-            WHERE r.role_id=?
+            AND r.role_id=?
             ORDER BY playa_name`,
             [CORE_CREW_ID]
           );

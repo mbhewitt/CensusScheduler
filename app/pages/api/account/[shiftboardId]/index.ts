@@ -15,7 +15,8 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         FROM op_roles as r
         JOIN op_volunteer_roles AS vr
         ON r.role_id=vr.role_id
-        WHERE vr.shiftboard_id=? AND vr.remove_role=false`,
+        AND vr.remove_role=false
+        AND vr.shiftboard_id=?`,
         [shiftboardId]
       );
       const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
