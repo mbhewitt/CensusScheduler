@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
 import type { IResRoleItem } from "src/components/types";
-import { idGenerate } from "src/utils/idGenerate";
+import { generateId } from "src/utils/generateId";
 
 const roles = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
@@ -53,8 +53,8 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       // check if role id exists
-      const checkRoleId = async () => {
-        roleIdNew = idGenerate();
+      const checkIsRoleIdExist = async () => {
+        roleIdNew = generateId();
         const [dbRoleList] = await pool.query<RowDataPacket[]>(
           `SELECT role_id
           FROM op_roles
@@ -66,11 +66,11 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
         // if role ID exists already
         // then execute function recursively
         if (dbRoleFirst) {
-          checkRoleId();
+          checkIsRoleIdExist();
         }
       };
 
-      checkRoleId();
+      checkIsRoleIdExist();
       await pool.query(
         `INSERT INTO op_roles (create_role, delete_role, display, role, role_id)
         VALUES (true, false, true, ?, ?)`,

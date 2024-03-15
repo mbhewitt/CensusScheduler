@@ -15,9 +15,9 @@ import { Loading } from "src/components/general/Loading";
 import { Hero } from "src/components/layout/Hero";
 import type { IResShiftItem } from "src/components/types";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
-import { colorMapGet } from "src/utils/colorMapGet";
-import { dateNameFormat, timeFormat } from "src/utils/dateTimeFormat";
 import { fetcherGet } from "src/utils/fetcher";
+import { formatDateName, formatTime } from "src/utils/formatDateTime";
+import { getColorMap } from "src/utils/getColorMap";
 
 export const Shifts = () => {
   const {
@@ -168,7 +168,7 @@ export const Shifts = () => {
 
       data.forEach(({ date, dateName, shiftName }: IResShiftItem) => {
         dateFilterList.push(
-          dateName ? dateNameFormat(date, dateName) : dateNameFormat(date, null)
+          dateName ? formatDateName(date, dateName) : formatDateName(date, null)
         );
         shiftNameFilterList.push(shiftName);
       });
@@ -206,7 +206,7 @@ export const Shifts = () => {
   if (!data) return <Loading />;
 
   // prepare datatable
-  const colorMapDisplay = colorMapGet(data);
+  const colorMapDisplay = getColorMap(data);
   const dataTable = data.map(
     ({
       category,
@@ -223,8 +223,8 @@ export const Shifts = () => {
       return [
         shiftTimesId,
         `${date} ${year}`,
-        dateNameFormat(date, dateName),
-        timeFormat(startTime, endTime),
+        formatDateName(date, dateName),
+        formatTime(startTime, endTime),
         shiftName,
         <Chip
           key={`${shiftTimesId}-chip`}

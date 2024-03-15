@@ -43,8 +43,8 @@ import type { IResVolunteerRoleItem } from "src/components/types";
 import { VolunteerShifts } from "src/components/volunteer-shifts";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import { authenticatedCheck } from "src/utils/authenticatedCheck";
-import { coreCrewCheck } from "src/utils/coreCrewCheck";
+import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
+import { checkIsCoreCrew } from "src/utils/checkIsCoreCrew";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IFormValues {
@@ -126,11 +126,11 @@ export const Account = () => {
   if (!data) return <Loading />;
 
   const { isVolunteerCreated, playaName, roleList, worldName } = data;
-  const isAuthenticated = authenticatedCheck(
+  const isAuthenticated = checkIsAuthenticated(
     accountType,
     isAuthenticatedSession
   );
-  const isCoreCrew = coreCrewCheck(accountType, roleList);
+  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
 
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {

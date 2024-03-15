@@ -5,8 +5,8 @@ import { Roles } from "src/components/roles";
 import { SignIn } from "src/components/sign-in";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import { authenticatedCheck } from "src/utils/authenticatedCheck";
-import { coreCrewCheck } from "src/utils/coreCrewCheck";
+import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
+import { checkIsCoreCrew } from "src/utils/checkIsCoreCrew";
 
 const RolesPage = () => {
   const {
@@ -18,11 +18,11 @@ const RolesPage = () => {
       user: { roleList },
     },
   } = useContext(SessionContext);
-  const isAuthenticated = authenticatedCheck(
+  const isAuthenticated = checkIsAuthenticated(
     accountType,
     isAuthenticatedSession
   );
-  const isCoreCrew = coreCrewCheck(accountType, roleList);
+  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
 
   return (
     <>

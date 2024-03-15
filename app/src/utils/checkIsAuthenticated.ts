@@ -1,7 +1,7 @@
 import { ACCOUNT_TYPE_ADMIN, ACCOUNT_TYPE_AUTHENTICATED } from "src/constants";
 import { IAccountTypePayload } from "src/state/developer-mode/reducer";
 
-export const authenticatedCheck = (
+export const checkIsAuthenticated = (
   { isEnabled, value }: IAccountTypePayload,
   isAuthenticatedSession: boolean
 ) => {

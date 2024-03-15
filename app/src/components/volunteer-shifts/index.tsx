@@ -39,12 +39,12 @@ import { VolunteerShiftsDialogRemove } from "src/components/volunteer-shifts/Vol
 import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import { authenticatedCheck } from "src/utils/authenticatedCheck";
-import { checkInGet } from "src/utils/checkInGet";
-import { colorMapGet } from "src/utils/colorMapGet";
-import { coreCrewCheck } from "src/utils/coreCrewCheck";
-import { dateNameFormat, timeFormat } from "src/utils/dateTimeFormat";
+import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
+import { checkIsCoreCrew } from "src/utils/checkIsCoreCrew";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
+import { formatDateName, formatTime } from "src/utils/formatDateTime";
+import { getCheckInType } from "src/utils/getCheckInType";
+import { getColorMap } from "src/utils/getColorMap";
 
 const socket = io();
 export const VolunteerShifts = () => {
@@ -60,11 +60,11 @@ export const VolunteerShifts = () => {
       user: { roleList, playaName, worldName },
     },
   } = useContext(SessionContext);
-  const isAuthenticated = authenticatedCheck(
+  const isAuthenticated = checkIsAuthenticated(
     accountType,
     isAuthenticatedSession
   );
-  const isCoreCrew = coreCrewCheck(accountType, roleList);
+  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
   const [isMounted, setIsMounted] = useState(false);
   const [isDialogRemoveOpen, setIsDialogRemoveOpen] = useState({
     isOpen: false,
@@ -232,7 +232,7 @@ export const VolunteerShifts = () => {
   };
 
   // prepare datatable
-  const colorMapDisplay = colorMapGet(data);
+  const colorMapDisplay = getColorMap(data);
   const columnList = [
     {
       name: "Date",
@@ -270,7 +270,7 @@ export const VolunteerShifts = () => {
       startTime,
     }: IResVolunteerShiftItem) => {
       // evaluate the check-in type and available features
-      const checkInType = checkInGet({
+      const checkInType = getCheckInType({
         dateTime: dayjs(dateTimeValue),
         endTime: dayjs(endTime),
         startTime: dayjs(startTime),
@@ -299,8 +299,8 @@ export const VolunteerShifts = () => {
       }
 
       return [
-        dateNameFormat(date, dateName),
-        timeFormat(startTime, endTime),
+        formatDateName(date, dateName),
+        formatTime(startTime, endTime),
         positionName,
         <Chip
           key={`${shiftTimesId}${shiftPositionId}-chip`}

@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
 import type { IResVolunteerAccount } from "src/components/types";
-import { idGenerate } from "src/utils/idGenerate";
+import { generateId } from "src/utils/generateId";
 
 const account = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
@@ -19,7 +19,7 @@ const account = async (req: NextApiRequest, res: NextApiResponse) => {
         worldName,
       } = JSON.parse(req.body);
       const insertAccount = async (): Promise<IResVolunteerAccount> => {
-        const shiftboardIdNew = idGenerate();
+        const shiftboardIdNew = generateId();
         const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
           `SELECT shiftboard_id
           FROM op_volunteers

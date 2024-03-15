@@ -17,8 +17,8 @@ import { pageListAdmin, pageListDefault } from "src/components/layout/pageList";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { EasterEggContext } from "src/state/easter-egg/context";
 import { SessionContext } from "src/state/session/context";
-import { authenticatedCheck } from "src/utils/authenticatedCheck";
-import { coreCrewCheck } from "src/utils/coreCrewCheck";
+import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
+import { checkIsCoreCrew } from "src/utils/checkIsCoreCrew";
 
 export const Footer = () => {
   const {
@@ -30,11 +30,11 @@ export const Footer = () => {
       user: { roleList },
     },
   } = useContext(SessionContext);
-  const isAuthenticated = authenticatedCheck(
+  const isAuthenticated = checkIsAuthenticated(
     accountType,
     isAuthenticatedSession
   );
-  const isCoreCrew = coreCrewCheck(accountType, roleList);
+  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
   const { setIsEasterEggOpen } = useContext(EasterEggContext);
   const theme = useTheme();
 

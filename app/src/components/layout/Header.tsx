@@ -31,9 +31,9 @@ import { pageListAdmin, pageListDefault } from "src/components/layout/pageList";
 import { IDLE_MINUTES, ROLE_BEHAVIORAL_STANDARDS_ID } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import { authenticatedCheck } from "src/utils/authenticatedCheck";
-import { checkRole } from "src/utils/checkRole";
-import { coreCrewCheck } from "src/utils/coreCrewCheck";
+import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
+import { checkIsCoreCrew } from "src/utils/checkIsCoreCrew";
+import { checkIsRoleExist } from "src/utils/checkIsRoleExist";
 import { signOut } from "src/utils/signOut";
 
 export const Header = () => {
@@ -51,15 +51,15 @@ export const Header = () => {
       user: { playaName, roleList, shiftboardId, worldName },
     },
   } = useContext(SessionContext);
-  const isBehavioralStandardsSigned = checkRole(
+  const isBehavioralStandardsSigned = checkIsRoleExist(
     ROLE_BEHAVIORAL_STANDARDS_ID,
     roleList
   );
-  const isAuthenticated = authenticatedCheck(
+  const isAuthenticated = checkIsAuthenticated(
     accountType,
     isAuthenticatedSession
   );
-  const isCoreCrew = coreCrewCheck(accountType, roleList);
+  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
   const router = useRouter();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();

@@ -40,10 +40,10 @@ import type {
 import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import { authenticatedCheck } from "src/utils/authenticatedCheck";
-import { checkInGet } from "src/utils/checkInGet";
-import { coreCrewCheck } from "src/utils/coreCrewCheck";
-import { dateNameFormat, timeFormat } from "src/utils/dateTimeFormat";
+import { getCheckInType } from "src/utils/getCheckInType";
+import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
+import { checkIsCoreCrew } from "src/utils/checkIsCoreCrew";
+import { formatDateName, formatTime } from "src/utils/formatDateTime";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IFormValues {
@@ -98,11 +98,11 @@ export const ShiftVolunteersDialogAdd = ({
       user: { playaName, roleList, shiftboardId, worldName },
     },
   } = useContext(SessionContext);
-  const isAuthenticated = authenticatedCheck(
+  const isAuthenticated = checkIsAuthenticated(
     accountType,
     isAuthenticatedSession
   );
-  const isCoreCrew = coreCrewCheck(accountType, roleList);
+  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
   const { control, handleSubmit, reset, watch } = useForm({
     defaultValues,
   });
@@ -194,7 +194,7 @@ export const ShiftVolunteersDialogAdd = ({
         enqueueSnackbar(
           <SnackbarText>
             Adding{" "}
-            <strong>{`${dateNameFormat(date, dateName)}, ${timeFormat(
+            <strong>{`${formatDateName(date, dateName)}, ${formatTime(
               startTime,
               endTime
             )}, ${shiftName}`}</strong>{" "}
@@ -424,7 +424,7 @@ export const ShiftVolunteersDialogAdd = ({
           ) {
             trainingListDisplay.push(
               <MenuItem key={`${shiftTimesId}-training`} value={shiftTimesId}>
-                {`${dateNameFormat(date, null)}, ${timeFormat(
+                {`${formatDateName(date, null)}, ${formatTime(
                   startTime,
                   endTime
                 )}, ${shiftName}: ${filledSlots} / ${totalSlots}`}
@@ -485,7 +485,7 @@ export const ShiftVolunteersDialogAdd = ({
 
       // evaluate the check-in type and value for training
       if (trainingAdd) {
-        const checkInTypeTraining = checkInGet({
+        const checkInTypeTraining = getCheckInType({
           dateTime: dayjs(dateTimeValue),
           endTime: dayjs(trainingAdd.endTime),
           startTime: dayjs(trainingAdd.startTime),
@@ -746,10 +746,10 @@ export const ShiftVolunteersDialogAdd = ({
                             enqueueSnackbar(
                               <SnackbarText>
                                 Adding{" "}
-                                <strong>{`${dateNameFormat(
+                                <strong>{`${formatDateName(
                                   trainingItemFound.date,
                                   trainingItemFound.dateName
-                                )}, ${timeFormat(
+                                )}, ${formatTime(
                                   trainingItemFound.startTime,
                                   trainingItemFound.endTime
                                 )}, ${

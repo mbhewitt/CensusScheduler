@@ -45,11 +45,11 @@ import type {
 import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import { authenticatedCheck } from "src/utils/authenticatedCheck";
-import { checkInGet } from "src/utils/checkInGet";
-import { coreCrewCheck } from "src/utils/coreCrewCheck";
-import { dateNameFormat, timeFormat } from "src/utils/dateTimeFormat";
+import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
+import { checkIsCoreCrew } from "src/utils/checkIsCoreCrew";
+import { formatDateName, formatTime } from "src/utils/formatDateTime";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
+import { getCheckInType } from "src/utils/getCheckInType";
 
 const socket = io();
 export const ShiftVolunteers = () => {
@@ -65,11 +65,11 @@ export const ShiftVolunteers = () => {
       user: { roleList },
     },
   } = useContext(SessionContext);
-  const isAuthenticated = authenticatedCheck(
+  const isAuthenticated = checkIsAuthenticated(
     accountType,
     isAuthenticatedSession
   );
-  const isCoreCrew = coreCrewCheck(accountType, roleList);
+  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
   const [isMounted, setIsMounted] = useState(false);
   const [isDialogAddOpen, setIsDialogAddOpen] = useState(false);
   const [isDialogRemoveOpen, setIsDialogRemoveOpen] = useState({
@@ -252,7 +252,7 @@ export const ShiftVolunteers = () => {
   };
 
   // evaluate the check-in type and available features
-  const checkInType = checkInGet({
+  const checkInType = getCheckInType({
     dateTime: dayjs(dateTimeValue),
     endTime: dayjs(dataShiftVolunteerItem.endTime),
     startTime: dayjs(dataShiftVolunteerItem.startTime),
@@ -435,12 +435,12 @@ export const ShiftVolunteers = () => {
           >
             <Box>
               <Typography component="h2" gutterBottom variant="h4">
-                {dateNameFormat(
+                {formatDateName(
                   dataShiftVolunteerItem.date,
                   dataShiftVolunteerItem.dateName
                 )}
                 <br />
-                {timeFormat(
+                {formatTime(
                   dataShiftVolunteerItem.startTime,
                   dataShiftVolunteerItem.endTime
                 )}

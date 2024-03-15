@@ -5,7 +5,7 @@ import { Account } from "src/components/account";
 import { SignIn } from "src/components/sign-in";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import { authenticatedCheck } from "src/utils/authenticatedCheck";
+import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
 
 const AccountPage = () => {
   const {
@@ -16,7 +16,7 @@ const AccountPage = () => {
       settings: { isAuthenticated: isAuthenticatedSession },
     },
   } = useContext(SessionContext);
-  const isAuthenticated = authenticatedCheck(
+  const isAuthenticated = checkIsAuthenticated(
     accountType,
     isAuthenticatedSession
   );
