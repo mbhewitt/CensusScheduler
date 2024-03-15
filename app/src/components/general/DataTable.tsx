@@ -6,7 +6,7 @@ import MUITable, {
   Responsive,
 } from "mui-datatables";
 
-import { CENSUS_PINK } from "src/constants";
+import { COLOR_CENSUS_PINK } from "src/constants";
 
 interface ITableProps {
   columnList: MUIDataTableColumn[];
@@ -55,7 +55,7 @@ export const DataTable = ({
     },
     palette: {
       primary: {
-        main: CENSUS_PINK,
+        main: COLOR_CENSUS_PINK,
       },
     },
   });

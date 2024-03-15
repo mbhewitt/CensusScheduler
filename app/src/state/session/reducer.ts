@@ -1,11 +1,9 @@
 import type { IResVolunteerAccount } from "src/components/types";
 import {
-  AUTHENTICATE,
-  BEHAVIORAL_STANDARDS_ADD,
+  SESSION_BEHAVIORAL_STANDARDS,
+  SESSION_SIGN_IN,
+  SESSION_SIGN_OUT,
   SESSION_STATE_STORAGE,
-  SIGN_IN,
-  SIGN_OUT,
-  UNAUTHENTICATE,
 } from "src/constants";
 
 interface IBehavioralStandardsPayload {
@@ -19,40 +17,27 @@ export interface ISessionState {
   user: IResVolunteerAccount;
 }
 export type ISessionAction =
-  | { type: typeof AUTHENTICATE }
   | {
       payload: IBehavioralStandardsPayload;
-      type: typeof BEHAVIORAL_STANDARDS_ADD;
+      type: typeof SESSION_BEHAVIORAL_STANDARDS;
     }
-  | { payload: ISessionState; type: typeof SESSION_STATE_STORAGE }
-  | { payload: IResVolunteerAccount; type: typeof SIGN_IN }
-  | { type: typeof SIGN_OUT }
-  | { type: typeof UNAUTHENTICATE };
+  | { payload: IResVolunteerAccount; type: typeof SESSION_SIGN_IN }
+  | { type: typeof SESSION_SIGN_OUT }
+  | { payload: ISessionState; type: typeof SESSION_STATE_STORAGE };
 
 export const sessionReducer = (
   state: ISessionState,
   action: ISessionAction
 ): ISessionState => {
   switch (action.type) {
-    case AUTHENTICATE: {
-      return structuredClone({
-        settings: {
-          isAuthenticated: true,
-        },
-        user: { ...state.user },
-      });
-    }
-    case BEHAVIORAL_STANDARDS_ADD: {
+    case SESSION_BEHAVIORAL_STANDARDS: {
       const stateClone = structuredClone(state);
 
       stateClone.user.roleList.push(action.payload);
 
       return stateClone;
     }
-    case SESSION_STATE_STORAGE: {
-      return structuredClone(action.payload);
-    }
-    case SIGN_IN: {
+    case SESSION_SIGN_IN: {
       return structuredClone({
         settings: {
           isAuthenticated: true,
@@ -60,7 +45,7 @@ export const sessionReducer = (
         user: action.payload,
       });
     }
-    case SIGN_OUT: {
+    case SESSION_SIGN_OUT: {
       return {
         settings: {
           isAuthenticated: false,
@@ -79,13 +64,8 @@ export const sessionReducer = (
         },
       };
     }
-    case UNAUTHENTICATE: {
-      return structuredClone({
-        settings: {
-          isAuthenticated: false,
-        },
-        user: { ...state.user },
-      });
+    case SESSION_STATE_STORAGE: {
+      return structuredClone(action.payload);
     }
     default: {
       const actionArg = action as ISessionAction;

@@ -29,7 +29,7 @@ import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import {
   BEHAVIORAL_STANDARDS_ADD,
-  BEHAVIORAL_STANDARDS_ID,
+  ROLE_BEHAVIORAL_STANDARDS_ID,
 } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
@@ -50,7 +50,7 @@ export const BehavioralStandards = () => {
   const [isSigned, setIsSigned] = useState(false);
   const { shiftboardId } = router.query;
   const { data, error } = useSWR(
-    `/api/roles/${BEHAVIORAL_STANDARDS_ID}`,
+    `/api/roles/${ROLE_BEHAVIORAL_STANDARDS_ID}`,
     fetcherGet
   );
   const { isMutating, trigger } = useSWRMutation(
@@ -112,7 +112,10 @@ export const BehavioralStandards = () => {
         method: "POST",
       });
       sessionDispatch({
-        payload: { roleId: BEHAVIORAL_STANDARDS_ID, roleName: data.roleName },
+        payload: {
+          roleId: ROLE_BEHAVIORAL_STANDARDS_ID,
+          roleName: data.roleName,
+        },
         type: BEHAVIORAL_STANDARDS_ADD,
       });
       enqueueSnackbar(

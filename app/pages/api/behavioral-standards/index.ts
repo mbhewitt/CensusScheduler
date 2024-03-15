@@ -2,7 +2,7 @@ import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
-import { BEHAVIORAL_STANDARDS_ID } from "src/constants";
+import { ROLE_BEHAVIORAL_STANDARDS_ID } from "src/constants";
 
 const contact = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
@@ -17,7 +17,7 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
         ON vr.role_id=r.role_id
         WHERE vr.role_id=?
         AND vr.shiftboard_id=?`,
-        [BEHAVIORAL_STANDARDS_ID, shiftboardId]
+        [ROLE_BEHAVIORAL_STANDARDS_ID, shiftboardId]
       );
       const dbVolunteerRoleFirst = dbVolunteerRoleList[0];
       const [addRole, removeRole] = [
@@ -33,14 +33,14 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
           SET add_role=?, remove_role=?
           WHERE role_id=?
           AND shiftboard_id=?`,
-          [addRole, removeRole, BEHAVIORAL_STANDARDS_ID, shiftboardId]
+          [addRole, removeRole, ROLE_BEHAVIORAL_STANDARDS_ID, shiftboardId]
         );
         // else insert behavioral standards row
       } else {
         await pool.query<RowDataPacket[]>(
           `INSERT INTO op_volunteer_roles (add_role, remove_role, role_id, shiftboard_id)
           VALUES (?, ?, ?, ?)`,
-          [addRole, removeRole, BEHAVIORAL_STANDARDS_ID, shiftboardId]
+          [addRole, removeRole, ROLE_BEHAVIORAL_STANDARDS_ID, shiftboardId]
         );
       }
 

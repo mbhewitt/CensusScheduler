@@ -3,7 +3,7 @@ import { OptionsObject, SnackbarKey, SnackbarMessage } from "notistack";
 import { Dispatch } from "react";
 
 import { SnackbarText } from "src/components/general/SnackbarText";
-import { DEVELOPER_MODE_RESET, SIGN_OUT } from "src/constants";
+import { DEVELOPER_MODE_RESET, SESSION_SIGN_OUT } from "src/constants";
 import { IDeveloperModeAction } from "src/state/developer-mode/reducer";
 import { ISessionAction } from "src/state/session/reducer";
 
@@ -24,7 +24,7 @@ export const signOut = (
       type: DEVELOPER_MODE_RESET,
     });
     sessionDispatch({
-      type: SIGN_OUT,
+      type: SESSION_SIGN_OUT,
     });
     const filterListStateStorage = JSON.parse(
       sessionStorage.getItem("filterListState") ?? "[]"

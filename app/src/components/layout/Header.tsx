@@ -28,7 +28,7 @@ import { useContext, useEffect, useState } from "react";
 import IdleTimer from "react-idle-timer";
 
 import { pageListAdmin, pageListDefault } from "src/components/layout/pageList";
-import { BEHAVIORAL_STANDARDS_ID, IDLE_MINUTES } from "src/constants";
+import { IDLE_MINUTES, ROLE_BEHAVIORAL_STANDARDS_ID } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
 import { authenticatedCheck } from "src/utils/authenticatedCheck";
@@ -52,7 +52,7 @@ export const Header = () => {
     },
   } = useContext(SessionContext);
   const isBehavioralStandardsSigned = checkRole(
-    BEHAVIORAL_STANDARDS_ID,
+    ROLE_BEHAVIORAL_STANDARDS_ID,
     roleList
   );
   const isAuthenticated = authenticatedCheck(
