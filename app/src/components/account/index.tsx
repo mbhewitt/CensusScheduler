@@ -377,7 +377,7 @@ export const Account = () => {
             <Typography component="h2" variant="h4" sx={{ mb: 1 }}>
               Admin
             </Typography>
-            <Card>
+            <Card sx={{ mb: 2 }}>
               <CardContent>
                 <Grid container>
                   <Grid item xs={4}>
@@ -446,9 +446,12 @@ export const Account = () => {
                       </Stack>
                     </form>
                   </Grid>
-                  <Grid item xs={12}>
-                    <Divider sx={{ my: 2 }} />
-                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent>
+                <Grid container>
                   <Grid item xs={4}>
                     <Typography component="h3" variant="h6" sx={{ mb: 1 }}>
                       Security
