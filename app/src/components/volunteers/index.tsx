@@ -29,10 +29,11 @@ import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { Hero } from "src/components/layout/Hero";
 import type { IResVolunteerShiftCountItem } from "src/components/types";
+import styles from "src/components/volunteers/Volunteers.module.css";
 import { fetcherGet } from "src/utils/fetcher";
 
 const setCellHeaderPropsCenter = () => ({
-  className: "center",
+  className: styles.center,
 });
 const setCellPropsCenter = () => ({
   style: {
@@ -181,6 +182,8 @@ export const Volunteers = () => {
       name: "Actions",
       options: {
         filter: false,
+        setCellHeaderProps: setCellHeaderPropsCenter,
+        setCellProps: setCellPropsCenter,
         sort: false,
       },
     },
