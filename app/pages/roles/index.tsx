@@ -3,18 +3,26 @@ import { useContext } from "react";
 
 import { Roles } from "src/components/roles";
 import { SignIn } from "src/components/sign-in";
-import { CORE_CREW_ID } from "src/constants";
+import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import { checkRole } from "src/utils/checkRole";
+import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
+import { checkIsCoreCrew } from "src/utils/checkIsCoreCrew";
 
 const RolesPage = () => {
   const {
+    developerModeState: { accountType },
+  } = useContext(DeveloperModeContext);
+  const {
     sessionState: {
-      settings: { isAuthenticated },
+      settings: { isAuthenticated: isAuthenticatedSession },
       user: { roleList },
     },
   } = useContext(SessionContext);
-  const isCoreCrew = checkRole(CORE_CREW_ID, roleList);
+  const isAuthenticated = checkIsAuthenticated(
+    accountType,
+    isAuthenticatedSession
+  );
+  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
 
   return (
     <>

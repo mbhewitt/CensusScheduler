@@ -33,7 +33,7 @@ import type {
   IResVolunteerAccount,
   IVolunteerAccountFormValues,
 } from "src/components/types";
-import { SIGN_IN } from "src/constants";
+import { SESSION_SIGN_IN } from "src/constants";
 import { SessionContext } from "src/state/session/context";
 import { fetcherTrigger } from "src/utils/fetcher";
 
@@ -104,7 +104,7 @@ export const CreateAccount = () => {
 
       sessionDispatch({
         payload: dataVolunteerItem,
-        type: SIGN_IN,
+        type: SESSION_SIGN_IN,
       });
       reset(defaultValues);
       enqueueSnackbar(

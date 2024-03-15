@@ -31,7 +31,7 @@ import { Hero } from "src/components/layout/Hero";
 import { RolesDialogCreate } from "src/components/roles/RolesDialogCreate";
 import { RolesDialogDelete } from "src/components/roles/RolesDialogDelete";
 import type { IResRoleItem } from "src/components/types";
-import { SUPER_ADMIN_ID } from "src/constants";
+import { ROLE_SUPER_ADMIN_ID } from "src/constants";
 import { fetcherGet } from "src/utils/fetcher";
 
 export const Roles = () => {
@@ -126,7 +126,7 @@ export const Roles = () => {
   const dataTable = data.map(({ display, roleId, roleName }: IResRoleItem) => {
     // if role ID is super admin
     // then disable display and delete actions
-    if (roleId === SUPER_ADMIN_ID) {
+    if (roleId === ROLE_SUPER_ADMIN_ID) {
       return [
         roleId,
         roleName,

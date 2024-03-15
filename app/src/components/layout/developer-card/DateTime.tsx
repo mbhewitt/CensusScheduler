@@ -2,17 +2,17 @@ import TextField from "@mui/material/TextField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { useContext } from "react";
 
-import { DEVELOPER_MODE_SET } from "src/constants";
+import { DEVELOPER_MODE_DATE_TIME } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 
 export const DateTime = () => {
   const {
     developerModeDispatch,
     developerModeState: {
-      dateTime: { value: dateTimeValue },
+      dateTime: { value },
     },
   } = useContext(DeveloperModeContext);
 
@@ -24,16 +24,14 @@ export const DateTime = () => {
         onChange={(dateTime) => {
           developerModeDispatch({
             payload: {
-              dateTime: {
-                isEnabled: true,
-                value: dateTime as Dayjs,
-              },
+              isEnabled: true,
+              value: dayjs(dateTime).toISOString(),
             },
-            type: DEVELOPER_MODE_SET,
+            type: DEVELOPER_MODE_DATE_TIME,
           });
         }}
         renderInput={(props) => <TextField {...props} variant="standard" />}
-        value={dateTimeValue}
+        value={value}
       />
     </LocalizationProvider>
   );

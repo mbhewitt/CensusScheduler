@@ -3,14 +3,23 @@ import { useContext } from "react";
 
 import { Account } from "src/components/account";
 import { SignIn } from "src/components/sign-in";
+import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
+import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
 
 const AccountPage = () => {
   const {
+    developerModeState: { accountType },
+  } = useContext(DeveloperModeContext);
+  const {
     sessionState: {
-      settings: { isAuthenticated },
+      settings: { isAuthenticated: isAuthenticatedSession },
     },
   } = useContext(SessionContext);
+  const isAuthenticated = checkIsAuthenticated(
+    accountType,
+    isAuthenticatedSession
+  );
 
   return (
     <>

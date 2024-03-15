@@ -2,7 +2,7 @@ import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
-import { shiftListGet } from "src/utils/shiftListGet";
+import { getShiftList } from "src/utils/getShiftList";
 
 const shiftTrainings = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
@@ -30,7 +30,7 @@ const shiftTrainings = async (req: NextApiRequest, res: NextApiResponse) => {
         ORDER BY st.start_time`,
         [prerequisiteId]
       );
-      const resShiftList = shiftListGet(dbTrainingList);
+      const resShiftList = getShiftList(dbTrainingList);
 
       return res.status(200).json(resShiftList);
     }

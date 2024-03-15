@@ -15,8 +15,8 @@ import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { SnackbarText } from "src/components/general/SnackbarText";
-import { dateNameFormat, timeFormat } from "src/utils/dateTimeFormat";
 import { fetcherTrigger } from "src/utils/fetcher";
+import { formatDateName, formatTime } from "src/utils/formatDateTime";
 
 interface IVolunteerShiftsDialogRemoveProps {
   handleDialogRemoveClose: () => void;
@@ -68,8 +68,8 @@ export const VolunteerShiftsDialogRemove = ({
       handleDialogRemoveClose();
       enqueueSnackbar(
         <SnackbarText>
-          <strong>{dateNameFormat(date, dateName)}</strong> at{" "}
-          <strong>{timeFormat(startTime, endTime)}</strong> for{" "}
+          <strong>{formatDateName(date, dateName)}</strong> at{" "}
+          <strong>{formatTime(startTime, endTime)}</strong> for{" "}
           <strong>{positionName}</strong> has been removed
         </SnackbarText>,
         {
@@ -102,8 +102,8 @@ export const VolunteerShiftsDialogRemove = ({
       <DialogContentText>
         <Typography component="span">
           Are you sure you want to remove{" "}
-          <strong>{dateNameFormat(date, dateName)}</strong> at{" "}
-          <strong>{timeFormat(startTime, endTime)}</strong> for{" "}
+          <strong>{formatDateName(date, dateName)}</strong> at{" "}
+          <strong>{formatTime(startTime, endTime)}</strong> for{" "}
           <strong>{positionName}</strong>?
         </Typography>
       </DialogContentText>

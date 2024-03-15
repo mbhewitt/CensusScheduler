@@ -14,19 +14,27 @@ import Link from "next/link";
 import { useContext } from "react";
 
 import { pageListAdmin, pageListDefault } from "src/components/layout/pageList";
-import { CORE_CREW_ID } from "src/constants";
+import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { EasterEggContext } from "src/state/easter-egg/context";
 import { SessionContext } from "src/state/session/context";
-import { checkRole } from "src/utils/checkRole";
+import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
+import { checkIsCoreCrew } from "src/utils/checkIsCoreCrew";
 
 export const Footer = () => {
   const {
+    developerModeState: { accountType },
+  } = useContext(DeveloperModeContext);
+  const {
     sessionState: {
-      settings: { isAuthenticated },
+      settings: { isAuthenticated: isAuthenticatedSession },
       user: { roleList },
     },
   } = useContext(SessionContext);
-  const isCoreCrew = checkRole(CORE_CREW_ID, roleList);
+  const isAuthenticated = checkIsAuthenticated(
+    accountType,
+    isAuthenticatedSession
+  );
+  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
   const { setIsEasterEggOpen } = useContext(EasterEggContext);
   const theme = useTheme();
 
@@ -162,7 +170,7 @@ export const Footer = () => {
               color: theme.palette.common.white,
             }}
           >
-            2024.E.00016.Prizmo
+            2024.T.00018.Prizmo
           </Typography>
         </Stack>
       </Container>

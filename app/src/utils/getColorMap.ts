@@ -10,7 +10,7 @@ import {
 
 import type { IResShiftItem } from "src/components/types";
 
-export const colorMapGet = (data: IResShiftItem[]) => {
+export const getColorMap = (data: IResShiftItem[]) => {
   const colorList = [
     red[100],
     orange[100],

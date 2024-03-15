@@ -42,33 +42,34 @@ import type {
   IResShiftVolunteerItem,
   ISwitchValues,
 } from "src/components/types";
-import {
-  CORE_CREW_ID,
-  SHIFT_DURING,
-  SHIFT_FUTURE,
-  SHIFT_PAST,
-} from "src/constants";
+import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import { checkInGet } from "src/utils/checkInGet";
-import { checkRole } from "src/utils/checkRole";
-import { dateNameFormat, timeFormat } from "src/utils/dateTimeFormat";
+import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
+import { checkIsCoreCrew } from "src/utils/checkIsCoreCrew";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
+import { formatDateName, formatTime } from "src/utils/formatDateTime";
+import { getCheckInType } from "src/utils/getCheckInType";
 
 const socket = io();
 export const ShiftVolunteers = () => {
   const {
-    sessionState: {
-      settings: { isAuthenticated },
-      user: { roleList },
-    },
-  } = useContext(SessionContext);
-  const isCoreCrew = checkRole(CORE_CREW_ID, roleList);
-  const {
     developerModeState: {
+      accountType,
       dateTime: { value: dateTimeValue },
     },
   } = useContext(DeveloperModeContext);
+  const {
+    sessionState: {
+      settings: { isAuthenticated: isAuthenticatedSession },
+      user: { roleList },
+    },
+  } = useContext(SessionContext);
+  const isAuthenticated = checkIsAuthenticated(
+    accountType,
+    isAuthenticatedSession
+  );
+  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
   const [isMounted, setIsMounted] = useState(false);
   const [isDialogAddOpen, setIsDialogAddOpen] = useState(false);
   const [isDialogRemoveOpen, setIsDialogRemoveOpen] = useState({
@@ -251,8 +252,8 @@ export const ShiftVolunteers = () => {
   };
 
   // evaluate the check-in type and available features
-  const checkInType = checkInGet({
-    dateTime: dateTimeValue,
+  const checkInType = getCheckInType({
+    dateTime: dayjs(dateTimeValue),
     endTime: dayjs(dataShiftVolunteerItem.endTime),
     startTime: dayjs(dataShiftVolunteerItem.startTime),
   });
@@ -434,12 +435,12 @@ export const ShiftVolunteers = () => {
           >
             <Box>
               <Typography component="h2" gutterBottom variant="h4">
-                {dateNameFormat(
+                {formatDateName(
                   dataShiftVolunteerItem.date,
                   dataShiftVolunteerItem.dateName
                 )}
                 <br />
-                {timeFormat(
+                {formatTime(
                   dataShiftVolunteerItem.startTime,
                   dataShiftVolunteerItem.endTime
                 )}

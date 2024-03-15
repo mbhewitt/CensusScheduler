@@ -14,45 +14,28 @@ import { useContext } from "react";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import {
   ACCOUNT_TYPE_ADMIN,
-  ACCOUNT_TYPE_RESET,
-  DEVELOPER_MODE_SET,
+  DEVELOPER_MODE_ACCOUNT_TYPE,
+  DEVELOPER_MODE_DATE_TIME,
+  DEVELOPER_MODE_DISABLE_IDLE,
+  DEVELOPER_MODE_RESET,
 } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
-import { SessionContext } from "src/state/session/context";
 
 export const DeveloperMode = () => {
   const {
-    sessionDispatch,
-    sessionState: {
-      developerMode: { isAccountTypeEnabled },
-    },
-  } = useContext(SessionContext);
-  const {
+    developerModeDispatch,
     developerModeState: {
+      accountType: { isEnabled: isAccountTypeEnabled },
       dateTime: { isEnabled: isDateTimeEnabled },
       disableIdle: { isEnabled: isDisableIdleEnabled },
     },
-    developerModeDispatch,
   } = useContext(DeveloperModeContext);
   const { enqueueSnackbar } = useSnackbar();
 
   const onReset = () => {
     developerModeDispatch({
-      payload: {
-        dateTime: {
-          isEnabled: false,
-          value: dayjs(),
-        },
-        disableIdle: {
-          isEnabled: false,
-        },
-      },
-      type: DEVELOPER_MODE_SET,
+      type: DEVELOPER_MODE_RESET,
     });
-    sessionDispatch({
-      type: ACCOUNT_TYPE_RESET,
-    });
-
     enqueueSnackbar(
       <SnackbarText>Developer mode settings have been reset</SnackbarText>,
       {
@@ -77,12 +60,20 @@ export const DeveloperMode = () => {
                 color="secondary"
                 onChange={(event) => {
                   if (event.target.checked) {
-                    sessionDispatch({
-                      type: ACCOUNT_TYPE_ADMIN,
+                    developerModeDispatch({
+                      payload: {
+                        isEnabled: true,
+                        value: ACCOUNT_TYPE_ADMIN,
+                      },
+                      type: DEVELOPER_MODE_ACCOUNT_TYPE,
                     });
                   } else {
-                    sessionDispatch({
-                      type: ACCOUNT_TYPE_RESET,
+                    developerModeDispatch({
+                      payload: {
+                        isEnabled: false,
+                        value: ACCOUNT_TYPE_ADMIN,
+                      },
+                      type: DEVELOPER_MODE_ACCOUNT_TYPE,
                     });
                   }
                 }}
@@ -98,12 +89,10 @@ export const DeveloperMode = () => {
                 onChange={(event) => {
                   developerModeDispatch({
                     payload: {
-                      dateTime: {
-                        isEnabled: event.target.checked,
-                        value: dayjs(),
-                      },
+                      isEnabled: event.target.checked,
+                      value: dayjs().toISOString(),
                     },
-                    type: DEVELOPER_MODE_SET,
+                    type: DEVELOPER_MODE_DATE_TIME,
                   });
                 }}
               />
@@ -118,11 +107,9 @@ export const DeveloperMode = () => {
                 onChange={(event) => {
                   developerModeDispatch({
                     payload: {
-                      disableIdle: {
-                        isEnabled: event.target.checked,
-                      },
+                      isEnabled: event.target.checked,
                     },
-                    type: DEVELOPER_MODE_SET,
+                    type: DEVELOPER_MODE_DISABLE_IDLE,
                   });
                 }}
               />

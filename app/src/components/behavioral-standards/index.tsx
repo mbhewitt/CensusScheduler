@@ -20,14 +20,20 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
 import { useContext, useState } from "react";
+import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
+import { ErrorPage } from "src/components/general/ErrorPage";
+import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
-import { BEHAVIORAL_STANDARDS_SET } from "src/constants";
+import {
+  ROLE_BEHAVIORAL_STANDARDS_ID,
+  SESSION_BEHAVIORAL_STANDARDS,
+} from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import { fetcherTrigger } from "src/utils/fetcher";
+import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 import { signOut } from "src/utils/signOut";
 
 export const BehavioralStandards = () => {
@@ -43,21 +49,24 @@ export const BehavioralStandards = () => {
   const router = useRouter();
   const [isSigned, setIsSigned] = useState(false);
   const { shiftboardId } = router.query;
+  const { data, error } = useSWR(
+    `/api/roles/${ROLE_BEHAVIORAL_STANDARDS_ID}`,
+    fetcherGet
+  );
   const { isMutating, trigger } = useSWRMutation(
     "/api/behavioral-standards",
     fetcherTrigger
   );
   const { enqueueSnackbar } = useSnackbar();
 
+  if (error) return <ErrorPage />;
+  if (!data) return <Loading />;
+
   const handleDecline = async () => {
     try {
       await trigger({
         body: { isBehavioralStandardsSigned: false, shiftboardId },
         method: "POST",
-      });
-      sessionDispatch({
-        payload: { isBehavioralStandardsSigned: false },
-        type: BEHAVIORAL_STANDARDS_SET,
       });
       enqueueSnackbar(
         <SnackbarText>
@@ -103,8 +112,11 @@ export const BehavioralStandards = () => {
         method: "POST",
       });
       sessionDispatch({
-        payload: { isBehavioralStandardsSigned: true },
-        type: BEHAVIORAL_STANDARDS_SET,
+        payload: {
+          roleId: ROLE_BEHAVIORAL_STANDARDS_ID,
+          roleName: data.roleName,
+        },
+        type: SESSION_BEHAVIORAL_STANDARDS,
       });
       enqueueSnackbar(
         <SnackbarText>

@@ -17,7 +17,7 @@ interface IDbShiftItem {
   year: string;
 }
 
-export const shiftListGet = (dbShiftList: RowDataPacket[]) => {
+export const getShiftList = (dbShiftList: RowDataPacket[]) => {
   const shiftPositionIdMap: { [key: string]: boolean } = {};
 
   return dbShiftList.reduce(

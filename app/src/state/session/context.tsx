@@ -7,7 +7,7 @@ import {
   useReducer,
 } from "react";
 
-import { ACCOUNT_TYPE_ADMIN, SESSION_STATE_STORAGE } from "src/constants";
+import { SESSION_STATE_STORAGE } from "src/constants";
 import {
   ISessionAction,
   ISessionState,
@@ -25,10 +25,6 @@ interface ISessionProviderProps {
 export const SessionContext = createContext({} as ISessionProviderValue);
 
 const sessionInitial: ISessionState = {
-  developerMode: {
-    accountType: ACCOUNT_TYPE_ADMIN,
-    isAccountTypeEnabled: false,
-  },
   user: {
     email: "",
     emergencyContact: "",

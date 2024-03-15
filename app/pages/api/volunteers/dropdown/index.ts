@@ -6,7 +6,7 @@ import type {
   IResVolunteerDropdownItem,
   IResVolunteerRoleItem,
 } from "src/components/types";
-import { CORE_CREW_ID } from "src/constants";
+import { ROLE_CORE_CREW_ID } from "src/constants";
 
 interface IDbVolunteerItem {
   playa_name: string;
@@ -35,7 +35,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             ON r.role_id=vr.role_id
             AND r.role_id=?
             ORDER BY playa_name`,
-            [CORE_CREW_ID]
+            [ROLE_CORE_CREW_ID]
           );
 
           break;

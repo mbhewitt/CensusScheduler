@@ -9,13 +9,17 @@ import {
   SHIFT_PAST,
 } from "src/constants";
 
-interface ICheckInGet {
+interface IGetCheckInType {
   dateTime: Dayjs;
   endTime: Dayjs;
   startTime: Dayjs;
 }
 
-export const checkInGet = ({ dateTime, endTime, startTime }: ICheckInGet) => {
+export const getCheckInType = ({
+  dateTime,
+  endTime,
+  startTime,
+}: IGetCheckInType) => {
   dayjs.extend(isBetween);
 
   // evualuate pre-shift and post-shift date and times

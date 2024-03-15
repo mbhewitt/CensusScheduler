@@ -4,16 +4,25 @@ import { useContext, useEffect } from "react";
 
 import { Loading } from "src/components/general/Loading";
 import { SignIn } from "src/components/sign-in";
+import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
+import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
 
 const SignInPage = () => {
   const {
+    developerModeState: { accountType },
+  } = useContext(DeveloperModeContext);
+  const {
     sessionState: {
-      settings: { isAuthenticated },
+      settings: { isAuthenticated: isAuthenticatedSession },
       user: { shiftboardId },
     },
   } = useContext(SessionContext);
   const router = useRouter();
+  const isAuthenticated = checkIsAuthenticated(
+    accountType,
+    isAuthenticatedSession
+  );
 
   useEffect(() => {
     if (isAuthenticated) {

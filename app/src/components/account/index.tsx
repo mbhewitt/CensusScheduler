@@ -41,9 +41,10 @@ import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import type { IResVolunteerRoleItem } from "src/components/types";
 import { VolunteerShifts } from "src/components/volunteer-shifts";
-import { CORE_CREW_ID } from "src/constants";
+import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import { checkRole } from "src/utils/checkRole";
+import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
+import { checkIsCoreCrew } from "src/utils/checkIsCoreCrew";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IFormValues {
@@ -67,8 +68,11 @@ const defaultValues: IFormValues = {
 };
 export const Account = () => {
   const {
+    developerModeState: { accountType },
+  } = useContext(DeveloperModeContext);
+  const {
     sessionState: {
-      settings: { isAuthenticated },
+      settings: { isAuthenticated: isAuthenticatedSession },
     },
   } = useContext(SessionContext);
   const [isMounted, setIsMounted] = useState(false);
@@ -122,7 +126,11 @@ export const Account = () => {
   if (!data) return <Loading />;
 
   const { isVolunteerCreated, playaName, roleList, worldName } = data;
-  const isCoreCrew = checkRole(CORE_CREW_ID, roleList);
+  const isAuthenticated = checkIsAuthenticated(
+    accountType,
+    isAuthenticatedSession
+  );
+  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
 
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
@@ -369,7 +377,7 @@ export const Account = () => {
             <Typography component="h2" variant="h4" sx={{ mb: 1 }}>
               Admin
             </Typography>
-            <Card>
+            <Card sx={{ mb: 2 }}>
               <CardContent>
                 <Grid container>
                   <Grid item xs={4}>
@@ -438,9 +446,12 @@ export const Account = () => {
                       </Stack>
                     </form>
                   </Grid>
-                  <Grid item xs={12}>
-                    <Divider sx={{ my: 2 }} />
-                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent>
+                <Grid container>
                   <Grid item xs={4}>
                     <Typography component="h3" variant="h6" sx={{ mb: 1 }}>
                       Security
