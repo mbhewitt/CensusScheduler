@@ -28,21 +28,26 @@ import { useContext, useEffect, useState } from "react";
 import IdleTimer from "react-idle-timer";
 
 import { pageListAdmin, pageListDefault } from "src/components/layout/pageList";
-import {
-  BEHAVIORAL_STANDARDS_ID,
-  CORE_CREW_ID,
-  IDLE_MINUTES,
-} from "src/constants";
+import { BEHAVIORAL_STANDARDS_ID, IDLE_MINUTES } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
+import { authenticatedCheck } from "src/utils/authenticatedCheck";
 import { checkRole } from "src/utils/checkRole";
+import { coreCrewCheck } from "src/utils/coreCrewCheck";
 import { signOut } from "src/utils/signOut";
 
 export const Header = () => {
   const {
+    developerModeState: {
+      accountType,
+      disableIdle: { isEnabled: isDisableIdleEnabled },
+    },
+    developerModeDispatch,
+  } = useContext(DeveloperModeContext);
+  const {
     sessionDispatch,
     sessionState: {
-      settings: { isAuthenticated },
+      settings: { isAuthenticated: isAuthenticatedSession },
       user: { playaName, roleList, shiftboardId, worldName },
     },
   } = useContext(SessionContext);
@@ -50,14 +55,11 @@ export const Header = () => {
     BEHAVIORAL_STANDARDS_ID,
     roleList
   );
-  const isCoreCrew = checkRole(CORE_CREW_ID, roleList);
-
-  const {
-    developerModeState: {
-      disableIdle: { isEnabled: isDisableIdleEnabled },
-    },
-    developerModeDispatch,
-  } = useContext(DeveloperModeContext);
+  const isAuthenticated = authenticatedCheck(
+    accountType,
+    isAuthenticatedSession
+  );
+  const isCoreCrew = coreCrewCheck(accountType, roleList);
   const router = useRouter();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();

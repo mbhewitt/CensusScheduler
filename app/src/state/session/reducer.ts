@@ -1,127 +1,59 @@
 import type { IResVolunteerAccount } from "src/components/types";
 import {
-  ACCOUNT_TYPE_ADMIN,
-  ACCOUNT_TYPE_AUTHENTICATED,
-  ACCOUNT_TYPE_RESET,
-  ACCOUNT_TYPE_UNAUTHENTICATED,
-  BEHAVIORAL_STANDARDS_SET,
+  AUTHENTICATE,
+  BEHAVIORAL_STANDARDS_ADD,
   SESSION_STATE_STORAGE,
   SIGN_IN,
   SIGN_OUT,
+  UNAUTHENTICATE,
 } from "src/constants";
 
 interface IBehavioralStandardsPayload {
-  isBehavioralStandardsSigned: boolean;
+  roleId: number;
+  roleName: string;
 }
 export interface ISessionState {
-  developerMode: {
-    accountType: string;
-    isAccountTypeEnabled: boolean;
-  };
   settings: {
     isAuthenticated: boolean;
   };
   user: IResVolunteerAccount;
 }
 export type ISessionAction =
-  | { payload: IResVolunteerAccount; type: typeof SIGN_IN }
-  | { type: typeof SIGN_OUT }
+  | { type: typeof AUTHENTICATE }
   | {
       payload: IBehavioralStandardsPayload;
-      type: typeof BEHAVIORAL_STANDARDS_SET;
+      type: typeof BEHAVIORAL_STANDARDS_ADD;
     }
-  | { type: typeof ACCOUNT_TYPE_ADMIN }
-  | { type: typeof ACCOUNT_TYPE_AUTHENTICATED }
-  | { type: typeof ACCOUNT_TYPE_UNAUTHENTICATED }
-  | { type: typeof ACCOUNT_TYPE_RESET }
-  | { payload: ISessionState; type: typeof SESSION_STATE_STORAGE };
+  | { payload: ISessionState; type: typeof SESSION_STATE_STORAGE }
+  | { payload: IResVolunteerAccount; type: typeof SIGN_IN }
+  | { type: typeof SIGN_OUT }
+  | { type: typeof UNAUTHENTICATE };
 
 export const sessionReducer = (
   state: ISessionState,
   action: ISessionAction
 ): ISessionState => {
   switch (action.type) {
-    case ACCOUNT_TYPE_ADMIN: {
+    case AUTHENTICATE: {
       return structuredClone({
-        developerMode: {
-          accountType: ACCOUNT_TYPE_ADMIN,
-          isAccountTypeEnabled: true,
-        },
         settings: {
           isAuthenticated: true,
         },
-        user: {
-          ...state.user,
-          isCoreCrew: true,
-        },
+        user: { ...state.user },
       });
     }
-    case ACCOUNT_TYPE_AUTHENTICATED: {
-      return structuredClone({
-        developerMode: {
-          accountType: ACCOUNT_TYPE_AUTHENTICATED,
-          isAccountTypeEnabled: true,
-        },
-        settings: {
-          isAuthenticated: true,
-        },
-        user: {
-          ...state.user,
-          isCoreCrew: false,
-        },
-      });
-    }
-    case ACCOUNT_TYPE_RESET: {
-      return structuredClone({
-        developerMode: {
-          accountType: ACCOUNT_TYPE_ADMIN,
-          isAccountTypeEnabled: false,
-        },
-        settings: {
-          isAuthenticated: true,
-        },
-        user: { ...state.user, isCoreCrew: true },
-      });
-    }
-    case ACCOUNT_TYPE_UNAUTHENTICATED: {
-      return structuredClone({
-        developerMode: {
-          accountType: ACCOUNT_TYPE_UNAUTHENTICATED,
-          isAccountTypeEnabled: true,
-        },
-        settings: {
-          isAuthenticated: false,
-        },
-        user: {
-          ...state.user,
-          isCoreCrew: false,
-        },
-      });
-    }
-    case BEHAVIORAL_STANDARDS_SET: {
-      return structuredClone({
-        developerMode: {
-          ...state.developerMode,
-        },
-        settings: {
-          ...state.settings,
-        },
-        user: {
-          ...state.user,
-          isBehavioralStandardsSigned:
-            action.payload.isBehavioralStandardsSigned,
-        },
-      });
+    case BEHAVIORAL_STANDARDS_ADD: {
+      const stateClone = structuredClone(state);
+
+      stateClone.user.roleList.push(action.payload);
+
+      return stateClone;
     }
     case SESSION_STATE_STORAGE: {
       return structuredClone(action.payload);
     }
     case SIGN_IN: {
       return structuredClone({
-        developerMode: {
-          accountType: ACCOUNT_TYPE_ADMIN,
-          isAccountTypeEnabled: false,
-        },
         settings: {
           isAuthenticated: true,
         },
@@ -130,10 +62,6 @@ export const sessionReducer = (
     }
     case SIGN_OUT: {
       return {
-        developerMode: {
-          accountType: ACCOUNT_TYPE_ADMIN,
-          isAccountTypeEnabled: false,
-        },
         settings: {
           isAuthenticated: false,
         },
@@ -150,6 +78,14 @@ export const sessionReducer = (
           worldName: "",
         },
       };
+    }
+    case UNAUTHENTICATE: {
+      return structuredClone({
+        settings: {
+          isAuthenticated: false,
+        },
+        user: { ...state.user },
+      });
     }
     default: {
       const actionArg = action as ISessionAction;

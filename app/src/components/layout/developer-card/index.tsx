@@ -5,16 +5,11 @@ import { useContext } from "react";
 import { AccountType } from "src/components/layout/developer-card/AccountType";
 import { DateTime } from "src/components/layout/developer-card/DateTime";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
-import { SessionContext } from "src/state/session/context";
 
 export const DeveloperCard = () => {
   const {
-    sessionState: {
-      developerMode: { isAccountTypeEnabled },
-    },
-  } = useContext(SessionContext);
-  const {
     developerModeState: {
+      accountType: { isEnabled: isAccountTypeEnabled },
       dateTime: { isEnabled: isDateTimeEnabled },
     },
   } = useContext(DeveloperModeContext);

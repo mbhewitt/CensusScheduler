@@ -41,9 +41,10 @@ import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import type { IResVolunteerRoleItem } from "src/components/types";
 import { VolunteerShifts } from "src/components/volunteer-shifts";
-import { CORE_CREW_ID } from "src/constants";
+import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import { checkRole } from "src/utils/checkRole";
+import { authenticatedCheck } from "src/utils/authenticatedCheck";
+import { coreCrewCheck } from "src/utils/coreCrewCheck";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IFormValues {
@@ -67,8 +68,11 @@ const defaultValues: IFormValues = {
 };
 export const Account = () => {
   const {
+    developerModeState: { accountType },
+  } = useContext(DeveloperModeContext);
+  const {
     sessionState: {
-      settings: { isAuthenticated },
+      settings: { isAuthenticated: isAuthenticatedSession },
     },
   } = useContext(SessionContext);
   const [isMounted, setIsMounted] = useState(false);
@@ -122,7 +126,11 @@ export const Account = () => {
   if (!data) return <Loading />;
 
   const { isVolunteerCreated, playaName, roleList, worldName } = data;
-  const isCoreCrew = checkRole(CORE_CREW_ID, roleList);
+  const isAuthenticated = authenticatedCheck(
+    accountType,
+    isAuthenticatedSession
+  );
+  const isCoreCrew = coreCrewCheck(accountType, roleList);
 
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {

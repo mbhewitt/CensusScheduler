@@ -37,16 +37,12 @@ import type {
   IVolunteerOption,
   TCheckInTypes,
 } from "src/components/types";
-import {
-  CORE_CREW_ID,
-  SHIFT_DURING,
-  SHIFT_FUTURE,
-  SHIFT_PAST,
-} from "src/constants";
+import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
+import { authenticatedCheck } from "src/utils/authenticatedCheck";
 import { checkInGet } from "src/utils/checkInGet";
-import { checkRole } from "src/utils/checkRole";
+import { coreCrewCheck } from "src/utils/coreCrewCheck";
 import { dateNameFormat, timeFormat } from "src/utils/dateTimeFormat";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
@@ -92,16 +88,21 @@ export const ShiftVolunteersDialogAdd = ({
 }: IShiftVolunteersDialogAddProps) => {
   const {
     developerModeState: {
+      accountType,
       dateTime: { value: dateTimeValue },
     },
   } = useContext(DeveloperModeContext);
   const {
     sessionState: {
-      settings: { isAuthenticated },
+      settings: { isAuthenticated: isAuthenticatedSession },
       user: { playaName, roleList, shiftboardId, worldName },
     },
   } = useContext(SessionContext);
-  const isCoreCrew = checkRole(CORE_CREW_ID, roleList);
+  const isAuthenticated = authenticatedCheck(
+    accountType,
+    isAuthenticatedSession
+  );
+  const isCoreCrew = coreCrewCheck(accountType, roleList);
   const { control, handleSubmit, reset, watch } = useForm({
     defaultValues,
   });
@@ -334,7 +335,7 @@ export const ShiftVolunteersDialogAdd = ({
           if (
             (isAuthenticated && isCoreCrew) ||
             (totalSlots - filledSlots > 0 &&
-              dateTimeValue.isBefore(dayjs(startTime)))
+              dayjs(dateTimeValue).isBefore(dayjs(startTime)))
           ) {
             trainingListDisplay.push(
               <MenuItem key={`${shiftTimesId}-training`} value={shiftTimesId}>
@@ -419,7 +420,7 @@ export const ShiftVolunteersDialogAdd = ({
           if (
             (isAuthenticated && isCoreCrew) ||
             (totalSlots - filledSlots > 0 &&
-              dateTimeValue.isBefore(dayjs(startTime)))
+              dayjs(dateTimeValue).isBefore(dayjs(startTime)))
           ) {
             trainingListDisplay.push(
               <MenuItem key={`${shiftTimesId}-training`} value={shiftTimesId}>
@@ -485,7 +486,7 @@ export const ShiftVolunteersDialogAdd = ({
       // evaluate the check-in type and value for training
       if (trainingAdd) {
         const checkInTypeTraining = checkInGet({
-          dateTime: dateTimeValue,
+          dateTime: dayjs(dateTimeValue),
           endTime: dayjs(trainingAdd.endTime),
           startTime: dayjs(trainingAdd.startTime),
         });

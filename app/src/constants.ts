@@ -22,15 +22,24 @@ export const ACCOUNT_TYPE_LIST = [
   { label: "Unauthenticated", value: ACCOUNT_TYPE_UNAUTHENTICATED },
 ];
 
-// action types - authentication
+// action types - developer mode
+export const DEVELOPER_MODE_ACCOUNT_TYPE = "developerModeAccountType";
+export const DEVELOPER_MODE_DATE_TIME = "developerModeDateTime";
+export const DEVELOPER_MODE_DISABLE_IDLE = "developerModeDisableIdle";
+export const DEVELOPER_MODE_RESET = "developerModeReset";
+export const DEVELOPER_MODE_STATE_STORAGE = "developerModeStateStorage";
+
+// action types - session
+export const AUTHENTICATE = "authenticate";
+export const BEHAVIORAL_STANDARDS_ADD = "behavioralStandardsAdd";
 export const SIGN_IN = "signIn";
 export const SIGN_OUT = "signOut";
-export const SESSION_STATE_STORAGE = "sessionStorage";
+export const SESSION_STATE_STORAGE = "sessionStateStorage";
+export const UNAUTHENTICATE = "unauthenticate";
 
-// action types - check-in
+// check-in hours
 export const CHECK_IN_BEFORE_HOURS = 1;
 export const CHECK_OUT_AFTER_HOURS = 2;
-export const DEVELOPER_MODE_SET = "developerModeSet";
 
 // check-in types
 export const SHIFT_FUTURE = "shiftFuture";
@@ -43,9 +52,6 @@ export const IDLE_MINUTES = 5;
 // palette
 export const BURNING_MAN_BROWN = "#2f2f2f";
 export const CENSUS_PINK = "#ed008c";
-
-// behavioral standards
-export const BEHAVIORAL_STANDARDS_SET = "behavioralStandardsSet";
 
 // roles
 export const BEHAVIORAL_STANDARDS_ID = 1000012;

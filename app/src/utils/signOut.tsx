@@ -1,10 +1,9 @@
-import dayjs from "dayjs";
 import { NextRouter } from "next/router";
 import { OptionsObject, SnackbarKey, SnackbarMessage } from "notistack";
 import { Dispatch } from "react";
 
 import { SnackbarText } from "src/components/general/SnackbarText";
-import { DEVELOPER_MODE_SET, SIGN_OUT } from "src/constants";
+import { DEVELOPER_MODE_RESET, SIGN_OUT } from "src/constants";
 import { IDeveloperModeAction } from "src/state/developer-mode/reducer";
 import { ISessionAction } from "src/state/session/reducer";
 
@@ -21,20 +20,11 @@ export const signOut = (
   worldName: string
 ) => {
   if (isAuthenticated) {
+    developerModeDispatch({
+      type: DEVELOPER_MODE_RESET,
+    });
     sessionDispatch({
       type: SIGN_OUT,
-    });
-    developerModeDispatch({
-      payload: {
-        dateTime: {
-          isEnabled: false,
-          value: dayjs(),
-        },
-        disableIdle: {
-          isEnabled: false,
-        },
-      },
-      type: DEVELOPER_MODE_SET,
     });
     const filterListStateStorage = JSON.parse(
       sessionStorage.getItem("filterListState") ?? "[]"
