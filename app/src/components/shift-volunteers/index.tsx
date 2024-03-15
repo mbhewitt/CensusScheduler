@@ -47,8 +47,8 @@ import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
 import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
 import { checkIsCoreCrew } from "src/utils/checkIsCoreCrew";
-import { formatDateName, formatTime } from "src/utils/formatDateTime";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
+import { formatDateName, formatTime } from "src/utils/formatDateTime";
 import { getCheckInType } from "src/utils/getCheckInType";
 
 const socket = io();

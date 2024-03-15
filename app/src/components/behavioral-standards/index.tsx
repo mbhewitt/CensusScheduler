@@ -28,8 +28,8 @@ import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import {
-  BEHAVIORAL_STANDARDS_ADD,
   ROLE_BEHAVIORAL_STANDARDS_ID,
+  SESSION_BEHAVIORAL_STANDARDS,
 } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
@@ -116,7 +116,7 @@ export const BehavioralStandards = () => {
           roleId: ROLE_BEHAVIORAL_STANDARDS_ID,
           roleName: data.roleName,
         },
-        type: BEHAVIORAL_STANDARDS_ADD,
+        type: SESSION_BEHAVIORAL_STANDARDS,
       });
       enqueueSnackbar(
         <SnackbarText>

@@ -15,8 +15,8 @@ import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { SnackbarText } from "src/components/general/SnackbarText";
-import { formatDateName, formatTime } from "src/utils/formatDateTime";
 import { fetcherTrigger } from "src/utils/fetcher";
+import { formatDateName, formatTime } from "src/utils/formatDateTime";
 
 interface IVolunteerShiftsDialogRemoveProps {
   handleDialogRemoveClose: () => void;
