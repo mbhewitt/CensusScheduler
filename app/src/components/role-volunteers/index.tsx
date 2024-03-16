@@ -33,6 +33,10 @@ import { RoleVolunteersDialogAdd } from "src/components/role-volunteers/RoleVolu
 import { RoleVolunteersDialogRemove } from "src/components/role-volunteers/RoleVolunteersDialogRemove";
 import type { IResRoleVolunteerItem } from "src/components/types";
 import { fetcherGet } from "src/utils/fetcher";
+import {
+  setCellHeaderPropsCenter,
+  setCellPropsCenter,
+} from "src/utils/setCellPropsCenter";
 
 export const RoleVolunteers = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -87,7 +91,12 @@ export const RoleVolunteers = () => {
     },
     {
       name: "Actions",
-      options: { searchable: false, sort: false },
+      options: {
+        searchable: false,
+        setCellHeaderProps: setCellHeaderPropsCenter,
+        setCellProps: setCellPropsCenter,
+        sort: false,
+      },
     },
   ];
   const dataTable = dataRoleVolunteerList.map(

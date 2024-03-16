@@ -33,20 +33,19 @@ export const DataTable = ({
       },
       MuiTableCell: {
         styleOverrides: {
-          root: {
-            "&.center [class*='MUITableHeadCell-contentWrapper']": {
-              justifyContent: "center",
-              ".MuiButton-root": {
-                marginLeft: 0,
-                marginRight: 0,
-              },
-            },
-          },
           head: {
+            "&.cell-header-center [class*='MUIDataTableHeadCell-contentWrapper']":
+              {
+                justifyContent: "center",
+              },
+            "&.cell-header-center > div": {
+              textAlign: "center",
+            },
             ".MuiButton-root": {
               fontWeight: 700,
+              margin: 0,
             },
-            "[class*='MUITableHeadCell-sortAction']": {
+            "[class*='MUIDataTableHeadCell-sortAction']": {
               alignItems: "center",
             },
           },

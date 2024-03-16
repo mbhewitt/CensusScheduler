@@ -20,7 +20,6 @@ const rockwellFont = localFont({
   display: "swap",
   src: "../src/fonts/rockwell-regular.ttf",
 });
-
 const theme = createTheme({
   components: {
     MuiCssBaseline: {
@@ -149,13 +148,11 @@ const theme = createTheme({
     h6: { fontFamily: rockwellFont.style.fontFamily },
   },
 });
-
 const StyledSnackbarProvider = styled(SnackbarProvider)`
   &.SnackbarContent-root {
     flex-wrap: nowrap;
   }
 `;
-
 const SnackbarAction = (snackbarKey: number | string) => (
   <SnackbarButtonClose snackbarKey={snackbarKey} />
 );

@@ -50,6 +50,10 @@ import { checkIsCoreCrew } from "src/utils/checkIsCoreCrew";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 import { formatDateName, formatTime } from "src/utils/formatDateTime";
 import { getCheckInType } from "src/utils/getCheckInType";
+import {
+  setCellHeaderPropsCenter,
+  setCellPropsCenter,
+} from "src/utils/setCellPropsCenter";
 
 const socket = io();
 export const ShiftVolunteers = () => {
@@ -298,13 +302,25 @@ export const ShiftVolunteers = () => {
     { name: "Position", options: { sortThirdClickReset: true } },
     {
       name: "Check in",
-      options: { filter: false, searchable: false, sort: false },
+      options: {
+        filter: false,
+        searchable: false,
+        setCellHeaderProps: setCellHeaderPropsCenter,
+        setCellProps: setCellPropsCenter,
+        sort: false,
+      },
     },
   ];
   if (isAuthenticated && isCoreCrew) {
     columnList.push({
       name: "Admin",
-      options: { filter: false, searchable: false, sort: false },
+      options: {
+        filter: false,
+        searchable: false,
+        setCellHeaderProps: setCellHeaderPropsCenter,
+        setCellProps: setCellPropsCenter,
+        sort: false,
+      },
     });
   }
   const dataTable = structuredClone(

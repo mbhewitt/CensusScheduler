@@ -37,6 +37,10 @@ import {
   ROLE_SUPER_ADMIN_ID,
 } from "src/constants";
 import { fetcherGet } from "src/utils/fetcher";
+import {
+  setCellHeaderPropsCenter,
+  setCellPropsCenter,
+} from "src/utils/setCellPropsCenter";
 
 export const Roles = () => {
   const { data, error } = useSWR("/api/roles", fetcherGet);
@@ -117,12 +121,16 @@ export const Roles = () => {
     {
       name: "Display",
       options: {
+        setCellHeaderProps: setCellHeaderPropsCenter,
+        setCellProps: setCellPropsCenter,
         sort: false,
       },
     },
     {
       name: "Actions",
       options: {
+        setCellHeaderProps: setCellHeaderPropsCenter,
+        setCellProps: setCellPropsCenter,
         sort: false,
       },
     },

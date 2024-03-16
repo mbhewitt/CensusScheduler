@@ -29,17 +29,12 @@ import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { Hero } from "src/components/layout/Hero";
 import type { IResVolunteerShiftCountItem } from "src/components/types";
-import styles from "src/components/volunteers/Volunteers.module.css";
 import { fetcherGet } from "src/utils/fetcher";
+import {
+  setCellHeaderPropsCenter,
+  setCellPropsCenter,
+} from "src/utils/setCellPropsCenter";
 
-const setCellHeaderPropsCenter = () => ({
-  className: styles.center,
-});
-const setCellPropsCenter = () => ({
-  style: {
-    textAlign: "center",
-  },
-});
 const sortCompareShiftCount = (order: string) => {
   return (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
