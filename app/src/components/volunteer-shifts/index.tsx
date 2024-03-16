@@ -45,6 +45,10 @@ import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 import { formatDateName, formatTime } from "src/utils/formatDateTime";
 import { getCheckInType } from "src/utils/getCheckInType";
 import { getColorMap } from "src/utils/getColorMap";
+import {
+  setCellHeaderPropsCenter,
+  setCellPropsCenter,
+} from "src/utils/setCellPropsCenter";
 
 const socket = io();
 export const VolunteerShifts = () => {
@@ -253,9 +257,24 @@ export const VolunteerShifts = () => {
     { name: "Position", options: { filter: false, sortThirdClickReset: true } },
     {
       name: "Check in",
-      options: { filter: false, searchable: false, sort: false },
+      options: {
+        filter: false,
+        searchable: false,
+        setCellHeaderProps: setCellHeaderPropsCenter,
+        setCellProps: setCellPropsCenter,
+        sort: false,
+      },
     },
-    { name: "", options: { filter: false, searchable: false, sort: false } },
+    {
+      name: "Actions",
+      options: {
+        filter: false,
+        searchable: false,
+        setCellHeaderProps: setCellHeaderPropsCenter,
+        setCellProps: setCellPropsCenter,
+        sort: false,
+      },
+    },
   ];
   const dataTable = data.map(
     ({
