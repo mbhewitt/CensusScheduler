@@ -22,6 +22,8 @@ import {
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 
 export const DeveloperMode = () => {
+  // context
+  // --------------------
   const {
     developerModeDispatch,
     developerModeState: {
@@ -30,8 +32,13 @@ export const DeveloperMode = () => {
       disableIdle: { isEnabled: isDisableIdleEnabled },
     },
   } = useContext(DeveloperModeContext);
+
+  // other hooks
+  // --------------------
   const { enqueueSnackbar } = useSnackbar();
 
+  // logic
+  // --------------------
   const onReset = () => {
     developerModeDispatch({
       type: DEVELOPER_MODE_RESET,
@@ -44,6 +51,8 @@ export const DeveloperMode = () => {
     );
   };
 
+  // display
+  // --------------------
   return (
     <>
       <Grid item xs={4}>

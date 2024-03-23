@@ -3,6 +3,8 @@ import Head from "next/head";
 import { ShiftVolunteers } from "src/components/shift-volunteers";
 
 const ShiftVolunteersPage = () => {
+  // display
+  // --------------------
   return (
     <>
       <Head>

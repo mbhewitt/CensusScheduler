@@ -46,16 +46,23 @@ export const RoleVolunteersDialogAdd = ({
   roleName,
   roleVolunteerList,
 }: IRoleVolunteersDialogAddProps) => {
+  // fetching, mutation, and revalidation
+  // --------------------
   const { data, error } = useSWR("/api/volunteers/dropdown", fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     `/api/role-volunteers/${roleId}`,
     fetcherTrigger
   );
+
+  // other hooks
+  // --------------------
   const { control, handleSubmit, reset } = useForm({
     defaultValues,
   });
   const { enqueueSnackbar } = useSnackbar();
 
+  // logic
+  // --------------------
   if (error)
     return (
       <DialogContainer
@@ -77,7 +84,8 @@ export const RoleVolunteersDialogAdd = ({
       </DialogContainer>
     );
 
-  // handle form submission
+  // form submission
+  // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
       const roleVolunteerAdd = data.find(
@@ -145,6 +153,8 @@ export const RoleVolunteersDialogAdd = ({
     }
   };
 
+  // display
+  // --------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogAddClose}

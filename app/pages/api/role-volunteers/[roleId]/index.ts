@@ -8,8 +8,10 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   const { roleId } = req.query;
 
   switch (req.method) {
-    // get - get all role volunteers
+    // get
+    // --------------------
     case "GET": {
+      // get all role volunteers
       const [dbRoleVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT v.playa_name, r.role, r.role_id, vr.shiftboard_id, v.world_name
         FROM op_volunteer_roles AS vr
@@ -37,8 +39,11 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
 
       return res.status(200).json(resRoleVolunteerList);
     }
-    // post - add role volunteer
+
+    // post
+    // --------------------
     case "POST": {
+      // add role volunteer
       const { shiftboardId } = JSON.parse(req.body);
       const [dbRoleVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT role_id
@@ -73,8 +78,11 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         message: "OK",
       });
     }
-    // delete - remove role volunteer
+
+    // delete
+    // --------------------
     case "DELETE": {
+      // remove role volunteer
       const shiftboardId = JSON.parse(req.body);
 
       await pool.query<RowDataPacket[]>(
@@ -89,8 +97,11 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         message: "OK",
       });
     }
-    // default - send an error message
+
+    // default
+    // --------------------
     default: {
+      // send error message
       return res.status(404).json({
         statusCode: 404,
         message: "Not found",

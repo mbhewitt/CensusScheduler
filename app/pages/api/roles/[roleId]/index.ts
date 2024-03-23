@@ -8,8 +8,10 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
   const { roleId } = req.query;
 
   switch (req.method) {
-    // get - get one role
+    // get
+    // --------------------
     case "GET": {
+      // get one role
       const [dbRoleList] = await pool.query<RowDataPacket[]>(
         `SELECT display, role, role_id
         FROM op_roles
@@ -26,8 +28,11 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
 
       return res.status(200).json(resRoleFirst);
     }
-    // patch - update role display
+
+    // patch
+    // --------------------
     case "PATCH": {
+      // update role display
       const { name } = JSON.parse(req.body);
 
       await pool.query<RowDataPacket[]>(
@@ -42,8 +47,11 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
         message: "OK",
       });
     }
-    // delete - delete role
+
+    // delete
+    // --------------------
     case "DELETE": {
+      // delete role
       await pool.query<RowDataPacket[]>(
         `UPDATE op_roles
         SET create_role=false, delete_role=true
@@ -56,8 +64,11 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
         message: "OK",
       });
     }
-    // default - send an error message
+
+    // default
+    // --------------------
     default: {
+      // send error message
       return res.status(404).json({
         statusCode: 404,
         message: "Not found",

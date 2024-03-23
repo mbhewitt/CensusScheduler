@@ -6,8 +6,10 @@ import { getShiftList } from "src/utils/getShiftList";
 
 const shiftTrainings = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
-    // get - get all shift volunteer trainings
+    // get
+    // --------------------
     case "GET": {
+      // get all shift volunteer trainings
       const { prerequisiteId } = req.query;
       const [dbTrainingList] = await pool.query<RowDataPacket[]>(
         `SELECT sc.category, sc.shift_category_id, st.date, d.datename, st.end_time, sp.position_type_id, sn.shift_name, st.shift_times_id, vs.shiftboard_id, st.start_time, sp.total_slots, st.year, vs.remove_shift
@@ -34,8 +36,11 @@ const shiftTrainings = async (req: NextApiRequest, res: NextApiResponse) => {
 
       return res.status(200).json(resShiftList);
     }
-    // default - send an error message
+
+    // default
+    // --------------------
     default: {
+      // send error message
       return res.status(404).json({
         statusCode: 404,
         message: "Not found",

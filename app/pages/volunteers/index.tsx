@@ -9,6 +9,8 @@ import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
 import { checkIsCoreCrew } from "src/utils/checkIsCoreCrew";
 
 const VolunteersPage = () => {
+  // context
+  // --------------------
   const {
     developerModeState: { accountType },
   } = useContext(DeveloperModeContext);
@@ -18,12 +20,17 @@ const VolunteersPage = () => {
       user: { roleList },
     },
   } = useContext(SessionContext);
+
+  // logic
+  // --------------------
   const isAuthenticated = checkIsAuthenticated(
     accountType,
     isAuthenticatedSession
   );
   const isCoreCrew = checkIsCoreCrew(accountType, roleList);
 
+  // display
+  // --------------------
   return (
     <>
       <Head>

@@ -9,6 +9,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
 
   switch (req.method) {
     // get
+    // --------------------
     case "GET": {
       let dbShiftList = [];
 
@@ -60,7 +61,10 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
 
       return res.status(200).json(resShiftList);
     }
-    // default - send an error message
+
+    // default
+    // --------------------
+    // send error message
     default: {
       return res.status(404).json({
         statusCode: 404,

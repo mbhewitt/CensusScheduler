@@ -45,8 +45,8 @@ import {
 } from "src/utils/setCellPropsCenter";
 
 export const Roles = () => {
-  const { data, error } = useSWR("/api/roles", fetcherGet);
-  const { mutate } = useSWRConfig();
+  // state
+  // --------------------
   const [isDialogCreateOpen, setIsDialogCreateOpen] = useState(false);
   const [isDialogUpdateOpen, setIsDialogUpdateOpen] = useState({
     isOpen: false,
@@ -64,8 +64,18 @@ export const Roles = () => {
       roleName: "",
     },
   });
+
+  // fetching, mutation, and revalidation
+  // --------------------
+  const { data, error } = useSWR("/api/roles", fetcherGet);
+  const { mutate } = useSWRConfig();
+
+  // other hooks
+  // --------------------
   const { enqueueSnackbar } = useSnackbar();
 
+  // logic
+  // --------------------
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
@@ -175,6 +185,8 @@ export const Roles = () => {
       ];
     }
 
+    // display
+    // --------------------
     return [
       roleId,
       roleName,

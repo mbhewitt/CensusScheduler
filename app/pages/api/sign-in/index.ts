@@ -6,8 +6,10 @@ import type { IResVolunteerAccount } from "src/components/types";
 
 const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
-    // check email and passcode credentials
+    // post
+    // --------------------
     case "POST": {
+      // check email and passcode credentials
       const { passcode, shiftboardId } = JSON.parse(req.body);
       const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT core_crew, email, emergency_contact, playa_name, shiftboard_id, world_name
@@ -19,7 +21,7 @@ const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
       const volunteerFirst = dbVolunteerList[0];
 
       // if credentials do not exist
-      // then send an error message
+      // then send error message
       if (!volunteerFirst) {
         return res.status(404).json({
           statusCode: 404,
@@ -56,8 +58,11 @@ const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
 
       return res.status(200).json(resAccount);
     }
-    // default - send an error message
+
+    // default
+    // --------------------
     default: {
+      // send error message
       return res.status(404).json({
         statusCode: 404,
         message: "Not found",

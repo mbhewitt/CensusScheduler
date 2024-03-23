@@ -48,7 +48,25 @@ const defaultValues: IVolunteerAccountFormValues = {
   worldName: "",
 };
 export const CreateAccount = () => {
+  // context
+  // --------------------
   const { sessionDispatch } = useContext(SessionContext);
+
+  // state
+  // --------------------
+  const [isPasscodeCreateVisible, setIsPasscodeCreateVisible] = useState(false);
+  const [isPasscodeConfirmVisible, setIsPasscodeConfirmVisible] =
+    useState(false);
+
+  // fetching, mutation, and revalidation
+  // --------------------
+  const { isMutating, trigger } = useSWRMutation(
+    "/api/account",
+    fetcherTrigger
+  );
+
+  // other hooks
+  // --------------------
   const {
     control,
     formState: { errors },
@@ -60,16 +78,11 @@ export const CreateAccount = () => {
     mode: "onBlur",
   });
   const router = useRouter();
-  const { isMutating, trigger } = useSWRMutation(
-    "/api/account",
-    fetcherTrigger
-  );
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
-  const [isPasscodeCreateVisible, setIsPasscodeCreateVisible] = useState(false);
-  const [isPasscodeConfirmVisible, setIsPasscodeConfirmVisible] =
-    useState(false);
 
+  // form submission
+  // --------------------
   const onSubmit: SubmitHandler<IVolunteerAccountFormValues> = async (
     dataFormInitial
   ) => {
@@ -130,6 +143,8 @@ export const CreateAccount = () => {
     }
   };
 
+  // display
+  // --------------------
   return (
     <>
       <Hero

@@ -8,8 +8,10 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   const { shiftboardId } = req.query;
 
   switch (req.method) {
-    // get - get volunteer account
+    // get
+    // --------------------
     case "GET": {
+      // get volunteer account
       const [dbRoleList] = await pool.query<RowDataPacket[]>(
         `SELECT r.role, r.role_id
         FROM op_roles as r
@@ -47,8 +49,10 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(200).json(resVolunteerItem);
     }
 
-    // patch - update volunteer account
+    // patch
+    // --------------------
     case "PATCH": {
+      // update volunteer account
       const { update } = req.query;
 
       switch (update) {
@@ -102,8 +106,10 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       });
     }
 
-    // default - send an error message
+    // default
+    // --------------------
     default: {
+      // send error message
       return res.status(404).json({
         statusCode: 404,
         message: "Not found",

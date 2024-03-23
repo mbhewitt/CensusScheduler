@@ -39,17 +39,9 @@ import {
 } from "src/utils/setCellPropsCenter";
 
 export const RoleVolunteers = () => {
+  // state
+  // --------------------
   const [isMounted, setIsMounted] = useState(false);
-  const router = useRouter();
-  const { roleId } = router.query;
-  const { data: dataRoleItem, error: errorRoleItem } = useSWR(
-    isMounted ? `/api/roles/${roleId}` : null,
-    fetcherGet
-  );
-  const { data: dataRoleVolunteerList, error: errorRoleVolunteerList } = useSWR(
-    isMounted ? `/api/role-volunteers/${roleId}` : null,
-    fetcherGet
-  );
   const [isDialogAddOpen, setIsDialogAddOpen] = useState(false);
   const [isDialogRemoveOpen, setIsDialogRemoveOpen] = useState({
     isOpen: false,
@@ -62,12 +54,29 @@ export const RoleVolunteers = () => {
     },
   });
 
+  // fetching, mutation, and revalidation
+  // --------------------
+  const router = useRouter();
+  const { roleId } = router.query;
+  const { data: dataRoleItem, error: errorRoleItem } = useSWR(
+    isMounted ? `/api/roles/${roleId}` : null,
+    fetcherGet
+  );
+  const { data: dataRoleVolunteerList, error: errorRoleVolunteerList } = useSWR(
+    isMounted ? `/api/role-volunteers/${roleId}` : null,
+    fetcherGet
+  );
+
+  // side effects
+  // --------------------
   useEffect(() => {
     if (router.isReady) {
       setIsMounted(true);
     }
   }, [router.isReady]);
 
+  // logic
+  // --------------------
   if (errorRoleItem || errorRoleVolunteerList) return <ErrorPage />;
   if (!dataRoleItem || !dataRoleVolunteerList) return <Loading />;
 
@@ -151,6 +160,8 @@ export const RoleVolunteers = () => {
   );
   const optionListCustom = { filter: false };
 
+  // display
+  // --------------------
   return (
     <>
       <Hero

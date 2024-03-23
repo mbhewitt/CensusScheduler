@@ -35,21 +35,29 @@ export const RolesDialogUpdate = ({
   role,
   roleList,
 }: IRolesDialogUpdateProps) => {
+  // fetching, mutation, and revalidation
+  // --------------------
   const { isMutating, trigger } = useSWRMutation(
     `/api/roles/${role.roleId}`,
     fetcherTrigger
   );
   const { mutate } = useSWRConfig();
+
+  // other hooks
+  // --------------------
   const { control, handleSubmit, reset, setValue } = useForm({
     defaultValues,
   });
   const { enqueueSnackbar } = useSnackbar();
 
+  // side effects
+  // --------------------
   useEffect(() => {
     setValue("name", role.roleName);
   }, [role, setValue]);
 
-  // handle form submission
+  // form submission
+  // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
       const isRoleAvailable = roleList.some(
@@ -105,6 +113,8 @@ export const RolesDialogUpdate = ({
     }
   };
 
+  // display
+  // --------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogUpdateClose}

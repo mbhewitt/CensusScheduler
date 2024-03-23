@@ -52,9 +52,16 @@ const sortCompareShiftCount = (order: string) => {
 };
 
 export const Volunteers = () => {
+  // fetching, mutation, and revalidation
+  // --------------------
   const { data, error } = useSWR("/api/volunteers", fetcherGet);
+
+  // other hooks
+  // --------------------
   const theme = useTheme();
 
+  // logic
+  // --------------------
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
@@ -238,6 +245,8 @@ export const Volunteers = () => {
   );
   const optionListCustom = {};
 
+  // display
+  // --------------------
   return (
     <>
       <Hero

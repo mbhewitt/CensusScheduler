@@ -33,6 +33,8 @@ export const ResetPasscodeForm = ({
   setIsPasscodeConfirmVisible,
   setIsPasscodeCreateVisible,
 }: IResetPasscodeFormProps) => {
+  // display
+  // --------------------
   return (
     <>
       <Stack alignItems="center" direction="row">

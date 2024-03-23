@@ -31,13 +31,41 @@ export const RolesDialogDelete = ({
   isDialogDeleteOpen,
   role: { roleId, roleName },
 }: IRolesDialogDeleteProps) => {
+  // fetching, mutation, and revalidation
+  // --------------------
   const { data, error } = useSWR(`/api/role-volunteers/${roleId}`, fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     `/api/roles/${roleId}`,
     fetcherTrigger
   );
   const { mutate } = useSWRConfig();
+
+  // other hooks
+  // --------------------
   const { enqueueSnackbar } = useSnackbar();
+
+  // logic
+  // --------------------
+  if (error)
+    return (
+      <DialogContainer
+        handleDialogClose={handleDialogDeleteClose}
+        isDialogOpen={isDialogDeleteOpen}
+        text="Delete role"
+      >
+        <ErrorAlert />
+      </DialogContainer>
+    );
+  if (!data)
+    return (
+      <DialogContainer
+        handleDialogClose={handleDialogDeleteClose}
+        isDialogOpen={isDialogDeleteOpen}
+        text="Delete role"
+      >
+        <Loading />
+      </DialogContainer>
+    );
 
   // handle role delete
   const handleRoleDelete = async () => {
@@ -73,27 +101,8 @@ export const RolesDialogDelete = ({
     }
   };
 
-  if (error)
-    return (
-      <DialogContainer
-        handleDialogClose={handleDialogDeleteClose}
-        isDialogOpen={isDialogDeleteOpen}
-        text="Delete role"
-      >
-        <ErrorAlert />
-      </DialogContainer>
-    );
-  if (!data)
-    return (
-      <DialogContainer
-        handleDialogClose={handleDialogDeleteClose}
-        isDialogOpen={isDialogDeleteOpen}
-        text="Delete role"
-      >
-        <Loading />
-      </DialogContainer>
-    );
-
+  // display
+  // --------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogDeleteClose}

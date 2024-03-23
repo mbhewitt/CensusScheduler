@@ -41,10 +41,21 @@ export const ResetPasscodeDialog = ({
   playaName,
   worldName,
 }: IResetPasscodeDialogProps) => {
+  // state
+  // --------------------
+  const [isPasscodeCreateVisible, setIsPasscodeCreateVisible] = useState(false);
+  const [isPasscodeConfirmVisible, setIsPasscodeConfirmVisible] =
+    useState(false);
+
+  // fetching, mutation, and revalidation
+  // --------------------
   const { isMutating, trigger } = useSWRMutation(
     `/api/account/${shiftboardId}?update=passcode`,
     fetcherTrigger
   );
+
+  // other hooks
+  // --------------------
   const {
     control,
     formState: { errors },
@@ -56,11 +67,9 @@ export const ResetPasscodeDialog = ({
     mode: "onBlur",
   });
   const { enqueueSnackbar } = useSnackbar();
-  const [isPasscodeCreateVisible, setIsPasscodeCreateVisible] = useState(false);
-  const [isPasscodeConfirmVisible, setIsPasscodeConfirmVisible] =
-    useState(false);
 
-  // handle form submission
+  // form submission
+  // --------------------
   const onSubmit: SubmitHandler<IVolunteerAccountFormValues> = async (
     dataForm
   ) => {
@@ -101,6 +110,8 @@ export const ResetPasscodeDialog = ({
     }
   };
 
+  // display
+  // --------------------
   return (
     <DialogContainer
       handleDialogClose={() => {

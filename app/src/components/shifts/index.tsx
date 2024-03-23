@@ -20,22 +20,19 @@ import { formatDateName, formatTime } from "src/utils/formatDateTime";
 import { getColorMap } from "src/utils/getColorMap";
 
 export const Shifts = () => {
+  // context
+  // --------------------
   const {
     developerModeState: {
       dateTime: { value: dateTimeValue },
     },
   } = useContext(DeveloperModeContext);
-  const { data, error } = useSWR("/api/shifts", fetcherGet);
-  const router = useRouter();
-  const theme = useTheme();
 
-  // set up variables to manipulate columns
+  // state
+  // --------------------
   const columnNameDateHidden = "Date - hidden";
   const columnNameDate = "Date";
   const columnNameShiftNameHidden = "Shift name - hidden";
-
-  dayjs.extend(isSameOrAfter);
-
   const [columnList, setColumnList] = useImmer<MUIDataTableColumn[]>([
     {
       name: "Shift Times ID - hidden", // hide for row click
@@ -113,6 +110,17 @@ export const Shifts = () => {
     },
   ]);
 
+  // fetching, mutation, and revalidation
+  // --------------------
+  const { data, error } = useSWR("/api/shifts", fetcherGet);
+
+  // other hooks
+  // --------------------
+  const router = useRouter();
+  const theme = useTheme();
+
+  // side effects
+  // --------------------
   useEffect(() => {
     // if filter list state is stored in session storage
     // then update column list state with filter list state
@@ -130,7 +138,6 @@ export const Shifts = () => {
       );
     }
   }, [setColumnList]);
-
   useEffect(() => {
     // if dateTimeValue updates
     // then update filter logic for "Date - hidden" column
@@ -158,7 +165,6 @@ export const Shifts = () => {
       });
     });
   }, [dateTimeValue, setColumnList]);
-
   useEffect(() => {
     // if data exists
     // then customize the filter options display for date and name columns
@@ -202,8 +208,12 @@ export const Shifts = () => {
     }
   }, [data, setColumnList]);
 
+  // logic
+  // --------------------
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
+
+  dayjs.extend(isSameOrAfter);
 
   // prepare datatable
   const colorMapDisplay = getColorMap(data);
@@ -269,6 +279,8 @@ export const Shifts = () => {
     sortFilterList: false,
   };
 
+  // display
+  // --------------------
   return (
     <>
       <Hero

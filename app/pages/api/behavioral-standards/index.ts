@@ -6,7 +6,10 @@ import { ROLE_BEHAVIORAL_STANDARDS_ID } from "src/constants";
 
 const contact = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
+    // post
+    // --------------------
     case "POST": {
+      // create volunteer account
       const { isBehavioralStandardsSigned, shiftboardId } = JSON.parse(
         req.body
       );
@@ -49,7 +52,11 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
         message: "OK",
       });
     }
+
+    // default
+    // --------------------
     default: {
+      // send error message
       return res.status(404).json({
         statusCode: 404,
         message: "Not found",

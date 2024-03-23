@@ -52,6 +52,8 @@ import {
 
 const socket = io();
 export const VolunteerShifts = () => {
+  // context
+  // --------------------
   const {
     developerModeState: {
       accountType,
@@ -64,11 +66,9 @@ export const VolunteerShifts = () => {
       user: { roleList, playaName, worldName },
     },
   } = useContext(SessionContext);
-  const isAuthenticated = checkIsAuthenticated(
-    accountType,
-    isAuthenticatedSession
-  );
-  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
+
+  // state
+  // --------------------
   const [isMounted, setIsMounted] = useState(false);
   const [isDialogRemoveOpen, setIsDialogRemoveOpen] = useState({
     isOpen: false,
@@ -82,6 +82,9 @@ export const VolunteerShifts = () => {
       startTime: "",
     },
   });
+
+  // fetching, mutation, and revalidation
+  // --------------------
   const router = useRouter();
   const { shiftboardId } = router.query;
   const { data, error, mutate } = useSWR(
@@ -92,11 +95,16 @@ export const VolunteerShifts = () => {
     `/api/volunteer-shifts/${shiftboardId}`,
     fetcherTrigger
   );
+
+  // other hooks
+  // --------------------
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
 
-  // listen for socket events
+  // side effects
+  // --------------------
   useEffect(() => {
+    // listen for socket events
     (async () => {
       try {
         await fetch("/api/socket");
@@ -153,13 +161,14 @@ export const VolunteerShifts = () => {
       }
     })();
   }, [data, enqueueSnackbar, mutate]);
-
   useEffect(() => {
     if (router.isReady) {
       setIsMounted(true);
     }
   }, [router.isReady]);
 
+  // logic
+  // --------------------
   if (error)
     return (
       <>
@@ -178,6 +187,12 @@ export const VolunteerShifts = () => {
         <Loading />
       </>
     );
+
+  const isAuthenticated = checkIsAuthenticated(
+    accountType,
+    isAuthenticatedSession
+  );
+  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
 
   // handle check in toggle
   const handleCheckInToggle = async ({
@@ -401,6 +416,8 @@ export const VolunteerShifts = () => {
     },
   };
 
+  // display
+  // --------------------
   return (
     <>
       <Stack
