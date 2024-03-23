@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "src/components/general/DialogContainer";
@@ -36,6 +36,7 @@ export const RolesDialogDelete = ({
     `/api/roles/${roleId}`,
     fetcherTrigger
   );
+  const { mutate } = useSWRConfig();
   const { enqueueSnackbar } = useSnackbar();
 
   // handle role delete
@@ -44,6 +45,7 @@ export const RolesDialogDelete = ({
       await trigger({
         method: "DELETE",
       });
+      mutate("/api/roles");
 
       handleDialogDeleteClose();
       enqueueSnackbar(

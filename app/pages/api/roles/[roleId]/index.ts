@@ -28,13 +28,13 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     // patch - update role display
     case "PATCH": {
-      const { checked } = req.body;
+      const { name } = JSON.parse(req.body);
 
       await pool.query<RowDataPacket[]>(
         `UPDATE op_roles
-        SET display=?
+        SET role=?, update_role=true
         WHERE role_id=?`,
-        [checked, roleId]
+        [name, roleId]
       );
 
       return res.status(200).json({

@@ -90,15 +90,7 @@ export const CreateAccount = () => {
       // update database
       const { data: dataVolunteerItem }: { data: IResVolunteerAccount } =
         await trigger({
-          body: {
-            email: dataFormFinal.email,
-            emergencyContact: dataFormFinal.emergencyContact,
-            location: dataFormFinal.location,
-            passcodeCreate: dataFormFinal.passcodeCreate,
-            phone: dataFormFinal.phone,
-            playaName: dataFormFinal.playaName,
-            worldName: dataFormFinal.worldName,
-          },
+          body: dataFormFinal,
           method: "POST",
         });
 
