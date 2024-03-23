@@ -53,52 +53,31 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     // --------------------
     case "PATCH": {
       // update volunteer account
-      const { update } = req.query;
+      const {
+        email,
+        emergencyContact,
+        location,
+        notes,
+        phone,
+        playaName,
+        worldName,
+      } = JSON.parse(req.body);
 
-      switch (update) {
-        // reset volunteer passcode
-        case "passcode": {
-          const { passcode } = JSON.parse(req.body);
-
-          await pool.query<RowDataPacket[]>(
-            `UPDATE op_volunteers
-            SET passcode=?
-            WHERE shiftboard_id=?`,
-            [passcode, shiftboardId]
-          );
-
-          break;
-        }
-
-        // default - update volunteer profile
-        default: {
-          const {
-            email,
-            emergencyContact,
-            location,
-            notes,
-            phone,
-            playaName,
-            worldName,
-          } = JSON.parse(req.body);
-
-          await pool.query<RowDataPacket[]>(
-            `UPDATE op_volunteers
-            SET email=?, emergency_contact=?, location=?, update_volunteer=true, notes=?, phone=?, playa_name=?, world_name=?
-            WHERE shiftboard_id=?`,
-            [
-              email,
-              emergencyContact,
-              location,
-              notes,
-              phone,
-              playaName,
-              worldName,
-              shiftboardId,
-            ]
-          );
-        }
-      }
+      await pool.query<RowDataPacket[]>(
+        `UPDATE op_volunteers
+        SET email=?, emergency_contact=?, location=?, update_volunteer=true, notes=?, phone=?, playa_name=?, world_name=?
+        WHERE shiftboard_id=?`,
+        [
+          email,
+          emergencyContact,
+          location,
+          notes,
+          phone,
+          playaName,
+          worldName,
+          shiftboardId,
+        ]
+      );
 
       return res.status(200).json({
         statusCode: 200,
