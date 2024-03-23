@@ -4,6 +4,8 @@ import Image from "next/image";
 import { Hero } from "src/components/layout/Hero";
 
 export const Reports = () => {
+  // display
+  // --------------------
   return (
     <>
       <Hero

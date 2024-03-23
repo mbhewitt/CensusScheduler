@@ -7,14 +7,12 @@ import { loadSeaAnemonePreset } from "tsparticles-preset-sea-anemone";
 import { EasterEggContext } from "src/state/easter-egg/context";
 
 export const EasterEgg = () => {
+  // context
+  // --------------------
   const { setIsEasterEggOpen } = useContext(EasterEggContext);
-  const particlesInit = useCallback(async (engine: Engine) => {
-    await loadSeaAnemonePreset(engine);
-  }, []);
-  const options = {
-    preset: "seaAnemone",
-  };
 
+  // side effects
+  // --------------------
   useEffect(() => {
     const audio = new Audio("/general/darude-sandstorm.mp3");
 
@@ -26,6 +24,17 @@ export const EasterEgg = () => {
     };
   }, []);
 
+  // logic
+  // --------------------
+  const particlesInit = useCallback(async (engine: Engine) => {
+    await loadSeaAnemonePreset(engine);
+  }, []);
+  const options = {
+    preset: "seaAnemone",
+  };
+
+  // display
+  // --------------------
   return (
     <Box
       onClick={() => setIsEasterEggOpen(false)}

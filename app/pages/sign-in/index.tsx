@@ -9,6 +9,8 @@ import { SessionContext } from "src/state/session/context";
 import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
 
 const SignInPage = () => {
+  // context
+  // --------------------
   const {
     developerModeState: { accountType },
   } = useContext(DeveloperModeContext);
@@ -18,18 +20,28 @@ const SignInPage = () => {
       user: { shiftboardId },
     },
   } = useContext(SessionContext);
+
+  // other hooks
+  // --------------------
   const router = useRouter();
+
+  // logic
+  // --------------------
   const isAuthenticated = checkIsAuthenticated(
     accountType,
     isAuthenticatedSession
   );
 
+  // side effects
+  // --------------------
   useEffect(() => {
     if (isAuthenticated) {
       router.push(`/account/${shiftboardId}`);
     }
   }, [isAuthenticated, router, shiftboardId]);
 
+  // display
+  // --------------------
   return (
     <>
       <Head>

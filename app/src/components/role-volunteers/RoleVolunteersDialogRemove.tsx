@@ -33,13 +33,19 @@ export const RoleVolunteersDialogRemove = ({
   isDialogRemoveOpen,
   volunteer: { playaName, roleId, roleName, shiftboardId, worldName },
 }: IRoleVolunteersDialogRemoveProps) => {
+  // fetching, mutation, and revalidation
+  // --------------------
   const { isMutating, trigger } = useSWRMutation(
     `/api/role-volunteers/${roleId}`,
     fetcherTrigger
   );
+
+  // other hooks
+  // --------------------
   const { enqueueSnackbar } = useSnackbar();
 
-  // handle role volunteer remove
+  // logic
+  // --------------------
   const handleRoleVolunteerRemove = async () => {
     try {
       // update database
@@ -79,6 +85,8 @@ export const RoleVolunteersDialogRemove = ({
     }
   };
 
+  // display
+  // --------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogRemoveClose}

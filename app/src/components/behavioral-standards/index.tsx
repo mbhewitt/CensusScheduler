@@ -37,6 +37,8 @@ import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 import { signOut } from "src/utils/signOut";
 
 export const BehavioralStandards = () => {
+  // context
+  // --------------------
   const {
     sessionDispatch,
     sessionState: {
@@ -46,9 +48,13 @@ export const BehavioralStandards = () => {
   } = useContext(SessionContext);
 
   const { developerModeDispatch } = useContext(DeveloperModeContext);
-  const router = useRouter();
+
+  // state
+  // --------------------
   const [isSigned, setIsSigned] = useState(false);
-  const { shiftboardId } = router.query;
+
+  // fetching, mutation, and revalidation
+  // --------------------
   const { data, error } = useSWR(
     `/api/roles/${ROLE_BEHAVIORAL_STANDARDS_ID}`,
     fetcherGet
@@ -57,8 +63,15 @@ export const BehavioralStandards = () => {
     "/api/behavioral-standards",
     fetcherTrigger
   );
+
+  // other hooks
+  // --------------------
+  const router = useRouter();
+  const { shiftboardId } = router.query;
   const { enqueueSnackbar } = useSnackbar();
 
+  // logic
+  // --------------------
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
@@ -148,6 +161,8 @@ export const BehavioralStandards = () => {
     }
   };
 
+  // display
+  // --------------------
   return (
     <>
       <Hero

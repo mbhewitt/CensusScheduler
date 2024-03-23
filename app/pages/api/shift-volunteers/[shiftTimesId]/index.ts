@@ -13,8 +13,10 @@ import type {
 
 const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
-    // get - get all shift volunteers
+    // get
+    // --------------------
     case "GET": {
+      // get all shift volunteers
       const { shiftTimesId } = req.query;
       const [dbShiftPositionList] = await pool.query<RowDataPacket[]>(
         `SELECT st.date, d.datename, st.end_time, st.notes, pt.position, pt.position_details, sp.position_type_id, pt.prerequisite_id, pt.role_id, sn.shift_name, sp.shift_position_id, st.start_time, sp.total_slots, st.year
@@ -106,8 +108,11 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         startTime: resShiftPositionFirst.start_time,
       });
     }
-    // post - add a volunteer to a shift
+
+    // post
+    // --------------------
     case "POST": {
+      // add volunteer to shift
       const { noShow, shiftboardId, shiftPositionId, shiftTimesId } =
         JSON.parse(req.body);
       const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
@@ -141,16 +146,25 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         message: "OK",
       });
     }
-    // patch - check a volunteer into a shift
+
+    // patch
+    // --------------------
     case "PATCH": {
+      // check volunteer into shift
       return shiftVolunteerCheckIn(pool, req, res);
     }
-    // delete - remove a volunteer from a shift
+
+    // delete
+    // --------------------
     case "DELETE": {
+      // remove volunteer from shift
       return shiftVolunteerRemove(pool, req, res);
     }
-    // default - send an error message
+
+    // default
+    // --------------------
     default: {
+      // send error message
       return res.status(404).json({
         statusCode: 404,
         message: "Not found",

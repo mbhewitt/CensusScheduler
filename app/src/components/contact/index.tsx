@@ -49,13 +49,21 @@ const defaultValues: IFormValues = {
   to: "Volunteer Coordinator",
 };
 export const Contact = () => {
+  // context
+  // --------------------
   const {
     sessionState: {
       settings: { isAuthenticated },
       user: { email, playaName, worldName },
     },
   } = useContext(SessionContext);
+
+  // state
+  // --------------------
   const [isMounted, setIsMounted] = useState(false);
+
+  // fetching, mutation, and revalidation
+  // --------------------
   const { data, error } = useSWR(
     "/api/volunteers/dropdown?filter=core",
     fetcherGet
@@ -64,12 +72,17 @@ export const Contact = () => {
     "/api/contact",
     fetcherTrigger
   );
+
+  // other hooks
+  // --------------------
   const { control, handleSubmit, reset } = useForm({
     defaultValues,
   });
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
 
+  // side effects
+  // --------------------
   useEffect(() => {
     if (router.isReady) {
       setIsMounted(true);
@@ -90,9 +103,13 @@ export const Contact = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, isMounted]);
 
+  // logic
+  // --------------------
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
+  // form submission
+  // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
       await trigger({ body: dataForm, method: "POST" });
@@ -124,6 +141,8 @@ export const Contact = () => {
     }
   };
 
+  // display
+  // --------------------
   return (
     <>
       <Hero

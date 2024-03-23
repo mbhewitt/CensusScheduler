@@ -37,6 +37,8 @@ import { checkIsRoleExist } from "src/utils/checkIsRoleExist";
 import { signOut } from "src/utils/signOut";
 
 export const Header = () => {
+  // context
+  // --------------------
   const {
     developerModeState: {
       accountType,
@@ -51,6 +53,19 @@ export const Header = () => {
       user: { playaName, roleList, shiftboardId, worldName },
     },
   } = useContext(SessionContext);
+
+  // state
+  // --------------------
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  // other hooks
+  // --------------------
+  const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
+  const theme = useTheme();
+
+  // side effects
+  // --------------------
   const isBehavioralStandardsSigned = checkIsRoleExist(
     ROLE_BEHAVIORAL_STANDARDS_ID,
     roleList
@@ -59,11 +74,24 @@ export const Header = () => {
     accountType,
     isAuthenticatedSession
   );
+
+  // if volunteer is signed in,
+  // did not sign behavioral standards agreement,
+  // and is not on behavioral standards agreement page
+  // then load behavioral standards agreement page
+  useEffect(() => {
+    if (
+      isAuthenticated &&
+      !isBehavioralStandardsSigned &&
+      !router.pathname.includes("behavioral-standards")
+    ) {
+      router.push(`/behavioral-standards/${shiftboardId}`);
+    }
+  }, [isAuthenticated, isBehavioralStandardsSigned, router, shiftboardId]);
+
+  // logic
+  // --------------------
   const isCoreCrew = checkIsCoreCrew(accountType, roleList);
-  const router = useRouter();
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
-  const theme = useTheme();
 
   // handle sign out
   const handleSignOut = () => {
@@ -85,20 +113,6 @@ export const Header = () => {
   const handleDrawerClose = () => {
     setIsDrawerOpen(false);
   };
-
-  // if volunteer is signed in,
-  // did not sign behavioral standards agreement,
-  // and is not on behavioral standards agreement page
-  // then load behavioral standards agreement page
-  useEffect(() => {
-    if (
-      isAuthenticated &&
-      !isBehavioralStandardsSigned &&
-      !router.pathname.includes("behavioral-standards")
-    ) {
-      router.push(`/behavioral-standards/${shiftboardId}`);
-    }
-  }, [isAuthenticated, isBehavioralStandardsSigned, router, shiftboardId]);
 
   return (
     <>

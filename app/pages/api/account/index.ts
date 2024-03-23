@@ -7,8 +7,10 @@ import { generateId } from "src/utils/generateId";
 
 const account = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
-    // post - create volunteer account
+    // post
+    // --------------------
     case "POST": {
+      // create volunteer account
       const {
         email,
         emergencyContact,
@@ -66,8 +68,10 @@ const account = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(200).json(resAccount);
     }
 
-    // default - send an error message
+    // default
+    // --------------------
     default: {
+      // send error message
       return res.status(404).json({
         statusCode: 404,
         message: "Not found",

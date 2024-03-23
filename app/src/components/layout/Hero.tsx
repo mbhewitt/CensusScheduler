@@ -7,8 +7,12 @@ interface IHeroProps {
 }
 
 export const Hero = ({ Image, text }: IHeroProps) => {
+  // other hooks
+  // --------------------
   const theme = useTheme();
 
+  // display
+  // --------------------
   return (
     <Box
       sx={{ height: theme.spacing(30), mb: 3, position: "relative", width: 1 }}

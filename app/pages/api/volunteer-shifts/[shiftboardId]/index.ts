@@ -10,8 +10,10 @@ import type { IResVolunteerShiftItem } from "src/components/types";
 
 const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
-    // get - get all volunteer shifts
+    // get
+    // --------------------
     case "GET": {
+      // get all volunteer shifts
       const { shiftboardId } = req.query;
       const [dbVolunteerShiftList] = await pool.query<RowDataPacket[]>(
         `SELECT sc.category, st.date, d.datename, st.end_time, vs.noshow, pt.position, vs.shift_position_id, vs.shift_times_id, st.start_time
@@ -60,16 +62,25 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
 
       return res.status(200).json(resVolunteerShiftList);
     }
-    // patch - check a volunteer into a shift
+
+    // patch
+    // --------------------
     case "PATCH": {
+      // check volunteer into shift
       return shiftVolunteerCheckIn(pool, req, res);
     }
-    // delete - remove a volunteer from a shift
+
+    // delete
+    // --------------------
     case "DELETE": {
+      // remove volunteer from shift
       return shiftVolunteerRemove(pool, req, res);
     }
-    // default - send an error message
+
+    // default
+    // --------------------
     default: {
+      // send error message
       return res.status(404).json({
         statusCode: 404,
         message: "Not found",

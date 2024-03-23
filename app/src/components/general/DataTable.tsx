@@ -15,49 +15,51 @@ interface ITableProps {
   optionListCustom: MUIDataTableOptions;
 }
 
+const theme = createTheme({
+  components: {
+    MuiPopover: {
+      styleOverrides: {
+        root: {
+          "[class*='MUIDataTableFilter-root']": {
+            minWidth: "400px",
+          },
+        },
+      },
+    },
+    MuiTableCell: {
+      styleOverrides: {
+        head: {
+          "&.cell-header-center [class*='MUIDataTableHeadCell-contentWrapper']":
+            {
+              justifyContent: "center",
+            },
+          "&.cell-header-center > div": {
+            textAlign: "center",
+          },
+          ".MuiButton-root": {
+            fontWeight: 700,
+            margin: 0,
+          },
+          "[class*='MUIDataTableHeadCell-sortAction']": {
+            alignItems: "center",
+          },
+        },
+      },
+    },
+  },
+  palette: {
+    primary: {
+      main: COLOR_CENSUS_PINK,
+    },
+  },
+});
 export const DataTable = ({
   columnList,
   dataTable,
   optionListCustom,
 }: ITableProps) => {
-  const theme = createTheme({
-    components: {
-      MuiPopover: {
-        styleOverrides: {
-          root: {
-            "[class*='MUIDataTableFilter-root']": {
-              minWidth: "400px",
-            },
-          },
-        },
-      },
-      MuiTableCell: {
-        styleOverrides: {
-          head: {
-            "&.cell-header-center [class*='MUIDataTableHeadCell-contentWrapper']":
-              {
-                justifyContent: "center",
-              },
-            "&.cell-header-center > div": {
-              textAlign: "center",
-            },
-            ".MuiButton-root": {
-              fontWeight: 700,
-              margin: 0,
-            },
-            "[class*='MUIDataTableHeadCell-sortAction']": {
-              alignItems: "center",
-            },
-          },
-        },
-      },
-    },
-    palette: {
-      primary: {
-        main: COLOR_CENSUS_PINK,
-      },
-    },
-  });
+  // logic
+  // --------------------
   const optionListFinal = {
     download: false,
     elevation: 0,
@@ -72,6 +74,8 @@ export const DataTable = ({
     ...optionListCustom,
   };
 
+  // display
+  // --------------------
   return (
     <ThemeProvider theme={theme}>
       <MUITable

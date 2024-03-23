@@ -7,8 +7,10 @@ import { generateId } from "src/utils/generateId";
 
 const roles = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
-    // get - get all roles
+    // get
+    // --------------------
     case "GET": {
+      // get all roles
       const [dbRoleList] = await pool.query<RowDataPacket[]>(
         `SELECT display, role, role_id
         FROM op_roles
@@ -23,8 +25,11 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
 
       return res.status(200).json(resRoleList);
     }
-    // post - create role
+
+    // post
+    // --------------------
     case "POST": {
+      // create role
       const { name } = JSON.parse(req.body);
       let roleIdNew;
       // check if role name exists
@@ -82,8 +87,11 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
         message: "Created",
       });
     }
-    // default - send an error message
+
+    // default
+    // --------------------
     default: {
+      // send error message
       return res.status(404).json({
         statusCode: 404,
         message: "Not found",

@@ -21,6 +21,8 @@ import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
 import { checkIsCoreCrew } from "src/utils/checkIsCoreCrew";
 
 export const Footer = () => {
+  // context
+  // --------------------
   const {
     developerModeState: { accountType },
   } = useContext(DeveloperModeContext);
@@ -30,14 +32,22 @@ export const Footer = () => {
       user: { roleList },
     },
   } = useContext(SessionContext);
+  const { setIsEasterEggOpen } = useContext(EasterEggContext);
+
+  // other hooks
+  // --------------------
+  const theme = useTheme();
+
+  // logic
+  // --------------------
   const isAuthenticated = checkIsAuthenticated(
     accountType,
     isAuthenticatedSession
   );
   const isCoreCrew = checkIsCoreCrew(accountType, roleList);
-  const { setIsEasterEggOpen } = useContext(EasterEggContext);
-  const theme = useTheme();
 
+  // display
+  // --------------------
   const pageListHalfCount = Math.ceil(pageListDefault.length / 2);
   const pageListHalfFirst = pageListDefault.slice(0, pageListHalfCount);
   const pageListHalfSecond = pageListDefault.slice(

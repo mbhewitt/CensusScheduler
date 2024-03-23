@@ -7,8 +7,10 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
   const { roleId } = req.query;
 
   switch (req.method) {
-    // patch - update role display
+    // patch
+    // --------------------
     case "PATCH": {
+      // update role display
       const { checked } = req.body;
 
       await pool.query<RowDataPacket[]>(
@@ -23,8 +25,11 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
         message: "OK",
       });
     }
-    // default - send an error message
+
+    // default
+    // --------------------
     default: {
+      // send error message
       return res.status(404).json({
         statusCode: 404,
         message: "Not found",

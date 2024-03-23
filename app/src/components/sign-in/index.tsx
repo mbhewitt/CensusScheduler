@@ -47,23 +47,38 @@ const defaultValues: IFormValues = {
   passcode: "",
 };
 export const SignIn = () => {
+  // context
+  // --------------------
   const { sessionDispatch } = useContext(SessionContext);
+
+  // state
+  // --------------------
+  const [isPasscodeVisible, setIsPasscodeVisible] = useState(false);
+
+  // fetching, mutation, and revalidation
+  // --------------------
   const { data, error } = useSWR("/api/volunteers/dropdown", fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     "/api/sign-in",
     fetcherTrigger
   );
+
+  // other hooks
+  // --------------------
   const { control, handleSubmit, reset } = useForm({
     defaultValues,
   });
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
   const theme = useTheme();
-  const [isPasscodeVisible, setIsPasscodeVisible] = useState(false);
 
+  // logic
+  // --------------------
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
+  // form submission
+  // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
       const dataVolunteerItem = await trigger({
@@ -74,7 +89,7 @@ export const SignIn = () => {
         method: "POST",
       });
 
-      // if response has a 404 status code
+      // if response has 404 status code
       // then display an error message
       if (dataVolunteerItem.statusCode === 404) {
         enqueueSnackbar(
@@ -124,6 +139,8 @@ export const SignIn = () => {
     }
   };
 
+  // display
+  // --------------------
   return (
     <>
       <Hero

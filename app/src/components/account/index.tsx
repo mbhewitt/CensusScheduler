@@ -67,6 +67,8 @@ const defaultValues: IFormValues = {
   worldName: "",
 };
 export const Account = () => {
+  // context
+  // --------------------
   const {
     developerModeState: { accountType },
   } = useContext(DeveloperModeContext);
@@ -75,9 +77,15 @@ export const Account = () => {
       settings: { isAuthenticated: isAuthenticatedSession },
     },
   } = useContext(SessionContext);
+
+  // state
+  // --------------------
   const [isMounted, setIsMounted] = useState(false);
   const [isResetPasscodeDialogOpen, setIsResetPasscodeDialogOpen] =
     useState(false);
+
+  // fetching, mutation, and revalidation
+  // --------------------
   const router = useRouter();
   const { shiftboardId } = router.query;
   const { data, error } = useSWR(
@@ -88,11 +96,16 @@ export const Account = () => {
     `/api/account/${shiftboardId}`,
     fetcherTrigger
   );
+
+  // other hooks
+  // --------------------
   const { control, handleSubmit, reset } = useForm({
     defaultValues,
   });
   const { enqueueSnackbar } = useSnackbar();
 
+  // side effects
+  // --------------------
   useEffect(() => {
     if (router.isReady) {
       setIsMounted(true);
@@ -122,6 +135,8 @@ export const Account = () => {
     }
   }, [data, reset]);
 
+  // logic
+  // --------------------
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
@@ -132,6 +147,8 @@ export const Account = () => {
   );
   const isCoreCrew = checkIsCoreCrew(accountType, roleList);
 
+  // form submission
+  // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
       await trigger({ body: { ...dataForm }, method: "PATCH" });
@@ -164,6 +181,8 @@ export const Account = () => {
     }
   };
 
+  // display
+  // --------------------
   return (
     <>
       <Hero

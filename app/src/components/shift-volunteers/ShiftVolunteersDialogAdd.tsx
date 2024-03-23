@@ -86,6 +86,8 @@ export const ShiftVolunteersDialogAdd = ({
   shiftVolunteerList,
   startTime,
 }: IShiftVolunteersDialogAddProps) => {
+  // context
+  // --------------------
   const {
     developerModeState: {
       accountType,
@@ -98,20 +100,13 @@ export const ShiftVolunteersDialogAdd = ({
       user: { playaName, roleList, shiftboardId, worldName },
     },
   } = useContext(SessionContext);
-  const isAuthenticated = checkIsAuthenticated(
-    accountType,
-    isAuthenticatedSession
-  );
-  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
+
+  // fetching, mutation, and revalidation
+  // --------------------
   const { control, handleSubmit, reset, watch } = useForm({
     defaultValues,
   });
   const volunteerWatch = watch("volunteer", null);
-  const shiftPositionIdWatch = watch("shiftPositionId", 0);
-  const prerequisiteIdWatch = shiftPositionList.find(
-    (shiftPositionItem) =>
-      shiftPositionItem.shiftPositionId === shiftPositionIdWatch
-  )?.prerequisiteId;
   const trainingTimesIdWatch = watch("trainingTimesId", 0);
   const { data: dataVolunteerList, error: errorVolunteerList } = useSWR(
     "/api/volunteers/dropdown",
@@ -139,9 +134,17 @@ export const ShiftVolunteersDialogAdd = ({
         : null,
       fetcherGet
     );
-  const { enqueueSnackbar } = useSnackbar();
-  dayjs.extend(isBetween);
 
+  // other hooks
+  // --------------------
+  const { enqueueSnackbar } = useSnackbar();
+
+  // side effects
+  // --------------------
+  const isAuthenticated = checkIsAuthenticated(
+    accountType,
+    isAuthenticatedSession
+  );
   const volunteerSelected =
     volunteerWatch &&
     dataVolunteerList &&
@@ -149,19 +152,6 @@ export const ShiftVolunteersDialogAdd = ({
       (dataVolunteerItem: IResVolunteerDropdownItem) =>
         dataVolunteerItem.shiftboardId === volunteerWatch?.shiftboardId
     );
-  const handleFormReset = () => {
-    if (isAuthenticated) {
-      reset({
-        volunteer: { label: `${playaName} "${worldName}"`, shiftboardId },
-        shiftPositionId: "",
-        trainingPositionId: "",
-        trainingTimesId: "",
-      });
-    } else {
-      reset(defaultValues);
-    }
-  };
-
   useEffect(() => {
     if (isAuthenticated) {
       reset({
@@ -188,7 +178,7 @@ export const ShiftVolunteersDialogAdd = ({
           )
       );
 
-      // if a slot is available there is a shift time conflict
+      // if slot is available and shift causes time conflict
       // then display warning notification
       if (isVolunteerSlotAvailable && !isVolunteerShiftAvailable) {
         enqueueSnackbar(
@@ -223,6 +213,21 @@ export const ShiftVolunteersDialogAdd = ({
     volunteerSelected,
   ]);
 
+  // logic
+  // --------------------
+  const handleFormReset = () => {
+    if (isAuthenticated) {
+      reset({
+        volunteer: { label: `${playaName} "${worldName}"`, shiftboardId },
+        shiftPositionId: "",
+        trainingPositionId: "",
+        trainingTimesId: "",
+      });
+    } else {
+      reset(defaultValues);
+    }
+  };
+
   if (
     errorShiftList ||
     errorTrainingVolunteerList ||
@@ -254,6 +259,14 @@ export const ShiftVolunteersDialogAdd = ({
         <Loading />
       </DialogContainer>
     );
+
+  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
+  const shiftPositionIdWatch = watch("shiftPositionId", 0);
+  const prerequisiteIdWatch = shiftPositionList.find(
+    (shiftPositionItem) =>
+      shiftPositionItem.shiftPositionId === shiftPositionIdWatch
+  )?.prerequisiteId;
+  dayjs.extend(isBetween);
 
   // evaluate check-in type and available shifts and positions
   let volunteerListDisplay: IVolunteerOption[] = [];
@@ -322,7 +335,6 @@ export const ShiftVolunteersDialogAdd = ({
       );
 
       // display training list
-      console.log("trainingList: ", trainingList);
       trainingListDisplay = trainingList.map(
         ({
           date,
@@ -354,7 +366,6 @@ export const ShiftVolunteersDialogAdd = ({
       );
 
       // display training position list
-      console.log("dataTrainingVolunteerList: ", dataTrainingVolunteerList);
       if (dataTrainingVolunteerList) {
         trainingPositionListDisplay =
           dataTrainingVolunteerList.shiftPositionList.map(
@@ -542,7 +553,7 @@ export const ShiftVolunteersDialogAdd = ({
         );
         return;
       }
-      // else display a success notification
+      // else display success notification
       enqueueSnackbar(
         <SnackbarText>
           <strong>
@@ -752,7 +763,7 @@ export const ShiftVolunteersDialogAdd = ({
                                 )
                             );
 
-                          // if there is a shift time conflict
+                          // if volunteer shift causes time conflict
                           // then display warning notification
                           if (!isVolunteerTrainingAvailable) {
                             enqueueSnackbar(

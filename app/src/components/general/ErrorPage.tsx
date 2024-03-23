@@ -5,6 +5,8 @@ import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Hero } from "src/components/layout/Hero";
 
 export const ErrorPage = () => {
+  // display
+  // --------------------
   return (
     <>
       <Hero

@@ -7,14 +7,21 @@ import { DateTime } from "src/components/layout/developer-card/DateTime";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 
 export const DeveloperCard = () => {
+  // context
+  // --------------------
   const {
     developerModeState: {
       accountType: { isEnabled: isAccountTypeEnabled },
       dateTime: { isEnabled: isDateTimeEnabled },
     },
   } = useContext(DeveloperModeContext);
+
+  // other hooks
+  // --------------------
   const theme = useTheme();
 
+  // display
+  // --------------------
   return (
     <Card
       sx={{

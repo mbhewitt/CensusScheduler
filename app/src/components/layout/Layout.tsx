@@ -12,6 +12,8 @@ interface ILayoutProps {
 }
 
 export const Layout = ({ children }: ILayoutProps) => {
+  // context
+  // --------------------
   const {
     developerModeState: {
       accountType: { isEnabled: isAccountTypeEnabled },
@@ -20,6 +22,8 @@ export const Layout = ({ children }: ILayoutProps) => {
   } = useContext(DeveloperModeContext);
   const { isEasterEggOpen } = useContext(EasterEggContext);
 
+  // display
+  // --------------------
   return (
     <>
       {isEasterEggOpen ? (

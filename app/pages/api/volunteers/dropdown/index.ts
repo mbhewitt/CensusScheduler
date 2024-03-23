@@ -19,6 +19,7 @@ interface IDbVolunteerItem {
 const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     // get
+    // --------------------
     case "GET": {
       const { filter } = req.query;
       let dbVolunteerList = [];
@@ -100,8 +101,10 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(200).json(resVolunteerList);
     }
 
-    // default - send an error message
+    // default
+    // --------------------
     default: {
+      // send error message
       return res.status(404).json({
         statusCode: 404,
         message: "Not found",

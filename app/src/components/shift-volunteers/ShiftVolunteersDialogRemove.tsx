@@ -43,12 +43,19 @@ export const ShiftVolunteersDialogRemove = ({
     worldName,
   },
 }: IShiftVolunteersDialogRemoveProps) => {
+  // fetching, mutation, and revalidation
+  // --------------------
   const { isMutating, trigger } = useSWRMutation(
     `/api/shift-volunteers/${shiftTimesId}`,
     fetcherTrigger
   );
+
+  // other hooks
+  // --------------------
   const { enqueueSnackbar } = useSnackbar();
 
+  // logic
+  // --------------------
   const handleVolunteerRemove = async () => {
     try {
       await trigger({
@@ -90,6 +97,8 @@ export const ShiftVolunteersDialogRemove = ({
     }
   };
 
+  // display
+  // --------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogRemoveClose}

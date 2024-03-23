@@ -156,8 +156,9 @@ const StyledSnackbarProvider = styled(SnackbarProvider)`
 const SnackbarAction = (snackbarKey: number | string) => (
   <SnackbarButtonClose snackbarKey={snackbarKey} />
 );
-
 const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps) => {
+  // display
+  // --------------------
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

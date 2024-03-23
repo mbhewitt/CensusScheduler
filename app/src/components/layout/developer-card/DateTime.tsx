@@ -9,6 +9,8 @@ import { DEVELOPER_MODE_DATE_TIME } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 
 export const DateTime = () => {
+  // context
+  // --------------------
   const {
     developerModeDispatch,
     developerModeState: {
@@ -16,6 +18,8 @@ export const DateTime = () => {
     },
   } = useContext(DeveloperModeContext);
 
+  // display
+  // --------------------
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DateTimePicker

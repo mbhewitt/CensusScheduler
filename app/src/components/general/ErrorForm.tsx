@@ -8,6 +8,8 @@ interface IErrorFormProps {
 }
 
 export const ErrorForm = ({ errors }: IErrorFormProps) => {
+  // display
+  // --------------------
   return (
     <Alert severity="error" sx={{ mb: 2 }}>
       Whoops! Looks like there are some input errors:

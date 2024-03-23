@@ -57,6 +57,8 @@ import {
 
 const socket = io();
 export const ShiftVolunteers = () => {
+  // context
+  // --------------------
   const {
     developerModeState: {
       accountType,
@@ -69,11 +71,9 @@ export const ShiftVolunteers = () => {
       user: { roleList },
     },
   } = useContext(SessionContext);
-  const isAuthenticated = checkIsAuthenticated(
-    accountType,
-    isAuthenticatedSession
-  );
-  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
+
+  // state
+  // --------------------
   const [isMounted, setIsMounted] = useState(false);
   const [isDialogAddOpen, setIsDialogAddOpen] = useState(false);
   const [isDialogRemoveOpen, setIsDialogRemoveOpen] = useState({
@@ -87,6 +87,9 @@ export const ShiftVolunteers = () => {
       worldName: "",
     },
   });
+
+  // fetching, mutation, and revalidation
+  // --------------------
   const router = useRouter();
   const { shiftTimesId: shiftTimesQuery } = router.query;
   const {
@@ -101,8 +104,13 @@ export const ShiftVolunteers = () => {
     `/api/shift-volunteers/${shiftTimesQuery}`,
     fetcherTrigger
   );
+
+  // other hooks
+  // --------------------
   const { enqueueSnackbar } = useSnackbar();
 
+  // side effects
+  // --------------------
   useEffect(() => {
     if (router.isReady) {
       setIsMounted(true);
@@ -197,8 +205,16 @@ export const ShiftVolunteers = () => {
     })();
   }, [dataShiftVolunteerItem, enqueueSnackbar, mutateShiftVolunteerItem]);
 
+  // logic
+  // --------------------
   if (errorShiftVolunteerItem) return <ErrorPage />;
   if (!dataShiftVolunteerItem) return <Loading />;
+
+  const isAuthenticated = checkIsAuthenticated(
+    accountType,
+    isAuthenticatedSession
+  );
+  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
 
   // handle check in toggle
   const handleCheckInToggle = async ({
@@ -400,6 +416,8 @@ export const ShiftVolunteers = () => {
   );
   const optionListCustom = {};
 
+  // display
+  // --------------------
   return (
     <>
       <Hero
