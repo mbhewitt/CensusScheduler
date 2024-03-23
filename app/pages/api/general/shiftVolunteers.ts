@@ -2,7 +2,7 @@ import { RowDataPacket } from "mysql2";
 import { Pool } from "mysql2/promise";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-// shift volunteer check-in
+// patch - shift volunteer check-in
 export const shiftVolunteerCheckIn = async (
   pool: Pool,
   req: NextApiRequest,
@@ -15,7 +15,9 @@ export const shiftVolunteerCheckIn = async (
   await pool.query<RowDataPacket[]>(
     `UPDATE op_volunteer_shifts
     SET noshow=?, update_shift=true
-    WHERE shift_position_id=? AND shift_times_id=? AND shiftboard_id=?`,
+    WHERE shift_position_id=?
+    AND shift_times_id=?
+    AND shiftboard_id=?`,
     [checked ? "" : "Yes", shiftPositionId, shiftTimesId, shiftboardId]
   );
 
@@ -24,7 +26,7 @@ export const shiftVolunteerCheckIn = async (
     message: "OK",
   });
 };
-// shift volunteer remove
+// delete - shift volunteer remove
 export const shiftVolunteerRemove = async (
   pool: Pool,
   req: NextApiRequest,
@@ -35,7 +37,9 @@ export const shiftVolunteerRemove = async (
   await pool.query<RowDataPacket[]>(
     `UPDATE op_volunteer_shifts
     SET add_shift=false, remove_shift=true
-    WHERE shift_position_id=? AND shift_times_id=? AND shiftboard_id=?`,
+    WHERE shift_position_id=?
+    AND shift_times_id=?
+    AND shiftboard_id=?`,
     [shiftPositionId, shiftTimesId, shiftboardId]
   );
 

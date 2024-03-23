@@ -24,11 +24,14 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         LEFT JOIN op_dates AS d
         ON d.date=st.date
         JOIN op_shift_name AS sn
-        ON sn.shift_name_id=st.shift_name_id
+        ON sn.delete_shift=false
+        AND sn.shift_name_id=st.shift_name_id
         JOIN op_shift_position AS sp
-        ON sp.shift_name_id=sn.shift_name_id
+        ON sp.remove_shift_position=false
+        AND sp.shift_name_id=sn.shift_name_id
         JOIN op_position_type AS pt
-        ON pt.position_type_id=sp.position_type_id
+        ON pt.delete_position=false
+        AND pt.position_type_id=sp.position_type_id
         WHERE st.remove_shift_time=false
         AND st.shift_times_id=?`,
         [shiftTimesId]
@@ -37,11 +40,14 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         `SELECT vs.noshow, v.playa_name, pt.position, sp.position_type_id, vs.shift_position_id, vs.shift_times_id, vs.shiftboard_id, v.world_name
         FROM op_volunteer_shifts AS vs
         JOIN op_shift_position AS sp
-        ON sp.shift_position_id=vs.shift_position_id
+        ON sp.remove_shift_position=false
+        AND sp.shift_position_id=vs.shift_position_id
         JOIN op_position_type AS pt
-        ON pt.position_type_id=sp.position_type_id
+        ON pt.delete_position=false
+        AND pt.position_type_id=sp.position_type_id
         JOIN op_volunteers AS v
-        ON v.shiftboard_id=vs.shiftboard_id
+        ON v.delete_volunteer=false
+        AND v.shiftboard_id=vs.shiftboard_id
         WHERE vs.remove_shift=false
         AND vs.shift_times_id=?
         ORDER BY v.playa_name`,
@@ -118,7 +124,9 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT *
         FROM op_volunteer_shifts
-        WHERE shift_position_id=? AND shift_times_id=? AND shiftboard_id=?`,
+        WHERE shift_position_id=?
+        AND shift_times_id=?
+        AND shiftboard_id=?`,
         [shiftPositionId, shiftTimesId, shiftboardId]
       );
       const dbShiftVolunteerFirst = dbShiftVolunteerList[0];
@@ -129,7 +137,9 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         await pool.query<RowDataPacket[]>(
           `UPDATE op_volunteer_shifts
           SET noshow=?, add_shift=true, remove_shift=false
-          WHERE shift_position_id=? AND shift_times_id=? AND shiftboard_id=?`,
+          WHERE shift_position_id=?
+          AND shift_times_id=?
+          AND shiftboard_id=?`,
           [noShow, shiftPositionId, shiftTimesId, shiftboardId]
         );
       } else {
@@ -141,9 +151,9 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         );
       }
 
-      return res.status(200).json({
-        statusCode: 200,
-        message: "OK",
+      return res.status(201).json({
+        statusCode: 201,
+        message: "Created",
       });
     }
 
