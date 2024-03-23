@@ -15,7 +15,8 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
       const [dbRoleList] = await pool.query<RowDataPacket[]>(
         `SELECT display, role, role_id
         FROM op_roles
-        WHERE delete_role=false AND role_id=?
+        WHERE delete_role=false
+        AND role_id=?
         ORDER BY role`,
         [roleId]
       );

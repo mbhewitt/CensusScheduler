@@ -24,7 +24,8 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT create_volunteer, email, emergency_contact, location, notes, phone, playa_name, shiftboard_id, world_name
         FROM op_volunteers
-        WHERE shiftboard_id=?
+        WHERE delete_volunteer=false
+        AND shiftboard_id=?
         ORDER BY playa_name`,
         [shiftboardId]
       );
