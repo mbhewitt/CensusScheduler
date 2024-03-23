@@ -352,7 +352,7 @@ export const VolunteerShifts = () => {
                   <ListItemIcon>
                     <Groups3Icon />
                   </ListItemIcon>
-                  <ListItemText>Shift volunteers</ListItemText>
+                  <ListItemText>View volunteers</ListItemText>
                 </MenuItem>
               </Link>
               <MenuItem

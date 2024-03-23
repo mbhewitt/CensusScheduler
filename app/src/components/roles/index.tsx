@@ -1,6 +1,7 @@
 import {
   Add as AddIcon,
   Delete as DeleteIcon,
+  Edit as EditIcon,
   Groups3 as Groups3Icon,
   MoreHoriz as MoreHorizIcon,
 } from "@mui/icons-material";
@@ -30,6 +31,7 @@ import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import { RolesDialogCreate } from "src/components/roles/RolesDialogCreate";
 import { RolesDialogDelete } from "src/components/roles/RolesDialogDelete";
+import { RolesDialogUpdate } from "src/components/roles/RolesDialogUpdate";
 import type { IResRoleItem } from "src/components/types";
 import {
   ROLE_BEHAVIORAL_STANDARDS_ID,
@@ -46,6 +48,14 @@ export const Roles = () => {
   const { data, error } = useSWR("/api/roles", fetcherGet);
   const { mutate } = useSWRConfig();
   const [isDialogCreateOpen, setIsDialogCreateOpen] = useState(false);
+  const [isDialogUpdateOpen, setIsDialogUpdateOpen] = useState({
+    isOpen: false,
+    role: {
+      display: true,
+      roleId: 0,
+      roleName: "",
+    },
+  });
   const [isDialogDeleteOpen, setIsDialogDeleteOpen] = useState({
     isOpen: false,
     role: {
@@ -72,9 +82,8 @@ export const Roles = () => {
     try {
       // update database
       // workaround to handle dynamic routing
-      await axios.patch(`/api/roles/${roleId}`, {
+      await axios.patch(`/api/roles/${roleId}/display`, {
         checked,
-        roleId,
       });
       mutate("/api/roles");
 
@@ -195,6 +204,19 @@ export const Roles = () => {
             </Link>
             <MenuItem
               onClick={() =>
+                setIsDialogUpdateOpen({
+                  isOpen: true,
+                  role: { display, roleId, roleName },
+                })
+              }
+            >
+              <ListItemIcon>
+                <EditIcon />
+              </ListItemIcon>
+              <ListItemText>Update</ListItemText>
+            </MenuItem>
+            <MenuItem
+              onClick={() =>
                 setIsDialogDeleteOpen({
                   isOpen: true,
                   role: { display, roleId, roleName },
@@ -255,6 +277,23 @@ export const Roles = () => {
       <RolesDialogCreate
         handleDialogCreateClose={() => setIsDialogCreateOpen(false)}
         isDialogCreateOpen={isDialogCreateOpen}
+        roleList={data}
+      />
+
+      {/* update dialog */}
+      <RolesDialogUpdate
+        handleDialogUpdateClose={() =>
+          setIsDialogUpdateOpen({
+            isOpen: false,
+            role: {
+              display: true,
+              roleId: 0,
+              roleName: "",
+            },
+          })
+        }
+        isDialogUpdateOpen={isDialogUpdateOpen.isOpen}
+        role={isDialogUpdateOpen.role}
         roleList={data}
       />
 
