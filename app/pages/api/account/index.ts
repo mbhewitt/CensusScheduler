@@ -65,7 +65,7 @@ const account = async (req: NextApiRequest, res: NextApiResponse) => {
       };
       const resAccount = await insertAccount();
 
-      return res.status(200).json(resAccount);
+      return res.status(201).json(resAccount);
     }
 
     // default

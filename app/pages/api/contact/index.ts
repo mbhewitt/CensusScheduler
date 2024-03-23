@@ -15,9 +15,9 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
         [email, message, name, to, isReplyWanted]
       );
 
-      return res.status(200).json({
-        statusCode: 200,
-        message: "OK",
+      return res.status(201).json({
+        statusCode: 201,
+        message: "Created",
       });
     }
 
