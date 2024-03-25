@@ -7,7 +7,7 @@ import {
   useReducer,
 } from "react";
 
-import { ACCOUNT_TYPE_ADMIN, SESSION_STATE_STORAGE } from "src/constants";
+import { SESSION_STATE_STORAGE } from "src/constants";
 import {
   ISessionAction,
   ISessionState,
@@ -25,16 +25,16 @@ interface ISessionProviderProps {
 export const SessionContext = createContext({} as ISessionProviderValue);
 
 const sessionInitial: ISessionState = {
-  developerMode: {
-    accountType: ACCOUNT_TYPE_ADMIN,
-    isAccountTypeEnabled: false,
-  },
   user: {
     email: "",
-    isBehavioralStandardsSigned: false,
-    isCoreCrew: false,
+    emergencyContact: "",
+    isVolunteerCreated: false,
+    location: "",
+    notes: "",
+    phone: "",
     playaName: "",
-    shiftboardId: "",
+    roleList: [],
+    shiftboardId: 0,
     worldName: "",
   },
   settings: {
@@ -43,10 +43,15 @@ const sessionInitial: ISessionState = {
 };
 
 export const SessionProvider = ({ children }: ISessionProviderProps) => {
+  // reducer
+  // --------------------
   const [sessionState, sessionDispatch] = useReducer(
     sessionReducer,
     sessionInitial
   );
+
+  // other hooks
+  // --------------------
   const sessionProviderValue = useMemo(
     () => ({
       sessionState,
@@ -55,6 +60,8 @@ export const SessionProvider = ({ children }: ISessionProviderProps) => {
     [sessionState, sessionDispatch]
   );
 
+  // side effects
+  // --------------------
   useEffect(() => {
     const sessionStateStorage = JSON.parse(
       sessionStorage.getItem("sessionState") ?? "{}"
@@ -72,6 +79,8 @@ export const SessionProvider = ({ children }: ISessionProviderProps) => {
     sessionStorage.setItem("sessionState", JSON.stringify(sessionState));
   }, [sessionState]);
 
+  // display
+  // --------------------
   return (
     <SessionContext.Provider value={sessionProviderValue}>
       {children}

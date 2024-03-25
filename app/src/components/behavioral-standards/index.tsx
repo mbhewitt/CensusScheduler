@@ -1,6 +1,6 @@
 import {
   Check as CheckIcon,
-  NotInterested as NotInterestedIcon,
+  Close as CloseIcon,
   Warning as WarningIcon,
 } from "@mui/icons-material";
 import {
@@ -20,17 +20,25 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
 import { useContext, useState } from "react";
+import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
+import { ErrorPage } from "src/components/general/ErrorPage";
+import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
-import { BEHAVIORAL_STANDARDS_SET } from "src/constants";
+import {
+  ROLE_BEHAVIORAL_STANDARDS_ID,
+  SESSION_BEHAVIORAL_STANDARDS,
+} from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import { fetcherTrigger } from "src/utils/fetcher";
+import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 import { signOut } from "src/utils/signOut";
 
 export const BehavioralStandards = () => {
+  // context
+  // --------------------
   const {
     sessionDispatch,
     sessionState: {
@@ -40,24 +48,38 @@ export const BehavioralStandards = () => {
   } = useContext(SessionContext);
 
   const { developerModeDispatch } = useContext(DeveloperModeContext);
-  const router = useRouter();
+
+  // state
+  // --------------------
   const [isSigned, setIsSigned] = useState(false);
-  const { shiftboardId } = router.query;
+
+  // fetching, mutation, and revalidation
+  // --------------------
+  const { data, error } = useSWR(
+    `/api/roles/${ROLE_BEHAVIORAL_STANDARDS_ID}`,
+    fetcherGet
+  );
   const { isMutating, trigger } = useSWRMutation(
     "/api/behavioral-standards",
     fetcherTrigger
   );
+
+  // other hooks
+  // --------------------
+  const router = useRouter();
+  const { shiftboardId } = router.query;
   const { enqueueSnackbar } = useSnackbar();
+
+  // logic
+  // --------------------
+  if (error) return <ErrorPage />;
+  if (!data) return <Loading />;
 
   const handleDecline = async () => {
     try {
       await trigger({
         body: { isBehavioralStandardsSigned: false, shiftboardId },
         method: "POST",
-      });
-      sessionDispatch({
-        payload: { isBehavioralStandardsSigned: false },
-        type: BEHAVIORAL_STANDARDS_SET,
       });
       enqueueSnackbar(
         <SnackbarText>
@@ -103,8 +125,11 @@ export const BehavioralStandards = () => {
         method: "POST",
       });
       sessionDispatch({
-        payload: { isBehavioralStandardsSigned: true },
-        type: BEHAVIORAL_STANDARDS_SET,
+        payload: {
+          roleId: ROLE_BEHAVIORAL_STANDARDS_ID,
+          roleName: data.roleName,
+        },
+        type: SESSION_BEHAVIORAL_STANDARDS,
       });
       enqueueSnackbar(
         <SnackbarText>
@@ -118,7 +143,7 @@ export const BehavioralStandards = () => {
           variant: "success",
         }
       );
-      router.push(`/volunteers/${shiftboardId}`);
+      router.push(`/account/${shiftboardId}`);
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(
@@ -136,6 +161,8 @@ export const BehavioralStandards = () => {
     }
   };
 
+  // display
+  // --------------------
   return (
     <>
       <Hero
@@ -484,11 +511,7 @@ export const BehavioralStandards = () => {
                 disabled={isMutating}
                 onClick={handleDecline}
                 startIcon={
-                  isMutating ? (
-                    <CircularProgress size="1rem" />
-                  ) : (
-                    <NotInterestedIcon />
-                  )
+                  isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
                 }
                 type="button"
                 variant="outlined"

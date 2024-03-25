@@ -281,9 +281,10 @@ CREATE TABLE `op_volunteers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-insert ignore into op_volunteers (shiftboard_id,playa_name,passcode) values (1,'Admin','123456');
+insert ignore into op_volunteers (shiftboard_id,playa_name,world_name,passcode) values (1,'Admin','Admin','123456');
 insert ignore into op_roles (role_id,role,display,role_src) values (1,'SuperAdmin',1,'tablet'),(2,'Admin',1,'tablet');
 insert ignore into op_volunteer_roles (shiftboard_id,role_id) values (1,1),(1,2);
+
 alter table op_volunteers add timestamp timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 alter table op_volunteer_shifts add timestamp timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 alter table op_shift_times add end_time timestamp,add start_time timestamp;

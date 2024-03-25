@@ -11,7 +11,7 @@ import { SnackbarProvider } from "notistack";
 
 import SnackbarButtonClose from "src/components/general/SnackbarButtonClose";
 import { Layout } from "src/components/layout/Layout";
-import { BURNING_MAN_BROWN, CENSUS_PINK } from "src/constants";
+import { COLOR_BURNING_MAN_BROWN, COLOR_CENSUS_PINK } from "src/constants";
 import { DeveloperModeProvider } from "src/state/developer-mode/context";
 import { EasterEggProvider } from "src/state/easter-egg/context";
 import { SessionProvider } from "src/state/session/context";
@@ -20,7 +20,6 @@ const rockwellFont = localFont({
   display: "swap",
   src: "../src/fonts/rockwell-regular.ttf",
 });
-
 const theme = createTheme({
   components: {
     MuiCssBaseline: {
@@ -45,7 +44,7 @@ const theme = createTheme({
         },
         p: {
           a: {
-            color: CENSUS_PINK,
+            color: COLOR_CENSUS_PINK,
             "&:hover": {
               textDecoration: "underline",
             },
@@ -134,10 +133,10 @@ const theme = createTheme({
   },
   palette: {
     primary: {
-      main: BURNING_MAN_BROWN,
+      main: COLOR_BURNING_MAN_BROWN,
     },
     secondary: {
-      main: CENSUS_PINK,
+      main: COLOR_CENSUS_PINK,
     },
   },
   typography: {
@@ -149,18 +148,17 @@ const theme = createTheme({
     h6: { fontFamily: rockwellFont.style.fontFamily },
   },
 });
-
 const StyledSnackbarProvider = styled(SnackbarProvider)`
   &.SnackbarContent-root {
     flex-wrap: nowrap;
   }
 `;
-
 const SnackbarAction = (snackbarKey: number | string) => (
   <SnackbarButtonClose snackbarKey={snackbarKey} />
 );
-
 const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps) => {
+  // display
+  // --------------------
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

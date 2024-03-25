@@ -1,18 +1,21 @@
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useContext } from "react";
 
-import { TAccountActions } from "src/components/types";
-import { ACCOUNT_TYPE_LIST } from "src/constants";
-import { SessionContext } from "src/state/session/context";
+import { ACCOUNT_TYPE_LIST, DEVELOPER_MODE_ACCOUNT_TYPE } from "src/constants";
+import { DeveloperModeContext } from "src/state/developer-mode/context";
 
 export const AccountType = () => {
+  // context
+  // --------------------
   const {
-    sessionDispatch,
-    sessionState: {
-      developerMode: { accountType },
+    developerModeDispatch,
+    developerModeState: {
+      accountType: { value },
     },
-  } = useContext(SessionContext);
+  } = useContext(DeveloperModeContext);
 
+  // display
+  // --------------------
   return (
     <FormControl fullWidth variant="standard">
       <InputLabel id="accountAction">Account type</InputLabel>
@@ -20,11 +23,12 @@ export const AccountType = () => {
         label="Account type"
         labelId="accountAction"
         onChange={(event) => {
-          sessionDispatch({
-            type: event.target.value as TAccountActions,
+          developerModeDispatch({
+            payload: { isEnabled: true, value: event.target.value },
+            type: DEVELOPER_MODE_ACCOUNT_TYPE,
           });
         }}
-        value={accountType}
+        value={value}
       >
         {ACCOUNT_TYPE_LIST.map(({ label, value }) => (
           <MenuItem key={`${value}`} value={value}>

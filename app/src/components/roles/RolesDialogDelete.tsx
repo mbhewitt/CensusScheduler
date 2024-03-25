@@ -1,7 +1,4 @@
-import {
-  Delete as DeleteIcon,
-  HighlightOff as HighlightOffIcon,
-} from "@mui/icons-material";
+import { Close as CloseIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import {
   Button,
   CircularProgress,
@@ -13,55 +10,75 @@ import {
   Typography,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import io from "socket.io-client";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
-import { IRoleVolunteerItem } from "src/components/types";
+import type { IResRoleItem, IResRoleVolunteerItem } from "src/components/types";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IRolesDialogDeleteProps {
   handleDialogDeleteClose: () => void;
   isDialogDeleteOpen: boolean;
-  role: {
-    name: string;
-  };
+  role: IResRoleItem;
 }
 
-const socket = io();
 export const RolesDialogDelete = ({
   handleDialogDeleteClose,
   isDialogDeleteOpen,
-  role: { name },
+  role: { roleId, roleName },
 }: IRolesDialogDeleteProps) => {
-  const { data, error } = useSWR(
-    name ? `/api/roles/${encodeURI(name)}` : null,
-    fetcherGet
+  // fetching, mutation, and revalidation
+  // --------------------
+  const { data, error } = useSWR(`/api/role-volunteers/${roleId}`, fetcherGet);
+  const { isMutating, trigger } = useSWRMutation(
+    `/api/roles/${roleId}`,
+    fetcherTrigger
   );
-  const { isMutating, trigger } = useSWRMutation("/api/roles", fetcherTrigger);
+  const { mutate } = useSWRConfig();
+
+  // other hooks
+  // --------------------
   const { enqueueSnackbar } = useSnackbar();
+
+  // logic
+  // --------------------
+  if (error)
+    return (
+      <DialogContainer
+        handleDialogClose={handleDialogDeleteClose}
+        isDialogOpen={isDialogDeleteOpen}
+        text="Delete role"
+      >
+        <ErrorAlert />
+      </DialogContainer>
+    );
+  if (!data)
+    return (
+      <DialogContainer
+        handleDialogClose={handleDialogDeleteClose}
+        isDialogOpen={isDialogDeleteOpen}
+        text="Delete role"
+      >
+        <Loading />
+      </DialogContainer>
+    );
 
   // handle role delete
   const handleRoleDelete = async () => {
     try {
       await trigger({
-        body: {
-          name,
-        },
         method: "DELETE",
       });
-      socket.emit("req-role-delete", {
-        name,
-      });
+      mutate("/api/roles");
 
       handleDialogDeleteClose();
       enqueueSnackbar(
         <SnackbarText>
-          <strong>{name}</strong> role has been deleted
+          <strong>{roleName}</strong> role has been deleted
         </SnackbarText>,
         {
           variant: "success",
@@ -84,27 +101,8 @@ export const RolesDialogDelete = ({
     }
   };
 
-  if (error)
-    return (
-      <DialogContainer
-        handleDialogClose={handleDialogDeleteClose}
-        isDialogOpen={isDialogDeleteOpen}
-        text="Delete role"
-      >
-        <ErrorAlert />
-      </DialogContainer>
-    );
-  if (!data)
-    return (
-      <DialogContainer
-        handleDialogClose={handleDialogDeleteClose}
-        isDialogOpen={isDialogDeleteOpen}
-        text="Delete role"
-      >
-        <Loading />
-      </DialogContainer>
-    );
-
+  // display
+  // --------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogDeleteClose}
@@ -115,13 +113,17 @@ export const RolesDialogDelete = ({
         <>
           <DialogContentText>
             <Typography component="span">
-              Before doing so, the <strong>{name}</strong> role must be removed
-              from the following volunteers:
+              Before doing so, the <strong>{roleName}</strong> role must be
+              removed from the following volunteers:
             </Typography>
           </DialogContentText>
           <List sx={{ pl: 2, listStyleType: "disc" }}>
             {data.map(
-              ({ playaName, shiftboardId, worldName }: IRoleVolunteerItem) => {
+              ({
+                playaName,
+                shiftboardId,
+                worldName,
+              }: IResRoleVolunteerItem) => {
                 return (
                   <ListItem
                     disablePadding
@@ -138,14 +140,16 @@ export const RolesDialogDelete = ({
       ) : (
         <DialogContentText>
           <Typography component="span">
-            Are you sure you want to delete <strong>{name}</strong> role?
+            Are you sure you want to delete <strong>{roleName}</strong> role?
           </Typography>
         </DialogContentText>
       )}
       <DialogActions>
         <Button
           disabled={isMutating}
-          startIcon={<HighlightOffIcon />}
+          startIcon={
+            isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
+          }
           onClick={handleDialogDeleteClose}
           type="button"
           variant="outlined"
@@ -153,7 +157,7 @@ export const RolesDialogDelete = ({
           Cancel
         </Button>
         <Button
-          disabled={(data && data.length > 0) || isMutating}
+          disabled={isMutating || (data && data.length > 0)}
           onClick={handleRoleDelete}
           startIcon={
             isMutating ? <CircularProgress size="1rem" /> : <DeleteIcon />

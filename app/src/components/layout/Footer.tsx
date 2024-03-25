@@ -14,19 +14,40 @@ import Link from "next/link";
 import { useContext } from "react";
 
 import { pageListAdmin, pageListDefault } from "src/components/layout/pageList";
+import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { EasterEggContext } from "src/state/easter-egg/context";
 import { SessionContext } from "src/state/session/context";
+import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
+import { checkIsCoreCrew } from "src/utils/checkIsCoreCrew";
 
 export const Footer = () => {
+  // context
+  // --------------------
+  const {
+    developerModeState: { accountType },
+  } = useContext(DeveloperModeContext);
   const {
     sessionState: {
-      settings: { isAuthenticated },
-      user: { isCoreCrew },
+      settings: { isAuthenticated: isAuthenticatedSession },
+      user: { roleList },
     },
   } = useContext(SessionContext);
   const { setIsEasterEggOpen } = useContext(EasterEggContext);
+
+  // other hooks
+  // --------------------
   const theme = useTheme();
 
+  // logic
+  // --------------------
+  const isAuthenticated = checkIsAuthenticated(
+    accountType,
+    isAuthenticatedSession
+  );
+  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
+
+  // display
+  // --------------------
   const pageListHalfCount = Math.ceil(pageListDefault.length / 2);
   const pageListHalfFirst = pageListDefault.slice(0, pageListHalfCount);
   const pageListHalfSecond = pageListDefault.slice(
@@ -159,7 +180,7 @@ export const Footer = () => {
               color: theme.palette.common.white,
             }}
           >
-            2024.E.00009.Prizmo
+            2024.U.00021.Prizmo
           </Typography>
         </Stack>
       </Container>

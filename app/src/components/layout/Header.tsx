@@ -28,36 +28,70 @@ import { useContext, useEffect, useState } from "react";
 import IdleTimer from "react-idle-timer";
 
 import { pageListAdmin, pageListDefault } from "src/components/layout/pageList";
-import { IDLE_MINUTES } from "src/constants";
+import { IDLE_MINUTES, ROLE_BEHAVIORAL_STANDARDS_ID } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
+import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
+import { checkIsCoreCrew } from "src/utils/checkIsCoreCrew";
+import { checkIsRoleExist } from "src/utils/checkIsRoleExist";
 import { signOut } from "src/utils/signOut";
 
 export const Header = () => {
-  const {
-    sessionDispatch,
-    sessionState: {
-      settings: { isAuthenticated },
-      user: {
-        isBehavioralStandardsSigned,
-        isCoreCrew,
-        playaName,
-        shiftboardId,
-        worldName,
-      },
-    },
-  } = useContext(SessionContext);
-
+  // context
+  // --------------------
   const {
     developerModeState: {
+      accountType,
       disableIdle: { isEnabled: isDisableIdleEnabled },
     },
     developerModeDispatch,
   } = useContext(DeveloperModeContext);
-  const router = useRouter();
+  const {
+    sessionDispatch,
+    sessionState: {
+      settings: { isAuthenticated: isAuthenticatedSession },
+      user: { playaName, roleList, shiftboardId, worldName },
+    },
+  } = useContext(SessionContext);
+
+  // state
+  // --------------------
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  // other hooks
+  // --------------------
+  const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
+
+  // side effects
+  // --------------------
+  const isBehavioralStandardsSigned = checkIsRoleExist(
+    ROLE_BEHAVIORAL_STANDARDS_ID,
+    roleList
+  );
+  const isAuthenticated = checkIsAuthenticated(
+    accountType,
+    isAuthenticatedSession
+  );
+
+  // if volunteer is signed in,
+  // did not sign behavioral standards agreement,
+  // and is not on behavioral standards agreement page
+  // then load behavioral standards agreement page
+  useEffect(() => {
+    if (
+      isAuthenticated &&
+      !isBehavioralStandardsSigned &&
+      !router.pathname.includes("behavioral-standards")
+    ) {
+      router.push(`/behavioral-standards/${shiftboardId}`);
+    }
+  }, [isAuthenticated, isBehavioralStandardsSigned, router, shiftboardId]);
+
+  // logic
+  // --------------------
+  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
 
   // handle sign out
   const handleSignOut = () => {
@@ -79,20 +113,6 @@ export const Header = () => {
   const handleDrawerClose = () => {
     setIsDrawerOpen(false);
   };
-
-  // if volunteer is signed in,
-  // did not sign behavioral standards agreement,
-  // and is not on behavioral standards agreement page
-  // then load behavioral standards agreement page
-  useEffect(() => {
-    if (
-      isAuthenticated &&
-      !isBehavioralStandardsSigned &&
-      !router.pathname.includes("behavioral-standards")
-    ) {
-      router.push(`/behavioral-standards/${shiftboardId}`);
-    }
-  }, [isAuthenticated, isBehavioralStandardsSigned, router, shiftboardId]);
 
   return (
     <>
@@ -190,7 +210,7 @@ export const Header = () => {
                 }
               >
                 <ListItem disablePadding>
-                  <Link href={`/volunteers/${shiftboardId}`}>
+                  <Link href={`/account/${shiftboardId}`}>
                     <ListItemButton>
                       <ListItemIcon sx={{ minWidth: "auto", pr: 2 }}>
                         <ManageAccountsIcon />

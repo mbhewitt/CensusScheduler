@@ -3,6 +3,8 @@ import Head from "next/head";
 import { Home } from "src/components/home";
 
 const HomePage = () => {
+  // display
+  // --------------------
   return (
     <>
       <Head>

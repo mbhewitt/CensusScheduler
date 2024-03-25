@@ -10,27 +10,6 @@ services:
     ports:
       - "3306:3306"
     restart: always
-  dnsmasq:
-    build:
-      context: dnsmasq
-      dockerfile: Dockerfile
-    container_name: census-dnsmasq
-    image: burning-man/census-dnsmasq
-    cap_add: ['NET_ADMIN']
-    ports:
-      - "192.168.11.11:53:53"
-      - "192.168.11.11:53:53/udp"
-    restart: always
-  httpd:
-    build:
-      context: httpd
-      dockerfile: Dockerfile
-    container_name: census-nginx
-    image: burning-man/census-nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    restart: always
   census:
     build:
       context: app

@@ -21,102 +21,64 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
-import io from "socket.io-client";
 import useSWR from "swr";
 
 import { DataTable } from "src/components/general/DataTable";
 import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
-import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import { RoleVolunteersDialogAdd } from "src/components/role-volunteers/RoleVolunteersDialogAdd";
 import { RoleVolunteersDialogRemove } from "src/components/role-volunteers/RoleVolunteersDialogRemove";
-import { IRoleVolunteerItem } from "src/components/types";
+import type { IResRoleVolunteerItem } from "src/components/types";
 import { fetcherGet } from "src/utils/fetcher";
+import {
+  setCellHeaderPropsCenter,
+  setCellPropsCenter,
+} from "src/utils/setCellPropsCenter";
 
-const socket = io();
 export const RoleVolunteers = () => {
+  // state
+  // --------------------
   const [isMounted, setIsMounted] = useState(false);
-  const router = useRouter();
-  const { roleName: roleNameQuery } = router.query;
-  const { data, error, mutate } = useSWR(
-    isMounted ? `/api/roles/${encodeURI(roleNameQuery as string)}` : null,
-    fetcherGet
-  );
   const [isDialogAddOpen, setIsDialogAddOpen] = useState(false);
   const [isDialogRemoveOpen, setIsDialogRemoveOpen] = useState({
     isOpen: false,
     volunteer: {
       playaName: "",
+      roleId: 0,
       roleName: "",
       shiftboardId: 0,
       worldName: "",
     },
   });
-  const { enqueueSnackbar } = useSnackbar();
 
+  // fetching, mutation, and revalidation
+  // --------------------
+  const router = useRouter();
+  const { roleId } = router.query;
+  const { data: dataRoleItem, error: errorRoleItem } = useSWR(
+    isMounted ? `/api/roles/${roleId}` : null,
+    fetcherGet
+  );
+  const { data: dataRoleVolunteerList, error: errorRoleVolunteerList } = useSWR(
+    isMounted ? `/api/role-volunteers/${roleId}` : null,
+    fetcherGet
+  );
+
+  // side effects
+  // --------------------
   useEffect(() => {
     if (router.isReady) {
       setIsMounted(true);
     }
   }, [router.isReady]);
 
-  // listen for socket events
-  useEffect(() => {
-    (async () => {
-      try {
-        await fetch("/api/socket");
-
-        socket.on(
-          "res-role-volunteer-add",
-          ({ playaName, roleName, shiftboardId, worldName }) => {
-            if (data && roleName === roleNameQuery) {
-              const dataMutate = structuredClone(data);
-              dataMutate.push({
-                playaName,
-                roleName,
-                shiftboardId,
-                worldName,
-              });
-
-              mutate(dataMutate);
-            }
-          }
-        );
-        socket.on("res-role-volunteer-remove", ({ shiftboardId }) => {
-          if (data) {
-            const dataMutate = structuredClone(data);
-            const roleVolunteerListNew = dataMutate.filter(
-              (roleVolunteerItem: IRoleVolunteerItem) =>
-                roleVolunteerItem.shiftboardId !== shiftboardId
-            );
-
-            mutate(roleVolunteerListNew);
-          }
-        });
-      } catch (error) {
-        if (error instanceof Error) {
-          enqueueSnackbar(
-            <SnackbarText>
-              <strong>{error.message}</strong>
-            </SnackbarText>,
-            {
-              persist: true,
-              variant: "error",
-            }
-          );
-        }
-
-        throw error;
-      }
-    })();
-  }, [data, enqueueSnackbar, mutate, roleNameQuery]);
-
-  if (error) return <ErrorPage />;
-  if (!data) return <Loading />;
+  // logic
+  // --------------------
+  if (errorRoleItem || errorRoleVolunteerList) return <ErrorPage />;
+  if (!dataRoleItem || !dataRoleVolunteerList) return <Loading />;
 
   // prepare datatable
   const columnList = [
@@ -138,11 +100,22 @@ export const RoleVolunteers = () => {
     },
     {
       name: "Actions",
-      options: { searchable: false, sort: false },
+      options: {
+        searchable: false,
+        setCellHeaderProps: setCellHeaderPropsCenter,
+        setCellProps: setCellPropsCenter,
+        sort: false,
+      },
     },
   ];
-  const dataTable = data.map(
-    ({ playaName, roleName, shiftboardId, worldName }: IRoleVolunteerItem) => {
+  const dataTable = dataRoleVolunteerList.map(
+    ({
+      playaName,
+      roleId,
+      roleName,
+      shiftboardId,
+      worldName,
+    }: IResRoleVolunteerItem) => {
       return [
         shiftboardId,
         playaName,
@@ -152,7 +125,7 @@ export const RoleVolunteers = () => {
           key={`${shiftboardId}-menu`}
           MenuList={
             <MenuList>
-              <Link href={`/volunteers/${shiftboardId}`}>
+              <Link href={`/account/${shiftboardId}`}>
                 <MenuItem>
                   <ListItemIcon>
                     <ManageAccountsIcon />
@@ -166,6 +139,7 @@ export const RoleVolunteers = () => {
                     isOpen: true,
                     volunteer: {
                       playaName,
+                      roleId,
                       roleName,
                       shiftboardId,
                       worldName,
@@ -186,6 +160,8 @@ export const RoleVolunteers = () => {
   );
   const optionListCustom = { filter: false };
 
+  // display
+  // --------------------
   return (
     <>
       <Hero
@@ -237,7 +213,7 @@ export const RoleVolunteers = () => {
           >
             <Box>
               <Typography component="h2" variant="h4">
-                {roleNameQuery}
+                {dataRoleItem.roleName}
               </Typography>
             </Box>
             <Button
@@ -263,8 +239,9 @@ export const RoleVolunteers = () => {
       <RoleVolunteersDialogAdd
         handleDialogAddClose={() => setIsDialogAddOpen(false)}
         isDialogAddOpen={isDialogAddOpen}
-        roleName={roleNameQuery as string}
-        roleVolunteerList={data}
+        roleId={roleId}
+        roleName={dataRoleItem.roleName}
+        roleVolunteerList={dataRoleVolunteerList}
       />
 
       {/* remove dialog */}
@@ -274,6 +251,7 @@ export const RoleVolunteers = () => {
             isOpen: false,
             volunteer: {
               playaName: "",
+              roleId: 0,
               roleName: "",
               shiftboardId: 0,
               worldName: "",

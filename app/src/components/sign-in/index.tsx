@@ -29,17 +29,16 @@ import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
-import type { IVolunteerItem } from "src/components/types";
-import { SIGN_IN } from "src/constants";
+import type {
+  IResVolunteerDropdownItem,
+  IVolunteerOption,
+} from "src/components/types";
+import { SESSION_SIGN_IN } from "src/constants";
 import { SessionContext } from "src/state/session/context";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
-interface IVolunteer {
-  label: string;
-  shiftboardId: string;
-}
 interface IFormValues {
-  volunteer: null | IVolunteer;
+  volunteer: null | IVolunteerOption;
   passcode: string;
 }
 
@@ -48,23 +47,38 @@ const defaultValues: IFormValues = {
   passcode: "",
 };
 export const SignIn = () => {
+  // context
+  // --------------------
   const { sessionDispatch } = useContext(SessionContext);
-  const { data, error } = useSWR("/api/volunteers?filter=all", fetcherGet);
+
+  // state
+  // --------------------
+  const [isPasscodeVisible, setIsPasscodeVisible] = useState(false);
+
+  // fetching, mutation, and revalidation
+  // --------------------
+  const { data, error } = useSWR("/api/volunteers/dropdown", fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     "/api/sign-in",
     fetcherTrigger
   );
+
+  // other hooks
+  // --------------------
   const { control, handleSubmit, reset } = useForm({
     defaultValues,
   });
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
   const theme = useTheme();
-  const [isPasscodeVisible, setIsPasscodeVisible] = useState(false);
 
+  // logic
+  // --------------------
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
+  // form submission
+  // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
       const dataVolunteerItem = await trigger({
@@ -75,7 +89,7 @@ export const SignIn = () => {
         method: "POST",
       });
 
-      // if response has a 404 status code
+      // if response has 404 status code
       // then display an error message
       if (dataVolunteerItem.statusCode === 404) {
         enqueueSnackbar(
@@ -92,7 +106,7 @@ export const SignIn = () => {
       } else {
         sessionDispatch({
           payload: dataVolunteerItem,
-          type: SIGN_IN,
+          type: SESSION_SIGN_IN,
         });
         reset(defaultValues);
         enqueueSnackbar(
@@ -125,6 +139,8 @@ export const SignIn = () => {
     }
   };
 
+  // display
+  // --------------------
   return (
     <>
       <Hero
@@ -158,9 +174,9 @@ export const SignIn = () => {
                     <Autocomplete
                       {...field}
                       fullWidth
-                      isOptionEqualToValue={(option, value: IVolunteer) =>
+                      isOptionEqualToValue={(option, value: IVolunteerOption) =>
                         option.shiftboardId === value.shiftboardId ||
-                        value.shiftboardId === ""
+                        value.shiftboardId === 0
                       }
                       onChange={(_, data) => field.onChange(data)}
                       options={data.map(
@@ -168,7 +184,7 @@ export const SignIn = () => {
                           playaName,
                           shiftboardId,
                           worldName,
-                        }: IVolunteerItem) => ({
+                        }: IResVolunteerDropdownItem) => ({
                           label: `${playaName} "${worldName}"`,
                           shiftboardId,
                         })
@@ -197,7 +213,6 @@ export const SignIn = () => {
                       <TextField
                         {...field}
                         autoComplete="off"
-                        disabled={isMutating}
                         fullWidth
                         label="Passcode"
                         required

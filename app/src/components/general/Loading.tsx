@@ -1,6 +1,8 @@
 import { CircularProgress, Container } from "@mui/material";
 
 export const Loading = () => {
+  // display
+  // --------------------
   return (
     <Container
       component="main"

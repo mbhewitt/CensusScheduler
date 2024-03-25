@@ -16,15 +16,6 @@ import {
   Switch,
   Typography,
 } from "@mui/material";
-import {
-  blue,
-  green,
-  orange,
-  purple,
-  red,
-  teal,
-  yellow,
-} from "@mui/material/colors";
 import { useTheme } from "@mui/material/styles";
 import dayjs from "dayjs";
 import Link from "next/link";
@@ -40,45 +31,60 @@ import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { SnackbarText } from "src/components/general/SnackbarText";
-import type { IVolunteerShiftItem } from "src/components/types";
-import { VolunteerShiftsDialogAdd } from "src/components/volunteer-shifts/VolunteerShiftsDialogAdd";
+import type {
+  IResVolunteerShiftItem,
+  ISwitchValues,
+} from "src/components/types";
 import { VolunteerShiftsDialogRemove } from "src/components/volunteer-shifts/VolunteerShiftsDialogRemove";
 import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import { checkInGet } from "src/utils/checkInGet";
+import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
+import { checkIsCoreCrew } from "src/utils/checkIsCoreCrew";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
-
-interface ISwitchValues {
-  checked: boolean;
-  position: string;
-  shiftPositionId: string;
-}
+import { formatDateName, formatTime } from "src/utils/formatDateTime";
+import { getCheckInType } from "src/utils/getCheckInType";
+import { getColorMap } from "src/utils/getColorMap";
+import {
+  setCellHeaderPropsCenter,
+  setCellPropsCenter,
+} from "src/utils/setCellPropsCenter";
 
 const socket = io();
 export const VolunteerShifts = () => {
-  const {
-    sessionState: {
-      settings: { isAuthenticated },
-      user: { isCoreCrew },
-    },
-  } = useContext(SessionContext);
+  // context
+  // --------------------
   const {
     developerModeState: {
+      accountType,
       dateTime: { value: dateTimeValue },
     },
   } = useContext(DeveloperModeContext);
+  const {
+    sessionState: {
+      settings: { isAuthenticated: isAuthenticatedSession },
+      user: { roleList, playaName, worldName },
+    },
+  } = useContext(SessionContext);
+
+  // state
+  // --------------------
   const [isMounted, setIsMounted] = useState(false);
-  const [isDialogAddOpen, setIsDialogAddOpen] = useState(false);
   const [isDialogRemoveOpen, setIsDialogRemoveOpen] = useState({
     isOpen: false,
     shift: {
-      day: "",
-      time: "",
-      position: "",
-      shiftPositionId: "",
+      date: "",
+      dateName: "",
+      endTime: "",
+      positionName: "",
+      shiftPositionId: 0,
+      shiftTimesId: 0,
+      startTime: "",
     },
   });
+
+  // fetching, mutation, and revalidation
+  // --------------------
   const router = useRouter();
   const { shiftboardId } = router.query;
   const { data, error, mutate } = useSWR(
@@ -89,76 +95,49 @@ export const VolunteerShifts = () => {
     `/api/volunteer-shifts/${shiftboardId}`,
     fetcherTrigger
   );
+
+  // other hooks
+  // --------------------
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
 
-  // listen for socket events
+  // side effects
+  // --------------------
   useEffect(() => {
+    // listen for socket events
     (async () => {
       try {
         await fetch("/api/socket");
 
         socket.on(
-          "res-shift-volunteer-add",
-          ({
-            date,
-            dateName,
-            endTime,
-            noShow,
-            position,
-            shit,
-            shiftId,
-            shiftPositionId,
-            startTime,
-          }) => {
-            if (data) {
-              const dataMutate = structuredClone(data);
-              dataMutate.volunteerShiftList.push({
-                date,
-                dateName,
-                endTime,
-                noShow,
-                position,
-                shit,
-                shiftId,
-                shiftPositionId,
-                startTime,
-              });
-
-              mutate(dataMutate);
-            }
-          }
-        );
-        socket.on(
           "res-check-in-toggle",
           ({
             checked,
-            shiftPositionId,
+            shiftTimesId,
           }: {
             checked: boolean;
-            shiftPositionId: string;
+            shiftTimesId: number;
           }) => {
             if (data) {
               const dataMutate = structuredClone(data);
-              const volunteerShiftItemUpdate =
-                dataMutate.volunteerShiftList.find(
-                  (volunteerShiftItem: IVolunteerShiftItem) =>
-                    volunteerShiftItem.shiftPositionId === shiftPositionId
-                );
-              if (volunteerShiftItemUpdate) {
-                volunteerShiftItemUpdate.noShow = checked ? "" : "Yes";
+              const volunteerShiftItemFound = dataMutate.find(
+                (volunteerShiftItem: IResVolunteerShiftItem) =>
+                  volunteerShiftItem.shiftTimesId === shiftTimesId
+              );
+              if (volunteerShiftItemFound) {
+                volunteerShiftItemFound.noShow = checked ? "" : "Yes";
               }
 
               mutate(dataMutate);
             }
           }
         );
-        socket.on("res-shift-volunteer-remove", ({ shiftPositionId }) => {
+        socket.on("res-shift-volunteer-remove", ({ shiftTimesId }) => {
           if (data) {
             const dataMutate = structuredClone(data);
-            const volunteerShiftListNew = dataMutate.volunteerShiftList.filter(
-              (volunteerShiftItem: IVolunteerShiftItem) =>
-                volunteerShiftItem.shiftPositionId !== shiftPositionId
+            const volunteerShiftListNew = dataMutate.filter(
+              (volunteerShiftItem: IResVolunteerShiftItem) =>
+                volunteerShiftItem.shiftTimesId !== shiftTimesId
             );
             dataMutate.volunteerShiftList = volunteerShiftListNew;
 
@@ -182,13 +161,14 @@ export const VolunteerShifts = () => {
       }
     })();
   }, [data, enqueueSnackbar, mutate]);
-
   useEffect(() => {
     if (router.isReady) {
       setIsMounted(true);
     }
   }, [router.isReady]);
 
+  // logic
+  // --------------------
   if (error)
     return (
       <>
@@ -198,21 +178,39 @@ export const VolunteerShifts = () => {
         <ErrorAlert />
       </>
     );
-  if (!data) return <Loading />;
+  if (!data)
+    return (
+      <>
+        <Typography component="h2" sx={{ mb: 1 }} variant="h4">
+          Shifts
+        </Typography>
+        <Loading />
+      </>
+    );
 
-  const { playaName, worldName } = data;
+  const isAuthenticated = checkIsAuthenticated(
+    accountType,
+    isAuthenticatedSession
+  );
+  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
+
   // handle check in toggle
   const handleCheckInToggle = async ({
     checked,
-    position,
+    playaName,
+    positionName,
+    shiftboardId,
     shiftPositionId,
+    shiftTimesId,
+    worldName,
   }: ISwitchValues) => {
     try {
       await trigger({
         body: {
           checked,
-          shiftPositionId,
           shiftboardId,
+          shiftPositionId,
+          shiftTimesId,
         },
         method: "PATCH",
       });
@@ -220,6 +218,7 @@ export const VolunteerShifts = () => {
         checked,
         shiftboardId,
         shiftPositionId,
+        shiftTimesId,
       });
 
       enqueueSnackbar(
@@ -227,7 +226,7 @@ export const VolunteerShifts = () => {
           <strong>
             {playaName} &quot;{worldName}&quot;
           </strong>{" "}
-          for <strong>{position}</strong> has{" "}
+          for <strong>{positionName}</strong> has{" "}
           <strong>checked {checked ? "in" : "out"}</strong>
         </SnackbarText>,
         {
@@ -252,33 +251,7 @@ export const VolunteerShifts = () => {
   };
 
   // prepare datatable
-  const colorList = [
-    red[100],
-    orange[100],
-    yellow[100],
-    green[100],
-    teal[100],
-    blue[100],
-    purple[100],
-  ];
-  let colorIndexCurrent = 0;
-  const colorMap = data.volunteerShiftList.reduce(
-    (
-      shiftListTotal: { [key: string]: string },
-      { position }: { position: string }
-    ) => {
-      const shiftListTotalNew = structuredClone(shiftListTotal);
-
-      if (!shiftListTotalNew[position]) {
-        shiftListTotalNew[position] = colorList[colorIndexCurrent];
-        colorIndexCurrent += 1;
-      }
-
-      return shiftListTotalNew;
-    },
-    {}
-  );
-
+  const colorMapDisplay = getColorMap(data);
   const columnList = [
     {
       name: "Date",
@@ -299,25 +272,40 @@ export const VolunteerShifts = () => {
     { name: "Position", options: { filter: false, sortThirdClickReset: true } },
     {
       name: "Check in",
-      options: { filter: false, searchable: false, sort: false },
+      options: {
+        filter: false,
+        searchable: false,
+        setCellHeaderProps: setCellHeaderPropsCenter,
+        setCellProps: setCellPropsCenter,
+        sort: false,
+      },
     },
-    { name: "", options: { filter: false, searchable: false, sort: false } },
+    {
+      name: "Actions",
+      options: {
+        filter: false,
+        searchable: false,
+        setCellHeaderProps: setCellHeaderPropsCenter,
+        setCellProps: setCellPropsCenter,
+        sort: false,
+      },
+    },
   ];
-  const dataTable = data.volunteerShiftList.map(
+  const dataTable = data.map(
     ({
+      category,
       date,
       dateName,
       endTime,
       noShow,
-      position,
-      shift,
-      shiftId,
+      positionName,
       shiftPositionId,
+      shiftTimesId,
       startTime,
-    }: IVolunteerShiftItem) => {
+    }: IResVolunteerShiftItem) => {
       // evaluate the check-in type and available features
-      const checkInType = checkInGet({
-        dateTime: dateTimeValue,
+      const checkInType = getCheckInType({
+        dateTime: dayjs(dateTimeValue),
         endTime: dayjs(endTime),
         startTime: dayjs(startTime),
       });
@@ -345,13 +333,13 @@ export const VolunteerShifts = () => {
       }
 
       return [
-        `${dateName} ${date}`,
-        shift,
-        position,
+        formatDateName(date, dateName),
+        formatTime(startTime, endTime),
+        positionName,
         <Chip
-          key={`${position}-chip`}
-          label={position}
-          sx={{ backgroundColor: colorMap[position] }}
+          key={`${shiftTimesId}${shiftPositionId}-chip`}
+          label={positionName}
+          sx={{ backgroundColor: colorMapDisplay[category] }}
         />,
         <Switch
           checked={noShow === ""}
@@ -359,8 +347,12 @@ export const VolunteerShifts = () => {
           onChange={(event) =>
             handleCheckInToggle({
               checked: event.target.checked,
-              position,
+              playaName,
+              positionName,
+              shiftboardId: Number(shiftboardId),
               shiftPositionId,
+              shiftTimesId,
+              worldName,
             })
           }
           key={`${shiftboardId}-switch`}
@@ -370,12 +362,12 @@ export const VolunteerShifts = () => {
           key={`${shiftboardId}-menu`}
           MenuList={
             <MenuList>
-              <Link href={`/shifts/shift-volunteers/${shiftId}`}>
+              <Link href={`/shifts/shift-volunteers/${shiftTimesId}`}>
                 <MenuItem>
                   <ListItemIcon>
                     <Groups3Icon />
                   </ListItemIcon>
-                  <ListItemText>Shift volunteers</ListItemText>
+                  <ListItemText>View volunteers</ListItemText>
                 </MenuItem>
               </Link>
               <MenuItem
@@ -384,10 +376,13 @@ export const VolunteerShifts = () => {
                   setIsDialogRemoveOpen({
                     isOpen: true,
                     shift: {
-                      day: `${dateName} ${date}`,
-                      time: shift,
-                      position,
+                      date,
+                      dateName,
+                      endTime,
+                      positionName,
                       shiftPositionId,
+                      shiftTimesId,
+                      startTime,
                     },
                   })
                 }
@@ -421,6 +416,8 @@ export const VolunteerShifts = () => {
     },
   };
 
+  // display
+  // --------------------
   return (
     <>
       <Stack
@@ -433,7 +430,9 @@ export const VolunteerShifts = () => {
           Shifts
         </Typography>
         <Button
-          onClick={() => setIsDialogAddOpen(true)}
+          onClick={() => {
+            router.push("/shifts");
+          }}
           startIcon={<EventAvailableIcon />}
           type="button"
           variant="contained"
@@ -448,25 +447,19 @@ export const VolunteerShifts = () => {
         optionListCustom={optionListCustom}
       />
 
-      {/* add dialog */}
-      <VolunteerShiftsDialogAdd
-        handleDialogAddClose={() => setIsDialogAddOpen(false)}
-        isDialogAddOpen={isDialogAddOpen}
-        playaName={playaName}
-        shiftboardId={shiftboardId}
-        worldName={worldName}
-      />
-
       {/* remove dialog */}
       <VolunteerShiftsDialogRemove
         handleDialogRemoveClose={() =>
           setIsDialogRemoveOpen({
             isOpen: false,
             shift: {
-              day: "",
-              time: "",
-              position: "",
-              shiftPositionId: "",
+              date: "",
+              dateName: "",
+              endTime: "",
+              positionName: "",
+              shiftPositionId: 0,
+              shiftTimesId: 0,
+              startTime: "",
             },
           })
         }

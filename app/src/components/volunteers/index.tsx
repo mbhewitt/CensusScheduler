@@ -28,17 +28,13 @@ import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { Hero } from "src/components/layout/Hero";
-import type { IVolunteerShiftCountItem } from "src/components/types";
+import type { IResVolunteerShiftCountItem } from "src/components/types";
 import { fetcherGet } from "src/utils/fetcher";
+import {
+  setCellHeaderPropsCenter,
+  setCellPropsCenter,
+} from "src/utils/setCellPropsCenter";
 
-const setCellHeaderPropsCenter = () => ({
-  className: "center",
-});
-const setCellPropsCenter = () => ({
-  style: {
-    textAlign: "center",
-  },
-});
 const sortCompareShiftCount = (order: string) => {
   return (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -56,9 +52,16 @@ const sortCompareShiftCount = (order: string) => {
 };
 
 export const Volunteers = () => {
+  // fetching, mutation, and revalidation
+  // --------------------
   const { data, error } = useSWR("/api/volunteers", fetcherGet);
+
+  // other hooks
+  // --------------------
   const theme = useTheme();
 
+  // logic
+  // --------------------
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
@@ -181,6 +184,8 @@ export const Volunteers = () => {
       name: "Actions",
       options: {
         filter: false,
+        setCellHeaderProps: setCellHeaderPropsCenter,
+        setCellProps: setCellPropsCenter,
         sort: false,
       },
     },
@@ -194,7 +199,7 @@ export const Volunteers = () => {
       remainingCount,
       shiftboardId,
       worldName,
-    }: IVolunteerShiftCountItem) => {
+    }: IResVolunteerShiftCountItem) => {
       return [
         shiftboardId,
         playaName,
@@ -224,7 +229,7 @@ export const Volunteers = () => {
           key={`${shiftboardId}-menu`}
           MenuList={
             <MenuList>
-              <Link href={`/volunteers/${shiftboardId}`}>
+              <Link href={`/account/${shiftboardId}`}>
                 <MenuItem>
                   <ListItemIcon>
                     <ManageAccountsIcon />
@@ -240,6 +245,8 @@ export const Volunteers = () => {
   );
   const optionListCustom = {};
 
+  // display
+  // --------------------
   return (
     <>
       <Hero

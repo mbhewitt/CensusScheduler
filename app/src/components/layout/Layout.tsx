@@ -6,25 +6,24 @@ import { Footer } from "src/components/layout/Footer";
 import { Header } from "src/components/layout/Header";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { EasterEggContext } from "src/state/easter-egg/context";
-import { SessionContext } from "src/state/session/context";
 
 interface ILayoutProps {
   children: ReactNode;
 }
 
 export const Layout = ({ children }: ILayoutProps) => {
-  const {
-    sessionState: {
-      developerMode: { isAccountTypeEnabled },
-    },
-  } = useContext(SessionContext);
+  // context
+  // --------------------
   const {
     developerModeState: {
+      accountType: { isEnabled: isAccountTypeEnabled },
       dateTime: { isEnabled: isDateTimeEnabled },
     },
   } = useContext(DeveloperModeContext);
   const { isEasterEggOpen } = useContext(EasterEggContext);
 
+  // display
+  // --------------------
   return (
     <>
       {isEasterEggOpen ? (

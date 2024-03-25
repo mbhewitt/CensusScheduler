@@ -8,7 +8,7 @@ import {
   useReducer,
 } from "react";
 
-import { DEVELOPER_MODE_SET } from "src/constants";
+import { DEVELOPER_MODE_STATE_STORAGE } from "src/constants";
 import {
   developerModeReducer,
   IDeveloperModeAction,
@@ -27,10 +27,14 @@ export const DeveloperModeContext = createContext(
   {} as IDeveloperModeProviderValue
 );
 
-const developerModeInitial = {
+const developerModeInitial: IDeveloperModeState = {
+  accountType: {
+    isEnabled: false,
+    value: "",
+  },
   dateTime: {
     isEnabled: false,
-    value: dayjs(),
+    value: dayjs().toISOString(),
   },
   disableIdle: {
     isEnabled: false,
@@ -40,15 +44,22 @@ const developerModeInitial = {
 export const DeveloperModeProvider = ({
   children,
 }: IDeveloperModeProviderProps) => {
+  // reducer
+  // --------------------
   const [developerModeState, developerModeDispatch] = useReducer(
     developerModeReducer,
     developerModeInitial
   );
+
+  // other hooks
+  // --------------------
   const developerModeProviderValue = useMemo(
     () => ({ developerModeState, developerModeDispatch }),
     [developerModeState, developerModeDispatch]
   );
 
+  // side effects
+  // --------------------
   useEffect(() => {
     const developerModeStateStorage = JSON.parse(
       sessionStorage.getItem("developerModeState") ?? "{}"
@@ -62,12 +73,13 @@ export const DeveloperModeProvider = ({
     // if developer mode state is stored in session storage
     // then update context state with developer mode state
     if (
+      developerModeStateStorage.accountType?.isEnabled ||
       developerModeStateStorage.dateTime?.isEnabled ||
       developerModeStateStorage.disableIdle?.isEnabled
     ) {
       developerModeDispatch({
         payload: developerModeStateStorage,
-        type: DEVELOPER_MODE_SET,
+        type: DEVELOPER_MODE_STATE_STORAGE,
       });
     }
   }, []);
@@ -78,6 +90,8 @@ export const DeveloperModeProvider = ({
     );
   }, [developerModeState]);
 
+  // display
+  // --------------------
   return (
     <DeveloperModeContext.Provider value={developerModeProviderValue}>
       {children}

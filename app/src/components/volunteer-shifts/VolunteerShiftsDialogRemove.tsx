@@ -1,6 +1,6 @@
 import {
+  Close as CloseIcon,
   EventBusy as EventBusyIcon,
-  HighlightOff as HighlightOffIcon,
 } from "@mui/icons-material";
 import {
   Button,
@@ -16,15 +16,19 @@ import useSWRMutation from "swr/mutation";
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { fetcherTrigger } from "src/utils/fetcher";
+import { formatDateName, formatTime } from "src/utils/formatDateTime";
 
 interface IVolunteerShiftsDialogRemoveProps {
   handleDialogRemoveClose: () => void;
   isDialogRemoveOpen: boolean;
   shift: {
-    day: string;
-    time: string;
-    position: string;
-    shiftPositionId: string;
+    date: string;
+    dateName: string;
+    endTime: string;
+    positionName: string;
+    shiftPositionId: number;
+    shiftTimesId: number;
+    startTime: string;
   };
   shiftboardId: string | string[] | undefined;
 }
@@ -33,31 +37,47 @@ const socket = io();
 export const VolunteerShiftsDialogRemove = ({
   handleDialogRemoveClose,
   isDialogRemoveOpen,
-  shift: { day, time, position, shiftPositionId },
+  shift: {
+    date,
+    dateName,
+    endTime,
+    positionName,
+    shiftPositionId,
+    shiftTimesId,
+    startTime,
+  },
   shiftboardId,
 }: IVolunteerShiftsDialogRemoveProps) => {
+  // fetching, mutation, and revalidation
+  // --------------------
   const { isMutating, trigger } = useSWRMutation(
     `/api/volunteer-shifts/${shiftboardId}`,
     fetcherTrigger
   );
+
+  // other hooks
+  // --------------------
   const { enqueueSnackbar } = useSnackbar();
 
+  // logic
+  // --------------------
   const handleVolunteerRemove = async () => {
     try {
       await trigger({
-        body: { shiftboardId, shiftPositionId },
+        body: { shiftPositionId, shiftTimesId, shiftboardId },
         method: "DELETE",
       });
       socket.emit("req-shift-volunteer-remove", {
         shiftboardId,
-        shiftPositionId,
+        shiftTimesId,
       });
 
       handleDialogRemoveClose();
       enqueueSnackbar(
         <SnackbarText>
-          <strong>{day}</strong> at <strong>{time}</strong> for{" "}
-          <strong>{position}</strong> has been removed
+          <strong>{formatDateName(date, dateName)}</strong> at{" "}
+          <strong>{formatTime(startTime, endTime)}</strong> for{" "}
+          <strong>{positionName}</strong> has been removed
         </SnackbarText>,
         {
           variant: "success",
@@ -80,6 +100,8 @@ export const VolunteerShiftsDialogRemove = ({
     }
   };
 
+  // display
+  // --------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogRemoveClose}
@@ -88,14 +110,18 @@ export const VolunteerShiftsDialogRemove = ({
     >
       <DialogContentText>
         <Typography component="span">
-          Are you sure you want to remove <strong>{day}</strong> at{" "}
-          <strong>{time}</strong> for <strong>{position}</strong>?
+          Are you sure you want to remove{" "}
+          <strong>{formatDateName(date, dateName)}</strong> at{" "}
+          <strong>{formatTime(startTime, endTime)}</strong> for{" "}
+          <strong>{positionName}</strong>?
         </Typography>
       </DialogContentText>
       <DialogActions>
         <Button
           disabled={isMutating}
-          startIcon={<HighlightOffIcon />}
+          startIcon={
+            isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
+          }
           onClick={handleDialogRemoveClose}
           type="button"
           variant="outlined"

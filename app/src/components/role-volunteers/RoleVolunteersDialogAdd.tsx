@@ -1,5 +1,5 @@
 import {
-  HighlightOff as HighlightOffIcon,
+  Close as CloseIcon,
   PersonAdd as PersonAddIcon,
 } from "@mui/icons-material";
 import {
@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import io from "socket.io-client";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
@@ -19,49 +18,51 @@ import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
-import type { IVolunteerItem } from "src/components/types";
+import type {
+  IResRoleVolunteerItem,
+  IResVolunteerDropdownItem,
+  IVolunteerOption,
+} from "src/components/types";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
-interface IVolunteer {
-  label: string;
-  shiftboardId: string;
-}
 interface IFormValues {
-  volunteer: null | IVolunteer;
-}
-interface IRoleVolunteerItem {
-  roleName: string;
-  playaName: string;
-  shiftboardId: number;
-  worldName: string;
+  volunteer: null | IVolunteerOption;
 }
 interface IRoleVolunteersDialogAddProps {
   handleDialogAddClose: () => void;
   isDialogAddOpen: boolean;
+  roleId: string | string[] | undefined;
   roleName: string;
-  roleVolunteerList: IRoleVolunteerItem[];
+  roleVolunteerList: IResRoleVolunteerItem[];
 }
 
-const socket = io();
 const defaultValues: IFormValues = {
   volunteer: null,
 };
 export const RoleVolunteersDialogAdd = ({
   handleDialogAddClose,
   isDialogAddOpen,
+  roleId,
   roleName,
   roleVolunteerList,
 }: IRoleVolunteersDialogAddProps) => {
-  const { data, error } = useSWR("/api/volunteers?filter=all", fetcherGet);
+  // fetching, mutation, and revalidation
+  // --------------------
+  const { data, error } = useSWR("/api/volunteers/dropdown", fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
-    `/api/roles/${roleName}`,
+    `/api/role-volunteers/${roleId}`,
     fetcherTrigger
   );
+
+  // other hooks
+  // --------------------
   const { control, handleSubmit, reset } = useForm({
     defaultValues,
   });
   const { enqueueSnackbar } = useSnackbar();
 
+  // logic
+  // --------------------
   if (error)
     return (
       <DialogContainer
@@ -83,16 +84,18 @@ export const RoleVolunteersDialogAdd = ({
       </DialogContainer>
     );
 
-  // handle form submission
+  // form submission
+  // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
       const roleVolunteerAdd = data.find(
-        (dataVolunteerItem: IVolunteerItem) =>
+        (dataVolunteerItem: IResVolunteerDropdownItem) =>
           dataVolunteerItem.shiftboardId === dataForm.volunteer?.shiftboardId
       );
       const isRoleVolunteerAvailable = roleVolunteerList.some(
         ({ shiftboardId }) => shiftboardId === roleVolunteerAdd.shiftboardId
       );
+
       // if the role volunteer has been added already
       // then display an error
       if (isRoleVolunteerAvailable) {
@@ -111,18 +114,15 @@ export const RoleVolunteersDialogAdd = ({
         );
         return;
       }
+
       // update database
       await trigger({
-        body: { shiftboardId: roleVolunteerAdd.shiftboardId },
+        body: {
+          shiftboardId: dataForm.volunteer?.shiftboardId,
+        },
         method: "POST",
       });
-      // emit shift update
-      socket.emit("req-role-volunteer-add", {
-        playaName: roleVolunteerAdd.playaName,
-        roleName,
-        shiftboardId: roleVolunteerAdd.shiftboardId,
-        worldName: roleVolunteerAdd.worldName,
-      });
+
       handleDialogAddClose();
       reset(defaultValues);
       enqueueSnackbar(
@@ -153,6 +153,8 @@ export const RoleVolunteersDialogAdd = ({
     }
   };
 
+  // display
+  // --------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogAddClose}
@@ -167,13 +169,17 @@ export const RoleVolunteersDialogAdd = ({
             <Autocomplete
               {...field}
               fullWidth
-              isOptionEqualToValue={(option, value: IVolunteer) =>
+              isOptionEqualToValue={(option, value: IVolunteerOption) =>
                 option.shiftboardId === value.shiftboardId ||
-                value.shiftboardId === ""
+                value.shiftboardId === 0
               }
               onChange={(_, data) => field.onChange(data)}
               options={data.map(
-                ({ playaName, shiftboardId, worldName }: IVolunteerItem) => ({
+                ({
+                  playaName,
+                  shiftboardId,
+                  worldName,
+                }: IResVolunteerDropdownItem) => ({
                   label: `${playaName} "${worldName}"`,
                   shiftboardId,
                 })
@@ -197,7 +203,9 @@ export const RoleVolunteersDialogAdd = ({
         <DialogActions>
           <Button
             disabled={isMutating}
-            startIcon={<HighlightOffIcon />}
+            startIcon={
+              isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
+            }
             onClick={() => {
               handleDialogAddClose();
               reset(defaultValues);

@@ -7,8 +7,12 @@ interface IMoreMenuProps {
 }
 
 export const MoreMenu = ({ Icon, MenuList }: IMoreMenuProps) => {
+  // state
+  // --------------------
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
+  // logic
+  // --------------------
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -16,6 +20,8 @@ export const MoreMenu = ({ Icon, MenuList }: IMoreMenuProps) => {
     setAnchorEl(null);
   };
 
+  // display
+  // --------------------
   return (
     <>
       <IconButton onClick={handleMenuOpen}>{Icon}</IconButton>
