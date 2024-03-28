@@ -29,8 +29,8 @@ import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import type {
-  IResPositionItem,
   IResShiftItem,
+  IResShiftPositionItem,
   IResShiftVolunteerItem,
   IResVolunteerDropdownItem,
   IResVolunteerShiftItem,
@@ -60,7 +60,7 @@ interface IShiftVolunteersDialogAddProps {
   handleDialogAddClose: () => void;
   isDialogAddOpen: boolean;
   shiftName: string;
-  shiftPositionList: IResPositionItem[];
+  shiftPositionList: IResShiftPositionItem[];
   shiftTimesId: string | string[] | undefined;
   shiftVolunteerList: IResShiftVolunteerItem[];
   startTime: string;
@@ -375,7 +375,7 @@ export const ShiftVolunteersDialogAdd = ({
               roleRequiredId,
               shiftPositionId,
               totalSlots,
-            }: IResPositionItem) => {
+            }: IResShiftPositionItem) => {
               const isShiftPositionAvailable =
                 (isAuthenticated && isCoreCrew) ||
                 (totalSlots - filledSlots > 0 &&
@@ -466,7 +466,7 @@ export const ShiftVolunteersDialogAdd = ({
               positionName,
               shiftPositionId,
               totalSlots,
-            }: IResPositionItem) => (
+            }: IResShiftPositionItem) => (
               <MenuItem
                 key={`${shiftPositionId}-position`}
                 value={shiftPositionId}
@@ -501,7 +501,7 @@ export const ShiftVolunteersDialogAdd = ({
       );
       const trainingPositionAdd =
         dataTrainingVolunteerList?.shiftPositionList.find(
-          (trainingPositionItem: IResPositionItem) =>
+          (trainingPositionItem: IResShiftPositionItem) =>
             trainingPositionItem.shiftPositionId === dataForm.trainingPositionId
         );
       let noShowTraining: string | undefined;
@@ -654,8 +654,7 @@ export const ShiftVolunteersDialogAdd = ({
                   {...field}
                   fullWidth
                   isOptionEqualToValue={(option, value: IVolunteerOption) =>
-                    option.shiftboardId === value.shiftboardId ||
-                    value.shiftboardId === 0
+                    option.shiftboardId === value.shiftboardId
                   }
                   onChange={(_, data) => field.onChange(data)}
                   options={volunteerListDisplay}
@@ -820,7 +819,7 @@ export const ShiftVolunteersDialogAdd = ({
 
                           const trainingPositionFound =
                             dataTrainingVolunteerList.shiftPositionList.find(
-                              (trainingPositionItem: IResPositionItem) =>
+                              (trainingPositionItem: IResShiftPositionItem) =>
                                 trainingPositionItem.shiftPositionId ===
                                 trainingPositionSelected
                             );

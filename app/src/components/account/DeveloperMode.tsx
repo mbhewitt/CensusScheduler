@@ -2,6 +2,7 @@ import { RestartAlt as RestartAltIcon } from "@mui/icons-material";
 import {
   Button,
   FormControlLabel,
+  FormGroup,
   Grid,
   Stack,
   Switch,
@@ -61,7 +62,7 @@ export const DeveloperMode = () => {
         </Typography>
       </Grid>
       <Grid item xs={8}>
-        <Stack direction="column" sx={{ mb: 2 }}>
+        <FormGroup sx={{ mb: 2 }}>
           <FormControlLabel
             control={
               <Switch
@@ -125,7 +126,7 @@ export const DeveloperMode = () => {
             }
             label="Disable idle"
           />
-        </Stack>
+        </FormGroup>
         <Stack direction="row" justifyContent="flex-end">
           <Button
             onClick={onReset}

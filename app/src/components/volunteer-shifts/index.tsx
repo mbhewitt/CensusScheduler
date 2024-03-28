@@ -437,10 +437,9 @@ export const VolunteerShifts = () => {
           type="button"
           variant="contained"
         >
-          Add
+          Add shift
         </Button>
       </Stack>
-
       <DataTable
         columnList={columnList}
         dataTable={dataTable}

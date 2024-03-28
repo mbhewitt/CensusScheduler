@@ -170,8 +170,7 @@ export const RoleVolunteersDialogAdd = ({
               {...field}
               fullWidth
               isOptionEqualToValue={(option, value: IVolunteerOption) =>
-                option.shiftboardId === value.shiftboardId ||
-                value.shiftboardId === 0
+                option.shiftboardId === value.shiftboardId
               }
               onChange={(_, data) => field.onChange(data)}
               options={data.map(
@@ -191,11 +190,6 @@ export const RoleVolunteersDialogAdd = ({
                   required
                   variant="standard"
                 />
-              )}
-              renderOption={(props, option) => (
-                <li {...props} key={option.shiftboardId}>
-                  {option.label}
-                </li>
               )}
             />
           )}
