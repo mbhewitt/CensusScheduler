@@ -17,8 +17,10 @@ import { pageListAdmin, pageListDefault } from "src/components/layout/pageList";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { EasterEggContext } from "src/state/easter-egg/context";
 import { SessionContext } from "src/state/session/context";
-import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
-import { checkIsCoreCrew } from "src/utils/checkIsCoreCrew";
+import {
+  checkIsAuthenticated,
+  checkIsCoreCrew,
+} from "src/utils/checkIsRoleExist";
 
 export const Footer = () => {
   // context

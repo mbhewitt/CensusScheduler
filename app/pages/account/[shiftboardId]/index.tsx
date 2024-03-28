@@ -5,7 +5,7 @@ import { Account } from "src/components/account";
 import { SignIn } from "src/components/sign-in";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
+import { checkIsAuthenticated } from "src/utils/checkIsRoleExist";
 
 const AccountPage = () => {
   // context

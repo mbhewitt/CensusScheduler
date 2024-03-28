@@ -43,8 +43,10 @@ import type { IResVolunteerRoleItem } from "src/components/types";
 import { VolunteerShifts } from "src/components/volunteer-shifts";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
-import { checkIsCoreCrew } from "src/utils/checkIsCoreCrew";
+import {
+  checkIsAuthenticated,
+  checkIsCoreCrew,
+} from "src/utils/checkIsRoleExist";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IFormValues {

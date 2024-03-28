@@ -17,7 +17,7 @@ import { Hero } from "src/components/layout/Hero";
 import type { IResShiftItem } from "src/components/types";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import { checkIsSuperAdmin } from "src/utils/checkIsSuperAdmin";
+import { checkIsSuperAdmin } from "src/utils/checkIsRoleExist";
 import { fetcherGet } from "src/utils/fetcher";
 import { formatDateName, formatTime } from "src/utils/formatDateTime";
 import { getColorMap } from "src/utils/getColorMap";
