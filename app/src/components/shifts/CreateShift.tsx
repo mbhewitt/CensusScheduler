@@ -2,6 +2,8 @@ import {
   CalendarMonth as CalendarMonthIcon,
   Close as CloseIcon,
   EventAvailable as EventAvailableIcon,
+  MoreTime as MoreTimeIcon,
+  PersonAdd as PersonAddIcon,
 } from "@mui/icons-material";
 import {
   Box,
@@ -13,9 +15,12 @@ import {
   Checkbox,
   CircularProgress,
   Container,
+  Divider,
   FormControl,
   FormControlLabel,
   FormGroup,
+  Grid,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -32,7 +37,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import {
+  Controller,
+  SubmitHandler,
+  useFieldArray,
+  useForm,
+} from "react-hook-form";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
@@ -45,37 +55,66 @@ import type {
   IResPositionDropdownItem,
   IResShiftCategoryDropdownItem,
 } from "src/components/types";
+import { COLOR_BURNING_MAN_BROWN } from "src/constants";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
-interface IFormValues {
-  category: string;
-  date: string;
+interface IPositionItem {
+  critical: boolean;
   details: string;
+  endTimeOffset: string;
+  lead: boolean;
+  positionName: string;
+  prerequisiteShift: string;
+  role: string;
+  startTimeOffset: string;
+  totalSlots: string;
+  wapPoints: string;
+}
+interface ITimeItem {
+  date: string;
   endTime: string;
   instance: string;
+  notes: string;
+  startTime: string;
+}
+interface IFormValues {
+  category: string;
+  details: string;
   isCore: boolean;
   isOffPlaya: boolean;
   name: string;
-  notes: string;
-  position: string;
-  startTime: string;
-  totalSlots: number;
-  wapPoints: number;
+  positionList: IPositionItem[];
+  timeList: ITimeItem[];
 }
 const defaultValues: IFormValues = {
   category: "",
-  date: "",
+  timeList: [
+    {
+      date: "",
+      endTime: "",
+      instance: "",
+      notes: "",
+      startTime: "",
+    },
+  ],
   details: "",
-  endTime: "",
-  instance: "",
   isCore: false,
   isOffPlaya: false,
   name: "",
-  notes: "",
-  position: "",
-  startTime: "",
-  totalSlots: 0,
-  wapPoints: 0,
+  positionList: [
+    {
+      critical: false,
+      details: "",
+      endTimeOffset: "",
+      lead: false,
+      positionName: "",
+      prerequisiteShift: "",
+      role: "",
+      startTimeOffset: "",
+      totalSlots: "",
+      wapPoints: "",
+    },
+  ],
 };
 export const CreateShift = () => {
   // context
@@ -100,6 +139,22 @@ export const CreateShift = () => {
   } = useForm({
     defaultValues,
     mode: "onBlur",
+  });
+  const {
+    append: timeAppend,
+    fields: timeFields,
+    remove: timeRemove,
+  } = useFieldArray({
+    control,
+    name: "timeList",
+  });
+  const {
+    append: positionAppend,
+    fields: positionFields,
+    remove: positionRemove,
+  } = useFieldArray({
+    control,
+    name: "positionList",
   });
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
@@ -129,7 +184,7 @@ export const CreateShift = () => {
   //   }, {});
 
   //   try {
-  //     // update database
+  //     // MoreTime database
   //     const { data: dataVolunteerItem }: { data: IResVolunteerAccount } =
   //       await trigger({
   //         body: dataFormFinal,
@@ -221,339 +276,536 @@ export const CreateShift = () => {
         </Box>
         <Box component="section">
           <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-            <Card
+            {/* information */}
+            <Box
               sx={{
-                mb: 2,
+                mb: 3,
               }}
             >
-              <CardContent>
-                {/* handle errors */}
-                {Object.keys(errors).length > 0 && (
-                  <ErrorForm errors={errors} />
-                )}
+              <Typography component="h2" sx={{ mb: 2 }} variant="h4">
+                Information
+              </Typography>
+              <Card>
+                <CardContent>
+                  {/* handle errors */}
+                  {Object.keys(errors).length > 0 && (
+                    <ErrorForm errors={errors} />
+                  )}
 
-                <Stack direction="row" spacing={2}>
-                  <Controller
-                    control={control}
-                    name="name"
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        fullWidth
-                        label="Name"
-                        required
-                        variant="standard"
+                  <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                      <Controller
+                        control={control}
+                        name="name"
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            fullWidth
+                            label="Name"
+                            required
+                            variant="standard"
+                          />
+                        )}
                       />
-                    )}
-                  />
-                  <Controller
-                    control={control}
-                    name="category"
-                    render={({ field }) => (
-                      <FormControl fullWidth variant="standard">
-                        <InputLabel id="to">Category *</InputLabel>
-                        <Select
-                          {...field}
-                          label="Category *"
-                          labelId="category"
-                          required
-                        >
-                          {data.shiftCategoryList.map(
-                            ({
-                              shiftCategoryId,
-                              shiftCategoryName,
-                            }: IResShiftCategoryDropdownItem) => (
-                              <MenuItem
-                                key={shiftCategoryId}
-                                value={shiftCategoryName}
-                              >
-                                {shiftCategoryName}
-                              </MenuItem>
-                            )
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Controller
+                        control={control}
+                        name="category"
+                        render={({ field }) => (
+                          <FormControl fullWidth variant="standard">
+                            <InputLabel id="to">Category *</InputLabel>
+                            <Select
+                              {...field}
+                              label="Category *"
+                              labelId="category"
+                              required
+                            >
+                              {data.shiftCategoryList.map(
+                                ({
+                                  shiftCategoryId,
+                                  shiftCategoryName,
+                                }: IResShiftCategoryDropdownItem) => (
+                                  <MenuItem
+                                    key={shiftCategoryId}
+                                    value={shiftCategoryName}
+                                  >
+                                    {shiftCategoryName}
+                                  </MenuItem>
+                                )
+                              )}
+                            </Select>
+                          </FormControl>
+                        )}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Controller
+                        control={control}
+                        name="details"
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            fullWidth
+                            label="Details"
+                            variant="standard"
+                          />
+                        )}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <FormGroup row>
+                        <Controller
+                          control={control}
+                          name="isCore"
+                          render={({ field: { value, ...field } }) => (
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  {...field}
+                                  checked={value}
+                                  color="secondary"
+                                />
+                              }
+                              label="Core"
+                            />
                           )}
-                        </Select>
-                      </FormControl>
-                    )}
-                  />
-                </Stack>
-                <Stack direction="row" spacing={2}>
-                  <Controller
-                    control={control}
-                    name="details"
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        fullWidth
-                        label="Details"
-                        sx={{ width: 0.5 }}
-                        variant="standard"
-                      />
-                    )}
-                  />
-                  <FormGroup row>
-                    <Controller
-                      control={control}
-                      name="isCore"
-                      render={({ field: { value, ...field } }) => (
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              {...field}
-                              checked={value}
-                              color="secondary"
-                            />
-                          }
-                          label="Core"
                         />
-                      )}
-                    />
-                    <Controller
-                      control={control}
-                      name="isOffPlaya"
-                      render={({ field: { value, ...field } }) => (
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              {...field}
-                              checked={value}
-                              color="secondary"
+                        <Controller
+                          control={control}
+                          name="isOffPlaya"
+                          render={({ field: { value, ...field } }) => (
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  {...field}
+                                  checked={value}
+                                  color="secondary"
+                                />
+                              }
+                              label="Off playa"
                             />
-                          }
-                          label="Off playa"
+                          )}
                         />
-                      )}
-                    />
-                  </FormGroup>
-                </Stack>
-              </CardContent>
-            </Card>
-            <Card
+                      </FormGroup>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Box>
+
+            {/* positions */}
+            <Box
               sx={{
-                mb: 2,
+                mb: 3,
               }}
             >
-              <CardContent>
-                <Stack direction="row" spacing={2}>
-                  <Controller
-                    control={control}
-                    name="position"
-                    render={({ field }) => (
-                      <FormControl fullWidth variant="standard">
-                        <InputLabel id="to">Position *</InputLabel>
-                        <Select
-                          {...field}
-                          label="Position *"
-                          labelId="position"
-                          required
+              <Stack
+                alignItems="flex-end"
+                direction="row"
+                justifyContent="space-between"
+                sx={{ mb: 2 }}
+              >
+                <Typography component="h2" variant="h4">
+                  Positions
+                </Typography>
+                <Button
+                  onClick={() => {
+                    positionAppend(
+                      structuredClone(defaultValues.positionList[0])
+                    );
+                  }}
+                  startIcon={<PersonAddIcon />}
+                  type="button"
+                  variant="contained"
+                >
+                  Add position
+                </Button>
+              </Stack>
+              {positionFields.map((item, index) => {
+                return (
+                  <Card
+                    key={item.id}
+                    sx={{
+                      mb: 1,
+                    }}
+                  >
+                    <CardContent>
+                      <Grid container spacing={2}>
+                        <Grid item xs={3}>
+                          <Controller
+                            control={control}
+                            name={`positionList.${index}.positionName`}
+                            render={({ field }) => (
+                              <FormControl fullWidth variant="standard">
+                                <InputLabel id="to">Position *</InputLabel>
+                                <Select
+                                  {...field}
+                                  label="Position *"
+                                  labelId="position"
+                                  required
+                                >
+                                  {data.positionList.map(
+                                    ({
+                                      positionId,
+                                      positionName,
+                                    }: IResPositionDropdownItem) => (
+                                      <MenuItem
+                                        key={positionId}
+                                        value={positionName}
+                                      >
+                                        {positionName}
+                                      </MenuItem>
+                                    )
+                                  )}
+                                </Select>
+                              </FormControl>
+                            )}
+                          />
+                        </Grid>
+                        <Grid item xs={3}>
+                          <Controller
+                            control={control}
+                            name={`positionList.${index}.totalSlots`}
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                fullWidth
+                                label="Total slots"
+                                required
+                                type="number"
+                                variant="standard"
+                              />
+                            )}
+                          />
+                        </Grid>
+                        <Grid item xs={3}>
+                          <Controller
+                            control={control}
+                            name={`positionList.${index}.wapPoints`}
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                fullWidth
+                                label="WAP points"
+                                required
+                                type="number"
+                                variant="standard"
+                              />
+                            )}
+                          />
+                        </Grid>
+                        <Grid
+                          item
+                          sx={{
+                            alignItems: "flex-start",
+                            display: "flex",
+                            justifyContent: "flex-end",
+                          }}
+                          xs={3}
                         >
-                          {data.positionList.map(
-                            ({
-                              positionId,
-                              positionName,
-                            }: IResPositionDropdownItem) => (
-                              <MenuItem key={positionId} value={positionName}>
-                                {positionName}
-                              </MenuItem>
-                            )
-                          )}
-                        </Select>
-                      </FormControl>
-                    )}
-                  />
-                  <Controller
-                    control={control}
-                    name="totalSlots"
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        fullWidth
-                        label="Total slots"
-                        variant="standard"
-                      />
-                    )}
-                  />
-                  <Controller
-                    control={control}
-                    name="wapPoints"
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        fullWidth
-                        label="WAP points"
-                        variant="standard"
-                      />
-                    )}
-                  />
-                </Stack>
-                <Stack direction="row" spacing={2}>
-                  <TextField
-                    disabled
-                    fullWidth
-                    label="Role"
-                    variant="standard"
-                  />
-                  <TextField
-                    disabled
-                    fullWidth
-                    label="Prerequisite shift"
-                    variant="standard"
-                  />
-                  <TextField
-                    disabled
-                    fullWidth
-                    label="Start time offset"
-                    variant="standard"
-                  />
-                  <TextField
-                    disabled
-                    fullWidth
-                    label="End time offset"
-                    variant="standard"
-                  />
-                </Stack>
-                <Stack direction="row" spacing={2}>
-                  <TextField
-                    disabled
-                    fullWidth
-                    label="Details"
-                    sx={{ width: 0.5 }}
-                    variant="standard"
-                  />
-                  <FormGroup row>
-                    <FormControlLabel
-                      control={<Checkbox color="secondary" disabled />}
-                      label="Critical"
-                    />
-                    <FormControlLabel
-                      control={<Checkbox color="secondary" disabled />}
-                      label="Lead"
-                    />
-                  </FormGroup>
-                </Stack>
-              </CardContent>
-            </Card>
-            <Card
+                          <IconButton onClick={() => positionRemove(index)}>
+                            <CloseIcon />
+                          </IconButton>
+                        </Grid>
+                        <Grid item xs={3}>
+                          <Controller
+                            control={control}
+                            name={`positionList.${index}.role`}
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                disabled
+                                fullWidth
+                                label="Role"
+                                variant="standard"
+                              />
+                            )}
+                          />
+                        </Grid>
+                        <Grid item xs={3}>
+                          <Controller
+                            control={control}
+                            name={`positionList.${index}.prerequisiteShift`}
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                disabled
+                                fullWidth
+                                label="Prerequisite shift"
+                                variant="standard"
+                              />
+                            )}
+                          />
+                        </Grid>
+                        <Grid item xs={3}>
+                          <Controller
+                            control={control}
+                            name={`positionList.${index}.startTimeOffset`}
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                disabled
+                                fullWidth
+                                label="Start time offset"
+                                variant="standard"
+                              />
+                            )}
+                          />
+                        </Grid>
+                        <Grid item xs={3}>
+                          <Controller
+                            control={control}
+                            name={`positionList.${index}.endTimeOffset`}
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                disabled
+                                fullWidth
+                                label="End time offset"
+                                variant="standard"
+                              />
+                            )}
+                          />
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Controller
+                            control={control}
+                            name={`positionList.${index}.details`}
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                disabled
+                                fullWidth
+                                label="Details"
+                                variant="standard"
+                              />
+                            )}
+                          />
+                        </Grid>
+                        <Grid item xs={6}>
+                          <FormGroup row>
+                            <Controller
+                              control={control}
+                              name={`positionList.${index}.critical`}
+                              render={({ field }) => (
+                                <FormControlLabel
+                                  control={
+                                    <Checkbox
+                                      {...field}
+                                      color="secondary"
+                                      disabled
+                                    />
+                                  }
+                                  label="Critical"
+                                />
+                              )}
+                            />
+                            <Controller
+                              control={control}
+                              name={`positionList.${index}.lead`}
+                              render={({ field }) => (
+                                <FormControlLabel
+                                  control={
+                                    <Checkbox
+                                      {...field}
+                                      color="secondary"
+                                      disabled
+                                    />
+                                  }
+                                  label="Lead"
+                                />
+                              )}
+                            />
+                          </FormGroup>
+                        </Grid>
+                      </Grid>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </Box>
+
+            {/* times */}
+            <Box
               sx={{
-                mb: 2,
+                mb: 3,
               }}
             >
-              <CardContent>
-                <Stack direction="row" spacing={2}>
-                  <Controller
-                    control={control}
-                    name="date"
-                    render={({ field }) => (
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DatePicker
-                          {...field}
-                          label="Date"
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              error={Object.hasOwn(errors, "date")}
-                              fullWidth
-                              // helperText={errors.date?.message}
-                              required
-                              variant="standard"
-                            />
-                          )}
-                        />
-                      </LocalizationProvider>
-                    )}
-                    rules={{
-                      required: "Date is required",
-                      validate: (value) => {
-                        return Boolean(value) || "Date is required";
-                      },
+              <Stack
+                alignItems="flex-end"
+                direction="row"
+                justifyContent="space-between"
+                sx={{ mb: 2 }}
+              >
+                <Typography component="h2" variant="h4">
+                  Times
+                </Typography>
+                <Button
+                  onClick={() => {
+                    timeAppend(structuredClone(defaultValues.timeList[0]));
+                  }}
+                  startIcon={<MoreTimeIcon />}
+                  type="button"
+                  variant="contained"
+                >
+                  Add time
+                </Button>
+              </Stack>
+              {timeFields.map((item, index) => {
+                return (
+                  <Card
+                    key={item.id}
+                    sx={{
+                      mb: 1,
                     }}
-                  />
-                  <Controller
-                    control={control}
-                    name="startTime"
-                    render={({ field }) => (
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <TimePicker
-                          {...field}
-                          ampm={false}
-                          label="Start time"
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              error={Object.hasOwn(errors, "startTime")}
-                              fullWidth
-                              // helperText={errors.startTime?.message}
-                              required
-                              variant="standard"
-                            />
-                          )}
-                        />
-                      </LocalizationProvider>
-                    )}
-                    rules={{
-                      required: "Start time is required",
-                      validate: (value) => {
-                        return Boolean(value) || "Start time is required";
-                      },
-                    }}
-                  />
-                  <Controller
-                    control={control}
-                    name="endTime"
-                    render={({ field }) => (
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <TimePicker
-                          {...field}
-                          ampm={false}
-                          label="End time"
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              error={Object.hasOwn(errors, "endTime")}
-                              fullWidth
-                              // helperText={errors.endTime?.message}
-                              required
-                              variant="standard"
-                            />
-                          )}
-                        />
-                      </LocalizationProvider>
-                    )}
-                    rules={{
-                      required: "End time is required",
-                      validate: (value) => {
-                        return Boolean(value) || "End time is required";
-                      },
-                    }}
-                  />
-                </Stack>
-                <Stack direction="row" spacing={2}>
-                  <Controller
-                    control={control}
-                    name="notes"
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        fullWidth
-                        label="Notes"
-                        variant="standard"
-                      />
-                    )}
-                  />
-                  <Controller
-                    control={control}
-                    name="instance"
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        fullWidth
-                        label="Instance"
-                        variant="standard"
-                      />
-                    )}
-                  />
-                </Stack>
-              </CardContent>
-            </Card>
+                  >
+                    <CardContent>
+                      <Grid container spacing={2}>
+                        <Grid item xs={3}>
+                          <Controller
+                            control={control}
+                            name={`timeList.${index}.date`}
+                            render={({ field }) => (
+                              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DatePicker
+                                  {...field}
+                                  label="Date"
+                                  renderInput={(params) => (
+                                    <TextField
+                                      {...params}
+                                      error={Object.hasOwn(errors, "date")}
+                                      fullWidth
+                                      // helperText={errors.date?.message}
+                                      required
+                                      variant="standard"
+                                    />
+                                  )}
+                                />
+                              </LocalizationProvider>
+                            )}
+                            rules={{
+                              required: "Date is required",
+                              validate: (value) => {
+                                return Boolean(value) || "Date is required";
+                              },
+                            }}
+                          />
+                        </Grid>
+                        <Grid item xs={3}>
+                          <Controller
+                            control={control}
+                            name={`timeList.${index}.startTime`}
+                            render={({ field }) => (
+                              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <TimePicker
+                                  {...field}
+                                  ampm={false}
+                                  label="Start time"
+                                  renderInput={(params) => (
+                                    <TextField
+                                      {...params}
+                                      error={Object.hasOwn(errors, "startTime")}
+                                      fullWidth
+                                      // helperText={errors.startTime?.message}
+                                      required
+                                      variant="standard"
+                                    />
+                                  )}
+                                />
+                              </LocalizationProvider>
+                            )}
+                            rules={{
+                              required: "Start time is required",
+                              validate: (value) => {
+                                return (
+                                  Boolean(value) || "Start time is required"
+                                );
+                              },
+                            }}
+                          />
+                        </Grid>
+                        <Grid item xs={3}>
+                          <Controller
+                            control={control}
+                            name={`timeList.${index}.endTime`}
+                            render={({ field }) => (
+                              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <TimePicker
+                                  {...field}
+                                  ampm={false}
+                                  label="End time"
+                                  renderInput={(params) => (
+                                    <TextField
+                                      {...params}
+                                      error={Object.hasOwn(errors, "endTime")}
+                                      fullWidth
+                                      // helperText={errors.endTime?.message}
+                                      required
+                                      variant="standard"
+                                    />
+                                  )}
+                                />
+                              </LocalizationProvider>
+                            )}
+                            rules={{
+                              required: "End time is required",
+                              validate: (value) => {
+                                return Boolean(value) || "End time is required";
+                              },
+                            }}
+                          />
+                        </Grid>
+                        <Grid
+                          item
+                          sx={{
+                            alignItems: "flex-start",
+                            display: "flex",
+                            justifyContent: "flex-end",
+                          }}
+                          xs={3}
+                        >
+                          <IconButton onClick={() => timeRemove(index)}>
+                            <CloseIcon />
+                          </IconButton>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Controller
+                            control={control}
+                            name={`timeList.${index}.notes`}
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                fullWidth
+                                label="Notes"
+                                variant="standard"
+                              />
+                            )}
+                          />
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Controller
+                            control={control}
+                            name={`timeList.${index}.instance`}
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                fullWidth
+                                label="Instance"
+                                variant="standard"
+                              />
+                            )}
+                          />
+                        </Grid>
+                      </Grid>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </Box>
+            <Divider sx={{ borderColor: COLOR_BURNING_MAN_BROWN, mb: 3 }} />
+
+            {/* actions */}
             <Card>
               <CardActions
                 sx={{

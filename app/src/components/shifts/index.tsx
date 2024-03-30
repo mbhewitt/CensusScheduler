@@ -309,7 +309,7 @@ export const Shifts = () => {
       <Container component="main">
         <Box component="section">
           {/* {isSuperAdmin && ( */}
-          <Stack direction="row" justifyContent="flex-end" sx={{ mb: 1 }}>
+          <Stack direction="row" justifyContent="flex-end" sx={{ mb: 2 }}>
             <Button
               onClick={() => {
                 router.push("/create-shift");

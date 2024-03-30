@@ -426,7 +426,7 @@ export const VolunteerShifts = () => {
         alignItems="flex-end"
         direction="row"
         justifyContent="space-between"
-        sx={{ mb: 1 }}
+        sx={{ mb: 2 }}
       >
         <Typography component="h2" variant="h4">
           Shifts
