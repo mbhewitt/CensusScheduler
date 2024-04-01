@@ -137,7 +137,6 @@ export const CreateShift = () => {
     handleSubmit,
     reset,
     setValue,
-    watch,
   } = useForm({
     defaultValues,
     mode: "onBlur",
@@ -228,8 +227,27 @@ export const CreateShift = () => {
   //     throw error;
   //   }
   // };
-  const onSubmit: SubmitHandler<IFormValues> = (dataFormInitial) => {
-    console.log("dataFormInitial: ", dataFormInitial);
+  const onSubmit: SubmitHandler<IFormValues> = (formValues) => {
+    const isShiftNameAvailable = !data.shiftNameList.some(
+      ({ shiftNameText }: { shiftNameText: string }) => {
+        return shiftNameText.toLowerCase() === formValues.name.toLowerCase();
+      }
+    );
+
+    // if the shift name has been added already
+    // then display an error
+    if (!isShiftNameAvailable) {
+      enqueueSnackbar(
+        <SnackbarText>
+          <strong>{formValues.name}</strong> for shift name has been added
+          already
+        </SnackbarText>,
+        {
+          persist: true,
+          variant: "error",
+        }
+      );
+    }
   };
 
   // display
@@ -461,32 +479,32 @@ export const CreateShift = () => {
 
                                     field.onChange(positionSelected);
                                     setValue(
-                                      `positionList.${index}.role`,
-                                      positionItem.role
-                                    );
-                                    setValue(
-                                      `positionList.${index}.prerequisiteShift`,
-                                      positionItem.prerequisiteShift
-                                    );
-                                    setValue(
-                                      `positionList.${index}.startTimeOffset`,
-                                      positionItem.startTimeOffset
+                                      `positionList.${index}.critical`,
+                                      positionItem.critical
                                     );
                                     setValue(
                                       `positionList.${index}.endTimeOffset`,
                                       positionItem.endTimeOffset
                                     );
                                     setValue(
+                                      `positionList.${index}.lead`,
+                                      positionItem.lead
+                                    );
+                                    setValue(
                                       `positionList.${index}.positionDetails`,
                                       positionItem.positionDetails
                                     );
                                     setValue(
-                                      `positionList.${index}.critical`,
-                                      positionItem.critical
+                                      `positionList.${index}.prerequisiteShift`,
+                                      positionItem.prerequisiteShift
                                     );
                                     setValue(
-                                      `positionList.${index}.lead`,
-                                      positionItem.lead
+                                      `positionList.${index}.role`,
+                                      positionItem.role
+                                    );
+                                    setValue(
+                                      `positionList.${index}.startTimeOffset`,
+                                      positionItem.startTimeOffset
                                     );
                                   }}
                                   required
