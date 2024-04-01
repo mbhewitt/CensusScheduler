@@ -16,6 +16,7 @@ import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
+import { ErrorForm } from "src/components/general/ErrorForm";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import type {
@@ -56,8 +57,14 @@ export const RoleVolunteersDialogAdd = ({
 
   // other hooks
   // --------------------
-  const { control, handleSubmit, reset } = useForm({
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+    reset,
+  } = useForm({
     defaultValues,
+    mode: "onBlur",
   });
   const { enqueueSnackbar } = useSnackbar();
 
@@ -161,6 +168,9 @@ export const RoleVolunteersDialogAdd = ({
       isDialogOpen={isDialogAddOpen}
       text="Add role volunteer"
     >
+      {/* handle errors */}
+      {Object.keys(errors).length > 0 && <ErrorForm errors={errors} />}
+
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
         <Controller
           control={control}
@@ -186,6 +196,8 @@ export const RoleVolunteersDialogAdd = ({
               renderInput={(params) => (
                 <TextField
                   {...params}
+                  error={Boolean(errors.volunteer)}
+                  helperText={errors.volunteer?.message}
                   label="Name"
                   required
                   variant="standard"
@@ -193,6 +205,9 @@ export const RoleVolunteersDialogAdd = ({
               )}
             />
           )}
+          rules={{
+            required: "Volunteer is required",
+          }}
         />
         <DialogActions>
           <Button

@@ -8,6 +8,7 @@ import {
   CircularProgress,
   DialogActions,
   FormControl,
+  FormHelperText,
   Grid,
   InputLabel,
   MenuItem,
@@ -26,6 +27,7 @@ import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
+import { ErrorForm } from "src/components/general/ErrorForm";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import type {
@@ -105,9 +107,17 @@ export const ShiftVolunteersDialogAdd = ({
 
   // fetching, mutation, and revalidation
   // --------------------
-  const { control, handleSubmit, reset, watch } = useForm({
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+    reset,
+    watch,
+  } = useForm({
     defaultValues,
+    mode: "onBlur",
   });
+
   const volunteerWatch = watch("volunteer");
   const trainingTimesIdWatch = watch("trainingTimesId");
   const { data: dataVolunteerList, error: errorVolunteerList } = useSWR(
@@ -648,6 +658,9 @@ export const ShiftVolunteersDialogAdd = ({
       isDialogOpen={isDialogAddOpen}
       text="Add volunteer"
     >
+      {/* handle errors */}
+      {Object.keys(errors).length > 0 && <ErrorForm errors={errors} />}
+
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={2}>
           <Grid item xs={6}>
@@ -666,6 +679,8 @@ export const ShiftVolunteersDialogAdd = ({
                   renderInput={(params) => (
                     <TextField
                       {...params}
+                      error={Boolean(errors.volunteer)}
+                      helperText={errors.volunteer?.message}
                       label="Name"
                       required
                       variant="standard"
@@ -673,6 +688,9 @@ export const ShiftVolunteersDialogAdd = ({
                   )}
                 />
               )}
+              rules={{
+                required: "Volunteer is required",
+              }}
             />
           </Grid>
           <Grid item xs={6}>
@@ -684,19 +702,20 @@ export const ShiftVolunteersDialogAdd = ({
                   <InputLabel id="shiftPositionId">Shift position *</InputLabel>
                   <Select
                     {...field}
+                    error={Boolean(errors.shiftPositionId)}
                     disabled={!volunteerWatch}
                     label="Shift position *"
                     labelId="shiftPositionId"
                     onChange={(event) => {
                       const shiftPositionSelected = event.target.value;
-
-                      field.onChange(shiftPositionSelected);
-
                       const shiftPositionFound = shiftPositionList.find(
                         (shiftPositionItem) =>
                           shiftPositionItem.shiftPositionId ===
                           shiftPositionSelected
                       );
+
+                      // update field
+                      field.onChange(shiftPositionSelected);
 
                       // if there are less than or equal to zero slots available
                       // then display warning notification
@@ -725,8 +744,16 @@ export const ShiftVolunteersDialogAdd = ({
                   >
                     {shiftPositionListDisplay}
                   </Select>
+                  {errors.shiftPositionId && (
+                    <FormHelperText error>
+                      {errors.shiftPositionId?.message}
+                    </FormHelperText>
+                  )}
                 </FormControl>
               )}
+              rules={{
+                required: "Shift position is required",
+              }}
             />
           </Grid>
           {trainingListDisplay.length > 0 && (
@@ -742,13 +769,11 @@ export const ShiftVolunteersDialogAdd = ({
                       </InputLabel>
                       <Select
                         {...field}
+                        error={Boolean(errors.trainingTimesId)}
                         label="Training time *"
                         labelId="trainingTimesId"
                         onChange={(event) => {
                           const trainingTimesIdSelected = event.target.value;
-
-                          field.onChange(trainingTimesIdSelected);
-
                           const trainingItemFound = dataTrainingList.find(
                             (dataTrainingItem: IResShiftItem) =>
                               dataTrainingItem.shiftTimesId ===
@@ -766,6 +791,9 @@ export const ShiftVolunteersDialogAdd = ({
                                   "[]"
                                 )
                             );
+
+                          // update field
+                          field.onChange(trainingTimesIdSelected);
 
                           // if volunteer shift causes time conflict
                           // then display warning notification
@@ -799,8 +827,16 @@ export const ShiftVolunteersDialogAdd = ({
                       >
                         {trainingListDisplay}
                       </Select>
+                      {errors.trainingTimesId && (
+                        <FormHelperText error>
+                          {errors.trainingTimesId?.message}
+                        </FormHelperText>
+                      )}
                     </FormControl>
                   )}
+                  rules={{
+                    required: "Training time is required",
+                  }}
                 />
               </Grid>
               <Grid item xs={6}>
@@ -815,19 +851,20 @@ export const ShiftVolunteersDialogAdd = ({
                       <Select
                         {...field}
                         disabled={!trainingTimesIdWatch}
+                        error={Boolean(errors.trainingPositionId)}
                         label="Training position *"
                         labelId="trainingPositionId"
                         onChange={(event) => {
                           const trainingPositionSelected = event.target.value;
-
-                          field.onChange(trainingPositionSelected);
-
                           const trainingPositionFound =
                             dataTrainingVolunteerList.shiftPositionList.find(
                               (trainingPositionItem: IResShiftPositionItem) =>
                                 trainingPositionItem.shiftPositionId ===
                                 trainingPositionSelected
                             );
+
+                          // update field
+                          field.onChange(trainingPositionSelected);
 
                           // if there are less than or equal to zero slots available
                           // then display warning notification
@@ -845,7 +882,7 @@ export const ShiftVolunteersDialogAdd = ({
                                 </strong>{" "}
                                 openings available for{" "}
                                 <strong>
-                                  {trainingPositionFound.position}
+                                  {trainingPositionFound.positionName}
                                 </strong>
                               </SnackbarText>,
                               {
@@ -858,8 +895,16 @@ export const ShiftVolunteersDialogAdd = ({
                       >
                         {trainingPositionListDisplay}
                       </Select>
+                      {errors.trainingPositionId && (
+                        <FormHelperText error>
+                          {errors.trainingPositionId?.message}
+                        </FormHelperText>
+                      )}
                     </FormControl>
                   )}
+                  rules={{
+                    required: "Training position is required",
+                  }}
                 />
               </Grid>
             </>

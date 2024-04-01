@@ -408,18 +408,15 @@ export const CreateShift = () => {
                               )}
                             </Select>
                             {errors.information &&
-                              Boolean(errors.information.category) && (
+                              errors.information.category && (
                                 <FormHelperText error>
-                                  Category is required
+                                  {errors.information.category?.message}
                                 </FormHelperText>
                               )}
                           </FormControl>
                         )}
                         rules={{
                           required: "Category is required",
-                          validate: (value) => {
-                            return Boolean(value) || "Category is required";
-                          },
                         }}
                       />
                     </Grid>
@@ -552,7 +549,10 @@ export const CreateShift = () => {
                                       }
                                     );
 
+                                    // update field
                                     field.onChange(positionSelected);
+
+                                    // auto-populate fields
                                     setValue(
                                       `positionList.${index}.critical`,
                                       positionItem.critical
@@ -599,20 +599,18 @@ export const CreateShift = () => {
                                   )}
                                 </Select>
                                 {errors.positionList &&
-                                  Boolean(
-                                    errors.positionList[index]?.positionName
-                                  ) && (
+                                  errors.positionList[index]?.positionName && (
                                     <FormHelperText error>
-                                      Position is required
+                                      {
+                                        errors.positionList[index]?.positionName
+                                          ?.message
+                                      }
                                     </FormHelperText>
                                   )}
                               </FormControl>
                             )}
                             rules={{
                               required: "Position is required",
-                              validate: (value) => {
-                                return Boolean(value) || "Position is required";
-                              },
                             }}
                           />
                         </Grid>
@@ -643,11 +641,6 @@ export const CreateShift = () => {
                             )}
                             rules={{
                               required: "Total slots is required",
-                              validate: (value) => {
-                                return (
-                                  Boolean(value) || "Total slots is required"
-                                );
-                              },
                             }}
                           />
                         </Grid>
@@ -675,11 +668,6 @@ export const CreateShift = () => {
                             )}
                             rules={{
                               required: "WAP points is required",
-                              validate: (value) => {
-                                return (
-                                  Boolean(value) || "WAP points is required"
-                                );
-                              },
                             }}
                           />
                         </Grid>
@@ -867,7 +855,9 @@ export const CreateShift = () => {
                                   {...field}
                                   label="Date"
                                   onChange={(event) => {
+                                    // update field
                                     field.onChange(event);
+
                                     if (event) {
                                       clearErrors(`timeList.${index}.date`);
                                     }
@@ -912,7 +902,9 @@ export const CreateShift = () => {
                                   ampm={false}
                                   label="Start time"
                                   onChange={(event) => {
+                                    // update field
                                     field.onChange(event);
+
                                     if (event) {
                                       clearErrors(
                                         `timeList.${index}.startTime`
@@ -965,7 +957,9 @@ export const CreateShift = () => {
                                   ampm={false}
                                   label="End time"
                                   onChange={(event) => {
+                                    // update field
                                     field.onChange(event);
+
                                     if (event) {
                                       clearErrors(`timeList.${index}.endTime`);
                                     }
