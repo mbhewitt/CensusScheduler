@@ -221,7 +221,7 @@ export const Shifts = () => {
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
-  const isSuperAdmin = checkIsSuperAdmin(roleList);
+  const isSuperAdmin = checkIsSuperAdmin(roleList); // WIP
   dayjs.extend(isSameOrAfter);
 
   // prepare datatable

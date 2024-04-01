@@ -19,6 +19,7 @@ import {
   FormControl,
   FormControlLabel,
   FormGroup,
+  FormHelperText,
   Grid,
   IconButton,
   InputLabel,
@@ -59,6 +60,13 @@ import type {
 import { COLOR_BURNING_MAN_BROWN } from "src/constants";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
+interface IInformation {
+  category: string;
+  details: string;
+  isCore: boolean;
+  isOffPlaya: boolean;
+  name: string;
+}
 interface IPositionItem {
   critical: boolean;
   endTimeOffset: string;
@@ -79,16 +87,18 @@ interface ITimeItem {
   startTime: string;
 }
 interface IFormValues {
-  category: string;
-  details: string;
-  isCore: boolean;
-  isOffPlaya: boolean;
-  name: string;
+  information: IInformation;
   positionList: IPositionItem[];
   timeList: ITimeItem[];
 }
 const defaultValues: IFormValues = {
-  category: "",
+  information: {
+    category: "",
+    details: "",
+    isCore: false,
+    isOffPlaya: false,
+    name: "",
+  },
   timeList: [
     {
       date: "",
@@ -98,10 +108,6 @@ const defaultValues: IFormValues = {
       startTime: "",
     },
   ],
-  details: "",
-  isCore: false,
-  isOffPlaya: false,
-  name: "",
   positionList: [
     {
       critical: false,
@@ -132,11 +138,13 @@ export const CreateShift = () => {
   // other hooks
   // --------------------
   const {
+    clearErrors,
     control,
     formState: { errors },
     getValues,
     handleSubmit,
     reset,
+    setError,
     setValue,
   } = useForm({
     defaultValues,
@@ -160,7 +168,6 @@ export const CreateShift = () => {
   });
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
-  const theme = useTheme();
 
   // logic
   // --------------------
@@ -232,7 +239,10 @@ export const CreateShift = () => {
     console.log("formValues: ", formValues);
     const isShiftNameAvailable = data.shiftNameList.every(
       ({ shiftNameText }: { shiftNameText: string }) => {
-        return shiftNameText.toLowerCase() !== formValues.name.toLowerCase();
+        return (
+          shiftNameText.toLowerCase() !==
+          formValues.information.name.toLowerCase()
+        );
       }
     );
     const invalidTimeFound = formValues.timeList.find(
@@ -246,8 +256,8 @@ export const CreateShift = () => {
     if (!isShiftNameAvailable) {
       enqueueSnackbar(
         <SnackbarText>
-          <strong>{formValues.name}</strong> for shift name has been added
-          already
+          <strong>{formValues.information.name}</strong> shift name has been
+          added already
         </SnackbarText>,
         {
           persist: true,
@@ -332,36 +342,54 @@ export const CreateShift = () => {
               <Card>
                 <CardContent>
                   {/* handle errors */}
-                  {Object.keys(errors).length > 0 && (
-                    <ErrorForm errors={errors} />
+                  {errors.information && (
+                    <ErrorForm errors={errors.information} />
                   )}
 
                   <Grid container spacing={2}>
                     <Grid item xs={6}>
                       <Controller
                         control={control}
-                        name="name"
+                        name="information.name"
                         render={({ field }) => (
                           <TextField
                             {...field}
+                            error={
+                              errors.information &&
+                              Boolean(errors.information.name)
+                            }
                             fullWidth
+                            helperText={
+                              errors.information &&
+                              errors.information.name?.message
+                            }
                             label="Name"
                             required
                             variant="standard"
                           />
                         )}
+                        rules={{
+                          required: "Name is required",
+                          validate: (value) => {
+                            return Boolean(value.trim()) || "Name is required";
+                          },
+                        }}
                       />
                     </Grid>
                     <Grid item xs={6}>
                       <Controller
                         control={control}
-                        name="category"
+                        name="information.category"
                         render={({ field }) => (
                           <FormControl fullWidth variant="standard">
                             <InputLabel id="to">Category *</InputLabel>
                             <Select
                               {...field}
-                              label="Category *"
+                              error={
+                                errors.information &&
+                                Boolean(errors.information.category)
+                              }
+                              label="Category"
                               labelId="category"
                               required
                             >
@@ -379,14 +407,26 @@ export const CreateShift = () => {
                                 )
                               )}
                             </Select>
+                            {errors.information &&
+                              Boolean(errors.information.category) && (
+                                <FormHelperText error>
+                                  Category is required
+                                </FormHelperText>
+                              )}
                           </FormControl>
                         )}
+                        rules={{
+                          required: "Category is required",
+                          validate: (value) => {
+                            return Boolean(value) || "Category is required";
+                          },
+                        }}
                       />
                     </Grid>
                     <Grid item xs={6}>
                       <Controller
                         control={control}
-                        name="details"
+                        name="information.details"
                         render={({ field }) => (
                           <TextField
                             {...field}
@@ -401,7 +441,7 @@ export const CreateShift = () => {
                       <FormGroup row>
                         <Controller
                           control={control}
-                          name="isCore"
+                          name="information.isCore"
                           render={({ field: { value, ...field } }) => (
                             <FormControlLabel
                               control={
@@ -417,7 +457,7 @@ export const CreateShift = () => {
                         />
                         <Controller
                           control={control}
-                          name="isOffPlaya"
+                          name="information.isOffPlaya"
                           render={({ field: { value, ...field } }) => (
                             <FormControlLabel
                               control={
@@ -475,6 +515,11 @@ export const CreateShift = () => {
                     }}
                   >
                     <CardContent>
+                      {/* handle errors */}
+                      {errors.positionList && errors.positionList[index] && (
+                        <ErrorForm errors={errors.positionList[index]} />
+                      )}
+
                       <Grid container spacing={2}>
                         <Grid item xs={3}>
                           <Controller
@@ -485,6 +530,12 @@ export const CreateShift = () => {
                                 <InputLabel id="to">Position *</InputLabel>
                                 <Select
                                   {...field}
+                                  error={
+                                    errors.positionList &&
+                                    Boolean(
+                                      errors.positionList[index]?.positionName
+                                    )
+                                  }
                                   label="Position *"
                                   labelId="position"
                                   onChange={(event) => {
@@ -547,8 +598,22 @@ export const CreateShift = () => {
                                     )
                                   )}
                                 </Select>
+                                {errors.positionList &&
+                                  Boolean(
+                                    errors.positionList[index]?.positionName
+                                  ) && (
+                                    <FormHelperText error>
+                                      Position is required
+                                    </FormHelperText>
+                                  )}
                               </FormControl>
                             )}
+                            rules={{
+                              required: "Position is required",
+                              validate: (value) => {
+                                return Boolean(value) || "Position is required";
+                              },
+                            }}
                           />
                         </Grid>
                         <Grid item xs={3}>
@@ -558,13 +623,32 @@ export const CreateShift = () => {
                             render={({ field }) => (
                               <TextField
                                 {...field}
+                                error={
+                                  errors.positionList &&
+                                  Boolean(
+                                    errors.positionList[index]?.totalSlots
+                                  )
+                                }
                                 fullWidth
+                                helperText={
+                                  errors.positionList &&
+                                  errors.positionList[index]?.totalSlots
+                                    ?.message
+                                }
                                 label="Total slots"
                                 required
                                 type="number"
                                 variant="standard"
                               />
                             )}
+                            rules={{
+                              required: "Total slots is required",
+                              validate: (value) => {
+                                return (
+                                  Boolean(value) || "Total slots is required"
+                                );
+                              },
+                            }}
                           />
                         </Grid>
                         <Grid item xs={3}>
@@ -574,13 +658,29 @@ export const CreateShift = () => {
                             render={({ field }) => (
                               <TextField
                                 {...field}
+                                error={
+                                  errors.positionList &&
+                                  Boolean(errors.positionList[index]?.wapPoints)
+                                }
                                 fullWidth
+                                helperText={
+                                  errors.positionList &&
+                                  errors.positionList[index]?.wapPoints?.message
+                                }
                                 label="WAP points"
                                 required
                                 type="number"
                                 variant="standard"
                               />
                             )}
+                            rules={{
+                              required: "WAP points is required",
+                              validate: (value) => {
+                                return (
+                                  Boolean(value) || "WAP points is required"
+                                );
+                              },
+                            }}
                           />
                         </Grid>
                         <Grid
@@ -751,6 +851,11 @@ export const CreateShift = () => {
                     }}
                   >
                     <CardContent>
+                      {/* handle errors */}
+                      {errors.timeList && errors.timeList[index] && (
+                        <ErrorForm errors={errors.timeList[index]} />
+                      )}
+
                       <Grid container spacing={2}>
                         <Grid item xs={3}>
                           <Controller
@@ -761,25 +866,39 @@ export const CreateShift = () => {
                                 <DatePicker
                                   {...field}
                                   label="Date"
+                                  onChange={(event) => {
+                                    field.onChange(event);
+                                    if (event) {
+                                      clearErrors(`timeList.${index}.date`);
+                                    }
+                                  }}
                                   renderInput={(params) => (
                                     <TextField
                                       {...params}
-                                      error={Object.hasOwn(errors, "date")}
+                                      error={
+                                        errors.timeList &&
+                                        Boolean(errors.timeList[index]?.date)
+                                      }
                                       fullWidth
-                                      // helperText={errors.date?.message}
+                                      helperText={
+                                        errors.timeList &&
+                                        errors.timeList[index]?.date?.message
+                                      }
                                       required
+                                      onBlur={(event) => {
+                                        if (!event.target.value) {
+                                          setError(`timeList.${index}.date`, {
+                                            type: "required",
+                                            message: "Date is required",
+                                          });
+                                        }
+                                      }}
                                       variant="standard"
                                     />
                                   )}
                                 />
                               </LocalizationProvider>
                             )}
-                            rules={{
-                              required: "Date is required",
-                              validate: (value) => {
-                                return Boolean(value) || "Date is required";
-                              },
-                            }}
                           />
                         </Grid>
                         <Grid item xs={3}>
@@ -792,12 +911,40 @@ export const CreateShift = () => {
                                   {...field}
                                   ampm={false}
                                   label="Start time"
+                                  onChange={(event) => {
+                                    field.onChange(event);
+                                    if (event) {
+                                      clearErrors(
+                                        `timeList.${index}.startTime`
+                                      );
+                                    }
+                                  }}
                                   renderInput={(params) => (
                                     <TextField
                                       {...params}
-                                      error={Object.hasOwn(errors, "startTime")}
+                                      error={
+                                        errors.timeList &&
+                                        Boolean(
+                                          errors.timeList[index]?.startTime
+                                        )
+                                      }
                                       fullWidth
-                                      // helperText={errors.startTime?.message}
+                                      helperText={
+                                        errors.timeList &&
+                                        errors.timeList[index]?.startTime
+                                          ?.message
+                                      }
+                                      onBlur={(event) => {
+                                        if (!event.target.value) {
+                                          setError(
+                                            `timeList.${index}.startTime`,
+                                            {
+                                              type: "required",
+                                              message: "Start time is required",
+                                            }
+                                          );
+                                        }
+                                      }}
                                       required
                                       variant="standard"
                                     />
@@ -805,14 +952,6 @@ export const CreateShift = () => {
                                 />
                               </LocalizationProvider>
                             )}
-                            rules={{
-                              required: "Start time is required",
-                              validate: (value) => {
-                                return (
-                                  Boolean(value) || "Start time is required"
-                                );
-                              },
-                            }}
                           />
                         </Grid>
                         <Grid item xs={3}>
@@ -825,12 +964,35 @@ export const CreateShift = () => {
                                   {...field}
                                   ampm={false}
                                   label="End time"
+                                  onChange={(event) => {
+                                    field.onChange(event);
+                                    if (event) {
+                                      clearErrors(`timeList.${index}.endTime`);
+                                    }
+                                  }}
                                   renderInput={(params) => (
                                     <TextField
                                       {...params}
-                                      error={Object.hasOwn(errors, "endTime")}
+                                      error={
+                                        errors.timeList &&
+                                        Boolean(errors.timeList[index]?.endTime)
+                                      }
                                       fullWidth
-                                      // helperText={errors.endTime?.message}
+                                      helperText={
+                                        errors.timeList &&
+                                        errors.timeList[index]?.endTime?.message
+                                      }
+                                      onBlur={(event) => {
+                                        if (!event.target.value) {
+                                          setError(
+                                            `timeList.${index}.endTime`,
+                                            {
+                                              type: "required",
+                                              message: "End time is required",
+                                            }
+                                          );
+                                        }
+                                      }}
                                       required
                                       variant="standard"
                                     />
@@ -838,12 +1000,6 @@ export const CreateShift = () => {
                                 />
                               </LocalizationProvider>
                             )}
-                            rules={{
-                              required: "End time is required",
-                              validate: (value) => {
-                                return Boolean(value) || "End time is required";
-                              },
-                            }}
                           />
                         </Grid>
                         <Grid
