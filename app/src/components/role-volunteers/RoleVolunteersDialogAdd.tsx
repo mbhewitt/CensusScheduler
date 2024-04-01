@@ -97,7 +97,7 @@ export const RoleVolunteersDialogAdd = ({
       );
 
       // if the role volunteer has been added already
-      // then display an error
+      // then display error
       if (!isRoleVolunteerAvailable) {
         enqueueSnackbar(
           <SnackbarText>

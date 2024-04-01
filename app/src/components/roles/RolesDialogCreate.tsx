@@ -51,7 +51,7 @@ export const RolesDialogCreate = ({
       );
 
       // if the role has been added already
-      // then display an error
+      // then display error
       if (!isRoleAvailable) {
         enqueueSnackbar(
           <SnackbarText>

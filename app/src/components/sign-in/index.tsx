@@ -90,7 +90,7 @@ export const SignIn = () => {
       });
 
       // if response has 404 status code
-      // then display an error message
+      // then display error message
       if (dataVolunteerItem.statusCode === 404) {
         enqueueSnackbar(
           <SnackbarText>

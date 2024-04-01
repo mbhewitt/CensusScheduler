@@ -541,7 +541,7 @@ export const ShiftVolunteersDialogAdd = ({
       );
 
       // if the volunteer has been added already
-      // then display an error
+      // then display error
       if (!isVolunteerSlotAvailable) {
         enqueueSnackbar(
           <SnackbarText>

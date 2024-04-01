@@ -242,7 +242,7 @@ export const CreateShift = () => {
     );
 
     // if the shift name has been added already
-    // then display an error
+    // then display error
     if (!isShiftNameAvailable) {
       enqueueSnackbar(
         <SnackbarText>
@@ -257,7 +257,7 @@ export const CreateShift = () => {
     }
 
     // if shift end time occurs before start time
-    // then display an error
+    // then display error
     if (invalidTimeFound) {
       enqueueSnackbar(
         <SnackbarText>
