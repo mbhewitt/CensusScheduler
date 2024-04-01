@@ -25,15 +25,13 @@ const SignInPage = () => {
   // --------------------
   const router = useRouter();
 
-  // logic
+  // side effects
   // --------------------
   const isAuthenticated = checkIsAuthenticated(
     accountType,
     isAuthenticatedSession
   );
 
-  // side effects
-  // --------------------
   useEffect(() => {
     if (isAuthenticated) {
       router.push(`/account/${shiftboardId}`);

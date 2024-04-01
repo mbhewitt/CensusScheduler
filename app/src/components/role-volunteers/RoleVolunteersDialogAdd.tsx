@@ -92,13 +92,13 @@ export const RoleVolunteersDialogAdd = ({
         (dataVolunteerItem: IResVolunteerDropdownItem) =>
           dataVolunteerItem.shiftboardId === dataForm.volunteer?.shiftboardId
       );
-      const isRoleVolunteerAvailable = roleVolunteerList.some(
+      const isRoleVolunteerAvailable = !roleVolunteerList.some(
         ({ shiftboardId }) => shiftboardId === roleVolunteerAdd.shiftboardId
       );
 
       // if the role volunteer has been added already
       // then display an error
-      if (isRoleVolunteerAvailable) {
+      if (!isRoleVolunteerAvailable) {
         enqueueSnackbar(
           <SnackbarText>
             <strong>

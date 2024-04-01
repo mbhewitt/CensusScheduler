@@ -84,26 +84,13 @@ export const CreateAccount = () => {
   // form submission
   // --------------------
   const onSubmit: SubmitHandler<IVolunteerAccountFormValues> = async (
-    dataFormInitial
+    formValues
   ) => {
-    // trim whitespace
-    const dataFormFinal: IVolunteerAccountFormValues = Object.keys(
-      dataFormInitial
-    ).reduce((dataFormAcc, dataFormKey) => {
-      return {
-        ...dataFormAcc,
-        [dataFormKey]:
-          dataFormInitial[
-            dataFormKey as keyof IVolunteerAccountFormValues
-          ]?.trim(),
-      };
-    }, {});
-
     try {
       // update database
       const { data: dataVolunteerItem }: { data: IResVolunteerAccount } =
         await trigger({
-          body: dataFormFinal,
+          body: formValues,
           method: "POST",
         });
 

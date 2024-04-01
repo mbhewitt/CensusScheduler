@@ -108,8 +108,8 @@ export const ShiftVolunteersDialogAdd = ({
   const { control, handleSubmit, reset, watch } = useForm({
     defaultValues,
   });
-  const volunteerWatch = watch("volunteer", null);
-  const trainingTimesIdWatch = watch("trainingTimesId", 0);
+  const volunteerWatch = watch("volunteer");
+  const trainingTimesIdWatch = watch("trainingTimesId");
   const { data: dataVolunteerList, error: errorVolunteerList } = useSWR(
     "/api/volunteers/dropdown",
     fetcherGet
@@ -235,7 +235,7 @@ export const ShiftVolunteersDialogAdd = ({
     errorTrainingVolunteerList ||
     errorVolunteerList ||
     errorVolunteerShiftList
-  )
+  ) {
     return (
       <DialogContainer
         handleDialogClose={() => {
@@ -248,7 +248,8 @@ export const ShiftVolunteersDialogAdd = ({
         <ErrorAlert />
       </DialogContainer>
     );
-  if (!dataVolunteerList || !dataTrainingList)
+  }
+  if (!dataVolunteerList || !dataTrainingList) {
     return (
       <DialogContainer
         handleDialogClose={() => {
@@ -261,9 +262,10 @@ export const ShiftVolunteersDialogAdd = ({
         <Loading />
       </DialogContainer>
     );
+  }
 
   const isCoreCrew = checkIsCoreCrew(accountType, roleList);
-  const shiftPositionIdWatch = watch("shiftPositionId", 0);
+  const shiftPositionIdWatch = watch("shiftPositionId");
   const prerequisiteIdWatch = shiftPositionList.find(
     (shiftPositionItem) =>
       shiftPositionItem.shiftPositionId === shiftPositionIdWatch

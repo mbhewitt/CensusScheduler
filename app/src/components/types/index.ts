@@ -18,6 +18,10 @@ export interface IResShiftCategoryDropdownItem {
   shiftCategoryId: number;
   shiftCategoryName: string;
 }
+export interface IResShiftNameDropdownItem {
+  shiftNameId: number;
+  shiftNameText: string;
+}
 export interface IResShiftItem {
   category: string;
   date: string;

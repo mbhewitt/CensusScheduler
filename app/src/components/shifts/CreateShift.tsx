@@ -60,9 +60,9 @@ import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IPositionItem {
   critical: boolean;
-  details: string;
   endTimeOffset: string;
   lead: boolean;
+  positionDetails: string;
   positionName: string;
   prerequisiteShift: string;
   role: string;
@@ -104,9 +104,9 @@ const defaultValues: IFormValues = {
   positionList: [
     {
       critical: false,
-      details: "",
       endTimeOffset: "",
       lead: false,
+      positionDetails: "",
       positionName: "",
       prerequisiteShift: "",
       role: "",
@@ -125,7 +125,7 @@ export const CreateShift = () => {
 
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR("/api/shifts/dropdown", fetcherGet);
+  const { data, error } = useSWR("/api/shifts/create", fetcherGet);
   const { isMutating, trigger } = useSWRMutation("/api/shifts", fetcherTrigger);
 
   // other hooks
@@ -136,6 +136,8 @@ export const CreateShift = () => {
     getValues,
     handleSubmit,
     reset,
+    setValue,
+    watch,
   } = useForm({
     defaultValues,
     mode: "onBlur",
@@ -443,6 +445,50 @@ export const CreateShift = () => {
                                   {...field}
                                   label="Position *"
                                   labelId="position"
+                                  onChange={(event) => {
+                                    const positionSelected = event.target.value;
+                                    const positionItem = data.positionList.find(
+                                      ({
+                                        positionName,
+                                      }: {
+                                        positionName: string;
+                                      }) => {
+                                        return (
+                                          positionName === positionSelected
+                                        );
+                                      }
+                                    );
+
+                                    field.onChange(positionSelected);
+                                    setValue(
+                                      `positionList.${index}.role`,
+                                      positionItem.role
+                                    );
+                                    setValue(
+                                      `positionList.${index}.prerequisiteShift`,
+                                      positionItem.prerequisiteShift
+                                    );
+                                    setValue(
+                                      `positionList.${index}.startTimeOffset`,
+                                      positionItem.startTimeOffset
+                                    );
+                                    setValue(
+                                      `positionList.${index}.endTimeOffset`,
+                                      positionItem.endTimeOffset
+                                    );
+                                    setValue(
+                                      `positionList.${index}.positionDetails`,
+                                      positionItem.positionDetails
+                                    );
+                                    setValue(
+                                      `positionList.${index}.critical`,
+                                      positionItem.critical
+                                    );
+                                    setValue(
+                                      `positionList.${index}.lead`,
+                                      positionItem.lead
+                                    );
+                                  }}
                                   required
                                 >
                                   {data.positionList.map(
@@ -571,7 +617,7 @@ export const CreateShift = () => {
                         <Grid item xs={6}>
                           <Controller
                             control={control}
-                            name={`positionList.${index}.details`}
+                            name={`positionList.${index}.positionDetails`}
                             render={({ field }) => (
                               <TextField
                                 {...field}
@@ -588,11 +634,12 @@ export const CreateShift = () => {
                             <Controller
                               control={control}
                               name={`positionList.${index}.critical`}
-                              render={({ field }) => (
+                              render={({ field: { value, ...field } }) => (
                                 <FormControlLabel
                                   control={
                                     <Checkbox
                                       {...field}
+                                      checked={value}
                                       color="secondary"
                                       disabled
                                     />
@@ -604,11 +651,12 @@ export const CreateShift = () => {
                             <Controller
                               control={control}
                               name={`positionList.${index}.lead`}
-                              render={({ field }) => (
+                              render={({ field: { value, ...field } }) => (
                                 <FormControlLabel
                                   control={
                                     <Checkbox
                                       {...field}
+                                      checked={value}
                                       color="secondary"
                                       disabled
                                     />

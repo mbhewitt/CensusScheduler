@@ -130,6 +130,14 @@ const theme = createTheme({
         }),
       },
     },
+    MuiInputBase: {
+      styleOverrides: {
+        input: () => ({
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }),
+      },
+    },
   },
   palette: {
     primary: {

@@ -46,13 +46,13 @@ export const RolesDialogCreate = ({
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
-      const isRoleAvailable = roleList.some(
+      const isRoleAvailable = !roleList.some(
         ({ roleName }) => roleName === dataForm.name
       );
 
       // if the role has been added already
       // then display an error
-      if (isRoleAvailable) {
+      if (!isRoleAvailable) {
         enqueueSnackbar(
           <SnackbarText>
             <strong>{dataForm.name}</strong> role has been added already
