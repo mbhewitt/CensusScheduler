@@ -33,6 +33,7 @@ import { TimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import dayjs from "dayjs";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -228,9 +229,15 @@ export const CreateShift = () => {
   //   }
   // };
   const onSubmit: SubmitHandler<IFormValues> = (formValues) => {
-    const isShiftNameAvailable = !data.shiftNameList.some(
+    console.log("formValues: ", formValues);
+    const isShiftNameAvailable = data.shiftNameList.every(
       ({ shiftNameText }: { shiftNameText: string }) => {
-        return shiftNameText.toLowerCase() === formValues.name.toLowerCase();
+        return shiftNameText.toLowerCase() !== formValues.name.toLowerCase();
+      }
+    );
+    const invalidTimeFound = formValues.timeList.find(
+      ({ endTime, startTime }: { endTime: string; startTime: string }) => {
+        return dayjs(endTime).isBefore(dayjs(startTime));
       }
     );
 
@@ -241,6 +248,23 @@ export const CreateShift = () => {
         <SnackbarText>
           <strong>{formValues.name}</strong> for shift name has been added
           already
+        </SnackbarText>,
+        {
+          persist: true,
+          variant: "error",
+        }
+      );
+    }
+
+    // if shift end time occurs before start time
+    // then display an error
+    if (invalidTimeFound) {
+      enqueueSnackbar(
+        <SnackbarText>
+          On{" "}
+          <strong>{dayjs(invalidTimeFound.date).format("MM/DD/YYYY")}</strong>,
+          the <strong>end time</strong> is occuring before the{" "}
+          <strong>start time</strong>
         </SnackbarText>,
         {
           persist: true,

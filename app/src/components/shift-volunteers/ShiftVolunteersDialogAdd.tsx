@@ -167,17 +167,18 @@ export const ShiftVolunteersDialogAdd = ({
 
   useEffect(() => {
     if (dataVolunteerShiftList) {
-      const isVolunteerSlotAvailable = !shiftVolunteerList.some(
-        (volunteer) => volunteer.shiftboardId === Number(shiftboardId)
-      );
-      const isVolunteerShiftAvailable = !dataVolunteerShiftList.some(
-        (volunteerShiftItem: IResVolunteerShiftItem) =>
-          dayjs(startTime).isBetween(
+      const isVolunteerSlotAvailable = shiftVolunteerList.every((volunteer) => {
+        return volunteer.shiftboardId !== Number(shiftboardId);
+      });
+      const isVolunteerShiftAvailable = dataVolunteerShiftList.every(
+        (volunteerShiftItem: IResVolunteerShiftItem) => {
+          return !dayjs(startTime).isBetween(
             dayjs(volunteerShiftItem.startTime),
             dayjs(volunteerShiftItem.endTime),
             null,
             "[]"
-          )
+          );
+        }
       );
 
       // if slot is available and shift causes time conflict
@@ -534,9 +535,9 @@ export const ShiftVolunteersDialogAdd = ({
       }
 
       // check if the volunteer has been added already
-      const isVolunteerSlotAvailable = !shiftVolunteerList.some(
+      const isVolunteerSlotAvailable = shiftVolunteerList.every(
         (volunteer) =>
-          volunteer.shiftboardId === Number(dataForm.volunteer?.shiftboardId)
+          volunteer.shiftboardId !== Number(dataForm.volunteer?.shiftboardId)
       );
 
       // if the volunteer has been added already
@@ -754,11 +755,11 @@ export const ShiftVolunteersDialogAdd = ({
                               trainingTimesIdSelected
                           );
                           const isVolunteerTrainingAvailable =
-                            !dataVolunteerShiftList.some(
+                            dataVolunteerShiftList.every(
                               (
                                 dataVolunteerShiftList: IResVolunteerShiftItem
                               ) =>
-                                dayjs(trainingItemFound.startTime).isBetween(
+                                !dayjs(trainingItemFound.startTime).isBetween(
                                   dayjs(dataVolunteerShiftList.startTime),
                                   dayjs(dataVolunteerShiftList.endTime),
                                   null,

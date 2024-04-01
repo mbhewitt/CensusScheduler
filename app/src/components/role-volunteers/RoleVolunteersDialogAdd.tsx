@@ -92,8 +92,8 @@ export const RoleVolunteersDialogAdd = ({
         (dataVolunteerItem: IResVolunteerDropdownItem) =>
           dataVolunteerItem.shiftboardId === dataForm.volunteer?.shiftboardId
       );
-      const isRoleVolunteerAvailable = !roleVolunteerList.some(
-        ({ shiftboardId }) => shiftboardId === roleVolunteerAdd.shiftboardId
+      const isRoleVolunteerAvailable = roleVolunteerList.every(
+        ({ shiftboardId }) => shiftboardId !== roleVolunteerAdd.shiftboardId
       );
 
       // if the role volunteer has been added already

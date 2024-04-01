@@ -60,8 +60,8 @@ export const RolesDialogUpdate = ({
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
-      const isRoleAvailable = !roleList.some(
-        ({ roleName }) => roleName === dataForm.name
+      const isRoleAvailable = roleList.every(
+        ({ roleName }) => roleName !== dataForm.name
       );
 
       // if the role has been added already
