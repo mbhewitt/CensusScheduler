@@ -24,6 +24,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
+import { ErrorForm } from "src/components/general/ErrorForm";
 import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
@@ -75,8 +76,14 @@ export const Contact = () => {
 
   // other hooks
   // --------------------
-  const { control, handleSubmit, reset } = useForm({
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+    reset,
+  } = useForm({
     defaultValues,
+    mode: "onBlur",
   });
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
@@ -163,6 +170,9 @@ export const Contact = () => {
         <Card>
           <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
             <CardContent>
+              {/* handle errors */}
+              {Object.keys(errors).length > 0 && <ErrorForm errors={errors} />}
+
               <Grid container spacing={2}>
                 <Grid item xs={6}>
                   <Controller
@@ -171,12 +181,20 @@ export const Contact = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
+                        error={Boolean(errors.name)}
                         fullWidth
+                        helperText={errors.name?.message}
                         label="Name"
                         required
                         variant="standard"
                       />
                     )}
+                    rules={{
+                      required: "Name is required",
+                      validate: (value) => {
+                        return Boolean(value.trim()) || "Name is required";
+                      },
+                    }}
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -186,13 +204,21 @@ export const Contact = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
+                        error={Boolean(errors.email)}
                         fullWidth
+                        helperText={errors.email?.message}
                         label="Email"
                         required
                         type="email"
                         variant="standard"
                       />
                     )}
+                    rules={{
+                      required: "Email is required",
+                      validate: (value) => {
+                        return Boolean(value.trim()) || "Email is required";
+                      },
+                    }}
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -266,13 +292,21 @@ export const Contact = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
+                        error={Boolean(errors.message)}
                         fullWidth
+                        helperText={errors.message?.message}
                         label="Message"
                         multiline
                         required
                         variant="standard"
                       />
                     )}
+                    rules={{
+                      required: "Message is required",
+                      validate: (value) => {
+                        return Boolean(value.trim()) || "Message is required";
+                      },
+                    }}
                   />
                 </Grid>
               </Grid>
