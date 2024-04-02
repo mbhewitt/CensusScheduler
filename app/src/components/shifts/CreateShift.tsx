@@ -29,7 +29,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 import { TimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -48,7 +47,6 @@ import {
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { ErrorForm } from "src/components/general/ErrorForm";
 import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
@@ -341,11 +339,6 @@ export const CreateShift = () => {
               </Typography>
               <Card>
                 <CardContent>
-                  {/* handle errors */}
-                  {errors.information && (
-                    <ErrorForm errors={errors.information} />
-                  )}
-
                   <Grid container spacing={2}>
                     <Grid item xs={6}>
                       <Controller
@@ -512,11 +505,6 @@ export const CreateShift = () => {
                     }}
                   >
                     <CardContent>
-                      {/* handle errors */}
-                      {errors.positionList && errors.positionList[index] && (
-                        <ErrorForm errors={errors.positionList[index]} />
-                      )}
-
                       <Grid container spacing={2}>
                         <Grid item xs={3}>
                           <Controller
@@ -839,11 +827,6 @@ export const CreateShift = () => {
                     }}
                   >
                     <CardContent>
-                      {/* handle errors */}
-                      {errors.timeList && errors.timeList[index] && (
-                        <ErrorForm errors={errors.timeList[index]} />
-                      )}
-
                       <Grid container spacing={2}>
                         <Grid item xs={3}>
                           <Controller

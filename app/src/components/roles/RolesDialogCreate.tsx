@@ -10,7 +10,6 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "src/components/general/DialogContainer";
-import { ErrorForm } from "src/components/general/ErrorForm";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import type { IResRoleItem } from "src/components/types";
 import { fetcherTrigger } from "src/utils/fetcher";
@@ -113,9 +112,6 @@ export const RolesDialogCreate = ({
       isDialogOpen={isDialogCreateOpen}
       text="Create role"
     >
-      {/* handle errors */}
-      {Object.keys(errors).length > 0 && <ErrorForm errors={errors} />}
-
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
         <Controller
           control={control}

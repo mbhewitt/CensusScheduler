@@ -17,7 +17,6 @@ import useSWRMutation from "swr/mutation";
 
 import { ResetPasscodeForm } from "src/components/account/ResetPasscodeForm";
 import { DialogContainer } from "src/components/general/DialogContainer";
-import { ErrorForm } from "src/components/general/ErrorForm";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import type { IVolunteerAccountFormValues } from "src/components/types";
 import { fetcherTrigger } from "src/utils/fetcher";
@@ -130,9 +129,6 @@ export const ResetPasscodeDialog = ({
             </strong>
           </Typography>
         </DialogContentText>
-
-        {/* handle errors */}
-        {Object.keys(errors).length > 0 && <ErrorForm errors={errors} />}
 
         <Stack spacing={2}>
           <ResetPasscodeForm

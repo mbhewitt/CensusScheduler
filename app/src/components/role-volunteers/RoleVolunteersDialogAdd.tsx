@@ -16,7 +16,6 @@ import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
-import { ErrorForm } from "src/components/general/ErrorForm";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import type {
@@ -168,9 +167,6 @@ export const RoleVolunteersDialogAdd = ({
       isDialogOpen={isDialogAddOpen}
       text="Add role volunteer"
     >
-      {/* handle errors */}
-      {Object.keys(errors).length > 0 && <ErrorForm errors={errors} />}
-
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
         <Controller
           control={control}

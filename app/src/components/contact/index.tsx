@@ -24,7 +24,6 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { ErrorForm } from "src/components/general/ErrorForm";
 import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
@@ -170,9 +169,6 @@ export const Contact = () => {
         <Card>
           <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
             <CardContent>
-              {/* handle errors */}
-              {Object.keys(errors).length > 0 && <ErrorForm errors={errors} />}
-
               <Grid container spacing={2}>
                 <Grid item xs={6}>
                   <Controller
