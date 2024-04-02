@@ -65,8 +65,14 @@ export const SignIn = () => {
 
   // other hooks
   // --------------------
-  const { control, handleSubmit, reset } = useForm({
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+    reset,
+  } = useForm({
     defaultValues,
+    mode: "onBlur",
   });
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
@@ -191,13 +197,18 @@ export const SignIn = () => {
                       renderInput={(params) => (
                         <TextField
                           {...params}
-                          label="Name"
+                          error={Boolean(errors.volunteer)}
+                          helperText={errors.volunteer?.message}
+                          label="Volunteer"
                           required
                           variant="standard"
                         />
                       )}
                     />
                   )}
+                  rules={{
+                    required: "Volunteer is required",
+                  }}
                 />
                 <Stack alignItems="center" direction="row">
                   <Controller
@@ -207,6 +218,8 @@ export const SignIn = () => {
                       <TextField
                         {...field}
                         autoComplete="off"
+                        error={Boolean(errors.passcode)}
+                        helperText={errors.passcode?.message}
                         fullWidth
                         label="Passcode"
                         required
@@ -214,6 +227,9 @@ export const SignIn = () => {
                         variant="standard"
                       />
                     )}
+                    rules={{
+                      required: "Passcode is required",
+                    }}
                   />
                   <IconButton
                     onClick={() => setIsPasscodeVisible((prev) => !prev)}

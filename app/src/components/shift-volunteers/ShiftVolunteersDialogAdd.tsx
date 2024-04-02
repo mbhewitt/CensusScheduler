@@ -677,7 +677,7 @@ export const ShiftVolunteersDialogAdd = ({
                       {...params}
                       error={Boolean(errors.volunteer)}
                       helperText={errors.volunteer?.message}
-                      label="Name"
+                      label="Volunteer"
                       required
                       variant="standard"
                     />
