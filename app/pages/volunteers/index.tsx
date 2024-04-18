@@ -5,10 +5,7 @@ import { SignIn } from "src/components/sign-in";
 import { Volunteers } from "src/components/volunteers";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import {
-  checkIsAuthenticated,
-  checkIsCoreCrew,
-} from "src/utils/checkIsRoleExist";
+import { checkIsAdmin, checkIsAuthenticated } from "src/utils/checkIsRoleExist";
 
 const VolunteersPage = () => {
   // context
@@ -29,7 +26,7 @@ const VolunteersPage = () => {
     accountType,
     isAuthenticatedSession
   );
-  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
+  const isAdmin = checkIsAdmin(accountType, roleList);
 
   // display
   // --------------------
@@ -40,7 +37,7 @@ const VolunteersPage = () => {
         <meta name="description" content="" />
         <link rel="icon" href="/general/favicon.ico" />
       </Head>
-      {isAuthenticated && isCoreCrew ? <Volunteers /> : <SignIn />}
+      {isAuthenticated && isAdmin ? <Volunteers /> : <SignIn />}
     </>
   );
 };

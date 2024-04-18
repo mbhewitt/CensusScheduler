@@ -221,7 +221,7 @@ export const Shifts = () => {
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
-  const isSuperAdmin = checkIsSuperAdmin(roleList); // WIP
+  const isSuperAdmin = checkIsSuperAdmin(roleList);
   dayjs.extend(isSameOrAfter);
 
   // prepare datatable
@@ -308,20 +308,20 @@ export const Shifts = () => {
       />
       <Container component="main">
         <Box component="section">
-          {/* {isSuperAdmin && ( */}
-          <Stack direction="row" justifyContent="flex-end" sx={{ mb: 2 }}>
-            <Button
-              onClick={() => {
-                router.push("/create-shift");
-              }}
-              startIcon={<EventAvailableIcon />}
-              type="button"
-              variant="contained"
-            >
-              Create shift
-            </Button>
-          </Stack>
-          {/* )} */}
+          {isSuperAdmin && (
+            <Stack direction="row" justifyContent="flex-end" sx={{ mb: 2 }}>
+              <Button
+                onClick={() => {
+                  router.push("/create-shift");
+                }}
+                startIcon={<EventAvailableIcon />}
+                type="button"
+                variant="contained"
+              >
+                Create shift
+              </Button>
+            </Stack>
+          )}
           <DataTable
             columnList={columnList}
             dataTable={dataTable}

@@ -32,9 +32,9 @@ import { IDLE_MINUTES } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
 import {
+  checkIsAdmin,
   checkIsAuthenticated,
   checkIsBehavioralStandardsSigned,
-  checkIsCoreCrew,
 } from "src/utils/checkIsRoleExist";
 import { signOut } from "src/utils/signOut";
 
@@ -91,7 +91,7 @@ export const Header = () => {
 
   // logic
   // --------------------
-  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
+  const isAdmin = checkIsAdmin(accountType, roleList);
 
   // handle sign out
   const handleSignOut = () => {
@@ -175,7 +175,7 @@ export const Header = () => {
                 </ListItem>
               ))}
             </List>
-            {isAuthenticated && isCoreCrew && (
+            {isAuthenticated && isAdmin && (
               <>
                 <Divider />
                 <List

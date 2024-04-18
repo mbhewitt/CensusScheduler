@@ -45,10 +45,7 @@ import type {
 import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import {
-  checkIsAuthenticated,
-  checkIsCoreCrew,
-} from "src/utils/checkIsRoleExist";
+import { checkIsAdmin, checkIsAuthenticated } from "src/utils/checkIsRoleExist";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 import { formatDateName, formatTime } from "src/utils/formatDateTime";
 import { getCheckInType } from "src/utils/getCheckInType";
@@ -216,7 +213,7 @@ export const ShiftVolunteers = () => {
     accountType,
     isAuthenticatedSession
   );
-  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
+  const isAdmin = checkIsAdmin(accountType, roleList);
 
   // handle check in toggle
   const handleCheckInToggle = async ({
@@ -285,7 +282,7 @@ export const ShiftVolunteers = () => {
   switch (checkInType) {
     case SHIFT_FUTURE: {
       isVolunteerAddAvailable =
-        (isAuthenticated && isCoreCrew) ||
+        (isAuthenticated && isAdmin) ||
         (isAuthenticated &&
           dataShiftVolunteerItem.shiftPositionList.some(
             (positionItem: IResShiftPositionItem) =>
@@ -299,8 +296,8 @@ export const ShiftVolunteers = () => {
       break;
     }
     case SHIFT_PAST: {
-      isVolunteerAddAvailable = isAuthenticated && isCoreCrew;
-      isCheckInAvailable = isAuthenticated && isCoreCrew;
+      isVolunteerAddAvailable = isAuthenticated && isAdmin;
+      isCheckInAvailable = isAuthenticated && isAdmin;
       break;
     }
     default: {
@@ -330,7 +327,7 @@ export const ShiftVolunteers = () => {
       },
     },
   ];
-  if (isAuthenticated && isCoreCrew) {
+  if (isAuthenticated && isAdmin) {
     columnList.push({
       name: "Admin",
       options: {
@@ -376,7 +373,7 @@ export const ShiftVolunteers = () => {
         />,
         // if volunteer is authenticated and is core crew
         // then display volunteer shift volunteer menu
-        isAuthenticated && isCoreCrew && (
+        isAuthenticated && isAdmin && (
           <MoreMenu
             Icon={<MoreHorizIcon />}
             key={`${shiftboardId}-menu`}
