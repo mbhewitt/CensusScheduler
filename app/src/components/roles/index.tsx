@@ -1,9 +1,9 @@
 import {
-  Add as AddIcon,
-  Delete as DeleteIcon,
+  AddModerator as AddModeratorIcon,
   Edit as EditIcon,
   Groups3 as Groups3Icon,
   MoreHoriz as MoreHorizIcon,
+  RemoveModerator as RemoveModeratorIcon,
 } from "@mui/icons-material";
 import {
   Box,
@@ -227,7 +227,7 @@ export const Roles = () => {
               <ListItemIcon>
                 <EditIcon />
               </ListItemIcon>
-              <ListItemText>Update</ListItemText>
+              <ListItemText>Update role</ListItemText>
             </MenuItem>
             <MenuItem
               onClick={() =>
@@ -238,9 +238,9 @@ export const Roles = () => {
               }
             >
               <ListItemIcon>
-                <DeleteIcon />
+                <RemoveModeratorIcon />
               </ListItemIcon>
-              <ListItemText>Delete</ListItemText>
+              <ListItemText>Delete role</ListItemText>
             </MenuItem>
           </MenuList>
         }
@@ -272,11 +272,11 @@ export const Roles = () => {
               onClick={() => {
                 setIsDialogCreateOpen(true);
               }}
-              startIcon={<AddIcon />}
+              startIcon={<AddModeratorIcon />}
               type="button"
               variant="contained"
             >
-              Create
+              Create role
             </Button>
           </Stack>
           <DataTable

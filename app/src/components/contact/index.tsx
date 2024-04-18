@@ -323,7 +323,7 @@ export const Contact = () => {
                 type="submit"
                 variant="contained"
               >
-                Send
+                Send message
               </Button>
             </CardActions>
           </form>

@@ -1,4 +1,7 @@
-import { Add as AddIcon, Close as CloseIcon } from "@mui/icons-material";
+import {
+  AddModerator as AddModeratorIcon,
+  Close as CloseIcon,
+} from "@mui/icons-material";
 import {
   Button,
   CircularProgress,
@@ -146,12 +149,16 @@ export const RolesDialogCreate = ({
           <Button
             disabled={Object.keys(errors).length > 0 || isMutating}
             startIcon={
-              isMutating ? <CircularProgress size="1rem" /> : <AddIcon />
+              isMutating ? (
+                <CircularProgress size="1rem" />
+              ) : (
+                <AddModeratorIcon />
+              )
             }
             type="submit"
             variant="contained"
           >
-            Create
+            Create role
           </Button>
         </DialogActions>
       </form>

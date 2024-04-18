@@ -405,7 +405,7 @@ export const ShiftVolunteers = () => {
                   <ListItemIcon>
                     <PersonRemoveIcon />
                   </ListItemIcon>
-                  <ListItemText>Remove</ListItemText>
+                  <ListItemText>Remove volunteer</ListItemText>
                 </MenuItem>
               </MenuList>
             }
@@ -507,7 +507,7 @@ export const ShiftVolunteers = () => {
               type="button"
               variant="contained"
             >
-              Add
+              Add volunteer
             </Button>
           </Stack>
           <DataTable

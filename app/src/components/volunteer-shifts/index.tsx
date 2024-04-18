@@ -389,7 +389,7 @@ export const VolunteerShifts = () => {
                 <ListItemIcon>
                   <EventBusyIcon />
                 </ListItemIcon>
-                <ListItemText>Remove</ListItemText>
+                <ListItemText>Remove shift</ListItemText>
               </MenuItem>
             </MenuList>
           }
