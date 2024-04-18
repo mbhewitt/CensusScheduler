@@ -41,10 +41,7 @@ import type {
 import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import {
-  checkIsAuthenticated,
-  checkIsCoreCrew,
-} from "src/utils/checkIsRoleExist";
+import { checkIsAdmin, checkIsAuthenticated } from "src/utils/checkIsRoleExist";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 import { formatDateName, formatTime } from "src/utils/formatDateTime";
 import { getCheckInType } from "src/utils/getCheckInType";
@@ -274,7 +271,7 @@ export const ShiftVolunteersDialogAdd = ({
     );
   }
 
-  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
+  const isAdmin = checkIsAdmin(accountType, roleList);
   const shiftPositionIdWatch = watch("shiftPositionId");
   const prerequisiteIdWatch = shiftPositionList.find(
     (shiftPositionItem) =>
@@ -299,7 +296,7 @@ export const ShiftVolunteersDialogAdd = ({
       noShowShift = "X";
 
       // display volunteer list
-      if (isAuthenticated && isCoreCrew) {
+      if (isAuthenticated && isAdmin) {
         volunteerListDisplay = dataVolunteerList.map(
           ({
             playaName,
@@ -329,7 +326,7 @@ export const ShiftVolunteersDialogAdd = ({
           totalSlots,
         }) => {
           const isShiftPositionAvailable =
-            (isAuthenticated && isCoreCrew) ||
+            (isAuthenticated && isAdmin) ||
             (totalSlots - filledSlots > 0 &&
               (roleRequiredId === 0 ||
                 volunteerSelected?.roleList?.some(
@@ -360,7 +357,7 @@ export const ShiftVolunteersDialogAdd = ({
           totalSlots,
         }: IResShiftItem) => {
           const isShiftPositionAvailable =
-            (isAuthenticated && isCoreCrew) ||
+            (isAuthenticated && isAdmin) ||
             (totalSlots - filledSlots > 0 &&
               dayjs(dateTimeValue).isBefore(dayjs(startTime)));
 
@@ -391,7 +388,7 @@ export const ShiftVolunteersDialogAdd = ({
               totalSlots,
             }: IResShiftPositionItem) => {
               const isShiftPositionAvailable =
-                (isAuthenticated && isCoreCrew) ||
+                (isAuthenticated && isAdmin) ||
                 (totalSlots - filledSlots > 0 &&
                   (roleRequiredId === 0 ||
                     volunteerSelected?.roleList?.some(
@@ -452,7 +449,7 @@ export const ShiftVolunteersDialogAdd = ({
           totalSlots,
         }: IResShiftItem) => {
           const isShiftPositionAvailable =
-            (isAuthenticated && isCoreCrew) ||
+            (isAuthenticated && isAdmin) ||
             (totalSlots - filledSlots > 0 &&
               dayjs(dateTimeValue).isBefore(dayjs(startTime)));
 

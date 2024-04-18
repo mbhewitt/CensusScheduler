@@ -34,6 +34,7 @@ import { RolesDialogDelete } from "src/components/roles/RolesDialogDelete";
 import { RolesDialogUpdate } from "src/components/roles/RolesDialogUpdate";
 import type { IResRoleItem } from "src/components/types";
 import {
+  ROLE_ADMIN_ID,
   ROLE_BEHAVIORAL_STANDARDS_ID,
   ROLE_CORE_CREW_ID,
   ROLE_SUPER_ADMIN_ID,
@@ -155,12 +156,13 @@ export const Roles = () => {
     },
   ];
   const dataTable = data.map(({ display, roleId, roleName }: IResRoleItem) => {
-    // if role ID is super admin, core crew, or behavioral standards
+    // if role ID is super admin, admin, or behavioral standards
     // then disable actions
     if (
-      roleId === ROLE_SUPER_ADMIN_ID ||
+      roleId === ROLE_ADMIN_ID ||
       roleId === ROLE_CORE_CREW_ID ||
-      roleId === ROLE_BEHAVIORAL_STANDARDS_ID
+      roleId === ROLE_BEHAVIORAL_STANDARDS_ID ||
+      roleId === ROLE_SUPER_ADMIN_ID
     ) {
       return [
         roleId,

@@ -81,7 +81,7 @@ export const DeveloperMode = () => {
                     developerModeDispatch({
                       payload: {
                         isEnabled: false,
-                        value: ACCOUNT_TYPE_ADMIN,
+                        value: "",
                       },
                       type: DEVELOPER_MODE_ACCOUNT_TYPE,
                     });

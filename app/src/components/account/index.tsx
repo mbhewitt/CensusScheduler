@@ -43,10 +43,7 @@ import type { IResVolunteerRoleItem } from "src/components/types";
 import { VolunteerShifts } from "src/components/volunteer-shifts";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import {
-  checkIsAuthenticated,
-  checkIsCoreCrew,
-} from "src/utils/checkIsRoleExist";
+import { checkIsAdmin, checkIsAuthenticated } from "src/utils/checkIsRoleExist";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IFormValues {
@@ -147,7 +144,7 @@ export const Account = () => {
     accountType,
     isAuthenticatedSession
   );
-  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
+  const isAdmin = checkIsAdmin(accountType, roleList);
 
   // form submission
   // --------------------
@@ -203,7 +200,7 @@ export const Account = () => {
       />
       <Container component="main">
         {/* admin */}
-        {isAuthenticated && isCoreCrew && (
+        {isAuthenticated && isAdmin && (
           <Box component="section">
             <Breadcrumbs>
               <Link href="/volunteers">
@@ -393,7 +390,7 @@ export const Account = () => {
         </Box>
 
         {/* admin */}
-        {isAuthenticated && isCoreCrew && (
+        {isAuthenticated && isAdmin && (
           <Box component="section">
             <Typography component="h2" variant="h4" sx={{ mb: 1 }}>
               Admin

@@ -17,7 +17,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     // get
     // --------------------
     case "GET": {
-      // get all volunteers and their shift counts WIP
+      // get all volunteers and their shift counts
       const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT noshow, notes, playa_name, v.shiftboard_id, world_name
         FROM op_volunteers AS v

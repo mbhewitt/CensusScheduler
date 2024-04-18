@@ -17,10 +17,7 @@ import { pageListAdmin, pageListDefault } from "src/components/layout/pageList";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { EasterEggContext } from "src/state/easter-egg/context";
 import { SessionContext } from "src/state/session/context";
-import {
-  checkIsAuthenticated,
-  checkIsCoreCrew,
-} from "src/utils/checkIsRoleExist";
+import { checkIsAdmin, checkIsAuthenticated } from "src/utils/checkIsRoleExist";
 
 export const Footer = () => {
   // context
@@ -46,7 +43,7 @@ export const Footer = () => {
     accountType,
     isAuthenticatedSession
   );
-  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
+  const isAdmin = checkIsAdmin(accountType, roleList);
 
   // display
   // --------------------
@@ -115,7 +112,7 @@ export const Footer = () => {
               </Stack>
             </Box>
             {/* admin */}
-            {isAuthenticated && isCoreCrew && (
+            {isAuthenticated && isAdmin && (
               <Box>
                 <Typography
                   component="h3"

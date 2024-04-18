@@ -39,10 +39,7 @@ import { VolunteerShiftsDialogRemove } from "src/components/volunteer-shifts/Vol
 import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import {
-  checkIsAuthenticated,
-  checkIsCoreCrew,
-} from "src/utils/checkIsRoleExist";
+import { checkIsAdmin, checkIsAuthenticated } from "src/utils/checkIsRoleExist";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 import { formatDateName, formatTime } from "src/utils/formatDateTime";
 import { getCheckInType } from "src/utils/getCheckInType";
@@ -194,7 +191,7 @@ export const VolunteerShifts = () => {
     accountType,
     isAuthenticatedSession
   );
-  const isCoreCrew = checkIsCoreCrew(accountType, roleList);
+  const isAdmin = checkIsAdmin(accountType, roleList);
 
   // handle check in toggle
   const handleCheckInToggle = async ({
@@ -325,8 +322,8 @@ export const VolunteerShifts = () => {
           break;
         }
         case SHIFT_PAST: {
-          isVolunteerRemoveAvailable = isAuthenticated && isCoreCrew;
-          isCheckInAvailable = isAuthenticated && isCoreCrew;
+          isVolunteerRemoveAvailable = isAuthenticated && isAdmin;
+          isCheckInAvailable = isAuthenticated && isAdmin;
           break;
         }
         default: {
