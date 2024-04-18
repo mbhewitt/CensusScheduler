@@ -1,24 +1,20 @@
 import { Close as CloseIcon, Edit as EditIcon } from "@mui/icons-material";
-import {
-  Button,
-  CircularProgress,
-  DialogActions,
-  TextField,
-} from "@mui/material";
+import { Button, CircularProgress, DialogActions } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useEffect } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { useSWRConfig } from "swr";
 import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { SnackbarText } from "src/components/general/SnackbarText";
+import {
+  IFormValues,
+  RolesDialogForm,
+} from "src/components/roles/RolesDialogForm";
 import type { IResRoleItem } from "src/components/types";
 import { fetcherTrigger } from "src/utils/fetcher";
 
-interface IFormValues {
-  name: string;
-}
 interface IRolesDialogUpdateProps {
   handleDialogUpdateClose: () => void;
   isDialogUpdateOpen: boolean;
@@ -110,39 +106,10 @@ export const RolesDialogUpdate = ({
       text="Update role"
     >
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-        <Controller
+        <RolesDialogForm
           control={control}
-          name="name"
-          render={({ field }) => (
-            <TextField
-              {...field}
-              autoComplete="off"
-              fullWidth
-              error={Boolean(errors.name)}
-              helperText={errors.name?.message}
-              label="Name"
-              required
-              variant="standard"
-            />
-          )}
-          rules={{
-            required: "Name is required",
-            validate: {
-              required: (value) => {
-                return Boolean(value.trim()) || "Name is required";
-              },
-              roleNameAvailable: (value) => {
-                const isRoleNameAvailable = roleList.every(
-                  ({ roleName }) =>
-                    roleName.toLowerCase() !== value.toLowerCase()
-                );
-
-                return (
-                  isRoleNameAvailable || `${value} role has been added already`
-                );
-              },
-            },
-          }}
+          errors={errors}
+          roleList={roleList}
         />
         <DialogActions>
           <Button
