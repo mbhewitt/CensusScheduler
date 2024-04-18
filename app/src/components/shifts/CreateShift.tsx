@@ -52,6 +52,7 @@ import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import type {
+  IResCreateShiftPositionDropdownItem,
   IResPositionDropdownItem,
   IResShiftCategoryDropdownItem,
 } from "src/components/types";
@@ -122,16 +123,13 @@ const defaultValues: IFormValues = {
   ],
 };
 export const CreateShift = () => {
-  // context
-  // --------------------
-
-  // state
-  // --------------------
-
   // fetching, mutation, and revalidation
   // --------------------
   const { data, error } = useSWR("/api/shifts/create", fetcherGet);
-  const { isMutating, trigger } = useSWRMutation("/api/shifts", fetcherTrigger);
+  const { isMutating, trigger } = useSWRMutation(
+    "/api/shifts/create",
+    fetcherTrigger
+  );
 
   // other hooks
   // --------------------
@@ -139,7 +137,6 @@ export const CreateShift = () => {
     clearErrors,
     control,
     formState: { errors },
-    getValues,
     handleSubmit,
     reset,
     setError,
@@ -174,67 +171,7 @@ export const CreateShift = () => {
 
   // form submission
   // --------------------
-  // const onSubmit: SubmitHandler<IVolunteerAccountFormValues> = async (
-  //   dataFormInitial
-  // ) => {
-  //   // trim whitespace
-  //   const dataFormFinal: IVolunteerAccountFormValues = Object.keys(
-  //     dataFormInitial
-  //   ).reduce((dataFormAcc, dataFormKey) => {
-  //     return {
-  //       ...dataFormAcc,
-  //       [dataFormKey]:
-  //         dataFormInitial[
-  //           dataFormKey as keyof IVolunteerAccountFormValues
-  //         ]?.trim(),
-  //     };
-  //   }, {});
-
-  //   try {
-  //     // MoreTime database
-  //     const { data: dataVolunteerItem }: { data: IResVolunteerAccount } =
-  //       await trigger({
-  //         body: dataFormFinal,
-  //         method: "POST",
-  //       });
-
-  //     sessionDispatch({
-  //       payload: dataVolunteerItem,
-  //       type: SESSION_SIGN_IN,
-  //     });
-  //     reset(defaultValues);
-  //     enqueueSnackbar(
-  //       <SnackbarText>
-  //         Account for{" "}
-  //         <strong>
-  //           {dataVolunteerItem.playaName} &quot;{dataVolunteerItem.worldName}
-  //           &quot;
-  //         </strong>{" "}
-  //         has been created
-  //       </SnackbarText>,
-  //       {
-  //         variant: "success",
-  //       }
-  //     );
-  //     router.push(`/account/${dataVolunteerItem.shiftboardId}`);
-  //   } catch (error) {
-  //     if (error instanceof Error) {
-  //       enqueueSnackbar(
-  //         <SnackbarText>
-  //           <strong>{error.message}</strong>
-  //         </SnackbarText>,
-  //         {
-  //           persist: true,
-  //           variant: "error",
-  //         }
-  //       );
-  //     }
-
-  //     throw error;
-  //   }
-  // };
-  const onSubmit: SubmitHandler<IFormValues> = (formValues) => {
-    console.log("formValues: ", formValues);
+  const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     const isShiftNameAvailable = data.shiftNameList.every(
       ({ shiftNameText }: { shiftNameText: string }) => {
         return (
@@ -262,6 +199,8 @@ export const CreateShift = () => {
           variant: "error",
         }
       );
+
+      return;
     }
 
     // if shift end time occurs before start time
@@ -279,6 +218,87 @@ export const CreateShift = () => {
           variant: "error",
         }
       );
+
+      return;
+    }
+
+    try {
+      const { shiftCategoryId } = data.shiftCategoryList.find(
+        ({ shiftCategoryName }: { shiftCategoryName: string }) => {
+          return shiftCategoryName === formValues.information.category;
+        }
+      );
+      const positionList = formValues.positionList.map(
+        ({ positionName, totalSlots, wapPoints }) => {
+          const { positionId } = data.positionList.find(
+            (positionItem: IResCreateShiftPositionDropdownItem) => {
+              return positionItem.positionName === positionName;
+            }
+          );
+
+          return {
+            positionId,
+            totalSlots: Boolean(totalSlots),
+            wapPoints: Boolean(wapPoints),
+          };
+        }
+      );
+      const timeList = formValues.timeList.map(
+        ({ date, endTime, instance, notes, startTime }) => {
+          const dateFormat = dayjs(date).format("YYYY-MM-DD");
+
+          return {
+            date: dateFormat,
+            endTime: `${dateFormat} ${dayjs(endTime).format("HH:mm:ss")}`,
+            instance,
+            notes,
+            startTime: `${dateFormat} ${dayjs(startTime).format("HH:mm:ss")}`,
+            year: dayjs(date).get("year"),
+          };
+        }
+      );
+
+      // update database
+      await trigger({
+        body: {
+          information: {
+            details: formValues.information.details,
+            isCore: formValues.information.isCore,
+            isOffPlaya: formValues.information.isOffPlaya,
+            name: formValues.information.name,
+            shiftCategoryId,
+          },
+          positionList,
+          timeList,
+        },
+        method: "POST",
+      });
+
+      enqueueSnackbar(
+        <SnackbarText>
+          <strong>
+            <strong>{formValues.information.name}</strong>
+          </strong>{" "}
+          shift has been created
+        </SnackbarText>,
+        {
+          variant: "success",
+        }
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        enqueueSnackbar(
+          <SnackbarText>
+            <strong>{error.message}</strong>
+          </SnackbarText>,
+          {
+            persist: true,
+            variant: "error",
+          }
+        );
+      }
+
+      throw error;
     }
   };
 

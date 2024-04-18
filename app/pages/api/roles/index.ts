@@ -41,6 +41,24 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
       );
       const dbRoleFirst = dbRoleList[0];
 
+      // generate new role ID
+      const generateRoleId = async () => {
+        roleIdNew = generateId();
+        const [dbRoleList] = await pool.query<RowDataPacket[]>(
+          `SELECT role_id
+          FROM op_roles
+          WHERE role_id=?`,
+          [roleIdNew]
+        );
+        const dbRoleFirst = dbRoleList[0];
+
+        // if role ID exists already
+        // then execute function recursively
+        if (dbRoleFirst) {
+          generateRoleId();
+        }
+      };
+
       // if role name exists already
       // then update role row
       if (dbRoleFirst) {
@@ -57,25 +75,8 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
         });
       }
 
-      // check if role id exists
-      const checkIsRoleIdExist = async () => {
-        roleIdNew = generateId();
-        const [dbRoleList] = await pool.query<RowDataPacket[]>(
-          `SELECT role_id
-          FROM op_roles
-          WHERE role_id=?`,
-          [roleIdNew]
-        );
-        const dbRoleFirst = dbRoleList[0];
-
-        // if role ID exists already
-        // then execute function recursively
-        if (dbRoleFirst) {
-          checkIsRoleIdExist();
-        }
-      };
-
-      checkIsRoleIdExist();
+      // else insert new role row
+      generateRoleId();
       await pool.query(
         `INSERT INTO op_roles (create_role, delete_role, display, role, role_id)
         VALUES (true, false, true, ?, ?)`,

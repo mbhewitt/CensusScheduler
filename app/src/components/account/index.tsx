@@ -153,7 +153,7 @@ export const Account = () => {
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
-      await trigger({ body: { ...dataForm }, method: "PATCH" });
+      await trigger({ body: dataForm, method: "PATCH" });
 
       enqueueSnackbar(
         <SnackbarText>
