@@ -151,14 +151,14 @@ export const Account = () => {
 
   // form submission
   // --------------------
-  const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
+  const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
-      await trigger({ body: dataForm, method: "PATCH" });
+      await trigger({ body: formValues, method: "PATCH" });
 
       enqueueSnackbar(
         <SnackbarText>
           <strong>
-            {dataForm.playaName} &quot;{dataForm.worldName}&quot;
+            {formValues.playaName} &quot;{formValues.worldName}&quot;
           </strong>
           &apos;s profile has been updated
         </SnackbarText>,

@@ -92,17 +92,17 @@ export const RoleVolunteersDialogAdd = ({
 
   // form submission
   // --------------------
-  const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
+  const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       const roleVolunteerAdd = data.find(
         (dataVolunteerItem: IResVolunteerDropdownItem) =>
-          dataVolunteerItem.shiftboardId === dataForm.volunteer?.shiftboardId
+          dataVolunteerItem.shiftboardId === formValues.volunteer?.shiftboardId
       );
 
       // update database
       await trigger({
         body: {
-          shiftboardId: dataForm.volunteer?.shiftboardId,
+          shiftboardId: formValues.volunteer?.shiftboardId,
         },
         method: "POST",
       });

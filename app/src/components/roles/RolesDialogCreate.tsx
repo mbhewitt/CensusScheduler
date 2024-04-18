@@ -50,11 +50,11 @@ export const RolesDialogCreate = ({
 
   // form submission
   // --------------------
-  const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
+  const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       // update database
       await trigger({
-        body: dataForm,
+        body: formValues,
         method: "POST",
       });
 
@@ -62,7 +62,7 @@ export const RolesDialogCreate = ({
       reset(defaultValues);
       enqueueSnackbar(
         <SnackbarText>
-          <strong>{dataForm.name}</strong> role has been created
+          <strong>{formValues.name}</strong> role has been created
         </SnackbarText>,
         {
           variant: "success",

@@ -499,24 +499,25 @@ export const ShiftVolunteersDialogAdd = ({
   }
 
   // handle form submission
-  const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
+  const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       const volunteerAdd = dataVolunteerList.find(
         (volunteerItem: IResVolunteerDropdownItem) =>
-          volunteerItem.shiftboardId === dataForm.volunteer?.shiftboardId
+          volunteerItem.shiftboardId === formValues.volunteer?.shiftboardId
       );
       const shiftPositionAdd = shiftPositionList.find(
         (shiftPositionItem) =>
-          shiftPositionItem.shiftPositionId === dataForm.shiftPositionId
+          shiftPositionItem.shiftPositionId === formValues.shiftPositionId
       );
       const trainingAdd = dataTrainingList.find(
         (trainingItem: IResShiftItem) =>
-          trainingItem.shiftTimesId === dataForm.trainingTimesId
+          trainingItem.shiftTimesId === formValues.trainingTimesId
       );
       const trainingPositionAdd =
         dataTrainingVolunteerList?.shiftPositionList.find(
           (trainingPositionItem: IResShiftPositionItem) =>
-            trainingPositionItem.shiftPositionId === dataForm.trainingPositionId
+            trainingPositionItem.shiftPositionId ===
+            formValues.trainingPositionId
         );
       let noShowTraining: string | undefined;
 
@@ -560,8 +561,8 @@ export const ShiftVolunteersDialogAdd = ({
       await trigger({
         body: {
           noShow: noShowShift,
-          shiftboardId: dataForm.volunteer?.shiftboardId,
-          shiftPositionId: dataForm.shiftPositionId,
+          shiftboardId: formValues.volunteer?.shiftboardId,
+          shiftPositionId: formValues.shiftPositionId,
           shiftTimesId,
         },
         method: "POST",
@@ -571,8 +572,8 @@ export const ShiftVolunteersDialogAdd = ({
         noShow: noShowShift,
         playaName: volunteerAdd.playaName,
         positionName: shiftPositionAdd?.positionName,
-        shiftboardId: dataForm.volunteer?.shiftboardId,
-        shiftPositionId: dataForm.shiftPositionId,
+        shiftboardId: formValues.volunteer?.shiftboardId,
+        shiftPositionId: formValues.shiftPositionId,
         shiftTimesId,
         worldName: volunteerAdd.worldName,
       });
@@ -583,9 +584,9 @@ export const ShiftVolunteersDialogAdd = ({
         await trigger({
           body: {
             noShow: noShowTraining,
-            shiftboardId: dataForm.volunteer?.shiftboardId,
-            shiftPositionId: dataForm.trainingPositionId,
-            shiftTimesId: dataForm.trainingTimesId,
+            shiftboardId: formValues.volunteer?.shiftboardId,
+            shiftPositionId: formValues.trainingPositionId,
+            shiftTimesId: formValues.trainingTimesId,
           },
           method: "POST",
         });
@@ -594,9 +595,9 @@ export const ShiftVolunteersDialogAdd = ({
           noShow: noShowTraining,
           playaName: volunteerAdd.playaName,
           positionName: trainingPositionAdd.positionName,
-          shiftboardId: dataForm.volunteer?.shiftboardId,
-          shiftPositionId: dataForm.trainingPositionId,
-          shiftTimesId: dataForm.trainingTimesId,
+          shiftboardId: formValues.volunteer?.shiftboardId,
+          shiftPositionId: formValues.trainingPositionId,
+          shiftTimesId: formValues.trainingTimesId,
           worldName: volunteerAdd.worldName,
         });
       }

@@ -70,11 +70,11 @@ export const ResetPasscodeDialog = ({
   // form submission
   // --------------------
   const onSubmit: SubmitHandler<IVolunteerAccountFormValues> = async (
-    dataForm
+    formValues
   ) => {
     try {
       await trigger({
-        body: { passcode: dataForm.passcodeCreate },
+        body: { passcode: formValues.passcodeCreate },
         method: "PATCH",
       });
 

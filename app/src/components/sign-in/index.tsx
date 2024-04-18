@@ -85,12 +85,12 @@ export const SignIn = () => {
 
   // form submission
   // --------------------
-  const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
+  const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       const dataVolunteerItem = await trigger({
         body: {
-          passcode: dataForm.passcode,
-          shiftboardId: dataForm.volunteer?.shiftboardId,
+          passcode: formValues.passcode,
+          shiftboardId: formValues.volunteer?.shiftboardId,
         },
         method: "POST",
       });

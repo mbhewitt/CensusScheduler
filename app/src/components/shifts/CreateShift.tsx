@@ -147,7 +147,6 @@ export const CreateShift = () => {
     defaultValues,
     mode: "onBlur",
   });
-  console.log("errors: ", errors);
   const {
     append: timeAppend,
     fields: timeFields,

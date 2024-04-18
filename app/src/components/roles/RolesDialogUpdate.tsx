@@ -65,11 +65,11 @@ export const RolesDialogUpdate = ({
 
   // form submission
   // --------------------
-  const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
+  const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       // update database
       await trigger({
-        body: dataForm,
+        body: formValues,
         method: "PATCH",
       });
       mutate("/api/roles");
@@ -78,7 +78,7 @@ export const RolesDialogUpdate = ({
       reset(defaultValues);
       enqueueSnackbar(
         <SnackbarText>
-          <strong>{dataForm.name}</strong> role has been updated
+          <strong>{formValues.name}</strong> role has been updated
         </SnackbarText>,
         {
           variant: "success",

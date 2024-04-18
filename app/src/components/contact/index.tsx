@@ -116,15 +116,15 @@ export const Contact = () => {
 
   // form submission
   // --------------------
-  const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
+  const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
-      await trigger({ body: dataForm, method: "POST" });
+      await trigger({ body: formValues, method: "POST" });
 
       reset(defaultValues);
       enqueueSnackbar(
         <SnackbarText>
-          Message from <strong>{dataForm.name}</strong> at{" "}
-          <strong>{dataForm.email}</strong> has been recorded
+          Message from <strong>{formValues.name}</strong> at{" "}
+          <strong>{formValues.email}</strong> has been recorded
         </SnackbarText>,
         {
           variant: "success",
