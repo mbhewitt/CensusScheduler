@@ -516,7 +516,7 @@ export const BehavioralStandards = () => {
                 type="button"
                 variant="outlined"
               >
-                Decline
+                Decline agreement
               </Button>
               <Button
                 disabled={isMutating || !isSigned}
@@ -527,7 +527,7 @@ export const BehavioralStandards = () => {
                 type="button"
                 variant="contained"
               >
-                Sign
+                Sign agreement
               </Button>
             </CardActions>
           </Card>

@@ -220,7 +220,7 @@ export const RoleVolunteersDialogAdd = ({
             type="submit"
             variant="contained"
           >
-            Add
+            Add volunteer
           </Button>
         </DialogActions>
       </form>

@@ -167,7 +167,7 @@ export const RolesDialogUpdate = ({
             type="submit"
             variant="contained"
           >
-            Update
+            Update role
           </Button>
         </DialogActions>
       </form>

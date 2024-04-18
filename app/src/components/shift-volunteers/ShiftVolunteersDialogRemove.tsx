@@ -135,7 +135,7 @@ export const ShiftVolunteersDialogRemove = ({
           type="submit"
           variant="contained"
         >
-          Remove
+          Remove volunteer
         </Button>
       </DialogActions>
     </DialogContainer>

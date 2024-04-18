@@ -929,7 +929,7 @@ export const ShiftVolunteersDialogAdd = ({
             type="submit"
             variant="contained"
           >
-            Add
+            Add volunteer
           </Button>
         </DialogActions>
       </form>

@@ -1,4 +1,7 @@
-import { Close as CloseIcon, Delete as DeleteIcon } from "@mui/icons-material";
+import {
+  Close as CloseIcon,
+  RemoveModerator as RemoveModeratorIcon,
+} from "@mui/icons-material";
 import {
   Button,
   CircularProgress,
@@ -160,12 +163,16 @@ export const RolesDialogDelete = ({
           disabled={isMutating || (data && data.length > 0)}
           onClick={handleRoleDelete}
           startIcon={
-            isMutating ? <CircularProgress size="1rem" /> : <DeleteIcon />
+            isMutating ? (
+              <CircularProgress size="1rem" />
+            ) : (
+              <RemoveModeratorIcon />
+            )
           }
           type="submit"
           variant="contained"
         >
-          Delete
+          Delete role
         </Button>
       </DialogActions>
     </DialogContainer>

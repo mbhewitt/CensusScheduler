@@ -123,7 +123,7 @@ export const RoleVolunteersDialogRemove = ({
           type="submit"
           variant="contained"
         >
-          Remove
+          Remove volunteer
         </Button>
       </DialogActions>
     </DialogContainer>

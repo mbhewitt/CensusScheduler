@@ -4,7 +4,7 @@ import {
   MoreHoriz as MoreHorizIcon,
   PersonAdd as PersonAddIcon,
   PersonRemove as PersonRemoveIcon,
-  Verified as VerifiedIcon,
+  VerifiedUser as VerifiedUserIcon,
 } from "@mui/icons-material";
 import {
   Box,
@@ -150,7 +150,7 @@ export const RoleVolunteers = () => {
                 <ListItemIcon>
                   <PersonRemoveIcon />
                 </ListItemIcon>
-                <ListItemText>Remove</ListItemText>
+                <ListItemText>Remove volunteer</ListItemText>
               </MenuItem>
             </MenuList>
           }
@@ -189,7 +189,7 @@ export const RoleVolunteers = () => {
                   textDecoration: "underline",
                 }}
               >
-                <VerifiedIcon sx={{ mr: 0.5 }} />
+                <VerifiedUserIcon sx={{ mr: 0.5 }} />
                 Roles
               </Typography>
             </Link>
@@ -224,7 +224,7 @@ export const RoleVolunteers = () => {
               type="button"
               variant="contained"
             >
-              Add
+              Add volunteer
             </Button>
           </Stack>
           <DataTable

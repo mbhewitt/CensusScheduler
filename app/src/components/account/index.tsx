@@ -1,9 +1,10 @@
 import {
+  AccountCircle as AccountCircleIcon,
   Groups3 as Groups3Icon,
   LockReset as LockResetIcon,
   ManageAccounts as ManageAccountsIcon,
-  Send as SendIcon,
-  Verified as VerifiedIcon,
+  SpeakerNotes as SpeakerNotesIcon,
+  VerifiedUser as VerifiedUserIcon,
 } from "@mui/icons-material";
 import {
   Box,
@@ -372,12 +373,16 @@ export const Account = () => {
                 <Button
                   disabled={isMutating}
                   startIcon={
-                    isMutating ? <CircularProgress size="1rem" /> : <SendIcon />
+                    isMutating ? (
+                      <CircularProgress size="1rem" />
+                    ) : (
+                      <AccountCircleIcon />
+                    )
                   }
                   type="submit"
                   variant="contained"
                 >
-                  Update
+                  Update profile
                 </Button>
               </CardActions>
             </form>
@@ -411,7 +416,7 @@ export const Account = () => {
                             ({ roleId, roleName }: IResVolunteerRoleItem) => (
                               <ListItem disablePadding key={`${roleId}-item`}>
                                 <ListItemIcon sx={{ minWidth: "auto", pr: 1 }}>
-                                  <VerifiedIcon color="secondary" />
+                                  <VerifiedUserIcon color="secondary" />
                                 </ListItemIcon>
                                 <ListItemText>{roleName}</ListItemText>
                               </ListItem>
@@ -452,14 +457,14 @@ export const Account = () => {
                             isMutating ? (
                               <CircularProgress size="1rem" />
                             ) : (
-                              <SendIcon />
+                              <SpeakerNotesIcon />
                             )
                           }
                           sx={{ mt: 2 }}
                           type="submit"
                           variant="contained"
                         >
-                          Update
+                          Update notes
                         </Button>
                       </Stack>
                     </form>
