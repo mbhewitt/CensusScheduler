@@ -98,28 +98,6 @@ export const RoleVolunteersDialogAdd = ({
         (dataVolunteerItem: IResVolunteerDropdownItem) =>
           dataVolunteerItem.shiftboardId === dataForm.volunteer?.shiftboardId
       );
-      const isRoleVolunteerAvailable = roleVolunteerList.every(
-        ({ shiftboardId }) => shiftboardId !== roleVolunteerAdd.shiftboardId
-      );
-
-      // if the role volunteer has been added already
-      // then display error
-      if (!isRoleVolunteerAvailable) {
-        enqueueSnackbar(
-          <SnackbarText>
-            <strong>
-              {roleVolunteerAdd.playaName} &quot;{roleVolunteerAdd.worldName}
-              &quot;
-            </strong>{" "}
-            for <strong>{roleName}</strong> role has been added already
-          </SnackbarText>,
-          {
-            persist: true,
-            variant: "error",
-          }
-        );
-        return;
-      }
 
       // update database
       await trigger({
@@ -203,6 +181,20 @@ export const RoleVolunteersDialogAdd = ({
           )}
           rules={{
             required: "Volunteer is required",
+            validate: (value) => {
+              if (value) {
+                const isRoleVolunteerAvailable = roleVolunteerList.every(
+                  ({ shiftboardId }) => shiftboardId !== value.shiftboardId
+                );
+
+                return (
+                  isRoleVolunteerAvailable ||
+                  `${value.label} for ${roleName} role has been added already`
+                );
+              }
+
+              return "";
+            },
           }}
         />
         <DialogActions>
@@ -221,7 +213,7 @@ export const RoleVolunteersDialogAdd = ({
             Cancel
           </Button>
           <Button
-            disabled={isMutating}
+            disabled={Object.keys(errors).length > 0 || isMutating}
             startIcon={
               isMutating ? <CircularProgress size="1rem" /> : <PersonAddIcon />
             }

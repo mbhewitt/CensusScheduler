@@ -67,25 +67,6 @@ export const RolesDialogUpdate = ({
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
     try {
-      const isRoleAvailable = roleList.every(
-        ({ roleName }) => roleName !== dataForm.name
-      );
-
-      // if the role has been added already
-      // then display error
-      if (!isRoleAvailable) {
-        enqueueSnackbar(
-          <SnackbarText>
-            <strong>{dataForm.name}</strong> role has been added already
-          </SnackbarText>,
-          {
-            persist: true,
-            variant: "error",
-          }
-        );
-        return;
-      }
-
       // update database
       await trigger({
         body: dataForm,
@@ -146,8 +127,20 @@ export const RolesDialogUpdate = ({
           )}
           rules={{
             required: "Name is required",
-            validate: (value) => {
-              return Boolean(value.trim()) || "Name is required";
+            validate: {
+              required: (value) => {
+                return Boolean(value.trim()) || "Name is required";
+              },
+              roleNameAvailable: (value) => {
+                const isRoleNameAvailable = roleList.every(
+                  ({ roleName }) =>
+                    roleName.toLowerCase() !== value.toLowerCase()
+                );
+
+                return (
+                  isRoleNameAvailable || `${value} role has been added already`
+                );
+              },
             },
           }}
         />
@@ -167,7 +160,7 @@ export const RolesDialogUpdate = ({
             Cancel
           </Button>
           <Button
-            disabled={isMutating}
+            disabled={Object.keys(errors).length > 0 || isMutating}
             startIcon={
               isMutating ? <CircularProgress size="1rem" /> : <EditIcon />
             }

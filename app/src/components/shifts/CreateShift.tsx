@@ -34,6 +34,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -137,6 +138,7 @@ export const CreateShift = () => {
     clearErrors,
     control,
     formState: { errors },
+    getValues,
     handleSubmit,
     reset,
     setError,
@@ -145,6 +147,7 @@ export const CreateShift = () => {
     defaultValues,
     mode: "onBlur",
   });
+  console.log("errors: ", errors);
   const {
     append: timeAppend,
     fields: timeFields,
@@ -163,6 +166,7 @@ export const CreateShift = () => {
   });
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
+  dayjs.extend(isSameOrBefore);
 
   // logic
   // --------------------
@@ -172,56 +176,6 @@ export const CreateShift = () => {
   // form submission
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
-    const isShiftNameAvailable = data.shiftNameList.every(
-      ({ shiftNameText }: { shiftNameText: string }) => {
-        return (
-          shiftNameText.toLowerCase() !==
-          formValues.information.name.toLowerCase()
-        );
-      }
-    );
-    const invalidTimeFound = formValues.timeList.find(
-      ({ endTime, startTime }: { endTime: string; startTime: string }) => {
-        return dayjs(endTime).isBefore(dayjs(startTime));
-      }
-    );
-
-    // if the shift name has been added already
-    // then display error
-    if (!isShiftNameAvailable) {
-      enqueueSnackbar(
-        <SnackbarText>
-          <strong>{formValues.information.name}</strong> shift name has been
-          added already
-        </SnackbarText>,
-        {
-          persist: true,
-          variant: "error",
-        }
-      );
-
-      return;
-    }
-
-    // if shift end time occurs before start time
-    // then display error
-    if (invalidTimeFound) {
-      enqueueSnackbar(
-        <SnackbarText>
-          On{" "}
-          <strong>{dayjs(invalidTimeFound.date).format("MM/DD/YYYY")}</strong>,
-          the <strong>end time</strong> is occuring before the{" "}
-          <strong>start time</strong>
-        </SnackbarText>,
-        {
-          persist: true,
-          variant: "error",
-        }
-      );
-
-      return;
-    }
-
     try {
       const { shiftCategoryId } = data.shiftCategoryList.find(
         ({ shiftCategoryName }: { shiftCategoryName: string }) => {
@@ -383,8 +337,32 @@ export const CreateShift = () => {
                         )}
                         rules={{
                           required: "Name is required",
-                          validate: (value) => {
-                            return Boolean(value.trim()) || "Name is required";
+                          validate: {
+                            required: (value) => {
+                              return (
+                                Boolean(value.trim()) || "Name is required"
+                              );
+                            },
+                            roleNameAvailable: (value) => {
+                              const isShiftNameAvailable =
+                                data.shiftNameList.every(
+                                  ({
+                                    shiftNameText,
+                                  }: {
+                                    shiftNameText: string;
+                                  }) => {
+                                    return (
+                                      shiftNameText.toLowerCase() !==
+                                      value.toLowerCase()
+                                    );
+                                  }
+                                );
+
+                              return (
+                                isShiftNameAvailable ||
+                                `${value} shift has been added already`
+                              );
+                            },
                           },
                         }}
                       />
@@ -964,7 +942,38 @@ export const CreateShift = () => {
                                     field.onChange(event);
 
                                     if (event) {
-                                      clearErrors(`timeList.${index}.endTime`);
+                                      // validate end time occurs after start time
+                                      const dateFormat = dayjs(
+                                        getValues(`timeList.${index}.date`)
+                                      ).format("YYYY-MM-DD");
+                                      const startTimeFormat = dayjs(
+                                        `${dateFormat} ${dayjs(
+                                          getValues(
+                                            `timeList.${index}.startTime`
+                                          )
+                                        ).format("HH:mm")}`
+                                      );
+                                      const endTimeFormat = dayjs(
+                                        `${dateFormat} ${dayjs(event).format(
+                                          "HH:mm"
+                                        )}`
+                                      );
+
+                                      if (
+                                        dayjs(endTimeFormat).isSameOrBefore(
+                                          startTimeFormat
+                                        )
+                                      ) {
+                                        setError(`timeList.${index}.endTime`, {
+                                          type: "custom",
+                                          message:
+                                            "End time must occur after start time",
+                                        });
+                                      } else {
+                                        clearErrors(
+                                          `timeList.${index}.endTime`
+                                        );
+                                      }
                                     }
                                   }}
                                   renderInput={(params) => (
@@ -1075,7 +1084,7 @@ export const CreateShift = () => {
                   Cancel
                 </Button>
                 <Button
-                  disabled={isMutating}
+                  disabled={Object.keys(errors).length > 0 || isMutating}
                   startIcon={
                     isMutating ? (
                       <CircularProgress size="1rem" />

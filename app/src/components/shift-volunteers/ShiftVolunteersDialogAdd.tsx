@@ -543,31 +543,7 @@ export const ShiftVolunteersDialogAdd = ({
         }
       }
 
-      // check if the volunteer has been added already
-      const isVolunteerSlotAvailable = shiftVolunteerList.every(
-        (volunteer) =>
-          volunteer.shiftboardId !== Number(dataForm.volunteer?.shiftboardId)
-      );
-
-      // if the volunteer has been added already
-      // then display error
-      if (!isVolunteerSlotAvailable) {
-        enqueueSnackbar(
-          <SnackbarText>
-            <strong>
-              {volunteerAdd.playaName} &quot;{volunteerAdd.worldName}
-              &quot;
-            </strong>{" "}
-            has been added already
-          </SnackbarText>,
-          {
-            persist: true,
-            variant: "error",
-          }
-        );
-        return;
-      }
-      // else display success notification
+      // display success notification
       enqueueSnackbar(
         <SnackbarText>
           <strong>
@@ -580,55 +556,57 @@ export const ShiftVolunteersDialogAdd = ({
         }
       );
 
-      // add shift position
-      if (isVolunteerSlotAvailable || (isAuthenticated && isCoreCrew)) {
+      // update database
+      await trigger({
+        body: {
+          noShow: noShowShift,
+          shiftboardId: dataForm.volunteer?.shiftboardId,
+          shiftPositionId: dataForm.shiftPositionId,
+          shiftTimesId,
+        },
+        method: "POST",
+      });
+      // emit shift update
+      socket.emit("req-shift-volunteer-add", {
+        noShow: noShowShift,
+        playaName: volunteerAdd.playaName,
+        positionName: shiftPositionAdd?.positionName,
+        shiftboardId: dataForm.volunteer?.shiftboardId,
+        shiftPositionId: dataForm.shiftPositionId,
+        shiftTimesId,
+        worldName: volunteerAdd.worldName,
+      });
+
+      // add training position
+      if (trainingAdd) {
         // update database
         await trigger({
           body: {
-            noShow: noShowShift,
+            noShow: noShowTraining,
             shiftboardId: dataForm.volunteer?.shiftboardId,
-            shiftPositionId: dataForm.shiftPositionId,
-            shiftTimesId,
+            shiftPositionId: dataForm.trainingPositionId,
+            shiftTimesId: dataForm.trainingTimesId,
           },
           method: "POST",
         });
         // emit shift update
         socket.emit("req-shift-volunteer-add", {
-          noShow: noShowShift,
+          noShow: noShowTraining,
           playaName: volunteerAdd.playaName,
-          positionName: shiftPositionAdd?.positionName,
+          positionName: trainingPositionAdd.positionName,
           shiftboardId: dataForm.volunteer?.shiftboardId,
-          shiftPositionId: dataForm.shiftPositionId,
-          shiftTimesId,
+          shiftPositionId: dataForm.trainingPositionId,
+          shiftTimesId: dataForm.trainingTimesId,
           worldName: volunteerAdd.worldName,
         });
-
-        // add training position
-        if (trainingAdd) {
-          // update database
-          await trigger({
-            body: {
-              noShow: noShowTraining,
-              shiftboardId: dataForm.volunteer?.shiftboardId,
-              shiftPositionId: dataForm.trainingPositionId,
-              shiftTimesId: dataForm.trainingTimesId,
-            },
-            method: "POST",
-          });
-          // emit shift update
-          socket.emit("req-shift-volunteer-add", {
-            noShow: noShowTraining,
-            playaName: volunteerAdd.playaName,
-            positionName: trainingPositionAdd.positionName,
-            shiftboardId: dataForm.volunteer?.shiftboardId,
-            shiftPositionId: dataForm.trainingPositionId,
-            shiftTimesId: dataForm.trainingTimesId,
-            worldName: volunteerAdd.worldName,
-          });
-        }
-
-        reset(defaultValues);
       }
+
+      reset({
+        volunteer: { label: `${playaName} "${worldName}"`, shiftboardId },
+        shiftPositionId: "",
+        trainingPositionId: "",
+        trainingTimesId: "",
+      });
 
       handleDialogAddClose();
     } catch (error) {
@@ -686,6 +664,21 @@ export const ShiftVolunteersDialogAdd = ({
               )}
               rules={{
                 required: "Volunteer is required",
+                validate: (value) => {
+                  if (value) {
+                    const isVolunteerSlotAvailable = shiftVolunteerList.every(
+                      (volunteer) =>
+                        volunteer.shiftboardId !== value.shiftboardId
+                    );
+
+                    return (
+                      isVolunteerSlotAvailable ||
+                      `${value.label} has been added already`
+                    );
+                  }
+
+                  return "";
+                },
               }}
             />
           </Grid>
@@ -931,7 +924,7 @@ export const ShiftVolunteersDialogAdd = ({
             Cancel
           </Button>
           <Button
-            disabled={isMutating}
+            disabled={Object.keys(errors).length > 0 || isMutating}
             startIcon={
               isMutating ? <CircularProgress size="1rem" /> : <PersonAddIcon />
             }
