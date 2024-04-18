@@ -1,4 +1,5 @@
-import { Chip, Container, lighten } from "@mui/material";
+import { EventAvailable as EventAvailableIcon } from "@mui/icons-material";
+import { Box, Button, Chip, Container, lighten, Stack } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
@@ -15,6 +16,8 @@ import { Loading } from "src/components/general/Loading";
 import { Hero } from "src/components/layout/Hero";
 import type { IResShiftItem } from "src/components/types";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
+import { SessionContext } from "src/state/session/context";
+import { checkIsSuperAdmin } from "src/utils/checkIsRoleExist";
 import { fetcherGet } from "src/utils/fetcher";
 import { formatDateName, formatTime } from "src/utils/formatDateTime";
 import { getColorMap } from "src/utils/getColorMap";
@@ -27,6 +30,11 @@ export const Shifts = () => {
       dateTime: { value: dateTimeValue },
     },
   } = useContext(DeveloperModeContext);
+  const {
+    sessionState: {
+      user: { roleList },
+    },
+  } = useContext(SessionContext);
 
   // state
   // --------------------
@@ -89,16 +97,16 @@ export const Shifts = () => {
       },
     },
     {
-      name: "Filled / Max",
+      name: "Filled / Total",
       options: {
         filterOptions: {
           logic: (value: string, filterValue: string[]) => {
-            const [filled, max] = value
+            const [filled, total] = value
               .split(" / ")
               .map((string) => Number(string));
             const show =
-              (filterValue.indexOf("Full") >= 0 && filled >= max) ||
-              (filterValue.indexOf("Open") >= 0 && filled < max);
+              (filterValue.indexOf("Full") >= 0 && filled >= total) ||
+              (filterValue.indexOf("Open") >= 0 && filled < total);
 
             // returning false means that the value will display
             return !show;
@@ -213,6 +221,7 @@ export const Shifts = () => {
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
+  const isSuperAdmin = checkIsSuperAdmin(roleList); // WIP
   dayjs.extend(isSameOrAfter);
 
   // prepare datatable
@@ -298,11 +307,27 @@ export const Shifts = () => {
         text="Shifts"
       />
       <Container component="main">
-        <DataTable
-          columnList={columnList}
-          dataTable={dataTable}
-          optionListCustom={optionListCustom}
-        />
+        <Box component="section">
+          {/* {isSuperAdmin && ( */}
+          <Stack direction="row" justifyContent="flex-end" sx={{ mb: 2 }}>
+            <Button
+              onClick={() => {
+                router.push("/create-shift");
+              }}
+              startIcon={<EventAvailableIcon />}
+              type="button"
+              variant="contained"
+            >
+              Create shift
+            </Button>
+          </Stack>
+          {/* )} */}
+          <DataTable
+            columnList={columnList}
+            dataTable={dataTable}
+            optionListCustom={optionListCustom}
+          />
+        </Box>
       </Container>
     </>
   );

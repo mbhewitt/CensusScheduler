@@ -75,8 +75,14 @@ export const Contact = () => {
 
   // other hooks
   // --------------------
-  const { control, handleSubmit, reset } = useForm({
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+    reset,
+  } = useForm({
     defaultValues,
+    mode: "onBlur",
   });
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
@@ -110,15 +116,15 @@ export const Contact = () => {
 
   // form submission
   // --------------------
-  const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
+  const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
-      await trigger({ body: dataForm, method: "POST" });
+      await trigger({ body: formValues, method: "POST" });
 
       reset(defaultValues);
       enqueueSnackbar(
         <SnackbarText>
-          Message from <strong>{dataForm.name}</strong> at{" "}
-          <strong>{dataForm.email}</strong> has been recorded
+          Message from <strong>{formValues.name}</strong> at{" "}
+          <strong>{formValues.email}</strong> has been recorded
         </SnackbarText>,
         {
           variant: "success",
@@ -171,12 +177,20 @@ export const Contact = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
+                        error={Boolean(errors.name)}
                         fullWidth
+                        helperText={errors.name?.message}
                         label="Name"
                         required
                         variant="standard"
                       />
                     )}
+                    rules={{
+                      required: "Name is required",
+                      validate: (value) => {
+                        return Boolean(value.trim()) || "Name is required";
+                      },
+                    }}
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -186,13 +200,21 @@ export const Contact = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
+                        error={Boolean(errors.email)}
                         fullWidth
+                        helperText={errors.email?.message}
                         label="Email"
                         required
                         type="email"
                         variant="standard"
                       />
                     )}
+                    rules={{
+                      required: "Email is required",
+                      validate: (value) => {
+                        return Boolean(value.trim()) || "Email is required";
+                      },
+                    }}
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -266,13 +288,21 @@ export const Contact = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
+                        error={Boolean(errors.message)}
                         fullWidth
+                        helperText={errors.message?.message}
                         label="Message"
                         multiline
                         required
                         variant="standard"
                       />
                     )}
+                    rules={{
+                      required: "Message is required",
+                      validate: (value) => {
+                        return Boolean(value.trim()) || "Message is required";
+                      },
+                    }}
                   />
                 </Grid>
               </Grid>

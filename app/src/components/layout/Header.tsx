@@ -28,12 +28,14 @@ import { useContext, useEffect, useState } from "react";
 import IdleTimer from "react-idle-timer";
 
 import { pageListAdmin, pageListDefault } from "src/components/layout/pageList";
-import { IDLE_MINUTES, ROLE_BEHAVIORAL_STANDARDS_ID } from "src/constants";
+import { IDLE_MINUTES } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
-import { checkIsCoreCrew } from "src/utils/checkIsCoreCrew";
-import { checkIsRoleExist } from "src/utils/checkIsRoleExist";
+import {
+  checkIsAuthenticated,
+  checkIsBehavioralStandardsSigned,
+  checkIsCoreCrew,
+} from "src/utils/checkIsRoleExist";
 import { signOut } from "src/utils/signOut";
 
 export const Header = () => {
@@ -66,10 +68,8 @@ export const Header = () => {
 
   // side effects
   // --------------------
-  const isBehavioralStandardsSigned = checkIsRoleExist(
-    ROLE_BEHAVIORAL_STANDARDS_ID,
-    roleList
-  );
+  const isBehavioralStandardsSigned =
+    checkIsBehavioralStandardsSigned(roleList);
   const isAuthenticated = checkIsAuthenticated(
     accountType,
     isAuthenticatedSession

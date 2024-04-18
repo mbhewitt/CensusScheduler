@@ -56,8 +56,14 @@ export const RoleVolunteersDialogAdd = ({
 
   // other hooks
   // --------------------
-  const { control, handleSubmit, reset } = useForm({
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+    reset,
+  } = useForm({
     defaultValues,
+    mode: "onBlur",
   });
   const { enqueueSnackbar } = useSnackbar();
 
@@ -86,39 +92,17 @@ export const RoleVolunteersDialogAdd = ({
 
   // form submission
   // --------------------
-  const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
+  const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       const roleVolunteerAdd = data.find(
         (dataVolunteerItem: IResVolunteerDropdownItem) =>
-          dataVolunteerItem.shiftboardId === dataForm.volunteer?.shiftboardId
+          dataVolunteerItem.shiftboardId === formValues.volunteer?.shiftboardId
       );
-      const isRoleVolunteerAvailable = roleVolunteerList.some(
-        ({ shiftboardId }) => shiftboardId === roleVolunteerAdd.shiftboardId
-      );
-
-      // if the role volunteer has been added already
-      // then display an error
-      if (isRoleVolunteerAvailable) {
-        enqueueSnackbar(
-          <SnackbarText>
-            <strong>
-              {roleVolunteerAdd.playaName} &quot;{roleVolunteerAdd.worldName}
-              &quot;
-            </strong>{" "}
-            for <strong>{roleName}</strong> role has been added already
-          </SnackbarText>,
-          {
-            persist: true,
-            variant: "error",
-          }
-        );
-        return;
-      }
 
       // update database
       await trigger({
         body: {
-          shiftboardId: dataForm.volunteer?.shiftboardId,
+          shiftboardId: formValues.volunteer?.shiftboardId,
         },
         method: "POST",
       });
@@ -170,8 +154,7 @@ export const RoleVolunteersDialogAdd = ({
               {...field}
               fullWidth
               isOptionEqualToValue={(option, value: IVolunteerOption) =>
-                option.shiftboardId === value.shiftboardId ||
-                value.shiftboardId === 0
+                option.shiftboardId === value.shiftboardId
               }
               onChange={(_, data) => field.onChange(data)}
               options={data.map(
@@ -187,18 +170,32 @@ export const RoleVolunteersDialogAdd = ({
               renderInput={(params) => (
                 <TextField
                   {...params}
+                  error={Boolean(errors.volunteer)}
+                  helperText={errors.volunteer?.message}
                   label="Name"
                   required
                   variant="standard"
                 />
               )}
-              renderOption={(props, option) => (
-                <li {...props} key={option.shiftboardId}>
-                  {option.label}
-                </li>
-              )}
             />
           )}
+          rules={{
+            required: "Volunteer is required",
+            validate: (value) => {
+              if (value) {
+                const isRoleVolunteerAvailable = roleVolunteerList.every(
+                  ({ shiftboardId }) => shiftboardId !== value.shiftboardId
+                );
+
+                return (
+                  isRoleVolunteerAvailable ||
+                  `${value.label} for ${roleName} role has been added already`
+                );
+              }
+
+              return "";
+            },
+          }}
         />
         <DialogActions>
           <Button
@@ -216,7 +213,7 @@ export const RoleVolunteersDialogAdd = ({
             Cancel
           </Button>
           <Button
-            disabled={isMutating}
+            disabled={Object.keys(errors).length > 0 || isMutating}
             startIcon={
               isMutating ? <CircularProgress size="1rem" /> : <PersonAddIcon />
             }

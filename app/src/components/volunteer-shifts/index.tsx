@@ -39,8 +39,10 @@ import { VolunteerShiftsDialogRemove } from "src/components/volunteer-shifts/Vol
 import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
-import { checkIsCoreCrew } from "src/utils/checkIsCoreCrew";
+import {
+  checkIsAuthenticated,
+  checkIsCoreCrew,
+} from "src/utils/checkIsRoleExist";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 import { formatDateName, formatTime } from "src/utils/formatDateTime";
 import { getCheckInType } from "src/utils/getCheckInType";
@@ -424,7 +426,7 @@ export const VolunteerShifts = () => {
         alignItems="flex-end"
         direction="row"
         justifyContent="space-between"
-        sx={{ mb: 1 }}
+        sx={{ mb: 2 }}
       >
         <Typography component="h2" variant="h4">
           Shifts
@@ -437,10 +439,9 @@ export const VolunteerShifts = () => {
           type="button"
           variant="contained"
         >
-          Add
+          Add shift
         </Button>
       </Stack>
-
       <DataTable
         columnList={columnList}
         dataTable={dataTable}

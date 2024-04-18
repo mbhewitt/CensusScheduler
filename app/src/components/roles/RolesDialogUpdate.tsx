@@ -45,8 +45,15 @@ export const RolesDialogUpdate = ({
 
   // other hooks
   // --------------------
-  const { control, handleSubmit, reset, setValue } = useForm({
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+    reset,
+    setValue,
+  } = useForm({
     defaultValues,
+    mode: "onBlur",
   });
   const { enqueueSnackbar } = useSnackbar();
 
@@ -58,30 +65,11 @@ export const RolesDialogUpdate = ({
 
   // form submission
   // --------------------
-  const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
+  const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
-      const isRoleAvailable = roleList.some(
-        ({ roleName }) => roleName === dataForm.name
-      );
-
-      // if the role has been added already
-      // then display an error
-      if (isRoleAvailable) {
-        enqueueSnackbar(
-          <SnackbarText>
-            <strong>{dataForm.name}</strong> role has been added already
-          </SnackbarText>,
-          {
-            persist: true,
-            variant: "error",
-          }
-        );
-        return;
-      }
-
       // update database
       await trigger({
-        body: dataForm,
+        body: formValues,
         method: "PATCH",
       });
       mutate("/api/roles");
@@ -90,7 +78,7 @@ export const RolesDialogUpdate = ({
       reset(defaultValues);
       enqueueSnackbar(
         <SnackbarText>
-          <strong>{dataForm.name}</strong> role has been updated
+          <strong>{formValues.name}</strong> role has been updated
         </SnackbarText>,
         {
           variant: "success",
@@ -130,11 +118,31 @@ export const RolesDialogUpdate = ({
               {...field}
               autoComplete="off"
               fullWidth
+              error={Boolean(errors.name)}
+              helperText={errors.name?.message}
               label="Name"
               required
               variant="standard"
             />
           )}
+          rules={{
+            required: "Name is required",
+            validate: {
+              required: (value) => {
+                return Boolean(value.trim()) || "Name is required";
+              },
+              roleNameAvailable: (value) => {
+                const isRoleNameAvailable = roleList.every(
+                  ({ roleName }) =>
+                    roleName.toLowerCase() !== value.toLowerCase()
+                );
+
+                return (
+                  isRoleNameAvailable || `${value} role has been added already`
+                );
+              },
+            },
+          }}
         />
         <DialogActions>
           <Button
@@ -152,7 +160,7 @@ export const RolesDialogUpdate = ({
             Cancel
           </Button>
           <Button
-            disabled={isMutating}
+            disabled={Object.keys(errors).length > 0 || isMutating}
             startIcon={
               isMutating ? <CircularProgress size="1rem" /> : <EditIcon />
             }

@@ -34,7 +34,7 @@ export const DateTime = () => {
             type: DEVELOPER_MODE_DATE_TIME,
           });
         }}
-        renderInput={(props) => <TextField {...props} variant="standard" />}
+        renderInput={(params) => <TextField {...params} variant="standard" />}
         value={value}
       />
     </LocalizationProvider>

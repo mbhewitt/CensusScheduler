@@ -8,6 +8,7 @@ import {
   CircularProgress,
   DialogActions,
   FormControl,
+  FormHelperText,
   Grid,
   InputLabel,
   MenuItem,
@@ -29,8 +30,8 @@ import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import type {
-  IResPositionItem,
   IResShiftItem,
+  IResShiftPositionItem,
   IResShiftVolunteerItem,
   IResVolunteerDropdownItem,
   IResVolunteerShiftItem,
@@ -40,8 +41,10 @@ import type {
 import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
-import { checkIsCoreCrew } from "src/utils/checkIsCoreCrew";
+import {
+  checkIsAuthenticated,
+  checkIsCoreCrew,
+} from "src/utils/checkIsRoleExist";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 import { formatDateName, formatTime } from "src/utils/formatDateTime";
 import { getCheckInType } from "src/utils/getCheckInType";
@@ -60,7 +63,7 @@ interface IShiftVolunteersDialogAddProps {
   handleDialogAddClose: () => void;
   isDialogAddOpen: boolean;
   shiftName: string;
-  shiftPositionList: IResPositionItem[];
+  shiftPositionList: IResShiftPositionItem[];
   shiftTimesId: string | string[] | undefined;
   shiftVolunteerList: IResShiftVolunteerItem[];
   startTime: string;
@@ -103,11 +106,19 @@ export const ShiftVolunteersDialogAdd = ({
 
   // fetching, mutation, and revalidation
   // --------------------
-  const { control, handleSubmit, reset, watch } = useForm({
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+    reset,
+    watch,
+  } = useForm({
     defaultValues,
+    mode: "onBlur",
   });
-  const volunteerWatch = watch("volunteer", null);
-  const trainingTimesIdWatch = watch("trainingTimesId", 0);
+
+  const volunteerWatch = watch("volunteer");
+  const trainingTimesIdWatch = watch("trainingTimesId");
   const { data: dataVolunteerList, error: errorVolunteerList } = useSWR(
     "/api/volunteers/dropdown",
     fetcherGet
@@ -165,17 +176,18 @@ export const ShiftVolunteersDialogAdd = ({
 
   useEffect(() => {
     if (dataVolunteerShiftList) {
-      const isVolunteerSlotAvailable = !shiftVolunteerList.some(
-        (volunteer) => volunteer.shiftboardId === Number(shiftboardId)
-      );
-      const isVolunteerShiftAvailable = !dataVolunteerShiftList.some(
-        (volunteerShiftItem: IResVolunteerShiftItem) =>
-          dayjs(startTime).isBetween(
+      const isVolunteerSlotAvailable = shiftVolunteerList.every((volunteer) => {
+        return volunteer.shiftboardId !== Number(shiftboardId);
+      });
+      const isVolunteerShiftAvailable = dataVolunteerShiftList.every(
+        (volunteerShiftItem: IResVolunteerShiftItem) => {
+          return !dayjs(startTime).isBetween(
             dayjs(volunteerShiftItem.startTime),
             dayjs(volunteerShiftItem.endTime),
             null,
             "[]"
-          )
+          );
+        }
       );
 
       // if slot is available and shift causes time conflict
@@ -233,7 +245,7 @@ export const ShiftVolunteersDialogAdd = ({
     errorTrainingVolunteerList ||
     errorVolunteerList ||
     errorVolunteerShiftList
-  )
+  ) {
     return (
       <DialogContainer
         handleDialogClose={() => {
@@ -246,7 +258,8 @@ export const ShiftVolunteersDialogAdd = ({
         <ErrorAlert />
       </DialogContainer>
     );
-  if (!dataVolunteerList || !dataTrainingList)
+  }
+  if (!dataVolunteerList || !dataTrainingList) {
     return (
       <DialogContainer
         handleDialogClose={() => {
@@ -259,9 +272,10 @@ export const ShiftVolunteersDialogAdd = ({
         <Loading />
       </DialogContainer>
     );
+  }
 
   const isCoreCrew = checkIsCoreCrew(accountType, roleList);
-  const shiftPositionIdWatch = watch("shiftPositionId", 0);
+  const shiftPositionIdWatch = watch("shiftPositionId");
   const prerequisiteIdWatch = shiftPositionList.find(
     (shiftPositionItem) =>
       shiftPositionItem.shiftPositionId === shiftPositionIdWatch
@@ -375,7 +389,7 @@ export const ShiftVolunteersDialogAdd = ({
               roleRequiredId,
               shiftPositionId,
               totalSlots,
-            }: IResPositionItem) => {
+            }: IResShiftPositionItem) => {
               const isShiftPositionAvailable =
                 (isAuthenticated && isCoreCrew) ||
                 (totalSlots - filledSlots > 0 &&
@@ -466,7 +480,7 @@ export const ShiftVolunteersDialogAdd = ({
               positionName,
               shiftPositionId,
               totalSlots,
-            }: IResPositionItem) => (
+            }: IResShiftPositionItem) => (
               <MenuItem
                 key={`${shiftPositionId}-position`}
                 value={shiftPositionId}
@@ -485,24 +499,25 @@ export const ShiftVolunteersDialogAdd = ({
   }
 
   // handle form submission
-  const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
+  const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       const volunteerAdd = dataVolunteerList.find(
         (volunteerItem: IResVolunteerDropdownItem) =>
-          volunteerItem.shiftboardId === dataForm.volunteer?.shiftboardId
+          volunteerItem.shiftboardId === formValues.volunteer?.shiftboardId
       );
       const shiftPositionAdd = shiftPositionList.find(
         (shiftPositionItem) =>
-          shiftPositionItem.shiftPositionId === dataForm.shiftPositionId
+          shiftPositionItem.shiftPositionId === formValues.shiftPositionId
       );
       const trainingAdd = dataTrainingList.find(
         (trainingItem: IResShiftItem) =>
-          trainingItem.shiftTimesId === dataForm.trainingTimesId
+          trainingItem.shiftTimesId === formValues.trainingTimesId
       );
       const trainingPositionAdd =
         dataTrainingVolunteerList?.shiftPositionList.find(
-          (trainingPositionItem: IResPositionItem) =>
-            trainingPositionItem.shiftPositionId === dataForm.trainingPositionId
+          (trainingPositionItem: IResShiftPositionItem) =>
+            trainingPositionItem.shiftPositionId ===
+            formValues.trainingPositionId
         );
       let noShowTraining: string | undefined;
 
@@ -529,31 +544,7 @@ export const ShiftVolunteersDialogAdd = ({
         }
       }
 
-      // check if the volunteer has been added already
-      const isVolunteerSlotAvailable = !shiftVolunteerList.some(
-        (volunteer) =>
-          volunteer.shiftboardId === Number(dataForm.volunteer?.shiftboardId)
-      );
-
-      // if the volunteer has been added already
-      // then display an error
-      if (!isVolunteerSlotAvailable) {
-        enqueueSnackbar(
-          <SnackbarText>
-            <strong>
-              {volunteerAdd.playaName} &quot;{volunteerAdd.worldName}
-              &quot;
-            </strong>{" "}
-            has been added already
-          </SnackbarText>,
-          {
-            persist: true,
-            variant: "error",
-          }
-        );
-        return;
-      }
-      // else display success notification
+      // display success notification
       enqueueSnackbar(
         <SnackbarText>
           <strong>
@@ -566,55 +557,57 @@ export const ShiftVolunteersDialogAdd = ({
         }
       );
 
-      // add shift position
-      if (isVolunteerSlotAvailable || (isAuthenticated && isCoreCrew)) {
+      // update database
+      await trigger({
+        body: {
+          noShow: noShowShift,
+          shiftboardId: formValues.volunteer?.shiftboardId,
+          shiftPositionId: formValues.shiftPositionId,
+          shiftTimesId,
+        },
+        method: "POST",
+      });
+      // emit shift update
+      socket.emit("req-shift-volunteer-add", {
+        noShow: noShowShift,
+        playaName: volunteerAdd.playaName,
+        positionName: shiftPositionAdd?.positionName,
+        shiftboardId: formValues.volunteer?.shiftboardId,
+        shiftPositionId: formValues.shiftPositionId,
+        shiftTimesId,
+        worldName: volunteerAdd.worldName,
+      });
+
+      // add training position
+      if (trainingAdd) {
         // update database
         await trigger({
           body: {
-            noShow: noShowShift,
-            shiftboardId: dataForm.volunteer?.shiftboardId,
-            shiftPositionId: dataForm.shiftPositionId,
-            shiftTimesId,
+            noShow: noShowTraining,
+            shiftboardId: formValues.volunteer?.shiftboardId,
+            shiftPositionId: formValues.trainingPositionId,
+            shiftTimesId: formValues.trainingTimesId,
           },
           method: "POST",
         });
         // emit shift update
         socket.emit("req-shift-volunteer-add", {
-          noShow: noShowShift,
+          noShow: noShowTraining,
           playaName: volunteerAdd.playaName,
-          positionName: shiftPositionAdd?.positionName,
-          shiftboardId: dataForm.volunteer?.shiftboardId,
-          shiftPositionId: dataForm.shiftPositionId,
-          shiftTimesId,
+          positionName: trainingPositionAdd.positionName,
+          shiftboardId: formValues.volunteer?.shiftboardId,
+          shiftPositionId: formValues.trainingPositionId,
+          shiftTimesId: formValues.trainingTimesId,
           worldName: volunteerAdd.worldName,
         });
-
-        // add training position
-        if (trainingAdd) {
-          // update database
-          await trigger({
-            body: {
-              noShow: noShowTraining,
-              shiftboardId: dataForm.volunteer?.shiftboardId,
-              shiftPositionId: dataForm.trainingPositionId,
-              shiftTimesId: dataForm.trainingTimesId,
-            },
-            method: "POST",
-          });
-          // emit shift update
-          socket.emit("req-shift-volunteer-add", {
-            noShow: noShowTraining,
-            playaName: volunteerAdd.playaName,
-            positionName: trainingPositionAdd.positionName,
-            shiftboardId: dataForm.volunteer?.shiftboardId,
-            shiftPositionId: dataForm.trainingPositionId,
-            shiftTimesId: dataForm.trainingTimesId,
-            worldName: volunteerAdd.worldName,
-          });
-        }
-
-        reset(defaultValues);
       }
+
+      reset({
+        volunteer: { label: `${playaName} "${worldName}"`, shiftboardId },
+        shiftPositionId: "",
+        trainingPositionId: "",
+        trainingTimesId: "",
+      });
 
       handleDialogAddClose();
     } catch (error) {
@@ -654,21 +647,40 @@ export const ShiftVolunteersDialogAdd = ({
                   {...field}
                   fullWidth
                   isOptionEqualToValue={(option, value: IVolunteerOption) =>
-                    option.shiftboardId === value.shiftboardId ||
-                    value.shiftboardId === 0
+                    option.shiftboardId === value.shiftboardId
                   }
                   onChange={(_, data) => field.onChange(data)}
                   options={volunteerListDisplay}
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      label="Name"
+                      error={Boolean(errors.volunteer)}
+                      helperText={errors.volunteer?.message}
+                      label="Volunteer"
                       required
                       variant="standard"
                     />
                   )}
                 />
               )}
+              rules={{
+                required: "Volunteer is required",
+                validate: (value) => {
+                  if (value) {
+                    const isVolunteerSlotAvailable = shiftVolunteerList.every(
+                      (volunteer) =>
+                        volunteer.shiftboardId !== value.shiftboardId
+                    );
+
+                    return (
+                      isVolunteerSlotAvailable ||
+                      `${value.label} has been added already`
+                    );
+                  }
+
+                  return "";
+                },
+              }}
             />
           </Grid>
           <Grid item xs={6}>
@@ -680,19 +692,20 @@ export const ShiftVolunteersDialogAdd = ({
                   <InputLabel id="shiftPositionId">Shift position *</InputLabel>
                   <Select
                     {...field}
+                    error={Boolean(errors.shiftPositionId)}
                     disabled={!volunteerWatch}
                     label="Shift position *"
                     labelId="shiftPositionId"
                     onChange={(event) => {
                       const shiftPositionSelected = event.target.value;
-
-                      field.onChange(shiftPositionSelected);
-
                       const shiftPositionFound = shiftPositionList.find(
                         (shiftPositionItem) =>
                           shiftPositionItem.shiftPositionId ===
                           shiftPositionSelected
                       );
+
+                      // update field
+                      field.onChange(shiftPositionSelected);
 
                       // if there are less than or equal to zero slots available
                       // then display warning notification
@@ -721,8 +734,16 @@ export const ShiftVolunteersDialogAdd = ({
                   >
                     {shiftPositionListDisplay}
                   </Select>
+                  {errors.shiftPositionId && (
+                    <FormHelperText error>
+                      {errors.shiftPositionId?.message}
+                    </FormHelperText>
+                  )}
                 </FormControl>
               )}
+              rules={{
+                required: "Shift position is required",
+              }}
             />
           </Grid>
           {trainingListDisplay.length > 0 && (
@@ -738,30 +759,31 @@ export const ShiftVolunteersDialogAdd = ({
                       </InputLabel>
                       <Select
                         {...field}
+                        error={Boolean(errors.trainingTimesId)}
                         label="Training time *"
                         labelId="trainingTimesId"
                         onChange={(event) => {
                           const trainingTimesIdSelected = event.target.value;
-
-                          field.onChange(trainingTimesIdSelected);
-
                           const trainingItemFound = dataTrainingList.find(
                             (dataTrainingItem: IResShiftItem) =>
                               dataTrainingItem.shiftTimesId ===
                               trainingTimesIdSelected
                           );
                           const isVolunteerTrainingAvailable =
-                            !dataVolunteerShiftList.some(
+                            dataVolunteerShiftList.every(
                               (
                                 dataVolunteerShiftList: IResVolunteerShiftItem
                               ) =>
-                                dayjs(trainingItemFound.startTime).isBetween(
+                                !dayjs(trainingItemFound.startTime).isBetween(
                                   dayjs(dataVolunteerShiftList.startTime),
                                   dayjs(dataVolunteerShiftList.endTime),
                                   null,
                                   "[]"
                                 )
                             );
+
+                          // update field
+                          field.onChange(trainingTimesIdSelected);
 
                           // if volunteer shift causes time conflict
                           // then display warning notification
@@ -795,8 +817,16 @@ export const ShiftVolunteersDialogAdd = ({
                       >
                         {trainingListDisplay}
                       </Select>
+                      {errors.trainingTimesId && (
+                        <FormHelperText error>
+                          {errors.trainingTimesId?.message}
+                        </FormHelperText>
+                      )}
                     </FormControl>
                   )}
+                  rules={{
+                    required: "Training time is required",
+                  }}
                 />
               </Grid>
               <Grid item xs={6}>
@@ -811,19 +841,20 @@ export const ShiftVolunteersDialogAdd = ({
                       <Select
                         {...field}
                         disabled={!trainingTimesIdWatch}
+                        error={Boolean(errors.trainingPositionId)}
                         label="Training position *"
                         labelId="trainingPositionId"
                         onChange={(event) => {
                           const trainingPositionSelected = event.target.value;
-
-                          field.onChange(trainingPositionSelected);
-
                           const trainingPositionFound =
                             dataTrainingVolunteerList.shiftPositionList.find(
-                              (trainingPositionItem: IResPositionItem) =>
+                              (trainingPositionItem: IResShiftPositionItem) =>
                                 trainingPositionItem.shiftPositionId ===
                                 trainingPositionSelected
                             );
+
+                          // update field
+                          field.onChange(trainingPositionSelected);
 
                           // if there are less than or equal to zero slots available
                           // then display warning notification
@@ -841,7 +872,7 @@ export const ShiftVolunteersDialogAdd = ({
                                 </strong>{" "}
                                 openings available for{" "}
                                 <strong>
-                                  {trainingPositionFound.position}
+                                  {trainingPositionFound.positionName}
                                 </strong>
                               </SnackbarText>,
                               {
@@ -854,8 +885,16 @@ export const ShiftVolunteersDialogAdd = ({
                       >
                         {trainingPositionListDisplay}
                       </Select>
+                      {errors.trainingPositionId && (
+                        <FormHelperText error>
+                          {errors.trainingPositionId?.message}
+                        </FormHelperText>
+                      )}
                     </FormControl>
                   )}
+                  rules={{
+                    required: "Training position is required",
+                  }}
                 />
               </Grid>
             </>
@@ -886,7 +925,7 @@ export const ShiftVolunteersDialogAdd = ({
             Cancel
           </Button>
           <Button
-            disabled={isMutating}
+            disabled={Object.keys(errors).length > 0 || isMutating}
             startIcon={
               isMutating ? <CircularProgress size="1rem" /> : <PersonAddIcon />
             }

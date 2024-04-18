@@ -26,7 +26,6 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 
 import { ResetPasscodeForm } from "src/components/account/ResetPasscodeForm";
-import { ErrorForm } from "src/components/general/ErrorForm";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import type {
@@ -84,26 +83,13 @@ export const CreateAccount = () => {
   // form submission
   // --------------------
   const onSubmit: SubmitHandler<IVolunteerAccountFormValues> = async (
-    dataFormInitial
+    formValues
   ) => {
-    // trim whitespace
-    const dataFormFinal: IVolunteerAccountFormValues = Object.keys(
-      dataFormInitial
-    ).reduce((dataFormAcc, dataFormKey) => {
-      return {
-        ...dataFormAcc,
-        [dataFormKey]:
-          dataFormInitial[
-            dataFormKey as keyof IVolunteerAccountFormValues
-          ]?.trim(),
-      };
-    }, {});
-
     try {
       // update database
       const { data: dataVolunteerItem }: { data: IResVolunteerAccount } =
         await trigger({
-          body: dataFormFinal,
+          body: formValues,
           method: "POST",
         });
 
@@ -196,11 +182,6 @@ export const CreateAccount = () => {
           >
             <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
               <CardContent>
-                {/* handle errors */}
-                {Object.keys(errors).length > 0 && (
-                  <ErrorForm errors={errors} />
-                )}
-
                 <Stack spacing={2}>
                   <Controller
                     control={control}

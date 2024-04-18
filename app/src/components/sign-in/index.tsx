@@ -65,8 +65,14 @@ export const SignIn = () => {
 
   // other hooks
   // --------------------
-  const { control, handleSubmit, reset } = useForm({
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+    reset,
+  } = useForm({
     defaultValues,
+    mode: "onBlur",
   });
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
@@ -79,18 +85,18 @@ export const SignIn = () => {
 
   // form submission
   // --------------------
-  const onSubmit: SubmitHandler<IFormValues> = async (dataForm) => {
+  const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       const dataVolunteerItem = await trigger({
         body: {
-          passcode: dataForm.passcode,
-          shiftboardId: dataForm.volunteer?.shiftboardId,
+          passcode: formValues.passcode,
+          shiftboardId: formValues.volunteer?.shiftboardId,
         },
         method: "POST",
       });
 
       // if response has 404 status code
-      // then display an error message
+      // then display error
       if (dataVolunteerItem.statusCode === 404) {
         enqueueSnackbar(
           <SnackbarText>
@@ -175,8 +181,7 @@ export const SignIn = () => {
                       {...field}
                       fullWidth
                       isOptionEqualToValue={(option, value: IVolunteerOption) =>
-                        option.shiftboardId === value.shiftboardId ||
-                        value.shiftboardId === 0
+                        option.shiftboardId === value.shiftboardId
                       }
                       onChange={(_, data) => field.onChange(data)}
                       options={data.map(
@@ -192,18 +197,18 @@ export const SignIn = () => {
                       renderInput={(params) => (
                         <TextField
                           {...params}
-                          label="Name"
+                          error={Boolean(errors.volunteer)}
+                          helperText={errors.volunteer?.message}
+                          label="Volunteer"
                           required
                           variant="standard"
                         />
                       )}
-                      renderOption={(props, option) => (
-                        <li {...props} key={option.shiftboardId}>
-                          {option.label}
-                        </li>
-                      )}
                     />
                   )}
+                  rules={{
+                    required: "Volunteer is required",
+                  }}
                 />
                 <Stack alignItems="center" direction="row">
                   <Controller
@@ -213,6 +218,8 @@ export const SignIn = () => {
                       <TextField
                         {...field}
                         autoComplete="off"
+                        error={Boolean(errors.passcode)}
+                        helperText={errors.passcode?.message}
                         fullWidth
                         label="Passcode"
                         required
@@ -220,6 +227,9 @@ export const SignIn = () => {
                         variant="standard"
                       />
                     )}
+                    rules={{
+                      required: "Passcode is required",
+                    }}
                   />
                   <IconButton
                     onClick={() => setIsPasscodeVisible((prev) => !prev)}

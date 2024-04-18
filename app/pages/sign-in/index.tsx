@@ -6,7 +6,7 @@ import { Loading } from "src/components/general/Loading";
 import { SignIn } from "src/components/sign-in";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
-import { checkIsAuthenticated } from "src/utils/checkIsAuthenticated";
+import { checkIsAuthenticated } from "src/utils/checkIsRoleExist";
 
 const SignInPage = () => {
   // context
@@ -25,15 +25,13 @@ const SignInPage = () => {
   // --------------------
   const router = useRouter();
 
-  // logic
+  // side effects
   // --------------------
   const isAuthenticated = checkIsAuthenticated(
     accountType,
     isAuthenticatedSession
   );
 
-  // side effects
-  // --------------------
   useEffect(() => {
     if (isAuthenticated) {
       router.push(`/account/${shiftboardId}`);

@@ -20,8 +20,11 @@ const account = async (req: NextApiRequest, res: NextApiResponse) => {
         playaName,
         worldName,
       } = JSON.parse(req.body);
-      const insertAccount = async (): Promise<IResVolunteerAccount> => {
-        const shiftboardIdNew = generateId();
+      let shiftboardIdNew = 0;
+
+      // generate new role ID
+      const generateShiftboardId = async () => {
+        shiftboardIdNew = generateId();
         const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
           `SELECT shiftboard_id
           FROM op_volunteers
@@ -30,40 +33,42 @@ const account = async (req: NextApiRequest, res: NextApiResponse) => {
         );
         const dbVolunteerFirst = dbVolunteerList[0];
 
-        // if shiftboard ID exists already
+        // if role ID exists already
         // then execute function recursively
         if (dbVolunteerFirst) {
-          return insertAccount();
+          generateShiftboardId();
         }
-        await pool.query<RowDataPacket[]>(
-          `INSERT IGNORE INTO op_volunteers (create_volunteer, email, emergency_contact, location, passcode, phone, playa_name, shiftboard_id, world_name)
-          VALUES (true, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [
-            email,
-            emergencyContact,
-            location,
-            passcodeCreate,
-            phone,
-            playaName,
-            shiftboardIdNew,
-            worldName,
-          ]
-        );
+      };
 
-        return {
+      // insert new account row
+      generateShiftboardId();
+      await pool.query<RowDataPacket[]>(
+        `INSERT IGNORE INTO op_volunteers (create_volunteer, email, emergency_contact, location, passcode, phone, playa_name, shiftboard_id, world_name)
+          VALUES (true, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
           email,
           emergencyContact,
-          isVolunteerCreated: true,
           location,
-          notes: "",
+          passcodeCreate,
           phone,
           playaName,
-          roleList: [],
-          shiftboardId: shiftboardIdNew,
+          shiftboardIdNew,
           worldName,
-        };
+        ]
+      );
+
+      const resAccount: IResVolunteerAccount = {
+        email,
+        emergencyContact,
+        isVolunteerCreated: true,
+        location,
+        notes: "",
+        phone,
+        playaName,
+        roleList: [],
+        shiftboardId: shiftboardIdNew,
+        worldName,
       };
-      const resAccount = await insertAccount();
 
       return res.status(201).json(resAccount);
     }

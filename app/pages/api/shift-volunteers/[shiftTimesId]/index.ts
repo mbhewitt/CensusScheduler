@@ -7,7 +7,7 @@ import {
   shiftVolunteerRemove,
 } from "pages/api/general/shiftVolunteers";
 import type {
-  IResPositionItem,
+  IResShiftPositionItem,
   IResShiftVolunteerItem,
 } from "src/components/types";
 
@@ -54,26 +54,27 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         [shiftTimesId]
       );
       const resShiftPositionFirst = dbShiftPositionList[0];
-      const resShiftPositionList: IResPositionItem[] = dbShiftPositionList.map(
-        ({
-          position_details,
-          position_type_id,
-          position,
-          prerequisite_id,
-          role_id,
-          shift_position_id,
-          total_slots,
-        }) => ({
-          filledSlots: 0,
-          positionName: position,
-          positionDetails: position_details,
-          positionTypeId: position_type_id,
-          prerequisiteId: prerequisite_id ?? 0,
-          roleRequiredId: role_id ?? 0,
-          shiftPositionId: shift_position_id,
-          totalSlots: total_slots,
-        })
-      );
+      const resShiftPositionList: IResShiftPositionItem[] =
+        dbShiftPositionList.map(
+          ({
+            position_details,
+            position_type_id,
+            position,
+            prerequisite_id,
+            role_id,
+            shift_position_id,
+            total_slots,
+          }) => ({
+            filledSlots: 0,
+            positionName: position,
+            positionDetails: position_details,
+            positionTypeId: position_type_id,
+            prerequisiteId: prerequisite_id ?? 0,
+            roleRequiredId: role_id ?? 0,
+            shiftPositionId: shift_position_id,
+            totalSlots: total_slots,
+          })
+        );
       const resShiftVolunteerList: IResShiftVolunteerItem[] =
         dbShiftVolunteerList.map(
           ({

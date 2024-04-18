@@ -1,12 +1,17 @@
-export interface IResPositionItem {
-  filledSlots: number;
-  positionName: string;
+export interface IResCreateShiftPositionDropdownItem {
+  critical: boolean;
+  endTimeOffset: number;
+  lead: boolean;
   positionDetails: string;
-  positionTypeId: number;
-  prerequisiteId: number;
-  roleRequiredId: number;
-  shiftPositionId: number;
-  totalSlots: number;
+  positionId: number;
+  positionName: string;
+  prerequisiteShift: string;
+  role: string;
+  startTimeOffset: number;
+}
+export interface IResPositionDropdownItem {
+  positionId: number;
+  positionName: string;
 }
 export interface IResRoleItem {
   display: boolean;
@@ -20,6 +25,14 @@ export interface IResRoleVolunteerItem {
   shiftboardId: number;
   worldName: string;
 }
+export interface IResShiftCategoryDropdownItem {
+  shiftCategoryId: number;
+  shiftCategoryName: string;
+}
+export interface IResShiftNameDropdownItem {
+  shiftNameId: number;
+  shiftNameText: string;
+}
 export interface IResShiftItem {
   category: string;
   date: string;
@@ -32,6 +45,16 @@ export interface IResShiftItem {
   startTime: string;
   totalSlots: number;
   year: string;
+}
+export interface IResShiftPositionItem {
+  filledSlots: number;
+  positionName: string;
+  positionDetails: string;
+  positionTypeId: number;
+  prerequisiteId: number;
+  roleRequiredId: number;
+  shiftPositionId: number;
+  totalSlots: number;
 }
 export interface IResShiftVolunteerItem {
   noShow: string;
@@ -83,6 +106,10 @@ export interface IResVolunteerShiftItem {
   shiftPositionId: number;
   shiftTimesId: number;
   startTime: string;
+}
+export interface IShiftNameOption {
+  label: string;
+  shiftNameId: number;
 }
 export interface ISwitchValues {
   checked: boolean;
