@@ -15,10 +15,10 @@ import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 
-import { ResetPasscodeForm } from "src/components/account/ResetPasscodeForm";
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import type { IVolunteerAccountFormValues } from "src/components/types";
+import { ResetPasscodeForm } from "src/components/volunteers/account/ResetPasscodeForm";
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IResetPasscodeDialogProps {
@@ -49,7 +49,7 @@ export const ResetPasscodeDialog = ({
   // fetching, mutation, and revalidation
   // --------------------
   const { isMutating, trigger } = useSWRMutation(
-    `/api/account/${shiftboardId}/passcode`,
+    `/api/volunteers/account/${shiftboardId}/passcode`,
     fetcherTrigger
   );
 

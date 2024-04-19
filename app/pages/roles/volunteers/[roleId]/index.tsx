@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { useContext } from "react";
 
-import { RoleVolunteers } from "src/components/role-volunteers";
+import { RoleVolunteers } from "src/components/roles/volunteers";
 import { SignIn } from "src/components/sign-in";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";

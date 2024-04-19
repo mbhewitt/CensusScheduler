@@ -1,6 +1,6 @@
 import {
   Close as CloseIcon,
-  PersonRemove as PersonRemoveIcon,
+  EventBusy as EventBusyIcon,
 } from "@mui/icons-material";
 import {
   Button,
@@ -10,33 +10,48 @@ import {
   Typography,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
+import io from "socket.io-client";
 import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { fetcherTrigger } from "src/utils/fetcher";
+import { formatDateName, formatTime } from "src/utils/formatDateTime";
 
-interface IRoleVolunteersDialogRemoveProps {
+interface IVolunteerShiftsDialogRemoveProps {
   handleDialogRemoveClose: () => void;
   isDialogRemoveOpen: boolean;
-  volunteer: {
-    playaName: string;
-    roleId: number;
-    roleName: string;
-    shiftboardId: number;
-    worldName: string;
+  shift: {
+    date: string;
+    dateName: string;
+    endTime: string;
+    positionName: string;
+    shiftPositionId: number;
+    shiftTimesId: number;
+    startTime: string;
   };
+  shiftboardId: string | string[] | undefined;
 }
 
-export const RoleVolunteersDialogRemove = ({
+const socket = io();
+export const VolunteerShiftsDialogRemove = ({
   handleDialogRemoveClose,
   isDialogRemoveOpen,
-  volunteer: { playaName, roleId, roleName, shiftboardId, worldName },
-}: IRoleVolunteersDialogRemoveProps) => {
+  shift: {
+    date,
+    dateName,
+    endTime,
+    positionName,
+    shiftPositionId,
+    shiftTimesId,
+    startTime,
+  },
+  shiftboardId,
+}: IVolunteerShiftsDialogRemoveProps) => {
   // fetching, mutation, and revalidation
   // --------------------
   const { isMutating, trigger } = useSWRMutation(
-    `/api/role-volunteers/${roleId}`,
+    `/api/volunteers/shifts/${shiftboardId}`,
     fetcherTrigger
   );
 
@@ -46,23 +61,23 @@ export const RoleVolunteersDialogRemove = ({
 
   // logic
   // --------------------
-  const handleRoleVolunteerRemove = async () => {
+  const handleVolunteerRemove = async () => {
     try {
-      // update database
       await trigger({
-        body: {
-          shiftboardId,
-        },
+        body: { shiftPositionId, shiftTimesId, shiftboardId },
         method: "DELETE",
+      });
+      socket.emit("req-shift-volunteer-remove", {
+        shiftboardId,
+        shiftTimesId,
       });
 
       handleDialogRemoveClose();
       enqueueSnackbar(
         <SnackbarText>
-          <strong>
-            {playaName} &quot;{worldName}&quot;
-          </strong>{" "}
-          for <strong>{roleName}</strong> role has been removed
+          <strong>{formatDateName(date, dateName)}</strong> at{" "}
+          <strong>{formatTime(startTime, endTime)}</strong> for{" "}
+          <strong>{positionName}</strong> has been removed
         </SnackbarText>,
         {
           variant: "success",
@@ -91,15 +106,14 @@ export const RoleVolunteersDialogRemove = ({
     <DialogContainer
       handleDialogClose={handleDialogRemoveClose}
       isDialogOpen={isDialogRemoveOpen}
-      text="Remove role volunteer"
+      text="Remove volunteer shift"
     >
       <DialogContentText>
         <Typography component="span">
           Are you sure you want to remove{" "}
-          <strong>
-            {playaName} &quot;{worldName}&quot;
-          </strong>{" "}
-          for <strong>{roleName}</strong> role?
+          <strong>{formatDateName(date, dateName)}</strong> at{" "}
+          <strong>{formatTime(startTime, endTime)}</strong> for{" "}
+          <strong>{positionName}</strong>?
         </Typography>
       </DialogContentText>
       <DialogActions>
@@ -116,14 +130,14 @@ export const RoleVolunteersDialogRemove = ({
         </Button>
         <Button
           disabled={isMutating}
-          onClick={handleRoleVolunteerRemove}
+          onClick={handleVolunteerRemove}
           startIcon={
-            isMutating ? <CircularProgress size="1rem" /> : <PersonRemoveIcon />
+            isMutating ? <CircularProgress size="1rem" /> : <EventBusyIcon />
           }
           type="submit"
           variant="contained"
         >
-          Remove volunteer
+          Remove shift
         </Button>
       </DialogActions>
     </DialogContainer>

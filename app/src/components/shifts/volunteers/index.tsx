@@ -35,8 +35,8 @@ import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
-import { ShiftVolunteersDialogAdd } from "src/components/shift-volunteers/ShiftVolunteersDialogAdd";
-import { ShiftVolunteersDialogRemove } from "src/components/shift-volunteers/ShiftVolunteersDialogRemove";
+import { ShiftVolunteersDialogAdd } from "src/components/shifts/volunteers/ShiftVolunteersDialogAdd";
+import { ShiftVolunteersDialogRemove } from "src/components/shifts/volunteers/ShiftVolunteersDialogRemove";
 import type {
   IResShiftPositionItem,
   IResShiftVolunteerItem,
@@ -96,11 +96,11 @@ export const ShiftVolunteers = () => {
     error: errorShiftVolunteerItem,
     mutate: mutateShiftVolunteerItem,
   } = useSWR(
-    isMounted ? `/api/shift-volunteers/${shiftTimesQuery}` : null,
+    isMounted ? `/api/shifts/volunteers/${shiftTimesQuery}` : null,
     fetcherGet
   );
   const { trigger } = useSWRMutation(
-    `/api/shift-volunteers/${shiftTimesQuery}`,
+    `/api/shifts/volunteers/${shiftTimesQuery}`,
     fetcherTrigger
   );
 
@@ -379,7 +379,7 @@ export const ShiftVolunteers = () => {
             key={`${shiftboardId}-menu`}
             MenuList={
               <MenuList>
-                <Link href={`/account/${shiftboardId}`}>
+                <Link href={`/volunteers/account/${shiftboardId}`}>
                   <MenuItem>
                     <ListItemIcon>
                       <ManageAccountsIcon />
@@ -426,7 +426,7 @@ export const ShiftVolunteers = () => {
             alt="census volunteers gathering"
             fill
             priority
-            src="/shift-volunteers/hero.jpg"
+            src="/shifts/volunteers/hero.jpg"
             style={{
               objectFit: "cover",
             }}

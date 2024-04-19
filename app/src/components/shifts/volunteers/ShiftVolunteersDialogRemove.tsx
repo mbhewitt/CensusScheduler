@@ -46,7 +46,7 @@ export const ShiftVolunteersDialogRemove = ({
   // fetching, mutation, and revalidation
   // --------------------
   const { isMutating, trigger } = useSWRMutation(
-    `/api/shift-volunteers/${shiftTimesId}`,
+    `/api/shifts/volunteers/${shiftTimesId}`,
     fetcherTrigger
   );
 

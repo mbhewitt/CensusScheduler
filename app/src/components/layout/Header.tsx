@@ -241,7 +241,7 @@ export const Header = () => {
                 }
               >
                 <ListItem disablePadding>
-                  <Link href={`/account/${shiftboardId}`}>
+                  <Link href={`/volunteers/account/${shiftboardId}`}>
                     <ListItemButton>
                       <ListItemIcon sx={{ minWidth: "auto", pr: 2 }}>
                         <ManageAccountsIcon />

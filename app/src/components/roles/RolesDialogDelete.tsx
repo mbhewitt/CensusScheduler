@@ -36,7 +36,7 @@ export const RolesDialogDelete = ({
 }: IRolesDialogDeleteProps) => {
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR(`/api/role-volunteers/${roleId}`, fetcherGet);
+  const { data, error } = useSWR(`/api/roles/volunteers/${roleId}`, fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     `/api/roles/${roleId}`,
     fetcherTrigger

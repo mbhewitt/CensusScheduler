@@ -34,14 +34,14 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { DeveloperMode } from "src/components/account/DeveloperMode";
-import { ResetPasscodeDialog } from "src/components/account/ResetPasscodeDialog";
 import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import type { IResVolunteerRoleItem } from "src/components/types";
-import { VolunteerShifts } from "src/components/volunteer-shifts";
+import { DeveloperMode } from "src/components/volunteers/account/DeveloperMode";
+import { ResetPasscodeDialog } from "src/components/volunteers/account/ResetPasscodeDialog";
+import { VolunteerShifts } from "src/components/volunteers/shifts";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
 import { checkIsAdmin, checkIsAuthenticated } from "src/utils/checkIsRoleExist";
@@ -74,6 +74,7 @@ export const Account = () => {
   } = useContext(DeveloperModeContext);
   const {
     sessionState: {
+      user: { roleList: roleListSession },
       settings: { isAuthenticated: isAuthenticatedSession },
     },
   } = useContext(SessionContext);
@@ -89,11 +90,11 @@ export const Account = () => {
   const router = useRouter();
   const { shiftboardId } = router.query;
   const { data, error } = useSWR(
-    isMounted ? `/api/account/${shiftboardId}` : null,
+    isMounted ? `/api/volunteers/account/${shiftboardId}` : null,
     fetcherGet
   );
   const { isMutating, trigger } = useSWRMutation(
-    `/api/account/${shiftboardId}`,
+    `/api/volunteers/account/${shiftboardId}`,
     fetcherTrigger
   );
 
@@ -140,12 +141,17 @@ export const Account = () => {
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
-  const { isVolunteerCreated, playaName, roleList, worldName } = data;
+  const {
+    isVolunteerCreated,
+    playaName,
+    roleList: roleListData,
+    worldName,
+  } = data;
   const isAuthenticated = checkIsAuthenticated(
     accountType,
     isAuthenticatedSession
   );
-  const isAdmin = checkIsAdmin(accountType, roleList);
+  const isAdmin = checkIsAdmin(accountType, roleListSession);
 
   // form submission
   // --------------------
@@ -191,7 +197,7 @@ export const Account = () => {
             alt="census art car illuminating at night"
             fill
             priority
-            src="/account/hero.jpg"
+            src="/volunteers/account/hero.jpg"
             style={{
               objectFit: "cover",
             }}
@@ -410,9 +416,9 @@ export const Account = () => {
                   </Grid>
                   <Grid item xs={8}>
                     <List disablePadding>
-                      {roleList.length ? (
+                      {roleListData.length ? (
                         <>
-                          {roleList.map(
+                          {roleListData.map(
                             ({ roleId, roleName }: IResVolunteerRoleItem) => (
                               <ListItem disablePadding key={`${roleId}-item`}>
                                 <ListItemIcon sx={{ minWidth: "auto", pr: 1 }}>

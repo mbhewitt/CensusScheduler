@@ -254,7 +254,7 @@ export const SignIn = () => {
               <Button
                 disabled={isMutating}
                 onClick={() => {
-                  router.push("/create-account");
+                  router.push("/volunteers/account/create");
                 }}
                 startIcon={
                   isMutating ? (
