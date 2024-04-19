@@ -53,9 +53,9 @@ import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import type {
-  IResCreateShiftPositionDropdownItem,
   IResPositionDropdownItem,
   IResShiftCategoryDropdownItem,
+  IResShiftCreatePositionDropdownItem,
 } from "src/components/types";
 import { COLOR_BURNING_MAN_BROWN } from "src/constants";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
@@ -123,7 +123,7 @@ const defaultValues: IFormValues = {
     },
   ],
 };
-export const CreateShift = () => {
+export const ShiftCreate = () => {
   // fetching, mutation, and revalidation
   // --------------------
   const { data, error } = useSWR("/api/shifts/create", fetcherGet);
@@ -184,7 +184,7 @@ export const CreateShift = () => {
       const positionList = formValues.positionList.map(
         ({ positionName, totalSlots, wapPoints }) => {
           const { positionId } = data.positionList.find(
-            (positionItem: IResCreateShiftPositionDropdownItem) => {
+            (positionItem: IResShiftCreatePositionDropdownItem) => {
               return positionItem.positionName === positionName;
             }
           );

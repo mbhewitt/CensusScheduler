@@ -1,8 +1,8 @@
 import Head from "next/head";
 
-import { CreateAccount } from "src/components/account/CreateAccount";
+import { AccountCreate } from "src/components/account/AccountCreate";
 
-const CreateAccountPage = () => {
+const AccountCreatePage = () => {
   // display
   // --------------------
   return (
@@ -12,9 +12,9 @@ const CreateAccountPage = () => {
         <meta name="description" content="" />
         <link rel="icon" href="/general/favicon.ico" />
       </Head>
-      <CreateAccount />
+      <AccountCreate />
     </>
   );
 };
 
-export default CreateAccountPage;
+export default AccountCreatePage;

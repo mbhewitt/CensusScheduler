@@ -1,14 +1,3 @@
-export interface IResCreateShiftPositionDropdownItem {
-  critical: boolean;
-  endTimeOffset: number;
-  lead: boolean;
-  positionDetails: string;
-  positionId: number;
-  positionName: string;
-  prerequisiteShift: string;
-  role: string;
-  startTimeOffset: number;
-}
 export interface IResPositionDropdownItem {
   positionId: number;
   positionName: string;
@@ -28,6 +17,17 @@ export interface IResRoleVolunteerItem {
 export interface IResShiftCategoryDropdownItem {
   shiftCategoryId: number;
   shiftCategoryName: string;
+}
+export interface IResShiftCreatePositionDropdownItem {
+  critical: boolean;
+  endTimeOffset: number;
+  lead: boolean;
+  positionDetails: string;
+  positionId: number;
+  positionName: string;
+  prerequisiteShift: string;
+  role: string;
+  startTimeOffset: number;
 }
 export interface IResShiftNameDropdownItem {
   shiftNameId: number;
