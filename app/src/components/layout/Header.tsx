@@ -27,7 +27,11 @@ import { useSnackbar } from "notistack";
 import { useContext, useEffect, useState } from "react";
 import IdleTimer from "react-idle-timer";
 
-import { pageListAdmin, pageListDefault } from "src/components/layout/pageList";
+import {
+  pageListAdmin,
+  pageListDefault,
+  pageListSuperAdmin,
+} from "src/components/layout/pageList";
 import { IDLE_MINUTES } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
@@ -35,6 +39,7 @@ import {
   checkIsAdmin,
   checkIsAuthenticated,
   checkIsBehavioralStandardsSigned,
+  checkIsSuperAdmin,
 } from "src/utils/checkIsRoleExist";
 import { signOut } from "src/utils/signOut";
 
@@ -92,6 +97,7 @@ export const Header = () => {
   // logic
   // --------------------
   const isAdmin = checkIsAdmin(accountType, roleList);
+  const isSuperAdmin = checkIsSuperAdmin(roleList);
 
   // handle sign out
   const handleSignOut = () => {
@@ -161,6 +167,7 @@ export const Header = () => {
           }}
         >
           <Box>
+            {/* general nav */}
             <List onClick={handleDrawerClose}>
               {pageListDefault.map(({ icon, label, path }) => (
                 <ListItem disablePadding key={path}>
@@ -175,6 +182,7 @@ export const Header = () => {
                 </ListItem>
               ))}
             </List>
+            {/* admin nav */}
             {isAuthenticated && isAdmin && (
               <>
                 <Divider />
@@ -183,6 +191,29 @@ export const Header = () => {
                   subheader={<ListSubheader>Admin</ListSubheader>}
                 >
                   {pageListAdmin.map(({ icon, label, path }) => (
+                    <ListItem disablePadding key={path}>
+                      <Link href={path}>
+                        <ListItemButton>
+                          <ListItemIcon sx={{ minWidth: "auto", pr: 2 }}>
+                            {icon}
+                          </ListItemIcon>
+                          <ListItemText primary={label} />
+                        </ListItemButton>
+                      </Link>
+                    </ListItem>
+                  ))}
+                </List>
+              </>
+            )}
+            {/* super admin nav */}
+            {isAuthenticated && isSuperAdmin && (
+              <>
+                <Divider />
+                <List
+                  onClick={handleDrawerClose}
+                  subheader={<ListSubheader>Super admin</ListSubheader>}
+                >
+                  {pageListSuperAdmin.map(({ icon, label, path }) => (
                     <ListItem disablePadding key={path}>
                       <Link href={path}>
                         <ListItemButton>

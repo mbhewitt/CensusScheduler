@@ -1,5 +1,4 @@
-import { EventAvailable as EventAvailableIcon } from "@mui/icons-material";
-import { Box, Button, Chip, Container, lighten, Stack } from "@mui/material";
+import { Box, Chip, Container, lighten } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
@@ -16,8 +15,6 @@ import { Loading } from "src/components/general/Loading";
 import { Hero } from "src/components/layout/Hero";
 import type { IResShiftItem } from "src/components/types";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
-import { SessionContext } from "src/state/session/context";
-import { checkIsSuperAdmin } from "src/utils/checkIsRoleExist";
 import { fetcherGet } from "src/utils/fetcher";
 import { formatDateName, formatTime } from "src/utils/formatDateTime";
 import { getColorMap } from "src/utils/getColorMap";
@@ -30,11 +27,6 @@ export const Shifts = () => {
       dateTime: { value: dateTimeValue },
     },
   } = useContext(DeveloperModeContext);
-  const {
-    sessionState: {
-      user: { roleList },
-    },
-  } = useContext(SessionContext);
 
   // state
   // --------------------
@@ -221,7 +213,6 @@ export const Shifts = () => {
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
-  const isSuperAdmin = checkIsSuperAdmin(roleList);
   dayjs.extend(isSameOrAfter);
 
   // prepare datatable
@@ -308,20 +299,6 @@ export const Shifts = () => {
       />
       <Container component="main">
         <Box component="section">
-          {isSuperAdmin && (
-            <Stack direction="row" justifyContent="flex-end" sx={{ mb: 2 }}>
-              <Button
-                onClick={() => {
-                  router.push("/create-shift");
-                }}
-                startIcon={<EventAvailableIcon />}
-                type="button"
-                variant="contained"
-              >
-                Create shift
-              </Button>
-            </Stack>
-          )}
           <DataTable
             columnList={columnList}
             dataTable={dataTable}

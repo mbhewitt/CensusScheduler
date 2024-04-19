@@ -13,11 +13,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { useContext } from "react";
 
-import { pageListAdmin, pageListDefault } from "src/components/layout/pageList";
+import {
+  pageListAdmin,
+  pageListDefault,
+  pageListSuperAdmin,
+} from "src/components/layout/pageList";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { EasterEggContext } from "src/state/easter-egg/context";
 import { SessionContext } from "src/state/session/context";
-import { checkIsAdmin, checkIsAuthenticated } from "src/utils/checkIsRoleExist";
+import {
+  checkIsAdmin,
+  checkIsAuthenticated,
+  checkIsSuperAdmin,
+} from "src/utils/checkIsRoleExist";
 
 export const Footer = () => {
   // context
@@ -44,6 +52,7 @@ export const Footer = () => {
     isAuthenticatedSession
   );
   const isAdmin = checkIsAdmin(accountType, roleList);
+  const isSuperAdmin = checkIsSuperAdmin(roleList);
 
   // display
   // --------------------
@@ -140,6 +149,35 @@ export const Footer = () => {
                 </List>
               </Box>
             )}
+            {/* super admin */}
+            {isAuthenticated && isSuperAdmin && (
+              <Box>
+                <Typography
+                  component="h3"
+                  sx={{
+                    color: theme.palette.common.white,
+                    mb: theme.spacing(2),
+                  }}
+                  variant="h6"
+                >
+                  Super admin
+                </Typography>
+                <List sx={{ p: 0 }}>
+                  {pageListSuperAdmin.map(({ label, path }) => (
+                    <ListItem disablePadding key={path}>
+                      <Link href={path}>
+                        <ListItemText
+                          primary={label}
+                          primaryTypographyProps={{
+                            sx: { color: theme.palette.common.white },
+                          }}
+                        />
+                      </Link>
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
+            )}
           </Stack>
           <Box
             sx={{
@@ -179,7 +217,7 @@ export const Footer = () => {
               color: theme.palette.common.white,
             }}
           >
-            2024.W.00028.Prizmo
+            2024.W.00029.Prizmo
           </Typography>
         </Stack>
       </Container>

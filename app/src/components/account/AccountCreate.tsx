@@ -46,7 +46,7 @@ const defaultValues: IVolunteerAccountFormValues = {
   playaName: "",
   worldName: "",
 };
-export const CreateAccount = () => {
+export const AccountCreate = () => {
   // context
   // --------------------
   const { sessionDispatch } = useContext(SessionContext);
