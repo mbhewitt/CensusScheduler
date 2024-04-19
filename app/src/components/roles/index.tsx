@@ -126,13 +126,6 @@ export const Roles = () => {
   // prepare datatable
   const columnList = [
     {
-      name: "Role ID - hidden", // hide for row click
-      options: {
-        display: false,
-        filter: false,
-      },
-    },
-    {
       name: "Name",
       options: {
         sortThirdClickReset: true,
@@ -165,7 +158,6 @@ export const Roles = () => {
       roleId === ROLE_SUPER_ADMIN_ID
     ) {
       return [
-        roleId,
         roleName,
         <Switch disabled checked={display} key={`${roleId}-switch`} />,
         <MoreMenu
@@ -187,10 +179,8 @@ export const Roles = () => {
       ];
     }
 
-    // display
-    // --------------------
+    // else display normal row
     return [
-      roleId,
       roleName,
       <Switch
         checked={display}
@@ -249,6 +239,8 @@ export const Roles = () => {
   });
   const optionListCustom = { filter: false };
 
+  // display
+  // --------------------
   return (
     <>
       <Hero
