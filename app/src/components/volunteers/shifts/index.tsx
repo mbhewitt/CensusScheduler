@@ -35,7 +35,7 @@ import type {
   IResVolunteerShiftItem,
   ISwitchValues,
 } from "src/components/types";
-import { VolunteerShiftsDialogRemove } from "src/components/volunteer-shifts/VolunteerShiftsDialogRemove";
+import { VolunteerShiftsDialogRemove } from "src/components/volunteers/shifts/VolunteerShiftsDialogRemove";
 import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
@@ -87,11 +87,11 @@ export const VolunteerShifts = () => {
   const router = useRouter();
   const { shiftboardId } = router.query;
   const { data, error, mutate } = useSWR(
-    isMounted ? `/api/volunteer-shifts/${shiftboardId}` : null,
+    isMounted ? `/api/volunteers/shifts/${shiftboardId}` : null,
     fetcherGet
   );
   const { trigger } = useSWRMutation(
-    `/api/volunteer-shifts/${shiftboardId}`,
+    `/api/volunteers/shifts/${shiftboardId}`,
     fetcherTrigger
   );
 
@@ -361,7 +361,7 @@ export const VolunteerShifts = () => {
           key={`${shiftboardId}-menu`}
           MenuList={
             <MenuList>
-              <Link href={`/shifts/shift-volunteers/${shiftTimesId}`}>
+              <Link href={`/shifts/volunteers/${shiftTimesId}`}>
                 <MenuItem>
                   <ListItemIcon>
                     <Groups3Icon />

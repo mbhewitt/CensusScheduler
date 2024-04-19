@@ -255,7 +255,7 @@ export const Shifts = () => {
       sessionStorage.setItem("filterListState", JSON.stringify(filterList));
     },
     onRowClick: (row: string[]) => {
-      router.push(`/shifts/shift-volunteers/${row[0]}`);
+      router.push(`/shifts/volunteers/${row[0]}`);
     },
     rowHover: true,
     rowsPerPage: 200,

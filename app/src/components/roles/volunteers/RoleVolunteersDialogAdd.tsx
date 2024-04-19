@@ -50,7 +50,7 @@ export const RoleVolunteersDialogAdd = ({
   // --------------------
   const { data, error } = useSWR("/api/volunteers/dropdown", fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
-    `/api/role-volunteers/${roleId}`,
+    `/api/roles/volunteers/${roleId}`,
     fetcherTrigger
   );
 

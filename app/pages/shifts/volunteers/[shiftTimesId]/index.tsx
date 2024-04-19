@@ -1,20 +1,20 @@
 import Head from "next/head";
 
-import { AccountCreate } from "src/components/account/AccountCreate";
+import { ShiftVolunteers } from "src/components/shifts/volunteers";
 
-const AccountCreatePage = () => {
+const ShiftVolunteersPage = () => {
   // display
   // --------------------
   return (
     <>
       <Head>
-        <title>Census | Create account</title>
+        <title>Census | Shift volunteers</title>
         <meta name="description" content="" />
         <link rel="icon" href="/general/favicon.ico" />
       </Head>
-      <AccountCreate />
+      <ShiftVolunteers />
     </>
   );
 };
 
-export default AccountCreatePage;
+export default ShiftVolunteersPage;

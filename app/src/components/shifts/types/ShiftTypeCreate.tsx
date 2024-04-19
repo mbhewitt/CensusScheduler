@@ -265,7 +265,7 @@ export const ShiftTypeCreate = () => {
             alt="volunteers riding the census art car"
             fill
             priority
-            src="/create-account/hero.jpg"
+            src="/volunteers/account/create/hero.jpg"
             style={{
               objectFit: "cover",
             }}

@@ -29,8 +29,8 @@ import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { Hero } from "src/components/layout/Hero";
-import { RoleVolunteersDialogAdd } from "src/components/role-volunteers/RoleVolunteersDialogAdd";
-import { RoleVolunteersDialogRemove } from "src/components/role-volunteers/RoleVolunteersDialogRemove";
+import { RoleVolunteersDialogAdd } from "src/components/roles/volunteers/RoleVolunteersDialogAdd";
+import { RoleVolunteersDialogRemove } from "src/components/roles/volunteers/RoleVolunteersDialogRemove";
 import type { IResRoleVolunteerItem } from "src/components/types";
 import { fetcherGet } from "src/utils/fetcher";
 import {
@@ -63,7 +63,7 @@ export const RoleVolunteers = () => {
     fetcherGet
   );
   const { data: dataRoleVolunteerList, error: errorRoleVolunteerList } = useSWR(
-    isMounted ? `/api/role-volunteers/${roleId}` : null,
+    isMounted ? `/api/roles/volunteers/${roleId}` : null,
     fetcherGet
   );
 
@@ -125,7 +125,7 @@ export const RoleVolunteers = () => {
           key={`${shiftboardId}-menu`}
           MenuList={
             <MenuList>
-              <Link href={`/account/${shiftboardId}`}>
+              <Link href={`/volunteers/account/${shiftboardId}`}>
                 <MenuItem>
                   <ListItemIcon>
                     <ManageAccountsIcon />

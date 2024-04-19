@@ -125,20 +125,20 @@ export const ShiftVolunteersDialogAdd = ({
     fetcherGet
   );
   const { isMutating, trigger } = useSWRMutation(
-    `/api/shift-volunteers/${shiftTimesId}`,
+    `/api/shifts/volunteers/${shiftTimesId}`,
     fetcherTrigger
   );
   const { data: dataVolunteerShiftList, error: errorVolunteerShiftList } =
     useSWR(
       volunteerWatch
-        ? `/api/volunteer-shifts/${volunteerWatch?.shiftboardId}`
+        ? `/api/volunteers/shifts/${volunteerWatch?.shiftboardId}`
         : null,
       fetcherGet
     );
   const { data: dataTrainingVolunteerList, error: errorTrainingVolunteerList } =
     useSWR(
       trainingTimesIdWatch
-        ? `/api/shift-volunteers/${trainingTimesIdWatch}`
+        ? `/api/shifts/volunteers/${trainingTimesIdWatch}`
         : null,
       fetcherGet
     );
