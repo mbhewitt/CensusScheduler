@@ -1,6 +1,7 @@
 import {
   Article as ArticleIcon,
   CalendarMonth as CalendarMonthIcon,
+  DateRange as DateRangeIcon,
   Groups3 as Groups3Icon,
   Help as HelpIcon,
   Home as HomeIcon,
@@ -46,5 +47,13 @@ export const pageListAdmin = [
     icon: <VerifiedUserIcon />,
     label: "Roles",
     path: "/roles",
+  },
+];
+
+export const pageListSuperAdmin = [
+  {
+    icon: <DateRangeIcon />,
+    label: "Shift types",
+    path: "/shifts/types",
   },
 ];

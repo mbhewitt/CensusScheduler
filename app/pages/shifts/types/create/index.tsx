@@ -1,12 +1,12 @@
 import Head from "next/head";
 import { useContext } from "react";
 
-import { ShiftCreate } from "src/components/shifts/ShiftCreate";
+import { ShiftTypeCreate } from "src/components/shifts/types/ShiftTypeCreate";
 import { SignIn } from "src/components/sign-in";
 import { SessionContext } from "src/state/session/context";
 import { checkIsSuperAdmin } from "src/utils/checkIsRoleExist";
 
-const ShiftCreatePage = () => {
+const ShiftTypeCreatePage = () => {
   // context
   // --------------------
   const {
@@ -24,13 +24,13 @@ const ShiftCreatePage = () => {
   return (
     <>
       <Head>
-        <title>Census | Create shift</title>
+        <title>Census | Create shift type</title>
         <meta name="description" content="" />
         <link rel="icon" href="/general/favicon.ico" />
       </Head>
-      {isSuperAdmin ? <ShiftCreate /> : <SignIn />}
+      {isSuperAdmin ? <ShiftTypeCreate /> : <SignIn />}
     </>
   );
 };
 
-export default ShiftCreatePage;
+export default ShiftTypeCreatePage;

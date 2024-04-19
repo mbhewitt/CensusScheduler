@@ -1,6 +1,6 @@
 import {
-  CalendarMonth as CalendarMonthIcon,
   Close as CloseIcon,
+  DateRange as DateRangeIcon,
   EventAvailable as EventAvailableIcon,
   MoreTime as MoreTimeIcon,
   PersonAdd as PersonAddIcon,
@@ -123,7 +123,7 @@ const defaultValues: IFormValues = {
     },
   ],
 };
-export const ShiftCreate = () => {
+export const ShiftTypeCreate = () => {
   // fetching, mutation, and revalidation
   // --------------------
   const { data, error } = useSWR("/api/shifts/create", fetcherGet);
@@ -271,12 +271,12 @@ export const ShiftCreate = () => {
             }}
           />
         }
-        text="Create shift"
+        text="Create shift type"
       />
       <Container component="main">
         <Box component="section">
           <Breadcrumbs>
-            <Link href="/shifts">
+            <Link href="/shifts/types">
               <Typography
                 sx={{
                   alignItems: "center",
@@ -284,8 +284,8 @@ export const ShiftCreate = () => {
                   textDecoration: "underline",
                 }}
               >
-                <CalendarMonthIcon sx={{ mr: 0.5 }} />
-                Shifts
+                <DateRangeIcon sx={{ mr: 0.5 }} />
+                Shift types
               </Typography>
             </Link>
             <Typography

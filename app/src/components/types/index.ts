@@ -65,6 +65,10 @@ export interface IResShiftVolunteerItem {
   shiftTimesId: number;
   worldName: string;
 }
+export interface IResShiftTypeItem {
+  shiftTypeId: number;
+  shiftTypeName: string;
+}
 export interface IResVolunteerAccount {
   email: string;
   emergencyContact: string;
