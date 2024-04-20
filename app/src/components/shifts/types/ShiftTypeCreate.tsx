@@ -29,16 +29,21 @@ import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import {
   defaultValues,
+  findCategoryId,
   IFormValues,
+  processPositionList,
+  processTimeList,
   ShiftTypeForm,
 } from "src/components/shifts/types/ShiftTypeForm";
-import type { IReqShiftTypePositionItem } from "src/components/types";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 export const ShiftTypeCreate = () => {
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR("/api/shifts/types/defaults", fetcherGet);
+  const { data: dataDefaults, error: errorDefaults } = useSWR(
+    "/api/shifts/types/defaults",
+    fetcherGet
+  );
   const { isMutating, trigger } = useSWRMutation(
     "/api/shifts/types",
     fetcherTrigger
@@ -81,62 +86,30 @@ export const ShiftTypeCreate = () => {
 
   // logic
   // --------------------
-  if (error) return <ErrorPage />;
-  if (!data) return <Loading />;
+  if (errorDefaults) return <ErrorPage />;
+  if (!dataDefaults) return <Loading />;
 
   // form submission
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
-      const { categoryId } = data.shiftCategoryList.find(
-        ({ shiftCategoryName }: { shiftCategoryName: string }) => {
-          return shiftCategoryName === formValues.information.category;
-        }
-      );
-      const positionList = formValues.positionList.map(
-        ({ name, totalSlots, wapPoints }) => {
-          const { positionId } = data.shiftPositionList.find(
-            (positionItem: IReqShiftTypePositionItem) => {
-              return positionItem.name === name;
-            }
-          );
-
-          return {
-            positionId,
-            totalSlots,
-            wapPoints,
-          };
-        }
-      );
-      const timeList = formValues.timeList.map(
-        ({ date, endTime, instance, notes, startTime }) => {
-          const dateFormat = dayjs(date).format("YYYY-MM-DD");
-
-          return {
-            date: dateFormat,
-            endTime: `${dateFormat} ${dayjs(endTime).format("HH:mm:ss")}`,
-            instance,
-            notes,
-            startTime: `${dateFormat} ${dayjs(startTime).format("HH:mm:ss")}`,
-          };
-        }
-      );
+      const categoryId = findCategoryId(dataDefaults, formValues);
+      const positionList = processPositionList(dataDefaults, formValues);
+      const timeList = processTimeList(formValues);
 
       // update database
-      const request = {
-        information: {
-          categoryId,
-          details: formValues.information.details,
-          isCore: formValues.information.isCore,
-          isOffPlaya: formValues.information.isOffPlaya,
-          name: formValues.information.name,
-        },
-        positionList,
-        timeList,
-      };
-
       await trigger({
-        body: request,
+        body: {
+          information: {
+            categoryId,
+            details: formValues.information.details,
+            isCore: formValues.information.isCore,
+            isOffPlaya: formValues.information.isOffPlaya,
+            name: formValues.information.name,
+          },
+          positionList,
+          timeList,
+        },
         method: "POST",
       });
 
@@ -218,7 +191,7 @@ export const ShiftTypeCreate = () => {
             <ShiftTypeForm
               clearErrors={clearErrors}
               control={control}
-              data={data}
+              dataDefaults={dataDefaults}
               errors={errors}
               getValues={getValues}
               positionAppend={positionAppend}

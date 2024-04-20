@@ -56,15 +56,16 @@ export interface IFormValues {
   positionList: IReqShiftTypePositionItem[];
   timeList: IResShiftTypeTimeItem[];
 }
+interface IDataDefaults {
+  categoryList: IResShiftTypeCategoryItem[];
+  positionList: IResShiftTypePositionItem[];
+  typeList: IResShiftTypeItem[];
+}
 interface IShiftTypeFormProps {
   clearErrors: UseFormClearErrors<IFormValues>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<IFormValues, any>;
-  data: {
-    categoryList: IResShiftTypeCategoryItem[];
-    positionList: IResShiftTypePositionItem[];
-    typeList: IResShiftTypeItem[];
-  };
+  dataDefaults: IDataDefaults;
   errors: FieldErrors<IFormValues>;
   getValues: UseFormGetValues<IFormValues>;
   positionAppend: UseFieldArrayAppend<IFormValues, "positionList">;
@@ -76,6 +77,55 @@ interface IShiftTypeFormProps {
   timeFields: FieldArrayWithId<IFormValues, "timeList", "id">[];
   timeRemove: UseFieldArrayRemove;
 }
+
+// utilities
+// --------------------
+export const findCategoryId = (
+  dataDefaults: IDataDefaults,
+  formValues: IFormValues
+) => {
+  const categoryItem = dataDefaults.categoryList.find(
+    ({ name }: { name: string }) => {
+      return name === formValues.information.category;
+    }
+  );
+
+  return categoryItem?.id;
+};
+export const processPositionList = (
+  dataDefaults: IDataDefaults,
+  formValues: IFormValues
+) => {
+  return formValues.positionList.map(({ name, totalSlots, wapPoints }) => {
+    const positionFound = dataDefaults.positionList.find(
+      (positionItem: IResShiftTypePositionItem) => {
+        return positionItem.name === name;
+      }
+    );
+
+    return {
+      id: positionFound?.id,
+      totalSlots,
+      wapPoints,
+    };
+  });
+};
+export const processTimeList = (formValues: IFormValues) => {
+  return formValues.timeList.map(
+    ({ date, endTime, instance, notes, startTime, timeId }) => {
+      const dateFormat = dayjs(date).format("YYYY-MM-DD");
+
+      return {
+        date: dateFormat,
+        endTime: `${dateFormat} ${dayjs(endTime).format("HH:mm:ss")}`,
+        instance,
+        notes,
+        startTime: `${dateFormat} ${dayjs(startTime).format("HH:mm:ss")}`,
+        timeId,
+      };
+    }
+  );
+};
 
 export const defaultValues: IFormValues = {
   information: {
@@ -114,7 +164,7 @@ export const defaultValues: IFormValues = {
 export const ShiftTypeForm = ({
   clearErrors,
   control,
-  data,
+  dataDefaults,
   errors,
   getValues,
   positionAppend,
@@ -168,7 +218,7 @@ export const ShiftTypeForm = ({
                         return Boolean(value.trim()) || "Name is required";
                       },
                       typeAvailable: (value) => {
-                        const istypeAvailable = data.typeList.every(
+                        const istypeAvailable = dataDefaults.typeList.every(
                           ({ name }) => {
                             return name.toLowerCase() !== value.toLowerCase();
                           }
@@ -200,7 +250,7 @@ export const ShiftTypeForm = ({
                         labelId="category"
                         required
                       >
-                        {data.categoryList.map(
+                        {dataDefaults.categoryList.map(
                           ({
                             id: shiftTypeCategoryId,
                             name: shiftTypeCategoryName,
@@ -334,11 +384,10 @@ export const ShiftTypeForm = ({
                             labelId="position"
                             onChange={(event) => {
                               const positionSelected = event.target.value;
-                              const positionItem = data.positionList.find(
-                                ({ name }) => {
+                              const positionItem =
+                                dataDefaults.positionList.find(({ name }) => {
                                   return name === positionSelected;
-                                }
-                              );
+                                });
 
                               // update field
                               field.onChange(positionSelected);
@@ -377,7 +426,7 @@ export const ShiftTypeForm = ({
                             }}
                             required
                           >
-                            {data.positionList.map(
+                            {dataDefaults.positionList.map(
                               ({
                                 id: shiftTypePositionId,
                                 name: shiftTypePositionName,

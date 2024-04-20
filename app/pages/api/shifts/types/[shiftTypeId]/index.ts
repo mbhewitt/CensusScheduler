@@ -19,7 +19,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
     // --------------------
     case "GET": {
       // get current information
-      const [dbShiftTypeList] = await pool.query<RowDataPacket[]>(
+      const [dbInformationList] = await pool.query<RowDataPacket[]>(
         `SELECT
           sc.shift_category,
           sn.core,
@@ -32,8 +32,8 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         WHERE sn.shift_name_id=?`,
         [shiftTypeId]
       );
-      const [resShiftTypeInformation]: IResShiftTypeInformation[] =
-        dbShiftTypeList.map(
+      const [resInformation]: IResShiftTypeInformation[] =
+        dbInformationList.map(
           ({ core, off_playa, shift_category, shift_details, shift_name }) => ({
             category: shift_category ?? "",
             details: shift_details,
@@ -43,7 +43,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           })
         );
       // get all current positions
-      const [dbShiftTypePositionList] = await pool.query<RowDataPacket[]>(
+      const [dbPositionList] = await pool.query<RowDataPacket[]>(
         `SELECT
           pt.critical,
           pt.end_time_offset,
@@ -67,36 +67,35 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         ORDER BY pt.position`,
         [shiftTypeId]
       );
-      const resShiftTypePositionList: IResShiftTypePositionItem[] =
-        dbShiftTypePositionList.map(
-          ({
-            critical,
-            end_time_offset,
-            lead,
-            position,
-            position_details,
-            position_type_id,
-            role,
-            shift_category,
-            start_time_offset,
-            total_slots,
-            wap_points,
-          }) => ({
-            critical: Boolean(critical),
-            details: position_details,
-            endTimeOffset: end_time_offset,
-            id: position_type_id,
-            lead: Boolean(lead),
-            name: position,
-            prerequisiteShift: shift_category ?? "",
-            role: role ?? "",
-            startTimeOffset: start_time_offset,
-            totalSlots: total_slots,
-            wapPoints: wap_points,
-          })
-        );
+      const resPositionList: IResShiftTypePositionItem[] = dbPositionList.map(
+        ({
+          critical,
+          end_time_offset,
+          lead,
+          position,
+          position_details,
+          position_type_id,
+          role,
+          shift_category,
+          start_time_offset,
+          total_slots,
+          wap_points,
+        }) => ({
+          critical: Boolean(critical),
+          details: position_details,
+          endTimeOffset: end_time_offset,
+          id: position_type_id,
+          lead: Boolean(lead),
+          name: position,
+          prerequisiteShift: shift_category ?? "",
+          role: role ?? "",
+          startTimeOffset: start_time_offset,
+          totalSlots: total_slots,
+          wapPoints: wap_points,
+        })
+      );
       // get all times
-      const [dbShiftTypeTimeList] = await pool.query<RowDataPacket[]>(
+      const [dbTimeList] = await pool.query<RowDataPacket[]>(
         `SELECT
           date,
           end_time,
@@ -109,29 +108,28 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         ORDER BY start_time`,
         [shiftTypeId]
       );
-      const resShiftTypeTimeList: IResShiftTypeTimeItem[] =
-        dbShiftTypeTimeList.map(
-          ({
-            date,
-            end_time,
-            notes,
-            shift_instance,
-            shift_times_id,
-            start_time,
-          }) => ({
-            date,
-            endTime: end_time,
-            instance: shift_instance,
-            notes: notes ?? "",
-            startTime: start_time,
-            timeId: shift_times_id,
-          })
-        );
+      const resTimeList: IResShiftTypeTimeItem[] = dbTimeList.map(
+        ({
+          date,
+          end_time,
+          notes,
+          shift_instance,
+          shift_times_id,
+          start_time,
+        }) => ({
+          date,
+          endTime: end_time,
+          instance: shift_instance,
+          notes: notes ?? "",
+          startTime: start_time,
+          timeId: shift_times_id,
+        })
+      );
 
       return res.status(200).json({
-        shiftTypeInformation: resShiftTypeInformation,
-        shiftTypePositionList: resShiftTypePositionList,
-        shiftTypeTimeList: resShiftTypeTimeList,
+        information: resInformation,
+        positionList: resPositionList,
+        timeList: resTimeList,
       });
     }
 
@@ -219,20 +217,13 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
 
       // update shift type time rows
       timeList.forEach(
-        async ({
-          date,
-          endTime,
-          instance,
-          notes,
-          startTime,
-          timeId: timeIdNum,
-        }) => {
+        async ({ date, endTime, instance, notes, startTime, timeId }) => {
           const timeIdQuery = `
             SELECT shift_times_id
             FROM op_shift_times
             WHERE shift_times_id=?
           `;
-          const isTimeIdExist = await checkIsIdExists(timeIdQuery, timeIdNum);
+          const isTimeIdExist = await checkIsIdExists(timeIdQuery, timeId);
 
           // if shift type time row exists
           // then update shift type time row
@@ -255,7 +246,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
                 instance,
                 startTime,
                 date.split("-")[0],
-                timeIdNum,
+                timeId,
               ]
             );
             // else insert new shift type time row
