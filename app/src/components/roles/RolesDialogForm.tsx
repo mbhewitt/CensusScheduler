@@ -13,6 +13,9 @@ interface IRolesDialogFormProps {
   roleList: IResRoleItem[];
 }
 
+export const defaultValues: IFormValues = {
+  name: "",
+};
 export const RolesDialogForm = ({
   control,
   errors,

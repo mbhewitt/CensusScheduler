@@ -11,7 +11,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
     // get
     // --------------------
     case "GET": {
-      // get one role
+      // get role
       const [dbRoleList] = await pool.query<RowDataPacket[]>(
         `SELECT display, role, role_id
         FROM op_roles

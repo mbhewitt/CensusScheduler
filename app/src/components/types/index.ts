@@ -1,19 +1,18 @@
 // requests
 // --------------------
+export interface IReqShiftTypeInfoItem extends IResShiftTypeInformation {
+  shiftCategoryId: string;
+}
 export interface IReqShiftTypePositionItem extends IResShiftTypePositionItem {
   totalSlots: string;
   wapPoints: string;
 }
 
-export interface IReqShiftTypeInfoItem extends IResShiftTypeInfoItem {
-  shiftCategoryId: string;
-}
-
 // responses
 // --------------------
 export interface IResPositionDropdownItem {
-  positionId: number;
-  positionName: string;
+  id: number;
+  name: string;
 }
 export interface IResRoleItem {
   display: boolean;
@@ -27,24 +26,29 @@ export interface IResRoleVolunteerItem {
   shiftboardId: number;
   worldName: string;
 }
-export interface IResShiftCategoryDropdownItem {
-  shiftCategoryId: number;
-  shiftCategoryName: string;
+export interface IResShiftTypeCategoryItem {
+  id: number;
+  name: string;
 }
-export interface IResShiftTypeInfoItem {
+export interface IResShiftTypeInformation {
   category: string;
   details: string;
   isCore: boolean;
   isOffPlaya: boolean;
   name: string;
 }
+export interface IResShiftTypeDefaults {
+  categoryList: IResShiftTypeCategoryItem[];
+  positionList: IResShiftTypePositionItem[];
+  nameList: IResShiftTypeNameItem[];
+}
 export interface IResShiftTypePositionItem {
   critical: boolean;
+  details: string;
   endTimeOffset: string;
+  id: number;
   lead: boolean;
-  positionDetails: string;
-  positionId: number;
-  positionName: string;
+  name: string;
   prerequisiteShift: string;
   role: string;
   startTimeOffset: string;
@@ -57,9 +61,9 @@ export interface IResShiftTypeTimeItem {
   shiftTimesId: number;
   startTime: string;
 }
-export interface IResShiftNameDropdownItem {
-  shiftNameId: number;
-  shiftNameText: string;
+export interface IResShiftTypeNameItem {
+  id: number;
+  name: string;
 }
 export interface IResShiftItem {
   category: string;

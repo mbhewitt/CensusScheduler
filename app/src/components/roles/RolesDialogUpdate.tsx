@@ -9,6 +9,7 @@ import useSWRMutation from "swr/mutation";
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import {
+  defaultValues,
   IFormValues,
   RolesDialogForm,
 } from "src/components/roles/RolesDialogForm";
@@ -22,9 +23,6 @@ interface IRolesDialogUpdateProps {
   roleList: IResRoleItem[];
 }
 
-const defaultValues: IFormValues = {
-  name: "",
-};
 export const RolesDialogUpdate = ({
   handleDialogUpdateClose,
   isDialogUpdateOpen,
@@ -62,10 +60,14 @@ export const RolesDialogUpdate = ({
   // form submission
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
+    const roleFound = roleList.find(
+      (roleItem) => roleItem.roleName === formValues.name
+    );
+
     try {
       // update database
       await trigger({
-        body: formValues,
+        body: roleFound,
         method: "PATCH",
       });
       mutate("/api/roles");
