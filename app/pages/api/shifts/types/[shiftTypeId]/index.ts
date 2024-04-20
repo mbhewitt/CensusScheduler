@@ -123,8 +123,8 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
             endTime: end_time,
             instance: shift_instance,
             notes: notes ?? "",
-            shiftTimesId: shift_times_id,
             startTime: start_time,
+            timeId: shift_times_id,
           })
         );
 
@@ -140,7 +140,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
     case "PATCH": {
       // update shift type
       const {
-        information: { shiftCategoryId, details, isCore, isOffPlaya, name },
+        information: { categoryId, details, isCore, isOffPlaya, name },
         positionList,
         timeList,
       }: {
@@ -160,7 +160,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           shift_details=?,
           shift_name=?
         WHERE shift_name_id=?`,
-        [isCore, isOffPlaya, shiftCategoryId, details, name, shiftTypeId]
+        [isCore, isOffPlaya, categoryId, details, name, shiftTypeId]
       );
 
       // update shift type position rows
@@ -224,22 +224,19 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           endTime,
           instance,
           notes,
-          shiftTimesId: shiftTimesIdNum,
           startTime,
+          timeId: timeIdNum,
         }) => {
-          const shiftTimesIdQuery = `
+          const timeIdQuery = `
             SELECT shift_times_id
             FROM op_shift_times
             WHERE shift_times_id=?
           `;
-          const isShiftTimesIdExist = await checkIsIdExists(
-            shiftTimesIdQuery,
-            shiftTimesIdNum
-          );
+          const isTimeIdExist = await checkIsIdExists(timeIdQuery, timeIdNum);
 
           // if shift type time row exists
           // then update shift type time row
-          if (isShiftTimesIdExist) {
+          if (isTimeIdExist) {
             await pool.query<RowDataPacket[]>(
               `UPDATE op_shift_times
               SET
@@ -258,12 +255,12 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
                 instance,
                 startTime,
                 date.split("-")[0],
-                shiftTimesIdNum,
+                timeIdNum,
               ]
             );
             // else insert new shift type time row
           } else {
-            const shiftTimesIdNew = generateId(shiftTimesIdQuery);
+            const timeIdNew = generateId(timeIdQuery);
 
             await pool.query(
               `INSERT INTO op_shift_times (
@@ -284,7 +281,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
                 notes,
                 instance,
                 shiftTypeId,
-                shiftTimesIdNew,
+                timeIdNew,
                 startTime,
                 date.split("-")[0],
               ]

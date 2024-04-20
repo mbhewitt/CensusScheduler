@@ -141,12 +141,7 @@ export const Account = () => {
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
-  const {
-    isVolunteerCreated,
-    playaName,
-    roleList: roleListData,
-    worldName,
-  } = data;
+  const { isCreated, playaName, roleList: roleListData, worldName } = data;
   const isAuthenticated = checkIsAuthenticated(
     accountType,
     isAuthenticatedSession
@@ -236,7 +231,7 @@ export const Account = () => {
         )}
 
         {/* only new accounts are allowed to update their profile */}
-        {!isVolunteerCreated && (
+        {!isCreated && (
           <Box component="section">
             <Card>
               <CardContent>
@@ -296,7 +291,7 @@ export const Account = () => {
                       render={({ field }) => (
                         <TextField
                           {...field}
-                          disabled={!isVolunteerCreated}
+                          disabled={!isCreated}
                           fullWidth
                           label="Default world name"
                           required
@@ -312,7 +307,7 @@ export const Account = () => {
                       render={({ field }) => (
                         <TextField
                           {...field}
-                          disabled={!isVolunteerCreated}
+                          disabled={!isCreated}
                           fullWidth
                           label="Email"
                           required
@@ -329,7 +324,7 @@ export const Account = () => {
                       render={({ field }) => (
                         <TextField
                           {...field}
-                          disabled={!isVolunteerCreated}
+                          disabled={!isCreated}
                           fullWidth
                           label="Phone"
                           type="phone"
@@ -419,7 +414,10 @@ export const Account = () => {
                       {roleListData.length ? (
                         <>
                           {roleListData.map(
-                            ({ roleId, roleName }: IResVolunteerRoleItem) => (
+                            ({
+                              id: roleId,
+                              name: roleName,
+                            }: IResVolunteerRoleItem) => (
                               <ListItem disablePadding key={`${roleId}-item`}>
                                 <ListItemIcon sx={{ minWidth: "auto", pr: 1 }}>
                                   <VerifiedUserIcon color="secondary" />

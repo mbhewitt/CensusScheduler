@@ -47,7 +47,7 @@ export const RolesDialogForm = ({
           },
           roleNameAvailable: (value) => {
             const isRoleNameAvailable = roleList.every(
-              ({ roleName }) => roleName.toLowerCase() !== value.toLowerCase()
+              ({ name }) => name.toLowerCase() !== value.toLowerCase()
             );
 
             return (

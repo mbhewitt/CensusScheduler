@@ -32,7 +32,7 @@ export const RolesDialogUpdate = ({
   // fetching, mutation, and revalidation
   // --------------------
   const { isMutating, trigger } = useSWRMutation(
-    `/api/roles/${role.roleId}`,
+    `/api/roles/${role.id}`,
     fetcherTrigger
   );
   const { mutate } = useSWRConfig();
@@ -54,14 +54,14 @@ export const RolesDialogUpdate = ({
   // side effects
   // --------------------
   useEffect(() => {
-    setValue("name", role.roleName);
+    setValue("name", role.name);
   }, [role, setValue]);
 
   // form submission
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     const roleFound = roleList.find(
-      (roleItem) => roleItem.roleName === formValues.name
+      (roleItem) => roleItem.name === formValues.name
     );
 
     try {

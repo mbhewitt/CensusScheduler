@@ -19,7 +19,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
       );
       const resRoleList: IResRoleItem[] = dbRoleList.map(
         ({ display, role, role_id }) => {
-          return { display: Boolean(display), roleId: role_id, roleName: role };
+          return { display: Boolean(display), id: role_id, name: role };
         }
       );
 

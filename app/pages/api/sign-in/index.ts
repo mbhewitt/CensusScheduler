@@ -40,13 +40,13 @@ const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
         [shiftboardId]
       );
       const resRoleList = dbRoleList.map(({ role, role_id }) => ({
-        roleId: role_id,
-        roleName: role,
+        id: role_id,
+        name: role,
       }));
       const resAccount: IResVolunteerAccount = {
         email: volunteerFirst.email,
         emergencyContact: volunteerFirst.emergency_contact,
-        isVolunteerCreated: volunteerFirst.create_volunteer,
+        isCreated: volunteerFirst.create_volunteer,
         location: volunteerFirst.location,
         notes: volunteerFirst.notes,
         phone: volunteerFirst.phone,

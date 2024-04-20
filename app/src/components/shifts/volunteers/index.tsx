@@ -82,7 +82,7 @@ export const ShiftVolunteers = () => {
       positionName: "",
       shiftboardId: 0,
       shiftPositionId: 0,
-      shiftTimesId: 0,
+      timeId: 0,
       worldName: "",
     },
   });
@@ -90,7 +90,7 @@ export const ShiftVolunteers = () => {
   // fetching, mutation, and revalidation
   // --------------------
   const router = useRouter();
-  const { shiftTimesId: shiftTimesQuery } = router.query;
+  const { timeId: shiftTimesQuery } = router.query;
   const {
     data: dataShiftVolunteerItem,
     error: errorShiftVolunteerItem,
@@ -130,7 +130,7 @@ export const ShiftVolunteers = () => {
             positionName,
             shiftboardId,
             shiftPositionId,
-            shiftTimesId,
+            timeId,
             worldName,
           }) => {
             if (dataShiftVolunteerItem) {
@@ -141,7 +141,7 @@ export const ShiftVolunteers = () => {
                 positionName,
                 shiftboardId,
                 shiftPositionId,
-                shiftTimesId,
+                timeId,
                 worldName,
               });
 
@@ -222,7 +222,7 @@ export const ShiftVolunteers = () => {
     positionName,
     shiftboardId,
     shiftPositionId,
-    shiftTimesId,
+    timeId,
     worldName,
   }: ISwitchValues) => {
     try {
@@ -231,7 +231,7 @@ export const ShiftVolunteers = () => {
           checked,
           shiftboardId,
           shiftPositionId,
-          shiftTimesId,
+          timeId,
         },
         method: "PATCH",
       });
@@ -239,7 +239,7 @@ export const ShiftVolunteers = () => {
         checked,
         shiftboardId,
         shiftPositionId,
-        shiftTimesId,
+        timeId,
       });
       enqueueSnackbar(
         <SnackbarText>
@@ -348,7 +348,7 @@ export const ShiftVolunteers = () => {
       positionName,
       shiftboardId,
       shiftPositionId,
-      shiftTimesId,
+      timeId,
       worldName,
     }: IResShiftVolunteerItem) => {
       return [
@@ -365,7 +365,7 @@ export const ShiftVolunteers = () => {
               positionName,
               shiftboardId,
               shiftPositionId,
-              shiftTimesId,
+              timeId,
               worldName,
             })
           }
@@ -396,7 +396,7 @@ export const ShiftVolunteers = () => {
                         positionName,
                         shiftboardId,
                         shiftPositionId,
-                        shiftTimesId,
+                        timeId,
                         worldName,
                       },
                     })
@@ -479,7 +479,7 @@ export const ShiftVolunteers = () => {
                   dataShiftVolunteerItem.endTime
                 )}
                 <br />
-                {dataShiftVolunteerItem.shiftName}
+                {dataShiftVolunteerItem.type}
               </Typography>
               <Typography component="h3" variant="h6">
                 {dataShiftVolunteerItem.shiftPositionList.map(
@@ -525,11 +525,11 @@ export const ShiftVolunteers = () => {
           endTime={dataShiftVolunteerItem.endTime}
           handleDialogAddClose={() => setIsDialogAddOpen(false)}
           isDialogAddOpen={isDialogAddOpen}
-          shiftName={dataShiftVolunteerItem.shiftName}
           shiftPositionList={dataShiftVolunteerItem.shiftPositionList}
-          shiftTimesId={shiftTimesQuery}
+          timeId={shiftTimesQuery}
           shiftVolunteerList={dataShiftVolunteerItem.shiftVolunteerList}
           startTime={dataShiftVolunteerItem.startTime}
+          type={dataShiftVolunteerItem.type}
         />
 
         {/* remove dialog */}
@@ -542,7 +542,7 @@ export const ShiftVolunteers = () => {
                 positionName: "",
                 shiftboardId: 0,
                 shiftPositionId: 0,
-                shiftTimesId: 0,
+                timeId: 0,
                 worldName: "",
               },
             })

@@ -28,7 +28,7 @@ const sessionInitial: ISessionState = {
   user: {
     email: "",
     emergencyContact: "",
-    isVolunteerCreated: false,
+    isCreated: false,
     location: "",
     notes: "",
     phone: "",

@@ -88,7 +88,7 @@ export const ShiftTypeCreate = () => {
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
-      const { shiftCategoryId } = data.shiftCategoryList.find(
+      const { categoryId } = data.shiftCategoryList.find(
         ({ shiftCategoryName }: { shiftCategoryName: string }) => {
           return shiftCategoryName === formValues.information.category;
         }
@@ -125,11 +125,11 @@ export const ShiftTypeCreate = () => {
       // update database
       const request = {
         information: {
+          categoryId,
           details: formValues.information.details,
           isCore: formValues.information.isCore,
           isOffPlaya: formValues.information.isOffPlaya,
           name: formValues.information.name,
-          shiftCategoryId,
         },
         positionList,
         timeList,

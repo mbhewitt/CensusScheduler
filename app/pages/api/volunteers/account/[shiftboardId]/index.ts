@@ -30,14 +30,14 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         [shiftboardId]
       );
       const resRoleList = dbRoleList.map(({ role, role_id }) => ({
-        roleId: role_id,
-        roleName: role,
+        id: role_id,
+        name: role,
       }));
       const dbVolunteerFirst = dbVolunteerList[0];
       const resVolunteerItem: IResVolunteerAccount = {
         email: dbVolunteerFirst.email ?? "",
         emergencyContact: dbVolunteerFirst.emergency_contact ?? "",
-        isVolunteerCreated: Boolean(dbVolunteerFirst.create_volunteer),
+        isCreated: Boolean(dbVolunteerFirst.create_volunteer),
         location: dbVolunteerFirst.location ?? "",
         notes: dbVolunteerFirst.notes ?? "",
         phone: dbVolunteerFirst.phone ?? "",

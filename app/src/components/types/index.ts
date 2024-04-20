@@ -1,162 +1,12 @@
-// requests
+// general
 // --------------------
-export interface IReqShiftTypeInfoItem extends IResShiftTypeInformation {
-  shiftCategoryId: string;
-}
-export interface IReqShiftTypePositionItem extends IResShiftTypePositionItem {
-  totalSlots: string;
-  wapPoints: string;
-}
-
-// responses
-// --------------------
-export interface IResPositionDropdownItem {
-  id: number;
-  name: string;
-}
-export interface IResRoleItem {
-  display: boolean;
-  roleId: number;
-  roleName: string;
-}
-export interface IResRoleVolunteerItem {
-  playaName: string;
-  roleId: number;
-  roleName: string;
-  shiftboardId: number;
-  worldName: string;
-}
-export interface IResShiftTypeCategoryItem {
-  id: number;
-  name: string;
-}
-export interface IResShiftTypeInformation {
-  category: string;
-  details: string;
-  isCore: boolean;
-  isOffPlaya: boolean;
-  name: string;
-}
-export interface IResShiftTypeDefaults {
-  categoryList: IResShiftTypeCategoryItem[];
-  positionList: IResShiftTypePositionItem[];
-  nameList: IResShiftTypeNameItem[];
-}
-export interface IResShiftTypePositionItem {
-  critical: boolean;
-  details: string;
-  endTimeOffset: string;
-  id: number;
-  lead: boolean;
-  name: string;
-  prerequisiteShift: string;
-  role: string;
-  startTimeOffset: string;
-}
-export interface IResShiftTypeTimeItem {
-  date: string;
-  endTime: string;
-  instance: string;
-  notes: string;
-  shiftTimesId: number;
-  startTime: string;
-}
-export interface IResShiftTypeNameItem {
-  id: number;
-  name: string;
-}
-export interface IResShiftItem {
-  category: string;
-  date: string;
-  dateName: string;
-  endTime: string;
-  filledSlots: number;
-  shiftCategoryId: number;
-  shiftName: string;
-  shiftTimesId: number;
-  startTime: string;
-  totalSlots: number;
-  year: string;
-}
-export interface IResShiftPositionItem {
-  filledSlots: number;
-  positionName: string;
-  positionDetails: string;
-  positionTypeId: number;
-  prerequisiteId: number;
-  roleRequiredId: number;
-  shiftPositionId: number;
-  totalSlots: number;
-}
-export interface IResShiftVolunteerItem {
-  noShow: string;
-  playaName: string;
-  positionName: string;
-  shiftboardId: number;
-  shiftPositionId: number;
-  shiftTimesId: number;
-  worldName: string;
-}
-export interface IResShiftTypeItem {
-  shiftTypeId: number;
-  shiftTypeName: string;
-}
-export interface IResVolunteerAccount {
-  email: string;
-  emergencyContact: string;
-  isVolunteerCreated: boolean;
-  location: string;
-  notes: string;
-  phone: string;
-  playaName: string;
-  roleList: IResVolunteerRoleItem[];
-  shiftboardId: number;
-  worldName: string;
-}
-export interface IResVolunteerDropdownItem {
-  playaName: string;
-  roleList: IResVolunteerRoleItem[];
-  shiftboardId: number;
-  worldName: string;
-}
-export interface IResVolunteerRoleItem {
-  roleId: number;
-  roleName: string;
-}
-export interface IResVolunteerShiftCountItem {
-  attendedCount: number;
-  isNotes: boolean;
-  noShowCount: number;
-  playaName: string;
-  remainingCount: number;
-  shiftboardId: string;
-  worldName: string;
-}
-export interface IResVolunteerShiftItem {
-  category: string;
-  date: string;
-  dateName: string;
-  endTime: string;
-  noShow: string;
-  positionName: string;
-  shiftPositionId: number;
-  shiftTimesId: number;
-  startTime: string;
-}
-
-// app UI
-// --------------------
-export interface IShiftNameOption {
-  label: string;
-  shiftNameId: number;
-}
 export interface ISwitchValues {
   checked: boolean;
   playaName: string;
   positionName: string;
   shiftboardId: number;
   shiftPositionId: number;
-  shiftTimesId: number;
+  timeId: number;
   worldName: string;
 }
 export interface IVolunteerOption {
@@ -178,3 +28,142 @@ export type TAccountActions =
   | "accountTypeAdmin"
   | "accountTypeAuthenticated"
   | "accountTypeUnauthenticated";
+
+// roles
+// --------------------
+export interface IResRoleItem {
+  display: boolean;
+  id: number;
+  name: string;
+}
+export interface IResRoleVolunteerItem {
+  playaName: string;
+  roleId: number;
+  roleName: string;
+  shiftboardId: number;
+  worldName: string;
+}
+
+// shift types
+// --------------------
+export interface IResShiftTypeCategoryItem {
+  id: number;
+  name: string;
+}
+export interface IResShiftTypeInformation {
+  category: string;
+  details: string;
+  isCore: boolean;
+  isOffPlaya: boolean;
+  name: string;
+}
+export interface IResShiftTypeItem {
+  id: number;
+  name: string;
+}
+export interface IResShiftTypePositionItem {
+  critical: boolean;
+  details: string;
+  endTimeOffset: string;
+  id: number;
+  lead: boolean;
+  name: string;
+  prerequisiteShift: string;
+  role: string;
+  startTimeOffset: string;
+}
+export interface IResShiftTypeTimeItem {
+  date: string;
+  endTime: string;
+  instance: string;
+  notes: string;
+  timeId: number;
+  startTime: string;
+}
+export interface IReqShiftTypeInfoItem extends IResShiftTypeInformation {
+  categoryId: string;
+}
+export interface IReqShiftTypePositionItem extends IResShiftTypePositionItem {
+  totalSlots: string;
+  wapPoints: string;
+}
+
+// shifts
+// --------------------
+export interface IResShiftItem {
+  category: string;
+  categoryId: number;
+  date: string;
+  dateName: string;
+  endTime: string;
+  filledSlots: number;
+  startTime: string;
+  timeId: number;
+  totalSlots: number;
+  type: string;
+  year: string;
+}
+export interface IResShiftPositionItem {
+  filledSlots: number;
+  positionName: string;
+  positionDetails: string;
+  positionTypeId: number;
+  prerequisiteId: number;
+  roleRequiredId: number;
+  shiftPositionId: number;
+  totalSlots: number;
+}
+export interface IResShiftVolunteerItem {
+  noShow: string;
+  playaName: string;
+  positionName: string;
+  shiftboardId: number;
+  shiftPositionId: number;
+  timeId: number;
+  worldName: string;
+}
+
+// volunteers
+// --------------------
+export interface IResVolunteerAccount {
+  email: string;
+  emergencyContact: string;
+  isCreated: boolean;
+  location: string;
+  notes: string;
+  phone: string;
+  playaName: string;
+  roleList: IResVolunteerRoleItem[];
+  shiftboardId: number;
+  worldName: string;
+}
+export interface IResVolunteerDropdownItem {
+  playaName: string;
+  roleList: IResVolunteerRoleItem[];
+  shiftboardId: number;
+  worldName: string;
+}
+export interface IResVolunteerRoleItem {
+  id: number;
+  name: string;
+}
+export interface IResVolunteerShiftCountItem {
+  attendedCount: number;
+  isNotes: boolean;
+  noShowCount: number;
+  playaName: string;
+  remainingCount: number;
+  shiftboardId: string;
+  worldName: string;
+}
+export interface IResVolunteerShiftItem {
+  category: string;
+  date: string;
+  dateName: string;
+  endTime: string;
+  noShow: string;
+  positionName: string;
+  shiftPositionId: number;
+  timeId: number;
+  startTime: string;
+}

@@ -120,7 +120,7 @@ export const ShiftTypeUpdate = () => {
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
-      const { shiftCategoryId } = dataDefaults.shiftCategoryList.find(
+      const { categoryId } = dataDefaults.shiftCategoryList.find(
         ({ shiftCategoryName }: { shiftCategoryName: string }) => {
           return shiftCategoryName === formValues.information.category;
         }
@@ -141,7 +141,7 @@ export const ShiftTypeUpdate = () => {
         }
       );
       const timeList = formValues.timeList.map(
-        ({ date, endTime, instance, notes, shiftTimesId, startTime }) => {
+        ({ date, endTime, instance, notes, startTime, timeId }) => {
           const dateFormat = dayjs(date).format("YYYY-MM-DD");
 
           return {
@@ -149,7 +149,7 @@ export const ShiftTypeUpdate = () => {
             endTime: `${dateFormat} ${dayjs(endTime).format("HH:mm:ss")}`,
             instance,
             notes,
-            shiftTimesId,
+            timeId,
             startTime: `${dateFormat} ${dayjs(startTime).format("HH:mm:ss")}`,
           };
         }
@@ -159,11 +159,11 @@ export const ShiftTypeUpdate = () => {
       await trigger({
         body: {
           information: {
+            categoryId,
             details: formValues.information.details,
             isCore: formValues.information.isCore,
             isOffPlaya: formValues.information.isOffPlaya,
             name: formValues.information.name,
-            shiftCategoryId,
           },
           positionList,
           timeList,

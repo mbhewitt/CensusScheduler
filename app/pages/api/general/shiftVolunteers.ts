@@ -8,7 +8,7 @@ export const shiftVolunteerCheckIn = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
-  const { checked, shiftboardId, shiftPositionId, shiftTimesId } = JSON.parse(
+  const { checked, shiftboardId, shiftPositionId, timeId } = JSON.parse(
     req.body
   );
 
@@ -18,7 +18,7 @@ export const shiftVolunteerCheckIn = async (
     WHERE shift_position_id=?
     AND shift_times_id=?
     AND shiftboard_id=?`,
-    [checked ? "" : "Yes", shiftPositionId, shiftTimesId, shiftboardId]
+    [checked ? "" : "Yes", shiftPositionId, timeId, shiftboardId]
   );
 
   return res.status(200).json({
@@ -32,7 +32,7 @@ export const shiftVolunteerRemove = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
-  const { shiftboardId, shiftPositionId, shiftTimesId } = JSON.parse(req.body);
+  const { shiftboardId, shiftPositionId, timeId } = JSON.parse(req.body);
 
   await pool.query<RowDataPacket[]>(
     `UPDATE op_volunteer_shifts
@@ -40,7 +40,7 @@ export const shiftVolunteerRemove = async (
     WHERE shift_position_id=?
     AND shift_times_id=?
     AND shiftboard_id=?`,
-    [shiftPositionId, shiftTimesId, shiftboardId]
+    [shiftPositionId, timeId, shiftboardId]
   );
 
   return res.status(200).json({

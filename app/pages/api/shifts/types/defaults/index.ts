@@ -4,8 +4,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { pool } from "lib/database";
 import {
   IResShiftTypeCategoryItem,
-  IResShiftTypeDefaults,
-  IResShiftTypeNameItem,
+  IResShiftTypeItem,
   IResShiftTypePositionItem,
 } from "src/components/types";
 
@@ -15,32 +14,31 @@ const shiftTypeDefaults = async (req: NextApiRequest, res: NextApiResponse) => {
     // --------------------
     case "GET": {
       // get all shift type names
-      const [dbShiftTypeNameList] = await pool.query<RowDataPacket[]>(
+      const [dbTypeList] = await pool.query<RowDataPacket[]>(
         `SELECT shift_name, shift_name_id
         FROM op_shift_name
         ORDER BY shift_name`
       );
-      const resNameList: IResShiftTypeNameItem[] = dbShiftTypeNameList.map(
+      const resTypeList: IResShiftTypeItem[] = dbTypeList.map(
         ({ shift_name, shift_name_id }) => ({
           id: shift_name_id,
           name: shift_name,
         })
       );
       // get all shift categories
-      const [dbShiftTypeCategoryList] = await pool.query<RowDataPacket[]>(
+      const [dbCategoryList] = await pool.query<RowDataPacket[]>(
         `SELECT shift_category, shift_category_id
         FROM op_shift_category
         ORDER BY shift_category`
       );
-      const resCategoryList: IResShiftTypeCategoryItem[] =
-        dbShiftTypeCategoryList.map(
-          ({ shift_category, shift_category_id }) => ({
-            id: shift_category_id,
-            name: shift_category,
-          })
-        );
+      const resCategoryList: IResShiftTypeCategoryItem[] = dbCategoryList.map(
+        ({ shift_category, shift_category_id }) => ({
+          id: shift_category_id,
+          name: shift_category,
+        })
+      );
       // get all shift positions
-      const [dbPositionDropdownList] = await pool.query<RowDataPacket[]>(
+      const [dbPositionList] = await pool.query<RowDataPacket[]>(
         `SELECT
           pt.critical,
           pt.end_time_offset,
@@ -58,37 +56,35 @@ const shiftTypeDefaults = async (req: NextApiRequest, res: NextApiResponse) => {
         ON sc.shift_category_id=pt.prerequisite_id
         ORDER BY pt.position`
       );
-      const resPositionList: IResShiftTypePositionItem[] =
-        dbPositionDropdownList.map(
-          ({
-            critical,
-            end_time_offset,
-            lead,
-            position,
-            position_details,
-            position_type_id,
-            role,
-            shift_category,
-            start_time_offset,
-          }) => ({
-            critical: Boolean(critical),
-            details: position_details,
-            endTimeOffset: end_time_offset,
-            id: position_type_id,
-            lead: Boolean(lead),
-            name: position,
-            prerequisiteShift: shift_category ?? "",
-            role: role ?? "",
-            startTimeOffset: start_time_offset,
-          })
-        );
-      const response: IResShiftTypeDefaults = {
+      const resPositionList: IResShiftTypePositionItem[] = dbPositionList.map(
+        ({
+          critical,
+          end_time_offset,
+          lead,
+          position,
+          position_details,
+          position_type_id,
+          role,
+          shift_category,
+          start_time_offset,
+        }) => ({
+          critical: Boolean(critical),
+          details: position_details,
+          endTimeOffset: end_time_offset,
+          id: position_type_id,
+          lead: Boolean(lead),
+          name: position,
+          prerequisiteShift: shift_category ?? "",
+          role: role ?? "",
+          startTimeOffset: start_time_offset,
+        })
+      );
+
+      return res.status(200).json({
         categoryList: resCategoryList,
         positionList: resPositionList,
-        nameList: resNameList,
-      };
-
-      return res.status(200).json(response);
+        typeList: resTypeList,
+      });
     }
 
     // default

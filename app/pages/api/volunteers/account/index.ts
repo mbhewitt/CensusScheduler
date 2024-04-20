@@ -45,7 +45,7 @@ const account = async (req: NextApiRequest, res: NextApiResponse) => {
       const resAccount: IResVolunteerAccount = {
         email,
         emergencyContact,
-        isVolunteerCreated: true,
+        isCreated: true,
         location,
         notes: "",
         phone,

@@ -23,7 +23,7 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
       );
       const resShiftTypeList: IResShiftTypeItem[] = dbShiftTypeList.map(
         ({ shift_name, shift_name_id }) => {
-          return { shiftTypeId: shift_name_id, shiftTypeName: shift_name };
+          return { id: shift_name_id, name: shift_name };
         }
       );
 
@@ -35,11 +35,11 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
     case "POST": {
       // create shift type
       const {
-        information: { shiftCategoryId, details, isCore, isOffPlaya, name },
+        information: { categoryId, details, isCore, isOffPlaya, name },
         positionList,
         timeList,
       } = JSON.parse(req.body);
-      const shiftTypeNameIdNew = generateId(
+      const typeIdNew = generateId(
         `SELECT shift_name_id
         FROM op_shift_name
         WHERE shift_name_id=?`
@@ -57,7 +57,7 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
           shift_name_id
         )
         VALUES (?, true, ?, ?, ?, ?, ?)`,
-        [isCore, isOffPlaya, shiftCategoryId, details, name, shiftTypeNameIdNew]
+        [isCore, isOffPlaya, categoryId, details, name, typeIdNew]
       );
       // insert new shift position rows
       positionList.forEach(
@@ -82,13 +82,7 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
               wap_points
             )
             VALUES (true, ?, ?, ?, ?, ?)`,
-            [
-              positionId,
-              shiftTypeNameIdNew,
-              shiftPositionIdNew,
-              totalSlots,
-              wapPoints,
-            ]
+            [positionId, typeIdNew, shiftPositionIdNew, totalSlots, wapPoints]
           );
         }
       );
@@ -101,7 +95,7 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
           notes,
           startTime,
         }: IResShiftTypeTimeItem) => {
-          const shiftTimesIdNew = generateId(
+          const timeIdNew = generateId(
             `SELECT shift_times_id
             FROM op_shift_times
             WHERE shift_times_id=?`
@@ -125,8 +119,8 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
               endTime,
               notes,
               instance,
-              shiftTypeNameIdNew,
-              shiftTimesIdNew,
+              typeIdNew,
+              timeIdNew,
               startTime,
               date.split("-")[0],
             ]

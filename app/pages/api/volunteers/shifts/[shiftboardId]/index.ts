@@ -55,8 +55,8 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
             noShow: noshow,
             positionName: position,
             shiftPositionId: shift_position_id,
-            shiftTimesId: shift_times_id,
             startTime: start_time,
+            timeId: shift_times_id,
           })
         );
 

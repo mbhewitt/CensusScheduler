@@ -43,10 +43,9 @@ import {
 
 import type {
   IReqShiftTypePositionItem,
-  IResPositionDropdownItem,
   IResShiftTypeCategoryItem,
   IResShiftTypeInformation,
-  IResShiftTypeNameItem,
+  IResShiftTypeItem,
   IResShiftTypePositionItem,
   IResShiftTypeTimeItem,
 } from "src/components/types";
@@ -62,9 +61,9 @@ interface IShiftTypeFormProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<IFormValues, any>;
   data: {
-    shiftTypeCategoryList: IResShiftTypeCategoryItem[];
-    shiftTypeNameList: IResShiftTypeNameItem[];
-    shiftTypePositionList: IResShiftTypePositionItem[];
+    categoryList: IResShiftTypeCategoryItem[];
+    positionList: IResShiftTypePositionItem[];
+    typeList: IResShiftTypeItem[];
   };
   errors: FieldErrors<IFormValues>;
   getValues: UseFormGetValues<IFormValues>;
@@ -107,8 +106,8 @@ export const defaultValues: IFormValues = {
       endTime: "",
       instance: "",
       notes: "",
-      shiftTimesId: 0,
       startTime: "",
+      timeId: 0,
     },
   ],
 };
@@ -168,14 +167,15 @@ export const ShiftTypeForm = ({
                       required: (value) => {
                         return Boolean(value.trim()) || "Name is required";
                       },
-                      roleNameAvailable: (value) => {
-                        const isShiftTypeNameAvailable =
-                          data.shiftTypeNameList.every(({ name }) => {
+                      typeAvailable: (value) => {
+                        const istypeAvailable = data.typeList.every(
+                          ({ name }) => {
                             return name.toLowerCase() !== value.toLowerCase();
-                          });
+                          }
+                        );
 
                         return (
-                          isShiftTypeNameAvailable ||
+                          istypeAvailable ||
                           `${value} shift type has been added already`
                         );
                       },
@@ -200,10 +200,16 @@ export const ShiftTypeForm = ({
                         labelId="category"
                         required
                       >
-                        {data.shiftTypeCategoryList.map(
-                          ({ id, name }: IResShiftTypeCategoryItem) => (
-                            <MenuItem key={id} value={name}>
-                              {name}
+                        {data.categoryList.map(
+                          ({
+                            id: shiftTypeCategoryId,
+                            name: shiftTypeCategoryName,
+                          }: IResShiftTypeCategoryItem) => (
+                            <MenuItem
+                              key={shiftTypeCategoryId}
+                              value={shiftTypeCategoryName}
+                            >
+                              {shiftTypeCategoryName}
                             </MenuItem>
                           )
                         )}
@@ -328,10 +334,11 @@ export const ShiftTypeForm = ({
                             labelId="position"
                             onChange={(event) => {
                               const positionSelected = event.target.value;
-                              const positionItem =
-                                data.shiftTypePositionList.find(({ name }) => {
+                              const positionItem = data.positionList.find(
+                                ({ name }) => {
                                   return name === positionSelected;
-                                });
+                                }
+                              );
 
                               // update field
                               field.onChange(positionSelected);
@@ -370,10 +377,16 @@ export const ShiftTypeForm = ({
                             }}
                             required
                           >
-                            {data.shiftTypePositionList.map(
-                              ({ id, name }: IResPositionDropdownItem) => (
-                                <MenuItem key={id} value={name}>
-                                  {name}
+                            {data.positionList.map(
+                              ({
+                                id: shiftTypePositionId,
+                                name: shiftTypePositionName,
+                              }) => (
+                                <MenuItem
+                                  key={shiftTypePositionId}
+                                  value={shiftTypePositionName}
+                                >
+                                  {shiftTypePositionName}
                                 </MenuItem>
                               )
                             )}
