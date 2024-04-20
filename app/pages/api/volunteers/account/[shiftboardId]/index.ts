@@ -66,7 +66,15 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
 
       await pool.query<RowDataPacket[]>(
         `UPDATE op_volunteers
-        SET email=?, emergency_contact=?, location=?, update_volunteer=true, notes=?, phone=?, playa_name=?, world_name=?
+        SET
+          email=?,
+          emergency_contact=?,
+          location=?,
+          notes=?,
+          phone=?,
+          playa_name=?,
+          update_volunteer=true,
+          world_name=?
         WHERE shiftboard_id=?`,
         [
           email,

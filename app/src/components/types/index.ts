@@ -1,3 +1,16 @@
+// requests
+// --------------------
+export interface IReqShiftTypePositionItem extends IResShiftTypePositionItem {
+  totalSlots: string;
+  wapPoints: string;
+}
+
+export interface IReqShiftTypeInfoItem extends IResShiftTypeInfoItem {
+  shiftCategoryId: string;
+}
+
+// responses
+// --------------------
 export interface IResPositionDropdownItem {
   positionId: number;
   positionName: string;
@@ -18,16 +31,31 @@ export interface IResShiftCategoryDropdownItem {
   shiftCategoryId: number;
   shiftCategoryName: string;
 }
-export interface IResShiftCreatePositionDropdownItem {
+export interface IResShiftTypeInfoItem {
+  category: string;
+  details: string;
+  isCore: boolean;
+  isOffPlaya: boolean;
+  name: string;
+}
+export interface IResShiftTypePositionItem {
   critical: boolean;
-  endTimeOffset: number;
+  endTimeOffset: string;
   lead: boolean;
   positionDetails: string;
   positionId: number;
   positionName: string;
   prerequisiteShift: string;
   role: string;
-  startTimeOffset: number;
+  startTimeOffset: string;
+}
+export interface IResShiftTypeTimeItem {
+  date: string;
+  endTime: string;
+  instance: string;
+  notes: string;
+  shiftTimesId: number;
+  startTime: string;
 }
 export interface IResShiftNameDropdownItem {
   shiftNameId: number;
@@ -111,6 +139,9 @@ export interface IResVolunteerShiftItem {
   shiftTimesId: number;
   startTime: string;
 }
+
+// app UI
+// --------------------
 export interface IShiftNameOption {
   label: string;
   shiftNameId: number;

@@ -3,9 +3,10 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
 import {
-  IResCreateShiftPositionDropdownItem,
   IResShiftCategoryDropdownItem,
   IResShiftNameDropdownItem,
+  IResShiftTypePositionItem,
+  IResShiftTypeTimeItem,
 } from "src/components/types";
 import { generateId } from "src/utils/generateId";
 
@@ -54,32 +55,31 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
         ON r.role_id=pt.role_id
         LEFT JOIN op_shift_category AS sc
         ON sc.shift_category_id=pt.prerequisite_id
-        ORDER BY position`
+        ORDER BY pt.position`
       );
-      const resPositionList: IResCreateShiftPositionDropdownItem[] =
-        dbPositionList.map(
-          ({
-            critical,
-            end_time_offset,
-            lead,
-            position,
-            position_details,
-            position_type_id,
-            role,
-            shift_category,
-            start_time_offset,
-          }) => ({
-            critical: Boolean(critical),
-            endTimeOffset: end_time_offset,
-            lead: Boolean(lead),
-            positionDetails: position_details,
-            role: role ?? "",
-            positionId: position_type_id,
-            positionName: position,
-            prerequisiteShift: shift_category ?? "",
-            startTimeOffset: start_time_offset,
-          })
-        );
+      const resPositionList: IResShiftTypePositionItem[] = dbPositionList.map(
+        ({
+          critical,
+          end_time_offset,
+          lead,
+          position,
+          position_details,
+          position_type_id,
+          role,
+          shift_category,
+          start_time_offset,
+        }) => ({
+          critical: Boolean(critical),
+          endTimeOffset: end_time_offset,
+          lead: Boolean(lead),
+          positionDetails: position_details,
+          role: role ?? "",
+          positionId: position_type_id,
+          positionName: position,
+          prerequisiteShift: shift_category ?? "",
+          startTimeOffset: start_time_offset,
+        })
+      );
 
       return res.status(200).json({
         positionList: resPositionList,
@@ -90,7 +90,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
     // post
     // --------------------
     case "POST": {
-      // create shift
+      // create shift type
       const {
         information: { shiftCategoryId, details, isCore, isOffPlaya, name },
         positionList,
@@ -200,7 +200,6 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
         }
       );
       // insert new shift time rows
-      generateShiftTimesId();
       timeList.forEach(
         async ({
           date,
@@ -208,16 +207,8 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
           instance,
           notes,
           startTime,
-          year,
-        }: {
-          date: string;
-          endTime: string;
-          instance: string;
-          notes: string;
-          startTime: string;
-          year: string;
-        }) => {
-          generateShiftPositionId();
+        }: IResShiftTypeTimeItem) => {
+          generateShiftTimesId();
           await pool.query(
             `INSERT INTO op_shift_times (
               add_shift_time,
@@ -239,7 +230,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
               shiftNameIdNew,
               shiftTimesIdNew,
               startTime,
-              year,
+              date.split("-")[0],
             ]
           );
         }
