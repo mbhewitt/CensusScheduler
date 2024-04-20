@@ -19,7 +19,7 @@ const ShiftTypeCreatePage = () => {
   // --------------------
   const isSuperAdmin = checkIsSuperAdmin(roleList);
 
-  // display
+  // render
   // --------------------
   return (
     <>

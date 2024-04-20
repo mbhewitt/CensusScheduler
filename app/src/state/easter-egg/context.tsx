@@ -29,7 +29,7 @@ export const EasterEggProvider = ({ children }: IEasterEggProviderProps) => {
     [isEasterEggOpen, setIsEasterEggOpen]
   );
 
-  // display
+  // render
   // --------------------
   return (
     <EasterEggContext.Provider value={easterEggProviderValue}>

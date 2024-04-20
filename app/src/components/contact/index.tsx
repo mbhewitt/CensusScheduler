@@ -147,7 +147,7 @@ export const Contact = () => {
     }
   };
 
-  // display
+  // render
   // --------------------
   return (
     <>

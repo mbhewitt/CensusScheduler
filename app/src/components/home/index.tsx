@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Hero } from "src/components/layout/Hero";
 
 export const Home = () => {
-  // display
+  // render
   // --------------------
   return (
     <>

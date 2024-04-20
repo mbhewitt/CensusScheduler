@@ -137,7 +137,7 @@ export const RoleVolunteersDialogAdd = ({
     }
   };
 
-  // display
+  // render
   // --------------------
   return (
     <DialogContainer

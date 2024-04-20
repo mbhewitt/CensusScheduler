@@ -97,7 +97,7 @@ export const ShiftVolunteersDialogRemove = ({
     }
   };
 
-  // display
+  // render
   // --------------------
   return (
     <DialogContainer

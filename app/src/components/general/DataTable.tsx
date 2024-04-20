@@ -74,7 +74,7 @@ export const DataTable = ({
     ...optionListCustom,
   };
 
-  // display
+  // render
   // --------------------
   return (
     <ThemeProvider theme={theme}>

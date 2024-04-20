@@ -82,7 +82,7 @@ export const RolesDialogCreate = ({
     }
   };
 
-  // display
+  // render
   // --------------------
   return (
     <DialogContainer

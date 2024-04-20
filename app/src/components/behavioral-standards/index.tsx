@@ -161,7 +161,7 @@ export const BehavioralStandards = () => {
     }
   };
 
-  // display
+  // render
   // --------------------
   return (
     <>

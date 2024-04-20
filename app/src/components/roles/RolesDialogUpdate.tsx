@@ -99,7 +99,7 @@ export const RolesDialogUpdate = ({
     }
   };
 
-  // display
+  // render
   // --------------------
   return (
     <DialogContainer

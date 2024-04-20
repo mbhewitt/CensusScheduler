@@ -409,7 +409,7 @@ export const VolunteerShifts = () => {
     },
   };
 
-  // display
+  // render
   // --------------------
   return (
     <>

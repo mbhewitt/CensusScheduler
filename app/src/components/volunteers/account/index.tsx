@@ -182,7 +182,7 @@ export const Account = () => {
     }
   };
 
-  // display
+  // render
   // --------------------
   return (
     <>

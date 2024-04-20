@@ -11,7 +11,7 @@ export const SnackbarText = ({ children }: ISnackbarTextProps) => {
   // --------------------
   const theme = useTheme();
 
-  // display
+  // render
   // --------------------
   return (
     <Typography

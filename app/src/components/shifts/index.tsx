@@ -277,7 +277,7 @@ export const Shifts = () => {
     sortFilterList: false,
   };
 
-  // display
+  // render
   // --------------------
   return (
     <>

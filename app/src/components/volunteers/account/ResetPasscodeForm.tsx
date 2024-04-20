@@ -33,7 +33,7 @@ export const ResetPasscodeForm = ({
   setIsPasscodeConfirmVisible,
   setIsPasscodeCreateVisible,
 }: IResetPasscodeFormProps) => {
-  // display
+  // render
   // --------------------
   return (
     <>

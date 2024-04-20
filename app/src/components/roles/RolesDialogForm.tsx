@@ -21,7 +21,7 @@ export const RolesDialogForm = ({
   errors,
   roleList,
 }: IRolesDialogFormProps) => {
-  // display
+  // render
   // --------------------
   return (
     <Controller

@@ -26,7 +26,7 @@ const AccountPage = () => {
     isAuthenticatedSession
   );
 
-  // display
+  // render
   // --------------------
   return (
     <>

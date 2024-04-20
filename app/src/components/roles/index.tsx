@@ -243,7 +243,7 @@ export const Roles = () => {
   );
   const optionListCustom = { filter: false };
 
-  // display
+  // render
   // --------------------
   return (
     <>

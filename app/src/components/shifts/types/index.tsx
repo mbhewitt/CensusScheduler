@@ -106,7 +106,7 @@ export const ShiftTypes = () => {
   );
   const optionListCustom = { filter: false };
 
-  // display
+  // render
   // --------------------
   return (
     <>

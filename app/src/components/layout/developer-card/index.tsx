@@ -20,7 +20,7 @@ export const DeveloperCard = () => {
   // --------------------
   const theme = useTheme();
 
-  // display
+  // render
   // --------------------
   return (
     <Card

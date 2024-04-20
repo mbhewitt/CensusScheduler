@@ -38,7 +38,7 @@ const SignInPage = () => {
     }
   }, [isAuthenticated, router, shiftboardId]);
 
-  // display
+  // render
   // --------------------
   return (
     <>

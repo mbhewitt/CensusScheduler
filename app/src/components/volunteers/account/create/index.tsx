@@ -129,7 +129,7 @@ export const AccountCreate = () => {
     }
   };
 
-  // display
+  // render
   // --------------------
   return (
     <>

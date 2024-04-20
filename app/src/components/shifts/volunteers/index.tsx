@@ -416,7 +416,7 @@ export const ShiftVolunteers = () => {
   );
   const optionListCustom = {};
 
-  // display
+  // render
   // --------------------
   return (
     <>

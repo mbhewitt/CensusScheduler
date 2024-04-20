@@ -495,7 +495,8 @@ export const ShiftVolunteersDialogAdd = ({
     }
   }
 
-  // handle form submission
+  // form submission
+  // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       const volunteerAdd = dataVolunteerList.find(
@@ -624,6 +625,8 @@ export const ShiftVolunteersDialogAdd = ({
     }
   };
 
+  // render
+  // --------------------
   return (
     <DialogContainer
       handleDialogClose={() => {

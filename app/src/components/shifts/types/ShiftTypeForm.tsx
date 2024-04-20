@@ -126,7 +126,7 @@ export const ShiftTypeForm = ({
   timeFields,
   timeRemove,
 }: IShiftTypeFormProps) => {
-  // display
+  // render
   // --------------------
   return (
     <>

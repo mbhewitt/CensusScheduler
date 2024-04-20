@@ -104,7 +104,7 @@ export const RolesDialogDelete = ({
     }
   };
 
-  // display
+  // render
   // --------------------
   return (
     <DialogContainer

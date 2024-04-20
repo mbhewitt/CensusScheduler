@@ -14,7 +14,7 @@ export const AccountType = () => {
     },
   } = useContext(DeveloperModeContext);
 
-  // display
+  // render
   // --------------------
   return (
     <FormControl fullWidth variant="standard">

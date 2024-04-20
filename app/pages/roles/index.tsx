@@ -28,7 +28,7 @@ const RolesPage = () => {
   );
   const isAdmin = checkIsAdmin(accountType, roleList);
 
-  // display
+  // render
   // --------------------
   return (
     <>

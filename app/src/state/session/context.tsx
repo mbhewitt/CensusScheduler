@@ -79,7 +79,7 @@ export const SessionProvider = ({ children }: ISessionProviderProps) => {
     sessionStorage.setItem("sessionState", JSON.stringify(sessionState));
   }, [sessionState]);
 
-  // display
+  // render
   // --------------------
   return (
     <SessionContext.Provider value={sessionProviderValue}>

@@ -19,7 +19,7 @@ const ShiftTypeUpdatePage = () => {
   // --------------------
   const isSuperAdmin = checkIsSuperAdmin(roleList);
 
-  // display
+  // render
   // --------------------
   return (
     <>

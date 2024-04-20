@@ -52,7 +52,7 @@ export const DeveloperMode = () => {
     );
   };
 
-  // display
+  // render
   // --------------------
   return (
     <>

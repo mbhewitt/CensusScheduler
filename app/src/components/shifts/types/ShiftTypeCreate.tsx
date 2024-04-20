@@ -140,6 +140,7 @@ export const ShiftTypeCreate = () => {
         method: "POST",
       });
 
+      // display success notification
       enqueueSnackbar(
         <SnackbarText>
           <strong>
@@ -168,7 +169,7 @@ export const ShiftTypeCreate = () => {
     }
   };
 
-  // display
+  // render
   // --------------------
   return (
     <>
