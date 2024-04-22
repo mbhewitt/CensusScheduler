@@ -3,7 +3,7 @@ import Head from "next/head";
 import { AccountCreate } from "src/components/volunteers/account/create";
 
 const AccountCreatePage = () => {
-  // display
+  // render
   // --------------------
   return (
     <>

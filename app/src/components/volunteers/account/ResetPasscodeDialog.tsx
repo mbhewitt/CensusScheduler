@@ -109,7 +109,7 @@ export const ResetPasscodeDialog = ({
     }
   };
 
-  // display
+  // render
   // --------------------
   return (
     <DialogContainer

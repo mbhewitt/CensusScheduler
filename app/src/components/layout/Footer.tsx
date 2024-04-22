@@ -54,7 +54,7 @@ export const Footer = () => {
   const isAdmin = checkIsAdmin(accountType, roleList);
   const isSuperAdmin = checkIsSuperAdmin(roleList);
 
-  // display
+  // render
   // --------------------
   const pageListHalfCount = Math.ceil(pageListDefault.length / 2);
   const pageListHalfFirst = pageListDefault.slice(0, pageListHalfCount);
@@ -217,7 +217,7 @@ export const Footer = () => {
               color: theme.palette.common.white,
             }}
           >
-            2024.W.00030.Prizmo
+            2024.W.00031.Prizmo
           </Typography>
         </Stack>
       </Container>

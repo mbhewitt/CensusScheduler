@@ -20,28 +20,13 @@ const account = async (req: NextApiRequest, res: NextApiResponse) => {
         playaName,
         worldName,
       } = JSON.parse(req.body);
-      let shiftboardIdNew = 0;
-
-      // generate new role ID
-      const generateShiftboardId = async () => {
-        shiftboardIdNew = generateId();
-        const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
-          `SELECT shiftboard_id
-          FROM op_volunteers
-          WHERE shiftboard_id=?`,
-          [shiftboardIdNew]
-        );
-        const dbVolunteerFirst = dbVolunteerList[0];
-
-        // if role ID exists already
-        // then execute function recursively
-        if (dbVolunteerFirst) {
-          generateShiftboardId();
-        }
-      };
+      const shiftboardIdNew = generateId(`
+        SELECT shiftboard_id
+        FROM op_volunteers
+        WHERE shiftboard_id=?
+      `);
 
       // insert new account row
-      generateShiftboardId();
       await pool.query<RowDataPacket[]>(
         `INSERT IGNORE INTO op_volunteers (create_volunteer, email, emergency_contact, location, passcode, phone, playa_name, shiftboard_id, world_name)
           VALUES (true, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -60,7 +45,7 @@ const account = async (req: NextApiRequest, res: NextApiResponse) => {
       const resAccount: IResVolunteerAccount = {
         email,
         emergencyContact,
-        isVolunteerCreated: true,
+        isCreated: true,
         location,
         notes: "",
         phone,

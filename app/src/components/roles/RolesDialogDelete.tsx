@@ -32,7 +32,7 @@ interface IRolesDialogDeleteProps {
 export const RolesDialogDelete = ({
   handleDialogDeleteClose,
   isDialogDeleteOpen,
-  role: { roleId, roleName },
+  role: { id: roleId, name: roleName },
 }: IRolesDialogDeleteProps) => {
   // fetching, mutation, and revalidation
   // --------------------
@@ -104,7 +104,7 @@ export const RolesDialogDelete = ({
     }
   };
 
-  // display
+  // render
   // --------------------
   return (
     <DialogContainer

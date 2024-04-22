@@ -9,6 +9,7 @@ import useSWRMutation from "swr/mutation";
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import {
+  defaultValues,
   IFormValues,
   RolesDialogForm,
 } from "src/components/roles/RolesDialogForm";
@@ -22,9 +23,6 @@ interface IRolesDialogUpdateProps {
   roleList: IResRoleItem[];
 }
 
-const defaultValues: IFormValues = {
-  name: "",
-};
 export const RolesDialogUpdate = ({
   handleDialogUpdateClose,
   isDialogUpdateOpen,
@@ -34,7 +32,7 @@ export const RolesDialogUpdate = ({
   // fetching, mutation, and revalidation
   // --------------------
   const { isMutating, trigger } = useSWRMutation(
-    `/api/roles/${role.roleId}`,
+    `/api/roles/${role.id}`,
     fetcherTrigger
   );
   const { mutate } = useSWRConfig();
@@ -56,16 +54,20 @@ export const RolesDialogUpdate = ({
   // side effects
   // --------------------
   useEffect(() => {
-    setValue("name", role.roleName);
+    setValue("name", role.name);
   }, [role, setValue]);
 
   // form submission
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
+    const roleFound = roleList.find(
+      (roleItem) => roleItem.name === formValues.name
+    );
+
     try {
       // update database
       await trigger({
-        body: formValues,
+        body: roleFound,
         method: "PATCH",
       });
       mutate("/api/roles");
@@ -97,7 +99,7 @@ export const RolesDialogUpdate = ({
     }
   };
 
-  // display
+  // render
   // --------------------
   return (
     <DialogContainer

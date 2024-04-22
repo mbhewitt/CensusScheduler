@@ -3,7 +3,7 @@ import Head from "next/head";
 import { Reports } from "src/components/reports";
 
 const ReportsPage = () => {
-  // display
+  // render
   // --------------------
   return (
     <>

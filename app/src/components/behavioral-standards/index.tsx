@@ -126,8 +126,8 @@ export const BehavioralStandards = () => {
       });
       sessionDispatch({
         payload: {
-          roleId: ROLE_BEHAVIORAL_STANDARDS_ID,
-          roleName: data.roleName,
+          id: ROLE_BEHAVIORAL_STANDARDS_ID,
+          name: data.roleName,
         },
         type: SESSION_BEHAVIORAL_STANDARDS,
       });
@@ -161,7 +161,7 @@ export const BehavioralStandards = () => {
     }
   };
 
-  // display
+  // render
   // --------------------
   return (
     <>

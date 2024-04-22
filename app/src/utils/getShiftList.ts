@@ -27,20 +27,20 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
 
       // if the database row has new shift times ID
       // then create new object
-      if (!rowListLast || rowListLast.shiftTimesId !== rowItem.shift_times_id) {
+      if (!rowListLast || rowListLast.timeId !== rowItem.shift_times_id) {
         shiftPositionIdMap[shiftPositionIdItem] = true;
 
         const rowItemNew = {
           category: rowItem.category ?? "",
+          categoryId: rowItem.shift_category_id,
           date: rowItem.date,
           dateName: rowItem.datename ?? "",
           endTime: rowItem.end_time,
           filledSlots: rowItem.shiftboard_id ? 1 : 0,
-          shiftCategoryId: rowItem.shift_category_id,
-          shiftName: rowItem.shift_name,
-          shiftTimesId: rowItem.shift_times_id,
           startTime: rowItem.start_time,
+          timeId: rowItem.shift_times_id,
           totalSlots: rowItem.total_slots,
+          type: rowItem.shift_name,
           year: rowItem.year,
         };
 

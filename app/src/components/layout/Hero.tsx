@@ -11,7 +11,7 @@ export const Hero = ({ Image, text }: IHeroProps) => {
   // --------------------
   const theme = useTheme();
 
-  // display
+  // render
   // --------------------
   return (
     <Box

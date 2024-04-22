@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
 import type { IResRoleItem } from "src/components/types";
-import { generateId } from "src/utils/generateId";
+import { checkIsIdExists, generateId } from "src/utils/generateId";
 
 const roles = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
@@ -19,7 +19,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
       );
       const resRoleList: IResRoleItem[] = dbRoleList.map(
         ({ display, role, role_id }) => {
-          return { display: Boolean(display), roleId: role_id, roleName: role };
+          return { display: Boolean(display), id: role_id, name: role };
         }
       );
 
@@ -30,43 +30,22 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
     // --------------------
     case "POST": {
       // create role
-      const { name } = JSON.parse(req.body);
-      let roleIdNew;
-      // check if role name exists
-      const [dbRoleList] = await pool.query<RowDataPacket[]>(
-        `SELECT role_id
-          FROM op_roles
-          WHERE role=?`,
-        [name]
-      );
-      const dbRoleFirst = dbRoleList[0];
-
-      // generate new role ID
-      const generateRoleId = async () => {
-        roleIdNew = generateId();
-        const [dbRoleList] = await pool.query<RowDataPacket[]>(
-          `SELECT role_id
-          FROM op_roles
-          WHERE role_id=?`,
-          [roleIdNew]
-        );
-        const dbRoleFirst = dbRoleList[0];
-
-        // if role ID exists already
-        // then execute function recursively
-        if (dbRoleFirst) {
-          generateRoleId();
-        }
-      };
+      const { roleId, roleName } = JSON.parse(req.body);
+      const roleIdQuery = `
+        SELECT role_id
+        FROM op_roles
+        WHERE role_id=?
+      `;
+      const isRoleIdExist = await checkIsIdExists(roleIdQuery, roleId);
 
       // if role name exists already
       // then update role row
-      if (dbRoleFirst) {
+      if (isRoleIdExist) {
         await pool.query<RowDataPacket[]>(
           `UPDATE op_roles
             SET create_role=true, delete_role=false, display=true
-            WHERE role=?`,
-          [name]
+            WHERE role_id=?`,
+          [roleId]
         );
 
         return res.status(201).json({
@@ -76,11 +55,12 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       // else insert new role row
-      generateRoleId();
+      const roleIdNew = generateId(roleIdQuery);
+
       await pool.query(
         `INSERT INTO op_roles (create_role, delete_role, display, role, role_id)
         VALUES (true, false, true, ?, ?)`,
-        [name, roleIdNew]
+        [roleName, roleIdNew]
       );
 
       return res.status(201).json({

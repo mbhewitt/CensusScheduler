@@ -3,7 +3,7 @@ import Head from "next/head";
 import { BehavioralStandards } from "src/components/behavioral-standards";
 
 const BehavioralStandardsPage = () => {
-  // display
+  // render
   // --------------------
   return (
     <>

@@ -145,7 +145,7 @@ export const SignIn = () => {
     }
   };
 
-  // display
+  // render
   // --------------------
   return (
     <>

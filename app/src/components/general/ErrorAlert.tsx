@@ -1,7 +1,7 @@
 import { Alert } from "@mui/material";
 
 export const ErrorAlert = () => {
-  // display
+  // render
   // --------------------
   return (
     <Alert severity="error">

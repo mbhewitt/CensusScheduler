@@ -3,7 +3,7 @@ import Head from "next/head";
 import { Contact } from "src/components/contact";
 
 const ContactPage = () => {
-  // display
+  // render
   // --------------------
   return (
     <>

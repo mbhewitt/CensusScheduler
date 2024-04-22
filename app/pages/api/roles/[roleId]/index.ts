@@ -11,7 +11,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
     // get
     // --------------------
     case "GET": {
-      // get one role
+      // get role
       const [dbRoleList] = await pool.query<RowDataPacket[]>(
         `SELECT display, role, role_id
         FROM op_roles
@@ -22,7 +22,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
       );
       const resRoleList: IResRoleItem[] = dbRoleList.map(
         ({ display, role, role_id }) => {
-          return { display: Boolean(display), roleId: role_id, roleName: role };
+          return { display: Boolean(display), id: role_id, name: role };
         }
       );
       const resRoleFirst = resRoleList[0];
@@ -33,7 +33,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
     // patch
     // --------------------
     case "PATCH": {
-      // update role display
+      // update role name
       const { name } = JSON.parse(req.body);
 
       await pool.query<RowDataPacket[]>(

@@ -165,7 +165,7 @@ const SnackbarAction = (snackbarKey: number | string) => (
   <SnackbarButtonClose snackbarKey={snackbarKey} />
 );
 const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps) => {
-  // display
+  // render
   // --------------------
   return (
     <ThemeProvider theme={theme}>

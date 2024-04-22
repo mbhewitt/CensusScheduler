@@ -90,7 +90,7 @@ export const DeveloperModeProvider = ({
     );
   }, [developerModeState]);
 
-  // display
+  // render
   // --------------------
   return (
     <DeveloperModeContext.Provider value={developerModeProviderValue}>

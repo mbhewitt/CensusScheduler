@@ -85,7 +85,7 @@ export const RoleVolunteersDialogRemove = ({
     }
   };
 
-  // display
+  // render
   // --------------------
   return (
     <DialogContainer

@@ -7,8 +7,8 @@ import {
 } from "src/constants";
 
 interface IBehavioralStandardsPayload {
-  roleId: number;
-  roleName: string;
+  id: number;
+  name: string;
 }
 export interface ISessionState {
   settings: {
@@ -53,7 +53,7 @@ export const sessionReducer = (
         user: {
           email: "",
           emergencyContact: "",
-          isVolunteerCreated: false,
+          isCreated: false,
           location: "",
           notes: "",
           phone: "",

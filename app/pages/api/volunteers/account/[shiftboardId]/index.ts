@@ -30,14 +30,14 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         [shiftboardId]
       );
       const resRoleList = dbRoleList.map(({ role, role_id }) => ({
-        roleId: role_id,
-        roleName: role,
+        id: role_id,
+        name: role,
       }));
       const dbVolunteerFirst = dbVolunteerList[0];
       const resVolunteerItem: IResVolunteerAccount = {
         email: dbVolunteerFirst.email ?? "",
         emergencyContact: dbVolunteerFirst.emergency_contact ?? "",
-        isVolunteerCreated: Boolean(dbVolunteerFirst.create_volunteer),
+        isCreated: Boolean(dbVolunteerFirst.create_volunteer),
         location: dbVolunteerFirst.location ?? "",
         notes: dbVolunteerFirst.notes ?? "",
         phone: dbVolunteerFirst.phone ?? "",
@@ -66,7 +66,15 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
 
       await pool.query<RowDataPacket[]>(
         `UPDATE op_volunteers
-        SET email=?, emergency_contact=?, location=?, update_volunteer=true, notes=?, phone=?, playa_name=?, world_name=?
+        SET
+          email=?,
+          emergency_contact=?,
+          location=?,
+          notes=?,
+          phone=?,
+          playa_name=?,
+          update_volunteer=true,
+          world_name=?
         WHERE shiftboard_id=?`,
         [
           email,

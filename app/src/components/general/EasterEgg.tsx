@@ -33,7 +33,7 @@ export const EasterEgg = () => {
     preset: "seaAnemone",
   };
 
-  // display
+  // render
   // --------------------
   return (
     <Box

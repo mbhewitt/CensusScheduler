@@ -45,6 +45,12 @@ import {
   setCellPropsCenter,
 } from "src/utils/setCellPropsCenter";
 
+interface IRoleDisplay {
+  checked: boolean;
+  roleId: number;
+  roleName: string;
+}
+
 export const Roles = () => {
   // state
   // --------------------
@@ -53,16 +59,16 @@ export const Roles = () => {
     isOpen: false,
     role: {
       display: true,
-      roleId: 0,
-      roleName: "",
+      id: 0,
+      name: "",
     },
   });
   const [isDialogDeleteOpen, setIsDialogDeleteOpen] = useState({
     isOpen: false,
     role: {
       display: true,
-      roleId: 0,
-      roleName: "",
+      id: 0,
+      name: "",
     },
   });
 
@@ -85,11 +91,7 @@ export const Roles = () => {
     checked,
     roleId,
     roleName,
-  }: {
-    checked: boolean;
-    roleId: number;
-    roleName: string;
-  }) => {
+  }: IRoleDisplay) => {
     try {
       // update database
       // workaround to handle dynamic routing
@@ -148,18 +150,52 @@ export const Roles = () => {
       },
     },
   ];
-  const dataTable = data.map(({ display, roleId, roleName }: IResRoleItem) => {
-    // if role ID is super admin, admin, or behavioral standards
-    // then disable actions
-    if (
-      roleId === ROLE_ADMIN_ID ||
-      roleId === ROLE_CORE_CREW_ID ||
-      roleId === ROLE_BEHAVIORAL_STANDARDS_ID ||
-      roleId === ROLE_SUPER_ADMIN_ID
-    ) {
+  const dataTable = data.map(
+    ({ display, id: roleId, name: roleName }: IResRoleItem) => {
+      // if role ID is super admin, admin, or behavioral standards
+      // then disable actions
+      if (
+        roleId === ROLE_ADMIN_ID ||
+        roleId === ROLE_CORE_CREW_ID ||
+        roleId === ROLE_BEHAVIORAL_STANDARDS_ID ||
+        roleId === ROLE_SUPER_ADMIN_ID
+      ) {
+        return [
+          roleName,
+          <Switch disabled checked={display} key={`${roleId}-switch`} />,
+          <MoreMenu
+            Icon={<MoreHorizIcon />}
+            key={`${roleId}-menu`}
+            MenuList={
+              <MenuList>
+                <Link href={`/roles/volunteers/${roleId}`}>
+                  <MenuItem>
+                    <ListItemIcon>
+                      <Groups3Icon />
+                    </ListItemIcon>
+                    <ListItemText>View volunteers</ListItemText>
+                  </MenuItem>
+                </Link>
+              </MenuList>
+            }
+          />,
+        ];
+      }
+
+      // else display normal row
       return [
         roleName,
-        <Switch disabled checked={display} key={`${roleId}-switch`} />,
+        <Switch
+          checked={display}
+          onChange={(event) =>
+            handleDisplayToggle({
+              checked: event.target.checked,
+              roleId,
+              roleName,
+            })
+          }
+          key={`${roleId}-switch`}
+        />,
         <MoreMenu
           Icon={<MoreHorizIcon />}
           key={`${roleId}-menu`}
@@ -173,73 +209,41 @@ export const Roles = () => {
                   <ListItemText>View volunteers</ListItemText>
                 </MenuItem>
               </Link>
+              <MenuItem
+                onClick={() =>
+                  setIsDialogUpdateOpen({
+                    isOpen: true,
+                    role: { display, id: roleId, name: roleName },
+                  })
+                }
+              >
+                <ListItemIcon>
+                  <EditIcon />
+                </ListItemIcon>
+                <ListItemText>Update role</ListItemText>
+              </MenuItem>
+              <MenuItem
+                onClick={() =>
+                  setIsDialogDeleteOpen({
+                    isOpen: true,
+                    role: { display, id: roleId, name: roleName },
+                  })
+                }
+              >
+                <ListItemIcon>
+                  <RemoveModeratorIcon />
+                </ListItemIcon>
+                <ListItemText>Delete role</ListItemText>
+              </MenuItem>
             </MenuList>
           }
         />,
       ];
     }
-
-    // else display normal row
-    return [
-      roleName,
-      <Switch
-        checked={display}
-        onChange={(event) =>
-          handleDisplayToggle({
-            checked: event.target.checked,
-            roleId,
-            roleName,
-          })
-        }
-        key={`${roleId}-switch`}
-      />,
-      <MoreMenu
-        Icon={<MoreHorizIcon />}
-        key={`${roleId}-menu`}
-        MenuList={
-          <MenuList>
-            <Link href={`/roles/volunteers/${roleId}`}>
-              <MenuItem>
-                <ListItemIcon>
-                  <Groups3Icon />
-                </ListItemIcon>
-                <ListItemText>View volunteers</ListItemText>
-              </MenuItem>
-            </Link>
-            <MenuItem
-              onClick={() =>
-                setIsDialogUpdateOpen({
-                  isOpen: true,
-                  role: { display, roleId, roleName },
-                })
-              }
-            >
-              <ListItemIcon>
-                <EditIcon />
-              </ListItemIcon>
-              <ListItemText>Update role</ListItemText>
-            </MenuItem>
-            <MenuItem
-              onClick={() =>
-                setIsDialogDeleteOpen({
-                  isOpen: true,
-                  role: { display, roleId, roleName },
-                })
-              }
-            >
-              <ListItemIcon>
-                <RemoveModeratorIcon />
-              </ListItemIcon>
-              <ListItemText>Delete role</ListItemText>
-            </MenuItem>
-          </MenuList>
-        }
-      />,
-    ];
-  });
+  );
   const optionListCustom = { filter: false };
 
-  // display
+  // render
   // --------------------
   return (
     <>
@@ -293,8 +297,8 @@ export const Roles = () => {
             isOpen: false,
             role: {
               display: true,
-              roleId: 0,
-              roleName: "",
+              id: 0,
+              name: "",
             },
           })
         }
@@ -310,8 +314,8 @@ export const Roles = () => {
             isOpen: false,
             role: {
               display: true,
-              roleId: 0,
-              roleName: "",
+              id: 0,
+              name: "",
             },
           })
         }

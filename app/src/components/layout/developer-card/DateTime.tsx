@@ -18,7 +18,7 @@ export const DateTime = () => {
     },
   } = useContext(DeveloperModeContext);
 
-  // display
+  // render
   // --------------------
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>

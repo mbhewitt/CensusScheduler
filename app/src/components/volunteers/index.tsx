@@ -245,7 +245,7 @@ export const Volunteers = () => {
   );
   const optionListCustom = {};
 
-  // display
+  // render
   // --------------------
   return (
     <>

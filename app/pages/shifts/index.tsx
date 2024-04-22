@@ -3,7 +3,7 @@ import Head from "next/head";
 import { Shifts } from "src/components/shifts";
 
 const ShiftsPage = () => {
-  // display
+  // render
   // --------------------
   return (
     <>

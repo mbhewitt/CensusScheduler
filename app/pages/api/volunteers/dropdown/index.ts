@@ -72,8 +72,8 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
 
           if (rowListLast && rowListLast.shiftboardId === shiftboard_id) {
             rowListLast.roleList.push({
-              roleId: role_id,
-              roleName: role,
+              id: role_id,
+              name: role,
             });
 
             return rowList;
@@ -88,8 +88,8 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
 
           if (role_id) {
             rowItemNew.roleList.push({
-              roleId: role_id,
-              roleName: role,
+              id: role_id,
+              name: role,
             });
           }
 

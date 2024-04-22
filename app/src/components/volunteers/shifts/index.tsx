@@ -77,7 +77,7 @@ export const VolunteerShifts = () => {
       endTime: "",
       positionName: "",
       shiftPositionId: 0,
-      shiftTimesId: 0,
+      timeId: 0,
       startTime: "",
     },
   });
@@ -110,18 +110,12 @@ export const VolunteerShifts = () => {
 
         socket.on(
           "res-check-in-toggle",
-          ({
-            checked,
-            shiftTimesId,
-          }: {
-            checked: boolean;
-            shiftTimesId: number;
-          }) => {
+          ({ checked, timeId }: { checked: boolean; timeId: number }) => {
             if (data) {
               const dataMutate = structuredClone(data);
               const volunteerShiftItemFound = dataMutate.find(
                 (volunteerShiftItem: IResVolunteerShiftItem) =>
-                  volunteerShiftItem.shiftTimesId === shiftTimesId
+                  volunteerShiftItem.timeId === timeId
               );
               if (volunteerShiftItemFound) {
                 volunteerShiftItemFound.noShow = checked ? "" : "Yes";
@@ -131,12 +125,12 @@ export const VolunteerShifts = () => {
             }
           }
         );
-        socket.on("res-shift-volunteer-remove", ({ shiftTimesId }) => {
+        socket.on("res-shift-volunteer-remove", ({ timeId }) => {
           if (data) {
             const dataMutate = structuredClone(data);
             const volunteerShiftListNew = dataMutate.filter(
               (volunteerShiftItem: IResVolunteerShiftItem) =>
-                volunteerShiftItem.shiftTimesId !== shiftTimesId
+                volunteerShiftItem.timeId !== timeId
             );
             dataMutate.volunteerShiftList = volunteerShiftListNew;
 
@@ -200,7 +194,7 @@ export const VolunteerShifts = () => {
     positionName,
     shiftboardId,
     shiftPositionId,
-    shiftTimesId,
+    timeId,
     worldName,
   }: ISwitchValues) => {
     try {
@@ -209,7 +203,7 @@ export const VolunteerShifts = () => {
           checked,
           shiftboardId,
           shiftPositionId,
-          shiftTimesId,
+          timeId,
         },
         method: "PATCH",
       });
@@ -217,7 +211,7 @@ export const VolunteerShifts = () => {
         checked,
         shiftboardId,
         shiftPositionId,
-        shiftTimesId,
+        timeId,
       });
 
       enqueueSnackbar(
@@ -299,8 +293,8 @@ export const VolunteerShifts = () => {
       noShow,
       positionName,
       shiftPositionId,
-      shiftTimesId,
       startTime,
+      timeId,
     }: IResVolunteerShiftItem) => {
       // evaluate the check-in type and available features
       const checkInType = getCheckInType({
@@ -336,7 +330,7 @@ export const VolunteerShifts = () => {
         formatTime(startTime, endTime),
         positionName,
         <Chip
-          key={`${shiftTimesId}${shiftPositionId}-chip`}
+          key={`${timeId}${shiftPositionId}-chip`}
           label={positionName}
           sx={{ backgroundColor: colorMapDisplay[category] }}
         />,
@@ -350,7 +344,7 @@ export const VolunteerShifts = () => {
               positionName,
               shiftboardId: Number(shiftboardId),
               shiftPositionId,
-              shiftTimesId,
+              timeId,
               worldName,
             })
           }
@@ -361,7 +355,7 @@ export const VolunteerShifts = () => {
           key={`${shiftboardId}-menu`}
           MenuList={
             <MenuList>
-              <Link href={`/shifts/volunteers/${shiftTimesId}`}>
+              <Link href={`/shifts/volunteers/${timeId}`}>
                 <MenuItem>
                   <ListItemIcon>
                     <Groups3Icon />
@@ -380,8 +374,8 @@ export const VolunteerShifts = () => {
                       endTime,
                       positionName,
                       shiftPositionId,
-                      shiftTimesId,
                       startTime,
+                      timeId,
                     },
                   })
                 }
@@ -415,7 +409,7 @@ export const VolunteerShifts = () => {
     },
   };
 
-  // display
+  // render
   // --------------------
   return (
     <>
@@ -456,7 +450,7 @@ export const VolunteerShifts = () => {
               endTime: "",
               positionName: "",
               shiftPositionId: 0,
-              shiftTimesId: 0,
+              timeId: 0,
               startTime: "",
             },
           })

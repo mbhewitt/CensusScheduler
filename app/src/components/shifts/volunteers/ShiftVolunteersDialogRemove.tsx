@@ -25,7 +25,7 @@ interface IShiftVolunteersDialogRemoveProps {
     positionName: string;
     shiftboardId: number;
     shiftPositionId: number;
-    shiftTimesId: number;
+    timeId: number;
     worldName: string;
   };
 }
@@ -39,14 +39,14 @@ export const ShiftVolunteersDialogRemove = ({
     positionName,
     shiftboardId,
     shiftPositionId,
-    shiftTimesId,
+    timeId,
     worldName,
   },
 }: IShiftVolunteersDialogRemoveProps) => {
   // fetching, mutation, and revalidation
   // --------------------
   const { isMutating, trigger } = useSWRMutation(
-    `/api/shifts/volunteers/${shiftTimesId}`,
+    `/api/shifts/volunteers/${timeId}`,
     fetcherTrigger
   );
 
@@ -59,13 +59,13 @@ export const ShiftVolunteersDialogRemove = ({
   const handleVolunteerRemove = async () => {
     try {
       await trigger({
-        body: { shiftboardId, shiftPositionId, shiftTimesId },
+        body: { shiftboardId, shiftPositionId, timeId },
         method: "DELETE",
       });
       socket.emit("req-shift-volunteer-remove", {
         shiftboardId,
         shiftPositionId,
-        shiftTimesId,
+        timeId,
       });
 
       handleDialogRemoveClose();
@@ -97,7 +97,7 @@ export const ShiftVolunteersDialogRemove = ({
     }
   };
 
-  // display
+  // render
   // --------------------
   return (
     <DialogContainer

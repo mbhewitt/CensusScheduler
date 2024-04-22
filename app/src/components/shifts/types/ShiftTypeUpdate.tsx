@@ -1,7 +1,7 @@
 import {
   Close as CloseIcon,
   DateRange as DateRangeIcon,
-  EventAvailable as EventAvailableIcon,
+  EditCalendar as EditCalendarIcon,
 } from "@mui/icons-material";
 import {
   Box,
@@ -19,6 +19,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
@@ -37,15 +38,25 @@ import {
 } from "src/components/shifts/types/ShiftTypeForm";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
-export const ShiftTypeCreate = () => {
+export const ShiftTypeUpdate = () => {
+  // state
+  // --------------------
+  const [isMounted, setIsMounted] = useState(false);
+
   // fetching, mutation, and revalidation
   // --------------------
+  const router = useRouter();
+  const { shiftTypeId } = router.query;
   const { data: dataDefaults, error: errorDefaults } = useSWR(
-    "/api/shifts/types/defaults",
+    isMounted ? "/api/shifts/types/defaults" : null,
+    fetcherGet
+  );
+  const { data: dataCurrent, error: errorCurrent } = useSWR(
+    isMounted ? `/api/shifts/types/${shiftTypeId}` : null,
     fetcherGet
   );
   const { isMutating, trigger } = useSWRMutation(
-    "/api/shifts/types",
+    `/api/shifts/types/${shiftTypeId}`,
     fetcherTrigger
   );
 
@@ -80,14 +91,32 @@ export const ShiftTypeCreate = () => {
     control,
     name: "positionList",
   });
-  const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   dayjs.extend(isSameOrBefore);
 
+  // side effects
+  // --------------------
+  useEffect(() => {
+    if (router.isReady) {
+      setIsMounted(true);
+    }
+  }, [router.isReady]);
+  useEffect(() => {
+    if (dataCurrent) {
+      const { information, positionList, timeList } = dataCurrent;
+
+      reset({
+        information,
+        positionList,
+        timeList,
+      });
+    }
+  }, [dataCurrent, reset]);
+
   // logic
   // --------------------
-  if (errorDefaults) return <ErrorPage />;
-  if (!dataDefaults) return <Loading />;
+  if (errorDefaults || errorCurrent) return <ErrorPage />;
+  if (!dataDefaults || !dataCurrent) return <Loading />;
 
   // form submission
   // --------------------
@@ -110,7 +139,7 @@ export const ShiftTypeCreate = () => {
           positionList,
           timeList,
         },
-        method: "POST",
+        method: "PATCH",
       });
 
       // display success notification
@@ -119,7 +148,7 @@ export const ShiftTypeCreate = () => {
           <strong>
             <strong>{formValues.information.name}</strong>
           </strong>{" "}
-          shift type has been created
+          shift type has been updated
         </SnackbarText>,
         {
           variant: "success",
@@ -158,7 +187,7 @@ export const ShiftTypeCreate = () => {
             }}
           />
         }
-        text="Create shift type"
+        text="Update shift type"
       />
       <Container component="main">
         <Box component="section">
@@ -181,8 +210,8 @@ export const ShiftTypeCreate = () => {
                 display: "flex",
               }}
             >
-              <EventAvailableIcon sx={{ mr: 0.5 }} />
-              Create type
+              <EditCalendarIcon sx={{ mr: 0.5 }} />
+              Update type
             </Typography>
           </Breadcrumbs>
         </Box>
@@ -236,13 +265,13 @@ export const ShiftTypeCreate = () => {
                     isMutating ? (
                       <CircularProgress size="1rem" />
                     ) : (
-                      <EventAvailableIcon />
+                      <EditCalendarIcon />
                     )
                   }
                   type="submit"
                   variant="contained"
                 >
-                  Create type
+                  Update type
                 </Button>
               </CardActions>
             </Card>

@@ -14,7 +14,7 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
         req.body
       );
       const [dbVolunteerRoleList] = await pool.query<RowDataPacket[]>(
-        `SELECT *
+        `SELECT shiftboard_id
         FROM op_volunteer_roles AS vr
         JOIN op_roles AS r
         ON vr.role_id=r.role_id

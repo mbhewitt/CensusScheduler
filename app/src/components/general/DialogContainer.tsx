@@ -21,7 +21,7 @@ export const DialogContainer = ({
   isDialogOpen,
   text,
 }: IDialogContainerProps) => {
-  // display
+  // render
   // --------------------
   return (
     <Dialog fullWidth onClose={handleDialogClose} open={isDialogOpen}>

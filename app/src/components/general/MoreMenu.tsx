@@ -20,7 +20,7 @@ export const MoreMenu = ({ Icon, MenuList }: IMoreMenuProps) => {
     setAnchorEl(null);
   };
 
-  // display
+  // render
   // --------------------
   return (
     <>

@@ -28,7 +28,7 @@ const RoleVolunteersPage = () => {
   );
   const isAdmin = checkIsAdmin(accountType, roleList);
 
-  // display
+  // render
   // --------------------
   return (
     <>

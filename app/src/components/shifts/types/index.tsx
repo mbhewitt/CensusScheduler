@@ -76,15 +76,15 @@ export const ShiftTypes = () => {
     },
   ];
   const dataTable = data.map(
-    ({ shiftTypeId, shiftTypeName }: IResShiftTypeItem) => {
+    ({ id: typeId, name: typeName }: IResShiftTypeItem) => {
       return [
-        shiftTypeName,
+        typeName,
         <MoreMenu
           Icon={<MoreHorizIcon />}
-          key={`${shiftTypeId}-menu`}
+          key={`${typeId}-menu`}
           MenuList={
             <MenuList>
-              <Link href={`/shifts/types/update/${shiftTypeId}`}>
+              <Link href={`/shifts/types/update/${typeId}`}>
                 <MenuItem>
                   <ListItemIcon>
                     <EditCalendarIcon />
@@ -106,7 +106,7 @@ export const ShiftTypes = () => {
   );
   const optionListCustom = { filter: false };
 
-  // display
+  // render
   // --------------------
   return (
     <>

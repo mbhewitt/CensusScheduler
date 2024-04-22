@@ -21,7 +21,7 @@ export const Help = () => {
   // --------------------
   const theme = useTheme();
 
-  // display
+  // render
   // --------------------
   return (
     <>

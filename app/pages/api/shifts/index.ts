@@ -16,7 +16,20 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
       // get all training shifts
       if (filter === "trainings") {
         [dbShiftList] = await pool.query<RowDataPacket[]>(
-          `SELECT sc.category, sc.shift_category_id, st.date, d.datename, st.end_time, sp.position_type_id, sn.shift_name, st.shift_times_id, vs.shiftboard_id, st.start_time, sp.total_slots, st.year, vs.remove_shift
+          `SELECT
+            sc.category,
+            sc.shift_category_id,
+            st.date,
+            d.datename,
+            st.end_time,
+            sp.position_type_id,
+            sn.shift_name,
+            st.shift_times_id,
+            vs.shiftboard_id,
+            st.start_time,
+            sp.total_slots,
+            st.year,
+            vs.remove_shift
           FROM op_shift_times AS st
           JOIN op_shift_name AS sn
           ON sn.delete_shift=false 
@@ -41,7 +54,20 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
       } else {
         // get all shifts
         [dbShiftList] = await pool.query<RowDataPacket[]>(
-          `SELECT sc.category, sc.shift_category_id, st.date, d.datename, st.end_time, sp.position_type_id, sn.shift_name, st.shift_times_id, vs.shiftboard_id, st.start_time, sp.total_slots, st.year, vs.remove_shift
+          `SELECT
+            sc.category,
+            sc.shift_category_id,
+            st.date,
+            d.datename,
+            st.end_time,
+            sp.position_type_id,
+            sn.shift_name,
+            st.shift_times_id,
+            vs.shiftboard_id,
+            st.start_time,
+            sp.total_slots,
+            st.year,
+            vs.remove_shift
           FROM op_shift_times AS st
           JOIN op_shift_name AS sn
           ON sn.delete_shift=false

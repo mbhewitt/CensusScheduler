@@ -32,7 +32,7 @@ export const Shifts = () => {
   // --------------------
   const columnNameDateHidden = "Date - hidden";
   const columnNameDate = "Date";
-  const columnNameShiftNameHidden = "Shift name - hidden";
+  const columnNameTypeHidden = "Type - hidden";
   const [columnList, setColumnList] = useImmer<MUIDataTableColumn[]>([
     {
       name: "Shift Times ID - hidden", // hide for row click
@@ -62,14 +62,14 @@ export const Shifts = () => {
       options: { filter: false, sortThirdClickReset: true },
     },
     {
-      name: columnNameShiftNameHidden, // hide for filter dialog
-      label: "Name",
+      name: columnNameTypeHidden, // hide for filter dialog
+      label: "Type",
       options: {
         display: false,
       },
     },
     {
-      name: "Name",
+      name: "Type",
       options: {
         filter: false,
         sortThirdClickReset: true,
@@ -170,19 +170,17 @@ export const Shifts = () => {
     // then customize the filter options display for date and name columns
     if (data) {
       const dateFilterList: string[] = [];
-      const shiftNameFilterList: string[] = [];
+      const typeFilterList: string[] = [];
 
-      data.forEach(({ date, dateName, shiftName }: IResShiftItem) => {
+      data.forEach(({ date, dateName, type }: IResShiftItem) => {
         dateFilterList.push(
           dateName ? formatDateName(date, dateName) : formatDateName(date, null)
         );
-        shiftNameFilterList.push(shiftName);
+        typeFilterList.push(type);
       });
 
       const dateFilterListDisplay = [...new Set(dateFilterList)];
-      const shiftNameFilterListDisplay = [
-        ...new Set(shiftNameFilterList),
-      ].sort();
+      const typeFilterListDisplay = [...new Set(typeFilterList)].sort();
 
       setColumnList((prevColumnList) =>
         prevColumnList.forEach((prevColumnItem) => {
@@ -194,10 +192,10 @@ export const Shifts = () => {
                   names: dateFilterListDisplay,
                 };
                 break;
-              case columnNameShiftNameHidden:
+              case columnNameTypeHidden:
                 prevColumnItem.options.filterOptions = {
                   ...prevColumnItem.options.filterOptions,
-                  names: shiftNameFilterListDisplay,
+                  names: typeFilterListDisplay,
                 };
                 break;
               default:
@@ -224,21 +222,21 @@ export const Shifts = () => {
       dateName,
       endTime,
       filledSlots,
-      shiftName,
-      shiftTimesId,
       startTime,
+      timeId,
       totalSlots,
+      type,
       year,
     }: IResShiftItem) => {
       return [
-        shiftTimesId,
+        timeId,
         `${date} ${year}`,
         formatDateName(date, dateName),
         formatTime(startTime, endTime),
-        shiftName,
+        type,
         <Chip
-          key={`${shiftTimesId}-chip`}
-          label={shiftName}
+          key={`${timeId}-chip`}
+          label={type}
           sx={{ backgroundColor: colorMapDisplay[category] }}
         />,
         `${filledSlots} / ${totalSlots}`,
@@ -279,7 +277,7 @@ export const Shifts = () => {
     sortFilterList: false,
   };
 
-  // display
+  // render
   // --------------------
   return (
     <>

@@ -24,7 +24,7 @@ export const checkIsAuthenticated = (
 
 // check for general role
 const checkIsRoleExist = (roleId: number, roleList: IResVolunteerRoleItem[]) =>
-  roleList && roleList.some((roleItem) => roleItem.roleId === roleId);
+  roleList && roleList.some((roleItem) => roleItem.id === roleId);
 // check for admin role, including when dev mode is on
 export const checkIsAdmin = (
   { isEnabled, value }: IAccountTypePayload,

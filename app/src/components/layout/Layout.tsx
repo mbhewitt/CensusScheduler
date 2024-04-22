@@ -22,7 +22,7 @@ export const Layout = ({ children }: ILayoutProps) => {
   } = useContext(DeveloperModeContext);
   const { isEasterEggOpen } = useContext(EasterEggContext);
 
-  // display
+  // render
   // --------------------
   return (
     <>

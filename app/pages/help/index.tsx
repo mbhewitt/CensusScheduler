@@ -3,7 +3,7 @@ import Head from "next/head";
 import { Help } from "src/components/help";
 
 const HelpPage = () => {
-  // display
+  // render
   // --------------------
   return (
     <>

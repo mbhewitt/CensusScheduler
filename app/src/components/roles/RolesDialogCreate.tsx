@@ -10,6 +10,7 @@ import useSWRMutation from "swr/mutation";
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import {
+  defaultValues,
   IFormValues,
   RolesDialogForm,
 } from "src/components/roles/RolesDialogForm";
@@ -22,9 +23,6 @@ interface IRolesDialogCreateProps {
   roleList: IResRoleItem[];
 }
 
-const defaultValues: IFormValues = {
-  name: "",
-};
 export const RolesDialogCreate = ({
   handleDialogCreateClose,
   isDialogCreateOpen,
@@ -84,7 +82,7 @@ export const RolesDialogCreate = ({
     }
   };
 
-  // display
+  // render
   // --------------------
   return (
     <DialogContainer

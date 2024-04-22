@@ -9,33 +9,33 @@
 ## op_position_type -- details on the positions in shifts
 
 - **position** -- name of the position
-- **role_id** -- foreign key to op_roles, if the position has a role restriction 
+- **role_id** -- foreign key to op_roles, if the position has a role restriction
 - **lead** -- if the position is a lead position
 - **critical** -- if the position is critical to the success of the shift
 - **prerequisite_id** -- foreign key to op_shift_category, if the position has a shift that is a prereq to it
 - **position_details** -- description of the position
-- **position_type_id** -- the row id
+- **position_type_id** -- row id
 - **start_time_offset** -- if the position actually starts this number of minutes before the shift start time
 - **end_time_offset** -- if the position actually ends this number of minutes after the shift end time
-- **create_position** -- 'bool', if the position is created on playa
-- **delete_position** --  'bool', if the position is deleted on playa
-- **update_position** --  'bool', if the position is updated on playa
+- **create_position** -- `Bool`, if the position is created on playa
+- **delete_position** -- `Bool`, if the position is deleted on playa
+- **update_position** -- `Bool`, if the position is updated on playa
 
 ## op_shift_category -- the category a shift falls into
 
 - **category** -- name of the category
 - **shift_category** -- name of the shift category
 - **shift_category_id** -- row id
-- **create_category**  -- 'bool', if the category is created on playa
-- **delete_category** --  'bool', if the category is deleted on playa
-- **update_category** --  'bool', if the category is updated on playa
+- **create_category** -- `Bool`, if the category is created on playa
+- **delete_category** -- `Bool`, if the category is deleted on playa
+- **update_category** -- `Bool`, if the category is updated on playa
 
 ## op_shift_name -- the name of a shift type, shift_times and shift_position are subtables of this one
 
 - **core** -- bool if shift is part of the core mission
 - **off_playa** -- bool if the shift takes place off playa
 - **shift_category_id** -- foreign key to op_shfit_category
-- **shift_name_id** -- rowid
+- **shift_name_id** -- row id
 - **shift_details** -- description of the shift type
 - **shift_name** -- name of the shift type
 - **create_shift** -- `Bool`, if this is an addition to the table onplaya this should be set to true
@@ -48,27 +48,27 @@
 - **total_slots** -- number of slots needed for this position type
 - **shift_name_id** -- foreign key to op_shift_name
 - **wap_points** -- number of points associated with this position on this shift
-- **shift_position_id** -- rowid
+- **shift_position_id** -- row id
 - **add_shift_position** -- `Bool`, if this is an addition to the table onplaya this should be set to true
-- **remove_shift_position** --  `Bool`, if true mark this shift for deletion
-- **update_shift_position** --  `Bool`, if true we made a change to a shift
+- **remove_shift_position** -- `Bool`, if true mark this shift for deletion
+- **update_shift_position** -- `Bool`, if true we made a change to a shift
 
 ## op_shift_times -- adds particular times to the shift name table
 
 - **year** -- burn year
 - **date** -- date the shift happens
+- **shift** -- `deprecated`
 - **shift_name_id** -- foreign key to op_shift_name
 - **shift_instance** -- a keyword to link the shiftboard shifts to the censusscheuduler
 - **start_time_lt** -- local time text of the start time
 - **end_time_lt** -- local time text of the end time
 - **start_time** -- datetime
 - **end_time** -- datetime
-- **shift_times_id** -- rowid
+- **shift_times_id** -- row id
 - **notes** -- onplaya notes changes
-- **add_shift_time** -- 
-- **remove_shift_time** -- 
-- **update_shift_time** -- 
-
+- **add_shift_time** --
+- **remove_shift_time** --
+- **update_shift_time** --
 
 ## op_shifts -- info table about every shift/position. (deprecated)
 
@@ -108,9 +108,9 @@
 - **remove_role** -- the role is removed onplaya
 - **add_role** -- the role is added onplaya
 
-## op_roles -- table containing all the valid roles to use 
+## op_roles -- table containing all the valid roles to use
 
-- **role_id** -- rowid
+- **role_id** -- row id
 - **role** -- the role name
 - **display** -- if the role should be displayed
 - **role_src** -- source of the role name
@@ -125,7 +125,7 @@
 - **shift_times_id** -- foreign key to op_shift_times
 - **shiftboard_id** -- the id of the individual
 - **shiftboard_shift_id** -- a integer of the position of the shift in shiftboard leave `NULL` if unknown, used for making changes in shiftboard
-- **noshow** -- If someone did not show up for a shift this is set to `Yes` otherwise '', set to `X` to denote that it is unknown yet
+- **noshow** -- if someone did not show up for a shift this is set to `Yes` otherwise '', set to `X` to denote that it is unknown yet
 - **add_shift** -- `Bool`, if this is an addition to the table onplaya this should be set to true
 - **remove_shift** -- `Bool`, if true mark this row for deletion
 - **update_shift** -- `Bool`, if true we made a change to noshow
@@ -149,8 +149,7 @@
 - **emergency_contact** -- Who to contact in case of emergency.
 - **create_volunteer** -- `Bool`, if this account was created on playa
 - **update_volunteer** -- `Bool`, if `playa_name`-`phone` is changed
-- **delete_volunteer** -- 'bool', if volunteer is removed on playa
- 
+- **delete_volunteer** -- `Bool`, if volunteer is removed on playa
 
 ## op_messages -- any messages for census which can be questions, or reminders to fill out census, etc
 
@@ -217,6 +216,5 @@
 1. commit transaction  
    `commit;`  
    `set autocommit=true;`
-
 
 ## When a record has a "delete" feild should select where delete=false;

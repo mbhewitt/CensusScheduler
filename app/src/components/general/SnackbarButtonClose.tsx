@@ -14,7 +14,7 @@ const SnackbarButtonClose = ({ snackbarKey }: ISnackbarButtonCloseProps) => {
   const { closeSnackbar } = useSnackbar();
   const theme = useTheme();
 
-  // display
+  // render
   // --------------------
   return (
     <IconButton onClick={() => closeSnackbar(snackbarKey)}>
