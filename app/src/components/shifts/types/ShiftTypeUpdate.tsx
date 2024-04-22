@@ -48,7 +48,8 @@ export const ShiftTypeUpdate = () => {
   const router = useRouter();
   const { shiftTypeId } = router.query;
   const { data: dataDefaults, error: errorDefaults } = useSWR(
-    "/api/shifts/types/defaults"
+    isMounted ? "/api/shifts/types/defaults" : null,
+    fetcherGet
   );
   const { data: dataCurrent, error: errorCurrent } = useSWR(
     isMounted ? `/api/shifts/types/${shiftTypeId}` : null,
