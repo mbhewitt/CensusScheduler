@@ -41,13 +41,14 @@ const theme = createTheme({
         a: {
           color: "inherit",
           textDecoration: "none",
+          p: {
+            textDecoration: "underline",
+          },
         },
         p: {
           a: {
             color: COLOR_CENSUS_PINK,
-            "&:hover": {
-              textDecoration: "underline",
-            },
+            textDecoration: "underline",
           },
         },
         li: {

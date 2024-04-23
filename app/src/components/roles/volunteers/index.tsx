@@ -186,7 +186,6 @@ export const RoleVolunteers = () => {
                 sx={{
                   alignItems: "center",
                   display: "flex",
-                  textDecoration: "underline",
                 }}
               >
                 <VerifiedUserIcon sx={{ mr: 0.5 }} />

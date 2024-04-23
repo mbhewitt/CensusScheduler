@@ -197,7 +197,6 @@ export const ShiftTypeUpdate = () => {
                 sx={{
                   alignItems: "center",
                   display: "flex",
-                  textDecoration: "underline",
                 }}
               >
                 <DateRangeIcon sx={{ mr: 0.5 }} />

@@ -442,7 +442,6 @@ export const ShiftVolunteers = () => {
                 sx={{
                   alignItems: "center",
                   display: "flex",
-                  textDecoration: "underline",
                 }}
               >
                 <CalendarMonthIcon sx={{ mr: 0.5 }} />

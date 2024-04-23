@@ -155,7 +155,6 @@ export const AccountCreate = () => {
                 sx={{
                   alignItems: "center",
                   display: "flex",
-                  textDecoration: "underline",
                 }}
               >
                 <LoginIcon sx={{ mr: 0.5 }} />
