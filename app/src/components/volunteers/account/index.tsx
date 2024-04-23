@@ -210,7 +210,6 @@ export const Account = () => {
                   sx={{
                     alignItems: "center",
                     display: "flex",
-                    textDecoration: "underline",
                   }}
                 >
                   <Groups3Icon sx={{ mr: 0.5 }} />

@@ -279,15 +279,10 @@ export const Help = () => {
                 <Box sx={{ flex: 1 }}>
                   <Typography paragraph>
                     Ask the participant to{" "}
-                    <Typography
-                      component="span"
-                      sx={{ textDecoration: "underline" }}
-                    >
-                      double check their email address
-                    </Typography>
-                    , as every year many email addresses are entered
-                    incorrectly. Unanswered questions will be addressed
-                    post-event via an email reply.{" "}
+                    <strong>double check their email address</strong>, as every
+                    year many email addresses are entered incorrectly.
+                    Unanswered questions will be addressed post-event via an
+                    email reply.{" "}
                     <strong>
                       Make sure to use the checkbox feature to select
                       &quot;reply wanted after Burning Man&quot; as seen above!
