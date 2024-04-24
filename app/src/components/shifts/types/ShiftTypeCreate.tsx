@@ -125,6 +125,9 @@ export const ShiftTypeCreate = () => {
           variant: "success",
         }
       );
+
+      // route to shift types page
+      router.push("/shifts/types");
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(
