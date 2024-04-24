@@ -22,6 +22,49 @@ const rockwellFont = localFont({
 });
 const theme = createTheme({
   components: {
+    MuiButton: {
+      defaultProps: {
+        disableElevation: true,
+      },
+      styleOverrides: {
+        root: {
+          textTransform: "none",
+        },
+        contained: ({ theme }) => ({
+          background: theme.palette.secondary.main,
+          "&:hover": {
+            background: darken(theme.palette.secondary.main, 0.3),
+          },
+        }),
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          boxShadow: "none",
+        },
+      },
+    },
+    MuiCardContent: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          "&:last-child": { paddingBottom: theme.spacing(2) },
+          "> *:not(:last-child)": {
+            marginBottom: theme.spacing(2),
+          },
+        }),
+      },
+    },
+    MuiContainer: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          flex: 1,
+          "> *:not(:last-child)": {
+            marginBottom: theme.spacing(3),
+          },
+        }),
+      },
+    },
     MuiCssBaseline: {
       styleOverrides: {
         "*": { boxSizing: "border-box" },
@@ -58,60 +101,12 @@ const theme = createTheme({
         },
       },
     },
-    MuiContainer: {
+    MuiDialogActions: {
       styleOverrides: {
         root: ({ theme }) => ({
-          flex: 1,
-          "> *:not(:last-child)": {
-            marginBottom: theme.spacing(3),
-          },
+          justifyContent: "flex-end",
+          padding: `${theme.spacing(2)} 0 0`,
         }),
-      },
-    },
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          boxShadow: "none",
-          "&:hover": {
-            boxShadow: "none",
-          },
-          textTransform: "none",
-        },
-        contained: ({ theme }) => ({
-          background: theme.palette.secondary.main,
-          "&:hover": {
-            background: darken(theme.palette.secondary.main, 0.3),
-          },
-        }),
-      },
-    },
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          boxShadow: "none",
-        },
-      },
-    },
-    MuiCardContent: {
-      styleOverrides: {
-        root: ({ theme }) => ({
-          "&:last-child": { paddingBottom: theme.spacing(2) },
-          "> *:not(:last-child)": {
-            marginBottom: theme.spacing(2),
-          },
-        }),
-      },
-    },
-    MuiTypography: {
-      styleOverrides: {
-        root: ({ theme }) => ({
-          color: theme.palette.primary.main,
-        }),
-      },
-    },
-    MuiDialogTitle: {
-      styleOverrides: {
-        root: ({ theme }) => ({ padding: theme.spacing(2) }),
       },
     },
     MuiDialogContent: {
@@ -123,12 +118,9 @@ const theme = createTheme({
         }),
       },
     },
-    MuiDialogActions: {
+    MuiDialogTitle: {
       styleOverrides: {
-        root: ({ theme }) => ({
-          justifyContent: "flex-end",
-          padding: `${theme.spacing(2)} 0 0`,
-        }),
+        root: ({ theme }) => ({ padding: theme.spacing(2) }),
       },
     },
     MuiInputBase: {
@@ -136,6 +128,13 @@ const theme = createTheme({
         input: () => ({
           overflow: "hidden",
           textOverflow: "ellipsis",
+        }),
+      },
+    },
+    MuiTypography: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          color: theme.palette.primary.main,
         }),
       },
     },
