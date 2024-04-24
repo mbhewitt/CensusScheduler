@@ -120,10 +120,13 @@ export const BehavioralStandards = () => {
   };
   const handleSign = async () => {
     try {
+      // update database
       await trigger({
         body: { isBehavioralStandardsSigned: true, shiftboardId },
         method: "POST",
       });
+
+      // update state
       sessionDispatch({
         payload: {
           id: ROLE_BEHAVIORAL_STANDARDS_ID,
@@ -131,6 +134,8 @@ export const BehavioralStandards = () => {
         },
         type: SESSION_BEHAVIORAL_STANDARDS,
       });
+
+      // display success notification
       enqueueSnackbar(
         <SnackbarText>
           <strong>
@@ -143,6 +148,8 @@ export const BehavioralStandards = () => {
           variant: "success",
         }
       );
+
+      // route to volunteer account page
       router.push(`/volunteers/account/${shiftboardId}`);
     } catch (error) {
       if (error instanceof Error) {

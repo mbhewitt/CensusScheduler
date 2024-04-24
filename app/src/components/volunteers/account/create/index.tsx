@@ -93,11 +93,14 @@ export const AccountCreate = () => {
           method: "POST",
         });
 
+      // update state
       sessionDispatch({
         payload: dataVolunteerItem,
         type: SESSION_SIGN_IN,
       });
       reset(defaultValues);
+
+      // display success notification
       enqueueSnackbar(
         <SnackbarText>
           Account for{" "}
@@ -111,6 +114,8 @@ export const AccountCreate = () => {
           variant: "success",
         }
       );
+
+      // route to volunteer account page
       router.push(`/volunteers/account/${dataVolunteerItem.shiftboardId}`);
     } catch (error) {
       if (error instanceof Error) {
