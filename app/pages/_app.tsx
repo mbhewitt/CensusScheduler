@@ -23,12 +23,11 @@ const rockwellFont = localFont({
 const theme = createTheme({
   components: {
     MuiButton: {
+      defaultProps: {
+        disableElevation: true,
+      },
       styleOverrides: {
         root: {
-          boxShadow: "none",
-          "&:hover": {
-            boxShadow: "none",
-          },
           textTransform: "none",
         },
         contained: ({ theme }) => ({
