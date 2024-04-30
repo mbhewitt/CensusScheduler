@@ -40,6 +40,7 @@ import {
   UseFormGetValues,
   UseFormSetError,
   UseFormSetValue,
+  UseFormWatch,
 } from "react-hook-form";
 
 import type {
@@ -77,6 +78,7 @@ interface IShiftTypeFormProps {
   timeAppend: UseFieldArrayAppend<IFormValues, "timeList">;
   timeFields: FieldArrayWithId<IFormValues, "timeList", "id">[];
   timeRemove: UseFieldArrayRemove;
+  watch: UseFormWatch<IFormValues>;
 }
 
 // utilities
@@ -176,11 +178,16 @@ export const ShiftTypeForm = ({
   timeAppend,
   timeFields,
   timeRemove,
+  watch,
 }: IShiftTypeFormProps) => {
   // fetching, mutation, and revalidation
   // --------------------
   const router = useRouter();
   const { shiftTypeId } = router.query;
+
+  // logic
+  // --------------------
+  const watchPositionList = watch("positionList");
 
   // render
   // --------------------
@@ -436,11 +443,24 @@ export const ShiftTypeForm = ({
                             required
                           >
                             {dataDefaults.positionList.map(
-                              ({ positionTypeId, name }) => (
-                                <MenuItem key={positionTypeId} value={name}>
-                                  {name}
-                                </MenuItem>
-                              )
+                              ({ positionTypeId, name: nameDefault }) => {
+                                const isPositionAvailable =
+                                  watchPositionList.every(
+                                    ({ name: nameCurrent }) => {
+                                      return nameCurrent !== nameDefault;
+                                    }
+                                  );
+
+                                return (
+                                  <MenuItem
+                                    disabled={!isPositionAvailable}
+                                    key={positionTypeId}
+                                    value={nameDefault}
+                                  >
+                                    {nameDefault}
+                                  </MenuItem>
+                                );
+                              }
                             )}
                           </Select>
                           {errors.positionList &&

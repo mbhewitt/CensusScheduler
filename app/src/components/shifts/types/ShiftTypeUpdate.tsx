@@ -71,6 +71,7 @@ export const ShiftTypeUpdate = () => {
     reset,
     setError,
     setValue,
+    watch,
   } = useForm({
     defaultValues,
     mode: "onBlur",
@@ -233,6 +234,7 @@ export const ShiftTypeUpdate = () => {
               timeAppend={timeAppend}
               timeFields={timeFields}
               timeRemove={timeRemove}
+              watch={watch}
             />
 
             {/* actions */}
