@@ -105,7 +105,7 @@ export const processPositionList = (
     );
 
     return {
-      id: positionFound?.id,
+      positionTypeId: positionFound?.positionTypeId,
       totalSlots,
       wapPoints,
     };
@@ -113,16 +113,16 @@ export const processPositionList = (
 };
 export const processTimeList = (formValues: IFormValues) => {
   return formValues.timeList.map(
-    ({ date, endTime, instance, notes, startTime, timeId }) => {
+    ({ date, endTime, id, instance, notes, startTime }) => {
       const dateFormat = dayjs(date).format("YYYY-MM-DD");
 
       return {
         date: dateFormat,
         endTime: `${dateFormat} ${dayjs(endTime).format("HH:mm:ss")}`,
+        id,
         instance,
         notes,
         startTime: `${dateFormat} ${dayjs(startTime).format("HH:mm:ss")}`,
-        timeId,
       };
     }
   );
@@ -141,9 +141,9 @@ export const defaultValues: IFormValues = {
       critical: false,
       details: "",
       endTimeOffset: "",
-      id: 0,
       lead: false,
       name: "",
+      positionTypeId: 0,
       prerequisiteShift: "",
       role: "",
       startTimeOffset: "",
@@ -155,10 +155,10 @@ export const defaultValues: IFormValues = {
     {
       date: "",
       endTime: "",
+      id: 0,
       instance: "",
       notes: "",
       startTime: "",
-      timeId: 0,
     },
   ],
 };
@@ -227,14 +227,14 @@ export const ShiftTypeForm = ({
                         const nameFound = dataDefaults.typeList.find(
                           ({ id }) => id === Number(shiftTypeId)
                         )?.name;
-                        const istypeAvailable =
+                        const isTypeAvailable =
                           value === nameFound ||
                           dataDefaults.typeList.every(({ name }) => {
                             return name.toLowerCase() !== value.toLowerCase();
                           });
 
                         return (
-                          istypeAvailable ||
+                          isTypeAvailable ||
                           `${value} shift type has been added already`
                         );
                       },
@@ -436,15 +436,9 @@ export const ShiftTypeForm = ({
                             required
                           >
                             {dataDefaults.positionList.map(
-                              ({
-                                id: shiftTypePositionId,
-                                name: shiftTypePositionName,
-                              }) => (
-                                <MenuItem
-                                  key={shiftTypePositionId}
-                                  value={shiftTypePositionName}
-                                >
-                                  {shiftTypePositionName}
+                              ({ positionTypeId, name }) => (
+                                <MenuItem key={positionTypeId} value={name}>
+                                  {name}
                                 </MenuItem>
                               )
                             )}
