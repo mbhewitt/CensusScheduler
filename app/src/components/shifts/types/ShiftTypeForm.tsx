@@ -28,6 +28,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
+import { useRouter } from "next/router";
 import {
   Control,
   Controller,
@@ -39,6 +40,7 @@ import {
   UseFormGetValues,
   UseFormSetError,
   UseFormSetValue,
+  UseFormWatch,
 } from "react-hook-form";
 
 import type {
@@ -76,6 +78,7 @@ interface IShiftTypeFormProps {
   timeAppend: UseFieldArrayAppend<IFormValues, "timeList">;
   timeFields: FieldArrayWithId<IFormValues, "timeList", "id">[];
   timeRemove: UseFieldArrayRemove;
+  watch: UseFormWatch<IFormValues>;
 }
 
 // utilities
@@ -104,7 +107,7 @@ export const processPositionList = (
     );
 
     return {
-      id: positionFound?.id,
+      positionTypeId: positionFound?.positionTypeId,
       totalSlots,
       wapPoints,
     };
@@ -112,16 +115,16 @@ export const processPositionList = (
 };
 export const processTimeList = (formValues: IFormValues) => {
   return formValues.timeList.map(
-    ({ date, endTime, instance, notes, startTime, timeId }) => {
+    ({ date, endTime, id, instance, notes, startTime }) => {
       const dateFormat = dayjs(date).format("YYYY-MM-DD");
 
       return {
         date: dateFormat,
         endTime: `${dateFormat} ${dayjs(endTime).format("HH:mm:ss")}`,
+        id,
         instance,
         notes,
         startTime: `${dateFormat} ${dayjs(startTime).format("HH:mm:ss")}`,
-        timeId,
       };
     }
   );
@@ -140,9 +143,9 @@ export const defaultValues: IFormValues = {
       critical: false,
       details: "",
       endTimeOffset: "",
-      id: 0,
       lead: false,
       name: "",
+      positionTypeId: 0,
       prerequisiteShift: "",
       role: "",
       startTimeOffset: "",
@@ -154,10 +157,10 @@ export const defaultValues: IFormValues = {
     {
       date: "",
       endTime: "",
+      id: 0,
       instance: "",
       notes: "",
       startTime: "",
-      timeId: 0,
     },
   ],
 };
@@ -175,7 +178,17 @@ export const ShiftTypeForm = ({
   timeAppend,
   timeFields,
   timeRemove,
+  watch,
 }: IShiftTypeFormProps) => {
+  // fetching, mutation, and revalidation
+  // --------------------
+  const router = useRouter();
+  const { shiftTypeId } = router.query;
+
+  // logic
+  // --------------------
+  const watchPositionList = watch("positionList");
+
   // render
   // --------------------
   return (
@@ -218,14 +231,17 @@ export const ShiftTypeForm = ({
                         return Boolean(value.trim()) || "Name is required";
                       },
                       typeAvailable: (value) => {
-                        const istypeAvailable = dataDefaults.typeList.every(
-                          ({ name }) => {
+                        const nameFound = dataDefaults.typeList.find(
+                          ({ id }) => id === Number(shiftTypeId)
+                        )?.name;
+                        const isTypeAvailable =
+                          value === nameFound ||
+                          dataDefaults.typeList.every(({ name }) => {
                             return name.toLowerCase() !== value.toLowerCase();
-                          }
-                        );
+                          });
 
                         return (
-                          istypeAvailable ||
+                          isTypeAvailable ||
                           `${value} shift type has been added already`
                         );
                       },
@@ -427,17 +443,24 @@ export const ShiftTypeForm = ({
                             required
                           >
                             {dataDefaults.positionList.map(
-                              ({
-                                id: shiftTypePositionId,
-                                name: shiftTypePositionName,
-                              }) => (
-                                <MenuItem
-                                  key={shiftTypePositionId}
-                                  value={shiftTypePositionName}
-                                >
-                                  {shiftTypePositionName}
-                                </MenuItem>
-                              )
+                              ({ positionTypeId, name: nameDefault }) => {
+                                const isPositionAvailable =
+                                  watchPositionList.every(
+                                    ({ name: nameCurrent }) => {
+                                      return nameCurrent !== nameDefault;
+                                    }
+                                  );
+
+                                return (
+                                  <MenuItem
+                                    disabled={!isPositionAvailable}
+                                    key={positionTypeId}
+                                    value={nameDefault}
+                                  >
+                                    {nameDefault}
+                                  </MenuItem>
+                                );
+                              }
                             )}
                           </Select>
                           {errors.positionList &&

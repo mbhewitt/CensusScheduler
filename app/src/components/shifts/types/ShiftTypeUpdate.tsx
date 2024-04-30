@@ -71,6 +71,7 @@ export const ShiftTypeUpdate = () => {
     reset,
     setError,
     setValue,
+    watch,
   } = useForm({
     defaultValues,
     mode: "onBlur",
@@ -154,6 +155,9 @@ export const ShiftTypeUpdate = () => {
           variant: "success",
         }
       );
+
+      // route to shift types page
+      router.push("/shifts/types");
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(
@@ -230,6 +234,7 @@ export const ShiftTypeUpdate = () => {
               timeAppend={timeAppend}
               timeFields={timeFields}
               timeRemove={timeRemove}
+              watch={watch}
             />
 
             {/* actions */}

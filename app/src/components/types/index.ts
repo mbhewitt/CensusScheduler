@@ -65,9 +65,9 @@ export interface IResShiftTypePositionItem {
   critical: boolean;
   details: string;
   endTimeOffset: string;
-  id: number;
   lead: boolean;
   name: string;
+  positionTypeId: number;
   prerequisiteShift: string;
   role: string;
   startTimeOffset: string;
@@ -75,9 +75,9 @@ export interface IResShiftTypePositionItem {
 export interface IResShiftTypeTimeItem {
   date: string;
   endTime: string;
+  id: number;
   instance: string;
   notes: string;
-  timeId: number;
   startTime: string;
 }
 export interface IReqShiftTypeInfoItem extends IResShiftTypeInformation {
