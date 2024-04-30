@@ -168,14 +168,14 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
             `SELECT shift_position_id
             FROM op_shift_position
             WHERE shift_name_id=?
-            AND shift_position_id=?`,
+            AND position_type_id=?`,
             [shiftTypeId, positionId]
           );
-          const dbPositionFirst = dbPositionList[0];
+          const { shift_position_id: shiftPositionIdFirst } = dbPositionList[0];
 
           // if shift type position row exists
           // then update shift type position row
-          if (dbPositionFirst) {
+          if (shiftPositionIdFirst) {
             await pool.query<RowDataPacket[]>(
               `UPDATE op_shift_position
               SET
@@ -183,7 +183,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
                 update_shift_position=true,
                 wap_points=?
               WHERE shift_position_id=?`,
-              [totalSlots, wapPoints, positionId]
+              [totalSlots, wapPoints, shiftPositionIdFirst]
             );
             // else insert new shift type position row
           } else {

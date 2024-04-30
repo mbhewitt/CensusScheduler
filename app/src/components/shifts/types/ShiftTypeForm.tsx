@@ -28,6 +28,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
+import { useRouter } from "next/router";
 import {
   Control,
   Controller,
@@ -176,6 +177,11 @@ export const ShiftTypeForm = ({
   timeFields,
   timeRemove,
 }: IShiftTypeFormProps) => {
+  // fetching, mutation, and revalidation
+  // --------------------
+  const router = useRouter();
+  const { shiftTypeId } = router.query;
+
   // render
   // --------------------
   return (
@@ -218,11 +224,14 @@ export const ShiftTypeForm = ({
                         return Boolean(value.trim()) || "Name is required";
                       },
                       typeAvailable: (value) => {
-                        const istypeAvailable = dataDefaults.typeList.every(
-                          ({ name }) => {
+                        const nameFound = dataDefaults.typeList.find(
+                          ({ id }) => id === Number(shiftTypeId)
+                        )?.name;
+                        const istypeAvailable =
+                          value === nameFound ||
+                          dataDefaults.typeList.every(({ name }) => {
                             return name.toLowerCase() !== value.toLowerCase();
-                          }
-                        );
+                          });
 
                         return (
                           istypeAvailable ||
