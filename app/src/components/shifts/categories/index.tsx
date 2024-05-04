@@ -1,12 +1,13 @@
 import {
-  EditCalendar as EditCalendarIcon,
-  EventAvailable as EventAvailableIcon,
-  EventBusy as EventBusyIcon,
+  Edit as EditIcon,
   MoreHoriz as MoreHorizIcon,
+  PlaylistAdd as PlaylistAddIcon,
+  PlaylistRemove as PlaylistRemoveIcon,
 } from "@mui/icons-material";
 import {
   Box,
   Button,
+  Chip,
   Container,
   ListItemIcon,
   ListItemText,
@@ -25,16 +26,17 @@ import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { Hero } from "src/components/layout/Hero";
-import type { IResShiftTypeItem } from "src/components/types";
+import type { IResShiftCategoryItem } from "src/components/types";
 import { SessionContext } from "src/state/session/context";
 import { checkIsSuperAdmin } from "src/utils/checkIsRoleExist";
 import { fetcherGet } from "src/utils/fetcher";
+import { getColorMap } from "src/utils/getColorMap";
 import {
   setCellHeaderPropsCenter,
   setCellPropsCenter,
 } from "src/utils/setCellPropsCenter";
 
-export const ShiftTypes = () => {
+export const ShiftCategories = () => {
   // context
   // --------------------
   const {
@@ -45,7 +47,7 @@ export const ShiftTypes = () => {
 
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR("/api/shifts/types", fetcherGet);
+  const { data, error } = useSWR("/api/shifts/categories", fetcherGet);
 
   // other hooks
   // --------------------
@@ -63,46 +65,84 @@ export const ShiftTypes = () => {
     {
       name: "Name",
       options: {
+        filter: false,
         sortThirdClickReset: true,
+      },
+    },
+    {
+      name: "Category - hidden", // hide for filter dialog
+      label: "Category",
+      options: {
+        display: false,
+      },
+    },
+    {
+      name: "Category",
+      options: {
+        filter: false,
+        sortThirdClickReset: true,
+        sortCompare: (order: string) => {
+          return (
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            category1: { [key: string]: any },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            category2: { [key: string]: any }
+          ) => {
+            const value1 = category1.data.props.label;
+            const value2 = category2.data.props.label;
+
+            return value1 > value2 && order === "asc" ? 1 : -1;
+          };
+        },
       },
     },
     {
       name: "Actions",
       options: {
+        filter: false,
         setCellHeaderProps: setCellHeaderPropsCenter,
         setCellProps: setCellPropsCenter,
         sort: false,
       },
     },
   ];
-  const dataTable = data.map(({ id, name }: IResShiftTypeItem) => {
-    return [
-      name,
-      <MoreMenu
-        Icon={<MoreHorizIcon />}
-        key={`${id}-menu`}
-        MenuList={
-          <MenuList>
-            <Link href={`/shifts/types/update/${id}`}>
+  const colorMapDisplay = getColorMap(data);
+  const dataTable = data.map(
+    ({ category, id, shiftCategory }: IResShiftCategoryItem) => {
+      return [
+        shiftCategory,
+        category,
+        <Chip
+          key={`${category}-chip`}
+          label={category}
+          sx={{ backgroundColor: colorMapDisplay[category] }}
+        />,
+        <MoreMenu
+          Icon={<MoreHorizIcon />}
+          key={`${id}-menu`}
+          MenuList={
+            <MenuList>
+              <Link href={`/shifts/types/update/${id}`}>
+                <MenuItem>
+                  <ListItemIcon>
+                    <EditIcon />
+                  </ListItemIcon>
+                  <ListItemText>Update category</ListItemText>
+                </MenuItem>
+              </Link>
               <MenuItem>
                 <ListItemIcon>
-                  <EditCalendarIcon />
+                  <PlaylistRemoveIcon />
                 </ListItemIcon>
-                <ListItemText>Update type</ListItemText>
+                <ListItemText>Delete category</ListItemText>
               </MenuItem>
-            </Link>
-            <MenuItem>
-              <ListItemIcon>
-                <EventBusyIcon />
-              </ListItemIcon>
-              <ListItemText>Delete type</ListItemText>
-            </MenuItem>
-          </MenuList>
-        }
-      />,
-    ];
-  });
-  const optionListCustom = { filter: false };
+            </MenuList>
+          }
+        />,
+      ];
+    }
+  );
+  const optionListCustom = {};
 
   // render
   // --------------------
@@ -120,7 +160,7 @@ export const ShiftTypes = () => {
             }}
           />
         }
-        text="Shift types"
+        text="Shift categories"
       />
       <Container component="main">
         <Box component="section">
@@ -128,13 +168,13 @@ export const ShiftTypes = () => {
             <Stack direction="row" justifyContent="flex-end" sx={{ mb: 2 }}>
               <Button
                 onClick={() => {
-                  router.push("/shifts/types/create");
+                  router.push("/shifts/categories/create");
                 }}
-                startIcon={<EventAvailableIcon />}
+                startIcon={<PlaylistAddIcon />}
                 type="button"
                 variant="contained"
               >
-                Create type
+                Create category
               </Button>
             </Stack>
           )}

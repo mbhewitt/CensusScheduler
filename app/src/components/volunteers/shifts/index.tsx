@@ -244,7 +244,6 @@ export const VolunteerShifts = () => {
   };
 
   // prepare datatable
-  const colorMapDisplay = getColorMap(data);
   const columnList = [
     {
       name: "Date",
@@ -284,6 +283,7 @@ export const VolunteerShifts = () => {
       },
     },
   ];
+  const colorMapDisplay = getColorMap(data);
   const dataTable = data.map(
     ({
       category,

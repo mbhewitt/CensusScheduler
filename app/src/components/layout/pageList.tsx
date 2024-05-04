@@ -5,6 +5,7 @@ import {
   Groups3 as Groups3Icon,
   Help as HelpIcon,
   Home as HomeIcon,
+  List as ListIcon,
   QuestionAnswer as QuestionAnswerIcon,
   VerifiedUser as VerifiedUserIcon,
 } from "@mui/icons-material";
@@ -51,6 +52,11 @@ export const pageListAdmin = [
 ];
 
 export const pageListSuperAdmin = [
+  {
+    icon: <ListIcon />,
+    label: "Shift categories",
+    path: "/shifts/categories",
+  },
   {
     icon: <DateRangeIcon />,
     label: "Shift types",

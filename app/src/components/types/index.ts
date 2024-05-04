@@ -44,6 +44,14 @@ export interface IResRoleVolunteerItem {
   worldName: string;
 }
 
+// shift categories
+// --------------------
+export interface IResShiftCategoryItem {
+  category: string;
+  id: number;
+  shiftCategory: string;
+}
+
 // shift types
 // --------------------
 export interface IResShiftTypeCategoryItem {
