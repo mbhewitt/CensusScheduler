@@ -30,7 +30,6 @@ export const RolesDialogForm = ({
       render={({ field }) => (
         <TextField
           {...field}
-          autoComplete="off"
           fullWidth
           error={Boolean(errors.name)}
           helperText={errors.name?.message}

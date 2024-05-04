@@ -217,7 +217,6 @@ export const SignIn = () => {
                     render={({ field }) => (
                       <TextField
                         {...field}
-                        autoComplete="off"
                         error={Boolean(errors.passcode)}
                         helperText={errors.passcode?.message}
                         fullWidth
