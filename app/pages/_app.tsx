@@ -5,8 +5,8 @@ import {
   styled,
   ThemeProvider,
 } from "@mui/material/styles";
-import localFont from "@next/font/local";
 import type { AppProps } from "next/app";
+import localFont from "next/font/local";
 import { SnackbarProvider } from "notistack";
 
 import SnackbarButtonClose from "src/components/general/SnackbarButtonClose";
