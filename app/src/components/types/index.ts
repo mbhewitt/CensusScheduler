@@ -49,7 +49,7 @@ export interface IResRoleVolunteerItem {
 export interface IResShiftCategoryItem {
   category: string;
   id: number;
-  shiftCategory: string;
+  name: string;
 }
 
 // shift types

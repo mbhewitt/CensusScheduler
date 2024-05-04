@@ -267,15 +267,9 @@ export const ShiftTypeForm = ({
                         required
                       >
                         {dataDefaults.categoryList.map(
-                          ({
-                            id: shiftTypeCategoryId,
-                            name: shiftTypeCategoryName,
-                          }: IResShiftTypeCategoryItem) => (
-                            <MenuItem
-                              key={shiftTypeCategoryId}
-                              value={shiftTypeCategoryName}
-                            >
-                              {shiftTypeCategoryName}
+                          ({ id, name }: IResShiftTypeCategoryItem) => (
+                            <MenuItem key={id} value={name}>
+                              {name}
                             </MenuItem>
                           )
                         )}

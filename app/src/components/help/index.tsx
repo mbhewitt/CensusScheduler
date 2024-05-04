@@ -275,7 +275,7 @@ export const Help = () => {
                   }}
                 />
               </Box>
-              <Stack direction="row" gap={theme.spacing(2)}>
+              <Stack direction="row" gap={2}>
                 <Box sx={{ flex: 1 }}>
                   <Typography paragraph>
                     Ask the participant to{" "}

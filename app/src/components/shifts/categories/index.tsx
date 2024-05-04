@@ -16,9 +16,7 @@ import {
   Stack,
 } from "@mui/material";
 import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useContext } from "react";
+import { useState } from "react";
 import useSWR from "swr";
 
 import { DataTable } from "src/components/general/DataTable";
@@ -26,9 +24,9 @@ import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { Hero } from "src/components/layout/Hero";
+import { ShiftCategoriesDialogCreate } from "src/components/shifts/categories/ShiftCategoriesDialogCreate";
+import { ShiftCategoriesDialogUpdate } from "src/components/shifts/categories/ShiftCategoriesDialogUpdate";
 import type { IResShiftCategoryItem } from "src/components/types";
-import { SessionContext } from "src/state/session/context";
-import { checkIsSuperAdmin } from "src/utils/checkIsRoleExist";
 import { fetcherGet } from "src/utils/fetcher";
 import { getColorMap } from "src/utils/getColorMap";
 import {
@@ -37,28 +35,26 @@ import {
 } from "src/utils/setCellPropsCenter";
 
 export const ShiftCategories = () => {
-  // context
+  // state
   // --------------------
-  const {
-    sessionState: {
-      user: { roleList },
+  const [isDialogCreateOpen, setIsDialogCreateOpen] = useState(false);
+  const [isDialogUpdateOpen, setIsDialogUpdateOpen] = useState({
+    isOpen: false,
+    shiftCategory: {
+      category: "",
+      id: 0,
+      name: "",
     },
-  } = useContext(SessionContext);
+  });
 
   // fetching, mutation, and revalidation
   // --------------------
   const { data, error } = useSWR("/api/shifts/categories", fetcherGet);
 
-  // other hooks
-  // --------------------
-  const router = useRouter();
-
   // logic
   // --------------------
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
-
-  const isSuperAdmin = checkIsSuperAdmin(roleList);
 
   // prepare datatable
   const columnList = [
@@ -108,9 +104,9 @@ export const ShiftCategories = () => {
   ];
   const colorMapDisplay = getColorMap(data);
   const dataTable = data.map(
-    ({ category, id, shiftCategory }: IResShiftCategoryItem) => {
+    ({ category, id, name }: IResShiftCategoryItem) => {
       return [
-        shiftCategory,
+        name,
         category,
         <Chip
           key={`${category}-chip`}
@@ -122,19 +118,24 @@ export const ShiftCategories = () => {
           key={`${id}-menu`}
           MenuList={
             <MenuList>
-              <Link href={`/shifts/types/update/${id}`}>
-                <MenuItem>
-                  <ListItemIcon>
-                    <EditIcon />
-                  </ListItemIcon>
-                  <ListItemText>Update category</ListItemText>
-                </MenuItem>
-              </Link>
+              <MenuItem
+                onClick={() =>
+                  setIsDialogUpdateOpen({
+                    isOpen: true,
+                    shiftCategory: { category, id, name },
+                  })
+                }
+              >
+                <ListItemIcon>
+                  <EditIcon />
+                </ListItemIcon>
+                <ListItemText>Update shift category</ListItemText>
+              </MenuItem>
               <MenuItem>
                 <ListItemIcon>
                   <PlaylistRemoveIcon />
                 </ListItemIcon>
-                <ListItemText>Delete category</ListItemText>
+                <ListItemText>Delete shift category</ListItemText>
               </MenuItem>
             </MenuList>
           }
@@ -164,20 +165,18 @@ export const ShiftCategories = () => {
       />
       <Container component="main">
         <Box component="section">
-          {isSuperAdmin && (
-            <Stack direction="row" justifyContent="flex-end" sx={{ mb: 2 }}>
-              <Button
-                onClick={() => {
-                  router.push("/shifts/categories/create");
-                }}
-                startIcon={<PlaylistAddIcon />}
-                type="button"
-                variant="contained"
-              >
-                Create category
-              </Button>
-            </Stack>
-          )}
+          <Stack direction="row" justifyContent="flex-end" sx={{ mb: 2 }}>
+            <Button
+              onClick={() => {
+                setIsDialogCreateOpen(true);
+              }}
+              startIcon={<PlaylistAddIcon />}
+              type="button"
+              variant="contained"
+            >
+              Create shift category
+            </Button>
+          </Stack>
           <DataTable
             columnList={columnList}
             dataTable={dataTable}
@@ -185,6 +184,30 @@ export const ShiftCategories = () => {
           />
         </Box>
       </Container>
+
+      {/* create dialog */}
+      <ShiftCategoriesDialogCreate
+        handleDialogCreateClose={() => setIsDialogCreateOpen(false)}
+        isDialogCreateOpen={isDialogCreateOpen}
+        shiftCategoryList={data}
+      />
+
+      {/* update dialog */}
+      <ShiftCategoriesDialogUpdate
+        handleDialogUpdateClose={() =>
+          setIsDialogUpdateOpen({
+            isOpen: false,
+            shiftCategory: {
+              category: "",
+              id: 0,
+              name: "",
+            },
+          })
+        }
+        isDialogUpdateOpen={isDialogUpdateOpen.isOpen}
+        shiftCategory={isDialogUpdateOpen.shiftCategory}
+        shiftCategoryList={data}
+      />
     </>
   );
 };
