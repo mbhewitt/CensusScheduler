@@ -1,6 +1,6 @@
 # CensusScheduler
 
-Census Scheduler Volunteer Management when there is no internet access. The primary goal is a system that can run a server for volunteer mangement that uses tablets as the primary interface.
+Census Scheduler is a shift management and staff scheduling application without access to the internet. The primary goal is to build a system that is comprised of a local server and multiple tablets for volunteers.
 
 see https://github.com/mbhewitt/CensusScheduler/blob/main/OPS_Install.md for server install and https://github.com/mbhewitt/CensusScheduler/blob/main/Tablet_setup.md for tablet setup.
 
