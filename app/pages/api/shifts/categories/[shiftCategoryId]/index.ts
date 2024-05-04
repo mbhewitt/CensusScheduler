@@ -5,14 +5,14 @@ import { pool } from "lib/database";
 import type { IResShiftCategoryItem } from "src/components/types";
 
 const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
+  const { shiftCategoryId } = req.query;
+
   switch (req.method) {
     // patch
     // --------------------
     case "PATCH": {
       // update shift category
-      const { category, id, name }: IResShiftCategoryItem = JSON.parse(
-        req.body
-      );
+      const { category, name }: IResShiftCategoryItem = JSON.parse(req.body);
 
       await pool.query<RowDataPacket[]>(
         `UPDATE op_shift_category
@@ -21,7 +21,24 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
           shift_category=?,
           update_category=true
         WHERE shift_category_id=?`,
-        [category, name, id]
+        [category, name, shiftCategoryId]
+      );
+
+      return res.status(200).json({
+        statusCode: 200,
+        message: "OK",
+      });
+    }
+
+    // delete
+    // --------------------
+    case "DELETE": {
+      // delete shift category
+      await pool.query<RowDataPacket[]>(
+        `UPDATE op_shift_category
+        SET delete_category=true
+        WHERE shift_category_id=?`,
+        [shiftCategoryId]
       );
 
       return res.status(200).json({

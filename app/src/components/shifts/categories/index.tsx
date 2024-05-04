@@ -25,6 +25,7 @@ import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { Hero } from "src/components/layout/Hero";
 import { ShiftCategoriesDialogCreate } from "src/components/shifts/categories/ShiftCategoriesDialogCreate";
+import { ShiftCategoriesDialogDelete } from "src/components/shifts/categories/ShiftCategoriesDialogDelete";
 import { ShiftCategoriesDialogUpdate } from "src/components/shifts/categories/ShiftCategoriesDialogUpdate";
 import type { IResShiftCategoryItem } from "src/components/types";
 import { fetcherGet } from "src/utils/fetcher";
@@ -39,6 +40,14 @@ export const ShiftCategories = () => {
   // --------------------
   const [isDialogCreateOpen, setIsDialogCreateOpen] = useState(false);
   const [isDialogUpdateOpen, setIsDialogUpdateOpen] = useState({
+    isOpen: false,
+    shiftCategory: {
+      category: "",
+      id: 0,
+      name: "",
+    },
+  });
+  const [isDialogDeleteOpen, setIsDialogDeleteOpen] = useState({
     isOpen: false,
     shiftCategory: {
       category: "",
@@ -131,7 +140,14 @@ export const ShiftCategories = () => {
                 </ListItemIcon>
                 <ListItemText>Update shift category</ListItemText>
               </MenuItem>
-              <MenuItem>
+              <MenuItem
+                onClick={() =>
+                  setIsDialogDeleteOpen({
+                    isOpen: true,
+                    shiftCategory: { category, id, name },
+                  })
+                }
+              >
                 <ListItemIcon>
                   <PlaylistRemoveIcon />
                 </ListItemIcon>
@@ -207,6 +223,22 @@ export const ShiftCategories = () => {
         isDialogUpdateOpen={isDialogUpdateOpen.isOpen}
         shiftCategory={isDialogUpdateOpen.shiftCategory}
         shiftCategoryList={data}
+      />
+
+      {/* delete dialog */}
+      <ShiftCategoriesDialogDelete
+        handleDialogDeleteClose={() =>
+          setIsDialogDeleteOpen({
+            isOpen: false,
+            shiftCategory: {
+              category: "",
+              id: 0,
+              name: "",
+            },
+          })
+        }
+        isDialogDeleteOpen={isDialogDeleteOpen.isOpen}
+        shiftCategory={isDialogDeleteOpen.shiftCategory}
       />
     </>
   );

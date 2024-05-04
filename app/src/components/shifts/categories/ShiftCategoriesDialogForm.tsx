@@ -13,20 +13,18 @@ import { IResShiftCategoryItem } from "src/components/types";
 
 export interface IFormValues {
   category: string;
-  id: number;
   name: string;
 }
 interface IShiftCategoriesDialogFormProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<IFormValues, any>;
   errors: FieldErrors<IFormValues>;
-  shiftCategory: IResShiftCategoryItem;
+  shiftCategory: IFormValues;
   shiftCategoryList: IResShiftCategoryItem[];
 }
 
 export const defaultValues: IFormValues = {
   category: "",
-  id: 0,
   name: "",
 };
 export const ShiftCategoriesDialogForm = ({
@@ -43,22 +41,6 @@ export const ShiftCategoriesDialogForm = ({
 
   return (
     <Stack direction="row" gap={2}>
-      {/* hide ID field */}
-      <Controller
-        control={control}
-        name="id"
-        render={({ field }) => (
-          <TextField
-            {...field}
-            label="ID"
-            sx={{
-              display: "none",
-            }}
-            variant="standard"
-          />
-        )}
-      />
-
       <Controller
         control={control}
         name="name"

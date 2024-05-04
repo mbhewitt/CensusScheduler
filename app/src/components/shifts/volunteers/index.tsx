@@ -215,7 +215,6 @@ export const ShiftVolunteers = () => {
   );
   const isAdmin = checkIsAdmin(accountType, roleList);
 
-  // handle check in toggle
   const handleCheckInToggle = async ({
     checked,
     playaName,

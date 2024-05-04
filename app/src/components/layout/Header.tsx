@@ -99,7 +99,6 @@ export const Header = () => {
   const isAdmin = checkIsAdmin(accountType, roleList);
   const isSuperAdmin = checkIsSuperAdmin(roleList);
 
-  // handle sign out
   const handleSignOut = () => {
     signOut(
       developerModeDispatch,
@@ -111,8 +110,6 @@ export const Header = () => {
       worldName
     );
   };
-
-  // handle drawer
   const handleDrawerOpen = () => {
     setIsDrawerOpen(true);
   };

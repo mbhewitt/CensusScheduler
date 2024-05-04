@@ -55,7 +55,6 @@ export const ShiftCategoriesDialogUpdate = ({
   // --------------------
   useEffect(() => {
     setValue("category", shiftCategory.category);
-    setValue("id", shiftCategory.id);
     setValue("name", shiftCategory.name);
   }, [shiftCategory, setValue]);
 

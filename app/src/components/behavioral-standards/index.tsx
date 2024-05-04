@@ -77,6 +77,7 @@ export const BehavioralStandards = () => {
 
   const handleDecline = async () => {
     try {
+      // update database
       await trigger({
         body: { isBehavioralStandardsSigned: false, shiftboardId },
         method: "POST",
