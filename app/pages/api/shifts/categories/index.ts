@@ -51,12 +51,7 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
           shift_category,
           shift_category_id
         )
-        VALUES (
-          ?,
-          true,
-          ?,
-          ?
-        )`,
+        VALUES (?, true, ?, ?)`,
         [category, name, shiftCategoryIdNew]
       );
 

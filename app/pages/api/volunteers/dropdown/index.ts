@@ -28,7 +28,12 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         // get core volunteers
         case "core": {
           [dbVolunteerList] = await pool.query<RowDataPacket[]>(
-            `SELECT v.playa_name, r.role, r.role_id, v.shiftboard_id, v.world_name
+            `SELECT
+              r.role_id,
+              r.role,
+              v.playa_name,
+              v.shiftboard_id,
+              v.world_name
             FROM op_volunteers AS v
             JOIN op_volunteer_roles AS vr
             ON vr.shiftboard_id=v.shiftboard_id
@@ -44,7 +49,12 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         // get all volunteers
         default: {
           [dbVolunteerList] = await pool.query<RowDataPacket[]>(
-            `SELECT v.playa_name, r.role, r.role_id, v.shiftboard_id, v.world_name
+            `SELECT
+              r.role_id,
+              r.role,
+              v.playa_name,
+              v.shiftboard_id,
+              v.world_name
             FROM op_volunteers AS v
             LEFT JOIN op_volunteer_roles AS vr
             ON vr.shiftboard_id=v.shiftboard_id

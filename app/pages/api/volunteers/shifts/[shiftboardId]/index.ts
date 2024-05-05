@@ -16,7 +16,16 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
       // get all volunteer shifts
       const { shiftboardId } = req.query;
       const [dbVolunteerShiftList] = await pool.query<RowDataPacket[]>(
-        `SELECT sc.category, st.date, d.datename, st.end_time, vs.noshow, pt.position, vs.shift_position_id, vs.shift_times_id, st.start_time
+        `SELECT
+          d.datename,
+          pt.position,
+          sc.category,
+          st.date,
+          st.end_time,
+          st.start_time
+          vs.noshow,
+          vs.shift_position_id,
+          vs.shift_times_id,
         FROM op_volunteer_shifts AS vs
         JOIN op_shift_position AS sp
         ON sp.shift_position_id=vs.shift_position_id

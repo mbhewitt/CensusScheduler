@@ -15,7 +15,9 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
 
       await pool.query<RowDataPacket[]>(
         `UPDATE op_volunteers
-        SET passcode=?, update_volunteer=true
+        SET
+          passcode=?,
+          update_volunteer=true
         WHERE shiftboard_id=?`,
         [passcode, shiftboardId]
       );

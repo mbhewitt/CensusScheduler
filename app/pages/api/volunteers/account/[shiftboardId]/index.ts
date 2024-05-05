@@ -13,7 +13,9 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     case "GET": {
       // get volunteer account
       const [dbRoleList] = await pool.query<RowDataPacket[]>(
-        `SELECT r.role, r.role_id
+        `SELECT
+          r.role,
+          r.role_id
         FROM op_roles as r
         JOIN op_volunteer_roles AS vr
         ON r.role_id=vr.role_id
@@ -22,7 +24,16 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         [shiftboardId]
       );
       const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
-        `SELECT create_volunteer, email, emergency_contact, location, notes, phone, playa_name, shiftboard_id, world_name
+        `SELECT
+          create_volunteer,
+          email,
+          emergency_contact,
+          location,
+          notes,
+          phone,
+          playa_name,
+          shiftboard_id,
+          world_name
         FROM op_volunteers
         WHERE delete_volunteer=false
         AND shiftboard_id=?

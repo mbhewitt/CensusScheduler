@@ -15,7 +15,9 @@ const shiftTypeDefaults = async (req: NextApiRequest, res: NextApiResponse) => {
     case "GET": {
       // get all shift type names
       const [dbTypeList] = await pool.query<RowDataPacket[]>(
-        `SELECT shift_name, shift_name_id
+        `SELECT
+          shift_name,
+          shift_name_id
         FROM op_shift_name
         ORDER BY shift_name`
       );
@@ -27,7 +29,9 @@ const shiftTypeDefaults = async (req: NextApiRequest, res: NextApiResponse) => {
       );
       // get all shift categories
       const [dbCategoryList] = await pool.query<RowDataPacket[]>(
-        `SELECT shift_category, shift_category_id
+        `SELECT
+          shift_category,
+          shift_category_id
         FROM op_shift_category
         ORDER BY shift_category`
       );

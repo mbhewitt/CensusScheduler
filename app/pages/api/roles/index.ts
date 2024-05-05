@@ -12,7 +12,10 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
     case "GET": {
       // get all roles
       const [dbRoleList] = await pool.query<RowDataPacket[]>(
-        `SELECT display, role, role_id
+        `SELECT
+          display,
+          role,
+          role_id
         FROM op_roles
         WHERE delete_role=false
         ORDER BY role`
@@ -61,7 +64,13 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
       const roleIdNew = generateId(roleIdQuery);
 
       await pool.query(
-        `INSERT INTO op_roles (create_role, delete_role, display, role, role_id)
+        `INSERT INTO op_roles (
+          create_role,
+          delete_role,
+          display,
+          role,
+          role_id
+        )
         VALUES (true, false, true, ?, ?)`,
         [roleName, roleIdNew]
       );

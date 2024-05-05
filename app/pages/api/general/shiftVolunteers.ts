@@ -14,7 +14,9 @@ export const shiftVolunteerCheckIn = async (
 
   await pool.query<RowDataPacket[]>(
     `UPDATE op_volunteer_shifts
-    SET noshow=?, update_shift=true
+    SET
+      noshow=?,
+      update_shift=true
     WHERE shift_position_id=?
     AND shift_times_id=?
     AND shiftboard_id=?`,
@@ -36,7 +38,9 @@ export const shiftVolunteerRemove = async (
 
   await pool.query<RowDataPacket[]>(
     `UPDATE op_volunteer_shifts
-    SET add_shift=false, remove_shift=true
+    SET
+      add_shift=false,
+      remove_shift=true
     WHERE shift_position_id=?
     AND shift_times_id=?
     AND shiftboard_id=?`,

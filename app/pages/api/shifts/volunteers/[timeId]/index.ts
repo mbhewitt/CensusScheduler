@@ -19,7 +19,21 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       // get all shift volunteers
       const { timeId } = req.query;
       const [dbShiftPositionList] = await pool.query<RowDataPacket[]>(
-        `SELECT st.date, d.datename, st.end_time, st.notes, pt.position, pt.position_details, sp.position_type_id, pt.prerequisite_id, pt.role_id, sn.shift_name, sp.shift_position_id, st.start_time, sp.total_slots, st.year
+        `SELECT
+          d.datename,
+          pt.position_details,
+          pt.position,
+          pt.prerequisite_id,
+          pt.role_id,
+          sn.shift_name,
+          sp.position_type_id,
+          sp.shift_position_id,
+          sp.total_slots,
+          st.date,
+          st.end_time,
+          st.notes,
+          st.start_time,
+          st.year
         FROM op_shift_times AS st
         LEFT JOIN op_dates AS d
         ON d.date=st.date
@@ -37,7 +51,15 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         [timeId]
       );
       const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
-        `SELECT vs.noshow, v.playa_name, pt.position, sp.position_type_id, vs.shift_position_id, vs.shift_times_id, vs.shiftboard_id, v.world_name
+        `SELECT
+          pt.position,
+          sp.position_type_id,
+          v.playa_name,
+          v.world_name
+          vs.noshow,
+          vs.shift_position_id,
+          vs.shift_times_id,
+          vs.shiftboard_id,
         FROM op_volunteer_shifts AS vs
         JOIN op_shift_position AS sp
         ON sp.remove_shift_position=false
@@ -138,7 +160,10 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       if (dbShiftVolunteerFirst) {
         await pool.query<RowDataPacket[]>(
           `UPDATE op_volunteer_shifts
-          SET noshow=?, add_shift=true, remove_shift=false
+          SET
+            noshow=?,
+            add_shift=true,
+            remove_shift=false
           WHERE shift_position_id=?
           AND shift_times_id=?
           AND shiftboard_id=?`,
@@ -147,7 +172,13 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       } else {
         // else insert them into the table
         await pool.query<RowDataPacket[]>(
-          `INSERT INTO op_volunteer_shifts (add_shift, noshow, shift_position_id, shift_times_id, shiftboard_id)
+          `INSERT INTO op_volunteer_shifts (
+            add_shift,
+            noshow,
+            shift_position_id,
+            shift_times_id,
+            shiftboard_id
+          )
           VALUES (true, ?, ?, ?, ?)`,
           [noShow, shiftPositionId, timeId, shiftboardId]
         );

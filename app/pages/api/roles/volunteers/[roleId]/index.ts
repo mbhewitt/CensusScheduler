@@ -13,7 +13,12 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     case "GET": {
       // get all role volunteers
       const [dbRoleVolunteerList] = await pool.query<RowDataPacket[]>(
-        `SELECT v.playa_name, r.role, r.role_id, vr.shiftboard_id, v.world_name
+        `SELECT
+          v.playa_name,
+          r.role,
+          r.role_id,
+          vr.shiftboard_id,
+          v.world_name
         FROM op_volunteer_roles AS vr
         JOIN op_volunteers AS v
         ON vr.shiftboard_id=v.shiftboard_id
@@ -59,7 +64,9 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       if (dbRoleVolunteerFirst) {
         await pool.query<RowDataPacket[]>(
           `UPDATE op_volunteer_roles
-          SET add_role=true, remove_role=false
+          SET
+            add_role=true,
+            remove_role=false
           WHERE roles=?
           AND shiftboard_id=?`,
           [roleId, shiftboardId]
@@ -67,7 +74,12 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         // else insert role volunteer row
       } else {
         await pool.query(
-          `INSERT INTO op_volunteer_roles (add_role, remove_role, role_id, shiftboard_id)
+          `INSERT INTO op_volunteer_roles (
+            add_role,
+            remove_role,
+            role_id,
+            shiftboard_id
+          )
           VALUES (true, false, ?, ?)`,
           [roleId, shiftboardId]
         );
@@ -87,7 +99,9 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
 
       await pool.query<RowDataPacket[]>(
         `UPDATE op_volunteer_roles
-        SET add_role=false, remove_role=true
+        SET
+          add_role=false,
+          remove_role=true
         WHERE role_id=?
         AND shiftboard_id=?`,
         [roleId, shiftboardId]

@@ -13,7 +13,10 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
     case "GET": {
       // get role
       const [dbRoleList] = await pool.query<RowDataPacket[]>(
-        `SELECT display, role, role_id
+        `SELECT
+          display,
+          role,
+          role_id
         FROM op_roles
         WHERE delete_role=false
         AND role_id=?
@@ -38,7 +41,9 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
 
       await pool.query<RowDataPacket[]>(
         `UPDATE op_roles
-        SET role=?, update_role=true
+        SET
+          role=?,
+          update_role=true
         WHERE role_id=?`,
         [name, roleId]
       );
@@ -55,7 +60,9 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
       // delete role
       await pool.query<RowDataPacket[]>(
         `UPDATE op_roles
-        SET create_role=false, delete_role=true
+        SET
+          create_role=false,
+          delete_role=true
         WHERE role_id=?`,
         [roleId]
       );

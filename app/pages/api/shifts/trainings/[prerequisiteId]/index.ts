@@ -12,7 +12,20 @@ const shiftTrainings = async (req: NextApiRequest, res: NextApiResponse) => {
       // get all shift volunteer trainings
       const { prerequisiteId } = req.query;
       const [dbTrainingList] = await pool.query<RowDataPacket[]>(
-        `SELECT sc.category, sc.shift_category_id, st.date, d.datename, st.end_time, sp.position_type_id, sn.shift_name, st.shift_times_id, vs.shiftboard_id, st.start_time, sp.total_slots, st.year, vs.remove_shift
+        `SELECT
+          d.datename,
+          sc.category,
+          sc.shift_category_id,
+          sn.shift_name,
+          sp.position_type_id,
+          sp.total_slots,
+          st.date,
+          st.end_time,
+          st.shift_times_id,
+          st.start_time,
+          st.year,
+          vs.remove_shift
+          vs.shiftboard_id,
         FROM op_shift_times AS st
         JOIN op_shift_name AS sn
         ON sn.delete_shift=false

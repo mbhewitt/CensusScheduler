@@ -11,7 +11,14 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
       const { email, isReplyWanted, message, name, to } = JSON.parse(req.body);
 
       await pool.query(
-        "INSERT INTO op_messages (email, message, name, `to`, wants_reply) VALUES (?, ?, ?, ?, ?)",
+        `INSERT INTO op_messages (
+          email,
+          message,
+          name,
+          to,
+          wants_reply
+        )
+        VALUES (?, ?, ?, ?, ?)`,
         [email, message, name, to, isReplyWanted]
       );
 
