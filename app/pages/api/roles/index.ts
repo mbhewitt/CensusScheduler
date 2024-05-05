@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
 import type { IResRoleItem } from "src/components/types";
-import { checkIsIdExists, generateId } from "src/utils/generateId";
+import { generateId } from "src/utils/generateId";
 
 const roles = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
@@ -33,35 +33,12 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
     // --------------------
     case "POST": {
       // create role
-      const { roleId, roleName } = JSON.parse(req.body);
-      const roleIdQuery = `
-        SELECT role_id
+      const { name } = JSON.parse(req.body);
+      const roleIdNew = generateId(
+        `SELECT role_id
         FROM op_roles
-        WHERE role_id=?
-      `;
-      const isRoleIdExist = await checkIsIdExists(roleIdQuery, roleId);
-
-      // if role name exists already
-      // then update role row
-      if (isRoleIdExist) {
-        await pool.query<RowDataPacket[]>(
-          `UPDATE op_roles
-            SET
-              create_role=true,
-              delete_role=false,
-              display=true
-            WHERE role_id=?`,
-          [roleId]
-        );
-
-        return res.status(201).json({
-          statusCode: 201,
-          message: "Created",
-        });
-      }
-
-      // else insert new role row
-      const roleIdNew = generateId(roleIdQuery);
+        WHERE role_id=?`
+      );
 
       await pool.query(
         `INSERT INTO op_roles (
@@ -72,7 +49,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
           role_id
         )
         VALUES (true, false, true, ?, ?)`,
-        [roleName, roleIdNew]
+        [name, roleIdNew]
       );
 
       return res.status(201).json({

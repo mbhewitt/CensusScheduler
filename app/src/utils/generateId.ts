@@ -4,7 +4,7 @@ import { pool } from "lib/database";
 
 const randomNum = () => Math.floor(Math.random() * 1000000 + 1);
 
-export const checkIsIdExists = async (query: string, id: number) => {
+const checkIsIdExists = async (query: string, id: number) => {
   const [dbIdList] = await pool.query<RowDataPacket[]>(query, [id]);
   const dbIdFirst = dbIdList[0];
 
