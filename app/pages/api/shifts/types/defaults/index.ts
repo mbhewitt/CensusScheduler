@@ -28,19 +28,18 @@ const shiftTypeDefaults = async (req: NextApiRequest, res: NextApiResponse) => {
         })
       );
       // get all shift categories
-      const [dbCategoryList] = await pool.query<RowDataPacket[]>(
+      const [dbShiftCategoryList] = await pool.query<RowDataPacket[]>(
         `SELECT
           shift_category,
           shift_category_id
         FROM op_shift_category
         ORDER BY shift_category`
       );
-      const resCategoryList: IResShiftTypeCategoryItem[] = dbCategoryList.map(
-        ({ shift_category, shift_category_id }) => ({
+      const resShiftCategoryList: IResShiftTypeCategoryItem[] =
+        dbShiftCategoryList.map(({ shift_category, shift_category_id }) => ({
           id: shift_category_id,
           name: shift_category,
-        })
-      );
+        }));
       // get all shift positions
       const [dbPositionList] = await pool.query<RowDataPacket[]>(
         `SELECT
@@ -85,8 +84,8 @@ const shiftTypeDefaults = async (req: NextApiRequest, res: NextApiResponse) => {
       );
 
       return res.status(200).json({
-        categoryList: resCategoryList,
         positionList: resPositionList,
+        shiftCategoryList: resShiftCategoryList,
         typeList: resTypeList,
       });
     }

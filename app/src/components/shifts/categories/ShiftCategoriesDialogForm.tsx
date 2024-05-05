@@ -19,7 +19,7 @@ interface IShiftCategoriesDialogFormProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<IFormValues, any>;
   errors: FieldErrors<IFormValues>;
-  shiftCategory: IFormValues;
+  shiftCategoryName: string;
   shiftCategoryList: IResShiftCategoryItem[];
 }
 
@@ -30,12 +30,12 @@ export const defaultValues: IFormValues = {
 export const ShiftCategoriesDialogForm = ({
   control,
   errors,
-  shiftCategory,
+  shiftCategoryName,
   shiftCategoryList,
 }: IShiftCategoriesDialogFormProps) => {
   // render
   // --------------------
-  const categoryListDisplay = [
+  const shiftCategoryListDisplay = [
     ...new Set(shiftCategoryList.map(({ category }) => category)),
   ].sort();
 
@@ -63,7 +63,7 @@ export const ShiftCategoriesDialogForm = ({
             },
             shiftCategoryNameAvailable: (value) => {
               const isShiftCategoryNameAvailable =
-                value === shiftCategory.name ||
+                value === shiftCategoryName ||
                 shiftCategoryList.every(({ name }) => name !== value);
 
               return (
@@ -87,9 +87,9 @@ export const ShiftCategoriesDialogForm = ({
               labelId="category"
               required
             >
-              {categoryListDisplay.map((categoryItem) => (
-                <MenuItem key={categoryItem} value={categoryItem}>
-                  {categoryItem}
+              {shiftCategoryListDisplay.map((shiftCategoryItem) => (
+                <MenuItem key={shiftCategoryItem} value={shiftCategoryItem}>
+                  {shiftCategoryItem}
                 </MenuItem>
               ))}
             </Select>

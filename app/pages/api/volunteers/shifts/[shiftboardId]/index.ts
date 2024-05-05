@@ -22,10 +22,10 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
           sc.category,
           st.date,
           st.end_time,
-          st.start_time
+          st.start_time,
           vs.noshow,
           vs.shift_position_id,
-          vs.shift_times_id,
+          vs.shift_times_id
         FROM op_volunteer_shifts AS vs
         JOIN op_shift_position AS sp
         ON sp.shift_position_id=vs.shift_position_id

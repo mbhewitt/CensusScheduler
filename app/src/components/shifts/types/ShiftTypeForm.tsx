@@ -59,8 +59,8 @@ export interface IFormValues {
   timeList: IResShiftTypeTimeItem[];
 }
 interface IDataDefaults {
-  categoryList: IResShiftTypeCategoryItem[];
   positionList: IResShiftTypePositionItem[];
+  shiftCategoryList: IResShiftTypeCategoryItem[];
   typeList: IResShiftTypeItem[];
 }
 interface IShiftTypeFormProps {
@@ -87,7 +87,7 @@ export const findCategoryId = (
   dataDefaults: IDataDefaults,
   formValues: IFormValues
 ) => {
-  const categoryItem = dataDefaults.categoryList.find(
+  const categoryItem = dataDefaults.shiftCategoryList.find(
     ({ name }: { name: string }) => {
       return name === formValues.information.category;
     }
@@ -266,7 +266,7 @@ export const ShiftTypeForm = ({
                         labelId="category"
                         required
                       >
-                        {dataDefaults.categoryList.map(
+                        {dataDefaults.shiftCategoryList.map(
                           ({ id, name }: IResShiftTypeCategoryItem) => (
                             <MenuItem key={id} value={name}>
                               {name}

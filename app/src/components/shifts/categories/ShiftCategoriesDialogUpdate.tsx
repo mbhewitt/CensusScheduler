@@ -19,20 +19,20 @@ import { fetcherTrigger } from "src/utils/fetcher";
 interface IShiftCategoriesDialogUpdateProps {
   handleDialogUpdateClose: () => void;
   isDialogUpdateOpen: boolean;
-  shiftCategory: IResShiftCategoryItem;
+  shiftCategoryItem: IResShiftCategoryItem;
   shiftCategoryList: IResShiftCategoryItem[];
 }
 
 export const ShiftCategoriesDialogUpdate = ({
   handleDialogUpdateClose,
   isDialogUpdateOpen,
-  shiftCategory,
+  shiftCategoryItem,
   shiftCategoryList,
 }: IShiftCategoriesDialogUpdateProps) => {
   // fetching, mutation, and revalidation
   // --------------------
   const { isMutating, trigger } = useSWRMutation(
-    `/api/shifts/categories/${shiftCategory.id}`,
+    `/api/shifts/categories/${shiftCategoryItem.id}`,
     fetcherTrigger
   );
   const { mutate } = useSWRConfig();
@@ -54,9 +54,9 @@ export const ShiftCategoriesDialogUpdate = ({
   // side effects
   // --------------------
   useEffect(() => {
-    setValue("category", shiftCategory.category);
-    setValue("name", shiftCategory.name);
-  }, [shiftCategory, setValue]);
+    setValue("category", shiftCategoryItem.category);
+    setValue("name", shiftCategoryItem.name);
+  }, [shiftCategoryItem, setValue]);
 
   // form submission
   // --------------------
@@ -108,7 +108,7 @@ export const ShiftCategoriesDialogUpdate = ({
         <ShiftCategoriesDialogForm
           control={control}
           errors={errors}
-          shiftCategory={shiftCategory}
+          shiftCategoryName={shiftCategoryItem.name}
           shiftCategoryList={shiftCategoryList}
         />
         <DialogActions>

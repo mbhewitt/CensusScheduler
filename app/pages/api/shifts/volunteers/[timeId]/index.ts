@@ -55,11 +55,11 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           pt.position,
           sp.position_type_id,
           v.playa_name,
-          v.world_name
+          v.world_name,
           vs.noshow,
           vs.shift_position_id,
           vs.shift_times_id,
-          vs.shiftboard_id,
+          vs.shiftboard_id
         FROM op_volunteer_shifts AS vs
         JOIN op_shift_position AS sp
         ON sp.remove_shift_position=false
