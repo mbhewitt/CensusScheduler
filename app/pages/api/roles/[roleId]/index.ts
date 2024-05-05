@@ -18,8 +18,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
           role,
           role_id
         FROM op_roles
-        WHERE delete_role=false
-        AND role_id=?
+        WHERE role_id=?
         ORDER BY role`,
         [roleId]
       );
@@ -60,9 +59,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
       // delete role
       await pool.query<RowDataPacket[]>(
         `UPDATE op_roles
-        SET
-          create_role=false,
-          delete_role=true
+        SET delete_role=true
         WHERE role_id=?`,
         [roleId]
       );

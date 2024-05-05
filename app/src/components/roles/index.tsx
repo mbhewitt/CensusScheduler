@@ -47,8 +47,8 @@ import {
 
 interface IRoleDisplay {
   checked: boolean;
-  roleId: number;
-  roleName: string;
+  id: number;
+  name: string;
 }
 
 export const Roles = () => {
@@ -86,22 +86,18 @@ export const Roles = () => {
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
-  const handleDisplayToggle = async ({
-    checked,
-    roleId,
-    roleName,
-  }: IRoleDisplay) => {
+  const handleDisplayToggle = async ({ checked, id, name }: IRoleDisplay) => {
     try {
       // update database
       // workaround to handle dynamic routing
-      await axios.patch(`/api/roles/${roleId}/display`, {
+      await axios.patch(`/api/roles/${id}/display`, {
         checked,
       });
       mutate("/api/roles");
 
       enqueueSnackbar(
         <SnackbarText>
-          <strong>{roleName}</strong> role display has been set to{" "}
+          <strong>{name}</strong> role display has been set to{" "}
           <strong>{checked ? "on" : "off"}</strong>
         </SnackbarText>,
         {
@@ -149,58 +145,24 @@ export const Roles = () => {
       },
     },
   ];
-  const dataTable = data.map(
-    ({ display, id: roleId, name: roleName }: IResRoleItem) => {
-      // if role ID is super admin, admin, or behavioral standards
-      // then disable actions
-      if (
-        roleId === ROLE_ADMIN_ID ||
-        roleId === ROLE_CORE_CREW_ID ||
-        roleId === ROLE_BEHAVIORAL_STANDARDS_ID ||
-        roleId === ROLE_SUPER_ADMIN_ID
-      ) {
-        return [
-          roleName,
-          <Switch disabled checked={display} key={`${roleId}-switch`} />,
-          <MoreMenu
-            Icon={<MoreHorizIcon />}
-            key={`${roleId}-menu`}
-            MenuList={
-              <MenuList>
-                <Link href={`/roles/volunteers/${roleId}`}>
-                  <MenuItem>
-                    <ListItemIcon>
-                      <Groups3Icon />
-                    </ListItemIcon>
-                    <ListItemText>View volunteers</ListItemText>
-                  </MenuItem>
-                </Link>
-              </MenuList>
-            }
-          />,
-        ];
-      }
-
-      // else display normal row
+  const dataTable = data.map(({ display, id, name }: IResRoleItem) => {
+    // if role ID is super admin, admin, or behavioral standards
+    // then disable actions
+    if (
+      id === ROLE_ADMIN_ID ||
+      id === ROLE_CORE_CREW_ID ||
+      id === ROLE_BEHAVIORAL_STANDARDS_ID ||
+      id === ROLE_SUPER_ADMIN_ID
+    ) {
       return [
-        roleName,
-        <Switch
-          checked={display}
-          onChange={(event) =>
-            handleDisplayToggle({
-              checked: event.target.checked,
-              roleId,
-              roleName,
-            })
-          }
-          key={`${roleId}-switch`}
-        />,
+        name,
+        <Switch disabled checked={display} key={`${id}-switch`} />,
         <MoreMenu
           Icon={<MoreHorizIcon />}
-          key={`${roleId}-menu`}
+          key={`${id}-menu`}
           MenuList={
             <MenuList>
-              <Link href={`/roles/volunteers/${roleId}`}>
+              <Link href={`/roles/volunteers/${id}`}>
                 <MenuItem>
                   <ListItemIcon>
                     <Groups3Icon />
@@ -208,38 +170,70 @@ export const Roles = () => {
                   <ListItemText>View volunteers</ListItemText>
                 </MenuItem>
               </Link>
-              <MenuItem
-                onClick={() =>
-                  setIsDialogUpdateOpen({
-                    isOpen: true,
-                    role: { display, id: roleId, name: roleName },
-                  })
-                }
-              >
-                <ListItemIcon>
-                  <EditIcon />
-                </ListItemIcon>
-                <ListItemText>Update role</ListItemText>
-              </MenuItem>
-              <MenuItem
-                onClick={() =>
-                  setIsDialogDeleteOpen({
-                    isOpen: true,
-                    role: { display, id: roleId, name: roleName },
-                  })
-                }
-              >
-                <ListItemIcon>
-                  <RemoveModeratorIcon />
-                </ListItemIcon>
-                <ListItemText>Delete role</ListItemText>
-              </MenuItem>
             </MenuList>
           }
         />,
       ];
     }
-  );
+
+    // else display normal row
+    return [
+      name,
+      <Switch
+        checked={display}
+        onChange={(event) =>
+          handleDisplayToggle({
+            checked: event.target.checked,
+            id,
+            name,
+          })
+        }
+        key={`${id}-switch`}
+      />,
+      <MoreMenu
+        Icon={<MoreHorizIcon />}
+        key={`${id}-menu`}
+        MenuList={
+          <MenuList>
+            <Link href={`/roles/volunteers/${id}`}>
+              <MenuItem>
+                <ListItemIcon>
+                  <Groups3Icon />
+                </ListItemIcon>
+                <ListItemText>View volunteers</ListItemText>
+              </MenuItem>
+            </Link>
+            <MenuItem
+              onClick={() =>
+                setIsDialogUpdateOpen({
+                  isOpen: true,
+                  role: { display, id, name },
+                })
+              }
+            >
+              <ListItemIcon>
+                <EditIcon />
+              </ListItemIcon>
+              <ListItemText>Update role</ListItemText>
+            </MenuItem>
+            <MenuItem
+              onClick={() =>
+                setIsDialogDeleteOpen({
+                  isOpen: true,
+                  role: { display, id, name },
+                })
+              }
+            >
+              <ListItemIcon>
+                <RemoveModeratorIcon />
+              </ListItemIcon>
+              <ListItemText>Delete role</ListItemText>
+            </MenuItem>
+          </MenuList>
+        }
+      />,
+    ];
+  });
   const optionListCustom = { filter: false };
 
   // render
@@ -302,7 +296,7 @@ export const Roles = () => {
           })
         }
         isDialogUpdateOpen={isDialogUpdateOpen.isOpen}
-        role={isDialogUpdateOpen.role}
+        roleItem={isDialogUpdateOpen.role}
         roleList={data}
       />
 
@@ -319,7 +313,7 @@ export const Roles = () => {
           })
         }
         isDialogDeleteOpen={isDialogDeleteOpen.isOpen}
-        role={isDialogDeleteOpen.role}
+        roleItem={isDialogDeleteOpen.role}
       />
     </>
   );

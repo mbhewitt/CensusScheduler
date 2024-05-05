@@ -19,20 +19,20 @@ import { fetcherTrigger } from "src/utils/fetcher";
 interface IRolesDialogUpdateProps {
   handleDialogUpdateClose: () => void;
   isDialogUpdateOpen: boolean;
-  role: IResRoleItem;
+  roleItem: IResRoleItem;
   roleList: IResRoleItem[];
 }
 
 export const RolesDialogUpdate = ({
   handleDialogUpdateClose,
   isDialogUpdateOpen,
-  role,
+  roleItem,
   roleList,
 }: IRolesDialogUpdateProps) => {
   // fetching, mutation, and revalidation
   // --------------------
   const { isMutating, trigger } = useSWRMutation(
-    `/api/roles/${role.id}`,
+    `/api/roles/${roleItem.id}`,
     fetcherTrigger
   );
   const { mutate } = useSWRConfig();
@@ -54,20 +54,16 @@ export const RolesDialogUpdate = ({
   // side effects
   // --------------------
   useEffect(() => {
-    setValue("name", role.name);
-  }, [role, setValue]);
+    setValue("name", roleItem.name);
+  }, [roleItem, setValue]);
 
   // form submission
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
-    const roleFound = roleList.find(
-      (roleItem) => roleItem.name === formValues.name
-    );
-
     try {
       // update database
       await trigger({
-        body: roleFound,
+        body: formValues,
         method: "PATCH",
       });
       mutate("/api/roles");
@@ -111,6 +107,7 @@ export const RolesDialogUpdate = ({
         <RolesDialogForm
           control={control}
           errors={errors}
+          roleName={roleItem.name}
           roleList={roleList}
         />
         <DialogActions>
