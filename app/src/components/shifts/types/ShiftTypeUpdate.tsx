@@ -231,6 +231,7 @@ export const ShiftTypeUpdate = () => {
               positionRemove={positionRemove}
               setError={setError}
               setValue={setValue}
+              shiftTypeName={dataCurrent.information.name}
               timeAppend={timeAppend}
               timeFields={timeFields}
               timeRemove={timeRemove}

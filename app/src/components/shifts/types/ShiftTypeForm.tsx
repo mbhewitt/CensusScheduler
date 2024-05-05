@@ -28,7 +28,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
-import { useRouter } from "next/router";
 import {
   Control,
   Controller,
@@ -75,6 +74,7 @@ interface IShiftTypeFormProps {
   positionRemove: UseFieldArrayRemove;
   setError: UseFormSetError<IFormValues>;
   setValue: UseFormSetValue<IFormValues>;
+  shiftTypeName: string;
   timeAppend: UseFieldArrayAppend<IFormValues, "timeList">;
   timeFields: FieldArrayWithId<IFormValues, "timeList", "id">[];
   timeRemove: UseFieldArrayRemove;
@@ -175,16 +175,12 @@ export const ShiftTypeForm = ({
   positionRemove,
   setError,
   setValue,
+  shiftTypeName,
   timeAppend,
   timeFields,
   timeRemove,
   watch,
 }: IShiftTypeFormProps) => {
-  // fetching, mutation, and revalidation
-  // --------------------
-  const router = useRouter();
-  const { shiftTypeId } = router.query;
-
   // logic
   // --------------------
   const watchPositionList = watch("positionList");
@@ -231,17 +227,14 @@ export const ShiftTypeForm = ({
                         return Boolean(value.trim()) || "Name is required";
                       },
                       typeAvailable: (value) => {
-                        const nameFound = dataDefaults.typeList.find(
-                          ({ id }) => id === Number(shiftTypeId)
-                        )?.name;
-                        const isTypeAvailable =
-                          value === nameFound ||
-                          dataDefaults.typeList.every(({ name }) => {
-                            return name.toLowerCase() !== value.toLowerCase();
-                          });
+                        const isShiftTypeNameAvailable =
+                          value === shiftTypeName ||
+                          dataDefaults.typeList.every(
+                            ({ name }) => name !== value
+                          );
 
                         return (
-                          isTypeAvailable ||
+                          isShiftTypeNameAvailable ||
                           `${value} shift type has been added already`
                         );
                       },
