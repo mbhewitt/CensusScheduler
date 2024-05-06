@@ -76,7 +76,7 @@ const shiftTypeDefaults = async (req: NextApiRequest, res: NextApiResponse) => {
           endTimeOffset: end_time_offset,
           lead: Boolean(lead),
           name: position,
-          positionTypeId: position_type_id,
+          positionId: position_type_id,
           prerequisiteShift: shift_category ?? "",
           role: role ?? "",
           startTimeOffset: start_time_offset,

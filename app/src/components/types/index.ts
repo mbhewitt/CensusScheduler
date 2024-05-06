@@ -75,7 +75,7 @@ export interface IResShiftTypePositionItem {
   endTimeOffset: string;
   lead: boolean;
   name: string;
-  positionTypeId: number;
+  positionId: number;
   prerequisiteShift: string;
   role: string;
   startTimeOffset: string;
@@ -115,7 +115,7 @@ export interface IResShiftPositionItem {
   filledSlots: number;
   positionName: string;
   positionDetails: string;
-  positionTypeId: number;
+  positionId: number;
   prerequisiteId: number;
   roleRequiredId: number;
   shiftPositionId: number;

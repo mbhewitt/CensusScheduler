@@ -62,7 +62,7 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
       // insert new shift position rows
       positionList.forEach(
         async ({
-          positionTypeId,
+          positionId,
           totalSlots,
           wapPoints,
         }: IReqShiftTypePositionItem) => {
@@ -82,13 +82,7 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
               wap_points
             )
             VALUES (true, ?, ?, ?, ?, ?)`,
-            [
-              positionTypeId,
-              typeIdNew,
-              shiftPositionIdNew,
-              totalSlots,
-              wapPoints,
-            ]
+            [positionId, typeIdNew, shiftPositionIdNew, totalSlots, wapPoints]
           );
         }
       );
