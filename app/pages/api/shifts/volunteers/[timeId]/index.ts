@@ -90,7 +90,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             filledSlots: 0,
             positionName: position,
             positionDetails: position_details,
-            positionTypeId: position_type_id,
+            positionId: position_type_id,
             prerequisiteId: prerequisite_id ?? 0,
             roleRequiredId: role_id ?? 0,
             shiftPositionId: shift_position_id,

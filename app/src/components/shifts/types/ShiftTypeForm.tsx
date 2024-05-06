@@ -107,7 +107,7 @@ export const processPositionList = (
     );
 
     return {
-      positionTypeId: positionFound?.positionTypeId,
+      positionId: positionFound?.positionId,
       totalSlots,
       wapPoints,
     };
@@ -145,7 +145,7 @@ export const defaultValues: IFormValues = {
       endTimeOffset: "",
       lead: false,
       name: "",
-      positionTypeId: 0,
+      positionId: 0,
       prerequisiteShift: "",
       role: "",
       startTimeOffset: "",
@@ -430,7 +430,7 @@ export const ShiftTypeForm = ({
                             required
                           >
                             {dataDefaults.positionList.map(
-                              ({ positionTypeId, name: nameDefault }) => {
+                              ({ positionId, name: nameDefault }) => {
                                 const isPositionAvailable =
                                   watchPositionList.every(
                                     ({ name: nameCurrent }) => {
@@ -441,7 +441,7 @@ export const ShiftTypeForm = ({
                                 return (
                                   <MenuItem
                                     disabled={!isPositionAvailable}
-                                    key={positionTypeId}
+                                    key={positionId}
                                     value={nameDefault}
                                   >
                                     {nameDefault}
