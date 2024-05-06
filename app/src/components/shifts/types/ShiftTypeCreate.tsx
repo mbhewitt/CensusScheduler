@@ -202,6 +202,7 @@ export const ShiftTypeCreate = () => {
               positionRemove={positionRemove}
               setError={setError}
               setValue={setValue}
+              shiftTypeName={defaultValues.information.name}
               timeAppend={timeAppend}
               timeFields={timeFields}
               timeRemove={timeRemove}

@@ -11,7 +11,7 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
     // --------------------
     case "GET": {
       // get all shift categories
-      const [dbCategoryList] = await pool.query<RowDataPacket[]>(
+      const [dbShiftCategoryList] = await pool.query<RowDataPacket[]>(
         `SELECT
           category,
           shift_category,
@@ -20,17 +20,18 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
         WHERE delete_category=false
         ORDER BY shift_category`
       );
-      const resCategoryList: IResShiftCategoryItem[] = dbCategoryList.map(
-        ({ category, shift_category, shift_category_id }) => {
-          return {
-            category,
-            id: shift_category_id,
-            name: shift_category,
-          };
-        }
-      );
+      const resShiftCategoryList: IResShiftCategoryItem[] =
+        dbShiftCategoryList.map(
+          ({ category, shift_category, shift_category_id }) => {
+            return {
+              category,
+              id: shift_category_id,
+              name: shift_category,
+            };
+          }
+        );
 
-      return res.status(200).json(resCategoryList);
+      return res.status(200).json(resShiftCategoryList);
     }
 
     // post
@@ -51,12 +52,7 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
           shift_category,
           shift_category_id
         )
-        VALUES (
-          ?,
-          true,
-          ?,
-          ?
-        )`,
+        VALUES (?, true, ?, ?)`,
         [category, name, shiftCategoryIdNew]
       );
 

@@ -94,6 +94,7 @@ export const RolesDialogCreate = ({
         <RolesDialogForm
           control={control}
           errors={errors}
+          roleName={defaultValues.name}
           roleList={roleList}
         />
         <DialogActions>

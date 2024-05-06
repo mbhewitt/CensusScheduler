@@ -35,26 +35,24 @@ import {
   setCellPropsCenter,
 } from "src/utils/setCellPropsCenter";
 
+const defaultState = {
+  isOpen: false,
+  shiftCategory: {
+    category: "",
+    id: 0,
+    name: "",
+  },
+};
 export const ShiftCategories = () => {
   // state
   // --------------------
   const [isDialogCreateOpen, setIsDialogCreateOpen] = useState(false);
-  const [isDialogUpdateOpen, setIsDialogUpdateOpen] = useState({
-    isOpen: false,
-    shiftCategory: {
-      category: "",
-      id: 0,
-      name: "",
-    },
-  });
-  const [isDialogDeleteOpen, setIsDialogDeleteOpen] = useState({
-    isOpen: false,
-    shiftCategory: {
-      category: "",
-      id: 0,
-      name: "",
-    },
-  });
+  const [isDialogUpdateOpen, setIsDialogUpdateOpen] = useState(
+    structuredClone(defaultState)
+  );
+  const [isDialogDeleteOpen, setIsDialogDeleteOpen] = useState(
+    structuredClone(defaultState)
+  );
 
   // fetching, mutation, and revalidation
   // --------------------
@@ -211,34 +209,20 @@ export const ShiftCategories = () => {
       {/* update dialog */}
       <ShiftCategoriesDialogUpdate
         handleDialogUpdateClose={() =>
-          setIsDialogUpdateOpen({
-            isOpen: false,
-            shiftCategory: {
-              category: "",
-              id: 0,
-              name: "",
-            },
-          })
+          setIsDialogUpdateOpen(structuredClone(defaultState))
         }
         isDialogUpdateOpen={isDialogUpdateOpen.isOpen}
-        shiftCategory={isDialogUpdateOpen.shiftCategory}
+        shiftCategoryItem={isDialogUpdateOpen.shiftCategory}
         shiftCategoryList={data}
       />
 
       {/* delete dialog */}
       <ShiftCategoriesDialogDelete
         handleDialogDeleteClose={() =>
-          setIsDialogDeleteOpen({
-            isOpen: false,
-            shiftCategory: {
-              category: "",
-              id: 0,
-              name: "",
-            },
-          })
+          setIsDialogDeleteOpen(structuredClone(defaultState))
         }
         isDialogDeleteOpen={isDialogDeleteOpen.isOpen}
-        shiftCategory={isDialogDeleteOpen.shiftCategory}
+        shiftCategoryItem={isDialogDeleteOpen.shiftCategory}
       />
     </>
   );

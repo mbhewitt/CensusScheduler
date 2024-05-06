@@ -12,7 +12,13 @@ const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
       // check email and passcode credentials
       const { passcode, shiftboardId } = JSON.parse(req.body);
       const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
-        `SELECT core_crew, email, emergency_contact, playa_name, shiftboard_id, world_name
+        `SELECT
+          core_crew,
+          email,
+          emergency_contact,
+          playa_name,
+          shiftboard_id,
+          world_name
         FROM op_volunteers
         WHERE passcode=?
         AND shiftboard_id=?`,
@@ -31,7 +37,9 @@ const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
 
       // else send the volunteer
       const [dbRoleList] = await pool.query<RowDataPacket[]>(
-        `SELECT r.role, r.role_id
+        `SELECT
+          r.role,
+          r.role_id
         FROM op_volunteer_roles AS vr
         JOIN op_roles AS r
         ON vr.role_id=r.role_id

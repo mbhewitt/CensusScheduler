@@ -21,13 +21,13 @@ import { fetcherTrigger } from "src/utils/fetcher";
 interface IShiftCategoriesDialogDeleteProps {
   handleDialogDeleteClose: () => void;
   isDialogDeleteOpen: boolean;
-  shiftCategory: IResShiftCategoryItem;
+  shiftCategoryItem: IResShiftCategoryItem;
 }
 
 export const ShiftCategoriesDialogDelete = ({
   handleDialogDeleteClose,
   isDialogDeleteOpen,
-  shiftCategory: { id, name },
+  shiftCategoryItem: { id, name },
 }: IShiftCategoriesDialogDeleteProps) => {
   // fetching, mutation, and revalidation
   // --------------------

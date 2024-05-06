@@ -97,7 +97,7 @@ export const ShiftCategoriesDialogCreate = ({
         <ShiftCategoriesDialogForm
           control={control}
           errors={errors}
-          shiftCategory={defaultValues}
+          shiftCategoryName={defaultValues.name}
           shiftCategoryList={shiftCategoryList}
         />
         <DialogActions>

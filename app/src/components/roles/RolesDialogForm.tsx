@@ -10,6 +10,7 @@ interface IRolesDialogFormProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<IFormValues, any>;
   errors: FieldErrors<IFormValues>;
+  roleName: string;
   roleList: IResRoleItem[];
 }
 
@@ -19,6 +20,7 @@ export const defaultValues: IFormValues = {
 export const RolesDialogForm = ({
   control,
   errors,
+  roleName,
   roleList,
 }: IRolesDialogFormProps) => {
   // render
@@ -45,9 +47,9 @@ export const RolesDialogForm = ({
             return Boolean(value.trim()) || "Name is required";
           },
           roleNameAvailable: (value) => {
-            const isRoleNameAvailable = roleList.every(
-              ({ name }) => name.toLowerCase() !== value.toLowerCase()
-            );
+            const isRoleNameAvailable =
+              value === roleName ||
+              roleList.every(({ name }) => name !== value);
 
             return (
               isRoleNameAvailable || `${value} role has been added already`

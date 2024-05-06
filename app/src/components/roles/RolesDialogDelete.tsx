@@ -26,19 +26,19 @@ import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 interface IRolesDialogDeleteProps {
   handleDialogDeleteClose: () => void;
   isDialogDeleteOpen: boolean;
-  role: IResRoleItem;
+  roleItem: IResRoleItem;
 }
 
 export const RolesDialogDelete = ({
   handleDialogDeleteClose,
   isDialogDeleteOpen,
-  role: { id: roleId, name: roleName },
+  roleItem: { id, name },
 }: IRolesDialogDeleteProps) => {
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR(`/api/roles/volunteers/${roleId}`, fetcherGet);
+  const { data, error } = useSWR(`/api/roles/volunteers/${id}`, fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
-    `/api/roles/${roleId}`,
+    `/api/roles/${id}`,
     fetcherTrigger
   );
   const { mutate } = useSWRConfig();
@@ -81,7 +81,7 @@ export const RolesDialogDelete = ({
       handleDialogDeleteClose();
       enqueueSnackbar(
         <SnackbarText>
-          <strong>{roleName}</strong> role has been deleted
+          <strong>{name}</strong> role has been deleted
         </SnackbarText>,
         {
           variant: "success",
@@ -116,8 +116,8 @@ export const RolesDialogDelete = ({
         <>
           <DialogContentText>
             <Typography component="span">
-              Before doing so, the <strong>{roleName}</strong> role must be
-              removed from the following volunteers:
+              Before doing so, the <strong>{name}</strong> role must be removed
+              from the following volunteers:
             </Typography>
           </DialogContentText>
           <List sx={{ pl: 2, listStyleType: "disc" }}>
@@ -143,7 +143,7 @@ export const RolesDialogDelete = ({
       ) : (
         <DialogContentText>
           <Typography component="span">
-            Are you sure you want to delete <strong>{roleName}</strong> role?
+            Are you sure you want to delete <strong>{name}</strong> role?
           </Typography>
         </DialogContentText>
       )}

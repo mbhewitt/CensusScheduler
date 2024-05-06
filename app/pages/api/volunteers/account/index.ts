@@ -28,8 +28,18 @@ const account = async (req: NextApiRequest, res: NextApiResponse) => {
 
       // insert new account row
       await pool.query<RowDataPacket[]>(
-        `INSERT IGNORE INTO op_volunteers (create_volunteer, email, emergency_contact, location, passcode, phone, playa_name, shiftboard_id, world_name)
-          VALUES (true, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO op_volunteers (
+          create_volunteer,
+          email,
+          emergency_contact,
+          location,
+          passcode,
+          phone,
+          playa_name,
+          shiftboard_id,
+          world_name
+        )
+        VALUES (true, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           email,
           emergencyContact,

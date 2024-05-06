@@ -33,7 +33,9 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
       if (dbVolunteerRoleFirst) {
         await pool.query<RowDataPacket[]>(
           `UPDATE op_volunteer_roles
-          SET add_role=?, remove_role=?
+          SET
+            add_role=?,
+            remove_role=?
           WHERE role_id=?
           AND shiftboard_id=?`,
           [addRole, removeRole, ROLE_BEHAVIORAL_STANDARDS_ID, shiftboardId]
@@ -41,7 +43,12 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
         // else insert behavioral standards row
       } else {
         await pool.query<RowDataPacket[]>(
-          `INSERT INTO op_volunteer_roles (add_role, remove_role, role_id, shiftboard_id)
+          `INSERT INTO op_volunteer_roles (
+            add_role,
+            remove_role,
+            role_id,
+            shiftboard_id
+          )
           VALUES (?, ?, ?, ?)`,
           [addRole, removeRole, ROLE_BEHAVIORAL_STANDARDS_ID, shiftboardId]
         );

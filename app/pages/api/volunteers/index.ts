@@ -19,7 +19,12 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     case "GET": {
       // get all volunteers and their shift counts
       const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
-        `SELECT noshow, notes, playa_name, v.shiftboard_id, world_name
+        `SELECT
+          noshow,
+          notes,
+          playa_name,
+          v.shiftboard_id,
+          world_name
         FROM op_volunteers AS v
         LEFT JOIN op_volunteer_shifts AS vs
         ON vs.shiftboard_id=v.shiftboard_id
