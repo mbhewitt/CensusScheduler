@@ -33,7 +33,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
     // patch
     // --------------------
     case "PATCH": {
-      // update role name
+      // update role
       const { name } = JSON.parse(req.body);
 
       await pool.query<RowDataPacket[]>(

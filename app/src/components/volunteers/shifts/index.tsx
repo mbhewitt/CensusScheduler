@@ -187,7 +187,6 @@ export const VolunteerShifts = () => {
   );
   const isAdmin = checkIsAdmin(accountType, roleList);
 
-  // handle check in toggle
   const handleCheckInToggle = async ({
     checked,
     playaName,
@@ -244,7 +243,6 @@ export const VolunteerShifts = () => {
   };
 
   // prepare datatable
-  const colorMapDisplay = getColorMap(data);
   const columnList = [
     {
       name: "Date",
@@ -284,6 +282,7 @@ export const VolunteerShifts = () => {
       },
     },
   ];
+  const colorMapDisplay = getColorMap(data);
   const dataTable = data.map(
     ({
       category,

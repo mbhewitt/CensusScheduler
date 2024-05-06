@@ -17,7 +17,6 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useContext } from "react";
 import useSWR from "swr";
 
 import { DataTable } from "src/components/general/DataTable";
@@ -26,8 +25,6 @@ import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { Hero } from "src/components/layout/Hero";
 import type { IResShiftTypeItem } from "src/components/types";
-import { SessionContext } from "src/state/session/context";
-import { checkIsSuperAdmin } from "src/utils/checkIsRoleExist";
 import { fetcherGet } from "src/utils/fetcher";
 import {
   setCellHeaderPropsCenter,
@@ -35,14 +32,6 @@ import {
 } from "src/utils/setCellPropsCenter";
 
 export const ShiftTypes = () => {
-  // context
-  // --------------------
-  const {
-    sessionState: {
-      user: { roleList },
-    },
-  } = useContext(SessionContext);
-
   // fetching, mutation, and revalidation
   // --------------------
   const { data, error } = useSWR("/api/shifts/types", fetcherGet);
@@ -55,8 +44,6 @@ export const ShiftTypes = () => {
   // --------------------
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
-
-  const isSuperAdmin = checkIsSuperAdmin(roleList);
 
   // prepare datatable
   const columnList = [
@@ -75,35 +62,33 @@ export const ShiftTypes = () => {
       },
     },
   ];
-  const dataTable = data.map(
-    ({ id: typeId, name: typeName }: IResShiftTypeItem) => {
-      return [
-        typeName,
-        <MoreMenu
-          Icon={<MoreHorizIcon />}
-          key={`${typeId}-menu`}
-          MenuList={
-            <MenuList>
-              <Link href={`/shifts/types/update/${typeId}`}>
-                <MenuItem>
-                  <ListItemIcon>
-                    <EditCalendarIcon />
-                  </ListItemIcon>
-                  <ListItemText>Update type</ListItemText>
-                </MenuItem>
-              </Link>
+  const dataTable = data.map(({ id, name }: IResShiftTypeItem) => {
+    return [
+      name,
+      <MoreMenu
+        Icon={<MoreHorizIcon />}
+        key={`${id}-menu`}
+        MenuList={
+          <MenuList>
+            <Link href={`/shifts/types/update/${id}`}>
               <MenuItem>
                 <ListItemIcon>
-                  <EventBusyIcon />
+                  <EditCalendarIcon />
                 </ListItemIcon>
-                <ListItemText>Delete type</ListItemText>
+                <ListItemText>Update type</ListItemText>
               </MenuItem>
-            </MenuList>
-          }
-        />,
-      ];
-    }
-  );
+            </Link>
+            <MenuItem>
+              <ListItemIcon>
+                <EventBusyIcon />
+              </ListItemIcon>
+              <ListItemText>Delete type</ListItemText>
+            </MenuItem>
+          </MenuList>
+        }
+      />,
+    ];
+  });
   const optionListCustom = { filter: false };
 
   // render
@@ -126,20 +111,18 @@ export const ShiftTypes = () => {
       />
       <Container component="main">
         <Box component="section">
-          {isSuperAdmin && (
-            <Stack direction="row" justifyContent="flex-end" sx={{ mb: 2 }}>
-              <Button
-                onClick={() => {
-                  router.push("/shifts/types/create");
-                }}
-                startIcon={<EventAvailableIcon />}
-                type="button"
-                variant="contained"
-              >
-                Create type
-              </Button>
-            </Stack>
-          )}
+          <Stack direction="row" justifyContent="flex-end" sx={{ mb: 2 }}>
+            <Button
+              onClick={() => {
+                router.push("/shifts/types/create");
+              }}
+              startIcon={<EventAvailableIcon />}
+              type="button"
+              variant="contained"
+            >
+              Create type
+            </Button>
+          </Stack>
           <DataTable
             columnList={columnList}
             dataTable={dataTable}

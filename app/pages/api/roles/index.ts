@@ -43,7 +43,10 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
       if (isRoleIdExist) {
         await pool.query<RowDataPacket[]>(
           `UPDATE op_roles
-            SET create_role=true, delete_role=false, display=true
+            SET
+              create_role=true,
+              delete_role=false,
+              display=true
             WHERE role_id=?`,
           [roleId]
         );

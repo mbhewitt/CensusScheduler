@@ -86,7 +86,6 @@ export const Roles = () => {
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
-  // handle display toggle
   const handleDisplayToggle = async ({
     checked,
     roleId,

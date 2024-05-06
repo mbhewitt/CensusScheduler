@@ -167,7 +167,7 @@ export const Shifts = () => {
   }, [dateTimeValue, setColumnList]);
   useEffect(() => {
     // if data exists
-    // then customize the filter options display for date and name columns
+    // then customize the filter options display for date and type columns
     if (data) {
       const dateFilterList: string[] = [];
       const typeFilterList: string[] = [];
