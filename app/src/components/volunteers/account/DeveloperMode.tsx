@@ -1,10 +1,10 @@
 import { RestartAlt as RestartAltIcon } from "@mui/icons-material";
 import {
+  Box,
   Button,
   FormControlLabel,
   FormGroup,
   Grid,
-  Stack,
   Switch,
   Typography,
 } from "@mui/material";
@@ -62,81 +62,91 @@ export const DeveloperMode = () => {
         </Typography>
       </Grid>
       <Grid item xs={8}>
-        <FormGroup sx={{ mb: 2 }}>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={isAccountTypeEnabled}
-                color="secondary"
-                onChange={(event) => {
-                  if (event.target.checked) {
+        <Box sx={{ display: "inline-block" }}>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isAccountTypeEnabled}
+                  color="secondary"
+                  onChange={(event) => {
+                    if (event.target.checked) {
+                      developerModeDispatch({
+                        payload: {
+                          isEnabled: true,
+                          value: ACCOUNT_TYPE_ADMIN,
+                        },
+                        type: DEVELOPER_MODE_ACCOUNT_TYPE,
+                      });
+                    } else {
+                      developerModeDispatch({
+                        payload: {
+                          isEnabled: false,
+                          value: "",
+                        },
+                        type: DEVELOPER_MODE_ACCOUNT_TYPE,
+                      });
+                    }
+                  }}
+                />
+              }
+              label="Account type"
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isDateTimeEnabled}
+                  color="secondary"
+                  onChange={(event) => {
                     developerModeDispatch({
                       payload: {
-                        isEnabled: true,
-                        value: ACCOUNT_TYPE_ADMIN,
+                        isEnabled: event.target.checked,
+                        value: dayjs().toISOString(),
                       },
-                      type: DEVELOPER_MODE_ACCOUNT_TYPE,
+                      type: DEVELOPER_MODE_DATE_TIME,
                     });
-                  } else {
+                  }}
+                />
+              }
+              label="Date and time"
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isDisableIdleEnabled}
+                  color="secondary"
+                  onChange={(event) => {
                     developerModeDispatch({
                       payload: {
-                        isEnabled: false,
-                        value: "",
+                        isEnabled: event.target.checked,
                       },
-                      type: DEVELOPER_MODE_ACCOUNT_TYPE,
+                      type: DEVELOPER_MODE_DISABLE_IDLE,
                     });
-                  }
-                }}
-              />
-            }
-            label="Account type"
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                checked={isDateTimeEnabled}
-                color="secondary"
-                onChange={(event) => {
-                  developerModeDispatch({
-                    payload: {
-                      isEnabled: event.target.checked,
-                      value: dayjs().toISOString(),
-                    },
-                    type: DEVELOPER_MODE_DATE_TIME,
-                  });
-                }}
-              />
-            }
-            label="Date and time"
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                checked={isDisableIdleEnabled}
-                color="secondary"
-                onChange={(event) => {
-                  developerModeDispatch({
-                    payload: {
-                      isEnabled: event.target.checked,
-                    },
-                    type: DEVELOPER_MODE_DISABLE_IDLE,
-                  });
-                }}
-              />
-            }
-            label="Disable idle"
-          />
-        </FormGroup>
-        <Stack direction="row" justifyContent="flex-end">
-          <Button
-            onClick={onReset}
-            startIcon={<RestartAltIcon />}
-            type="button"
-            variant="contained"
-          >
-            Reset settings
-          </Button>
-        </Stack>
+                  }}
+                />
+              }
+              label="Disable idle"
+            />
+          </FormGroup>
+        </Box>
+      </Grid>
+      <Grid
+        container
+        item
+        justifyContent="flex-end"
+        sx={{
+          mt: 2,
+        }}
+        xs={12}
+      >
+        <Button
+          onClick={onReset}
+          startIcon={<RestartAltIcon />}
+          type="button"
+          variant="contained"
+        >
+          Reset settings
+        </Button>
       </Grid>
     </>
   );
