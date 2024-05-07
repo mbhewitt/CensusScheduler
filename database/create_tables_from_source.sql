@@ -108,11 +108,11 @@ create table op_messages (timestamp timestamp DEFAULT CURRENT_TIMESTAMP ON UPDAT
 
 
 create table op_shift_category (
-   category varchar(128) not null,shift_category varchar(128) not null,shift_category_id bigint auto_increment not null,
+   department varchar(128) not null,shift_category varchar(128) not null,shift_category_id bigint auto_increment not null,
    create_category boolean default false, delete_category boolean default false,update_category boolean default false,
-   primary key (shift_category_id), key(category),unique(shift_category));
+   primary key (shift_category_id), key(department),unique(shift_category));
 
-insert ignore into op_shift_category (category,shift_category) (
+insert ignore into op_shift_category (department,shift_category) (
    select distinct category,subcategory from subject_category where subcategory is not null);
 
 create table op_position_type (

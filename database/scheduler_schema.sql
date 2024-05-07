@@ -110,7 +110,7 @@ DROP TABLE IF EXISTS `op_shift_category`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `op_shift_category` (
-  `category` varchar(128) NOT NULL,
+  `department` varchar(128) NOT NULL,
   `shift_category` varchar(128) NOT NULL,
   `shift_category_id` bigint NOT NULL AUTO_INCREMENT,
   `create_category` tinyint(1) DEFAULT '0',
@@ -118,7 +118,7 @@ CREATE TABLE `op_shift_category` (
   `update_category` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`shift_category_id`),
   UNIQUE KEY `shift_category` (`shift_category`),
-  KEY `category` (`category`)
+  KEY `category` (`department`)
 ) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

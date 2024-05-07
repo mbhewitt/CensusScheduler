@@ -23,7 +23,7 @@
 
 ## op_shift_category -- the category a shift falls into
 
-- **category** -- name of the category
+- **department** -- name of the department the shift category belongs to.
 - **shift_category** -- name of the shift category
 - **shift_category_id** -- row id
 - **create_category** -- `Bool`, if the category is created on playa
