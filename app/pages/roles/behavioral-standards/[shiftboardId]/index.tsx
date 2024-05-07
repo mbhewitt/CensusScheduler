@@ -1,6 +1,6 @@
 import Head from "next/head";
 
-import { BehavioralStandards } from "src/components/behavioral-standards";
+import { BehavioralStandards } from "src/components/roles/behavioral-standards";
 
 const BehavioralStandardsPage = () => {
   // render

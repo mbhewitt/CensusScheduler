@@ -60,7 +60,7 @@ export const BehavioralStandards = () => {
     fetcherGet
   );
   const { isMutating, trigger } = useSWRMutation(
-    "/api/behavioral-standards",
+    "/api/roles/behavioral-standards",
     fetcherTrigger
   );
 

@@ -90,7 +90,7 @@ export const Header = () => {
       !isBehavioralStandardsSigned &&
       !router.pathname.includes("behavioral-standards")
     ) {
-      router.push(`/behavioral-standards/${shiftboardId}`);
+      router.push(`/roles/behavioral-standards/${shiftboardId}`);
     }
   }, [isAuthenticated, isBehavioralStandardsSigned, router, shiftboardId]);
 
