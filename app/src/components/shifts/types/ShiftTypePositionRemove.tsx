@@ -11,6 +11,7 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
+import Link from "next/link";
 import { useSnackbar } from "notistack";
 import { UseFieldArrayRemove } from "react-hook-form";
 import useSWR from "swr";
@@ -109,11 +110,10 @@ export const ShiftTypePositionRemove = ({
           <DialogContentText>
             <Typography component="span">
               Before doing so, <strong>{positionItem.name}</strong> volunteers
-              must be removed from the position in the following dates and
-              times:
+              must be removed from the position in the following shift times:
             </Typography>
           </DialogContentText>
-          <List sx={{ pl: 2, listStyleType: "disc" }}>
+          <List sx={{ display: "inline-block", pl: 2, listStyleType: "disc" }}>
             {data.map((timeItem: ITimeItem) => {
               return (
                 <ListItem
@@ -121,7 +121,9 @@ export const ShiftTypePositionRemove = ({
                   key={timeItem.id}
                   sx={{ display: "list-item", pl: 0 }}
                 >
-                  <ListItemText primary={timeItem.time} />
+                  <Link href={`/shifts/volunteers/${timeItem.id}`}>
+                    <ListItemText>{timeItem.time}</ListItemText>
+                  </Link>
                 </ListItem>
               );
             })}

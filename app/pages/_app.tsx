@@ -94,11 +94,6 @@ const theme = createTheme({
             textDecoration: "underline",
           },
         },
-        li: {
-          "& > a": {
-            width: "100%",
-          },
-        },
       },
     },
     MuiDialogActions: {
@@ -112,6 +107,14 @@ const theme = createTheme({
     MuiDialogContent: {
       styleOverrides: {
         root: ({ theme }) => ({
+          ul: {
+            display: "inline-block",
+            li: {
+              a: {
+                textDecoration: "underline",
+              },
+            },
+          },
           padding: `0 ${theme.spacing(2)} ${theme.spacing(2)} ${theme.spacing(
             2
           )}`,
@@ -123,12 +126,21 @@ const theme = createTheme({
         root: ({ theme }) => ({ padding: theme.spacing(2) }),
       },
     },
+    MuiDrawer: {
+      styleOverrides: {
+        root: {
+          a: {
+            width: "100%",
+          },
+        },
+      },
+    },
     MuiInputBase: {
       styleOverrides: {
-        input: () => ({
+        input: {
           overflow: "hidden",
           textOverflow: "ellipsis",
-        }),
+        },
       },
     },
     MuiTypography: {

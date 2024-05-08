@@ -38,21 +38,24 @@ import {
   setCellPropsCenter,
 } from "src/utils/setCellPropsCenter";
 
+const defaultState = {
+  isOpen: false,
+  volunteer: {
+    playaName: "",
+    roleId: 0,
+    roleName: "",
+    shiftboardId: 0,
+    worldName: "",
+  },
+};
 export const RoleVolunteers = () => {
   // state
   // --------------------
   const [isMounted, setIsMounted] = useState(false);
   const [isDialogAddOpen, setIsDialogAddOpen] = useState(false);
-  const [isDialogRemoveOpen, setIsDialogRemoveOpen] = useState({
-    isOpen: false,
-    volunteer: {
-      playaName: "",
-      roleId: 0,
-      roleName: "",
-      shiftboardId: 0,
-      worldName: "",
-    },
-  });
+  const [isDialogRemoveOpen, setIsDialogRemoveOpen] = useState(
+    structuredClone(defaultState)
+  );
 
   // fetching, mutation, and revalidation
   // --------------------
@@ -246,16 +249,7 @@ export const RoleVolunteers = () => {
       {/* remove dialog */}
       <RoleVolunteersDialogRemove
         handleDialogRemoveClose={() =>
-          setIsDialogRemoveOpen({
-            isOpen: false,
-            volunteer: {
-              playaName: "",
-              roleId: 0,
-              roleName: "",
-              shiftboardId: 0,
-              worldName: "",
-            },
-          })
+          setIsDialogRemoveOpen(structuredClone(defaultState))
         }
         isDialogRemoveOpen={isDialogRemoveOpen.isOpen}
         volunteer={isDialogRemoveOpen.volunteer}
