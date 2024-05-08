@@ -33,8 +33,8 @@ import {
   IFormValues,
   processPositionList,
   processTimeList,
-  ShiftTypeForm,
-} from "src/components/shifts/types/ShiftTypeForm";
+  ShiftTypesForm,
+} from "src/components/shifts/types/type/ShiftTypesForm";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 export const ShiftTypeCreate = () => {
@@ -92,6 +92,9 @@ export const ShiftTypeCreate = () => {
 
   const handlePositionRemove = (index: number) => {
     positionRemove(index);
+  };
+  const handleTimeRemove = (_: string, index: number) => {
+    timeRemove(index);
   };
 
   // form submission
@@ -195,13 +198,14 @@ export const ShiftTypeCreate = () => {
         </Box>
         <Box component="section">
           <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-            <ShiftTypeForm
+            <ShiftTypesForm
               clearErrors={clearErrors}
               control={control}
               dataDefaults={dataDefaults}
               errors={errors}
               getValues={getValues}
               handlePositionRemove={handlePositionRemove}
+              handleTimeRemove={handleTimeRemove}
               positionAppend={positionAppend}
               positionFields={positionFields}
               setError={setError}

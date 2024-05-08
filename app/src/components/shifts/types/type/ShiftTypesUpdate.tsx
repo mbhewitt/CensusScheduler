@@ -34,10 +34,10 @@ import {
   IFormValues,
   processPositionList,
   processTimeList,
-  ShiftTypeForm,
-} from "src/components/shifts/types/ShiftTypeForm";
-import { ShiftTypePositionRemove } from "src/components/shifts/types/ShiftTypePositionRemove";
-import { ShiftTypeTimeRemove } from "src/components/shifts/types/ShiftTypeTimeRemove";
+  ShiftTypesForm,
+} from "src/components/shifts/types/type/ShiftTypesForm";
+import { ShiftTypesPositionRemove } from "src/components/shifts/types/type/ShiftTypesPositionRemove";
+import { ShiftTypesTimeRemove } from "src/components/shifts/types/type/ShiftTypesTimeRemove";
 import {
   IResShiftTypePositionItem,
   IResShiftTypeTimeItem,
@@ -306,7 +306,7 @@ export const ShiftTypeUpdate = () => {
         </Box>
         <Box component="section">
           <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-            <ShiftTypeForm
+            <ShiftTypesForm
               clearErrors={clearErrors}
               control={control}
               dataDefaults={dataDefaults}
@@ -372,7 +372,7 @@ export const ShiftTypeUpdate = () => {
       </Container>
 
       {/* position dialog remove */}
-      <ShiftTypePositionRemove
+      <ShiftTypesPositionRemove
         handlePositionDialogRemoveClose={() =>
           setIsPositionDialogRemoveOpen(structuredClone(defaultPositionState))
         }
@@ -383,7 +383,7 @@ export const ShiftTypeUpdate = () => {
       />
 
       {/* time dialog remove */}
-      <ShiftTypeTimeRemove
+      <ShiftTypesTimeRemove
         handleTimeDialogRemoveClose={() =>
           setIsTimeDialogRemoveOpen(structuredClone(defaultTimeState))
         }
