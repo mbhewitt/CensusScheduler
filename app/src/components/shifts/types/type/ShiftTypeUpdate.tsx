@@ -35,9 +35,9 @@ import {
   processPositionList,
   processTimeList,
   ShiftTypeForm,
-} from "src/components/shifts/types/ShiftTypeForm";
-import { ShiftTypePositionRemove } from "src/components/shifts/types/ShiftTypePositionRemove";
-import { ShiftTypeTimeRemove } from "src/components/shifts/types/ShiftTypeTimeRemove";
+} from "src/components/shifts/types/type/ShiftTypeForm";
+import { ShiftTypePositionRemove } from "src/components/shifts/types/type/ShiftTypePositionRemove";
+import { ShiftTypeTimeRemove } from "src/components/shifts/types/type/ShiftTypeTimeRemove";
 import {
   IResShiftTypePositionItem,
   IResShiftTypeTimeItem,

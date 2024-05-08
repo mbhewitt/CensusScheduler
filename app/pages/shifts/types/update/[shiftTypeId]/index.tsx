@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { useContext } from "react";
 
-import { ShiftTypeUpdate } from "src/components/shifts/types/ShiftTypeUpdate";
+import { ShiftTypeUpdate } from "src/components/shifts/types/type/ShiftTypeUpdate";
 import { SignIn } from "src/components/sign-in";
 import { SessionContext } from "src/state/session/context";
 import { checkIsSuperAdmin } from "src/utils/checkIsRoleExist";
