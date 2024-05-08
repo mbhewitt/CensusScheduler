@@ -51,26 +51,24 @@ interface IRoleDisplay {
   name: string;
 }
 
+const defaultState = {
+  isOpen: false,
+  role: {
+    display: true,
+    id: 0,
+    name: "",
+  },
+};
 export const Roles = () => {
   // state
   // --------------------
   const [isDialogCreateOpen, setIsDialogCreateOpen] = useState(false);
-  const [isDialogUpdateOpen, setIsDialogUpdateOpen] = useState({
-    isOpen: false,
-    role: {
-      display: true,
-      id: 0,
-      name: "",
-    },
-  });
-  const [isDialogDeleteOpen, setIsDialogDeleteOpen] = useState({
-    isOpen: false,
-    role: {
-      display: true,
-      id: 0,
-      name: "",
-    },
-  });
+  const [isDialogUpdateOpen, setIsDialogUpdateOpen] = useState(
+    structuredClone(defaultState)
+  );
+  const [isDialogDeleteOpen, setIsDialogDeleteOpen] = useState(
+    structuredClone(defaultState)
+  );
 
   // fetching, mutation, and revalidation
   // --------------------
@@ -286,14 +284,7 @@ export const Roles = () => {
       {/* update dialog */}
       <RolesDialogUpdate
         handleDialogUpdateClose={() =>
-          setIsDialogUpdateOpen({
-            isOpen: false,
-            role: {
-              display: true,
-              id: 0,
-              name: "",
-            },
-          })
+          setIsDialogUpdateOpen(structuredClone(defaultState))
         }
         isDialogUpdateOpen={isDialogUpdateOpen.isOpen}
         roleItem={isDialogUpdateOpen.role}
@@ -303,14 +294,7 @@ export const Roles = () => {
       {/* delete dialog */}
       <RolesDialogDelete
         handleDialogDeleteClose={() =>
-          setIsDialogDeleteOpen({
-            isOpen: false,
-            role: {
-              display: true,
-              id: 0,
-              name: "",
-            },
-          })
+          setIsDialogDeleteOpen(structuredClone(defaultState))
         }
         isDialogDeleteOpen={isDialogDeleteOpen.isOpen}
         roleItem={isDialogDeleteOpen.role}

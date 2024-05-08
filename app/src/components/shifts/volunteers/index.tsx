@@ -3,7 +3,7 @@ import {
   Groups3 as Groups3Icon,
   ManageAccounts as ManageAccountsIcon,
   MoreHoriz as MoreHorizIcon,
-  PersonAdd as PersonAddIcon,
+  PersonAddAlt1 as PersonAddAlt1Icon,
   PersonRemove as PersonRemoveIcon,
 } from "@mui/icons-material";
 import {
@@ -55,6 +55,17 @@ import {
 } from "src/utils/setCellPropsCenter";
 
 const socket = io();
+const defaultState = {
+  isOpen: false,
+  volunteer: {
+    playaName: "",
+    positionName: "",
+    shiftboardId: 0,
+    shiftPositionId: 0,
+    timeId: 0,
+    worldName: "",
+  },
+};
 export const ShiftVolunteers = () => {
   // context
   // --------------------
@@ -75,17 +86,9 @@ export const ShiftVolunteers = () => {
   // --------------------
   const [isMounted, setIsMounted] = useState(false);
   const [isDialogAddOpen, setIsDialogAddOpen] = useState(false);
-  const [isDialogRemoveOpen, setIsDialogRemoveOpen] = useState({
-    isOpen: false,
-    volunteer: {
-      playaName: "",
-      positionName: "",
-      shiftboardId: 0,
-      shiftPositionId: 0,
-      timeId: 0,
-      worldName: "",
-    },
-  });
+  const [isDialogRemoveOpen, setIsDialogRemoveOpen] = useState(
+    structuredClone(defaultState)
+  );
 
   // fetching, mutation, and revalidation
   // --------------------
@@ -501,7 +504,7 @@ export const ShiftVolunteers = () => {
               onClick={() => {
                 setIsDialogAddOpen(true);
               }}
-              startIcon={<PersonAddIcon />}
+              startIcon={<PersonAddAlt1Icon />}
               type="button"
               variant="contained"
             >
@@ -533,17 +536,7 @@ export const ShiftVolunteers = () => {
         {/* remove dialog */}
         <ShiftVolunteersDialogRemove
           handleDialogRemoveClose={() =>
-            setIsDialogRemoveOpen({
-              isOpen: false,
-              volunteer: {
-                playaName: "",
-                positionName: "",
-                shiftboardId: 0,
-                shiftPositionId: 0,
-                timeId: 0,
-                worldName: "",
-              },
-            })
+            setIsDialogRemoveOpen(structuredClone(defaultState))
           }
           isDialogRemoveOpen={isDialogRemoveOpen.isOpen}
           volunteer={isDialogRemoveOpen.volunteer}

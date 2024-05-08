@@ -50,6 +50,18 @@ import {
 } from "src/utils/setCellPropsCenter";
 
 const socket = io();
+const defaultState = {
+  isOpen: false,
+  shift: {
+    date: "",
+    dateName: "",
+    endTime: "",
+    positionName: "",
+    shiftPositionId: 0,
+    timeId: 0,
+    startTime: "",
+  },
+};
 export const VolunteerShifts = () => {
   // context
   // --------------------
@@ -69,18 +81,9 @@ export const VolunteerShifts = () => {
   // state
   // --------------------
   const [isMounted, setIsMounted] = useState(false);
-  const [isDialogRemoveOpen, setIsDialogRemoveOpen] = useState({
-    isOpen: false,
-    shift: {
-      date: "",
-      dateName: "",
-      endTime: "",
-      positionName: "",
-      shiftPositionId: 0,
-      timeId: 0,
-      startTime: "",
-    },
-  });
+  const [isDialogRemoveOpen, setIsDialogRemoveOpen] = useState(
+    structuredClone(defaultState)
+  );
 
   // fetching, mutation, and revalidation
   // --------------------
@@ -441,18 +444,7 @@ export const VolunteerShifts = () => {
       {/* remove dialog */}
       <VolunteerShiftsDialogRemove
         handleDialogRemoveClose={() =>
-          setIsDialogRemoveOpen({
-            isOpen: false,
-            shift: {
-              date: "",
-              dateName: "",
-              endTime: "",
-              positionName: "",
-              shiftPositionId: 0,
-              timeId: 0,
-              startTime: "",
-            },
-          })
+          setIsDialogRemoveOpen(structuredClone(defaultState))
         }
         isDialogRemoveOpen={isDialogRemoveOpen.isOpen}
         shift={isDialogRemoveOpen.shift}

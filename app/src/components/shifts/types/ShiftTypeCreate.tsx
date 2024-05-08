@@ -90,6 +90,10 @@ export const ShiftTypeCreate = () => {
   if (errorDefaults) return <ErrorPage />;
   if (!dataDefaults) return <Loading />;
 
+  const handlePositionRemove = (index: number) => {
+    positionRemove(index);
+  };
+
   // form submission
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
@@ -197,9 +201,9 @@ export const ShiftTypeCreate = () => {
               dataDefaults={dataDefaults}
               errors={errors}
               getValues={getValues}
+              handlePositionRemove={handlePositionRemove}
               positionAppend={positionAppend}
               positionFields={positionFields}
-              positionRemove={positionRemove}
               setError={setError}
               setValue={setValue}
               shiftTypeName={defaultValues.information.name}

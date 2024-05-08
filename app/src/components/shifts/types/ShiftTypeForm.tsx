@@ -1,7 +1,7 @@
 import {
   Close as CloseIcon,
+  GroupAdd as GroupAddIcon,
   MoreTime as MoreTimeIcon,
-  PersonAdd as PersonAddIcon,
 } from "@mui/icons-material";
 import {
   Box,
@@ -51,6 +51,7 @@ import type {
   IResShiftTypeTimeItem,
 } from "src/components/types";
 import { COLOR_BURNING_MAN_BROWN } from "src/constants";
+import { formatDateName, formatTime } from "src/utils/formatDateTime";
 
 export interface IFormValues {
   information: IResShiftTypeInformation;
@@ -69,9 +70,14 @@ interface IShiftTypeFormProps {
   dataDefaults: IDataDefaults;
   errors: FieldErrors<IFormValues>;
   getValues: UseFormGetValues<IFormValues>;
+  handlePositionRemove: (
+    index: number,
+    name: string,
+    positionId: number
+  ) => void;
+  handleTimeRemove: (dateTime: string, index: number, timeId: number) => void;
   positionAppend: UseFieldArrayAppend<IFormValues, "positionList">;
   positionFields: FieldArrayWithId<IFormValues, "positionList", "id">[];
-  positionRemove: UseFieldArrayRemove;
   setError: UseFormSetError<IFormValues>;
   setValue: UseFormSetValue<IFormValues>;
   shiftTypeName: string;
@@ -115,16 +121,16 @@ export const processPositionList = (
 };
 export const processTimeList = (formValues: IFormValues) => {
   return formValues.timeList.map(
-    ({ date, endTime, id, instance, notes, startTime }) => {
+    ({ date, endTime, instance, notes, startTime, timeId }) => {
       const dateFormat = dayjs(date).format("YYYY-MM-DD");
 
       return {
         date: dateFormat,
         endTime: `${dateFormat} ${dayjs(endTime).format("HH:mm:ss")}`,
-        id,
         instance,
         notes,
         startTime: `${dateFormat} ${dayjs(startTime).format("HH:mm:ss")}`,
+        timeId,
       };
     }
   );
@@ -157,7 +163,7 @@ export const defaultValues: IFormValues = {
     {
       date: "",
       endTime: "",
-      id: 0,
+      timeId: 0,
       instance: "",
       notes: "",
       startTime: "",
@@ -170,15 +176,15 @@ export const ShiftTypeForm = ({
   dataDefaults,
   errors,
   getValues,
+  handlePositionRemove,
+  handleTimeRemove,
   positionAppend,
   positionFields,
-  positionRemove,
   setError,
   setValue,
   shiftTypeName,
   timeAppend,
   timeFields,
-  timeRemove,
   watch,
 }: IShiftTypeFormProps) => {
   // logic
@@ -353,7 +359,7 @@ export const ShiftTypeForm = ({
             onClick={() => {
               positionAppend(structuredClone(defaultValues.positionList[0]));
             }}
-            startIcon={<PersonAddIcon />}
+            startIcon={<GroupAddIcon />}
             type="button"
             variant="contained"
           >
@@ -526,7 +532,11 @@ export const ShiftTypeForm = ({
                     }}
                     xs={3}
                   >
-                    <IconButton onClick={() => positionRemove(index)}>
+                    <IconButton
+                      onClick={() =>
+                        handlePositionRemove(index, item.name, item.positionId)
+                      }
+                    >
                       <CloseIcon />
                     </IconButton>
                   </Grid>
@@ -862,7 +872,18 @@ export const ShiftTypeForm = ({
                     }}
                     xs={3}
                   >
-                    <IconButton onClick={() => timeRemove(index)}>
+                    <IconButton
+                      onClick={() => {
+                        handleTimeRemove(
+                          `${formatDateName(item.date)}, ${formatTime(
+                            item.startTime,
+                            item.endTime
+                          )}`,
+                          index,
+                          item.timeId
+                        );
+                      }}
+                    >
                       <CloseIcon />
                     </IconButton>
                   </Grid>

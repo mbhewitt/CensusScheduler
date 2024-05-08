@@ -36,12 +36,46 @@ import {
   processTimeList,
   ShiftTypeForm,
 } from "src/components/shifts/types/ShiftTypeForm";
+import { ShiftTypePositionRemove } from "src/components/shifts/types/ShiftTypePositionRemove";
+import { ShiftTypeTimeRemove } from "src/components/shifts/types/ShiftTypeTimeRemove";
+import {
+  IResShiftTypePositionItem,
+  IResShiftTypeTimeItem,
+} from "src/components/types";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
+const defaultPositionState = {
+  isOpen: false,
+  position: {
+    id: 0,
+    index: 0,
+    name: "",
+  },
+  type: {
+    id: 0,
+  },
+};
+const defaultTimeState = {
+  isOpen: false,
+  time: {
+    dateTime: "",
+    id: 0,
+    index: 0,
+  },
+  type: {
+    id: 0,
+  },
+};
 export const ShiftTypeUpdate = () => {
   // state
   // --------------------
   const [isMounted, setIsMounted] = useState(false);
+  const [isPositionDialogRemoveOpen, setIsPositionDialogRemoveOpen] = useState(
+    structuredClone(defaultPositionState)
+  );
+  const [isTimeDialogRemoveOpen, setIsTimeDialogRemoveOpen] = useState(
+    structuredClone(defaultTimeState)
+  );
 
   // fetching, mutation, and revalidation
   // --------------------
@@ -118,6 +152,58 @@ export const ShiftTypeUpdate = () => {
   // --------------------
   if (errorDefaults || errorCurrent) return <ErrorPage />;
   if (!dataDefaults || !dataCurrent) return <Loading />;
+
+  const handlePositionRemove = (
+    index: number,
+    name: string,
+    positionId: number
+  ) => {
+    const positionFound = dataCurrent.positionList.find(
+      (positionItem: IResShiftTypePositionItem) =>
+        positionItem.positionId === positionId
+    );
+
+    if (shiftTypeId && positionFound) {
+      setIsPositionDialogRemoveOpen({
+        isOpen: true,
+        position: {
+          id: positionId,
+          index,
+          name,
+        },
+        type: {
+          id: Number(shiftTypeId),
+        },
+      });
+    } else {
+      positionRemove(index);
+    }
+  };
+  const handleTimeRemove = (
+    dateTime: string,
+    index: number,
+    timeId: number
+  ) => {
+    const timeFound = dataCurrent.timeList.find(
+      (timeItem: IResShiftTypeTimeItem) => timeItem.timeId === timeId
+    );
+
+    if (shiftTypeId && timeFound) {
+      setIsTimeDialogRemoveOpen({
+        isOpen: true,
+        time: {
+          dateTime,
+          id: timeId,
+          index,
+        },
+        type: {
+          id: Number(shiftTypeId),
+        },
+      });
+    } else {
+      timeRemove(index);
+    }
+  };
 
   // form submission
   // --------------------
@@ -226,9 +312,10 @@ export const ShiftTypeUpdate = () => {
               dataDefaults={dataDefaults}
               errors={errors}
               getValues={getValues}
+              handlePositionRemove={handlePositionRemove}
+              handleTimeRemove={handleTimeRemove}
               positionAppend={positionAppend}
               positionFields={positionFields}
-              positionRemove={positionRemove}
               setError={setError}
               setValue={setValue}
               shiftTypeName={dataCurrent.information.name}
@@ -283,6 +370,28 @@ export const ShiftTypeUpdate = () => {
           </form>
         </Box>
       </Container>
+
+      {/* position dialog remove */}
+      <ShiftTypePositionRemove
+        handlePositionDialogRemoveClose={() =>
+          setIsPositionDialogRemoveOpen(structuredClone(defaultPositionState))
+        }
+        isPositionDialogRemoveOpen={isPositionDialogRemoveOpen.isOpen}
+        positionItem={isPositionDialogRemoveOpen.position}
+        positionRemove={positionRemove}
+        typeItem={isPositionDialogRemoveOpen.type}
+      />
+
+      {/* time dialog remove */}
+      <ShiftTypeTimeRemove
+        handleTimeDialogRemoveClose={() =>
+          setIsTimeDialogRemoveOpen(structuredClone(defaultTimeState))
+        }
+        isTimeDialogRemoveOpen={isTimeDialogRemoveOpen.isOpen}
+        timeItem={isTimeDialogRemoveOpen.time}
+        timeRemove={timeRemove}
+        typeItem={isTimeDialogRemoveOpen.type}
+      />
     </>
   );
 };

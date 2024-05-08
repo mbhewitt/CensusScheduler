@@ -174,7 +174,7 @@ export const Shifts = () => {
 
       data.forEach(({ date, dateName, type }: IResShiftItem) => {
         dateFilterList.push(
-          dateName ? formatDateName(date, dateName) : formatDateName(date, null)
+          dateName ? formatDateName(date, dateName) : formatDateName(date)
         );
         typeFilterList.push(type);
       });

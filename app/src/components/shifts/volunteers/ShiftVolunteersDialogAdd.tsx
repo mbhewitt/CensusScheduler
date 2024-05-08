@@ -1,6 +1,6 @@
 import {
   Close as CloseIcon,
-  PersonAdd as PersonAddIcon,
+  PersonAddAlt1 as PersonAddAlt1Icon,
 } from "@mui/icons-material";
 import {
   Autocomplete,
@@ -367,7 +367,7 @@ export const ShiftVolunteersDialogAdd = ({
               key={`${timeId}-training`}
               value={timeId}
             >
-              {`${formatDateName(date, null)}, ${formatTime(
+              {`${formatDateName(date)}, ${formatTime(
                 startTime,
                 endTime
               )}, ${type}: ${filledSlots} / ${totalSlots}`}
@@ -459,7 +459,7 @@ export const ShiftVolunteersDialogAdd = ({
               key={`${timeId}-training`}
               value={timeId}
             >
-              {`${formatDateName(date, null)}, ${formatTime(
+              {`${formatDateName(date)}, ${formatTime(
                 startTime,
                 endTime
               )}, ${type}: ${filledSlots} / ${totalSlots}`}
@@ -925,7 +925,11 @@ export const ShiftVolunteersDialogAdd = ({
           <Button
             disabled={Object.keys(errors).length > 0 || isMutating}
             startIcon={
-              isMutating ? <CircularProgress size="1rem" /> : <PersonAddIcon />
+              isMutating ? (
+                <CircularProgress size="1rem" />
+              ) : (
+                <PersonAddAlt1Icon />
+              )
             }
             type="submit"
             variant="contained"
