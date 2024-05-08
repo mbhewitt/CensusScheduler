@@ -331,23 +331,6 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
       });
     }
 
-    // delete
-    // --------------------
-    case "DELETE": {
-      // delete type
-      await pool.query<RowDataPacket[]>(
-        `UPDATE op_shift_name
-        SET delete_shift=true
-        WHERE shift_name_id=?`,
-        [shiftTypeId]
-      );
-
-      return res.status(200).json({
-        statusCode: 200,
-        message: "OK",
-      });
-    }
-
     // default
     // --------------------
     // send error message

@@ -1,7 +1,7 @@
 import {
   Close as CloseIcon,
+  GroupAdd as GroupAddIcon,
   MoreTime as MoreTimeIcon,
-  PersonAddAlt1 as PersonAddAlt1Icon,
 } from "@mui/icons-material";
 import {
   Box,
@@ -359,7 +359,7 @@ export const ShiftTypeForm = ({
             onClick={() => {
               positionAppend(structuredClone(defaultValues.positionList[0]));
             }}
-            startIcon={<PersonAddAlt1Icon />}
+            startIcon={<GroupAddIcon />}
             type="button"
             variant="contained"
           >

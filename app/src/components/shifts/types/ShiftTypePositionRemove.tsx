@@ -1,6 +1,6 @@
 import {
   Close as CloseIcon,
-  PersonRemove as PersonRemoveIcon,
+  GroupRemove as GroupRemoveIcon,
 } from "@mui/icons-material";
 import {
   Button,
@@ -43,8 +43,8 @@ interface IShiftTypePositionRemoveProps {
 }
 
 export const ShiftTypePositionRemove = ({
-  handlePositionDialogRemoveClose,
-  isPositionDialogRemoveOpen,
+  handlePositionDialogRemoveClose: handleDialogRemoveClose,
+  isPositionDialogRemoveOpen: isDialogRemoveOpen,
   positionItem,
   positionRemove,
   typeItem,
@@ -65,8 +65,8 @@ export const ShiftTypePositionRemove = ({
   if (error)
     return (
       <DialogContainer
-        handleDialogClose={handlePositionDialogRemoveClose}
-        isDialogOpen={isPositionDialogRemoveOpen}
+        handleDialogClose={handleDialogRemoveClose}
+        isDialogOpen={isDialogRemoveOpen}
         text="Remove position"
       >
         <ErrorAlert />
@@ -75,9 +75,9 @@ export const ShiftTypePositionRemove = ({
   if (!data)
     return (
       <DialogContainer
-        handleDialogClose={handlePositionDialogRemoveClose}
-        isDialogOpen={isPositionDialogRemoveOpen}
-        text="Remove role"
+        handleDialogClose={handleDialogRemoveClose}
+        isDialogOpen={isDialogRemoveOpen}
+        text="Remove position"
       >
         <Loading />
       </DialogContainer>
@@ -85,7 +85,7 @@ export const ShiftTypePositionRemove = ({
 
   const handlePositionRemove = async () => {
     positionRemove(positionItem.index);
-    handlePositionDialogRemoveClose();
+    handleDialogRemoveClose();
     enqueueSnackbar(
       <SnackbarText>
         Click on the <strong>Update type</strong> button to finalize your
@@ -101,16 +101,16 @@ export const ShiftTypePositionRemove = ({
   // --------------------
   return (
     <DialogContainer
-      handleDialogClose={handlePositionDialogRemoveClose}
-      isDialogOpen={isPositionDialogRemoveOpen}
+      handleDialogClose={handleDialogRemoveClose}
+      isDialogOpen={isDialogRemoveOpen}
       text="Remove position"
     >
       {data && data.length > 0 ? (
         <>
           <DialogContentText>
             <Typography component="span">
-              Before doing so, <strong>{positionItem.name}</strong> volunteers
-              must be removed from the position in the following shift times:
+              Before removing <strong>{positionItem.name}</strong>, volunteers
+              must be removed from this position in the following times:
             </Typography>
           </DialogContentText>
           <List sx={{ display: "inline-block", pl: 2, listStyleType: "disc" }}>
@@ -140,7 +140,7 @@ export const ShiftTypePositionRemove = ({
       <DialogActions>
         <Button
           startIcon={<CloseIcon />}
-          onClick={handlePositionDialogRemoveClose}
+          onClick={handleDialogRemoveClose}
           type="button"
           variant="outlined"
         >
@@ -149,7 +149,7 @@ export const ShiftTypePositionRemove = ({
         <Button
           disabled={data && data.length > 0}
           onClick={handlePositionRemove}
-          startIcon={<PersonRemoveIcon />}
+          startIcon={<GroupRemoveIcon />}
           type="submit"
           variant="contained"
         >

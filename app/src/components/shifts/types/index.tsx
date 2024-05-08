@@ -17,6 +17,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import useSWR from "swr";
 
 import { DataTable } from "src/components/general/DataTable";
@@ -24,6 +25,7 @@ import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { Hero } from "src/components/layout/Hero";
+import { ShiftTypeDialogDelete } from "src/components/shifts/types/ShiftTypeDialogDelete";
 import type { IResShiftTypeItem } from "src/components/types";
 import { fetcherGet } from "src/utils/fetcher";
 import {
@@ -31,7 +33,20 @@ import {
   setCellPropsCenter,
 } from "src/utils/setCellPropsCenter";
 
+const defaultState = {
+  isOpen: false,
+  type: {
+    id: 0,
+    name: "",
+  },
+};
 export const ShiftTypes = () => {
+  // state
+  // --------------------
+  const [isDialogDeleteOpen, setIsDialogDeleteOpen] = useState(
+    structuredClone(defaultState)
+  );
+
   // fetching, mutation, and revalidation
   // --------------------
   const { data, error } = useSWR("/api/shifts/types", fetcherGet);
@@ -78,7 +93,14 @@ export const ShiftTypes = () => {
                 <ListItemText>Update type</ListItemText>
               </MenuItem>
             </Link>
-            <MenuItem>
+            <MenuItem
+              onClick={() =>
+                setIsDialogDeleteOpen({
+                  isOpen: true,
+                  type: { id, name },
+                })
+              }
+            >
               <ListItemIcon>
                 <EventBusyIcon />
               </ListItemIcon>
@@ -130,6 +152,15 @@ export const ShiftTypes = () => {
           />
         </Box>
       </Container>
+
+      {/* delete dialog */}
+      <ShiftTypeDialogDelete
+        handleDialogDeleteClose={() =>
+          setIsDialogDeleteOpen(structuredClone(defaultState))
+        }
+        isDialogDeleteOpen={isDialogDeleteOpen.isOpen}
+        typeItem={isDialogDeleteOpen.type}
+      />
     </>
   );
 };

@@ -43,8 +43,8 @@ interface IShiftTypeTimeRemoveProps {
 }
 
 export const ShiftTypeTimeRemove = ({
-  handleTimeDialogRemoveClose,
-  isTimeDialogRemoveOpen,
+  handleTimeDialogRemoveClose: handleDialogRemoveClose,
+  isTimeDialogRemoveOpen: isDialogRemoveOpen,
   timeItem,
   timeRemove,
   typeItem,
@@ -65,8 +65,8 @@ export const ShiftTypeTimeRemove = ({
   if (error)
     return (
       <DialogContainer
-        handleDialogClose={handleTimeDialogRemoveClose}
-        isDialogOpen={isTimeDialogRemoveOpen}
+        handleDialogClose={handleDialogRemoveClose}
+        isDialogOpen={isDialogRemoveOpen}
         text="Remove time"
       >
         <ErrorAlert />
@@ -75,8 +75,8 @@ export const ShiftTypeTimeRemove = ({
   if (!data)
     return (
       <DialogContainer
-        handleDialogClose={handleTimeDialogRemoveClose}
-        isDialogOpen={isTimeDialogRemoveOpen}
+        handleDialogClose={handleDialogRemoveClose}
+        isDialogOpen={isDialogRemoveOpen}
         text="Remove role"
       >
         <Loading />
@@ -85,7 +85,7 @@ export const ShiftTypeTimeRemove = ({
 
   const handleTimeRemove = async () => {
     timeRemove(timeItem.index);
-    handleTimeDialogRemoveClose();
+    handleDialogRemoveClose();
     enqueueSnackbar(
       <SnackbarText>
         Click on the <strong>Update type</strong> button to finalize your
@@ -101,19 +101,19 @@ export const ShiftTypeTimeRemove = ({
   // --------------------
   return (
     <DialogContainer
-      handleDialogClose={handleTimeDialogRemoveClose}
-      isDialogOpen={isTimeDialogRemoveOpen}
+      handleDialogClose={handleDialogRemoveClose}
+      isDialogOpen={isDialogRemoveOpen}
       text="Remove time"
     >
       {data && data.length > 0 ? (
         <>
           <DialogContentText>
             <Typography component="span">
-              Before doing so,{" "}
+              Before removing{" "}
               <Link href={`/shifts/volunteers/${timeItem.id}`}>
                 <strong>{timeItem.dateTime}</strong>
-              </Link>{" "}
-              shift volunteers must be removed from the time in the following
+              </Link>
+              , volunteers must be removed from this time in the following
               positions:
             </Typography>
           </DialogContentText>
@@ -142,7 +142,7 @@ export const ShiftTypeTimeRemove = ({
       <DialogActions>
         <Button
           startIcon={<CloseIcon />}
-          onClick={handleTimeDialogRemoveClose}
+          onClick={handleDialogRemoveClose}
           type="button"
           variant="outlined"
         >
