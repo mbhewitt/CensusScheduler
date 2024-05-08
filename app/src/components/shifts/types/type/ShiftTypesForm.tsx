@@ -63,7 +63,7 @@ interface IDataDefaults {
   shiftCategoryList: IResShiftTypeCategoryItem[];
   typeList: IResShiftTypeItem[];
 }
-interface IShiftTypeFormProps {
+interface IShiftTypesFormProps {
   clearErrors: UseFormClearErrors<IFormValues>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<IFormValues, any>;
@@ -170,7 +170,7 @@ export const defaultValues: IFormValues = {
     },
   ],
 };
-export const ShiftTypeForm = ({
+export const ShiftTypesForm = ({
   clearErrors,
   control,
   dataDefaults,
@@ -186,7 +186,7 @@ export const ShiftTypeForm = ({
   timeAppend,
   timeFields,
   watch,
-}: IShiftTypeFormProps) => {
+}: IShiftTypesFormProps) => {
   // logic
   // --------------------
   const watchPositionList = watch("positionList");

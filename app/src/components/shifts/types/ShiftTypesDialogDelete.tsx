@@ -35,7 +35,7 @@ interface IPreFetchDialogContainerProps {
   handleDialogDeleteClose: () => void;
   isDialogDeleteOpen: boolean;
 }
-interface IShiftTypeDialogDeleteProps {
+interface IShiftTypesDialogDeleteProps {
   handleDialogDeleteClose: () => void;
   isDialogDeleteOpen: boolean;
   typeItem: IResShiftTypeItem;
@@ -56,11 +56,11 @@ const PreFetchDialogContainer = ({
     </DialogContainer>
   );
 };
-export const ShiftTypeDialogDelete = ({
+export const ShiftTypesDialogDelete = ({
   handleDialogDeleteClose,
   isDialogDeleteOpen,
   typeItem: { id, name },
-}: IShiftTypeDialogDeleteProps) => {
+}: IShiftTypesDialogDeleteProps) => {
   // fetching, mutation, and revalidation
   // --------------------
   const { data, error } = useSWR(`/api/shifts/types/${id}`, fetcherGet);

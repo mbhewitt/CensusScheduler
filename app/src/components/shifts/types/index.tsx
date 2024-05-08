@@ -25,7 +25,7 @@ import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { Hero } from "src/components/layout/Hero";
-import { ShiftTypeDialogDelete } from "src/components/shifts/types/ShiftTypeDialogDelete";
+import { ShiftTypesDialogDelete } from "src/components/shifts/types/ShiftTypesDialogDelete";
 import type { IResShiftTypeItem } from "src/components/types";
 import { fetcherGet } from "src/utils/fetcher";
 import {
@@ -154,7 +154,7 @@ export const ShiftTypes = () => {
       </Container>
 
       {/* delete dialog */}
-      <ShiftTypeDialogDelete
+      <ShiftTypesDialogDelete
         handleDialogDeleteClose={() =>
           setIsDialogDeleteOpen(structuredClone(defaultState))
         }

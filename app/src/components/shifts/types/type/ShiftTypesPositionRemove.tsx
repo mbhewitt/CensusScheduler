@@ -1,6 +1,6 @@
 import {
   Close as CloseIcon,
-  UpdateDisabled as UpdateDisabledIcon,
+  GroupRemove as GroupRemoveIcon,
 } from "@mui/icons-material";
 import {
   Button,
@@ -22,37 +22,37 @@ import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { fetcherGet } from "src/utils/fetcher";
 
-interface ITimeItem {
-  dateTime: string;
-  id: number;
-  index: number;
-}
 interface IPositionItem {
   id: number;
+  index: number;
   name: string;
+}
+interface ITimeItem {
+  id: number;
+  time: string;
 }
 interface ITypeItem {
   id: number;
 }
-interface IShiftTypeTimeRemoveProps {
-  handleTimeDialogRemoveClose: () => void;
-  isTimeDialogRemoveOpen: boolean;
-  timeItem: ITimeItem;
-  timeRemove: UseFieldArrayRemove;
+interface IShiftTypesPositionRemoveProps {
+  handlePositionDialogRemoveClose: () => void;
+  isPositionDialogRemoveOpen: boolean;
+  positionItem: IPositionItem;
+  positionRemove: UseFieldArrayRemove;
   typeItem: ITypeItem;
 }
 
-export const ShiftTypeTimeRemove = ({
-  handleTimeDialogRemoveClose: handleDialogRemoveClose,
-  isTimeDialogRemoveOpen: isDialogRemoveOpen,
-  timeItem,
-  timeRemove,
+export const ShiftTypesPositionRemove = ({
+  handlePositionDialogRemoveClose: handleDialogRemoveClose,
+  isPositionDialogRemoveOpen: isDialogRemoveOpen,
+  positionItem,
+  positionRemove,
   typeItem,
-}: IShiftTypeTimeRemoveProps) => {
+}: IShiftTypesPositionRemoveProps) => {
   // fetching, mutation, and revalidation
   // --------------------
   const { data, error } = useSWR(
-    `/api/shifts/types/${typeItem.id}/times/${timeItem.id}`,
+    `/api/shifts/types/${typeItem.id}/positions/${positionItem.id}`,
     fetcherGet
   );
 
@@ -67,7 +67,7 @@ export const ShiftTypeTimeRemove = ({
       <DialogContainer
         handleDialogClose={handleDialogRemoveClose}
         isDialogOpen={isDialogRemoveOpen}
-        text="Remove time"
+        text="Remove position"
       >
         <ErrorAlert />
       </DialogContainer>
@@ -77,14 +77,14 @@ export const ShiftTypeTimeRemove = ({
       <DialogContainer
         handleDialogClose={handleDialogRemoveClose}
         isDialogOpen={isDialogRemoveOpen}
-        text="Remove role"
+        text="Remove position"
       >
         <Loading />
       </DialogContainer>
     );
 
-  const handleTimeRemove = async () => {
-    timeRemove(timeItem.index);
+  const handlePositionRemove = async () => {
+    positionRemove(positionItem.index);
     handleDialogRemoveClose();
     enqueueSnackbar(
       <SnackbarText>
@@ -103,29 +103,27 @@ export const ShiftTypeTimeRemove = ({
     <DialogContainer
       handleDialogClose={handleDialogRemoveClose}
       isDialogOpen={isDialogRemoveOpen}
-      text="Remove time"
+      text="Remove position"
     >
       {data && data.length > 0 ? (
         <>
           <DialogContentText>
             <Typography component="span">
-              Before removing{" "}
-              <Link href={`/shifts/volunteers/${timeItem.id}`}>
-                <strong>{timeItem.dateTime}</strong>
-              </Link>
-              , volunteers must be removed from this time in the following
-              positions:
+              Before removing <strong>{positionItem.name}</strong>, volunteers
+              must be removed from this position in the following times:
             </Typography>
           </DialogContentText>
           <List sx={{ display: "inline-block", pl: 2, listStyleType: "disc" }}>
-            {data.map((positionItem: IPositionItem) => {
+            {data.map((timeItem: ITimeItem) => {
               return (
                 <ListItem
                   disablePadding
-                  key={positionItem.id}
+                  key={timeItem.id}
                   sx={{ display: "list-item", pl: 0 }}
                 >
-                  <ListItemText>{positionItem.name}</ListItemText>
+                  <Link href={`/shifts/volunteers/${timeItem.id}`}>
+                    <ListItemText>{timeItem.time}</ListItemText>
+                  </Link>
                 </ListItem>
               );
             })}
@@ -134,8 +132,8 @@ export const ShiftTypeTimeRemove = ({
       ) : (
         <DialogContentText>
           <Typography component="span">
-            Are you sure you want to remove <strong>{timeItem.dateTime}</strong>{" "}
-            time?
+            Are you sure you want to remove <strong>{positionItem.name}</strong>{" "}
+            position?
           </Typography>
         </DialogContentText>
       )}
@@ -150,12 +148,12 @@ export const ShiftTypeTimeRemove = ({
         </Button>
         <Button
           disabled={data && data.length > 0}
-          onClick={handleTimeRemove}
-          startIcon={<UpdateDisabledIcon />}
+          onClick={handlePositionRemove}
+          startIcon={<GroupRemoveIcon />}
           type="submit"
           variant="contained"
         >
-          Remove time
+          Remove position
         </Button>
       </DialogActions>
     </DialogContainer>
