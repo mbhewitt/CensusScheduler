@@ -36,12 +36,28 @@ import {
   processTimeList,
   ShiftTypeForm,
 } from "src/components/shifts/types/ShiftTypeForm";
+import { ShiftTypePositionRemove } from "src/components/shifts/types/ShiftTypePositionRemove";
+import { IResShiftTypePositionItem } from "src/components/types";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
+const defaultState = {
+  isOpen: false,
+  position: {
+    id: 0,
+    index: 0,
+    name: "",
+  },
+  type: {
+    id: 0,
+  },
+};
 export const ShiftTypeUpdate = () => {
   // state
   // --------------------
   const [isMounted, setIsMounted] = useState(false);
+  const [isDialogRemoveOpen, setIsDialogRemoveOpen] = useState(
+    structuredClone(defaultState)
+  );
 
   // fetching, mutation, and revalidation
   // --------------------
@@ -118,6 +134,33 @@ export const ShiftTypeUpdate = () => {
   // --------------------
   if (errorDefaults || errorCurrent) return <ErrorPage />;
   if (!dataDefaults || !dataCurrent) return <Loading />;
+
+  const handlePositionRemove = (
+    index: number,
+    name: string,
+    positionId: number
+  ) => {
+    const positionFound = dataCurrent.positionList.find(
+      (positionItem: IResShiftTypePositionItem) =>
+        positionItem.positionId === positionId
+    );
+
+    if (shiftTypeId && positionFound) {
+      setIsDialogRemoveOpen({
+        isOpen: true,
+        position: {
+          id: positionId,
+          index,
+          name,
+        },
+        type: {
+          id: Number(shiftTypeId),
+        },
+      });
+    } else {
+      positionRemove(index);
+    }
+  };
 
   // form submission
   // --------------------
@@ -226,9 +269,9 @@ export const ShiftTypeUpdate = () => {
               dataDefaults={dataDefaults}
               errors={errors}
               getValues={getValues}
+              handlePositionRemove={handlePositionRemove}
               positionAppend={positionAppend}
               positionFields={positionFields}
-              positionRemove={positionRemove}
               setError={setError}
               setValue={setValue}
               shiftTypeName={dataCurrent.information.name}
@@ -283,6 +326,17 @@ export const ShiftTypeUpdate = () => {
           </form>
         </Box>
       </Container>
+
+      {/* remove dialog */}
+      <ShiftTypePositionRemove
+        handleDialogRemoveClose={() =>
+          setIsDialogRemoveOpen(structuredClone(defaultState))
+        }
+        isDialogRemoveOpen={isDialogRemoveOpen.isOpen}
+        positionItem={isDialogRemoveOpen.position}
+        positionRemove={positionRemove}
+        typeItem={isDialogRemoveOpen.type}
+      />
     </>
   );
 };

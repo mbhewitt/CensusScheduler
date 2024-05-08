@@ -116,8 +116,8 @@ export const RolesDialogDelete = ({
         <>
           <DialogContentText>
             <Typography component="span">
-              Before doing so, the <strong>{name}</strong> role must be removed
-              from the following volunteers:
+              Before doing so, <strong>{name}</strong> role must be removed from
+              the following volunteers:
             </Typography>
           </DialogContentText>
           <List sx={{ pl: 2, listStyleType: "disc" }}>

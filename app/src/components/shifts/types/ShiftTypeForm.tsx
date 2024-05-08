@@ -69,9 +69,13 @@ interface IShiftTypeFormProps {
   dataDefaults: IDataDefaults;
   errors: FieldErrors<IFormValues>;
   getValues: UseFormGetValues<IFormValues>;
+  handlePositionRemove: (
+    index: number,
+    name: string,
+    positionId: number
+  ) => void;
   positionAppend: UseFieldArrayAppend<IFormValues, "positionList">;
   positionFields: FieldArrayWithId<IFormValues, "positionList", "id">[];
-  positionRemove: UseFieldArrayRemove;
   setError: UseFormSetError<IFormValues>;
   setValue: UseFormSetValue<IFormValues>;
   shiftTypeName: string;
@@ -170,9 +174,9 @@ export const ShiftTypeForm = ({
   dataDefaults,
   errors,
   getValues,
+  handlePositionRemove,
   positionAppend,
   positionFields,
-  positionRemove,
   setError,
   setValue,
   shiftTypeName,
@@ -526,7 +530,11 @@ export const ShiftTypeForm = ({
                     }}
                     xs={3}
                   >
-                    <IconButton onClick={() => positionRemove(index)}>
+                    <IconButton
+                      onClick={() =>
+                        handlePositionRemove(index, item.name, item.positionId)
+                      }
+                    >
                       <CloseIcon />
                     </IconButton>
                   </Grid>

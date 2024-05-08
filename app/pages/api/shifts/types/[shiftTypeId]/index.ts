@@ -77,23 +77,25 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           position_details,
           position_type_id,
           role,
-          shift_category,
+          shift_category, // of prerequisite
           start_time_offset,
           total_slots,
           wap_points,
-        }) => ({
-          critical: Boolean(critical),
-          details: position_details,
-          endTimeOffset: end_time_offset,
-          lead: Boolean(lead),
-          name: position,
-          positionId: position_type_id,
-          prerequisiteShift: shift_category ?? "",
-          role: role ?? "",
-          startTimeOffset: start_time_offset,
-          totalSlots: total_slots,
-          wapPoints: wap_points,
-        })
+        }) => {
+          return {
+            critical: Boolean(critical),
+            details: position_details,
+            endTimeOffset: end_time_offset,
+            lead: Boolean(lead),
+            name: position,
+            positionId: position_type_id,
+            prerequisiteShift: shift_category ?? "",
+            role: role ?? "",
+            startTimeOffset: start_time_offset,
+            totalSlots: total_slots,
+            wapPoints: wap_points,
+          };
+        }
       );
       // get all current times
       const [dbTimeList] = await pool.query<RowDataPacket[]>(
