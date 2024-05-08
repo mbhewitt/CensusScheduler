@@ -2,7 +2,7 @@ import {
   Groups3 as Groups3Icon,
   ManageAccounts as ManageAccountsIcon,
   MoreHoriz as MoreHorizIcon,
-  PersonAdd as PersonAddIcon,
+  PersonAddAlt1 as PersonAddAlt1Icon,
   PersonRemove as PersonRemoveIcon,
   VerifiedUser as VerifiedUserIcon,
 } from "@mui/icons-material";
@@ -222,7 +222,7 @@ export const RoleVolunteers = () => {
               onClick={() => {
                 setIsDialogAddOpen(true);
               }}
-              startIcon={<PersonAddIcon />}
+              startIcon={<PersonAddAlt1Icon />}
               type="button"
               variant="contained"
             >

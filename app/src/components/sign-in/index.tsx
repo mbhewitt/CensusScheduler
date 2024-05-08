@@ -1,6 +1,6 @@
 import {
   Login as LoginIcon,
-  PersonAdd as PersonAddIcon,
+  PersonAddAlt1 as PersonAddAlt1Icon,
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
 } from "@mui/icons-material";
@@ -259,7 +259,7 @@ export const SignIn = () => {
                   isMutating ? (
                     <CircularProgress size="1rem" />
                   ) : (
-                    <PersonAddIcon />
+                    <PersonAddAlt1Icon />
                   )
                 }
                 type="button"

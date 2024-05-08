@@ -83,10 +83,10 @@ export interface IResShiftTypePositionItem {
 export interface IResShiftTypeTimeItem {
   date: string;
   endTime: string;
-  id: number;
   instance: string;
   notes: string;
   startTime: string;
+  timeId: number;
 }
 export interface IReqShiftTypeInfoItem extends IResShiftTypeInformation {
   categoryId: string;

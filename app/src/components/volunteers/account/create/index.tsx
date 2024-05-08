@@ -1,7 +1,7 @@
 import {
   Close as CloseIcon,
   Login as LoginIcon,
-  PersonAdd as PersonAddIcon,
+  PersonAddAlt1 as PersonAddAlt1Icon,
 } from "@mui/icons-material";
 import {
   Box,
@@ -172,7 +172,7 @@ export const AccountCreate = () => {
                 display: "flex",
               }}
             >
-              <PersonAddIcon sx={{ mr: 0.5 }} />
+              <PersonAddAlt1Icon sx={{ mr: 0.5 }} />
               Create account
             </Typography>
           </Breadcrumbs>
@@ -341,7 +341,7 @@ export const AccountCreate = () => {
                     isMutating ? (
                       <CircularProgress size="1rem" />
                     ) : (
-                      <PersonAddIcon />
+                      <PersonAddAlt1Icon />
                     )
                   }
                   type="submit"

@@ -123,10 +123,10 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         }) => ({
           date,
           endTime: end_time,
-          id: shift_times_id,
           instance: shift_instance,
           notes: notes ?? "",
           startTime: start_time,
+          timeId: shift_times_id,
         })
       );
 
@@ -242,24 +242,24 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         WHERE shift_name_id=?`,
         [shiftTypeId]
       );
-      const timeListUpdate = timeList.filter(({ id }) => {
+      const timeListUpdate = timeList.filter(({ timeId }) => {
         return dbTimeList.some(
-          ({ shift_times_id: shiftTimesId }) => shiftTimesId === id
+          ({ shift_times_id: shiftTimesId }) => shiftTimesId === timeId
         );
       });
-      const timeListAdd = timeList.filter(({ id }) => {
+      const timeListAdd = timeList.filter(({ timeId }) => {
         return !dbTimeList.some(
-          ({ shift_times_id: shiftTimesId }) => shiftTimesId === id
+          ({ shift_times_id: shiftTimesId }) => shiftTimesId === timeId
         );
       });
       const timeListRemove = dbTimeList.filter(
         ({ shift_times_id: shiftTimesId }) => {
-          return !timeList.some(({ id }) => id === shiftTimesId);
+          return !timeList.some(({ timeId }) => timeId === shiftTimesId);
         }
       );
 
       timeListUpdate.forEach(
-        async ({ date, endTime, instance, notes, startTime, id }) => {
+        async ({ date, endTime, instance, notes, startTime, timeId }) => {
           await pool.query<RowDataPacket[]>(
             `UPDATE op_shift_times
             SET
@@ -271,7 +271,15 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
               start_time=?,
               year=?
             WHERE shift_times_id=?`,
-            [date, endTime, notes, instance, startTime, date.split("-")[0], id]
+            [
+              date,
+              endTime,
+              notes,
+              instance,
+              startTime,
+              date.split("-")[0],
+              timeId,
+            ]
           );
         }
       );

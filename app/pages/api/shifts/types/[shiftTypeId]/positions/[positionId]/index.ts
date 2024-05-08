@@ -4,7 +4,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { pool } from "lib/database";
 import { formatDateName, formatTime } from "src/utils/formatDateTime";
 
-const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
+const shiftTypePosition = async (req: NextApiRequest, res: NextApiResponse) => {
   const { shiftTypeId, positionId } = req.query;
 
   switch (req.method) {
@@ -61,4 +61,4 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default shiftTypeUpdate;
+export default shiftTypePosition;

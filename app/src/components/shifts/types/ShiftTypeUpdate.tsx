@@ -37,10 +37,14 @@ import {
   ShiftTypeForm,
 } from "src/components/shifts/types/ShiftTypeForm";
 import { ShiftTypePositionRemove } from "src/components/shifts/types/ShiftTypePositionRemove";
-import { IResShiftTypePositionItem } from "src/components/types";
+import { ShiftTypeTimeRemove } from "src/components/shifts/types/ShiftTypeTimeRemove";
+import {
+  IResShiftTypePositionItem,
+  IResShiftTypeTimeItem,
+} from "src/components/types";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
-const defaultState = {
+const defaultPositionState = {
   isOpen: false,
   position: {
     id: 0,
@@ -51,12 +55,26 @@ const defaultState = {
     id: 0,
   },
 };
+const defaultTimeState = {
+  isOpen: false,
+  time: {
+    dateTime: "",
+    id: 0,
+    index: 0,
+  },
+  type: {
+    id: 0,
+  },
+};
 export const ShiftTypeUpdate = () => {
   // state
   // --------------------
   const [isMounted, setIsMounted] = useState(false);
-  const [isDialogRemoveOpen, setIsDialogRemoveOpen] = useState(
-    structuredClone(defaultState)
+  const [isPositionDialogRemoveOpen, setIsPositionDialogRemoveOpen] = useState(
+    structuredClone(defaultPositionState)
+  );
+  const [isTimeDialogRemoveOpen, setIsTimeDialogRemoveOpen] = useState(
+    structuredClone(defaultTimeState)
   );
 
   // fetching, mutation, and revalidation
@@ -146,7 +164,7 @@ export const ShiftTypeUpdate = () => {
     );
 
     if (shiftTypeId && positionFound) {
-      setIsDialogRemoveOpen({
+      setIsPositionDialogRemoveOpen({
         isOpen: true,
         position: {
           id: positionId,
@@ -159,6 +177,31 @@ export const ShiftTypeUpdate = () => {
       });
     } else {
       positionRemove(index);
+    }
+  };
+  const handleTimeRemove = (
+    dateTime: string,
+    index: number,
+    timeId: number
+  ) => {
+    const timeFound = dataCurrent.timeList.find(
+      (timeItem: IResShiftTypeTimeItem) => timeItem.timeId === timeId
+    );
+
+    if (shiftTypeId && timeFound) {
+      setIsTimeDialogRemoveOpen({
+        isOpen: true,
+        time: {
+          dateTime,
+          id: timeId,
+          index,
+        },
+        type: {
+          id: Number(shiftTypeId),
+        },
+      });
+    } else {
+      timeRemove(index);
     }
   };
 
@@ -270,6 +313,7 @@ export const ShiftTypeUpdate = () => {
               errors={errors}
               getValues={getValues}
               handlePositionRemove={handlePositionRemove}
+              handleTimeRemove={handleTimeRemove}
               positionAppend={positionAppend}
               positionFields={positionFields}
               setError={setError}
@@ -327,15 +371,26 @@ export const ShiftTypeUpdate = () => {
         </Box>
       </Container>
 
-      {/* remove dialog */}
+      {/* position dialog remove */}
       <ShiftTypePositionRemove
-        handleDialogRemoveClose={() =>
-          setIsDialogRemoveOpen(structuredClone(defaultState))
+        handlePositionDialogRemoveClose={() =>
+          setIsPositionDialogRemoveOpen(structuredClone(defaultPositionState))
         }
-        isDialogRemoveOpen={isDialogRemoveOpen.isOpen}
-        positionItem={isDialogRemoveOpen.position}
+        isPositionDialogRemoveOpen={isPositionDialogRemoveOpen.isOpen}
+        positionItem={isPositionDialogRemoveOpen.position}
         positionRemove={positionRemove}
-        typeItem={isDialogRemoveOpen.type}
+        typeItem={isPositionDialogRemoveOpen.type}
+      />
+
+      {/* time dialog remove */}
+      <ShiftTypeTimeRemove
+        handleTimeDialogRemoveClose={() =>
+          setIsTimeDialogRemoveOpen(structuredClone(defaultTimeState))
+        }
+        isTimeDialogRemoveOpen={isTimeDialogRemoveOpen.isOpen}
+        timeItem={isTimeDialogRemoveOpen.time}
+        timeRemove={timeRemove}
+        typeItem={isTimeDialogRemoveOpen.type}
       />
     </>
   );

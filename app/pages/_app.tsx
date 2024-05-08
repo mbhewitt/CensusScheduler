@@ -111,7 +111,11 @@ const theme = createTheme({
             display: "inline-block",
             li: {
               a: {
+                color: COLOR_CENSUS_PINK,
                 textDecoration: "underline",
+                span: {
+                  color: COLOR_CENSUS_PINK,
+                },
               },
             },
           },

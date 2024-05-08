@@ -1,6 +1,6 @@
 import {
   Close as CloseIcon,
-  PersonAdd as PersonAddIcon,
+  PersonAddAlt1 as PersonAddAlt1Icon,
 } from "@mui/icons-material";
 import {
   Autocomplete,
@@ -215,7 +215,11 @@ export const RoleVolunteersDialogAdd = ({
           <Button
             disabled={Object.keys(errors).length > 0 || isMutating}
             startIcon={
-              isMutating ? <CircularProgress size="1rem" /> : <PersonAddIcon />
+              isMutating ? (
+                <CircularProgress size="1rem" />
+              ) : (
+                <PersonAddAlt1Icon />
+              )
             }
             type="submit"
             variant="contained"
