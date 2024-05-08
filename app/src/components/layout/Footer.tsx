@@ -68,28 +68,24 @@ export const Footer = () => {
       component="footer"
       sx={{
         backgroundColor: theme.palette.primary.main,
-        mt: theme.spacing(3),
-        pt: theme.spacing(3),
-        pb: theme.spacing(2),
+        mt: 3,
+        pt: 3,
+        pb: 2,
       }}
     >
       <Container maxWidth="md">
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          sx={{ mb: theme.spacing(3) }}
-        >
-          <Stack direction="row" sx={{ gap: theme.spacing(6) }}>
+        <Stack direction="row" justifyContent="space-between" sx={{ mb: 3 }}>
+          <Stack direction="row" sx={{ gap: 6 }}>
             {/* quick links */}
             <Box>
               <Typography
                 component="h3"
-                sx={{ color: theme.palette.common.white, mb: theme.spacing(2) }}
+                sx={{ color: theme.palette.common.white, mb: 2 }}
                 variant="h6"
               >
                 Quick links
               </Typography>
-              <Stack direction="row" sx={{ gap: theme.spacing(6) }}>
+              <Stack direction="row" sx={{ gap: 6 }}>
                 <List sx={{ p: 0 }}>
                   {pageListHalfFirst.map(({ label, path }) => (
                     <ListItem disablePadding key={path}>
@@ -127,7 +123,7 @@ export const Footer = () => {
                   component="h3"
                   sx={{
                     color: theme.palette.common.white,
-                    mb: theme.spacing(2),
+                    mb: 2,
                   }}
                   variant="h6"
                 >
@@ -156,7 +152,7 @@ export const Footer = () => {
                   component="h3"
                   sx={{
                     color: theme.palette.common.white,
-                    mb: theme.spacing(2),
+                    mb: 2,
                   }}
                   variant="h6"
                 >
@@ -199,9 +195,7 @@ export const Footer = () => {
         </Stack>
       </Container>
       <Container>
-        <Divider
-          sx={{ borderColor: theme.palette.common.white, mb: theme.spacing(2) }}
-        />
+        <Divider sx={{ borderColor: theme.palette.common.white, mb: 2 }} />
       </Container>
       <Container>
         <Stack direction="row" justifyContent="space-between">
