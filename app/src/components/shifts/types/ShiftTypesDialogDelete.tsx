@@ -14,7 +14,6 @@ import {
   Typography,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { ReactNode } from "react";
 import useSWR, { useSWRConfig } from "swr";
 import useSWRMutation from "swr/mutation";
 
@@ -30,32 +29,12 @@ import type {
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 import { formatDateName, formatTime } from "src/utils/formatDateTime";
 
-interface IPreFetchDialogContainerProps {
-  children: ReactNode;
-  handleDialogDeleteClose: () => void;
-  isDialogDeleteOpen: boolean;
-}
 interface IShiftTypesDialogDeleteProps {
   handleDialogDeleteClose: () => void;
   isDialogDeleteOpen: boolean;
   typeItem: IResShiftTypeItem;
 }
 
-const PreFetchDialogContainer = ({
-  children,
-  handleDialogDeleteClose,
-  isDialogDeleteOpen,
-}: IPreFetchDialogContainerProps) => {
-  return (
-    <DialogContainer
-      handleDialogClose={handleDialogDeleteClose}
-      isDialogOpen={isDialogDeleteOpen}
-      text="Delete type"
-    >
-      {children}
-    </DialogContainer>
-  );
-};
 export const ShiftTypesDialogDelete = ({
   handleDialogDeleteClose,
   isDialogDeleteOpen,
@@ -78,21 +57,23 @@ export const ShiftTypesDialogDelete = ({
   // --------------------
   if (error)
     return (
-      <PreFetchDialogContainer
-        handleDialogDeleteClose={handleDialogDeleteClose}
-        isDialogDeleteOpen={isDialogDeleteOpen}
+      <DialogContainer
+        handleDialogClose={handleDialogDeleteClose}
+        isDialogOpen={isDialogDeleteOpen}
+        text="Delete type"
       >
         <ErrorAlert />
-      </PreFetchDialogContainer>
+      </DialogContainer>
     );
   if (!data)
     return (
-      <PreFetchDialogContainer
-        handleDialogDeleteClose={handleDialogDeleteClose}
-        isDialogDeleteOpen={isDialogDeleteOpen}
+      <DialogContainer
+        handleDialogClose={handleDialogDeleteClose}
+        isDialogOpen={isDialogDeleteOpen}
+        text="Delete type"
       >
         <Loading />
-      </PreFetchDialogContainer>
+      </DialogContainer>
     );
 
   const handleShiftTypeDelete = async () => {
@@ -132,9 +113,10 @@ export const ShiftTypesDialogDelete = ({
   // render
   // --------------------
   return (
-    <PreFetchDialogContainer
-      handleDialogDeleteClose={handleDialogDeleteClose}
-      isDialogDeleteOpen={isDialogDeleteOpen}
+    <DialogContainer
+      handleDialogClose={handleDialogDeleteClose}
+      isDialogOpen={isDialogDeleteOpen}
+      text="Delete type"
     >
       {(data && data.positionList.length > 0) || data.timeList.length > 0 ? (
         <>
@@ -237,6 +219,6 @@ export const ShiftTypesDialogDelete = ({
           Delete type
         </Button>
       </DialogActions>
-    </PreFetchDialogContainer>
+    </DialogContainer>
   );
 };
