@@ -4,6 +4,7 @@ import {
 } from "@mui/icons-material";
 import { Button, CircularProgress, DialogActions } from "@mui/material";
 import { useSnackbar } from "notistack";
+import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 
@@ -18,14 +19,16 @@ import type { IResShiftCategoryItem } from "src/components/types";
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IShiftCategoriesDialogCreateProps {
-  handleDialogCreateClose: () => void;
-  isDialogCreateOpen: boolean;
+  handleDialogClose: () => void;
+  isDialogOpen: boolean;
+  shiftCategoryItem: IResShiftCategoryItem;
   shiftCategoryList: IResShiftCategoryItem[];
 }
 
 export const ShiftCategoriesDialogCreate = ({
-  handleDialogCreateClose,
-  isDialogCreateOpen,
+  handleDialogClose,
+  isDialogOpen,
+  shiftCategoryItem,
   shiftCategoryList,
 }: IShiftCategoriesDialogCreateProps) => {
   // fetching, mutation, and revalidation
@@ -38,15 +41,26 @@ export const ShiftCategoriesDialogCreate = ({
   // other hooks
   // --------------------
   const {
+    clearErrors,
     control,
     formState: { errors },
     handleSubmit,
-    reset,
+    setValue,
   } = useForm({
     defaultValues,
     mode: "onBlur",
   });
   const { enqueueSnackbar } = useSnackbar();
+
+  // side effects
+  // --------------------
+  useEffect(() => {
+    if (isDialogOpen) {
+      clearErrors();
+      setValue("category", shiftCategoryItem.category);
+      setValue("name", shiftCategoryItem.name);
+    }
+  }, [clearErrors, isDialogOpen, shiftCategoryItem, setValue]);
 
   // form submission
   // --------------------
@@ -58,8 +72,7 @@ export const ShiftCategoriesDialogCreate = ({
         method: "POST",
       });
 
-      handleDialogCreateClose();
-      reset(defaultValues);
+      handleDialogClose();
       enqueueSnackbar(
         <SnackbarText>
           <strong>{formValues.name}</strong> shift category has been created
@@ -89,8 +102,8 @@ export const ShiftCategoriesDialogCreate = ({
   // --------------------
   return (
     <DialogContainer
-      handleDialogClose={handleDialogCreateClose}
-      isDialogOpen={isDialogCreateOpen}
+      handleDialogClose={handleDialogClose}
+      isDialogOpen={isDialogOpen}
       text="Create shift category"
     >
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
@@ -106,10 +119,7 @@ export const ShiftCategoriesDialogCreate = ({
             startIcon={
               isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
             }
-            onClick={() => {
-              handleDialogCreateClose();
-              reset(defaultValues);
-            }}
+            onClick={handleDialogClose}
             type="button"
             variant="outlined"
           >

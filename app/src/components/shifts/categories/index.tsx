@@ -35,24 +35,24 @@ import {
   setCellPropsCenter,
 } from "src/utils/setCellPropsCenter";
 
-const defaultState = {
-  isOpen: false,
-  shiftCategory: {
-    category: "",
-    id: 0,
-    name: "",
-  },
-};
+enum DialogList {
+  Create,
+  Delete,
+  Update,
+}
+
 export const ShiftCategories = () => {
   // state
   // --------------------
-  const [isDialogCreateOpen, setIsDialogCreateOpen] = useState(false);
-  const [isDialogUpdateOpen, setIsDialogUpdateOpen] = useState(
-    structuredClone(defaultState)
-  );
-  const [isDialogDeleteOpen, setIsDialogDeleteOpen] = useState(
-    structuredClone(defaultState)
-  );
+  const [dialogCurrent, setDialogCurrent] = useState({
+    dialogItem: 0,
+    shiftCategory: {
+      category: "",
+      id: 0,
+      name: "",
+    },
+  });
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // fetching, mutation, and revalidation
   // --------------------
@@ -126,12 +126,13 @@ export const ShiftCategories = () => {
           MenuList={
             <MenuList>
               <MenuItem
-                onClick={() =>
-                  setIsDialogUpdateOpen({
-                    isOpen: true,
+                onClick={() => {
+                  setDialogCurrent({
+                    dialogItem: DialogList.Update,
                     shiftCategory: { category, id, name },
-                  })
-                }
+                  });
+                  setIsDialogOpen(true);
+                }}
               >
                 <ListItemIcon>
                   <EditIcon />
@@ -139,12 +140,13 @@ export const ShiftCategories = () => {
                 <ListItemText>Update shift category</ListItemText>
               </MenuItem>
               <MenuItem
-                onClick={() =>
-                  setIsDialogDeleteOpen({
-                    isOpen: true,
+                onClick={() => {
+                  setDialogCurrent({
+                    dialogItem: DialogList.Delete,
                     shiftCategory: { category, id, name },
-                  })
-                }
+                  });
+                  setIsDialogOpen(true);
+                }}
               >
                 <ListItemIcon>
                   <PlaylistRemoveIcon />
@@ -182,7 +184,15 @@ export const ShiftCategories = () => {
           <Stack direction="row" justifyContent="flex-end" sx={{ mb: 2 }}>
             <Button
               onClick={() => {
-                setIsDialogCreateOpen(true);
+                setDialogCurrent({
+                  dialogItem: DialogList.Create,
+                  shiftCategory: {
+                    category: "",
+                    id: 0,
+                    name: "",
+                  },
+                });
+                setIsDialogOpen(true);
               }}
               startIcon={<PlaylistAddIcon />}
               type="button"
@@ -201,28 +211,31 @@ export const ShiftCategories = () => {
 
       {/* create dialog */}
       <ShiftCategoriesDialogCreate
-        handleDialogCreateClose={() => setIsDialogCreateOpen(false)}
-        isDialogCreateOpen={isDialogCreateOpen}
-        shiftCategoryList={data}
-      />
-
-      {/* update dialog */}
-      <ShiftCategoriesDialogUpdate
-        handleDialogUpdateClose={() =>
-          setIsDialogUpdateOpen(structuredClone(defaultState))
+        handleDialogClose={() => setIsDialogOpen(false)}
+        isDialogOpen={
+          dialogCurrent.dialogItem === DialogList.Create && isDialogOpen
         }
-        isDialogUpdateOpen={isDialogUpdateOpen.isOpen}
-        shiftCategoryItem={isDialogUpdateOpen.shiftCategory}
+        shiftCategoryItem={dialogCurrent.shiftCategory}
         shiftCategoryList={data}
       />
 
       {/* delete dialog */}
       <ShiftCategoriesDialogDelete
-        handleDialogDeleteClose={() =>
-          setIsDialogDeleteOpen(structuredClone(defaultState))
+        handleDialogClose={() => setIsDialogOpen(false)}
+        isDialogOpen={
+          dialogCurrent.dialogItem === DialogList.Delete && isDialogOpen
         }
-        isDialogDeleteOpen={isDialogDeleteOpen.isOpen}
-        shiftCategoryItem={isDialogDeleteOpen.shiftCategory}
+        shiftCategoryItem={dialogCurrent.shiftCategory}
+      />
+
+      {/* update dialog */}
+      <ShiftCategoriesDialogUpdate
+        handleDialogClose={() => setIsDialogOpen(false)}
+        isDialogOpen={
+          dialogCurrent.dialogItem === DialogList.Update && isDialogOpen
+        }
+        shiftCategoryItem={dialogCurrent.shiftCategory}
+        shiftCategoryList={data}
       />
     </>
   );

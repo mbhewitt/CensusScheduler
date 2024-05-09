@@ -19,14 +19,14 @@ import type { IResShiftCategoryItem } from "src/components/types";
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IShiftCategoriesDialogDeleteProps {
-  handleDialogDeleteClose: () => void;
-  isDialogDeleteOpen: boolean;
+  handleDialogClose: () => void;
+  isDialogOpen: boolean;
   shiftCategoryItem: IResShiftCategoryItem;
 }
 
 export const ShiftCategoriesDialogDelete = ({
-  handleDialogDeleteClose,
-  isDialogDeleteOpen,
+  handleDialogClose,
+  isDialogOpen,
   shiftCategoryItem: { id, name },
 }: IShiftCategoriesDialogDeleteProps) => {
   // fetching, mutation, and revalidation
@@ -49,7 +49,7 @@ export const ShiftCategoriesDialogDelete = ({
       });
       mutate("/api/shifts/categories");
 
-      handleDialogDeleteClose();
+      handleDialogClose();
       enqueueSnackbar(
         <SnackbarText>
           <strong>{name}</strong> shift category has been deleted
@@ -79,8 +79,8 @@ export const ShiftCategoriesDialogDelete = ({
   // --------------------
   return (
     <DialogContainer
-      handleDialogClose={handleDialogDeleteClose}
-      isDialogOpen={isDialogDeleteOpen}
+      handleDialogClose={handleDialogClose}
+      isDialogOpen={isDialogOpen}
       text="Delete shift category"
     >
       <DialogContentText>
@@ -95,7 +95,7 @@ export const ShiftCategoriesDialogDelete = ({
           startIcon={
             isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
           }
-          onClick={handleDialogDeleteClose}
+          onClick={handleDialogClose}
           type="button"
           variant="outlined"
         >
