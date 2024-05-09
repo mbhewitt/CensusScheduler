@@ -17,15 +17,15 @@ import type { IResRoleItem } from "src/components/types";
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IRolesDialogUpdateProps {
-  handleDialogUpdateClose: () => void;
-  isDialogUpdateOpen: boolean;
+  handleDialogClose: () => void;
+  isDialogOpen: boolean;
   roleItem: IResRoleItem;
   roleList: IResRoleItem[];
 }
 
 export const RolesDialogUpdate = ({
-  handleDialogUpdateClose,
-  isDialogUpdateOpen,
+  handleDialogClose,
+  isDialogOpen,
   roleItem,
   roleList,
 }: IRolesDialogUpdateProps) => {
@@ -43,7 +43,6 @@ export const RolesDialogUpdate = ({
     control,
     formState: { errors },
     handleSubmit,
-    reset,
     setValue,
   } = useForm({
     defaultValues,
@@ -68,8 +67,7 @@ export const RolesDialogUpdate = ({
       });
       mutate("/api/roles");
 
-      handleDialogUpdateClose();
-      reset(defaultValues);
+      handleDialogClose();
       enqueueSnackbar(
         <SnackbarText>
           <strong>{formValues.name}</strong> role has been updated
@@ -99,8 +97,8 @@ export const RolesDialogUpdate = ({
   // --------------------
   return (
     <DialogContainer
-      handleDialogClose={handleDialogUpdateClose}
-      isDialogOpen={isDialogUpdateOpen}
+      handleDialogClose={handleDialogClose}
+      isDialogOpen={isDialogOpen}
       text="Update role"
     >
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
@@ -116,10 +114,7 @@ export const RolesDialogUpdate = ({
             startIcon={
               isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
             }
-            onClick={() => {
-              handleDialogUpdateClose();
-              reset(defaultValues);
-            }}
+            onClick={handleDialogClose}
             type="button"
             variant="outlined"
           >

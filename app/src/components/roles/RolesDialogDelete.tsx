@@ -24,14 +24,14 @@ import type { IResRoleItem, IResRoleVolunteerItem } from "src/components/types";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IRolesDialogDeleteProps {
-  handleDialogDeleteClose: () => void;
-  isDialogDeleteOpen: boolean;
+  handleDialogClose: () => void;
+  isDialogOpen: boolean;
   roleItem: IResRoleItem;
 }
 
 export const RolesDialogDelete = ({
-  handleDialogDeleteClose,
-  isDialogDeleteOpen,
+  handleDialogClose,
+  isDialogOpen,
   roleItem: { id, name },
 }: IRolesDialogDeleteProps) => {
   // fetching, mutation, and revalidation
@@ -52,8 +52,8 @@ export const RolesDialogDelete = ({
   if (error)
     return (
       <DialogContainer
-        handleDialogClose={handleDialogDeleteClose}
-        isDialogOpen={isDialogDeleteOpen}
+        handleDialogClose={handleDialogClose}
+        isDialogOpen={isDialogOpen}
         text="Delete role"
       >
         <ErrorAlert />
@@ -62,8 +62,8 @@ export const RolesDialogDelete = ({
   if (!data)
     return (
       <DialogContainer
-        handleDialogClose={handleDialogDeleteClose}
-        isDialogOpen={isDialogDeleteOpen}
+        handleDialogClose={handleDialogClose}
+        isDialogOpen={isDialogOpen}
         text="Delete role"
       >
         <Loading />
@@ -78,7 +78,7 @@ export const RolesDialogDelete = ({
       });
       mutate("/api/roles");
 
-      handleDialogDeleteClose();
+      handleDialogClose();
       enqueueSnackbar(
         <SnackbarText>
           <strong>{name}</strong> role has been deleted
@@ -108,8 +108,8 @@ export const RolesDialogDelete = ({
   // --------------------
   return (
     <DialogContainer
-      handleDialogClose={handleDialogDeleteClose}
-      isDialogOpen={isDialogDeleteOpen}
+      handleDialogClose={handleDialogClose}
+      isDialogOpen={isDialogOpen}
       text="Delete role"
     >
       {data && data.length > 0 ? (
@@ -121,23 +121,17 @@ export const RolesDialogDelete = ({
             </Typography>
           </DialogContentText>
           <List sx={{ pl: 2, listStyleType: "disc" }}>
-            {data.map(
-              ({
-                playaName,
-                shiftboardId,
-                worldName,
-              }: IResRoleVolunteerItem) => {
-                return (
-                  <ListItem
-                    disablePadding
-                    key={shiftboardId}
-                    sx={{ display: "list-item", pl: 0 }}
-                  >
-                    <ListItemText primary={`${playaName} "${worldName}"`} />
-                  </ListItem>
-                );
-              }
-            )}
+            {data.map(({ id, playaName, worldName }: IResRoleVolunteerItem) => {
+              return (
+                <ListItem
+                  disablePadding
+                  key={id}
+                  sx={{ display: "list-item", pl: 0 }}
+                >
+                  <ListItemText primary={`${playaName} "${worldName}"`} />
+                </ListItem>
+              );
+            })}
           </List>
         </>
       ) : (
@@ -153,7 +147,7 @@ export const RolesDialogDelete = ({
           startIcon={
             isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
           }
-          onClick={handleDialogDeleteClose}
+          onClick={handleDialogClose}
           type="button"
           variant="outlined"
         >

@@ -18,14 +18,14 @@ import type { IResRoleItem } from "src/components/types";
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IRolesDialogCreateProps {
-  handleDialogCreateClose: () => void;
-  isDialogCreateOpen: boolean;
+  handleDialogClose: () => void;
+  isDialogOpen: boolean;
   roleList: IResRoleItem[];
 }
 
 export const RolesDialogCreate = ({
-  handleDialogCreateClose,
-  isDialogCreateOpen,
+  handleDialogClose,
+  isDialogOpen,
   roleList,
 }: IRolesDialogCreateProps) => {
   // fetching, mutation, and revalidation
@@ -38,7 +38,6 @@ export const RolesDialogCreate = ({
     control,
     formState: { errors },
     handleSubmit,
-    reset,
   } = useForm({
     defaultValues,
     mode: "onBlur",
@@ -55,8 +54,7 @@ export const RolesDialogCreate = ({
         method: "POST",
       });
 
-      handleDialogCreateClose();
-      reset(defaultValues);
+      handleDialogClose();
       enqueueSnackbar(
         <SnackbarText>
           <strong>{formValues.name}</strong> role has been created
@@ -86,8 +84,8 @@ export const RolesDialogCreate = ({
   // --------------------
   return (
     <DialogContainer
-      handleDialogClose={handleDialogCreateClose}
-      isDialogOpen={isDialogCreateOpen}
+      handleDialogClose={handleDialogClose}
+      isDialogOpen={isDialogOpen}
       text="Create role"
     >
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
@@ -103,10 +101,7 @@ export const RolesDialogCreate = ({
             startIcon={
               isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
             }
-            onClick={() => {
-              handleDialogCreateClose();
-              reset(defaultValues);
-            }}
+            onClick={handleDialogClose}
             type="button"
             variant="outlined"
           >

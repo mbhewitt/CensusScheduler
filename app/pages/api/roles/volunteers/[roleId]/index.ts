@@ -15,8 +15,6 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       const [dbRoleVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT
           v.playa_name,
-          r.role,
-          r.role_id,
           vr.shiftboard_id,
           v.world_name
         FROM op_volunteer_roles AS vr
@@ -30,17 +28,13 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         [roleId]
       );
       const resRoleVolunteerList: IResRoleVolunteerItem[] =
-        dbRoleVolunteerList.map(
-          ({ playa_name, role, role_id, shiftboard_id, world_name }) => {
-            return {
-              playaName: playa_name,
-              roleId: role_id,
-              roleName: role,
-              shiftboardId: shiftboard_id,
-              worldName: world_name,
-            };
-          }
-        );
+        dbRoleVolunteerList.map(({ playa_name, shiftboard_id, world_name }) => {
+          return {
+            id: shiftboard_id,
+            playaName: playa_name,
+            worldName: world_name,
+          };
+        });
 
       return res.status(200).json(resRoleVolunteerList);
     }
@@ -49,13 +43,13 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     // --------------------
     case "POST": {
       // add role volunteer
-      const { shiftboardId } = JSON.parse(req.body);
+      const { id: volunteerId } = JSON.parse(req.body);
       const [dbRoleVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT role_id
         FROM op_volunteer_roles
         WHERE role_id=?
         AND shiftboard_id=?`,
-        [roleId, shiftboardId]
+        [roleId, volunteerId]
       );
       const dbRoleVolunteerFirst = dbRoleVolunteerList[0];
 
@@ -69,7 +63,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             remove_role=false
           WHERE roles=?
           AND shiftboard_id=?`,
-          [roleId, shiftboardId]
+          [roleId, volunteerId]
         );
         // else insert role volunteer row
       } else {
@@ -81,7 +75,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             shiftboard_id
           )
           VALUES (true, false, ?, ?)`,
-          [roleId, shiftboardId]
+          [roleId, volunteerId]
         );
       }
 
@@ -95,7 +89,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     // --------------------
     case "DELETE": {
       // remove role volunteer
-      const shiftboardId = JSON.parse(req.body);
+      const { id: volunteerId } = JSON.parse(req.body);
 
       await pool.query<RowDataPacket[]>(
         `UPDATE op_volunteer_roles
@@ -104,7 +98,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           remove_role=true
         WHERE role_id=?
         AND shiftboard_id=?`,
-        [roleId, shiftboardId]
+        [roleId, volunteerId]
       );
 
       return res.status(200).json({

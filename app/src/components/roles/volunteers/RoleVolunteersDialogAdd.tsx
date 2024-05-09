@@ -10,6 +10,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
+import { useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
@@ -26,24 +27,25 @@ import type {
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IFormValues {
-  volunteer: null | IVolunteerOption;
+  name: null | IVolunteerOption;
 }
 interface IRoleVolunteersDialogAddProps {
-  handleDialogAddClose: () => void;
-  isDialogAddOpen: boolean;
-  roleId: string | string[] | undefined;
-  roleName: string;
+  handleDialogClose: () => void;
+  isDialogOpen: boolean;
+  roleItem: {
+    id: number;
+    name: string;
+  };
   roleVolunteerList: IResRoleVolunteerItem[];
 }
 
 const defaultValues: IFormValues = {
-  volunteer: null,
+  name: null,
 };
 export const RoleVolunteersDialogAdd = ({
-  handleDialogAddClose,
-  isDialogAddOpen,
-  roleId,
-  roleName,
+  handleDialogClose,
+  isDialogOpen,
+  roleItem: { id: roleId, name: roleName },
   roleVolunteerList,
 }: IRoleVolunteersDialogAddProps) => {
   // fetching, mutation, and revalidation
@@ -57,23 +59,33 @@ export const RoleVolunteersDialogAdd = ({
   // other hooks
   // --------------------
   const {
+    clearErrors,
     control,
     formState: { errors },
     handleSubmit,
-    reset,
+    setValue,
   } = useForm({
     defaultValues,
     mode: "onBlur",
   });
   const { enqueueSnackbar } = useSnackbar();
 
+  // side effects
+  // --------------------
+  useEffect(() => {
+    if (isDialogOpen) {
+      clearErrors();
+      setValue("name", null);
+    }
+  }, [clearErrors, isDialogOpen, setValue]);
+
   // logic
   // --------------------
   if (error)
     return (
       <DialogContainer
-        handleDialogClose={handleDialogAddClose}
-        isDialogOpen={isDialogAddOpen}
+        handleDialogClose={handleDialogClose}
+        isDialogOpen={isDialogOpen}
         text="Add role volunteer"
       >
         <ErrorAlert />
@@ -82,8 +94,8 @@ export const RoleVolunteersDialogAdd = ({
   if (!data)
     return (
       <DialogContainer
-        handleDialogClose={handleDialogAddClose}
-        isDialogOpen={isDialogAddOpen}
+        handleDialogClose={handleDialogClose}
+        isDialogOpen={isDialogOpen}
         text="Add role volunteer"
       >
         <Loading />
@@ -94,28 +106,19 @@ export const RoleVolunteersDialogAdd = ({
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
-      const roleVolunteerAdd = data.find(
-        (dataVolunteerItem: IResVolunteerDropdownItem) =>
-          dataVolunteerItem.shiftboardId === formValues.volunteer?.shiftboardId
-      );
-
       // update database
       await trigger({
         body: {
-          shiftboardId: formValues.volunteer?.shiftboardId,
+          id: formValues.name?.id,
         },
         method: "POST",
       });
 
-      handleDialogAddClose();
-      reset(defaultValues);
+      handleDialogClose();
       enqueueSnackbar(
         <SnackbarText>
-          <strong>
-            {roleVolunteerAdd.playaName} &quot;{roleVolunteerAdd.worldName}
-            &quot;
-          </strong>{" "}
-          for <strong>{roleName}</strong> role has been added
+          <strong>{formValues.name?.label}</strong> for{" "}
+          <strong>{roleName}</strong> role has been added
         </SnackbarText>,
         {
           variant: "success",
@@ -141,37 +144,33 @@ export const RoleVolunteersDialogAdd = ({
   // --------------------
   return (
     <DialogContainer
-      handleDialogClose={handleDialogAddClose}
-      isDialogOpen={isDialogAddOpen}
+      handleDialogClose={handleDialogClose}
+      isDialogOpen={isDialogOpen}
       text="Add role volunteer"
     >
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
         <Controller
           control={control}
-          name="volunteer"
+          name="name"
           render={({ field }) => (
             <Autocomplete
               {...field}
               fullWidth
               isOptionEqualToValue={(option, value: IVolunteerOption) =>
-                option.shiftboardId === value.shiftboardId
+                option.id === value.id
               }
               onChange={(_, data) => field.onChange(data)}
               options={data.map(
-                ({
-                  playaName,
-                  shiftboardId,
-                  worldName,
-                }: IResVolunteerDropdownItem) => ({
+                ({ id, playaName, worldName }: IResVolunteerDropdownItem) => ({
+                  id,
                   label: `${playaName} "${worldName}"`,
-                  shiftboardId,
                 })
               )}
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  error={Boolean(errors.volunteer)}
-                  helperText={errors.volunteer?.message}
+                  error={Boolean(errors.name)}
+                  helperText={errors.name?.message}
                   label="Name"
                   required
                   variant="standard"
@@ -180,11 +179,11 @@ export const RoleVolunteersDialogAdd = ({
             />
           )}
           rules={{
-            required: "Volunteer is required",
+            required: "Name is required",
             validate: (value) => {
               if (value) {
                 const isRoleVolunteerAvailable = roleVolunteerList.every(
-                  ({ shiftboardId }) => shiftboardId !== value.shiftboardId
+                  ({ id }) => id !== value.id
                 );
 
                 return (
@@ -203,10 +202,7 @@ export const RoleVolunteersDialogAdd = ({
             startIcon={
               isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
             }
-            onClick={() => {
-              handleDialogAddClose();
-              reset(defaultValues);
-            }}
+            onClick={handleDialogClose}
             type="button"
             variant="outlined"
           >

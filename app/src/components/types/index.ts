@@ -10,8 +10,8 @@ export interface ISwitchValues {
   worldName: string;
 }
 export interface IVolunteerOption {
+  id: number;
   label: string;
-  shiftboardId: number;
 }
 export interface IVolunteerAccountFormValues {
   email?: string;
@@ -37,10 +37,8 @@ export interface IResRoleItem {
   name: string;
 }
 export interface IResRoleVolunteerItem {
+  id: number;
   playaName: string;
-  roleId: number;
-  roleName: string;
-  shiftboardId: number;
   worldName: string;
 }
 
@@ -146,9 +144,9 @@ export interface IResVolunteerAccount {
   worldName: string;
 }
 export interface IResVolunteerDropdownItem {
+  id: number;
   playaName: string;
   roleList: IResVolunteerRoleItem[];
-  shiftboardId: number;
   worldName: string;
 }
 export interface IResVolunteerRoleItem {

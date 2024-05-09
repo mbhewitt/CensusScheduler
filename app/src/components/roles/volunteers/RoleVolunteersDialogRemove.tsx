@@ -17,21 +17,24 @@ import { SnackbarText } from "src/components/general/SnackbarText";
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IRoleVolunteersDialogRemoveProps {
-  handleDialogRemoveClose: () => void;
-  isDialogRemoveOpen: boolean;
-  volunteer: {
+  handleDialogClose: () => void;
+  isDialogOpen: boolean;
+  roleItem: {
+    id: number;
+    name: string;
+  };
+  volunteerItem: {
     playaName: string;
-    roleId: number;
-    roleName: string;
-    shiftboardId: number;
+    id: number;
     worldName: string;
   };
 }
 
 export const RoleVolunteersDialogRemove = ({
-  handleDialogRemoveClose,
-  isDialogRemoveOpen,
-  volunteer: { playaName, roleId, roleName, shiftboardId, worldName },
+  handleDialogClose,
+  isDialogOpen,
+  roleItem: { id: roleId, name: roleName },
+  volunteerItem: { playaName, id: volunteerId, worldName },
 }: IRoleVolunteersDialogRemoveProps) => {
   // fetching, mutation, and revalidation
   // --------------------
@@ -51,12 +54,12 @@ export const RoleVolunteersDialogRemove = ({
       // update database
       await trigger({
         body: {
-          shiftboardId,
+          id: volunteerId,
         },
         method: "DELETE",
       });
 
-      handleDialogRemoveClose();
+      handleDialogClose();
       enqueueSnackbar(
         <SnackbarText>
           <strong>
@@ -89,8 +92,8 @@ export const RoleVolunteersDialogRemove = ({
   // --------------------
   return (
     <DialogContainer
-      handleDialogClose={handleDialogRemoveClose}
-      isDialogOpen={isDialogRemoveOpen}
+      handleDialogClose={handleDialogClose}
+      isDialogOpen={isDialogOpen}
       text="Remove role volunteer"
     >
       <DialogContentText>
@@ -108,7 +111,7 @@ export const RoleVolunteersDialogRemove = ({
           startIcon={
             isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
           }
-          onClick={handleDialogRemoveClose}
+          onClick={handleDialogClose}
           type="button"
           variant="outlined"
         >

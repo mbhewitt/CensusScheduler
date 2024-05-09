@@ -45,30 +45,29 @@ import {
   setCellPropsCenter,
 } from "src/utils/setCellPropsCenter";
 
+enum DialogList {
+  Create,
+  Delete,
+  Update,
+}
 interface IRoleDisplay {
   checked: boolean;
   id: number;
   name: string;
 }
 
-const defaultState = {
-  isOpen: false,
-  role: {
-    display: true,
-    id: 0,
-    name: "",
-  },
-};
 export const Roles = () => {
   // state
   // --------------------
-  const [isDialogCreateOpen, setIsDialogCreateOpen] = useState(false);
-  const [isDialogUpdateOpen, setIsDialogUpdateOpen] = useState(
-    structuredClone(defaultState)
-  );
-  const [isDialogDeleteOpen, setIsDialogDeleteOpen] = useState(
-    structuredClone(defaultState)
-  );
+  const [dialogCurrent, setDialogCurrent] = useState({
+    dialogItem: 0,
+    role: {
+      display: true,
+      id: 0,
+      name: "",
+    },
+  });
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // fetching, mutation, and revalidation
   // --------------------
@@ -202,12 +201,13 @@ export const Roles = () => {
               </MenuItem>
             </Link>
             <MenuItem
-              onClick={() =>
-                setIsDialogUpdateOpen({
-                  isOpen: true,
+              onClick={() => {
+                setDialogCurrent({
+                  dialogItem: DialogList.Update,
                   role: { display, id, name },
-                })
-              }
+                });
+                setIsDialogOpen(true);
+              }}
             >
               <ListItemIcon>
                 <EditIcon />
@@ -215,12 +215,13 @@ export const Roles = () => {
               <ListItemText>Update role</ListItemText>
             </MenuItem>
             <MenuItem
-              onClick={() =>
-                setIsDialogDeleteOpen({
-                  isOpen: true,
+              onClick={() => {
+                setDialogCurrent({
+                  dialogItem: DialogList.Delete,
                   role: { display, id, name },
-                })
-              }
+                });
+                setIsDialogOpen(true);
+              }}
             >
               <ListItemIcon>
                 <RemoveModeratorIcon />
@@ -257,7 +258,15 @@ export const Roles = () => {
           <Stack direction="row" justifyContent="flex-end" sx={{ mb: 2 }}>
             <Button
               onClick={() => {
-                setIsDialogCreateOpen(true);
+                setDialogCurrent({
+                  dialogItem: DialogList.Create,
+                  role: {
+                    display: true,
+                    id: 0,
+                    name: "",
+                  },
+                });
+                setIsDialogOpen(true);
               }}
               startIcon={<AddModeratorIcon />}
               type="button"
@@ -276,28 +285,30 @@ export const Roles = () => {
 
       {/* create dialog */}
       <RolesDialogCreate
-        handleDialogCreateClose={() => setIsDialogCreateOpen(false)}
-        isDialogCreateOpen={isDialogCreateOpen}
-        roleList={data}
-      />
-
-      {/* update dialog */}
-      <RolesDialogUpdate
-        handleDialogUpdateClose={() =>
-          setIsDialogUpdateOpen(structuredClone(defaultState))
+        handleDialogClose={() => setIsDialogOpen(false)}
+        isDialogOpen={
+          dialogCurrent.dialogItem === DialogList.Create && isDialogOpen
         }
-        isDialogUpdateOpen={isDialogUpdateOpen.isOpen}
-        roleItem={isDialogUpdateOpen.role}
         roleList={data}
       />
 
       {/* delete dialog */}
       <RolesDialogDelete
-        handleDialogDeleteClose={() =>
-          setIsDialogDeleteOpen(structuredClone(defaultState))
+        handleDialogClose={() => setIsDialogOpen(false)}
+        isDialogOpen={
+          dialogCurrent.dialogItem === DialogList.Delete && isDialogOpen
         }
-        isDialogDeleteOpen={isDialogDeleteOpen.isOpen}
-        roleItem={isDialogDeleteOpen.role}
+        roleItem={dialogCurrent.role}
+      />
+
+      {/* update dialog */}
+      <RolesDialogUpdate
+        handleDialogClose={() => setIsDialogOpen(false)}
+        isDialogOpen={
+          dialogCurrent.dialogItem === DialogList.Update && isDialogOpen
+        }
+        roleItem={dialogCurrent.role}
+        roleList={data}
       />
     </>
   );
