@@ -551,7 +551,6 @@ export const ShiftVolunteersDialogAdd = ({
         },
         method: "POST",
       });
-
       // emit event
       socket.emit("req-shift-volunteer-add", {
         noShow: noShowShift,
@@ -575,7 +574,6 @@ export const ShiftVolunteersDialogAdd = ({
           },
           method: "POST",
         });
-
         // emit event
         socket.emit("req-shift-volunteer-add", {
           noShow: noShowTraining,
@@ -587,7 +585,7 @@ export const ShiftVolunteersDialogAdd = ({
           worldName: volunteerAdd.worldName,
         });
       }
-      // display success notification
+
       enqueueSnackbar(
         <SnackbarText>
           <strong>

@@ -82,7 +82,6 @@ export const ShiftTypesTimeRemove = ({
 
   const handleTimeRemove = async () => {
     timeRemove(timeItem.index);
-    handleDialogRemoveClose();
     enqueueSnackbar(
       <SnackbarText>
         Click on the <strong>Update type</strong> button to finalize your
@@ -92,6 +91,7 @@ export const ShiftTypesTimeRemove = ({
         variant: "warning",
       }
     );
+    handleDialogRemoveClose();
   };
 
   // render

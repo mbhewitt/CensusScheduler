@@ -82,8 +82,7 @@ export const Account = () => {
   // state
   // --------------------
   const [isMounted, setIsMounted] = useState(false);
-  const [isResetPasscodeDialogOpen, setIsResetPasscodeDialogOpen] =
-    useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // fetching, mutation, and revalidation
   // --------------------
@@ -486,7 +485,7 @@ export const Account = () => {
                   <Grid item xs={8}>
                     <Stack direction="row" justifyContent="flex-end">
                       <Button
-                        onClick={() => setIsResetPasscodeDialogOpen(true)}
+                        onClick={() => setIsDialogOpen(true)}
                         startIcon={<LockResetIcon />}
                         type="button"
                         variant="contained"
@@ -510,12 +509,10 @@ export const Account = () => {
 
       {/* remove dialog */}
       <ResetPasscodeDialog
-        handleResetPasscodeDialogClose={() =>
-          setIsResetPasscodeDialogOpen(false)
-        }
-        isResetPasscodeDialogOpen={isResetPasscodeDialogOpen}
-        shiftboardId={shiftboardId as string}
+        handleDialogClose={() => setIsDialogOpen(false)}
+        isDialogOpen={isDialogOpen}
         playaName={playaName}
+        shiftboardId={shiftboardId}
         worldName={worldName}
       />
     </>

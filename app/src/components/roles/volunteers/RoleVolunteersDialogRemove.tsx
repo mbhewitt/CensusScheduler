@@ -59,7 +59,6 @@ export const RoleVolunteersDialogRemove = ({
         method: "DELETE",
       });
 
-      // display success notification
       enqueueSnackbar(
         <SnackbarText>
           <strong>

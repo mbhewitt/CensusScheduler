@@ -207,7 +207,6 @@ export const ShiftTypesUpdate = () => {
         method: "PATCH",
       });
 
-      // display success notification
       enqueueSnackbar(
         <SnackbarText>
           <strong>

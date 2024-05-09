@@ -49,19 +49,11 @@ import {
   setCellPropsCenter,
 } from "src/utils/setCellPropsCenter";
 
+enum DialogList {
+  Remove,
+}
+
 const socket = io();
-const defaultState = {
-  isOpen: false,
-  shift: {
-    date: "",
-    dateName: "",
-    endTime: "",
-    positionName: "",
-    shiftPositionId: 0,
-    timeId: 0,
-    startTime: "",
-  },
-};
 export const VolunteerShifts = () => {
   // context
   // --------------------
@@ -81,9 +73,19 @@ export const VolunteerShifts = () => {
   // state
   // --------------------
   const [isMounted, setIsMounted] = useState(false);
-  const [isDialogRemoveOpen, setIsDialogRemoveOpen] = useState(
-    structuredClone(defaultState)
-  );
+  const [dialogCurrent, setDialogCurrent] = useState({
+    dialogItem: 0,
+    shift: {
+      date: "",
+      dateName: "",
+      endTime: "",
+      positionName: "",
+      shiftPositionId: 0,
+      timeId: 0,
+      startTime: "",
+    },
+  });
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // fetching, mutation, and revalidation
   // --------------------
@@ -367,9 +369,9 @@ export const VolunteerShifts = () => {
               </Link>
               <MenuItem
                 disabled={!isVolunteerRemoveAvailable}
-                onClick={() =>
-                  setIsDialogRemoveOpen({
-                    isOpen: true,
+                onClick={() => {
+                  setDialogCurrent({
+                    dialogItem: DialogList.Remove,
                     shift: {
                       date,
                       dateName,
@@ -379,8 +381,9 @@ export const VolunteerShifts = () => {
                       startTime,
                       timeId,
                     },
-                  })
-                }
+                  });
+                  setIsDialogOpen(true);
+                }}
               >
                 <ListItemIcon>
                   <EventBusyIcon />
@@ -443,11 +446,11 @@ export const VolunteerShifts = () => {
 
       {/* remove dialog */}
       <VolunteerShiftsDialogRemove
-        handleDialogRemoveClose={() =>
-          setIsDialogRemoveOpen(structuredClone(defaultState))
+        handleDialogClose={() => setIsDialogOpen(false)}
+        isDialogOpen={
+          dialogCurrent.dialogItem === DialogList.Remove && isDialogOpen
         }
-        isDialogRemoveOpen={isDialogRemoveOpen.isOpen}
-        shift={isDialogRemoveOpen.shift}
+        shiftItem={dialogCurrent.shift}
         shiftboardId={shiftboardId}
       />
     </>

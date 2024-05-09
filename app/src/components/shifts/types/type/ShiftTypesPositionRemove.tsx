@@ -82,7 +82,6 @@ export const ShiftTypesPositionRemove = ({
 
   const handlePositionRemove = async () => {
     positionRemove(positionItem.index);
-    handleDialogRemoveClose();
     enqueueSnackbar(
       <SnackbarText>
         Click on the <strong>Update type</strong> button to finalize your
@@ -92,6 +91,7 @@ export const ShiftTypesPositionRemove = ({
         variant: "warning",
       }
     );
+    handleDialogRemoveClose();
   };
 
   // render

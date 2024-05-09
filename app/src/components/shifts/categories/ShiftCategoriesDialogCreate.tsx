@@ -72,7 +72,6 @@ export const ShiftCategoriesDialogCreate = ({
         method: "POST",
       });
 
-      // display success notification
       enqueueSnackbar(
         <SnackbarText>
           <strong>{formValues.name}</strong> shift category has been created

@@ -115,7 +115,7 @@ export const SignIn = () => {
           payload: dataVolunteerItem,
           type: SESSION_SIGN_IN,
         });
-        reset(defaultValues);
+
         enqueueSnackbar(
           <SnackbarText>
             <strong>

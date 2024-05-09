@@ -78,7 +78,6 @@ export const RolesDialogDelete = ({
       });
       mutate("/api/roles");
 
-      // display success notification
       enqueueSnackbar(
         <SnackbarText>
           <strong>{name}</strong> role has been deleted

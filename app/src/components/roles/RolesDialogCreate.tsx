@@ -4,6 +4,7 @@ import {
 } from "@mui/icons-material";
 import { Button, CircularProgress, DialogActions } from "@mui/material";
 import { useSnackbar } from "notistack";
+import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 
@@ -35,14 +36,25 @@ export const RolesDialogCreate = ({
   // other hooks
   // --------------------
   const {
+    clearErrors,
     control,
     formState: { errors },
     handleSubmit,
+    setValue,
   } = useForm({
     defaultValues,
     mode: "onBlur",
   });
   const { enqueueSnackbar } = useSnackbar();
+
+  // side effects
+  // --------------------
+  useEffect(() => {
+    if (isDialogOpen) {
+      clearErrors();
+      setValue("name", "");
+    }
+  }, [clearErrors, isDialogOpen, setValue]);
 
   // form submission
   // --------------------
@@ -54,7 +66,6 @@ export const RolesDialogCreate = ({
         method: "POST",
       });
 
-      // display success notification
       enqueueSnackbar(
         <SnackbarText>
           <strong>{formValues.name}</strong> role has been created

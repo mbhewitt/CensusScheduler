@@ -49,7 +49,6 @@ export const ShiftCategoriesDialogDelete = ({
       });
       mutate("/api/shifts/categories");
 
-      // display success notification
       enqueueSnackbar(
         <SnackbarText>
           <strong>{name}</strong> shift category has been deleted

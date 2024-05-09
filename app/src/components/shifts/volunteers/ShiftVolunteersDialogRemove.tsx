@@ -59,7 +59,6 @@ export const ShiftVolunteersDialogRemove = ({
         body: { shiftboardId, shiftPositionId, timeId },
         method: "DELETE",
       });
-
       // emit event
       socket.emit("req-shift-volunteer-remove", {
         shiftboardId,
@@ -67,7 +66,6 @@ export const ShiftVolunteersDialogRemove = ({
         timeId,
       });
 
-      // display success notification
       enqueueSnackbar(
         <SnackbarText>
           <strong>

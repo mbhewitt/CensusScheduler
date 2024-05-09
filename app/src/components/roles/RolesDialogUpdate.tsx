@@ -53,8 +53,10 @@ export const RolesDialogUpdate = ({
   // side effects
   // --------------------
   useEffect(() => {
-    setValue("name", roleItem.name);
-  }, [roleItem, setValue]);
+    if (isDialogOpen) {
+      setValue("name", roleItem.name);
+    }
+  }, [isDialogOpen, roleItem, setValue]);
 
   // form submission
   // --------------------
@@ -67,7 +69,6 @@ export const RolesDialogUpdate = ({
       });
       mutate("/api/roles");
 
-      // display success notification
       enqueueSnackbar(
         <SnackbarText>
           <strong>{formValues.name}</strong> role has been updated

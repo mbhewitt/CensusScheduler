@@ -19,9 +19,9 @@ import { fetcherTrigger } from "src/utils/fetcher";
 import { formatDateName, formatTime } from "src/utils/formatDateTime";
 
 interface IVolunteerShiftsDialogRemoveProps {
-  handleDialogRemoveClose: () => void;
-  isDialogRemoveOpen: boolean;
-  shift: {
+  handleDialogClose: () => void;
+  isDialogOpen: boolean;
+  shiftItem: {
     date: string;
     dateName: string;
     endTime: string;
@@ -35,9 +35,9 @@ interface IVolunteerShiftsDialogRemoveProps {
 
 const socket = io();
 export const VolunteerShiftsDialogRemove = ({
-  handleDialogRemoveClose,
-  isDialogRemoveOpen,
-  shift: {
+  handleDialogClose,
+  isDialogOpen,
+  shiftItem: {
     date,
     dateName,
     endTime,
@@ -63,16 +63,17 @@ export const VolunteerShiftsDialogRemove = ({
   // --------------------
   const handleVolunteerRemove = async () => {
     try {
+      // update database
       await trigger({
         body: { shiftPositionId, timeId, shiftboardId },
         method: "DELETE",
       });
+      // emit event
       socket.emit("req-shift-volunteer-remove", {
         shiftboardId,
         timeId,
       });
 
-      handleDialogRemoveClose();
       enqueueSnackbar(
         <SnackbarText>
           <strong>{formatDateName(date, dateName)}</strong> at{" "}
@@ -83,6 +84,7 @@ export const VolunteerShiftsDialogRemove = ({
           variant: "success",
         }
       );
+      handleDialogClose();
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(
@@ -104,8 +106,8 @@ export const VolunteerShiftsDialogRemove = ({
   // --------------------
   return (
     <DialogContainer
-      handleDialogClose={handleDialogRemoveClose}
-      isDialogOpen={isDialogRemoveOpen}
+      handleDialogClose={handleDialogClose}
+      isDialogOpen={isDialogOpen}
       text="Remove volunteer shift"
     >
       <DialogContentText>
@@ -122,7 +124,7 @@ export const VolunteerShiftsDialogRemove = ({
           startIcon={
             isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
           }
-          onClick={handleDialogRemoveClose}
+          onClick={handleDialogClose}
           type="button"
           variant="outlined"
         >

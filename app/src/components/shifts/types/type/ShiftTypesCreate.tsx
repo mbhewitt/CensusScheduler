@@ -120,7 +120,6 @@ export const ShiftTypesCreate = () => {
         method: "POST",
       });
 
-      // display success notification
       enqueueSnackbar(
         <SnackbarText>
           <strong>

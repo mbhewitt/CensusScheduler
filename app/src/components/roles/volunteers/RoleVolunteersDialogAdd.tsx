@@ -114,7 +114,6 @@ export const RoleVolunteersDialogAdd = ({
         method: "POST",
       });
 
-      // display success notification
       enqueueSnackbar(
         <SnackbarText>
           <strong>{formValues.volunteer?.label}</strong> for{" "}

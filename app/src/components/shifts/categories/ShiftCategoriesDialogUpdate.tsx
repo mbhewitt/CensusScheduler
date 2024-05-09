@@ -72,7 +72,6 @@ export const ShiftCategoriesDialogUpdate = ({
       });
       mutate("/api/shifts/categories");
 
-      // display success notification
       enqueueSnackbar(
         <SnackbarText>
           <strong>{formValues.name}</strong> shift category has been updated
