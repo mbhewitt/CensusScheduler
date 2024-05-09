@@ -54,7 +54,7 @@ export const RolesDialogCreate = ({
         method: "POST",
       });
 
-      handleDialogClose();
+      // display success notification
       enqueueSnackbar(
         <SnackbarText>
           <strong>{formValues.name}</strong> role has been created
@@ -63,6 +63,7 @@ export const RolesDialogCreate = ({
           variant: "success",
         }
       );
+      handleDialogClose();
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(

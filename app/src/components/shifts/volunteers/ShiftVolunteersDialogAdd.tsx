@@ -54,37 +54,41 @@ interface IFormValues {
 }
 interface IShiftVolunteersDialogAddProps {
   checkInType: TCheckInTypes;
-  date: string;
-  dateName: string;
-  endTime: string;
-  handleDialogAddClose: () => void;
-  isDialogAddOpen: boolean;
-  shiftPositionList: IResShiftPositionItem[];
+  handleDialogClose: () => void;
+  isDialogOpen: boolean;
+  shiftVolunteersItem: {
+    date: string;
+    dateName: string;
+    endTime: string;
+    shiftPositionList: IResShiftPositionItem[];
+    shiftVolunteerList: IResShiftVolunteerItem[];
+    startTime: string;
+    type: string;
+  };
   timeId: string | string[] | undefined;
-  shiftVolunteerList: IResShiftVolunteerItem[];
-  startTime: string;
-  type: string;
 }
 
 const socket = io();
 const defaultValues: IFormValues = {
-  volunteer: null,
   shiftPositionId: "",
   trainingPositionId: "",
   trainingTimesId: "",
+  volunteer: null,
 };
 export const ShiftVolunteersDialogAdd = ({
   checkInType,
-  date,
-  dateName,
-  endTime,
-  handleDialogAddClose,
-  isDialogAddOpen,
-  shiftPositionList,
+  handleDialogClose,
+  isDialogOpen,
+  shiftVolunteersItem: {
+    date,
+    dateName,
+    endTime,
+    shiftPositionList,
+    shiftVolunteerList,
+    startTime,
+    type,
+  },
   timeId,
-  shiftVolunteerList,
-  startTime,
-  type,
 }: IShiftVolunteersDialogAddProps) => {
   // context
   // --------------------
@@ -161,15 +165,29 @@ export const ShiftVolunteersDialogAdd = ({
         dataVolunteerItem.shiftboardId === volunteerWatch?.shiftboardId
     );
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && isDialogOpen) {
       reset({
         volunteer: { label: `${playaName} "${worldName}"`, shiftboardId },
         shiftPositionId: "",
         trainingPositionId: "",
         trainingTimesId: "",
       });
+    } else if (isDialogOpen) {
+      reset({
+        volunteer: null,
+        shiftPositionId: "",
+        trainingPositionId: "",
+        trainingTimesId: "",
+      });
     }
-  }, [isAuthenticated, playaName, reset, shiftboardId, worldName]);
+  }, [
+    isAuthenticated,
+    isDialogOpen,
+    playaName,
+    reset,
+    shiftboardId,
+    worldName,
+  ]);
 
   useEffect(() => {
     if (dataVolunteerShiftList) {
@@ -224,19 +242,6 @@ export const ShiftVolunteersDialogAdd = ({
 
   // logic
   // --------------------
-  const handleFormReset = () => {
-    if (isAuthenticated) {
-      reset({
-        volunteer: { label: `${playaName} "${worldName}"`, shiftboardId },
-        shiftPositionId: "",
-        trainingPositionId: "",
-        trainingTimesId: "",
-      });
-    } else {
-      reset(defaultValues);
-    }
-  };
-
   if (
     errorShiftList ||
     errorTrainingVolunteerList ||
@@ -245,11 +250,8 @@ export const ShiftVolunteersDialogAdd = ({
   ) {
     return (
       <DialogContainer
-        handleDialogClose={() => {
-          handleDialogAddClose();
-          handleFormReset();
-        }}
-        isDialogOpen={isDialogAddOpen}
+        handleDialogClose={handleDialogClose}
+        isDialogOpen={isDialogOpen}
         text="Add volunteer"
       >
         <ErrorAlert />
@@ -259,11 +261,8 @@ export const ShiftVolunteersDialogAdd = ({
   if (!dataVolunteerList || !dataTrainingList) {
     return (
       <DialogContainer
-        handleDialogClose={() => {
-          handleDialogAddClose();
-          handleFormReset();
-        }}
-        isDialogOpen={isDialogAddOpen}
+        handleDialogClose={handleDialogClose}
+        isDialogOpen={isDialogOpen}
         text="Add volunteer"
       >
         <Loading />
@@ -542,19 +541,6 @@ export const ShiftVolunteersDialogAdd = ({
         }
       }
 
-      // display success notification
-      enqueueSnackbar(
-        <SnackbarText>
-          <strong>
-            {volunteerAdd.playaName} &quot;{volunteerAdd.worldName}&quot;
-          </strong>{" "}
-          for <strong>{shiftPositionAdd?.positionName}</strong> has been added
-        </SnackbarText>,
-        {
-          variant: "success",
-        }
-      );
-
       // update database
       await trigger({
         body: {
@@ -565,7 +551,8 @@ export const ShiftVolunteersDialogAdd = ({
         },
         method: "POST",
       });
-      // emit shift update
+
+      // emit event
       socket.emit("req-shift-volunteer-add", {
         noShow: noShowShift,
         playaName: volunteerAdd.playaName,
@@ -588,7 +575,8 @@ export const ShiftVolunteersDialogAdd = ({
           },
           method: "POST",
         });
-        // emit shift update
+
+        // emit event
         socket.emit("req-shift-volunteer-add", {
           noShow: noShowTraining,
           playaName: volunteerAdd.playaName,
@@ -599,15 +587,19 @@ export const ShiftVolunteersDialogAdd = ({
           worldName: volunteerAdd.worldName,
         });
       }
-
-      reset({
-        volunteer: { label: `${playaName} "${worldName}"`, shiftboardId },
-        shiftPositionId: "",
-        trainingPositionId: "",
-        trainingTimesId: "",
-      });
-
-      handleDialogAddClose();
+      // display success notification
+      enqueueSnackbar(
+        <SnackbarText>
+          <strong>
+            {volunteerAdd.playaName} &quot;{volunteerAdd.worldName}&quot;
+          </strong>{" "}
+          for <strong>{shiftPositionAdd?.positionName}</strong> has been added
+        </SnackbarText>,
+        {
+          variant: "success",
+        }
+      );
+      handleDialogClose();
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(
@@ -629,11 +621,8 @@ export const ShiftVolunteersDialogAdd = ({
   // --------------------
   return (
     <DialogContainer
-      handleDialogClose={() => {
-        handleDialogAddClose();
-        handleFormReset();
-      }}
-      isDialogOpen={isDialogAddOpen}
+      handleDialogClose={handleDialogClose}
+      isDialogOpen={isDialogOpen}
       text="Add volunteer"
     >
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
@@ -913,10 +902,7 @@ export const ShiftVolunteersDialogAdd = ({
             startIcon={
               isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
             }
-            onClick={() => {
-              handleDialogAddClose();
-              handleFormReset();
-            }}
+            onClick={handleDialogClose}
             type="button"
             variant="outlined"
           >

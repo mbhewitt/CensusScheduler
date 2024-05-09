@@ -72,7 +72,7 @@ export const ShiftCategoriesDialogCreate = ({
         method: "POST",
       });
 
-      handleDialogClose();
+      // display success notification
       enqueueSnackbar(
         <SnackbarText>
           <strong>{formValues.name}</strong> shift category has been created
@@ -81,6 +81,7 @@ export const ShiftCategoriesDialogCreate = ({
           variant: "success",
         }
       );
+      handleDialogClose();
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(

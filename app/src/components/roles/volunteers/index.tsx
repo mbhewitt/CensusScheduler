@@ -216,7 +216,7 @@ export const RoleVolunteers = () => {
           >
             <Box>
               <Typography component="h2" variant="h4">
-                {dataRoleItem.roleName}
+                {dataRoleItem.name}
               </Typography>
             </Box>
             <Button

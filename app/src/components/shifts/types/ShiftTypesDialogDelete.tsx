@@ -84,7 +84,7 @@ export const ShiftTypesDialogDelete = ({
       });
       mutate("/api/shifts/types");
 
-      handleDialogClose();
+      // display success notification
       enqueueSnackbar(
         <SnackbarText>
           <strong>{name}</strong> type has been deleted
@@ -93,6 +93,7 @@ export const ShiftTypesDialogDelete = ({
           variant: "success",
         }
       );
+      handleDialogClose();
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(

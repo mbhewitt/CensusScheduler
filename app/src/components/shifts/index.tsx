@@ -35,7 +35,7 @@ export const Shifts = () => {
   const columnNameTypeHidden = "Type - hidden";
   const [columnList, setColumnList] = useImmer<MUIDataTableColumn[]>([
     {
-      name: "Shift Times ID - hidden", // hide for row click
+      name: "Shift times ID - hidden", // hide for row click
       options: {
         display: false,
         filter: false,

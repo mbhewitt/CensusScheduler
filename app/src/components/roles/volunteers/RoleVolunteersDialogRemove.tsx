@@ -59,7 +59,7 @@ export const RoleVolunteersDialogRemove = ({
         method: "DELETE",
       });
 
-      handleDialogClose();
+      // display success notification
       enqueueSnackbar(
         <SnackbarText>
           <strong>
@@ -71,6 +71,7 @@ export const RoleVolunteersDialogRemove = ({
           variant: "success",
         }
       );
+      handleDialogClose();
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(

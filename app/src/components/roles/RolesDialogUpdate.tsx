@@ -67,7 +67,7 @@ export const RolesDialogUpdate = ({
       });
       mutate("/api/roles");
 
-      handleDialogClose();
+      // display success notification
       enqueueSnackbar(
         <SnackbarText>
           <strong>{formValues.name}</strong> role has been updated
@@ -76,6 +76,7 @@ export const RolesDialogUpdate = ({
           variant: "success",
         }
       );
+      handleDialogClose();
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(
