@@ -27,7 +27,7 @@ import type {
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IFormValues {
-  name: null | IVolunteerOption;
+  volunteer: null | IVolunteerOption;
 }
 interface IRoleVolunteersDialogAddProps {
   handleDialogClose: () => void;
@@ -40,7 +40,7 @@ interface IRoleVolunteersDialogAddProps {
 }
 
 const defaultValues: IFormValues = {
-  name: null,
+  volunteer: null,
 };
 export const RoleVolunteersDialogAdd = ({
   handleDialogClose,
@@ -75,7 +75,7 @@ export const RoleVolunteersDialogAdd = ({
   useEffect(() => {
     if (isDialogOpen) {
       clearErrors();
-      setValue("name", null);
+      setValue("volunteer", null);
     }
   }, [clearErrors, isDialogOpen, setValue]);
 
@@ -109,7 +109,7 @@ export const RoleVolunteersDialogAdd = ({
       // update database
       await trigger({
         body: {
-          id: formValues.name?.id,
+          shiftboardId: formValues.volunteer?.shiftboardId,
         },
         method: "POST",
       });
@@ -117,7 +117,7 @@ export const RoleVolunteersDialogAdd = ({
       handleDialogClose();
       enqueueSnackbar(
         <SnackbarText>
-          <strong>{formValues.name?.label}</strong> for{" "}
+          <strong>{formValues.volunteer?.label}</strong> for{" "}
           <strong>{roleName}</strong> role has been added
         </SnackbarText>,
         {
@@ -151,26 +151,30 @@ export const RoleVolunteersDialogAdd = ({
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
         <Controller
           control={control}
-          name="name"
+          name="volunteer"
           render={({ field }) => (
             <Autocomplete
               {...field}
               fullWidth
               isOptionEqualToValue={(option, value: IVolunteerOption) =>
-                option.id === value.id
+                option.shiftboardId === value.shiftboardId
               }
               onChange={(_, data) => field.onChange(data)}
               options={data.map(
-                ({ id, playaName, worldName }: IResVolunteerDropdownItem) => ({
-                  id,
+                ({
+                  playaName,
+                  shiftboardId,
+                  worldName,
+                }: IResVolunteerDropdownItem) => ({
                   label: `${playaName} "${worldName}"`,
+                  shiftboardId,
                 })
               )}
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  error={Boolean(errors.name)}
-                  helperText={errors.name?.message}
+                  error={Boolean(errors.volunteer)}
+                  helperText={errors.volunteer?.message}
                   label="Name"
                   required
                   variant="standard"
@@ -179,11 +183,11 @@ export const RoleVolunteersDialogAdd = ({
             />
           )}
           rules={{
-            required: "Name is required",
+            required: "Volunteer is required",
             validate: (value) => {
               if (value) {
                 const isRoleVolunteerAvailable = roleVolunteerList.every(
-                  ({ id }) => id !== value.id
+                  ({ shiftboardId }) => shiftboardId !== value.shiftboardId
                 );
 
                 return (

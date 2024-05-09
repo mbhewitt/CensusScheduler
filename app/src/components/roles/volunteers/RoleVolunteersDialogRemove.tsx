@@ -25,7 +25,7 @@ interface IRoleVolunteersDialogRemoveProps {
   };
   volunteerItem: {
     playaName: string;
-    id: number;
+    shiftboardId: number;
     worldName: string;
   };
 }
@@ -34,7 +34,7 @@ export const RoleVolunteersDialogRemove = ({
   handleDialogClose,
   isDialogOpen,
   roleItem: { id: roleId, name: roleName },
-  volunteerItem: { playaName, id: volunteerId, worldName },
+  volunteerItem: { playaName, shiftboardId, worldName },
 }: IRoleVolunteersDialogRemoveProps) => {
   // fetching, mutation, and revalidation
   // --------------------
@@ -54,7 +54,7 @@ export const RoleVolunteersDialogRemove = ({
       // update database
       await trigger({
         body: {
-          id: volunteerId,
+          shiftboardId,
         },
         method: "DELETE",
       });

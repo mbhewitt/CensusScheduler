@@ -54,8 +54,8 @@ export const RoleVolunteers = () => {
       name: "",
     },
     volunteer: {
-      id: 0,
       playaName: "",
+      shiftboardId: 0,
       worldName: "",
     },
   });
@@ -90,7 +90,7 @@ export const RoleVolunteers = () => {
   // prepare datatable
   const columnList = [
     {
-      name: "ID - hidden",
+      name: "Shiftboard ID - hidden",
       options: { display: false },
     },
     {
@@ -116,17 +116,17 @@ export const RoleVolunteers = () => {
     },
   ];
   const dataTable = dataRoleVolunteerList.map(
-    ({ id, playaName, worldName }: IResRoleVolunteerItem) => {
+    ({ playaName, shiftboardId, worldName }: IResRoleVolunteerItem) => {
       return [
-        id,
+        shiftboardId,
         playaName,
         worldName,
         <MoreMenu
           Icon={<MoreHorizIcon />}
-          key={`${id}-menu`}
+          key={`${shiftboardId}-menu`}
           MenuList={
             <MenuList>
-              <Link href={`/volunteers/account/${id}`}>
+              <Link href={`/volunteers/account/${shiftboardId}`}>
                 <MenuItem>
                   <ListItemIcon>
                     <ManageAccountsIcon />
@@ -143,8 +143,8 @@ export const RoleVolunteers = () => {
                       name: dataRoleItem.name,
                     },
                     volunteer: {
-                      id,
                       playaName,
+                      shiftboardId,
                       worldName,
                     },
                   });
@@ -229,7 +229,7 @@ export const RoleVolunteers = () => {
                   },
                   volunteer: {
                     playaName: "",
-                    id: 0,
+                    shiftboardId: 0,
                     worldName: "",
                   },
                 });

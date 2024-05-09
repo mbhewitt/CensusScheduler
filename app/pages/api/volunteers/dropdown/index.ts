@@ -80,7 +80,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         ) => {
           const rowListLast = rowList[rowList.length - 1];
 
-          if (rowListLast && rowListLast.id === shiftboard_id) {
+          if (rowListLast && rowListLast.shiftboardId === shiftboard_id) {
             rowListLast.roleList.push({
               id: role_id,
               name: role,
@@ -92,7 +92,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           const rowItemNew = {
             playaName: playa_name,
             roleList: [] as IResVolunteerRoleItem[],
-            id: shiftboard_id,
+            shiftboardId: shiftboard_id,
             worldName: world_name ?? "",
           };
 

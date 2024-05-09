@@ -30,7 +30,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       const resRoleVolunteerList: IResRoleVolunteerItem[] =
         dbRoleVolunteerList.map(({ playa_name, shiftboard_id, world_name }) => {
           return {
-            id: shiftboard_id,
+            shiftboardId: shiftboard_id,
             playaName: playa_name,
             worldName: world_name,
           };
@@ -43,13 +43,13 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     // --------------------
     case "POST": {
       // add role volunteer
-      const { id: volunteerId } = JSON.parse(req.body);
+      const { shiftboardId } = JSON.parse(req.body);
       const [dbRoleVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT role_id
         FROM op_volunteer_roles
         WHERE role_id=?
         AND shiftboard_id=?`,
-        [roleId, volunteerId]
+        [roleId, shiftboardId]
       );
       const dbRoleVolunteerFirst = dbRoleVolunteerList[0];
 
@@ -63,7 +63,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             remove_role=false
           WHERE roles=?
           AND shiftboard_id=?`,
-          [roleId, volunteerId]
+          [roleId, shiftboardId]
         );
         // else insert role volunteer row
       } else {
@@ -75,7 +75,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             shiftboard_id
           )
           VALUES (true, false, ?, ?)`,
-          [roleId, volunteerId]
+          [roleId, shiftboardId]
         );
       }
 
@@ -89,7 +89,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     // --------------------
     case "DELETE": {
       // remove role volunteer
-      const { id: volunteerId } = JSON.parse(req.body);
+      const { shiftboardId } = JSON.parse(req.body);
 
       await pool.query<RowDataPacket[]>(
         `UPDATE op_volunteer_roles
@@ -98,7 +98,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           remove_role=true
         WHERE role_id=?
         AND shiftboard_id=?`,
-        [roleId, volunteerId]
+        [roleId, shiftboardId]
       );
 
       return res.status(200).json({

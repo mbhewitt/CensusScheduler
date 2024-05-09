@@ -121,17 +121,23 @@ export const RolesDialogDelete = ({
             </Typography>
           </DialogContentText>
           <List sx={{ pl: 2, listStyleType: "disc" }}>
-            {data.map(({ id, playaName, worldName }: IResRoleVolunteerItem) => {
-              return (
-                <ListItem
-                  disablePadding
-                  key={id}
-                  sx={{ display: "list-item", pl: 0 }}
-                >
-                  <ListItemText primary={`${playaName} "${worldName}"`} />
-                </ListItem>
-              );
-            })}
+            {data.map(
+              ({
+                playaName,
+                shiftboardId,
+                worldName,
+              }: IResRoleVolunteerItem) => {
+                return (
+                  <ListItem
+                    disablePadding
+                    key={shiftboardId}
+                    sx={{ display: "list-item", pl: 0 }}
+                  >
+                    <ListItemText primary={`${playaName} "${worldName}"`} />
+                  </ListItem>
+                );
+              }
+            )}
           </List>
         </>
       ) : (
