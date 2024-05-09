@@ -33,19 +33,21 @@ import {
   setCellPropsCenter,
 } from "src/utils/setCellPropsCenter";
 
-const defaultState = {
-  isOpen: false,
-  type: {
-    id: 0,
-    name: "",
-  },
-};
+enum DialogList {
+  Delete,
+}
+
 export const ShiftTypes = () => {
   // state
   // --------------------
-  const [isDialogDeleteOpen, setIsDialogDeleteOpen] = useState(
-    structuredClone(defaultState)
-  );
+  const [dialogCurrent, setDialogCurrent] = useState({
+    dialogItem: 0,
+    type: {
+      id: 0,
+      name: "",
+    },
+  });
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // fetching, mutation, and revalidation
   // --------------------
@@ -94,12 +96,13 @@ export const ShiftTypes = () => {
               </MenuItem>
             </Link>
             <MenuItem
-              onClick={() =>
-                setIsDialogDeleteOpen({
-                  isOpen: true,
+              onClick={() => {
+                setDialogCurrent({
+                  dialogItem: DialogList.Delete,
                   type: { id, name },
-                })
-              }
+                });
+                setIsDialogOpen(true);
+              }}
             >
               <ListItemIcon>
                 <EventBusyIcon />
@@ -155,11 +158,11 @@ export const ShiftTypes = () => {
 
       {/* delete dialog */}
       <ShiftTypesDialogDelete
-        handleDialogDeleteClose={() =>
-          setIsDialogDeleteOpen(structuredClone(defaultState))
+        handleDialogClose={() => setIsDialogOpen(false)}
+        isDialogOpen={
+          dialogCurrent.dialogItem === DialogList.Delete && isDialogOpen
         }
-        isDialogDeleteOpen={isDialogDeleteOpen.isOpen}
-        typeItem={isDialogDeleteOpen.type}
+        typeItem={dialogCurrent.type}
       />
     </>
   );

@@ -4,7 +4,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { pool } from "lib/database";
 
 const shiftTypeTime = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { shiftTypeId, timeId } = req.query;
+  const { typeId, timeId } = req.query;
 
   switch (req.method) {
     // get
@@ -28,7 +28,7 @@ const shiftTypeTime = async (req: NextApiRequest, res: NextApiResponse) => {
         AND sn.shift_name_id=?
         WHERE vs.remove_shift=false
         ORDER BY pt.position`,
-        [timeId, shiftTypeId]
+        [timeId, typeId]
       );
       const resPositionList = dbPositionList.map(
         ({ position, position_type_id }) => {

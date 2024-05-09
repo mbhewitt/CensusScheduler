@@ -5,7 +5,7 @@ import { pool } from "lib/database";
 import { formatDateName, formatTime } from "src/utils/formatDateTime";
 
 const shiftTypePosition = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { shiftTypeId, positionId } = req.query;
+  const { typeId, positionId } = req.query;
 
   switch (req.method) {
     // get
@@ -32,13 +32,13 @@ const shiftTypePosition = async (req: NextApiRequest, res: NextApiResponse) => {
         AND sn.shift_name_id=?
         WHERE vs.remove_shift=false
         ORDER BY st.start_time`,
-        [positionId, shiftTypeId]
+        [positionId, typeId]
       );
       const resTimeList = dbTimeList.map(
         ({ date, datename, end_time, shift_times_id, start_time }) => {
           return {
             id: shift_times_id,
-            time: `${formatDateName(date, datename)}, ${formatTime(
+            name: `${formatDateName(date, datename)}, ${formatTime(
               start_time,
               end_time
             )}`,

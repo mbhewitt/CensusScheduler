@@ -44,53 +44,39 @@ import {
 } from "src/components/types";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
-const defaultPositionState = {
-  isOpen: false,
-  position: {
-    id: 0,
-    index: 0,
-    name: "",
-  },
-  type: {
-    id: 0,
-  },
-};
-const defaultTimeState = {
-  isOpen: false,
-  time: {
-    dateTime: "",
-    id: 0,
-    index: 0,
-  },
-  type: {
-    id: 0,
-  },
-};
-export const ShiftTypeUpdate = () => {
+enum DialogList {
+  PositionRemove,
+  TimeRemove,
+}
+
+export const ShiftTypesUpdate = () => {
   // state
   // --------------------
   const [isMounted, setIsMounted] = useState(false);
-  const [isPositionDialogRemoveOpen, setIsPositionDialogRemoveOpen] = useState(
-    structuredClone(defaultPositionState)
-  );
-  const [isTimeDialogRemoveOpen, setIsTimeDialogRemoveOpen] = useState(
-    structuredClone(defaultTimeState)
-  );
+  const [dialogCurrent, setDialogCurrent] = useState({
+    dialogItem: 0,
+    item: {
+      id: 0,
+      index: 0,
+      name: "",
+    },
+  });
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // fetching, mutation, and revalidation
   // --------------------
   const router = useRouter();
-  const { shiftTypeId } = router.query;
+  const { typeId } = router.query;
   const { data: dataDefaults, error: errorDefaults } = useSWR(
     isMounted ? "/api/shifts/types/defaults" : null,
     fetcherGet
   );
   const { data: dataCurrent, error: errorCurrent } = useSWR(
-    isMounted ? `/api/shifts/types/${shiftTypeId}` : null,
+    isMounted ? `/api/shifts/types/${typeId}` : null,
     fetcherGet
   );
   const { isMutating, trigger } = useSWRMutation(
-    `/api/shifts/types/${shiftTypeId}`,
+    `/api/shifts/types/${typeId}`,
     fetcherTrigger
   );
 
@@ -163,43 +149,35 @@ export const ShiftTypeUpdate = () => {
         positionItem.positionId === positionId
     );
 
-    if (shiftTypeId && positionFound) {
-      setIsPositionDialogRemoveOpen({
-        isOpen: true,
-        position: {
+    if (typeId && positionFound) {
+      setDialogCurrent({
+        dialogItem: DialogList.PositionRemove,
+        item: {
           id: positionId,
           index,
           name,
         },
-        type: {
-          id: Number(shiftTypeId),
-        },
       });
+      setIsDialogOpen(true);
     } else {
       positionRemove(index);
     }
   };
-  const handleTimeRemove = (
-    dateTime: string,
-    index: number,
-    timeId: number
-  ) => {
+  const handleTimeRemove = (index: number, name: string, timeId: number) => {
     const timeFound = dataCurrent.timeList.find(
       (timeItem: IResShiftTypeTimeItem) => timeItem.timeId === timeId
     );
 
-    if (shiftTypeId && timeFound) {
-      setIsTimeDialogRemoveOpen({
-        isOpen: true,
-        time: {
-          dateTime,
+    if (typeId && timeFound) {
+      setDialogCurrent({
+        dialogItem: DialogList.TimeRemove,
+        item: {
           id: timeId,
           index,
-        },
-        type: {
-          id: Number(shiftTypeId),
+          name,
         },
       });
+      setIsDialogOpen(true);
     } else {
       timeRemove(index);
     }
@@ -343,7 +321,6 @@ export const ShiftTypeUpdate = () => {
                     )
                   }
                   onClick={() => {
-                    reset(defaultValues);
                     router.push("/shifts/types");
                   }}
                   type="button"
@@ -373,24 +350,24 @@ export const ShiftTypeUpdate = () => {
 
       {/* position dialog remove */}
       <ShiftTypesPositionRemove
-        handlePositionDialogRemoveClose={() =>
-          setIsPositionDialogRemoveOpen(structuredClone(defaultPositionState))
+        handleDialogClose={() => setIsDialogOpen(false)}
+        isDialogOpen={
+          dialogCurrent.dialogItem === DialogList.PositionRemove && isDialogOpen
         }
-        isPositionDialogRemoveOpen={isPositionDialogRemoveOpen.isOpen}
-        positionItem={isPositionDialogRemoveOpen.position}
+        positionItem={dialogCurrent.item}
         positionRemove={positionRemove}
-        typeItem={isPositionDialogRemoveOpen.type}
+        typeId={Number(typeId)}
       />
 
       {/* time dialog remove */}
       <ShiftTypesTimeRemove
-        handleTimeDialogRemoveClose={() =>
-          setIsTimeDialogRemoveOpen(structuredClone(defaultTimeState))
+        handleDialogClose={() => setIsDialogOpen(false)}
+        isDialogOpen={
+          dialogCurrent.dialogItem === DialogList.TimeRemove && isDialogOpen
         }
-        isTimeDialogRemoveOpen={isTimeDialogRemoveOpen.isOpen}
-        timeItem={isTimeDialogRemoveOpen.time}
+        timeItem={dialogCurrent.item}
         timeRemove={timeRemove}
-        typeItem={isTimeDialogRemoveOpen.type}
+        typeId={Number(typeId)}
       />
     </>
   );

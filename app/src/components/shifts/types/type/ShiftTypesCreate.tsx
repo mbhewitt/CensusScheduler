@@ -37,7 +37,7 @@ import {
 } from "src/components/shifts/types/type/ShiftTypesForm";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
-export const ShiftTypeCreate = () => {
+export const ShiftTypesCreate = () => {
   // fetching, mutation, and revalidation
   // --------------------
   const { data: dataDefaults, error: errorDefaults } = useSWR(
@@ -57,7 +57,6 @@ export const ShiftTypeCreate = () => {
     formState: { errors },
     getValues,
     handleSubmit,
-    reset,
     setError,
     setValue,
     watch,
@@ -93,7 +92,7 @@ export const ShiftTypeCreate = () => {
   const handlePositionRemove = (index: number) => {
     positionRemove(index);
   };
-  const handleTimeRemove = (_: string, index: number) => {
+  const handleTimeRemove = (index: number) => {
     timeRemove(index);
   };
 
@@ -235,7 +234,6 @@ export const ShiftTypeCreate = () => {
                     )
                   }
                   onClick={() => {
-                    reset(defaultValues);
                     router.push("/shifts/types");
                   }}
                   type="button"

@@ -23,36 +23,33 @@ import { SnackbarText } from "src/components/general/SnackbarText";
 import { fetcherGet } from "src/utils/fetcher";
 
 interface ITimeItem {
-  dateTime: string;
   id: number;
   index: number;
+  name: string;
 }
 interface IPositionItem {
   id: number;
   name: string;
 }
-interface ITypeItem {
-  id: number;
-}
 interface IShiftTypesTimeRemoveProps {
-  handleTimeDialogRemoveClose: () => void;
-  isTimeDialogRemoveOpen: boolean;
+  handleDialogClose: () => void;
+  isDialogOpen: boolean;
   timeItem: ITimeItem;
   timeRemove: UseFieldArrayRemove;
-  typeItem: ITypeItem;
+  typeId: number;
 }
 
 export const ShiftTypesTimeRemove = ({
-  handleTimeDialogRemoveClose: handleDialogRemoveClose,
-  isTimeDialogRemoveOpen: isDialogRemoveOpen,
+  handleDialogClose: handleDialogRemoveClose,
+  isDialogOpen: isDialogRemoveOpen,
   timeItem,
   timeRemove,
-  typeItem,
+  typeId,
 }: IShiftTypesTimeRemoveProps) => {
   // fetching, mutation, and revalidation
   // --------------------
   const { data, error } = useSWR(
-    `/api/shifts/types/${typeItem.id}/times/${timeItem.id}`,
+    `/api/shifts/types/${typeId}/times/${timeItem.id}`,
     fetcherGet
   );
 
@@ -111,7 +108,7 @@ export const ShiftTypesTimeRemove = ({
             <Typography component="span">
               Before removing{" "}
               <Link href={`/shifts/volunteers/${timeItem.id}`}>
-                <strong>{timeItem.dateTime}</strong>
+                <strong>{timeItem.name}</strong>
               </Link>
               , volunteers must be removed from this time in the following
               positions:
@@ -134,7 +131,7 @@ export const ShiftTypesTimeRemove = ({
       ) : (
         <DialogContentText>
           <Typography component="span">
-            Are you sure you want to remove <strong>{timeItem.dateTime}</strong>{" "}
+            Are you sure you want to remove <strong>{timeItem.name}</strong>{" "}
             time?
           </Typography>
         </DialogContentText>

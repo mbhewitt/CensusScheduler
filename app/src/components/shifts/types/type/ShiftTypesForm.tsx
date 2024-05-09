@@ -70,12 +70,8 @@ interface IShiftTypesFormProps {
   dataDefaults: IDataDefaults;
   errors: FieldErrors<IFormValues>;
   getValues: UseFormGetValues<IFormValues>;
-  handlePositionRemove: (
-    index: number,
-    name: string,
-    positionId: number
-  ) => void;
-  handleTimeRemove: (dateTime: string, index: number, timeId: number) => void;
+  handlePositionRemove: (index: number, name: string, id: number) => void;
+  handleTimeRemove: (index: number, name: string, id: number) => void;
   positionAppend: UseFieldArrayAppend<IFormValues, "positionList">;
   positionFields: FieldArrayWithId<IFormValues, "positionList", "id">[];
   setError: UseFormSetError<IFormValues>;
@@ -875,11 +871,11 @@ export const ShiftTypesForm = ({
                     <IconButton
                       onClick={() => {
                         handleTimeRemove(
+                          index,
                           `${formatDateName(item.date)}, ${formatTime(
                             item.startTime,
                             item.endTime
                           )}`,
-                          index,
                           item.timeId
                         );
                       }}
