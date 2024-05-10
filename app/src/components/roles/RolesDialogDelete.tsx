@@ -24,14 +24,14 @@ import type { IResRoleItem, IResRoleVolunteerItem } from "src/components/types";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IRolesDialogDeleteProps {
-  handleDialogDeleteClose: () => void;
-  isDialogDeleteOpen: boolean;
+  handleDialogClose: () => void;
+  isDialogOpen: boolean;
   roleItem: IResRoleItem;
 }
 
 export const RolesDialogDelete = ({
-  handleDialogDeleteClose,
-  isDialogDeleteOpen,
+  handleDialogClose,
+  isDialogOpen,
   roleItem: { id, name },
 }: IRolesDialogDeleteProps) => {
   // fetching, mutation, and revalidation
@@ -52,8 +52,8 @@ export const RolesDialogDelete = ({
   if (error)
     return (
       <DialogContainer
-        handleDialogClose={handleDialogDeleteClose}
-        isDialogOpen={isDialogDeleteOpen}
+        handleDialogClose={handleDialogClose}
+        isDialogOpen={isDialogOpen}
         text="Delete role"
       >
         <ErrorAlert />
@@ -62,8 +62,8 @@ export const RolesDialogDelete = ({
   if (!data)
     return (
       <DialogContainer
-        handleDialogClose={handleDialogDeleteClose}
-        isDialogOpen={isDialogDeleteOpen}
+        handleDialogClose={handleDialogClose}
+        isDialogOpen={isDialogOpen}
         text="Delete role"
       >
         <Loading />
@@ -78,7 +78,6 @@ export const RolesDialogDelete = ({
       });
       mutate("/api/roles");
 
-      handleDialogDeleteClose();
       enqueueSnackbar(
         <SnackbarText>
           <strong>{name}</strong> role has been deleted
@@ -87,6 +86,7 @@ export const RolesDialogDelete = ({
           variant: "success",
         }
       );
+      handleDialogClose();
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(
@@ -108,8 +108,8 @@ export const RolesDialogDelete = ({
   // --------------------
   return (
     <DialogContainer
-      handleDialogClose={handleDialogDeleteClose}
-      isDialogOpen={isDialogDeleteOpen}
+      handleDialogClose={handleDialogClose}
+      isDialogOpen={isDialogOpen}
       text="Delete role"
     >
       {data && data.length > 0 ? (
@@ -153,7 +153,7 @@ export const RolesDialogDelete = ({
           startIcon={
             isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
           }
-          onClick={handleDialogDeleteClose}
+          onClick={handleDialogClose}
           type="button"
           variant="outlined"
         >

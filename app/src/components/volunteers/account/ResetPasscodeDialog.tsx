@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 
@@ -22,10 +22,10 @@ import { ResetPasscodeForm } from "src/components/volunteers/account/ResetPassco
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IResetPasscodeDialogProps {
-  handleResetPasscodeDialogClose: () => void;
-  isResetPasscodeDialogOpen: boolean;
-  shiftboardId: string;
+  handleDialogClose: () => void;
+  isDialogOpen: boolean;
   playaName: string;
+  shiftboardId: string | string[] | undefined;
   worldName: string;
 }
 
@@ -34,8 +34,8 @@ const defaultValues: IVolunteerAccountFormValues = {
   passcodeCreate: "",
 };
 export const ResetPasscodeDialog = ({
-  handleResetPasscodeDialogClose,
-  isResetPasscodeDialogOpen,
+  handleDialogClose,
+  isDialogOpen,
   shiftboardId,
   playaName,
   worldName,
@@ -56,16 +56,27 @@ export const ResetPasscodeDialog = ({
   // other hooks
   // --------------------
   const {
+    clearErrors,
     control,
     formState: { errors },
     getValues,
     handleSubmit,
-    reset,
+    setValue,
   } = useForm({
     defaultValues,
     mode: "onBlur",
   });
   const { enqueueSnackbar } = useSnackbar();
+
+  // side effects
+  // --------------------
+  useEffect(() => {
+    if (isDialogOpen) {
+      clearErrors();
+      setValue("passcodeCreate", "");
+      setValue("passcodeConfirm", "");
+    }
+  }, [clearErrors, isDialogOpen, setValue]);
 
   // form submission
   // --------------------
@@ -73,6 +84,7 @@ export const ResetPasscodeDialog = ({
     formValues
   ) => {
     try {
+      // update database
       await trigger({
         body: { passcode: formValues.passcodeCreate },
         method: "PATCH",
@@ -89,9 +101,7 @@ export const ResetPasscodeDialog = ({
           variant: "success",
         }
       );
-
-      handleResetPasscodeDialogClose();
-      reset(defaultValues);
+      handleDialogClose();
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(
@@ -113,11 +123,8 @@ export const ResetPasscodeDialog = ({
   // --------------------
   return (
     <DialogContainer
-      handleDialogClose={() => {
-        handleResetPasscodeDialogClose();
-        reset(defaultValues);
-      }}
-      isDialogOpen={isResetPasscodeDialogOpen}
+      handleDialogClose={handleDialogClose}
+      isDialogOpen={isDialogOpen}
       text="Reset passcode"
     >
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
@@ -144,10 +151,7 @@ export const ResetPasscodeDialog = ({
         <DialogActions>
           <Button
             disabled={isMutating}
-            onClick={() => {
-              handleResetPasscodeDialogClose();
-              reset(defaultValues);
-            }}
+            onClick={handleDialogClose}
             startIcon={
               isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
             }

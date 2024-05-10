@@ -4,6 +4,7 @@ import {
 } from "@mui/icons-material";
 import { Button, CircularProgress, DialogActions } from "@mui/material";
 import { useSnackbar } from "notistack";
+import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 
@@ -18,14 +19,14 @@ import type { IResRoleItem } from "src/components/types";
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IRolesDialogCreateProps {
-  handleDialogCreateClose: () => void;
-  isDialogCreateOpen: boolean;
+  handleDialogClose: () => void;
+  isDialogOpen: boolean;
   roleList: IResRoleItem[];
 }
 
 export const RolesDialogCreate = ({
-  handleDialogCreateClose,
-  isDialogCreateOpen,
+  handleDialogClose,
+  isDialogOpen,
   roleList,
 }: IRolesDialogCreateProps) => {
   // fetching, mutation, and revalidation
@@ -35,15 +36,25 @@ export const RolesDialogCreate = ({
   // other hooks
   // --------------------
   const {
+    clearErrors,
     control,
     formState: { errors },
     handleSubmit,
-    reset,
+    setValue,
   } = useForm({
     defaultValues,
     mode: "onBlur",
   });
   const { enqueueSnackbar } = useSnackbar();
+
+  // side effects
+  // --------------------
+  useEffect(() => {
+    if (isDialogOpen) {
+      clearErrors();
+      setValue("name", "");
+    }
+  }, [clearErrors, isDialogOpen, setValue]);
 
   // form submission
   // --------------------
@@ -55,8 +66,6 @@ export const RolesDialogCreate = ({
         method: "POST",
       });
 
-      handleDialogCreateClose();
-      reset(defaultValues);
       enqueueSnackbar(
         <SnackbarText>
           <strong>{formValues.name}</strong> role has been created
@@ -65,6 +74,7 @@ export const RolesDialogCreate = ({
           variant: "success",
         }
       );
+      handleDialogClose();
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(
@@ -86,8 +96,8 @@ export const RolesDialogCreate = ({
   // --------------------
   return (
     <DialogContainer
-      handleDialogClose={handleDialogCreateClose}
-      isDialogOpen={isDialogCreateOpen}
+      handleDialogClose={handleDialogClose}
+      isDialogOpen={isDialogOpen}
       text="Create role"
     >
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
@@ -103,10 +113,7 @@ export const RolesDialogCreate = ({
             startIcon={
               isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
             }
-            onClick={() => {
-              handleDialogCreateClose();
-              reset(defaultValues);
-            }}
+            onClick={handleDialogClose}
             type="button"
             variant="outlined"
           >

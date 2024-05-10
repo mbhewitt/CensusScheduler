@@ -29,30 +29,27 @@ interface IPositionItem {
 }
 interface ITimeItem {
   id: number;
-  time: string;
-}
-interface ITypeItem {
-  id: number;
+  name: string;
 }
 interface IShiftTypesPositionRemoveProps {
-  handlePositionDialogRemoveClose: () => void;
-  isPositionDialogRemoveOpen: boolean;
+  handleDialogClose: () => void;
+  isDialogOpen: boolean;
   positionItem: IPositionItem;
   positionRemove: UseFieldArrayRemove;
-  typeItem: ITypeItem;
+  typeId: number;
 }
 
 export const ShiftTypesPositionRemove = ({
-  handlePositionDialogRemoveClose: handleDialogRemoveClose,
-  isPositionDialogRemoveOpen: isDialogRemoveOpen,
+  handleDialogClose: handleDialogRemoveClose,
+  isDialogOpen: isDialogRemoveOpen,
   positionItem,
   positionRemove,
-  typeItem,
+  typeId,
 }: IShiftTypesPositionRemoveProps) => {
   // fetching, mutation, and revalidation
   // --------------------
   const { data, error } = useSWR(
-    `/api/shifts/types/${typeItem.id}/positions/${positionItem.id}`,
+    `/api/shifts/types/${typeId}/positions/${positionItem.id}`,
     fetcherGet
   );
 
@@ -85,7 +82,6 @@ export const ShiftTypesPositionRemove = ({
 
   const handlePositionRemove = async () => {
     positionRemove(positionItem.index);
-    handleDialogRemoveClose();
     enqueueSnackbar(
       <SnackbarText>
         Click on the <strong>Update type</strong> button to finalize your
@@ -95,6 +91,7 @@ export const ShiftTypesPositionRemove = ({
         variant: "warning",
       }
     );
+    handleDialogRemoveClose();
   };
 
   // render
@@ -122,7 +119,7 @@ export const ShiftTypesPositionRemove = ({
                   sx={{ display: "list-item", pl: 0 }}
                 >
                   <Link href={`/shifts/volunteers/${timeItem.id}`}>
-                    <ListItemText>{timeItem.time}</ListItemText>
+                    <ListItemText>{timeItem.name}</ListItemText>
                   </Link>
                 </ListItem>
               );

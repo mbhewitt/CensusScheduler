@@ -1,12 +1,12 @@
 import Head from "next/head";
 import { useContext } from "react";
 
-import { ShiftTypeUpdate } from "src/components/shifts/types/type/ShiftTypeUpdate";
+import { ShiftTypesUpdate } from "src/components/shifts/types/type/ShiftTypesUpdate";
 import { SignIn } from "src/components/sign-in";
 import { SessionContext } from "src/state/session/context";
 import { checkIsSuperAdmin } from "src/utils/checkIsRoleExist";
 
-const ShiftTypeUpdatePage = () => {
+const ShiftTypesUpdatePage = () => {
   // context
   // --------------------
   const {
@@ -28,9 +28,9 @@ const ShiftTypeUpdatePage = () => {
         <meta name="description" content="" />
         <link rel="icon" href="/general/favicon.ico" />
       </Head>
-      {isSuperAdmin ? <ShiftTypeUpdate /> : <SignIn />}
+      {isSuperAdmin ? <ShiftTypesUpdate /> : <SignIn />}
     </>
   );
 };
 
-export default ShiftTypeUpdatePage;
+export default ShiftTypesUpdatePage;

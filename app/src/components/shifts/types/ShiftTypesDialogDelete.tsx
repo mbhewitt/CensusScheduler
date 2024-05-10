@@ -30,14 +30,14 @@ import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 import { formatDateName, formatTime } from "src/utils/formatDateTime";
 
 interface IShiftTypesDialogDeleteProps {
-  handleDialogDeleteClose: () => void;
-  isDialogDeleteOpen: boolean;
+  handleDialogClose: () => void;
+  isDialogOpen: boolean;
   typeItem: IResShiftTypeItem;
 }
 
 export const ShiftTypesDialogDelete = ({
-  handleDialogDeleteClose,
-  isDialogDeleteOpen,
+  handleDialogClose,
+  isDialogOpen,
   typeItem: { id, name },
 }: IShiftTypesDialogDeleteProps) => {
   // fetching, mutation, and revalidation
@@ -58,8 +58,8 @@ export const ShiftTypesDialogDelete = ({
   if (error)
     return (
       <DialogContainer
-        handleDialogClose={handleDialogDeleteClose}
-        isDialogOpen={isDialogDeleteOpen}
+        handleDialogClose={handleDialogClose}
+        isDialogOpen={isDialogOpen}
         text="Delete type"
       >
         <ErrorAlert />
@@ -68,8 +68,8 @@ export const ShiftTypesDialogDelete = ({
   if (!data)
     return (
       <DialogContainer
-        handleDialogClose={handleDialogDeleteClose}
-        isDialogOpen={isDialogDeleteOpen}
+        handleDialogClose={handleDialogClose}
+        isDialogOpen={isDialogOpen}
         text="Delete type"
       >
         <Loading />
@@ -84,7 +84,6 @@ export const ShiftTypesDialogDelete = ({
       });
       mutate("/api/shifts/types");
 
-      handleDialogDeleteClose();
       enqueueSnackbar(
         <SnackbarText>
           <strong>{name}</strong> type has been deleted
@@ -93,6 +92,7 @@ export const ShiftTypesDialogDelete = ({
           variant: "success",
         }
       );
+      handleDialogClose();
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(
@@ -114,8 +114,8 @@ export const ShiftTypesDialogDelete = ({
   // --------------------
   return (
     <DialogContainer
-      handleDialogClose={handleDialogDeleteClose}
-      isDialogOpen={isDialogDeleteOpen}
+      handleDialogClose={handleDialogClose}
+      isDialogOpen={isDialogOpen}
       text="Delete type"
     >
       {(data && data.positionList.length > 0) || data.timeList.length > 0 ? (
@@ -196,7 +196,7 @@ export const ShiftTypesDialogDelete = ({
           startIcon={
             isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
           }
-          onClick={handleDialogDeleteClose}
+          onClick={handleDialogClose}
           type="button"
           variant="outlined"
         >

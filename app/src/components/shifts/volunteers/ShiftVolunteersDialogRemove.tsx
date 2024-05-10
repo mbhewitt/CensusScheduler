@@ -18,30 +18,26 @@ import { SnackbarText } from "src/components/general/SnackbarText";
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IShiftVolunteersDialogRemoveProps {
-  handleDialogRemoveClose: () => void;
-  isDialogRemoveOpen: boolean;
-  volunteer: {
-    playaName: string;
+  handleDialogClose: () => void;
+  isDialogOpen: boolean;
+  shiftItem: {
     positionName: string;
-    shiftboardId: number;
     shiftPositionId: number;
     timeId: number;
+  };
+  volunteerItem: {
+    playaName: string;
+    shiftboardId: number;
     worldName: string;
   };
 }
 
 const socket = io();
 export const ShiftVolunteersDialogRemove = ({
-  handleDialogRemoveClose,
-  isDialogRemoveOpen,
-  volunteer: {
-    playaName,
-    positionName,
-    shiftboardId,
-    shiftPositionId,
-    timeId,
-    worldName,
-  },
+  handleDialogClose,
+  isDialogOpen,
+  shiftItem: { positionName, shiftPositionId, timeId },
+  volunteerItem: { playaName, shiftboardId, worldName },
 }: IShiftVolunteersDialogRemoveProps) => {
   // fetching, mutation, and revalidation
   // --------------------
@@ -58,17 +54,18 @@ export const ShiftVolunteersDialogRemove = ({
   // --------------------
   const handleVolunteerRemove = async () => {
     try {
+      // update database
       await trigger({
         body: { shiftboardId, shiftPositionId, timeId },
         method: "DELETE",
       });
+      // emit event
       socket.emit("req-shift-volunteer-remove", {
         shiftboardId,
         shiftPositionId,
         timeId,
       });
 
-      handleDialogRemoveClose();
       enqueueSnackbar(
         <SnackbarText>
           <strong>
@@ -80,6 +77,7 @@ export const ShiftVolunteersDialogRemove = ({
           variant: "success",
         }
       );
+      handleDialogClose();
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(
@@ -101,8 +99,8 @@ export const ShiftVolunteersDialogRemove = ({
   // --------------------
   return (
     <DialogContainer
-      handleDialogClose={handleDialogRemoveClose}
-      isDialogOpen={isDialogRemoveOpen}
+      handleDialogClose={handleDialogClose}
+      isDialogOpen={isDialogOpen}
       text="Remove volunteer"
     >
       <DialogContentText>
@@ -120,7 +118,7 @@ export const ShiftVolunteersDialogRemove = ({
           startIcon={
             isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
           }
-          onClick={handleDialogRemoveClose}
+          onClick={handleDialogClose}
           type="button"
           variant="outlined"
         >

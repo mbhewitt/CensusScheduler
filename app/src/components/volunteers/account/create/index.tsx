@@ -92,15 +92,12 @@ export const AccountCreate = () => {
           body: formValues,
           method: "POST",
         });
-
       // update state
       sessionDispatch({
         payload: dataVolunteerItem,
         type: SESSION_SIGN_IN,
       });
-      reset(defaultValues);
 
-      // display success notification
       enqueueSnackbar(
         <SnackbarText>
           Account for{" "}
@@ -327,7 +324,6 @@ export const AccountCreate = () => {
                     )
                   }
                   onClick={() => {
-                    reset(defaultValues);
                     router.push("/sign-in");
                   }}
                   type="button"

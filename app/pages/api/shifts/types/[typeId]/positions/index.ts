@@ -12,7 +12,7 @@ import {
 import { generateId } from "src/utils/generateId";
 
 const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { shiftTypeId } = req.query;
+  const { typeId } = req.query;
 
   switch (req.method) {
     // get
@@ -30,7 +30,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         LEFT JOIN op_shift_category AS sc
         ON sc.shift_category_id=sn.shift_category_id
         WHERE sn.shift_name_id=?`,
-        [shiftTypeId]
+        [typeId]
       );
       const [resInformation]: IResShiftTypeInformation[] =
         dbInformationList.map(
@@ -66,7 +66,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         WHERE sp.shift_name_id=?
         AND sp.remove_shift_position=false
         ORDER BY pt.position`,
-        [shiftTypeId]
+        [typeId]
       );
       const resPositionList: IResShiftTypePositionItem[] = dbPositionList.map(
         ({
@@ -110,7 +110,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         WHERE shift_name_id=?
         AND remove_shift_time=false
         ORDER BY start_time`,
-        [shiftTypeId]
+        [typeId]
       );
       const resTimeList: IResShiftTypeTimeItem[] = dbTimeList.map(
         ({
@@ -162,7 +162,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           shift_details=?,
           shift_name=?
         WHERE shift_name_id=?`,
-        [isCore, isOffPlaya, categoryId, details, name, shiftTypeId]
+        [isCore, isOffPlaya, categoryId, details, name, typeId]
       );
 
       // update position rows
@@ -170,7 +170,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         `SELECT position_type_id
         FROM op_shift_position
         WHERE shift_name_id=?`,
-        [shiftTypeId]
+        [typeId]
       );
       const positionListUpdate = positionList.filter(({ positionId }) => {
         return dbPositionList.some(
@@ -201,7 +201,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
               wap_points=?
             WHERE position_type_id=?
             AND shift_name_id=?`,
-            [totalSlots, wapPoints, positionId, shiftTypeId]
+            [totalSlots, wapPoints, positionId, typeId]
           );
         }
       );
@@ -222,7 +222,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
               wap_points
             )
             VALUES (true, ?, ?, ?, ?, ?)`,
-          [positionId, shiftTypeId, shiftPositionIdNew, totalSlots, wapPoints]
+          [positionId, typeId, shiftPositionIdNew, totalSlots, wapPoints]
         );
       });
       positionListRemove.forEach(async ({ position_type_id: positionId }) => {
@@ -231,7 +231,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           SET remove_shift_position=true
           WHERE shift_name_id=?
           AND position_type_id=?`,
-          [shiftTypeId, positionId]
+          [typeId, positionId]
         );
       });
 
@@ -240,7 +240,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         `SELECT shift_times_id
         FROM op_shift_times
         WHERE shift_name_id=?`,
-        [shiftTypeId]
+        [typeId]
       );
       const timeListUpdate = timeList.filter(({ timeId }) => {
         return dbTimeList.some(
@@ -308,7 +308,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
               endTime,
               notes,
               instance,
-              shiftTypeId,
+              typeId,
               idNew,
               startTime,
               date.split("-")[0],
@@ -324,23 +324,6 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           [shiftTimeId]
         );
       });
-
-      return res.status(200).json({
-        statusCode: 200,
-        message: "OK",
-      });
-    }
-
-    // delete
-    // --------------------
-    case "DELETE": {
-      // delete type
-      await pool.query<RowDataPacket[]>(
-        `UPDATE op_shift_name
-        SET delete_shift=true
-        WHERE shift_name_id=?`,
-        [shiftTypeId]
-      );
 
       return res.status(200).json({
         statusCode: 200,

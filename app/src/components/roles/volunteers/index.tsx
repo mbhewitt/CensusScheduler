@@ -38,24 +38,28 @@ import {
   setCellPropsCenter,
 } from "src/utils/setCellPropsCenter";
 
-const defaultState = {
-  isOpen: false,
-  volunteer: {
-    playaName: "",
-    roleId: 0,
-    roleName: "",
-    shiftboardId: 0,
-    worldName: "",
-  },
-};
+enum DialogList {
+  Add,
+  Remove,
+}
+
 export const RoleVolunteers = () => {
   // state
   // --------------------
   const [isMounted, setIsMounted] = useState(false);
-  const [isDialogAddOpen, setIsDialogAddOpen] = useState(false);
-  const [isDialogRemoveOpen, setIsDialogRemoveOpen] = useState(
-    structuredClone(defaultState)
-  );
+  const [dialogCurrent, setDialogCurrent] = useState({
+    dialogItem: 0,
+    role: {
+      id: 0,
+      name: "",
+    },
+    volunteer: {
+      playaName: "",
+      shiftboardId: 0,
+      worldName: "",
+    },
+  });
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // fetching, mutation, and revalidation
   // --------------------
@@ -112,13 +116,7 @@ export const RoleVolunteers = () => {
     },
   ];
   const dataTable = dataRoleVolunteerList.map(
-    ({
-      playaName,
-      roleId,
-      roleName,
-      shiftboardId,
-      worldName,
-    }: IResRoleVolunteerItem) => {
+    ({ playaName, shiftboardId, worldName }: IResRoleVolunteerItem) => {
       return [
         shiftboardId,
         playaName,
@@ -137,18 +135,21 @@ export const RoleVolunteers = () => {
                 </MenuItem>
               </Link>
               <MenuItem
-                onClick={() =>
-                  setIsDialogRemoveOpen({
-                    isOpen: true,
+                onClick={() => {
+                  setDialogCurrent({
+                    dialogItem: DialogList.Remove,
+                    role: {
+                      id: dataRoleItem.id,
+                      name: dataRoleItem.name,
+                    },
                     volunteer: {
                       playaName,
-                      roleId,
-                      roleName,
                       shiftboardId,
                       worldName,
                     },
-                  })
-                }
+                  });
+                  setIsDialogOpen(true);
+                }}
               >
                 <ListItemIcon>
                   <PersonRemoveIcon />
@@ -215,12 +216,24 @@ export const RoleVolunteers = () => {
           >
             <Box>
               <Typography component="h2" variant="h4">
-                {dataRoleItem.roleName}
+                {dataRoleItem.name}
               </Typography>
             </Box>
             <Button
               onClick={() => {
-                setIsDialogAddOpen(true);
+                setDialogCurrent({
+                  dialogItem: DialogList.Add,
+                  role: {
+                    id: 0,
+                    name: "",
+                  },
+                  volunteer: {
+                    playaName: "",
+                    shiftboardId: 0,
+                    worldName: "",
+                  },
+                });
+                setIsDialogOpen(true);
               }}
               startIcon={<PersonAddAlt1Icon />}
               type="button"
@@ -239,20 +252,22 @@ export const RoleVolunteers = () => {
 
       {/* add dialog */}
       <RoleVolunteersDialogAdd
-        handleDialogAddClose={() => setIsDialogAddOpen(false)}
-        isDialogAddOpen={isDialogAddOpen}
-        roleId={roleId}
-        roleName={dataRoleItem.roleName}
+        handleDialogClose={() => setIsDialogOpen(false)}
+        isDialogOpen={
+          dialogCurrent.dialogItem === DialogList.Add && isDialogOpen
+        }
+        roleItem={dataRoleItem}
         roleVolunteerList={dataRoleVolunteerList}
       />
 
       {/* remove dialog */}
       <RoleVolunteersDialogRemove
-        handleDialogRemoveClose={() =>
-          setIsDialogRemoveOpen(structuredClone(defaultState))
+        handleDialogClose={() => setIsDialogOpen(false)}
+        isDialogOpen={
+          dialogCurrent.dialogItem === DialogList.Remove && isDialogOpen
         }
-        isDialogRemoveOpen={isDialogRemoveOpen.isOpen}
-        volunteer={isDialogRemoveOpen.volunteer}
+        roleItem={dataRoleItem}
+        volunteerItem={dialogCurrent.volunteer}
       />
     </>
   );

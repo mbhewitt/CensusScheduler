@@ -17,15 +17,15 @@ import type { IResShiftCategoryItem } from "src/components/types";
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IShiftCategoriesDialogUpdateProps {
-  handleDialogUpdateClose: () => void;
-  isDialogUpdateOpen: boolean;
+  handleDialogClose: () => void;
+  isDialogOpen: boolean;
   shiftCategoryItem: IResShiftCategoryItem;
   shiftCategoryList: IResShiftCategoryItem[];
 }
 
 export const ShiftCategoriesDialogUpdate = ({
-  handleDialogUpdateClose,
-  isDialogUpdateOpen,
+  handleDialogClose,
+  isDialogOpen,
   shiftCategoryItem,
   shiftCategoryList,
 }: IShiftCategoriesDialogUpdateProps) => {
@@ -40,10 +40,10 @@ export const ShiftCategoriesDialogUpdate = ({
   // other hooks
   // --------------------
   const {
+    clearErrors,
     control,
     formState: { errors },
     handleSubmit,
-    reset,
     setValue,
   } = useForm({
     defaultValues,
@@ -54,9 +54,12 @@ export const ShiftCategoriesDialogUpdate = ({
   // side effects
   // --------------------
   useEffect(() => {
-    setValue("category", shiftCategoryItem.category);
-    setValue("name", shiftCategoryItem.name);
-  }, [shiftCategoryItem, setValue]);
+    if (isDialogOpen) {
+      clearErrors();
+      setValue("category", shiftCategoryItem.category);
+      setValue("name", shiftCategoryItem.name);
+    }
+  }, [clearErrors, isDialogOpen, shiftCategoryItem, setValue]);
 
   // form submission
   // --------------------
@@ -69,8 +72,6 @@ export const ShiftCategoriesDialogUpdate = ({
       });
       mutate("/api/shifts/categories");
 
-      handleDialogUpdateClose();
-      reset(defaultValues);
       enqueueSnackbar(
         <SnackbarText>
           <strong>{formValues.name}</strong> shift category has been updated
@@ -79,6 +80,7 @@ export const ShiftCategoriesDialogUpdate = ({
           variant: "success",
         }
       );
+      handleDialogClose();
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(
@@ -100,8 +102,8 @@ export const ShiftCategoriesDialogUpdate = ({
   // --------------------
   return (
     <DialogContainer
-      handleDialogClose={handleDialogUpdateClose}
-      isDialogOpen={isDialogUpdateOpen}
+      handleDialogClose={handleDialogClose}
+      isDialogOpen={isDialogOpen}
       text="Update shift category"
     >
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
@@ -117,10 +119,7 @@ export const ShiftCategoriesDialogUpdate = ({
             startIcon={
               isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
             }
-            onClick={() => {
-              handleDialogUpdateClose();
-              reset(defaultValues);
-            }}
+            onClick={handleDialogClose}
             type="button"
             variant="outlined"
           >

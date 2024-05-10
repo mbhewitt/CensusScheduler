@@ -54,18 +54,12 @@ import {
   setCellPropsCenter,
 } from "src/utils/setCellPropsCenter";
 
+enum DialogList {
+  Add,
+  Remove,
+}
+
 const socket = io();
-const defaultState = {
-  isOpen: false,
-  volunteer: {
-    playaName: "",
-    positionName: "",
-    shiftboardId: 0,
-    shiftPositionId: 0,
-    timeId: 0,
-    worldName: "",
-  },
-};
 export const ShiftVolunteers = () => {
   // context
   // --------------------
@@ -85,25 +79,35 @@ export const ShiftVolunteers = () => {
   // state
   // --------------------
   const [isMounted, setIsMounted] = useState(false);
-  const [isDialogAddOpen, setIsDialogAddOpen] = useState(false);
-  const [isDialogRemoveOpen, setIsDialogRemoveOpen] = useState(
-    structuredClone(defaultState)
-  );
+  const [dialogCurrent, setDialogCurrent] = useState({
+    dialogItem: 0,
+    shift: {
+      positionName: "",
+      shiftPositionId: 0,
+      timeId: 0,
+    },
+    volunteer: {
+      playaName: "",
+      shiftboardId: 0,
+      worldName: "",
+    },
+  });
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // fetching, mutation, and revalidation
   // --------------------
   const router = useRouter();
-  const { timeId: shiftTimesQuery } = router.query;
+  const { timeId: timeIdQuery } = router.query;
   const {
-    data: dataShiftVolunteerItem,
-    error: errorShiftVolunteerItem,
-    mutate: mutateShiftVolunteerItem,
+    data: dataShiftVolunteersItem,
+    error: errorShiftVolunteersItem,
+    mutate: mutateShiftVolunteersItem,
   } = useSWR(
-    isMounted ? `/api/shifts/volunteers/${shiftTimesQuery}` : null,
+    isMounted ? `/api/shifts/volunteers/${timeIdQuery}` : null,
     fetcherGet
   );
   const { trigger } = useSWRMutation(
-    `/api/shifts/volunteers/${shiftTimesQuery}`,
+    `/api/shifts/volunteers/${timeIdQuery}`,
     fetcherTrigger
   );
 
@@ -136,8 +140,8 @@ export const ShiftVolunteers = () => {
             timeId,
             worldName,
           }) => {
-            if (dataShiftVolunteerItem) {
-              const dataMutate = structuredClone(dataShiftVolunteerItem);
+            if (dataShiftVolunteersItem) {
+              const dataMutate = structuredClone(dataShiftVolunteersItem);
               dataMutate.shiftVolunteerList.push({
                 noShow,
                 playaName,
@@ -148,7 +152,7 @@ export const ShiftVolunteers = () => {
                 worldName,
               });
 
-              mutateShiftVolunteerItem(dataMutate);
+              mutateShiftVolunteersItem(dataMutate);
             }
           }
         );
@@ -161,8 +165,8 @@ export const ShiftVolunteers = () => {
             checked: boolean;
             shiftboardId: number | string;
           }) => {
-            if (dataShiftVolunteerItem) {
-              const dataMutate = structuredClone(dataShiftVolunteerItem);
+            if (dataShiftVolunteersItem) {
+              const dataMutate = structuredClone(dataShiftVolunteersItem);
               const shiftboardIdNum = Number(shiftboardId);
               const shiftVolunteerItemUpdate =
                 dataMutate.shiftVolunteerList.find(
@@ -173,20 +177,20 @@ export const ShiftVolunteers = () => {
                 shiftVolunteerItemUpdate.noShow = checked ? "" : "Yes";
               }
 
-              mutateShiftVolunteerItem(dataMutate);
+              mutateShiftVolunteersItem(dataMutate);
             }
           }
         );
         socket.on("res-shift-volunteer-remove", ({ shiftboardId }) => {
-          if (dataShiftVolunteerItem) {
-            const dataMutate = structuredClone(dataShiftVolunteerItem);
+          if (dataShiftVolunteersItem) {
+            const dataMutate = structuredClone(dataShiftVolunteersItem);
             const volunteerListNew = dataMutate.shiftVolunteerList.filter(
               (volunteerItem: IResShiftVolunteerItem) =>
                 volunteerItem.shiftboardId !== shiftboardId
             );
             dataMutate.shiftVolunteerList = volunteerListNew;
 
-            mutateShiftVolunteerItem(dataMutate);
+            mutateShiftVolunteersItem(dataMutate);
           }
         });
       } catch (error) {
@@ -205,12 +209,12 @@ export const ShiftVolunteers = () => {
         throw error;
       }
     })();
-  }, [dataShiftVolunteerItem, enqueueSnackbar, mutateShiftVolunteerItem]);
+  }, [dataShiftVolunteersItem, enqueueSnackbar, mutateShiftVolunteersItem]);
 
   // logic
   // --------------------
-  if (errorShiftVolunteerItem) return <ErrorPage />;
-  if (!dataShiftVolunteerItem) return <Loading />;
+  if (errorShiftVolunteersItem) return <ErrorPage />;
+  if (!dataShiftVolunteersItem) return <Loading />;
 
   const isAuthenticated = checkIsAuthenticated(
     accountType,
@@ -275,8 +279,8 @@ export const ShiftVolunteers = () => {
   // evaluate the check-in type and available features
   const checkInType = getCheckInType({
     dateTime: dayjs(dateTimeValue),
-    endTime: dayjs(dataShiftVolunteerItem.endTime),
-    startTime: dayjs(dataShiftVolunteerItem.startTime),
+    endTime: dayjs(dataShiftVolunteersItem.endTime),
+    startTime: dayjs(dataShiftVolunteersItem.startTime),
   });
   let isVolunteerAddAvailable = false;
   let isCheckInAvailable = false;
@@ -286,7 +290,7 @@ export const ShiftVolunteers = () => {
       isVolunteerAddAvailable =
         (isAuthenticated && isAdmin) ||
         (isAuthenticated &&
-          dataShiftVolunteerItem.shiftPositionList.some(
+          dataShiftVolunteersItem.shiftPositionList.some(
             (positionItem: IResShiftPositionItem) =>
               positionItem.filledSlots > 0
           ));
@@ -342,7 +346,7 @@ export const ShiftVolunteers = () => {
     });
   }
   const dataTable = structuredClone(
-    dataShiftVolunteerItem.shiftVolunteerList
+    dataShiftVolunteersItem.shiftVolunteerList
   ).map(
     ({
       noShow,
@@ -390,19 +394,22 @@ export const ShiftVolunteers = () => {
                   </MenuItem>
                 </Link>
                 <MenuItem
-                  onClick={() =>
-                    setIsDialogRemoveOpen({
-                      isOpen: true,
-                      volunteer: {
-                        playaName,
+                  onClick={() => {
+                    setDialogCurrent({
+                      dialogItem: DialogList.Remove,
+                      shift: {
                         positionName,
-                        shiftboardId,
                         shiftPositionId,
                         timeId,
+                      },
+                      volunteer: {
+                        playaName,
+                        shiftboardId,
                         worldName,
                       },
-                    })
-                  }
+                    });
+                    setIsDialogOpen(true);
+                  }}
                 >
                   <ListItemIcon>
                     <PersonRemoveIcon />
@@ -471,19 +478,19 @@ export const ShiftVolunteers = () => {
             <Box>
               <Typography component="h2" gutterBottom variant="h4">
                 {formatDateName(
-                  dataShiftVolunteerItem.date,
-                  dataShiftVolunteerItem.dateName
+                  dataShiftVolunteersItem.date,
+                  dataShiftVolunteersItem.dateName
                 )}
                 <br />
                 {formatTime(
-                  dataShiftVolunteerItem.startTime,
-                  dataShiftVolunteerItem.endTime
+                  dataShiftVolunteersItem.startTime,
+                  dataShiftVolunteersItem.endTime
                 )}
                 <br />
-                {dataShiftVolunteerItem.type}
+                {dataShiftVolunteersItem.type}
               </Typography>
               <Typography component="h3" variant="h6">
-                {dataShiftVolunteerItem.shiftPositionList.map(
+                {dataShiftVolunteersItem.shiftPositionList.map(
                   ({
                     filledSlots,
                     positionName,
@@ -502,7 +509,20 @@ export const ShiftVolunteers = () => {
             <Button
               disabled={!isVolunteerAddAvailable}
               onClick={() => {
-                setIsDialogAddOpen(true);
+                setDialogCurrent({
+                  dialogItem: DialogList.Add,
+                  shift: {
+                    positionName: "",
+                    shiftPositionId: 0,
+                    timeId: 0,
+                  },
+                  volunteer: {
+                    playaName: "",
+                    shiftboardId: 0,
+                    worldName: "",
+                  },
+                });
+                setIsDialogOpen(true);
               }}
               startIcon={<PersonAddAlt1Icon />}
               type="button"
@@ -521,25 +541,22 @@ export const ShiftVolunteers = () => {
         {/* add dialog */}
         <ShiftVolunteersDialogAdd
           checkInType={checkInType}
-          date={dataShiftVolunteerItem.date}
-          dateName={dataShiftVolunteerItem.dateName}
-          endTime={dataShiftVolunteerItem.endTime}
-          handleDialogAddClose={() => setIsDialogAddOpen(false)}
-          isDialogAddOpen={isDialogAddOpen}
-          shiftPositionList={dataShiftVolunteerItem.shiftPositionList}
-          timeId={shiftTimesQuery}
-          shiftVolunteerList={dataShiftVolunteerItem.shiftVolunteerList}
-          startTime={dataShiftVolunteerItem.startTime}
-          type={dataShiftVolunteerItem.type}
+          handleDialogClose={() => setIsDialogOpen(false)}
+          isDialogOpen={
+            dialogCurrent.dialogItem === DialogList.Add && isDialogOpen
+          }
+          shiftVolunteersItem={dataShiftVolunteersItem}
+          timeId={timeIdQuery}
         />
 
         {/* remove dialog */}
         <ShiftVolunteersDialogRemove
-          handleDialogRemoveClose={() =>
-            setIsDialogRemoveOpen(structuredClone(defaultState))
+          handleDialogClose={() => setIsDialogOpen(false)}
+          isDialogOpen={
+            dialogCurrent.dialogItem === DialogList.Remove && isDialogOpen
           }
-          isDialogRemoveOpen={isDialogRemoveOpen.isOpen}
-          volunteer={isDialogRemoveOpen.volunteer}
+          shiftItem={dialogCurrent.shift}
+          volunteerItem={dialogCurrent.volunteer}
         />
       </Container>
     </>

@@ -38,8 +38,6 @@ export interface IResRoleItem {
 }
 export interface IResRoleVolunteerItem {
   playaName: string;
-  roleId: number;
-  roleName: string;
   shiftboardId: number;
   worldName: string;
 }

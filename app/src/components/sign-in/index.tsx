@@ -87,6 +87,7 @@ export const SignIn = () => {
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
+      // check database
       const dataVolunteerItem = await trigger({
         body: {
           passcode: formValues.passcode,
@@ -114,7 +115,7 @@ export const SignIn = () => {
           payload: dataVolunteerItem,
           type: SESSION_SIGN_IN,
         });
-        reset(defaultValues);
+
         enqueueSnackbar(
           <SnackbarText>
             <strong>

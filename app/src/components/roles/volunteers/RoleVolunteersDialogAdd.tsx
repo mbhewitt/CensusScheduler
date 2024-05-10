@@ -10,6 +10,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
+import { useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
@@ -29,10 +30,12 @@ interface IFormValues {
   volunteer: null | IVolunteerOption;
 }
 interface IRoleVolunteersDialogAddProps {
-  handleDialogAddClose: () => void;
-  isDialogAddOpen: boolean;
-  roleId: string | string[] | undefined;
-  roleName: string;
+  handleDialogClose: () => void;
+  isDialogOpen: boolean;
+  roleItem: {
+    id: number;
+    name: string;
+  };
   roleVolunteerList: IResRoleVolunteerItem[];
 }
 
@@ -40,10 +43,9 @@ const defaultValues: IFormValues = {
   volunteer: null,
 };
 export const RoleVolunteersDialogAdd = ({
-  handleDialogAddClose,
-  isDialogAddOpen,
-  roleId,
-  roleName,
+  handleDialogClose,
+  isDialogOpen,
+  roleItem: { id: roleId, name: roleName },
   roleVolunteerList,
 }: IRoleVolunteersDialogAddProps) => {
   // fetching, mutation, and revalidation
@@ -57,23 +59,33 @@ export const RoleVolunteersDialogAdd = ({
   // other hooks
   // --------------------
   const {
+    clearErrors,
     control,
     formState: { errors },
     handleSubmit,
-    reset,
+    setValue,
   } = useForm({
     defaultValues,
     mode: "onBlur",
   });
   const { enqueueSnackbar } = useSnackbar();
 
+  // side effects
+  // --------------------
+  useEffect(() => {
+    if (isDialogOpen) {
+      clearErrors();
+      setValue("volunteer", null);
+    }
+  }, [clearErrors, isDialogOpen, setValue]);
+
   // logic
   // --------------------
   if (error)
     return (
       <DialogContainer
-        handleDialogClose={handleDialogAddClose}
-        isDialogOpen={isDialogAddOpen}
+        handleDialogClose={handleDialogClose}
+        isDialogOpen={isDialogOpen}
         text="Add role volunteer"
       >
         <ErrorAlert />
@@ -82,8 +94,8 @@ export const RoleVolunteersDialogAdd = ({
   if (!data)
     return (
       <DialogContainer
-        handleDialogClose={handleDialogAddClose}
-        isDialogOpen={isDialogAddOpen}
+        handleDialogClose={handleDialogClose}
+        isDialogOpen={isDialogOpen}
         text="Add role volunteer"
       >
         <Loading />
@@ -94,11 +106,6 @@ export const RoleVolunteersDialogAdd = ({
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
-      const roleVolunteerAdd = data.find(
-        (dataVolunteerItem: IResVolunteerDropdownItem) =>
-          dataVolunteerItem.shiftboardId === formValues.volunteer?.shiftboardId
-      );
-
       // update database
       await trigger({
         body: {
@@ -107,20 +114,16 @@ export const RoleVolunteersDialogAdd = ({
         method: "POST",
       });
 
-      handleDialogAddClose();
-      reset(defaultValues);
       enqueueSnackbar(
         <SnackbarText>
-          <strong>
-            {roleVolunteerAdd.playaName} &quot;{roleVolunteerAdd.worldName}
-            &quot;
-          </strong>{" "}
-          for <strong>{roleName}</strong> role has been added
+          <strong>{formValues.volunteer?.label}</strong> for{" "}
+          <strong>{roleName}</strong> role has been added
         </SnackbarText>,
         {
           variant: "success",
         }
       );
+      handleDialogClose();
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(
@@ -141,8 +144,8 @@ export const RoleVolunteersDialogAdd = ({
   // --------------------
   return (
     <DialogContainer
-      handleDialogClose={handleDialogAddClose}
-      isDialogOpen={isDialogAddOpen}
+      handleDialogClose={handleDialogClose}
+      isDialogOpen={isDialogOpen}
       text="Add role volunteer"
     >
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
@@ -203,10 +206,7 @@ export const RoleVolunteersDialogAdd = ({
             startIcon={
               isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
             }
-            onClick={() => {
-              handleDialogAddClose();
-              reset(defaultValues);
-            }}
+            onClick={handleDialogClose}
             type="button"
             variant="outlined"
           >

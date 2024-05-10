@@ -126,7 +126,6 @@ export const BehavioralStandards = () => {
         body: { isBehavioralStandardsSigned: true, shiftboardId },
         method: "POST",
       });
-
       // update state
       sessionDispatch({
         payload: {
@@ -136,7 +135,6 @@ export const BehavioralStandards = () => {
         type: SESSION_BEHAVIORAL_STANDARDS,
       });
 
-      // display success notification
       enqueueSnackbar(
         <SnackbarText>
           <strong>
