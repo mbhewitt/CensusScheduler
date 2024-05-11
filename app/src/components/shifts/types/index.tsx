@@ -43,6 +43,7 @@ export const ShiftTypes = () => {
   const [dialogCurrent, setDialogCurrent] = useState({
     dialogItem: 0,
     type: {
+      categoryName: "",
       id: 0,
       name: "",
     },
@@ -67,54 +68,65 @@ export const ShiftTypes = () => {
     {
       name: "Name",
       options: {
+        filter: false,
+        sortThirdClickReset: true,
+      },
+    },
+    {
+      name: "Category",
+      options: {
         sortThirdClickReset: true,
       },
     },
     {
       name: "Actions",
       options: {
+        filter: false,
         setCellHeaderProps: setCellHeaderPropsCenter,
         setCellProps: setCellPropsCenter,
         sort: false,
       },
     },
   ];
-  const dataTable = data.map(({ id, name }: IResShiftTypeItem) => {
-    return [
-      name,
-      <MoreMenu
-        Icon={<MoreHorizIcon />}
-        key={`${id}-menu`}
-        MenuList={
-          <MenuList>
-            <Link href={`/shifts/types/update/${id}`}>
-              <MenuItem>
+  const dataTable = data.map(
+    ({ categoryName, id, name }: IResShiftTypeItem) => {
+      return [
+        name,
+        categoryName,
+        <MoreMenu
+          Icon={<MoreHorizIcon />}
+          key={`${id}-menu`}
+          MenuList={
+            <MenuList>
+              <Link href={`/shifts/types/update/${id}`}>
+                <MenuItem>
+                  <ListItemIcon>
+                    <EditCalendarIcon />
+                  </ListItemIcon>
+                  <ListItemText>Update type</ListItemText>
+                </MenuItem>
+              </Link>
+              <MenuItem
+                onClick={() => {
+                  setDialogCurrent({
+                    dialogItem: DialogList.Delete,
+                    type: { categoryName, id, name },
+                  });
+                  setIsDialogOpen(true);
+                }}
+              >
                 <ListItemIcon>
-                  <EditCalendarIcon />
+                  <EventBusyIcon />
                 </ListItemIcon>
-                <ListItemText>Update type</ListItemText>
+                <ListItemText>Delete type</ListItemText>
               </MenuItem>
-            </Link>
-            <MenuItem
-              onClick={() => {
-                setDialogCurrent({
-                  dialogItem: DialogList.Delete,
-                  type: { id, name },
-                });
-                setIsDialogOpen(true);
-              }}
-            >
-              <ListItemIcon>
-                <EventBusyIcon />
-              </ListItemIcon>
-              <ListItemText>Delete type</ListItemText>
-            </MenuItem>
-          </MenuList>
-        }
-      />,
-    ];
-  });
-  const optionListCustom = { filter: false };
+            </MenuList>
+          }
+        />,
+      ];
+    }
+  );
+  const optionListCustom = {};
 
   // render
   // --------------------

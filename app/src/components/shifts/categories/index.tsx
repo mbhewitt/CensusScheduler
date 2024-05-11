@@ -46,7 +46,7 @@ export const ShiftCategories = () => {
   // --------------------
   const [dialogCurrent, setDialogCurrent] = useState({
     category: {
-      department: "",
+      departmentName: "",
       id: 0,
       name: "",
     },
@@ -111,14 +111,14 @@ export const ShiftCategories = () => {
   ];
   const colorMapDisplay = getColorMap(data);
   const dataTable = data.map(
-    ({ department, id, name }: IResShiftCategoryItem) => {
+    ({ departmentName, id, name }: IResShiftCategoryItem) => {
       return [
         name,
-        department,
+        departmentName,
         <Chip
-          key={`${department}-chip`}
-          label={department}
-          sx={{ backgroundColor: colorMapDisplay[department] }}
+          key={`${departmentName}-chip`}
+          label={departmentName}
+          sx={{ backgroundColor: colorMapDisplay[departmentName] }}
         />,
         <MoreMenu
           Icon={<MoreHorizIcon />}
@@ -128,7 +128,7 @@ export const ShiftCategories = () => {
               <MenuItem
                 onClick={() => {
                   setDialogCurrent({
-                    category: { department, id, name },
+                    category: { departmentName, id, name },
                     dialogItem: DialogList.Update,
                   });
                   setIsDialogOpen(true);
@@ -142,7 +142,7 @@ export const ShiftCategories = () => {
               <MenuItem
                 onClick={() => {
                   setDialogCurrent({
-                    category: { department, id, name },
+                    category: { departmentName, id, name },
                     dialogItem: DialogList.Delete,
                   });
                   setIsDialogOpen(true);
@@ -186,7 +186,7 @@ export const ShiftCategories = () => {
               onClick={() => {
                 setDialogCurrent({
                   category: {
-                    department: "",
+                    departmentName: "",
                     id: 0,
                     name: "",
                   },
