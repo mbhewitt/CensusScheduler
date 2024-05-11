@@ -4,7 +4,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { pool } from "lib/database";
 import {
   IResShiftTypeCategoryItem,
-  IResShiftTypeItem,
+  IResShiftTypeDefaultItem,
   IResShiftTypePositionItem,
 } from "src/components/types";
 
@@ -21,7 +21,7 @@ const shiftTypeDefaults = async (req: NextApiRequest, res: NextApiResponse) => {
         FROM op_shift_name
         ORDER BY shift_name`
       );
-      const resTypeList: IResShiftTypeItem[] = dbTypeList.map(
+      const resTypeList: IResShiftTypeDefaultItem[] = dbTypeList.map(
         ({ shift_name, shift_name_id }) => ({
           id: shift_name_id,
           name: shift_name,

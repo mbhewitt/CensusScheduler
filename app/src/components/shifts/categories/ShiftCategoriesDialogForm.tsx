@@ -36,7 +36,7 @@ export const ShiftCategoriesDialogForm = ({
   // render
   // --------------------
   const departmentListDisplay = [
-    ...new Set(categoryList.map(({ department }) => department)),
+    ...new Set(categoryList.map(({ departmentName }) => departmentName)),
   ].sort();
 
   return (

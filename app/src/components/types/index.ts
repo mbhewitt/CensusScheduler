@@ -45,7 +45,7 @@ export interface IResRoleVolunteerItem {
 // shift categories
 // --------------------
 export interface IResShiftCategoryItem {
-  department: string;
+  departmentName: string;
   id: number;
   name: string;
 }
@@ -53,6 +53,10 @@ export interface IResShiftCategoryItem {
 // shift types
 // --------------------
 export interface IResShiftTypeCategoryItem {
+  id: number;
+  name: string;
+}
+export interface IResShiftTypeDefaultItem {
   id: number;
   name: string;
 }
