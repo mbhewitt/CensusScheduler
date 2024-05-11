@@ -64,6 +64,7 @@ export interface IResShiftTypeInformation {
   name: string;
 }
 export interface IResShiftTypeItem {
+  categoryName: string;
   id: number;
   name: string;
 }

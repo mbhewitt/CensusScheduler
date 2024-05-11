@@ -8,9 +8,9 @@ import {
   yellow,
 } from "@mui/material/colors";
 
-import type { IResShiftItem } from "src/components/types";
+import { IResShiftItem } from "src/components/types";
 
-export const getColorMap = (data: IResShiftItem[]) => {
+export const getColorMap = (rowList: IResShiftItem[]) => {
   const colorList = [
     red[100],
     orange[100],
@@ -21,21 +21,14 @@ export const getColorMap = (data: IResShiftItem[]) => {
     purple[100],
   ];
   let colorIndexCurrent = 0;
+  const colorMap: { [key: string]: string } = {};
 
-  return data.reduce(
-    (
-      shiftListTotal: { [key: string]: string },
-      { department }: { department: string }
-    ) => {
-      const shiftListTotalNew = structuredClone(shiftListTotal);
+  rowList.forEach(({ department }) => {
+    if (!colorMap[department]) {
+      colorMap[department] = colorList[colorIndexCurrent];
+      colorIndexCurrent += 1;
+    }
+  });
 
-      if (!shiftListTotalNew[department]) {
-        shiftListTotalNew[department] = colorList[colorIndexCurrent];
-        colorIndexCurrent += 1;
-      }
-
-      return shiftListTotalNew;
-    },
-    {}
-  );
+  return colorMap;
 };

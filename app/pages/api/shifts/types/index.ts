@@ -16,14 +16,23 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
     case "GET": {
       // get all types
       const [dbTypeList] = await pool.query<RowDataPacket[]>(
-        `SELECT shift_name, shift_name_id
-        FROM op_shift_name
+        `SELECT
+          sc.shift_category,
+          sn.shift_name,
+          sn.shift_name_id
+        FROM op_shift_name as sn
+        LEFT JOIN op_shift_category as sc
+        ON sc.shift_category_id=sn.shift_category_id
         WHERE delete_shift=false
         ORDER BY shift_name`
       );
       const resTypeList: IResShiftTypeItem[] = dbTypeList.map(
-        ({ shift_name, shift_name_id }) => {
-          return { id: shift_name_id, name: shift_name };
+        ({ shift_category, shift_name, shift_name_id }) => {
+          return {
+            categoryName: shift_category ?? "Not assigned",
+            id: shift_name_id,
+            name: shift_name,
+          };
         }
       );
 
