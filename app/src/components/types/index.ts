@@ -45,7 +45,7 @@ export interface IResRoleVolunteerItem {
 // shift categories
 // --------------------
 export interface IResShiftCategoryItem {
-  category: string;
+  department: string;
   id: number;
   name: string;
 }
@@ -97,10 +97,10 @@ export interface IReqShiftTypePositionItem extends IResShiftTypePositionItem {
 // shifts
 // --------------------
 export interface IResShiftItem {
-  category: string;
   categoryId: number;
   date: string;
   dateName: string;
+  department: string;
   endTime: string;
   filledSlots: number;
   startTime: string;
@@ -163,9 +163,9 @@ export interface IResVolunteerShiftCountItem {
   worldName: string;
 }
 export interface IResVolunteerShiftItem {
-  category: string;
   date: string;
   dateName: string;
+  department: string;
   endTime: string;
   noShow: string;
   positionName: string;

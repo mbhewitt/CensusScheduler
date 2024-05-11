@@ -147,6 +147,14 @@ const theme = createTheme({
         },
       },
     },
+    MuiListItemIcon: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          minWidth: "auto",
+          paddingRight: theme.spacing(2),
+        }),
+      },
+    },
     MuiTypography: {
       styleOverrides: {
         root: ({ theme }) => ({

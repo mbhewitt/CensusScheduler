@@ -3,9 +3,9 @@ import { RowDataPacket } from "mysql2";
 import type { IResShiftItem } from "src/components/types";
 
 interface IDbShiftItem {
-  category: null | string;
   date: Date;
   datename: null | string;
+  department: null | string;
   end_time: Date;
   position_type_id: number;
   shift_category_id: number;
@@ -31,10 +31,10 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
         shiftPositionIdMap[shiftPositionIdItem] = true;
 
         const rowItemNew = {
-          category: rowItem.category ?? "",
           categoryId: rowItem.shift_category_id,
           date: rowItem.date,
           dateName: rowItem.datename ?? "",
+          department: rowItem.department ?? "",
           endTime: rowItem.end_time,
           filledSlots: rowItem.shiftboard_id ? 1 : 0,
           startTime: rowItem.start_time,

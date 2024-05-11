@@ -18,7 +18,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
         [dbShiftList] = await pool.query<RowDataPacket[]>(
           `SELECT
             d.datename,
-            sc.category,
+            sc.department,
             sc.shift_category_id,
             sn.shift_name,
             sp.position_type_id,
@@ -38,7 +38,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
           LEFT JOIN op_shift_category AS sc
           ON sc.delete_category=false
           AND sc.shift_category_id=sn.shift_category_id
-          AND sc.category="Training"
+          AND sc.department="Training"
           LEFT JOIN op_dates AS d
           ON d.date=st.date
           JOIN op_shift_position AS sp
@@ -56,7 +56,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
         [dbShiftList] = await pool.query<RowDataPacket[]>(
           `SELECT
             d.datename,
-            sc.category,
+            sc.department,
             sc.shift_category_id,
             sn.shift_name,
             sp.position_type_id,

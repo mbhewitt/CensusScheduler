@@ -132,7 +132,7 @@ export const ShiftTypesCreate = () => {
         }
       );
 
-      // route to shift types page
+      // route to types page
       router.push("/shifts/types");
     } catch (error) {
       if (error instanceof Error) {

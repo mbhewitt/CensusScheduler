@@ -19,15 +19,15 @@ import type { IResShiftCategoryItem } from "src/components/types";
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IShiftCategoriesDialogDeleteProps {
+  categoryItem: IResShiftCategoryItem;
   handleDialogClose: () => void;
   isDialogOpen: boolean;
-  shiftCategoryItem: IResShiftCategoryItem;
 }
 
 export const ShiftCategoriesDialogDelete = ({
+  categoryItem: { id, name },
   handleDialogClose,
   isDialogOpen,
-  shiftCategoryItem: { id, name },
 }: IShiftCategoriesDialogDeleteProps) => {
   // fetching, mutation, and revalidation
   // --------------------
@@ -51,7 +51,7 @@ export const ShiftCategoriesDialogDelete = ({
 
       enqueueSnackbar(
         <SnackbarText>
-          <strong>{name}</strong> shift category has been deleted
+          <strong>{name}</strong> category has been deleted
         </SnackbarText>,
         {
           variant: "success",
@@ -81,12 +81,11 @@ export const ShiftCategoriesDialogDelete = ({
     <DialogContainer
       handleDialogClose={handleDialogClose}
       isDialogOpen={isDialogOpen}
-      text="Delete shift category"
+      text="Delete category"
     >
       <DialogContentText>
         <Typography component="span">
-          Are you sure you want to delete <strong>{name}</strong> shift
-          category?
+          Are you sure you want to delete <strong>{name}</strong> category?
         </Typography>
       </DialogContentText>
       <DialogActions>
@@ -114,7 +113,7 @@ export const ShiftCategoriesDialogDelete = ({
           type="submit"
           variant="contained"
         >
-          Delete shift category
+          Delete category
         </Button>
       </DialogActions>
     </DialogContainer>

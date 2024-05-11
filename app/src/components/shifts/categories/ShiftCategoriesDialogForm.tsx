@@ -12,31 +12,31 @@ import { Control, Controller, FieldErrors } from "react-hook-form";
 import { IResShiftCategoryItem } from "src/components/types";
 
 export interface IFormValues {
-  category: string;
+  department: string;
   name: string;
 }
 interface IShiftCategoriesDialogFormProps {
+  categoryList: IResShiftCategoryItem[];
+  categoryName: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<IFormValues, any>;
   errors: FieldErrors<IFormValues>;
-  shiftCategoryName: string;
-  shiftCategoryList: IResShiftCategoryItem[];
 }
 
 export const defaultValues: IFormValues = {
-  category: "",
+  department: "",
   name: "",
 };
 export const ShiftCategoriesDialogForm = ({
+  categoryList,
+  categoryName,
   control,
   errors,
-  shiftCategoryName,
-  shiftCategoryList,
 }: IShiftCategoriesDialogFormProps) => {
   // render
   // --------------------
-  const shiftCategoryListDisplay = [
-    ...new Set(shiftCategoryList.map(({ category }) => category)),
+  const departmentListDisplay = [
+    ...new Set(categoryList.map(({ department }) => department)),
   ].sort();
 
   return (
@@ -61,14 +61,14 @@ export const ShiftCategoriesDialogForm = ({
             required: (value) => {
               return Boolean(value.trim()) || "Name is required";
             },
-            shiftCategoryNameAvailable: (value) => {
-              const isShiftCategoryNameAvailable =
-                value === shiftCategoryName ||
-                shiftCategoryList.every(({ name }) => name !== value);
+            categoryNameAvailable: (value) => {
+              const isCategoryNameAvailable =
+                value === categoryName ||
+                categoryList.every(({ name }) => name !== value);
 
               return (
-                isShiftCategoryNameAvailable ||
-                `${value} shift category has been added already`
+                isCategoryNameAvailable ||
+                `${value} category has been added already`
               );
             },
           },
@@ -76,30 +76,30 @@ export const ShiftCategoriesDialogForm = ({
       />
       <Controller
         control={control}
-        name="category"
+        name="department"
         render={({ field }) => (
           <FormControl fullWidth variant="standard">
-            <InputLabel id="to">Category *</InputLabel>
+            <InputLabel id="to">Department *</InputLabel>
             <Select
               {...field}
-              error={Boolean(errors.category)}
-              label="Category"
-              labelId="category"
+              error={Boolean(errors.department)}
+              label="Department"
+              labelId="department"
               required
             >
-              {shiftCategoryListDisplay.map((shiftCategoryItem) => (
-                <MenuItem key={shiftCategoryItem} value={shiftCategoryItem}>
-                  {shiftCategoryItem}
+              {departmentListDisplay.map((departmentName) => (
+                <MenuItem key={departmentName} value={departmentName}>
+                  {departmentName}
                 </MenuItem>
               ))}
             </Select>
-            {errors.category && (
-              <FormHelperText error>{errors.category.message}</FormHelperText>
+            {errors.department && (
+              <FormHelperText error>{errors.department.message}</FormHelperText>
             )}
           </FormControl>
         )}
         rules={{
-          required: "Category is required",
+          required: "Department is required",
         }}
       />
     </Stack>

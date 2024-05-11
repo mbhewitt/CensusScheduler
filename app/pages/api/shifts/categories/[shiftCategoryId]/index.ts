@@ -11,17 +11,17 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
     // patch
     // --------------------
     case "PATCH": {
-      // update shift category
-      const { category, name }: IResShiftCategoryItem = JSON.parse(req.body);
+      // update category
+      const { department, name }: IResShiftCategoryItem = JSON.parse(req.body);
 
       await pool.query<RowDataPacket[]>(
         `UPDATE op_shift_category
         SET
-          category=?,
+          department=?,
           shift_category=?,
           update_category=true
         WHERE shift_category_id=?`,
-        [category, name, shiftCategoryId]
+        [department, name, shiftCategoryId]
       );
 
       return res.status(200).json({
@@ -33,7 +33,7 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
     // delete
     // --------------------
     case "DELETE": {
-      // delete shift category
+      // delete category
       await pool.query<RowDataPacket[]>(
         `UPDATE op_shift_category
         SET delete_category=true

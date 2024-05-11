@@ -217,9 +217,9 @@ export const Shifts = () => {
   const colorMapDisplay = getColorMap(data);
   const dataTable = data.map(
     ({
-      category,
       date,
       dateName,
+      department,
       endTime,
       filledSlots,
       startTime,
@@ -237,7 +237,7 @@ export const Shifts = () => {
         <Chip
           key={`${timeId}-chip`}
           label={type}
-          sx={{ backgroundColor: colorMapDisplay[category] }}
+          sx={{ backgroundColor: colorMapDisplay[department] }}
         />,
         `${filledSlots} / ${totalSlots}`,
       ];

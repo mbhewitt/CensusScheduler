@@ -290,9 +290,9 @@ export const VolunteerShifts = () => {
   const colorMapDisplay = getColorMap(data);
   const dataTable = data.map(
     ({
-      category,
       date,
       dateName,
+      department,
       endTime,
       noShow,
       positionName,
@@ -336,7 +336,7 @@ export const VolunteerShifts = () => {
         <Chip
           key={`${timeId}${shiftPositionId}-chip`}
           label={positionName}
-          sx={{ backgroundColor: colorMapDisplay[category] }}
+          sx={{ backgroundColor: colorMapDisplay[department] }}
         />,
         <Switch
           checked={noShow === ""}

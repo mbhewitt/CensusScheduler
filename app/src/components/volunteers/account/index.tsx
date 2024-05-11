@@ -417,7 +417,7 @@ export const Account = () => {
                               name: roleName,
                             }: IResVolunteerRoleItem) => (
                               <ListItem disablePadding key={`${roleId}-item`}>
-                                <ListItemIcon sx={{ minWidth: "auto", pr: 1 }}>
+                                <ListItemIcon sx={{ pr: 1 }}>
                                   <VerifiedUserIcon color="secondary" />
                                 </ListItemIcon>
                                 <ListItemText>{roleName}</ListItemText>
