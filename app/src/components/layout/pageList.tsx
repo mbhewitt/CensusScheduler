@@ -37,7 +37,6 @@ export const pageListDefault = [
     path: "/contact",
   },
 ];
-
 export const pageListAdmin = [
   {
     icon: <Groups3Icon />,
@@ -50,16 +49,15 @@ export const pageListAdmin = [
     path: "/roles",
   },
 ];
-
 export const pageListSuperAdmin = [
   {
     icon: <ListIcon />,
-    label: "Shift categories",
+    label: "Categories",
     path: "/shifts/categories",
   },
   {
     icon: <DateRangeIcon />,
-    label: "Shift types",
+    label: "Types",
     path: "/shifts/types",
   },
 ];

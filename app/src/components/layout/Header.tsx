@@ -1,4 +1,6 @@
 import {
+  CalendarMonth as CalendarMonthIcon,
+  ExpandMore as ExpandMoreIcon,
   Login as LoginIcon,
   Logout as LogoutIcon,
   ManageAccounts as ManageAccountsIcon,
@@ -99,6 +101,12 @@ export const Header = () => {
   const isAdmin = checkIsAdmin(accountType, roleList);
   const isSuperAdmin = checkIsSuperAdmin(roleList);
 
+  const handleDrawerOpen = () => {
+    setIsDrawerOpen(true);
+  };
+  const handleDrawerClose = () => {
+    setIsDrawerOpen(false);
+  };
   const handleSignOut = () => {
     signOut(
       developerModeDispatch,
@@ -109,12 +117,6 @@ export const Header = () => {
       sessionDispatch,
       worldName
     );
-  };
-  const handleDrawerOpen = () => {
-    setIsDrawerOpen(true);
-  };
-  const handleDrawerClose = () => {
-    setIsDrawerOpen(false);
   };
 
   return (
@@ -165,14 +167,12 @@ export const Header = () => {
         >
           <Box>
             {/* general nav */}
-            <List onClick={handleDrawerClose}>
+            <List>
               {pageListDefault.map(({ icon, label, path }) => (
                 <ListItem disablePadding key={path}>
-                  <Link href={path}>
+                  <Link href={path} onClick={handleDrawerClose}>
                     <ListItemButton>
-                      <ListItemIcon sx={{ minWidth: "auto", pr: 2 }}>
-                        {icon}
-                      </ListItemIcon>
+                      <ListItemIcon>{icon}</ListItemIcon>
                       <ListItemText primary={label} />
                     </ListItemButton>
                   </Link>
@@ -183,17 +183,12 @@ export const Header = () => {
             {isAuthenticated && isAdmin && (
               <>
                 <Divider />
-                <List
-                  onClick={handleDrawerClose}
-                  subheader={<ListSubheader>Admin</ListSubheader>}
-                >
+                <List subheader={<ListSubheader>Admin</ListSubheader>}>
                   {pageListAdmin.map(({ icon, label, path }) => (
                     <ListItem disablePadding key={path}>
-                      <Link href={path}>
+                      <Link href={path} onClick={handleDrawerClose}>
                         <ListItemButton>
-                          <ListItemIcon sx={{ minWidth: "auto", pr: 2 }}>
-                            {icon}
-                          </ListItemIcon>
+                          <ListItemIcon>{icon}</ListItemIcon>
                           <ListItemText primary={label} />
                         </ListItemButton>
                       </Link>
@@ -206,31 +201,37 @@ export const Header = () => {
             {isAuthenticated && isSuperAdmin && (
               <>
                 <Divider />
-                <List
-                  onClick={handleDrawerClose}
-                  subheader={<ListSubheader>Super admin</ListSubheader>}
-                >
-                  {pageListSuperAdmin.map(({ icon, label, path }) => (
-                    <ListItem disablePadding key={path}>
-                      <Link href={path}>
-                        <ListItemButton>
-                          <ListItemIcon sx={{ minWidth: "auto", pr: 2 }}>
-                            {icon}
-                          </ListItemIcon>
-                          <ListItemText primary={label} />
-                        </ListItemButton>
-                      </Link>
-                    </ListItem>
-                  ))}
+                <List subheader={<ListSubheader>Super admin</ListSubheader>}>
+                  <ListItem disablePadding>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <CalendarMonthIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="Shifts" />
+                      <ExpandMoreIcon />
+                    </ListItemButton>
+                  </ListItem>
+                  <List component="div" disablePadding>
+                    {pageListSuperAdmin.map(({ icon, label, path }) => (
+                      <ListItem disablePadding key={path}>
+                        <Link href={path} onClick={handleDrawerClose}>
+                          <ListItemButton sx={{ pl: 4 }}>
+                            <ListItemIcon>{icon}</ListItemIcon>
+                            <ListItemText primary={label} />
+                          </ListItemButton>
+                        </Link>
+                      </ListItem>
+                    ))}
+                  </List>
                 </List>
               </>
             )}
           </Box>
           <Box>
             <Divider />
+            {/* authenticated nav */}
             {isAuthenticated ? (
               <List
-                onClick={handleDrawerClose}
                 subheader={
                   <ListSubheader>
                     {playaName} &quot;{worldName}&quot;
@@ -238,9 +239,12 @@ export const Header = () => {
                 }
               >
                 <ListItem disablePadding>
-                  <Link href={`/volunteers/account/${shiftboardId}`}>
+                  <Link
+                    href={`/volunteers/account/${shiftboardId}`}
+                    onClick={handleDrawerClose}
+                  >
                     <ListItemButton>
-                      <ListItemIcon sx={{ minWidth: "auto", pr: 2 }}>
+                      <ListItemIcon>
                         <ManageAccountsIcon />
                       </ListItemIcon>
                       <ListItemText>Account</ListItemText>
@@ -249,8 +253,13 @@ export const Header = () => {
                 </ListItem>
                 <ListItem disablePadding>
                   <Link href="/sign-in">
-                    <ListItemButton onClick={handleSignOut}>
-                      <ListItemIcon sx={{ minWidth: "auto", pr: 2 }}>
+                    <ListItemButton
+                      onClick={() => {
+                        handleSignOut();
+                        handleDrawerClose();
+                      }}
+                    >
+                      <ListItemIcon>
                         <LogoutIcon />
                       </ListItemIcon>
                       <ListItemText>Sign out</ListItemText>
@@ -259,11 +268,12 @@ export const Header = () => {
                 </ListItem>
               </List>
             ) : (
-              <List onClick={handleDrawerClose}>
+              // unauthenticated nav
+              <List>
                 <ListItem disablePadding>
-                  <Link href="/sign-in">
+                  <Link href="/sign-in" onClick={handleDrawerClose}>
                     <ListItemButton>
-                      <ListItemIcon sx={{ minWidth: "auto", pr: 2 }}>
+                      <ListItemIcon>
                         <LoginIcon />
                       </ListItemIcon>
                       <ListItemText>Sign in</ListItemText>
