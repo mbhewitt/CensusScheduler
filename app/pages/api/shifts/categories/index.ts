@@ -22,9 +22,9 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
       );
       const resShiftCategoryList: IResShiftCategoryItem[] =
         dbShiftCategoryList.map(
-          ({ departmentName, shift_category, shift_category_id }) => {
+          ({ department, shift_category, shift_category_id }) => {
             return {
-              departmentName,
+              departmentName: department,
               id: shift_category_id,
               name: shift_category,
             };

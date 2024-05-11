@@ -23,9 +23,9 @@ export const getColorMap = (rowList: IResShiftItem[]) => {
   let colorIndexCurrent = 0;
   const colorMap: { [key: string]: string } = {};
 
-  rowList.forEach(({ department }) => {
-    if (!colorMap[department]) {
-      colorMap[department] = colorList[colorIndexCurrent];
+  rowList.forEach(({ departmentName }) => {
+    if (!colorMap[departmentName]) {
+      colorMap[departmentName] = colorList[colorIndexCurrent];
       colorIndexCurrent += 1;
     }
   });

@@ -12,7 +12,7 @@ import { Control, Controller, FieldErrors } from "react-hook-form";
 import { IResShiftCategoryItem } from "src/components/types";
 
 export interface IFormValues {
-  department: string;
+  departmentName: string;
   name: string;
 }
 interface IShiftCategoriesDialogFormProps {
@@ -24,7 +24,7 @@ interface IShiftCategoriesDialogFormProps {
 }
 
 export const defaultValues: IFormValues = {
-  department: "",
+  departmentName: "",
   name: "",
 };
 export const ShiftCategoriesDialogForm = ({
@@ -76,13 +76,13 @@ export const ShiftCategoriesDialogForm = ({
       />
       <Controller
         control={control}
-        name="department"
+        name="departmentName"
         render={({ field }) => (
           <FormControl fullWidth variant="standard">
             <InputLabel id="to">Department *</InputLabel>
             <Select
               {...field}
-              error={Boolean(errors.department)}
+              error={Boolean(errors.departmentName)}
               label="Department"
               labelId="department"
               required
@@ -93,8 +93,10 @@ export const ShiftCategoriesDialogForm = ({
                 </MenuItem>
               ))}
             </Select>
-            {errors.department && (
-              <FormHelperText error>{errors.department.message}</FormHelperText>
+            {errors.departmentName && (
+              <FormHelperText error>
+                {errors.departmentName.message}
+              </FormHelperText>
             )}
           </FormControl>
         )}

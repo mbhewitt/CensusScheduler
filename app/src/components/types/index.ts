@@ -105,7 +105,7 @@ export interface IResShiftItem {
   categoryId: number;
   date: string;
   dateName: string;
-  department: string;
+  departmentName: string;
   endTime: string;
   filledSlots: number;
   startTime: string;
@@ -170,7 +170,7 @@ export interface IResVolunteerShiftCountItem {
 export interface IResVolunteerShiftItem {
   date: string;
   dateName: string;
-  department: string;
+  departmentName: string;
   endTime: string;
   noShow: string;
   positionName: string;
