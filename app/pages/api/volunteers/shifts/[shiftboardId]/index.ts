@@ -19,7 +19,7 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
         `SELECT
           d.datename,
           pt.position,
-          sc.category,
+          sc.department,
           st.date,
           st.end_time,
           st.start_time,
@@ -47,7 +47,7 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
       const resVolunteerShiftList: IResVolunteerShiftItem[] =
         dbVolunteerShiftList.map(
           ({
-            category,
+            department,
             date,
             datename,
             end_time,
@@ -57,9 +57,9 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
             shift_times_id,
             start_time,
           }) => ({
-            category: category ?? "",
             date,
             dateName: datename ?? "",
+            department: department ?? "",
             endTime: end_time,
             noShow: noshow,
             positionName: position,

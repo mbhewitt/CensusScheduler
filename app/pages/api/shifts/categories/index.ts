@@ -10,10 +10,10 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
     // get
     // --------------------
     case "GET": {
-      // get all shift categories
+      // get all categories
       const [dbShiftCategoryList] = await pool.query<RowDataPacket[]>(
         `SELECT
-          category,
+          department,
           shift_category,
           shift_category_id
         FROM op_shift_category
@@ -22,9 +22,9 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
       );
       const resShiftCategoryList: IResShiftCategoryItem[] =
         dbShiftCategoryList.map(
-          ({ category, shift_category, shift_category_id }) => {
+          ({ department, shift_category, shift_category_id }) => {
             return {
-              category,
+              department,
               id: shift_category_id,
               name: shift_category,
             };
@@ -37,7 +37,7 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
     // post
     // --------------------
     case "POST": {
-      // create shift category
+      // create category
       const { category, name } = JSON.parse(req.body);
       const shiftCategoryIdNew = generateId(
         `SELECT shift_category_id

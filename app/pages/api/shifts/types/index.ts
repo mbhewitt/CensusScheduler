@@ -14,7 +14,7 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
     // get
     // --------------------
     case "GET": {
-      // get all shift types
+      // get all types
       const [dbTypeList] = await pool.query<RowDataPacket[]>(
         `SELECT shift_name, shift_name_id
         FROM op_shift_name
@@ -33,7 +33,7 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
     // post
     // --------------------
     case "POST": {
-      // create shift type
+      // create type
       const {
         information: { categoryId, details, isCore, isOffPlaya, name },
         positionList,

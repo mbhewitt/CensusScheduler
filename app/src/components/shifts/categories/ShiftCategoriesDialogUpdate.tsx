@@ -17,22 +17,22 @@ import type { IResShiftCategoryItem } from "src/components/types";
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IShiftCategoriesDialogUpdateProps {
+  categoryItem: IResShiftCategoryItem;
+  categoryList: IResShiftCategoryItem[];
   handleDialogClose: () => void;
   isDialogOpen: boolean;
-  shiftCategoryItem: IResShiftCategoryItem;
-  shiftCategoryList: IResShiftCategoryItem[];
 }
 
 export const ShiftCategoriesDialogUpdate = ({
+  categoryItem,
+  categoryList,
   handleDialogClose,
   isDialogOpen,
-  shiftCategoryItem,
-  shiftCategoryList,
 }: IShiftCategoriesDialogUpdateProps) => {
   // fetching, mutation, and revalidation
   // --------------------
   const { isMutating, trigger } = useSWRMutation(
-    `/api/shifts/categories/${shiftCategoryItem.id}`,
+    `/api/shifts/categories/${categoryItem.id}`,
     fetcherTrigger
   );
   const { mutate } = useSWRConfig();
@@ -56,10 +56,10 @@ export const ShiftCategoriesDialogUpdate = ({
   useEffect(() => {
     if (isDialogOpen) {
       clearErrors();
-      setValue("category", shiftCategoryItem.category);
-      setValue("name", shiftCategoryItem.name);
+      setValue("department", categoryItem.department);
+      setValue("name", categoryItem.name);
     }
-  }, [clearErrors, isDialogOpen, shiftCategoryItem, setValue]);
+  }, [categoryItem, clearErrors, isDialogOpen, setValue]);
 
   // form submission
   // --------------------
@@ -74,7 +74,7 @@ export const ShiftCategoriesDialogUpdate = ({
 
       enqueueSnackbar(
         <SnackbarText>
-          <strong>{formValues.name}</strong> shift category has been updated
+          <strong>{formValues.name}</strong> category has been updated
         </SnackbarText>,
         {
           variant: "success",
@@ -104,14 +104,14 @@ export const ShiftCategoriesDialogUpdate = ({
     <DialogContainer
       handleDialogClose={handleDialogClose}
       isDialogOpen={isDialogOpen}
-      text="Update shift category"
+      text="Update category"
     >
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
         <ShiftCategoriesDialogForm
+          categoryList={categoryList}
+          categoryName={categoryItem.name}
           control={control}
           errors={errors}
-          shiftCategoryName={shiftCategoryItem.name}
-          shiftCategoryList={shiftCategoryList}
         />
         <DialogActions>
           <Button
@@ -133,7 +133,7 @@ export const ShiftCategoriesDialogUpdate = ({
             type="submit"
             variant="contained"
           >
-            Update shift category
+            Update category
           </Button>
         </DialogActions>
       </form>

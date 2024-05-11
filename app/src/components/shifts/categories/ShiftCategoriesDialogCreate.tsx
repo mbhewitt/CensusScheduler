@@ -19,17 +19,17 @@ import type { IResShiftCategoryItem } from "src/components/types";
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IShiftCategoriesDialogCreateProps {
+  categoryItem: IResShiftCategoryItem;
+  categoryList: IResShiftCategoryItem[];
   handleDialogClose: () => void;
   isDialogOpen: boolean;
-  shiftCategoryItem: IResShiftCategoryItem;
-  shiftCategoryList: IResShiftCategoryItem[];
 }
 
 export const ShiftCategoriesDialogCreate = ({
+  categoryItem,
+  categoryList,
   handleDialogClose,
   isDialogOpen,
-  shiftCategoryItem,
-  shiftCategoryList,
 }: IShiftCategoriesDialogCreateProps) => {
   // fetching, mutation, and revalidation
   // --------------------
@@ -57,10 +57,10 @@ export const ShiftCategoriesDialogCreate = ({
   useEffect(() => {
     if (isDialogOpen) {
       clearErrors();
-      setValue("category", shiftCategoryItem.category);
-      setValue("name", shiftCategoryItem.name);
+      setValue("department", categoryItem.department);
+      setValue("name", categoryItem.name);
     }
-  }, [clearErrors, isDialogOpen, shiftCategoryItem, setValue]);
+  }, [categoryItem, clearErrors, isDialogOpen, setValue]);
 
   // form submission
   // --------------------
@@ -74,7 +74,7 @@ export const ShiftCategoriesDialogCreate = ({
 
       enqueueSnackbar(
         <SnackbarText>
-          <strong>{formValues.name}</strong> shift category has been created
+          <strong>{formValues.name}</strong> category has been created
         </SnackbarText>,
         {
           variant: "success",
@@ -104,14 +104,14 @@ export const ShiftCategoriesDialogCreate = ({
     <DialogContainer
       handleDialogClose={handleDialogClose}
       isDialogOpen={isDialogOpen}
-      text="Create shift category"
+      text="Create category"
     >
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
         <ShiftCategoriesDialogForm
+          categoryList={categoryList}
+          categoryName={defaultValues.name}
           control={control}
           errors={errors}
-          shiftCategoryName={defaultValues.name}
-          shiftCategoryList={shiftCategoryList}
         />
         <DialogActions>
           <Button
@@ -137,7 +137,7 @@ export const ShiftCategoriesDialogCreate = ({
             type="submit"
             variant="contained"
           >
-            Create shift category
+            Create category
           </Button>
         </DialogActions>
       </form>

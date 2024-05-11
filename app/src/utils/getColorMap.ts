@@ -25,12 +25,12 @@ export const getColorMap = (data: IResShiftItem[]) => {
   return data.reduce(
     (
       shiftListTotal: { [key: string]: string },
-      { category }: { category: string }
+      { department }: { department: string }
     ) => {
       const shiftListTotalNew = structuredClone(shiftListTotal);
 
-      if (!shiftListTotalNew[category]) {
-        shiftListTotalNew[category] = colorList[colorIndexCurrent];
+      if (!shiftListTotalNew[department]) {
+        shiftListTotalNew[department] = colorList[colorIndexCurrent];
         colorIndexCurrent += 1;
       }
 

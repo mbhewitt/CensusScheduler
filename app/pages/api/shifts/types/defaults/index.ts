@@ -13,7 +13,7 @@ const shiftTypeDefaults = async (req: NextApiRequest, res: NextApiResponse) => {
     // get
     // --------------------
     case "GET": {
-      // get all shift type names
+      // get all type names
       const [dbTypeList] = await pool.query<RowDataPacket[]>(
         `SELECT
           shift_name,
@@ -27,7 +27,7 @@ const shiftTypeDefaults = async (req: NextApiRequest, res: NextApiResponse) => {
           name: shift_name,
         })
       );
-      // get all shift categories
+      // get all categories
       const [dbShiftCategoryList] = await pool.query<RowDataPacket[]>(
         `SELECT
           shift_category,

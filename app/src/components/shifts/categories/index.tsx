@@ -45,12 +45,12 @@ export const ShiftCategories = () => {
   // state
   // --------------------
   const [dialogCurrent, setDialogCurrent] = useState({
-    dialogItem: 0,
-    shiftCategory: {
-      category: "",
+    category: {
+      department: "",
       id: 0,
       name: "",
     },
+    dialogItem: 0,
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -73,26 +73,26 @@ export const ShiftCategories = () => {
       },
     },
     {
-      name: "Category - hidden", // hide for filter dialog
-      label: "Category",
+      name: "Department - hidden", // hide for filter dialog
+      label: "Department",
       options: {
         display: false,
       },
     },
     {
-      name: "Category",
+      name: "Department",
       options: {
         filter: false,
         sortThirdClickReset: true,
         sortCompare: (order: string) => {
           return (
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            category1: { [key: string]: any },
+            department1: { [key: string]: any },
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            category2: { [key: string]: any }
+            department2: { [key: string]: any }
           ) => {
-            const value1 = category1.data.props.label;
-            const value2 = category2.data.props.label;
+            const value1 = department1.data.props.label;
+            const value2 = department2.data.props.label;
 
             return value1 > value2 && order === "asc" ? 1 : -1;
           };
@@ -111,14 +111,14 @@ export const ShiftCategories = () => {
   ];
   const colorMapDisplay = getColorMap(data);
   const dataTable = data.map(
-    ({ category, id, name }: IResShiftCategoryItem) => {
+    ({ department, id, name }: IResShiftCategoryItem) => {
       return [
         name,
-        category,
+        department,
         <Chip
-          key={`${category}-chip`}
-          label={category}
-          sx={{ backgroundColor: colorMapDisplay[category] }}
+          key={`${department}-chip`}
+          label={department}
+          sx={{ backgroundColor: colorMapDisplay[department] }}
         />,
         <MoreMenu
           Icon={<MoreHorizIcon />}
@@ -128,8 +128,8 @@ export const ShiftCategories = () => {
               <MenuItem
                 onClick={() => {
                   setDialogCurrent({
+                    category: { department, id, name },
                     dialogItem: DialogList.Update,
-                    shiftCategory: { category, id, name },
                   });
                   setIsDialogOpen(true);
                 }}
@@ -137,13 +137,13 @@ export const ShiftCategories = () => {
                 <ListItemIcon>
                   <EditIcon />
                 </ListItemIcon>
-                <ListItemText>Update shift category</ListItemText>
+                <ListItemText>Update category</ListItemText>
               </MenuItem>
               <MenuItem
                 onClick={() => {
                   setDialogCurrent({
+                    category: { department, id, name },
                     dialogItem: DialogList.Delete,
-                    shiftCategory: { category, id, name },
                   });
                   setIsDialogOpen(true);
                 }}
@@ -151,7 +151,7 @@ export const ShiftCategories = () => {
                 <ListItemIcon>
                   <PlaylistRemoveIcon />
                 </ListItemIcon>
-                <ListItemText>Delete shift category</ListItemText>
+                <ListItemText>Delete category</ListItemText>
               </MenuItem>
             </MenuList>
           }
@@ -185,12 +185,12 @@ export const ShiftCategories = () => {
             <Button
               onClick={() => {
                 setDialogCurrent({
-                  dialogItem: DialogList.Create,
-                  shiftCategory: {
-                    category: "",
+                  category: {
+                    department: "",
                     id: 0,
                     name: "",
                   },
+                  dialogItem: DialogList.Create,
                 });
                 setIsDialogOpen(true);
               }}
@@ -198,7 +198,7 @@ export const ShiftCategories = () => {
               type="button"
               variant="contained"
             >
-              Create shift category
+              Create category
             </Button>
           </Stack>
           <DataTable
@@ -211,31 +211,31 @@ export const ShiftCategories = () => {
 
       {/* create dialog */}
       <ShiftCategoriesDialogCreate
+        categoryItem={dialogCurrent.category}
+        categoryList={data}
         handleDialogClose={() => setIsDialogOpen(false)}
         isDialogOpen={
           dialogCurrent.dialogItem === DialogList.Create && isDialogOpen
         }
-        shiftCategoryItem={dialogCurrent.shiftCategory}
-        shiftCategoryList={data}
       />
 
       {/* delete dialog */}
       <ShiftCategoriesDialogDelete
+        categoryItem={dialogCurrent.category}
         handleDialogClose={() => setIsDialogOpen(false)}
         isDialogOpen={
           dialogCurrent.dialogItem === DialogList.Delete && isDialogOpen
         }
-        shiftCategoryItem={dialogCurrent.shiftCategory}
       />
 
       {/* update dialog */}
       <ShiftCategoriesDialogUpdate
+        categoryItem={dialogCurrent.category}
+        categoryList={data}
         handleDialogClose={() => setIsDialogOpen(false)}
         isDialogOpen={
           dialogCurrent.dialogItem === DialogList.Update && isDialogOpen
         }
-        shiftCategoryItem={dialogCurrent.shiftCategory}
-        shiftCategoryList={data}
       />
     </>
   );

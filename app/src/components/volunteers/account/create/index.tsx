@@ -71,7 +71,6 @@ export const AccountCreate = () => {
     formState: { errors },
     getValues,
     handleSubmit,
-    reset,
   } = useForm({
     defaultValues,
     mode: "onBlur",

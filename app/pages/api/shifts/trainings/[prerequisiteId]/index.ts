@@ -14,7 +14,7 @@ const shiftTrainings = async (req: NextApiRequest, res: NextApiResponse) => {
       const [dbTrainingList] = await pool.query<RowDataPacket[]>(
         `SELECT
           d.datename,
-          sc.category,
+          sc.department,
           sc.shift_category_id,
           sn.shift_name,
           sp.position_type_id,
