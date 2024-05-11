@@ -159,18 +159,28 @@ export const Footer = () => {
                   Super admin
                 </Typography>
                 <List sx={{ p: 0 }}>
-                  {pageListSuperAdmin.map(({ label, path }) => (
-                    <ListItem disablePadding key={path}>
-                      <Link href={path}>
-                        <ListItemText
-                          primary={label}
-                          primaryTypographyProps={{
-                            sx: { color: theme.palette.common.white },
-                          }}
-                        />
-                      </Link>
-                    </ListItem>
-                  ))}
+                  <ListItem disablePadding>
+                    <ListItemText
+                      primary="Shifts"
+                      primaryTypographyProps={{
+                        sx: { color: theme.palette.common.white },
+                      }}
+                    />
+                  </ListItem>
+                  <List component="div" disablePadding>
+                    {pageListSuperAdmin.map(({ label, path }) => (
+                      <ListItem disablePadding key={path}>
+                        <Link href={path}>
+                          <ListItemText
+                            primary={label}
+                            primaryTypographyProps={{
+                              sx: { color: theme.palette.common.white, pl: 2 },
+                            }}
+                          />
+                        </Link>
+                      </ListItem>
+                    ))}
+                  </List>
                 </List>
               </Box>
             )}
