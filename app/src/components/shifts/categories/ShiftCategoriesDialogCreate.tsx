@@ -57,7 +57,7 @@ export const ShiftCategoriesDialogCreate = ({
   useEffect(() => {
     if (isDialogOpen) {
       clearErrors();
-      setValue("department", categoryItem.departmentName);
+      setValue("departmentName", categoryItem.departmentName);
       setValue("name", categoryItem.name);
     }
   }, [categoryItem, clearErrors, isDialogOpen, setValue]);

@@ -12,6 +12,7 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
+import Link from "next/link";
 import { useSnackbar } from "notistack";
 import useSWR, { useSWRConfig } from "swr";
 import useSWRMutation from "swr/mutation";
@@ -30,15 +31,18 @@ interface IShiftCategoriesDialogDeleteProps {
 }
 
 export const ShiftCategoriesDialogDelete = ({
-  categoryItem: { id, name },
+  categoryItem: { id: categoryId, name: categoryName },
   handleDialogClose,
   isDialogOpen,
 }: IShiftCategoriesDialogDeleteProps) => {
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR(`/api/shifts/categories/${id}`, fetcherGet);
+  const { data, error } = useSWR(
+    `/api/shifts/categories/${categoryId}`,
+    fetcherGet
+  );
   const { isMutating, trigger } = useSWRMutation(
-    `/api/shifts/categories/${id}`,
+    `/api/shifts/categories/${categoryId}`,
     fetcherTrigger
   );
   const { mutate } = useSWRConfig();
@@ -80,7 +84,7 @@ export const ShiftCategoriesDialogDelete = ({
 
       enqueueSnackbar(
         <SnackbarText>
-          <strong>{name}</strong> category has been deleted
+          <strong>{categoryName}</strong> category has been deleted
         </SnackbarText>,
         {
           variant: "success",
@@ -116,28 +120,39 @@ export const ShiftCategoriesDialogDelete = ({
         <>
           <DialogContentText>
             <Typography component="span">
-              Before removing <strong>{name}</strong>, the following types must
-              be deleted from this category:
+              Before removing <strong>{categoryName}</strong>, the following
+              types must be deleted from this category:
             </Typography>
           </DialogContentText>
           <List sx={{ display: "inline-block", pl: 2, listStyleType: "disc" }}>
-            {data.map((typeItem: IPositionItem) => {
-              return (
-                <ListItem
-                  disablePadding
-                  key={typeItem.id}
-                  sx={{ display: "list-item", pl: 0 }}
-                >
-                  <ListItemText>{typeItem.name}</ListItemText>
-                </ListItem>
-              );
-            })}
+            {data.map(
+              ({
+                id: typeId,
+                name: typeName,
+              }: {
+                id: number;
+                name: string;
+              }) => {
+                return (
+                  <ListItem
+                    disablePadding
+                    key={typeId}
+                    sx={{ display: "list-item", pl: 0 }}
+                  >
+                    <Link href={`/shifts/types/update/${typeId}`}>
+                      <ListItemText>{typeName}</ListItemText>
+                    </Link>
+                  </ListItem>
+                );
+              }
+            )}
           </List>
         </>
       ) : (
         <DialogContentText>
           <Typography component="span">
-            Are you sure you want to delete <strong>{name}</strong> category?
+            Are you sure you want to delete <strong>{categoryName}</strong>{" "}
+            category?
           </Typography>
         </DialogContentText>
       )}

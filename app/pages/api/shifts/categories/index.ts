@@ -38,7 +38,7 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
     // --------------------
     case "POST": {
       // create category
-      const { category, name } = JSON.parse(req.body);
+      const { departmentName, name } = JSON.parse(req.body);
       const shiftCategoryIdNew = generateId(
         `SELECT shift_category_id
         FROM op_shift_category
@@ -47,13 +47,13 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
 
       await pool.query(
         `INSERT INTO op_shift_category (
-          category,
+          department,
           create_category,
           shift_category,
           shift_category_id
         )
         VALUES (?, true, ?, ?)`,
-        [category, name, shiftCategoryIdNew]
+        [departmentName, name, shiftCategoryIdNew]
       );
 
       return res.status(201).json({
