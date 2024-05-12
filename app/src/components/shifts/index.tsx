@@ -219,7 +219,7 @@ export const Shifts = () => {
     ({
       date,
       dateName,
-      department,
+      departmentName,
       endTime,
       filledSlots,
       startTime,
@@ -237,12 +237,13 @@ export const Shifts = () => {
         <Chip
           key={`${timeId}-chip`}
           label={type}
-          sx={{ backgroundColor: colorMapDisplay[department] }}
+          sx={{ backgroundColor: colorMapDisplay[departmentName] }}
         />,
         `${filledSlots} / ${totalSlots}`,
       ];
     }
   );
+
   let shiftDateCurrent = "";
   let shiftDateToggle = false;
   const optionListCustom = {

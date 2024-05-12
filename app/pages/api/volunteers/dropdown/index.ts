@@ -8,14 +8,6 @@ import type {
 } from "src/components/types";
 import { ROLE_CORE_CREW_ID } from "src/constants";
 
-interface IDbVolunteerItem {
-  playa_name: string;
-  role: string;
-  role_id: number;
-  shiftboard_id: number;
-  world_name: string;
-}
-
 const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     // get
@@ -67,45 +59,48 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         }
       }
 
-      const resVolunteerList = dbVolunteerList.reduce(
-        (
-          rowList: IResVolunteerDropdownItem[],
-          {
-            playa_name,
-            role,
-            role_id,
-            shiftboard_id,
-            world_name,
-          }: IDbVolunteerItem | RowDataPacket
-        ) => {
-          const rowListLast = rowList[rowList.length - 1];
+      const resVolunteerList: IResVolunteerDropdownItem[] = [];
 
-          if (rowListLast && rowListLast.shiftboardId === shiftboard_id) {
-            rowListLast.roleList.push({
+      dbVolunteerList.forEach(
+        ({
+          playa_name,
+          role,
+          role_id,
+          shiftboard_id,
+          world_name,
+        }: RowDataPacket) => {
+          const resVolunteerLast =
+            resVolunteerList[resVolunteerList.length - 1];
+
+          // if volunteer in last row is same as this row
+          // then add role
+          if (
+            resVolunteerLast &&
+            resVolunteerLast.shiftboardId === shiftboard_id
+          ) {
+            resVolunteerLast.roleList.push({
               id: role_id,
               name: role,
             });
+            // else add new volunteer
+          } else {
+            const resVolunteerNew = {
+              playaName: playa_name,
+              roleList: [] as IResVolunteerRoleItem[],
+              shiftboardId: shiftboard_id,
+              worldName: world_name ?? "",
+            };
 
-            return rowList;
+            if (role_id) {
+              resVolunteerNew.roleList.push({
+                id: role_id,
+                name: role,
+              });
+            }
+
+            resVolunteerList.push(resVolunteerNew);
           }
-
-          const rowItemNew = {
-            playaName: playa_name,
-            roleList: [] as IResVolunteerRoleItem[],
-            shiftboardId: shiftboard_id,
-            worldName: world_name ?? "",
-          };
-
-          if (role_id) {
-            rowItemNew.roleList.push({
-              id: role_id,
-              name: role,
-            });
-          }
-
-          return [...rowList, rowItemNew];
-        },
-        []
+        }
       );
 
       return res.status(200).json(resVolunteerList);

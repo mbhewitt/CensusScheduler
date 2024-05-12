@@ -59,7 +59,7 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
           }) => ({
             date,
             dateName: datename ?? "",
-            department: department ?? "",
+            departmentName: department ?? "",
             endTime: end_time,
             noShow: noshow,
             positionName: position,

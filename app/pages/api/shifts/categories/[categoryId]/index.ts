@@ -5,9 +5,35 @@ import { pool } from "lib/database";
 import type { IResShiftCategoryItem } from "src/components/types";
 
 const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { shiftCategoryId } = req.query;
+  const { categoryId } = req.query;
 
   switch (req.method) {
+    // get
+    // --------------------
+    case "GET": {
+      // get all active types for category
+      const [dbTypeList] = await pool.query<RowDataPacket[]>(
+        `SELECT
+          sn.shift_name,
+          sn.shift_name_id
+        FROM op_shift_name AS sn
+        JOIN op_shift_category AS sc
+        ON sc.shift_category_id=sn.shift_category_id
+        AND sn.delete_shift=false
+        WHERE sn.shift_category_id=?
+        ORDER BY sn.shift_name`,
+        [categoryId]
+      );
+      const resTypeList = dbTypeList.map(({ shift_name, shift_name_id }) => {
+        return {
+          id: shift_name_id,
+          name: shift_name,
+        };
+      });
+
+      return res.status(200).json(resTypeList);
+    }
+
     // patch
     // --------------------
     case "PATCH": {
@@ -23,7 +49,7 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
           shift_category=?,
           update_category=true
         WHERE shift_category_id=?`,
-        [departmentName, name, shiftCategoryId]
+        [departmentName, name, categoryId]
       );
 
       return res.status(200).json({
@@ -40,7 +66,7 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
         `UPDATE op_shift_category
         SET delete_category=true
         WHERE shift_category_id=?`,
-        [shiftCategoryId]
+        [categoryId]
       );
 
       return res.status(200).json({

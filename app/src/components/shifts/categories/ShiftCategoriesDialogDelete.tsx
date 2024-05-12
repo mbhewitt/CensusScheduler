@@ -7,16 +7,22 @@ import {
   CircularProgress,
   DialogActions,
   DialogContentText,
+  List,
+  ListItem,
+  ListItemText,
   Typography,
 } from "@mui/material";
+import Link from "next/link";
 import { useSnackbar } from "notistack";
-import { useSWRConfig } from "swr";
+import useSWR, { useSWRConfig } from "swr";
 import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "src/components/general/DialogContainer";
+import { ErrorAlert } from "src/components/general/ErrorAlert";
+import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import type { IResShiftCategoryItem } from "src/components/types";
-import { fetcherTrigger } from "src/utils/fetcher";
+import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IShiftCategoriesDialogDeleteProps {
   categoryItem: IResShiftCategoryItem;
@@ -25,14 +31,18 @@ interface IShiftCategoriesDialogDeleteProps {
 }
 
 export const ShiftCategoriesDialogDelete = ({
-  categoryItem: { id, name },
+  categoryItem: { id: categoryId, name: categoryName },
   handleDialogClose,
   isDialogOpen,
 }: IShiftCategoriesDialogDeleteProps) => {
   // fetching, mutation, and revalidation
   // --------------------
+  const { data, error } = useSWR(
+    `/api/shifts/categories/${categoryId}`,
+    fetcherGet
+  );
   const { isMutating, trigger } = useSWRMutation(
-    `/api/shifts/categories/${id}`,
+    `/api/shifts/categories/${categoryId}`,
     fetcherTrigger
   );
   const { mutate } = useSWRConfig();
@@ -40,6 +50,29 @@ export const ShiftCategoriesDialogDelete = ({
   // other hooks
   // --------------------
   const { enqueueSnackbar } = useSnackbar();
+
+  // logic
+  // --------------------
+  if (error)
+    return (
+      <DialogContainer
+        handleDialogClose={handleDialogClose}
+        isDialogOpen={isDialogOpen}
+        text="Delete category"
+      >
+        <ErrorAlert />
+      </DialogContainer>
+    );
+  if (!data)
+    return (
+      <DialogContainer
+        handleDialogClose={handleDialogClose}
+        isDialogOpen={isDialogOpen}
+        text="Delete category"
+      >
+        <Loading />
+      </DialogContainer>
+    );
 
   const handleShiftCategoryDelete = async () => {
     // update database
@@ -51,7 +84,7 @@ export const ShiftCategoriesDialogDelete = ({
 
       enqueueSnackbar(
         <SnackbarText>
-          <strong>{name}</strong> category has been deleted
+          <strong>{categoryName}</strong> category has been deleted
         </SnackbarText>,
         {
           variant: "success",
@@ -83,11 +116,46 @@ export const ShiftCategoriesDialogDelete = ({
       isDialogOpen={isDialogOpen}
       text="Delete category"
     >
-      <DialogContentText>
-        <Typography component="span">
-          Are you sure you want to delete <strong>{name}</strong> category?
-        </Typography>
-      </DialogContentText>
+      {data && data.length > 0 ? (
+        <>
+          <DialogContentText>
+            <Typography component="span">
+              Before removing <strong>{categoryName}</strong>, the following
+              types must be deleted from this category:
+            </Typography>
+          </DialogContentText>
+          <List sx={{ display: "inline-block", pl: 2, listStyleType: "disc" }}>
+            {data.map(
+              ({
+                id: typeId,
+                name: typeName,
+              }: {
+                id: number;
+                name: string;
+              }) => {
+                return (
+                  <ListItem
+                    disablePadding
+                    key={typeId}
+                    sx={{ display: "list-item", pl: 0 }}
+                  >
+                    <Link href={`/shifts/types/update/${typeId}`}>
+                      <ListItemText>{typeName}</ListItemText>
+                    </Link>
+                  </ListItem>
+                );
+              }
+            )}
+          </List>
+        </>
+      ) : (
+        <DialogContentText>
+          <Typography component="span">
+            Are you sure you want to delete <strong>{categoryName}</strong>{" "}
+            category?
+          </Typography>
+        </DialogContentText>
+      )}
       <DialogActions>
         <Button
           disabled={isMutating}
