@@ -225,13 +225,7 @@ export const ShiftTypesCreate = () => {
               >
                 <Button
                   disabled={isMutating}
-                  startIcon={
-                    isMutating ? (
-                      <CircularProgress size="1rem" />
-                    ) : (
-                      <CloseIcon />
-                    )
-                  }
+                  startIcon={<CloseIcon />}
                   onClick={() => {
                     router.push("/shifts/types");
                   }}

@@ -152,9 +152,7 @@ export const ResetPasscodeDialog = ({
           <Button
             disabled={isMutating}
             onClick={handleDialogClose}
-            startIcon={
-              isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
-            }
+            startIcon={<CloseIcon />}
             type="button"
             variant="outlined"
           >

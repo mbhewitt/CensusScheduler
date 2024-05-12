@@ -108,9 +108,7 @@ export const RoleVolunteersDialogRemove = ({
       <DialogActions>
         <Button
           disabled={isMutating}
-          startIcon={
-            isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
-          }
+          startIcon={<CloseIcon />}
           onClick={handleDialogClose}
           type="button"
           variant="outlined"

@@ -315,13 +315,7 @@ export const AccountCreate = () => {
               >
                 <Button
                   disabled={isMutating}
-                  startIcon={
-                    isMutating ? (
-                      <CircularProgress size="1rem" />
-                    ) : (
-                      <CloseIcon />
-                    )
-                  }
+                  startIcon={<CloseIcon />}
                   onClick={() => {
                     router.push("/sign-in");
                   }}
