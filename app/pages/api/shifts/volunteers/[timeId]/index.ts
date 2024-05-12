@@ -170,8 +170,8 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           AND shiftboard_id=?`,
           [noShow, shiftPositionId, timeId, shiftboardId]
         );
-      } else {
         // else insert them into the table
+      } else {
         await pool.query<RowDataPacket[]>(
           `INSERT INTO op_volunteer_shifts (
             add_shift,
