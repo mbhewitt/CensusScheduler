@@ -1,5 +1,6 @@
 import {
   CalendarMonth as CalendarMonthIcon,
+  ExpandLess as ExpandLessIcon,
   ExpandMore as ExpandMoreIcon,
   Login as LoginIcon,
   Logout as LogoutIcon,
@@ -9,6 +10,7 @@ import {
 import {
   AppBar,
   Box,
+  Collapse,
   Divider,
   Drawer,
   IconButton,
@@ -66,6 +68,7 @@ export const Header = () => {
   // state
   // --------------------
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isShiftsNavOpen, setIsShiftsNavOpen] = useState(true);
 
   // other hooks
   // --------------------
@@ -101,6 +104,9 @@ export const Header = () => {
   const isAdmin = checkIsAdmin(accountType, roleList);
   const isSuperAdmin = checkIsSuperAdmin(roleList);
 
+  const handleShiftsNavClick = () => {
+    setIsShiftsNavOpen((prev) => !prev);
+  };
   const handleDrawerOpen = () => {
     setIsDrawerOpen(true);
   };
@@ -203,26 +209,32 @@ export const Header = () => {
                 <Divider />
                 <List subheader={<ListSubheader>Super admin</ListSubheader>}>
                   <ListItem disablePadding>
-                    <ListItemButton>
+                    <ListItemButton onClick={handleShiftsNavClick}>
                       <ListItemIcon>
                         <CalendarMonthIcon />
                       </ListItemIcon>
                       <ListItemText primary="Shifts" />
-                      <ExpandMoreIcon />
+                      {isShiftsNavOpen ? (
+                        <ExpandLessIcon />
+                      ) : (
+                        <ExpandMoreIcon />
+                      )}
                     </ListItemButton>
                   </ListItem>
-                  <List component="div" disablePadding>
-                    {pageListSuperAdmin.map(({ icon, label, path }) => (
-                      <ListItem disablePadding key={path}>
-                        <Link href={path} onClick={handleDrawerClose}>
-                          <ListItemButton sx={{ pl: 4 }}>
-                            <ListItemIcon>{icon}</ListItemIcon>
-                            <ListItemText primary={label} />
-                          </ListItemButton>
-                        </Link>
-                      </ListItem>
-                    ))}
-                  </List>
+                  <Collapse in={isShiftsNavOpen} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                      {pageListSuperAdmin.map(({ icon, label, path }) => (
+                        <ListItem disablePadding key={path}>
+                          <Link href={path} onClick={handleDrawerClose}>
+                            <ListItemButton sx={{ pl: 4 }}>
+                              <ListItemIcon>{icon}</ListItemIcon>
+                              <ListItemText primary={label} />
+                            </ListItemButton>
+                          </Link>
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Collapse>
                 </List>
               </>
             )}
