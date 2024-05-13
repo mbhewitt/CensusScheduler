@@ -25,6 +25,7 @@ import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { Hero } from "src/components/layout/Hero";
+import { ShiftPositionsDialogDelete } from "src/components/shifts/positions/ShiftPositionsDialogDelete";
 import type { IResShiftPositionItem } from "src/components/types";
 import { fetcherGet } from "src/utils/fetcher";
 import {
@@ -156,6 +157,15 @@ export const ShiftPositions = () => {
           />
         </Box>
       </Container>
+
+      {/* delete dialog */}
+      <ShiftPositionsDialogDelete
+        handleDialogClose={() => setIsDialogOpen(false)}
+        isDialogOpen={
+          dialogCurrent.dialogItem === DialogList.Delete && isDialogOpen
+        }
+        positionItem={dialogCurrent.position}
+      />
     </>
   );
 };
