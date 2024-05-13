@@ -50,8 +50,36 @@ export interface IResShiftCategoryItem {
   name: string;
 }
 
+// shift positions
+// --------------------
+export interface IReqShiftPositionItem {
+  critical: boolean;
+  details: string;
+  endTimeOffset: number;
+  id: number;
+  lead: boolean;
+  name: string;
+  prerequisite: {
+    id: number;
+    name: string;
+  };
+  role: {
+    id: number;
+    name: string;
+  };
+  startTimeOffset: number;
+}
+export interface IResShiftPositionItem {
+  id: number;
+  name: string;
+}
+
 // shift types
 // --------------------
+export interface IResShiftPositionDefaultItem {
+  id: number;
+  name: string;
+}
 export interface IResShiftTypeCategoryItem {
   id: number;
   name: string;
@@ -61,7 +89,7 @@ export interface IResShiftTypeDefaultItem {
   name: string;
 }
 export interface IResShiftTypeInformation {
-  category: string;
+  categoryName: string;
   details: string;
   isCore: boolean;
   isOffPlaya: boolean;
@@ -79,7 +107,7 @@ export interface IResShiftTypePositionItem {
   lead: boolean;
   name: string;
   positionId: number;
-  prerequisiteShift: string;
+  prerequisite: string;
   role: string;
   startTimeOffset: string;
 }
@@ -114,7 +142,7 @@ export interface IResShiftItem {
   type: string;
   year: string;
 }
-export interface IResShiftPositionItem {
+export interface IResShiftPositionCountItem {
   filledSlots: number;
   positionName: string;
   positionDetails: string;

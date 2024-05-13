@@ -292,7 +292,7 @@ export const VolunteerShifts = () => {
     ({
       date,
       dateName,
-      department,
+      departmentName,
       endTime,
       noShow,
       positionName,
@@ -336,7 +336,7 @@ export const VolunteerShifts = () => {
         <Chip
           key={`${timeId}${shiftPositionId}-chip`}
           label={positionName}
-          sx={{ backgroundColor: colorMapDisplay[department] }}
+          sx={{ backgroundColor: colorMapDisplay[departmentName] }}
         />,
         <Switch
           checked={noShow === ""}

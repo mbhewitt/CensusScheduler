@@ -38,7 +38,7 @@ export const ShiftCategoriesDialogDelete = ({
   // fetching, mutation, and revalidation
   // --------------------
   const { data, error } = useSWR(
-    `/api/shifts/categories/${categoryId}`,
+    `/api/shifts/categories/${categoryId}/types`,
     fetcherGet
   );
   const { isMutating, trigger } = useSWRMutation(
@@ -75,8 +75,8 @@ export const ShiftCategoriesDialogDelete = ({
     );
 
   const handleShiftCategoryDelete = async () => {
-    // update database
     try {
+      // update database
       await trigger({
         method: "DELETE",
       });
@@ -120,8 +120,8 @@ export const ShiftCategoriesDialogDelete = ({
         <>
           <DialogContentText>
             <Typography component="span">
-              Before removing <strong>{categoryName}</strong>, the following
-              types must be deleted from this category:
+              To delete <strong>{categoryName}</strong>, this category must be
+              removed from the following types:
             </Typography>
           </DialogContentText>
           <List sx={{ display: "inline-block", pl: 2, listStyleType: "disc" }}>
@@ -159,9 +159,7 @@ export const ShiftCategoriesDialogDelete = ({
       <DialogActions>
         <Button
           disabled={isMutating}
-          startIcon={
-            isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
-          }
+          startIcon={<CloseIcon />}
           onClick={handleDialogClose}
           type="button"
           variant="outlined"

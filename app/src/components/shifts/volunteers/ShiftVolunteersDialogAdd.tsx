@@ -31,7 +31,7 @@ import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import type {
   IResShiftItem,
-  IResShiftPositionItem,
+  IResShiftPositionCountItem,
   IResShiftVolunteerItem,
   IResVolunteerDropdownItem,
   IResVolunteerShiftItem,
@@ -60,7 +60,7 @@ interface IShiftVolunteersDialogAddProps {
     date: string;
     dateName: string;
     endTime: string;
-    shiftPositionList: IResShiftPositionItem[];
+    shiftPositionList: IResShiftPositionCountItem[];
     shiftVolunteerList: IResShiftVolunteerItem[];
     startTime: string;
     type: string;
@@ -385,7 +385,7 @@ export const ShiftVolunteersDialogAdd = ({
               roleRequiredId,
               shiftPositionId,
               totalSlots,
-            }: IResShiftPositionItem) => {
+            }: IResShiftPositionCountItem) => {
               const isShiftPositionAvailable =
                 (isAuthenticated && isAdmin) ||
                 (totalSlots - filledSlots > 0 &&
@@ -476,7 +476,7 @@ export const ShiftVolunteersDialogAdd = ({
               positionName,
               shiftPositionId,
               totalSlots,
-            }: IResShiftPositionItem) => (
+            }: IResShiftPositionCountItem) => (
               <MenuItem
                 key={`${shiftPositionId}-position`}
                 value={shiftPositionId}
@@ -512,7 +512,7 @@ export const ShiftVolunteersDialogAdd = ({
       );
       const trainingPositionAdd =
         dataTrainingVolunteerList?.shiftPositionList.find(
-          (trainingPositionItem: IResShiftPositionItem) =>
+          (trainingPositionItem: IResShiftPositionCountItem) =>
             trainingPositionItem.shiftPositionId ===
             formValues.trainingPositionId
         );
@@ -833,7 +833,9 @@ export const ShiftVolunteersDialogAdd = ({
                           const trainingPositionSelected = event.target.value;
                           const trainingPositionFound =
                             dataTrainingVolunteerList.shiftPositionList.find(
-                              (trainingPositionItem: IResShiftPositionItem) =>
+                              (
+                                trainingPositionItem: IResShiftPositionCountItem
+                              ) =>
                                 trainingPositionItem.shiftPositionId ===
                                 trainingPositionSelected
                             );
@@ -897,9 +899,7 @@ export const ShiftVolunteersDialogAdd = ({
         <DialogActions>
           <Button
             disabled={isMutating}
-            startIcon={
-              isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
-            }
+            startIcon={<CloseIcon />}
             onClick={handleDialogClose}
             type="button"
             variant="outlined"

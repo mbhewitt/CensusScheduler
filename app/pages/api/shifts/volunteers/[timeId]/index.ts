@@ -7,7 +7,7 @@ import {
   shiftVolunteerRemove,
 } from "pages/api/general/shiftVolunteers";
 import type {
-  IResShiftPositionItem,
+  IResShiftPositionCountItem,
   IResShiftVolunteerItem,
 } from "src/components/types";
 
@@ -77,7 +77,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         [timeId]
       );
       const resShiftPositionFirst = dbShiftPositionList[0];
-      const resShiftPositionList: IResShiftPositionItem[] =
+      const resShiftPositionList: IResShiftPositionCountItem[] =
         dbShiftPositionList.map(
           ({
             position_details,

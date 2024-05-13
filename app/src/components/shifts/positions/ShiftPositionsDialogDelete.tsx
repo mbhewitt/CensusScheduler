@@ -1,6 +1,6 @@
 import {
   Close as CloseIcon,
-  RemoveModerator as RemoveModeratorIcon,
+  GroupRemove as GroupRemoveIcon,
 } from "@mui/icons-material";
 import {
   Button,
@@ -12,6 +12,7 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
+import Link from "next/link";
 import { useSnackbar } from "notistack";
 import useSWR, { useSWRConfig } from "swr";
 import useSWRMutation from "swr/mutation";
@@ -20,25 +21,28 @@ import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
-import type { IResRoleItem, IResRoleVolunteerItem } from "src/components/types";
+import type { IResShiftPositionItem } from "src/components/types";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
-interface IRolesDialogDeleteProps {
+interface IShiftPositionsDialogDeleteProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
-  roleItem: IResRoleItem;
+  positionItem: IResShiftPositionItem;
 }
 
-export const RolesDialogDelete = ({
+export const ShiftPositionsDialogDelete = ({
   handleDialogClose,
   isDialogOpen,
-  roleItem: { id, name },
-}: IRolesDialogDeleteProps) => {
+  positionItem: { id: positionId, name: positionName },
+}: IShiftPositionsDialogDeleteProps) => {
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR(`/api/roles/volunteers/${id}`, fetcherGet);
+  const { data, error } = useSWR(
+    `/api/shifts/positions/${positionId}/types`,
+    fetcherGet
+  );
   const { isMutating, trigger } = useSWRMutation(
-    `/api/roles/${id}`,
+    `/api/shifts/positions/${positionId}`,
     fetcherTrigger
   );
   const { mutate } = useSWRConfig();
@@ -54,7 +58,7 @@ export const RolesDialogDelete = ({
       <DialogContainer
         handleDialogClose={handleDialogClose}
         isDialogOpen={isDialogOpen}
-        text="Delete role"
+        text="Delete position"
       >
         <ErrorAlert />
       </DialogContainer>
@@ -64,23 +68,23 @@ export const RolesDialogDelete = ({
       <DialogContainer
         handleDialogClose={handleDialogClose}
         isDialogOpen={isDialogOpen}
-        text="Delete role"
+        text="Delete position"
       >
         <Loading />
       </DialogContainer>
     );
 
-  const handleRoleDelete = async () => {
+  const handleShiftPositionDelete = async () => {
     try {
       // update database
       await trigger({
         method: "DELETE",
       });
-      mutate("/api/roles");
+      mutate("/api/shifts/positions");
 
       enqueueSnackbar(
         <SnackbarText>
-          <strong>{name}</strong> role has been deleted
+          <strong>{positionName}</strong> type has been deleted
         </SnackbarText>,
         {
           variant: "success",
@@ -99,7 +103,6 @@ export const RolesDialogDelete = ({
           }
         );
       }
-
       throw error;
     }
   };
@@ -110,30 +113,34 @@ export const RolesDialogDelete = ({
     <DialogContainer
       handleDialogClose={handleDialogClose}
       isDialogOpen={isDialogOpen}
-      text="Delete role"
+      text="Delete position"
     >
       {data && data.length > 0 ? (
         <>
           <DialogContentText>
             <Typography component="span">
-              To delete <strong>{name}</strong>, this role must be removed from
-              the following volunteers:
+              To delete <strong>{positionName}</strong>, this position must be
+              removed from the following types:
             </Typography>
           </DialogContentText>
-          <List sx={{ pl: 2, listStyleType: "disc" }}>
+          <List sx={{ display: "inline-block", pl: 2, listStyleType: "disc" }}>
             {data.map(
               ({
-                playaName,
-                shiftboardId,
-                worldName,
-              }: IResRoleVolunteerItem) => {
+                id: typeId,
+                name: typeName,
+              }: {
+                id: number;
+                name: string;
+              }) => {
                 return (
                   <ListItem
                     disablePadding
-                    key={shiftboardId}
+                    key={typeId}
                     sx={{ display: "list-item", pl: 0 }}
                   >
-                    <ListItemText primary={`${playaName} "${worldName}"`} />
+                    <Link href={`/shifts/types/update/${typeId}`}>
+                      <ListItemText>{typeName}</ListItemText>
+                    </Link>
                   </ListItem>
                 );
               }
@@ -143,7 +150,8 @@ export const RolesDialogDelete = ({
       ) : (
         <DialogContentText>
           <Typography component="span">
-            Are you sure you want to delete <strong>{name}</strong> role?
+            Are you sure you want to delete <strong>{positionName}</strong>{" "}
+            position?
           </Typography>
         </DialogContentText>
       )}
@@ -158,19 +166,15 @@ export const RolesDialogDelete = ({
           Cancel
         </Button>
         <Button
-          disabled={isMutating || (data && data.length > 0)}
-          onClick={handleRoleDelete}
+          disabled={(data && data.length > 0) || isMutating}
+          onClick={handleShiftPositionDelete}
           startIcon={
-            isMutating ? (
-              <CircularProgress size="1rem" />
-            ) : (
-              <RemoveModeratorIcon />
-            )
+            isMutating ? <CircularProgress size="1rem" /> : <GroupRemoveIcon />
           }
           type="submit"
           variant="contained"
         >
-          Delete role
+          Delete position
         </Button>
       </DialogActions>
     </DialogContainer>

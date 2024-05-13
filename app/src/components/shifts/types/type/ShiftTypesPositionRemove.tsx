@@ -106,8 +106,8 @@ export const ShiftTypesPositionRemove = ({
         <>
           <DialogContentText>
             <Typography component="span">
-              Before removing <strong>{positionItem.name}</strong>, volunteers
-              must be removed from this position in the following times:
+              To remove <strong>{positionItem.name}</strong>, volunteers must be
+              removed from this position in the following times:
             </Typography>
           </DialogContentText>
           <List sx={{ display: "inline-block", pl: 2, listStyleType: "disc" }}>

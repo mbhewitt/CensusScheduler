@@ -231,43 +231,45 @@ export const AccountCreate = () => {
                       },
                     }}
                   />
-                  <Controller
-                    control={control}
-                    name="email"
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        error={Object.hasOwn(errors, "email")}
-                        fullWidth
-                        helperText={errors.email?.message}
-                        label="Email"
-                        required
-                        type="email"
-                        variant="standard"
-                      />
-                    )}
-                    rules={{
-                      required: "Email is required",
-                      validate: (value) => {
-                        return (
-                          Boolean(value?.trim()) || "Email name is required"
-                        );
-                      },
-                    }}
-                  />
-                  <Controller
-                    control={control}
-                    name="phone"
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        fullWidth
-                        label="Phone"
-                        type="tel"
-                        variant="standard"
-                      />
-                    )}
-                  />
+                  <Stack direction="row" gap={2}>
+                    <Controller
+                      control={control}
+                      name="email"
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          error={Object.hasOwn(errors, "email")}
+                          fullWidth
+                          helperText={errors.email?.message}
+                          label="Email"
+                          required
+                          type="email"
+                          variant="standard"
+                        />
+                      )}
+                      rules={{
+                        required: "Email is required",
+                        validate: (value) => {
+                          return (
+                            Boolean(value?.trim()) || "Email name is required"
+                          );
+                        },
+                      }}
+                    />
+                    <Controller
+                      control={control}
+                      name="phone"
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          fullWidth
+                          label="Phone"
+                          type="tel"
+                          variant="standard"
+                        />
+                      )}
+                    />
+                  </Stack>
                   <Controller
                     control={control}
                     name="location"
@@ -315,13 +317,7 @@ export const AccountCreate = () => {
               >
                 <Button
                   disabled={isMutating}
-                  startIcon={
-                    isMutating ? (
-                      <CircularProgress size="1rem" />
-                    ) : (
-                      <CloseIcon />
-                    )
-                  }
+                  startIcon={<CloseIcon />}
                   onClick={() => {
                     router.push("/sign-in");
                   }}

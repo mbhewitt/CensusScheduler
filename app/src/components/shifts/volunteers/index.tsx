@@ -38,7 +38,7 @@ import { Hero } from "src/components/layout/Hero";
 import { ShiftVolunteersDialogAdd } from "src/components/shifts/volunteers/ShiftVolunteersDialogAdd";
 import { ShiftVolunteersDialogRemove } from "src/components/shifts/volunteers/ShiftVolunteersDialogRemove";
 import type {
-  IResShiftPositionItem,
+  IResShiftPositionCountItem,
   IResShiftVolunteerItem,
   ISwitchValues,
 } from "src/components/types";
@@ -291,7 +291,7 @@ export const ShiftVolunteers = () => {
         (isAuthenticated && isAdmin) ||
         (isAuthenticated &&
           dataShiftVolunteersItem.shiftPositionList.some(
-            (positionItem: IResShiftPositionItem) =>
+            (positionItem: IResShiftPositionCountItem) =>
               positionItem.filledSlots > 0
           ));
       break;
@@ -495,7 +495,7 @@ export const ShiftVolunteers = () => {
                     filledSlots,
                     positionName,
                     totalSlots,
-                  }: IResShiftPositionItem) => {
+                  }: IResShiftPositionCountItem) => {
                     return (
                       <Fragment key={positionName}>
                         {positionName}: {filledSlots} / {totalSlots}
