@@ -120,8 +120,8 @@ export const ShiftCategoriesDialogDelete = ({
         <>
           <DialogContentText>
             <Typography component="span">
-              Before removing <strong>{categoryName}</strong>, the following
-              types must be deleted from this category:
+              To delete <strong>{categoryName}</strong>, this category must be
+              removed from the following types:
             </Typography>
           </DialogContentText>
           <List sx={{ display: "inline-block", pl: 2, listStyleType: "disc" }}>

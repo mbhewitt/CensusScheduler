@@ -106,7 +106,7 @@ export const ShiftTypesTimeRemove = ({
         <>
           <DialogContentText>
             <Typography component="span">
-              Before removing{" "}
+              To remove{" "}
               <Link href={`/shifts/volunteers/${timeItem.id}`}>
                 <strong>{timeItem.name}</strong>
               </Link>

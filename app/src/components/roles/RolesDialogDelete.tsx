@@ -116,7 +116,7 @@ export const RolesDialogDelete = ({
         <>
           <DialogContentText>
             <Typography component="span">
-              Before doing so, <strong>{name}</strong> role must be removed from
+              To delete <strong>{name}</strong>, this role must be removed from
               the following volunteers:
             </Typography>
           </DialogContentText>

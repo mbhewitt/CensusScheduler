@@ -119,8 +119,8 @@ export const ShiftPositionsDialogDelete = ({
         <>
           <DialogContentText>
             <Typography component="span">
-              Before removing <strong>{positionName}</strong>, this position
-              must be removed from the following types:
+              To delete <strong>{positionName}</strong>, this position must be
+              removed from the following types:
             </Typography>
           </DialogContentText>
           <List sx={{ display: "inline-block", pl: 2, listStyleType: "disc" }}>

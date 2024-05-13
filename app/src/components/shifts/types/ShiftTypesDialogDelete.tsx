@@ -122,8 +122,8 @@ export const ShiftTypesDialogDelete = ({
         <>
           <DialogContentText sx={{ mb: 2 }}>
             <Typography component="span">
-              Before deleting <strong>{name}</strong>, the following must be
-              removed from this type:
+              To delete <strong>{name}</strong>, the following must be removed
+              from this type:
             </Typography>
           </DialogContentText>
           {data.positionList.length > 0 && (
