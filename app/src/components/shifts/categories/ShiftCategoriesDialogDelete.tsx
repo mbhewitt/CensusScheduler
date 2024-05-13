@@ -38,7 +38,7 @@ export const ShiftCategoriesDialogDelete = ({
   // fetching, mutation, and revalidation
   // --------------------
   const { data, error } = useSWR(
-    `/api/shifts/categories/${categoryId}`,
+    `/api/shifts/categories/${categoryId}/types`,
     fetcherGet
   );
   const { isMutating, trigger } = useSWRMutation(
