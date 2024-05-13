@@ -40,8 +40,8 @@ interface IShiftTypesTimeRemoveProps {
 }
 
 export const ShiftTypesTimeRemove = ({
-  handleDialogClose: handleDialogRemoveClose,
-  isDialogOpen: isDialogRemoveOpen,
+  handleDialogClose,
+  isDialogOpen,
   timeItem,
   timeRemove,
   typeId,
@@ -49,7 +49,7 @@ export const ShiftTypesTimeRemove = ({
   // fetching, mutation, and revalidation
   // --------------------
   const { data, error } = useSWR(
-    `/api/shifts/types/${typeId}/times/${timeItem.id}`,
+    `/api/shifts/types/${typeId}/times/${timeItem.id}/positions`,
     fetcherGet
   );
 
@@ -62,8 +62,8 @@ export const ShiftTypesTimeRemove = ({
   if (error)
     return (
       <DialogContainer
-        handleDialogClose={handleDialogRemoveClose}
-        isDialogOpen={isDialogRemoveOpen}
+        handleDialogClose={handleDialogClose}
+        isDialogOpen={isDialogOpen}
         text="Remove time"
       >
         <ErrorAlert />
@@ -72,8 +72,8 @@ export const ShiftTypesTimeRemove = ({
   if (!data)
     return (
       <DialogContainer
-        handleDialogClose={handleDialogRemoveClose}
-        isDialogOpen={isDialogRemoveOpen}
+        handleDialogClose={handleDialogClose}
+        isDialogOpen={isDialogOpen}
         text="Remove role"
       >
         <Loading />
@@ -91,15 +91,15 @@ export const ShiftTypesTimeRemove = ({
         variant: "warning",
       }
     );
-    handleDialogRemoveClose();
+    handleDialogClose();
   };
 
   // render
   // --------------------
   return (
     <DialogContainer
-      handleDialogClose={handleDialogRemoveClose}
-      isDialogOpen={isDialogRemoveOpen}
+      handleDialogClose={handleDialogClose}
+      isDialogOpen={isDialogOpen}
       text="Remove time"
     >
       {data && data.length > 0 ? (
@@ -139,7 +139,7 @@ export const ShiftTypesTimeRemove = ({
       <DialogActions>
         <Button
           startIcon={<CloseIcon />}
-          onClick={handleDialogRemoveClose}
+          onClick={handleDialogClose}
           type="button"
           variant="outlined"
         >

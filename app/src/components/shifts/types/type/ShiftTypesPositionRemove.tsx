@@ -40,8 +40,8 @@ interface IShiftTypesPositionRemoveProps {
 }
 
 export const ShiftTypesPositionRemove = ({
-  handleDialogClose: handleDialogRemoveClose,
-  isDialogOpen: isDialogRemoveOpen,
+  handleDialogClose,
+  isDialogOpen,
   positionItem,
   positionRemove,
   typeId,
@@ -49,7 +49,7 @@ export const ShiftTypesPositionRemove = ({
   // fetching, mutation, and revalidation
   // --------------------
   const { data, error } = useSWR(
-    `/api/shifts/types/${typeId}/positions/${positionItem.id}`,
+    `/api/shifts/types/${typeId}/positions/${positionItem.id}/times`,
     fetcherGet
   );
 
@@ -62,8 +62,8 @@ export const ShiftTypesPositionRemove = ({
   if (error)
     return (
       <DialogContainer
-        handleDialogClose={handleDialogRemoveClose}
-        isDialogOpen={isDialogRemoveOpen}
+        handleDialogClose={handleDialogClose}
+        isDialogOpen={isDialogOpen}
         text="Remove position"
       >
         <ErrorAlert />
@@ -72,8 +72,8 @@ export const ShiftTypesPositionRemove = ({
   if (!data)
     return (
       <DialogContainer
-        handleDialogClose={handleDialogRemoveClose}
-        isDialogOpen={isDialogRemoveOpen}
+        handleDialogClose={handleDialogClose}
+        isDialogOpen={isDialogOpen}
         text="Remove position"
       >
         <Loading />
@@ -91,15 +91,15 @@ export const ShiftTypesPositionRemove = ({
         variant: "warning",
       }
     );
-    handleDialogRemoveClose();
+    handleDialogClose();
   };
 
   // render
   // --------------------
   return (
     <DialogContainer
-      handleDialogClose={handleDialogRemoveClose}
-      isDialogOpen={isDialogRemoveOpen}
+      handleDialogClose={handleDialogClose}
+      isDialogOpen={isDialogOpen}
       text="Remove position"
     >
       {data && data.length > 0 ? (
@@ -137,7 +137,7 @@ export const ShiftTypesPositionRemove = ({
       <DialogActions>
         <Button
           startIcon={<CloseIcon />}
-          onClick={handleDialogRemoveClose}
+          onClick={handleDialogClose}
           type="button"
           variant="outlined"
         >
