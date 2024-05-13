@@ -13,7 +13,7 @@ const shiftTypeDefaults = async (req: NextApiRequest, res: NextApiResponse) => {
     // get
     // --------------------
     case "GET": {
-      // get all type names
+      // get all types
       const [dbTypeList] = await pool.query<RowDataPacket[]>(
         `SELECT
           shift_name,
@@ -28,19 +28,20 @@ const shiftTypeDefaults = async (req: NextApiRequest, res: NextApiResponse) => {
         })
       );
       // get all categories
-      const [dbShiftCategoryList] = await pool.query<RowDataPacket[]>(
+      const [dbCategoryList] = await pool.query<RowDataPacket[]>(
         `SELECT
           shift_category,
           shift_category_id
         FROM op_shift_category
         ORDER BY shift_category`
       );
-      const resShiftCategoryList: IResShiftTypeCategoryItem[] =
-        dbShiftCategoryList.map(({ shift_category, shift_category_id }) => ({
+      const resCategoryList: IResShiftTypeCategoryItem[] = dbCategoryList.map(
+        ({ shift_category, shift_category_id }) => ({
           id: shift_category_id,
           name: shift_category,
-        }));
-      // get all shift positions
+        })
+      );
+      // get all positions
       const [dbPositionList] = await pool.query<RowDataPacket[]>(
         `SELECT
           pt.critical,
@@ -77,15 +78,15 @@ const shiftTypeDefaults = async (req: NextApiRequest, res: NextApiResponse) => {
           lead: Boolean(lead),
           name: position,
           positionId: position_type_id,
-          prerequisiteShift: shift_category ?? "",
+          prerequisite: shift_category ?? "",
           role: role ?? "",
           startTimeOffset: start_time_offset,
         })
       );
 
       return res.status(200).json({
+        categoryList: resCategoryList,
         positionList: resPositionList,
-        shiftCategoryList: resShiftCategoryList,
         typeList: resTypeList,
       });
     }

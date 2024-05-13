@@ -59,8 +59,8 @@ export interface IFormValues {
   timeList: IResShiftTypeTimeItem[];
 }
 interface IDataDefaults {
+  categoryList: IResShiftTypeCategoryItem[];
   positionList: IResShiftTypePositionItem[];
-  shiftCategoryList: IResShiftTypeCategoryItem[];
   typeList: IResShiftTypeItem[];
 }
 interface IShiftTypesFormProps {
@@ -76,10 +76,10 @@ interface IShiftTypesFormProps {
   positionFields: FieldArrayWithId<IFormValues, "positionList", "id">[];
   setError: UseFormSetError<IFormValues>;
   setValue: UseFormSetValue<IFormValues>;
-  shiftTypeName: string;
   timeAppend: UseFieldArrayAppend<IFormValues, "timeList">;
   timeFields: FieldArrayWithId<IFormValues, "timeList", "id">[];
   timeRemove: UseFieldArrayRemove;
+  typeName: string;
   watch: UseFormWatch<IFormValues>;
 }
 
@@ -89,9 +89,9 @@ export const findCategoryId = (
   dataDefaults: IDataDefaults,
   formValues: IFormValues
 ) => {
-  const categoryItem = dataDefaults.shiftCategoryList.find(
+  const categoryItem = dataDefaults.categoryList.find(
     ({ name }: { name: string }) => {
-      return name === formValues.information.category;
+      return name === formValues.information.categoryName;
     }
   );
 
@@ -134,7 +134,7 @@ export const processTimeList = (formValues: IFormValues) => {
 
 export const defaultValues: IFormValues = {
   information: {
-    category: "",
+    categoryName: "",
     details: "",
     isCore: false,
     isOffPlaya: false,
@@ -148,7 +148,7 @@ export const defaultValues: IFormValues = {
       lead: false,
       name: "",
       positionId: 0,
-      prerequisiteShift: "",
+      prerequisite: "",
       role: "",
       startTimeOffset: "",
       totalSlots: "",
@@ -178,9 +178,9 @@ export const ShiftTypesForm = ({
   positionFields,
   setError,
   setValue,
-  shiftTypeName,
   timeAppend,
   timeFields,
+  typeName,
   watch,
 }: IShiftTypesFormProps) => {
   // logic
@@ -228,16 +228,16 @@ export const ShiftTypesForm = ({
                       required: (value) => {
                         return Boolean(value.trim()) || "Name is required";
                       },
-                      typeAvailable: (value) => {
-                        const isShiftTypeNameAvailable =
-                          value === shiftTypeName ||
+                      typeNameAvailable: (value) => {
+                        const isTypeNameAvailable =
+                          value === typeName ||
                           dataDefaults.typeList.every(
                             ({ name }) => name !== value
                           );
 
                         return (
-                          isShiftTypeNameAvailable ||
-                          `${value} shift type has been added already`
+                          isTypeNameAvailable ||
+                          `${value} type has been added already`
                         );
                       },
                     },
@@ -247,7 +247,7 @@ export const ShiftTypesForm = ({
               <Grid item xs={6}>
                 <Controller
                   control={control}
-                  name="information.category"
+                  name="information.categoryName"
                   render={({ field }) => (
                     <FormControl fullWidth variant="standard">
                       <InputLabel id="to">Category *</InputLabel>
@@ -255,13 +255,13 @@ export const ShiftTypesForm = ({
                         {...field}
                         error={
                           errors.information &&
-                          Boolean(errors.information.category)
+                          Boolean(errors.information.categoryName)
                         }
                         label="Category"
                         labelId="category"
                         required
                       >
-                        {dataDefaults.shiftCategoryList.map(
+                        {dataDefaults.categoryList.map(
                           ({ id, name }: IResShiftTypeCategoryItem) => (
                             <MenuItem key={id} value={name}>
                               {name}
@@ -269,11 +269,12 @@ export const ShiftTypesForm = ({
                           )
                         )}
                       </Select>
-                      {errors.information && errors.information.category && (
-                        <FormHelperText error>
-                          {errors.information.category?.message}
-                        </FormHelperText>
-                      )}
+                      {errors.information &&
+                        errors.information.categoryName && (
+                          <FormHelperText error>
+                            {errors.information.categoryName?.message}
+                          </FormHelperText>
+                        )}
                     </FormControl>
                   )}
                   rules={{
@@ -372,7 +373,7 @@ export const ShiftTypesForm = ({
             >
               <CardContent>
                 <Grid container spacing={2}>
-                  <Grid item xs={3}>
+                  <Grid item xs={6}>
                     <Controller
                       control={control}
                       name={`positionList.${index}.name`}
@@ -416,8 +417,8 @@ export const ShiftTypesForm = ({
                                   positionItem.details
                                 );
                                 setValue(
-                                  `positionList.${index}.prerequisiteShift`,
-                                  positionItem.prerequisiteShift
+                                  `positionList.${index}.prerequisite`,
+                                  positionItem.prerequisite
                                 );
                                 setValue(
                                   `positionList.${index}.role`,
@@ -465,7 +466,7 @@ export const ShiftTypesForm = ({
                       }}
                     />
                   </Grid>
-                  <Grid item xs={3}>
+                  <Grid item xs={2}>
                     <Controller
                       control={control}
                       name={`positionList.${index}.totalSlots`}
@@ -492,7 +493,7 @@ export const ShiftTypesForm = ({
                       }}
                     />
                   </Grid>
-                  <Grid item xs={3}>
+                  <Grid item xs={2}>
                     <Controller
                       control={control}
                       name={`positionList.${index}.wapPoints`}
@@ -526,7 +527,7 @@ export const ShiftTypesForm = ({
                       display: "flex",
                       justifyContent: "flex-end",
                     }}
-                    xs={3}
+                    xs={2}
                   >
                     <IconButton
                       onClick={() =>
@@ -536,7 +537,7 @@ export const ShiftTypesForm = ({
                       <CloseIcon />
                     </IconButton>
                   </Grid>
-                  <Grid item xs={3}>
+                  <Grid item xs={6}>
                     <Controller
                       control={control}
                       name={`positionList.${index}.role`}
@@ -551,16 +552,16 @@ export const ShiftTypesForm = ({
                       )}
                     />
                   </Grid>
-                  <Grid item xs={3}>
+                  <Grid item xs={6}>
                     <Controller
                       control={control}
-                      name={`positionList.${index}.prerequisiteShift`}
+                      name={`positionList.${index}.prerequisite`}
                       render={({ field }) => (
                         <TextField
                           {...field}
                           disabled
                           fullWidth
-                          label="Prerequisite shift"
+                          label="Prerequisite"
                           variant="standard"
                         />
                       )}
@@ -591,21 +592,6 @@ export const ShiftTypesForm = ({
                           disabled
                           fullWidth
                           label="End time offset"
-                          variant="standard"
-                        />
-                      )}
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Controller
-                      control={control}
-                      name={`positionList.${index}.details`}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          disabled
-                          fullWidth
-                          label="Details"
                           variant="standard"
                         />
                       )}
@@ -648,6 +634,21 @@ export const ShiftTypesForm = ({
                         )}
                       />
                     </FormGroup>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Controller
+                      control={control}
+                      name={`positionList.${index}.details`}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          disabled
+                          fullWidth
+                          label="Details"
+                          variant="standard"
+                        />
+                      )}
+                    />
                   </Grid>
                 </Grid>
               </CardContent>

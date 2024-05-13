@@ -71,8 +71,8 @@ export const RolesDialogDelete = ({
     );
 
   const handleRoleDelete = async () => {
-    // update database
     try {
+      // update database
       await trigger({
         method: "DELETE",
       });

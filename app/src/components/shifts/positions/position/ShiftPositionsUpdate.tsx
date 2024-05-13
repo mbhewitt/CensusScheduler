@@ -1,7 +1,7 @@
 import {
   Close as CloseIcon,
   DateRange as DateRangeIcon,
-  EventAvailable as EventAvailableIcon,
+  EditCalendar as EditCalendarIcon,
 } from "@mui/icons-material";
 import {
   Box,
@@ -13,13 +13,12 @@ import {
   Container,
   Typography,
 } from "@mui/material";
-import dayjs from "dayjs";
-import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
-import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
@@ -29,111 +28,128 @@ import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import {
   defaultValues,
-  findCategoryId,
+  findList,
   IFormValues,
-  processPositionList,
-  processTimeList,
-  ShiftTypesForm,
-} from "src/components/shifts/types/type/ShiftTypesForm";
+  ShiftPositionsForm,
+} from "src/components/shifts/positions/position/ShiftPositionsForm";
+import { IReqShiftPositionItem } from "src/components/types";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
-export const ShiftTypesCreate = () => {
+export const ShiftPositionsUpdate = () => {
+  // state
+  // --------------------
+  const [isMounted, setIsMounted] = useState(false);
+
   // fetching, mutation, and revalidation
   // --------------------
+  const router = useRouter();
+  const { positionId } = router.query;
   const { data: dataDefaults, error: errorDefaults } = useSWR(
-    "/api/shifts/types/defaults",
+    isMounted ? "/api/shifts/positions/defaults" : null,
+    fetcherGet
+  );
+  const { data: dataCurrent, error: errorCurrent } = useSWR(
+    isMounted ? `/api/shifts/positions/${positionId}` : null,
     fetcherGet
   );
   const { isMutating, trigger } = useSWRMutation(
-    "/api/shifts/types",
+    `/api/shifts/positions/${positionId}`,
     fetcherTrigger
   );
 
   // other hooks
   // --------------------
   const {
-    clearErrors,
     control,
     formState: { errors },
-    getValues,
     handleSubmit,
-    setError,
-    setValue,
-    watch,
+    reset,
   } = useForm({
     defaultValues,
     mode: "onBlur",
   });
-  const {
-    append: timeAppend,
-    fields: timeFields,
-    remove: timeRemove,
-  } = useFieldArray({
-    control,
-    name: "timeList",
-  });
-  const {
-    append: positionAppend,
-    fields: positionFields,
-    remove: positionRemove,
-  } = useFieldArray({
-    control,
-    name: "positionList",
-  });
-  const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
-  dayjs.extend(isSameOrBefore);
+
+  // side effects
+  // --------------------
+  useEffect(() => {
+    if (router.isReady) {
+      setIsMounted(true);
+    }
+  }, [router.isReady]);
+  useEffect(() => {
+    if (dataCurrent) {
+      const {
+        critical,
+        details,
+        endTimeOffset,
+        id,
+        lead,
+        name,
+        prerequisite: { name: prerequisiteName },
+        role: { name: roleName },
+        startTimeOffset,
+      } = dataCurrent;
+
+      reset({
+        critical,
+        details,
+        endTimeOffset,
+        id,
+        lead,
+        name,
+        prerequisiteName,
+        roleName,
+        startTimeOffset,
+      });
+    }
+  }, [dataCurrent, reset]);
 
   // logic
   // --------------------
-  if (errorDefaults) return <ErrorPage />;
-  if (!dataDefaults) return <Loading />;
-
-  const handlePositionRemove = (index: number) => {
-    positionRemove(index);
-  };
-  const handleTimeRemove = (index: number) => {
-    timeRemove(index);
-  };
+  if (errorDefaults || errorCurrent) return <ErrorPage />;
+  if (!dataDefaults || !dataCurrent) return <Loading />;
 
   // form submission
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
-      const categoryId = findCategoryId(dataDefaults, formValues);
-      const positionList = processPositionList(dataDefaults, formValues);
-      const timeList = processTimeList(formValues);
+      const [prerequisiteFound, roleFound] = findList(dataDefaults, formValues);
+
+      if (prerequisiteFound === undefined || roleFound === undefined) {
+        throw new TypeError("Prerequisite and/or role cannot be found.");
+      }
+
+      const reqBody: IReqShiftPositionItem = {
+        critical: formValues.critical,
+        details: formValues.details,
+        endTimeOffset: formValues.endTimeOffset,
+        id: formValues.id,
+        lead: formValues.lead,
+        name: formValues.name,
+        prerequisite: prerequisiteFound,
+        role: roleFound,
+        startTimeOffset: formValues.startTimeOffset,
+      };
 
       // update database
       await trigger({
-        body: {
-          information: {
-            categoryId,
-            details: formValues.information.details,
-            isCore: formValues.information.isCore,
-            isOffPlaya: formValues.information.isOffPlaya,
-            name: formValues.information.name,
-          },
-          positionList,
-          timeList,
-        },
-        method: "POST",
+        body: reqBody,
+        method: "PATCH",
       });
-
       enqueueSnackbar(
         <SnackbarText>
           <strong>
-            <strong>{formValues.information.name}</strong>
+            <strong>{formValues.name}</strong>
           </strong>{" "}
-          type has been created
+          shift position has been updated
         </SnackbarText>,
         {
           variant: "success",
         }
       );
-
-      // route to types page
-      router.push("/shifts/types");
+      // route to positions page
+      router.push("/shifts/positions");
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(
@@ -146,7 +162,6 @@ export const ShiftTypesCreate = () => {
           }
         );
       }
-
       throw error;
     }
   };
@@ -167,12 +182,12 @@ export const ShiftTypesCreate = () => {
             }}
           />
         }
-        text="Create shift type"
+        text="Update shift position"
       />
       <Container component="main">
         <Box component="section">
           <Breadcrumbs>
-            <Link href="/shifts/types">
+            <Link href="/shifts/positions">
               <Typography
                 sx={{
                   alignItems: "center",
@@ -180,7 +195,7 @@ export const ShiftTypesCreate = () => {
                 }}
               >
                 <DateRangeIcon sx={{ mr: 0.5 }} />
-                Shift types
+                Shift positions
               </Typography>
             </Link>
             <Typography
@@ -189,30 +204,18 @@ export const ShiftTypesCreate = () => {
                 display: "flex",
               }}
             >
-              <EventAvailableIcon sx={{ mr: 0.5 }} />
-              Create type
+              <EditCalendarIcon sx={{ mr: 0.5 }} />
+              Update position
             </Typography>
           </Breadcrumbs>
         </Box>
         <Box component="section">
           <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-            <ShiftTypesForm
-              clearErrors={clearErrors}
+            <ShiftPositionsForm
               control={control}
               dataDefaults={dataDefaults}
               errors={errors}
-              getValues={getValues}
-              handlePositionRemove={handlePositionRemove}
-              handleTimeRemove={handleTimeRemove}
-              positionAppend={positionAppend}
-              positionFields={positionFields}
-              setError={setError}
-              setValue={setValue}
-              timeAppend={timeAppend}
-              timeFields={timeFields}
-              timeRemove={timeRemove}
-              typeName={defaultValues.information.name}
-              watch={watch}
+              positionName={dataCurrent.name}
             />
 
             {/* actions */}
@@ -227,7 +230,7 @@ export const ShiftTypesCreate = () => {
                   disabled={isMutating}
                   startIcon={<CloseIcon />}
                   onClick={() => {
-                    router.push("/shifts/types");
+                    router.push("/shifts/positions");
                   }}
                   type="button"
                   variant="outlined"
@@ -240,13 +243,13 @@ export const ShiftTypesCreate = () => {
                     isMutating ? (
                       <CircularProgress size="1rem" />
                     ) : (
-                      <EventAvailableIcon />
+                      <EditCalendarIcon />
                     )
                   }
                   type="submit"
                   variant="contained"
                 >
-                  Create type
+                  Update position
                 </Button>
               </CardActions>
             </Card>

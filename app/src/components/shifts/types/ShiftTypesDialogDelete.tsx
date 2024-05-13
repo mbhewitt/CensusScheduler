@@ -77,8 +77,8 @@ export const ShiftTypesDialogDelete = ({
     );
 
   const handleShiftTypeDelete = async () => {
-    // update database
     try {
+      // update database
       await trigger({
         method: "DELETE",
       });

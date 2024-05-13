@@ -35,7 +35,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
       const [resInformation]: IResShiftTypeInformation[] =
         dbInformationList.map(
           ({ core, off_playa, shift_category, shift_details, shift_name }) => ({
-            category: shift_category ?? "",
+            categoryName: shift_category ?? "",
             details: shift_details,
             isCore: Boolean(core),
             isOffPlaya: Boolean(off_playa),
@@ -89,7 +89,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
             lead: Boolean(lead),
             name: position,
             positionId: position_type_id,
-            prerequisiteShift: shift_category ?? "",
+            prerequisite: shift_category ?? "",
             role: role ?? "",
             startTimeOffset: start_time_offset,
             totalSlots: total_slots,
@@ -208,20 +208,20 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
       positionListAdd.forEach(async ({ positionId, totalSlots, wapPoints }) => {
         const shiftPositionIdNew = generateId(
           `SELECT shift_position_id
-            FROM op_shift_position
-            WHERE shift_position_id=?`
+          FROM op_shift_position
+          WHERE shift_position_id=?`
         );
 
         await pool.query(
           `INSERT INTO op_shift_position (
-              add_shift_position,
-              position_type_id,
-              shift_name_id,
-              shift_position_id,
-              total_slots,
-              wap_points
-            )
-            VALUES (true, ?, ?, ?, ?, ?)`,
+            add_shift_position,
+            position_type_id,
+            shift_name_id,
+            shift_position_id,
+            total_slots,
+            wap_points
+          )
+          VALUES (true, ?, ?, ?, ?, ?)`,
           [positionId, typeId, shiftPositionIdNew, totalSlots, wapPoints]
         );
       });
