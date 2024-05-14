@@ -1,10 +1,10 @@
 import { RowDataPacket } from "mysql2";
 
-import type { IResShiftItem } from "src/components/types";
+import type { IResShiftRowItem } from "src/components/types/shifts";
 
 export const getShiftList = (dbShiftList: RowDataPacket[]) => {
   const shiftPositionIdMap: { [key: string]: boolean } = {};
-  const shiftListNew: IResShiftItem[] = [];
+  const shiftListNew: IResShiftRowItem[] = [];
 
   dbShiftList.forEach(
     ({
@@ -22,22 +22,23 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
       year,
     }: RowDataPacket) => {
       const shiftPositionIdItem = `${shift_times_id}${position_type_id}`;
-      const dbShiftLast = shiftListNew[shiftListNew.length - 1];
+      const dbShiftLast: IResShiftRowItem =
+        shiftListNew[shiftListNew.length - 1];
 
       // if the database row has new shift times ID
       // then create new object
-      if (!dbShiftLast || dbShiftLast.timeId !== shift_times_id) {
+      if (!dbShiftLast || dbShiftLast.id !== shift_times_id) {
         shiftPositionIdMap[shiftPositionIdItem] = true;
 
-        const dbShiftItemNew = {
-          categoryId: shift_category_id,
+        const dbShiftItemNew: IResShiftRowItem = {
+          category: { id: shift_category_id },
           date,
           dateName: datename ?? "",
-          departmentName: department ?? "",
+          department: { name: department ?? "" },
           endTime: end_time,
           filledSlots: shiftboard_id ? 1 : 0,
+          id: shift_times_id,
           startTime: start_time,
-          timeId: shift_times_id,
           totalSlots: total_slots,
           type: shift_name,
           year,

@@ -25,7 +25,7 @@ import type {
   IResRoleRowItem,
   IResRoleVolunteerItem,
 } from "src/components/types/roles";
-import type { IResVolunteerDropdownItem } from "src/components/types/volunteers";
+import type { IResVolunteerDefaultItem } from "src/components/types/volunteers";
 import { ensure } from "src/utils/ensure";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
@@ -54,7 +54,7 @@ export const RoleVolunteersDialogAdd = ({
     data,
     error,
   }: {
-    data: IResVolunteerDropdownItem[];
+    data: IResVolunteerDefaultItem[];
     error: Error | undefined;
   } = useSWR("/api/volunteers/dropdown", fetcherGet);
   const { isMutating, trigger } = useSWRMutation(

@@ -27,7 +27,7 @@ export interface IResVolunteerAccount {
   shiftboardId: number;
   worldName: string;
 }
-export interface IResVolunteerDropdownItem {
+export interface IResVolunteerDefaultItem {
   playaName: string;
   roleList: IResVolunteerRoleItem[];
   shiftboardId: number;

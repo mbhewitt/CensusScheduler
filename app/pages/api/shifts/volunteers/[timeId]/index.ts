@@ -7,9 +7,11 @@ import {
   shiftVolunteerRemove,
 } from "pages/api/general/shiftVolunteers";
 import type {
+  IReqShiftVolunteerItem,
   IResShiftPositionCountItem,
-  IResShiftVolunteerItem,
-} from "src/components/types";
+  IResShiftVolunteerDetails,
+  IResShiftVolunteerRowItem,
+} from "src/components/types/shifts";
 
 const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
@@ -111,7 +113,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           shiftboard_id,
           world_name,
         }) => {
-          const resShiftVolunteerItem: IResShiftVolunteerItem = {
+          const resShiftVolunteerItem: IResShiftVolunteerRowItem = {
             isCheckedIn: noshow,
             playaName: playa_name,
             positionName: position,
@@ -133,24 +135,29 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         if (positionFound) positionFound.filledSlots += 1;
       });
 
-      return res.status(200).json({
+      const resShiftVolunteerDetails: IResShiftVolunteerDetails = {
         date: resShiftPositionFirst.date,
         dateName: resShiftPositionFirst.datename ?? "",
         endTime: resShiftPositionFirst.end_time,
-        shiftPositionList: resShiftPositionList,
-        shiftVolunteerList: resShiftVolunteerList,
+        positionList: resShiftPositionList,
         startTime: resShiftPositionFirst.start_time,
         type: resShiftPositionFirst.shift_name,
-      });
+        volunteerList: resShiftVolunteerList,
+      };
+
+      return res.status(200).json(resShiftVolunteerDetails);
     }
 
     // post
     // --------------------
     case "POST": {
       // add volunteer to shift
-      const { noShow, shiftboardId, shiftPositionId, timeId } = JSON.parse(
-        req.body
-      );
+      const {
+        id: timeId,
+        noShow,
+        shiftboardId,
+        shiftPositionId,
+      }: IReqShiftVolunteerItem = JSON.parse(req.body);
       const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT *
         FROM op_volunteer_shifts

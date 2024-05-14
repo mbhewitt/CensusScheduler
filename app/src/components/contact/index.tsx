@@ -29,7 +29,7 @@ import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import { IReqContact } from "src/components/types/contact";
-import type { IResVolunteerDropdownItem } from "src/components/types/volunteers";
+import type { IResVolunteerDefaultItem } from "src/components/types/volunteers";
 import { GENERAL_ROLE_LIST } from "src/constants";
 import { SessionContext } from "src/state/session/context";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
@@ -69,7 +69,7 @@ export const Contact = () => {
     data,
     error,
   }: {
-    data: IResVolunteerDropdownItem[];
+    data: IResVolunteerDefaultItem[];
     error: Error | undefined;
   } = useSWR("/api/volunteers/dropdown?filter=core", fetcherGet);
   const { isMutating, trigger } = useSWRMutation(

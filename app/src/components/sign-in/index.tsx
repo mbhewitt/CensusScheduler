@@ -31,7 +31,7 @@ import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import type { IVolunteerOption } from "src/components/types";
 import { IReqSignIn } from "src/components/types/sign-in";
-import type { IResVolunteerDropdownItem } from "src/components/types/volunteers";
+import type { IResVolunteerDefaultItem } from "src/components/types/volunteers";
 import { SESSION_SIGN_IN } from "src/constants";
 import { SessionContext } from "src/state/session/context";
 import { ensure } from "src/utils/ensure";
@@ -61,7 +61,7 @@ export const SignIn = () => {
     data,
     error,
   }: {
-    data: IResVolunteerDropdownItem[];
+    data: IResVolunteerDefaultItem[];
     error: Error | undefined;
   } = useSWR("/api/volunteers/dropdown", fetcherGet);
   const { isMutating, trigger } = useSWRMutation(

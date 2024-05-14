@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
 import type {
-  IResVolunteerDropdownItem,
+  IResVolunteerDefaultItem,
   IResVolunteerRoleItem,
 } from "src/components/types/volunteers";
 import { ROLE_CORE_CREW_ID } from "src/constants";
@@ -59,7 +59,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         }
       }
 
-      const resVolunteerList: IResVolunteerDropdownItem[] = [];
+      const resVolunteerList: IResVolunteerDefaultItem[] = [];
 
       dbVolunteerList.forEach(
         ({
@@ -69,7 +69,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           shiftboard_id,
           world_name,
         }: RowDataPacket) => {
-          const resVolunteerLast: IResVolunteerDropdownItem =
+          const resVolunteerLast: IResVolunteerDefaultItem =
             resVolunteerList[resVolunteerList.length - 1];
 
           // if volunteer in last row is same as this row
@@ -84,7 +84,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             });
             // else add new volunteer
           } else {
-            const resVolunteerNew: IResVolunteerDropdownItem = {
+            const resVolunteerNew: IResVolunteerDefaultItem = {
               playaName: playa_name,
               roleList: [] as IResVolunteerRoleItem[],
               shiftboardId: shiftboard_id,

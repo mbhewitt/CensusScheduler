@@ -34,38 +34,3 @@ export type TAccountActions =
   | "accountTypeAdmin"
   | "accountTypeAuthenticated"
   | "accountTypeUnauthenticated";
-
-// shifts
-// --------------------
-export interface IResShiftItem {
-  categoryId: number;
-  date: string;
-  dateName: string;
-  departmentName: string;
-  endTime: string;
-  filledSlots: number;
-  startTime: string;
-  timeId: number;
-  totalSlots: number;
-  type: string;
-  year: string;
-}
-export interface IResShiftPositionCountItem {
-  filledSlots: number;
-  positionName: string;
-  positionDetails: string;
-  positionId: number;
-  prerequisiteId: number;
-  roleRequiredId: number;
-  shiftPositionId: number;
-  totalSlots: number;
-}
-export interface IResShiftVolunteerItem {
-  isCheckedIn: string;
-  playaName: string;
-  positionName: string;
-  shiftboardId: number;
-  shiftPositionId: number;
-  timeId: number;
-  worldName: string;
-}
