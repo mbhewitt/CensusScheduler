@@ -2,7 +2,10 @@ import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
-import type { IResShiftCategoryItem } from "src/components/types";
+import type {
+  IReqShiftCategoryItem,
+  IResShiftCategoryItem,
+} from "src/components/types/shifts/categories";
 import { generateId } from "src/utils/generateId";
 
 const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -20,16 +23,17 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
         WHERE delete_category=false
         ORDER BY shift_category`
       );
-      const resShiftCategoryList: IResShiftCategoryItem[] =
-        dbShiftCategoryList.map(
-          ({ department, shift_category, shift_category_id }) => {
-            return {
-              departmentName: department,
-              id: shift_category_id,
-              name: shift_category,
-            };
-          }
-        );
+      const resShiftCategoryList = dbShiftCategoryList.map(
+        ({ department, shift_category, shift_category_id }) => {
+          const resShiftCategoryItem: IResShiftCategoryItem = {
+            department: { name: department },
+            id: shift_category_id,
+            name: shift_category,
+          };
+
+          return resShiftCategoryItem;
+        }
+      );
 
       return res.status(200).json(resShiftCategoryList);
     }
@@ -38,7 +42,10 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
     // --------------------
     case "POST": {
       // create category
-      const { departmentName, name } = JSON.parse(req.body);
+      const {
+        department: { name: departmentName },
+        name: categoryName,
+      }: IReqShiftCategoryItem = JSON.parse(req.body);
       const shiftCategoryIdNew = generateId(
         `SELECT shift_category_id
         FROM op_shift_category
@@ -53,7 +60,7 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
           shift_category_id
         )
         VALUES (?, true, ?, ?)`,
-        [departmentName, name, shiftCategoryIdNew]
+        [departmentName, categoryName, shiftCategoryIdNew]
       );
 
       return res.status(201).json({

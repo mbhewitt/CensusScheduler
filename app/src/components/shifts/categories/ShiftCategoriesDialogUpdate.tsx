@@ -13,7 +13,10 @@ import {
   IFormValues,
   ShiftCategoriesDialogForm,
 } from "src/components/shifts/categories/ShiftCategoriesDialogForm";
-import type { IResShiftCategoryItem } from "src/components/types";
+import type {
+  IReqShiftCategoryItem,
+  IResShiftCategoryItem,
+} from "src/components/types/shifts/categories";
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IShiftCategoriesDialogUpdateProps {
@@ -56,7 +59,7 @@ export const ShiftCategoriesDialogUpdate = ({
   useEffect(() => {
     if (isDialogOpen) {
       clearErrors();
-      setValue("departmentName", categoryItem.departmentName);
+      setValue("department.name", categoryItem.department.name);
       setValue("name", categoryItem.name);
     }
   }, [categoryItem, clearErrors, isDialogOpen, setValue]);
@@ -65,9 +68,11 @@ export const ShiftCategoriesDialogUpdate = ({
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
+      const body: IReqShiftCategoryItem = formValues;
+
       // update database
       await trigger({
-        body: formValues,
+        body,
         method: "PATCH",
       });
       mutate("/api/shifts/categories");

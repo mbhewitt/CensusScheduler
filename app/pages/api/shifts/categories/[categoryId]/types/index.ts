@@ -2,6 +2,7 @@ import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
+import type { IResShiftCategoryTypeItem } from "src/components/types/shifts/categories";
 
 const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
   const { categoryId } = req.query;
@@ -24,10 +25,12 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
         [categoryId]
       );
       const resTypeList = dbTypeList.map(({ shift_name, shift_name_id }) => {
-        return {
+        const resTypeItem: IResShiftCategoryTypeItem = {
           id: shift_name_id,
           name: shift_name,
         };
+
+        return resTypeItem;
       });
 
       return res.status(200).json(resTypeList);

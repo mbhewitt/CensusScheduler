@@ -9,10 +9,10 @@ import {
 } from "@mui/material";
 import { Control, Controller, FieldErrors } from "react-hook-form";
 
-import { IResShiftCategoryItem } from "src/components/types";
+import { IResShiftCategoryItem } from "src/components/types/shifts/categories";
 
 export interface IFormValues {
-  departmentName: string;
+  department: { name: string };
   name: string;
 }
 interface IShiftCategoriesDialogFormProps {
@@ -24,7 +24,7 @@ interface IShiftCategoriesDialogFormProps {
 }
 
 export const defaultValues: IFormValues = {
-  departmentName: "",
+  department: { name: "" },
   name: "",
 };
 export const ShiftCategoriesDialogForm = ({
@@ -36,7 +36,7 @@ export const ShiftCategoriesDialogForm = ({
   // render
   // --------------------
   const departmentListDisplay = [
-    ...new Set(categoryList.map(({ departmentName }) => departmentName)),
+    ...new Set(categoryList.map(({ department: { name } }) => name)),
   ].sort();
 
   return (
@@ -76,13 +76,13 @@ export const ShiftCategoriesDialogForm = ({
       />
       <Controller
         control={control}
-        name="departmentName"
+        name="department.name"
         render={({ field }) => (
           <FormControl fullWidth variant="standard">
             <InputLabel id="to">Department *</InputLabel>
             <Select
               {...field}
-              error={Boolean(errors.departmentName)}
+              error={Boolean(errors.department?.name)}
               label="Department"
               labelId="department"
               required
@@ -93,9 +93,9 @@ export const ShiftCategoriesDialogForm = ({
                 </MenuItem>
               ))}
             </Select>
-            {errors.departmentName && (
+            {errors.department?.name && (
               <FormHelperText error>
-                {errors.departmentName.message}
+                {errors.department?.name.message}
               </FormHelperText>
             )}
           </FormControl>

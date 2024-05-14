@@ -8,9 +8,13 @@ import {
   yellow,
 } from "@mui/material/colors";
 
-import { IResShiftItem } from "src/components/types";
+interface IRowList {
+  department: {
+    name: string;
+  };
+}
 
-export const getColorMap = (rowList: IResShiftItem[]) => {
+export const getColorMap = (rowList: IRowList[]) => {
   const colorList = [
     red[100],
     orange[100],
@@ -23,9 +27,9 @@ export const getColorMap = (rowList: IResShiftItem[]) => {
   let colorIndexCurrent = 0;
   const colorMap: { [key: string]: string } = {};
 
-  rowList.forEach(({ departmentName }) => {
-    if (!colorMap[departmentName]) {
-      colorMap[departmentName] = colorList[colorIndexCurrent];
+  rowList.forEach(({ department: { name } }) => {
+    if (!colorMap[name]) {
+      colorMap[name] = colorList[colorIndexCurrent];
       colorIndexCurrent += 1;
     }
   });

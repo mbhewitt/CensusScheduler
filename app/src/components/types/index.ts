@@ -29,14 +29,6 @@ export type TAccountActions =
   | "accountTypeAuthenticated"
   | "accountTypeUnauthenticated";
 
-// shift categories
-// --------------------
-export interface IResShiftCategoryItem {
-  departmentName: string;
-  id: number;
-  name: string;
-}
-
 // shift positions
 // --------------------
 export interface IReqShiftPositionItem {

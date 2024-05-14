@@ -63,9 +63,7 @@ export const RolesDialogCreate = ({
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
-      const body: IReqRoleListItem = {
-        name: formValues.name,
-      };
+      const body: IReqRoleListItem = formValues;
 
       // update database
       await trigger({
