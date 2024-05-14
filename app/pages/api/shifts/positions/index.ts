@@ -2,7 +2,10 @@ import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
-import type { IResShiftPositionItem } from "src/components/types";
+import type {
+  IReqShiftPositionItem,
+  IResShiftPositionRowItem,
+} from "src/components/types/shifts/positions";
 import { generateId } from "src/utils/generateId";
 
 const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -19,13 +22,16 @@ const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
         WHERE delete_position=false
         ORDER BY position`
       );
-      const resShiftPositionList: IResShiftPositionItem[] =
-        dbShiftPositionList.map(({ position_type_id, position }) => {
-          return {
+      const resShiftPositionList = dbShiftPositionList.map(
+        ({ position_type_id, position }) => {
+          const resShiftPositionItem: IResShiftPositionRowItem = {
             id: position_type_id,
             name: position,
           };
-        });
+
+          return resShiftPositionItem;
+        }
+      );
 
       return res.status(200).json(resShiftPositionList);
     }
@@ -36,14 +42,14 @@ const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
       // create position
       const {
         critical,
+        details,
         endTimeOffset,
         lead,
-        positionDetails,
         name: positionName,
         prerequisite: { id: prerequisiteId },
         role: { id: roleId },
         startTimeOffset,
-      } = JSON.parse(req.body);
+      }: IReqShiftPositionItem = JSON.parse(req.body);
       const shiftPositionIdNew = generateId(
         `SELECT position_type_id
         FROM op_position_type
@@ -57,7 +63,7 @@ const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
           critical,
           endTimeOffset,
           lead,
-          positionDetails,
+          details,
           shiftPositionIdNew,
           positionName,
           prerequisiteId,

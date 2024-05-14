@@ -31,16 +31,20 @@ import {
   IFormValues,
   ShiftPositionsForm,
 } from "src/components/shifts/positions/position/ShiftPositionsForm";
-import { IReqShiftPositionItem } from "src/components/types";
+import { IReqShiftPositionItem } from "src/components/types/shifts/positions";
+import type { IResShiftPositionDefaults } from "src/components/types/shifts/positions";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 export const ShiftPositionsCreate = () => {
   // fetching, mutation, and revalidation
   // --------------------
-  const { data: dataDefaults, error: errorDefaults } = useSWR(
-    "/api/shifts/positions/defaults",
-    fetcherGet
-  );
+  const {
+    data: dataDefaults,
+    error: errorDefaults,
+  }: {
+    data: IResShiftPositionDefaults;
+    error: Error | undefined;
+  } = useSWR("/api/shifts/positions/defaults", fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     "/api/shifts/positions",
     fetcherTrigger
@@ -68,27 +72,28 @@ export const ShiftPositionsCreate = () => {
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
-      const [prerequisiteFound, roleFound] = findList(dataDefaults, formValues);
-
-      if (prerequisiteFound === undefined || roleFound === undefined) {
-        throw new TypeError("Prerequisite and/or role cannot be found.");
-      }
-
-      const reqBody: IReqShiftPositionItem = {
+      const [prerequisiteIdFound, roleIdFound] = findList(
+        dataDefaults,
+        formValues
+      );
+      const body: IReqShiftPositionItem = {
         critical: formValues.critical,
         details: formValues.details,
         endTimeOffset: formValues.endTimeOffset,
-        id: formValues.id,
         lead: formValues.lead,
         name: formValues.name,
-        prerequisite: prerequisiteFound,
-        role: roleFound,
+        prerequisite: {
+          id: prerequisiteIdFound,
+        },
+        role: {
+          id: roleIdFound,
+        },
         startTimeOffset: formValues.startTimeOffset,
       };
 
       // update database
       await trigger({
-        body: reqBody,
+        body,
         method: "POST",
       });
       enqueueSnackbar(

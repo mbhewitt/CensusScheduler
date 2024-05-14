@@ -34,7 +34,7 @@ import { RolesDialogDelete } from "src/components/roles/RolesDialogDelete";
 import { RolesDialogUpdate } from "src/components/roles/RolesDialogUpdate";
 import type {
   IReqRoleDisplayItem,
-  IResRoleListItem,
+  IResRoleRowItem,
 } from "src/components/types/roles";
 import {
   ROLE_ADMIN_ID,
@@ -78,7 +78,7 @@ export const Roles = () => {
     data,
     error,
   }: {
-    data: IResRoleListItem[];
+    data: IResRoleRowItem[];
     error: Error | undefined;
   } = useSWR("/api/roles", fetcherGet);
   const { mutate } = useSWRConfig();

@@ -21,7 +21,7 @@ import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import type {
-  IResRoleListItem,
+  IResRoleRowItem,
   IResRoleVolunteerItem,
 } from "src/components/types/roles";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
@@ -29,7 +29,7 @@ import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 interface IRolesDialogDeleteProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
-  roleItem: IResRoleListItem;
+  roleItem: IResRoleRowItem;
 }
 
 export const RolesDialogDelete = ({

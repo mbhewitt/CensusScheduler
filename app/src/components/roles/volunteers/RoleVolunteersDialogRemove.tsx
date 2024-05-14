@@ -16,7 +16,7 @@ import { DialogContainer } from "src/components/general/DialogContainer";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import type {
   IReqRoleVolunteerItem,
-  IResRoleListItem,
+  IResRoleRowItem,
   IResRoleVolunteerItem,
 } from "src/components/types/roles";
 import { fetcherTrigger } from "src/utils/fetcher";
@@ -24,7 +24,7 @@ import { fetcherTrigger } from "src/utils/fetcher";
 interface IRoleVolunteersDialogRemoveProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
-  roleItem: IResRoleListItem;
+  roleItem: IResRoleRowItem;
   volunteerItem: IResRoleVolunteerItem;
 }
 

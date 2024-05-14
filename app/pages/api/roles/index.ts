@@ -2,7 +2,7 @@ import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
-import type { IResRoleListItem } from "src/components/types/roles";
+import type { IResRoleRowItem } from "src/components/types/roles";
 import { generateId } from "src/utils/generateId";
 
 const roles = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -20,9 +20,9 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
         WHERE delete_role=false
         ORDER BY role`
       );
-      const resRoleList: IResRoleListItem[] = dbRoleList.map(
+      const resRoleList: IResRoleRowItem[] = dbRoleList.map(
         ({ display, role, role_id }) => {
-          const resRoleItem: IResRoleListItem = {
+          const resRoleItem: IResRoleRowItem = {
             display: Boolean(display),
             id: role_id,
             name: role,

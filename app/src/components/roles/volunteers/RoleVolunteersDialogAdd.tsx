@@ -25,7 +25,7 @@ import type {
 } from "src/components/types";
 import type {
   IReqRoleVolunteerItem,
-  IResRoleListItem,
+  IResRoleRowItem,
   IResRoleVolunteerItem,
 } from "src/components/types/roles";
 import { ensure } from "src/utils/ensure";
@@ -37,7 +37,7 @@ interface IFormValues {
 interface IRoleVolunteersDialogAddProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
-  roleItem: IResRoleListItem;
+  roleItem: IResRoleRowItem;
   roleVolunteerList: IResRoleVolunteerItem[];
 }
 

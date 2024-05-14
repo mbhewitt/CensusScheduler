@@ -15,16 +15,13 @@ import {
   IFormValues,
   RolesDialogForm,
 } from "src/components/roles/RolesDialogForm";
-import type {
-  IReqRoleListItem,
-  IResRoleListItem,
-} from "src/components/types/roles";
+import type { IReqRoleItem, IResRoleRowItem } from "src/components/types/roles";
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IRolesDialogCreateProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
-  roleList: IResRoleListItem[];
+  roleList: IResRoleRowItem[];
 }
 
 export const RolesDialogCreate = ({
@@ -63,7 +60,7 @@ export const RolesDialogCreate = ({
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
-      const body: IReqRoleListItem = formValues;
+      const body: IReqRoleItem = formValues;
 
       // update database
       await trigger({

@@ -29,7 +29,7 @@ import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import type {
   IReqRoleBehavioralStandardsItem,
-  IResRoleListItem,
+  IResRoleRowItem,
 } from "src/components/types/roles";
 import {
   ROLE_BEHAVIORAL_STANDARDS_ID,
@@ -64,7 +64,7 @@ export const BehavioralStandards = () => {
     data,
     error,
   }: {
-    data: IResRoleListItem;
+    data: IResRoleRowItem;
     error: Error | undefined;
   } = useSWR(`/api/roles/${ROLE_BEHAVIORAL_STANDARDS_ID}`, fetcherGet);
   const { isMutating, trigger } = useSWRMutation(

@@ -2,7 +2,10 @@ import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
-import type { IReqShiftPositionItem } from "src/components/types";
+import type {
+  IReqShiftPositionItem,
+  IResShiftPositionItem,
+} from "src/components/types/shifts/positions";
 
 const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
   const { positionId } = req.query;
@@ -20,9 +23,7 @@ const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
           pt.position_details,
           pt.position_type_id,
           pt.position,
-          pt.prerequisite_id,
           pt.start_time_offset,
-          r.role_id,
           r.role,
           sc.shift_category
         FROM op_position_type AS pt
@@ -33,40 +34,35 @@ const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
         WHERE pt.position_type_id=?`,
         [positionId]
       );
-      const resShiftPositionFirst: IReqShiftPositionItem =
-        dbShiftPositionList.map(
-          ({
-            critical,
-            end_time_offset,
-            lead,
-            position_details,
-            position_type_id,
-            position,
-            prerequisite_id,
-            start_time_offset,
-            role_id,
-            role,
-            shift_category,
-          }) => {
-            return {
-              critical: Boolean(critical),
-              endTimeOffset: end_time_offset,
-              lead: Boolean(lead),
-              details: position_details,
-              id: position_type_id,
-              name: position,
-              prerequisite: {
-                id: prerequisite_id ?? 0,
-                name: shift_category ?? "",
-              },
-              startTimeOffset: start_time_offset,
-              role: {
-                id: role_id ?? 0,
-                name: role ?? "",
-              },
-            };
-          }
-        )[0];
+      const resShiftPositionFirst = dbShiftPositionList.map(
+        ({
+          critical,
+          end_time_offset,
+          lead,
+          position_details,
+          position,
+          start_time_offset,
+          role,
+          shift_category,
+        }) => {
+          const resShiftPositionItem: IResShiftPositionItem = {
+            critical: Boolean(critical),
+            endTimeOffset: end_time_offset,
+            lead: Boolean(lead),
+            details: position_details,
+            name: position,
+            prerequisite: {
+              name: shift_category ?? "",
+            },
+            startTimeOffset: start_time_offset,
+            role: {
+              name: role ?? "",
+            },
+          };
+
+          return resShiftPositionItem;
+        }
+      )[0];
 
       return res.status(200).json(resShiftPositionFirst);
     }
@@ -77,13 +73,13 @@ const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
       // update position
       const {
         critical,
+        details,
         endTimeOffset,
         lead,
-        details,
         name: positionName,
         prerequisite: { id: prerequisiteId },
-        startTimeOffset,
         role: { id: roleId },
+        startTimeOffset,
       }: IReqShiftPositionItem = JSON.parse(req.body);
 
       await pool.query<RowDataPacket[]>(

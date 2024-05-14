@@ -21,13 +21,16 @@ import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
-import type { IResShiftPositionItem } from "src/components/types";
+import type {
+  IResShiftPositionRowItem,
+  IResShiftPositionTypeItem,
+} from "src/components/types/shifts/positions";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IShiftPositionsDialogDeleteProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
-  positionItem: IResShiftPositionItem;
+  positionItem: IResShiftPositionRowItem;
 }
 
 export const ShiftPositionsDialogDelete = ({
@@ -37,10 +40,13 @@ export const ShiftPositionsDialogDelete = ({
 }: IShiftPositionsDialogDeleteProps) => {
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR(
-    `/api/shifts/positions/${positionId}/types`,
-    fetcherGet
-  );
+  const {
+    data,
+    error,
+  }: {
+    data: IResShiftPositionTypeItem[];
+    error: Error | undefined;
+  } = useSWR(`/api/shifts/positions/${positionId}/types`, fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     `/api/shifts/positions/${positionId}`,
     fetcherTrigger
@@ -124,27 +130,19 @@ export const ShiftPositionsDialogDelete = ({
             </Typography>
           </DialogContentText>
           <List sx={{ display: "inline-block", pl: 2, listStyleType: "disc" }}>
-            {data.map(
-              ({
-                id: typeId,
-                name: typeName,
-              }: {
-                id: number;
-                name: string;
-              }) => {
-                return (
-                  <ListItem
-                    disablePadding
-                    key={typeId}
-                    sx={{ display: "list-item", pl: 0 }}
-                  >
-                    <Link href={`/shifts/types/update/${typeId}`}>
-                      <ListItemText>{typeName}</ListItemText>
-                    </Link>
-                  </ListItem>
-                );
-              }
-            )}
+            {data.map(({ id: typeId, name: typeName }) => {
+              return (
+                <ListItem
+                  disablePadding
+                  key={typeId}
+                  sx={{ display: "list-item", pl: 0 }}
+                >
+                  <Link href={`/shifts/types/update/${typeId}`}>
+                    <ListItemText>{typeName}</ListItemText>
+                  </Link>
+                </ListItem>
+              );
+            })}
           </List>
         </>
       ) : (

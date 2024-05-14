@@ -32,7 +32,11 @@ import {
   IFormValues,
   ShiftPositionsForm,
 } from "src/components/shifts/positions/position/ShiftPositionsForm";
-import { IReqShiftPositionItem } from "src/components/types";
+import type {
+  IReqShiftPositionItem,
+  IResShiftPositionDefaults,
+  IResShiftPositionItem,
+} from "src/components/types/shifts/positions";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 export const ShiftPositionsUpdate = () => {
@@ -44,11 +48,20 @@ export const ShiftPositionsUpdate = () => {
   // --------------------
   const router = useRouter();
   const { positionId } = router.query;
-  const { data: dataDefaults, error: errorDefaults } = useSWR(
-    isMounted ? "/api/shifts/positions/defaults" : null,
-    fetcherGet
-  );
-  const { data: dataCurrent, error: errorCurrent } = useSWR(
+  const {
+    data: dataDefaults,
+    error: errorDefaults,
+  }: {
+    data: IResShiftPositionDefaults;
+    error: Error | undefined;
+  } = useSWR(isMounted ? "/api/shifts/positions/defaults" : null, fetcherGet);
+  const {
+    data: dataCurrent,
+    error: errorCurrent,
+  }: {
+    data: IResShiftPositionItem;
+    error: Error | undefined;
+  } = useSWR(
     isMounted ? `/api/shifts/positions/${positionId}` : null,
     fetcherGet
   );
@@ -83,7 +96,6 @@ export const ShiftPositionsUpdate = () => {
         critical,
         details,
         endTimeOffset,
-        id,
         lead,
         name,
         prerequisite: { name: prerequisiteName },
@@ -95,11 +107,10 @@ export const ShiftPositionsUpdate = () => {
         critical,
         details,
         endTimeOffset,
-        id,
         lead,
         name,
-        prerequisiteName,
-        roleName,
+        prerequisite: { name: prerequisiteName },
+        role: { name: roleName },
         startTimeOffset,
       });
     }
@@ -114,27 +125,28 @@ export const ShiftPositionsUpdate = () => {
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
-      const [prerequisiteFound, roleFound] = findList(dataDefaults, formValues);
-
-      if (prerequisiteFound === undefined || roleFound === undefined) {
-        throw new TypeError("Prerequisite and/or role cannot be found.");
-      }
-
-      const reqBody: IReqShiftPositionItem = {
+      const [prerequisiteIdFound, roleIdFound] = findList(
+        dataDefaults,
+        formValues
+      );
+      const body: IReqShiftPositionItem = {
         critical: formValues.critical,
         details: formValues.details,
         endTimeOffset: formValues.endTimeOffset,
-        id: formValues.id,
         lead: formValues.lead,
         name: formValues.name,
-        prerequisite: prerequisiteFound,
-        role: roleFound,
+        prerequisite: {
+          id: prerequisiteIdFound,
+        },
+        role: {
+          id: roleIdFound,
+        },
         startTimeOffset: formValues.startTimeOffset,
       };
 
       // update database
       await trigger({
-        body: reqBody,
+        body,
         method: "PATCH",
       });
       enqueueSnackbar(

@@ -29,36 +29,8 @@ export type TAccountActions =
   | "accountTypeAuthenticated"
   | "accountTypeUnauthenticated";
 
-// shift positions
-// --------------------
-export interface IReqShiftPositionItem {
-  critical: boolean;
-  details: string;
-  endTimeOffset: number;
-  id: number;
-  lead: boolean;
-  name: string;
-  prerequisite: {
-    id: number;
-    name: string;
-  };
-  role: {
-    id: number;
-    name: string;
-  };
-  startTimeOffset: number;
-}
-export interface IResShiftPositionItem {
-  id: number;
-  name: string;
-}
-
 // shift types
 // --------------------
-export interface IResShiftPositionDefaultItem {
-  id: number;
-  name: string;
-}
 export interface IResShiftTypeCategoryItem {
   id: number;
   name: string;

@@ -32,7 +32,7 @@ import { Hero } from "src/components/layout/Hero";
 import { RoleVolunteersDialogAdd } from "src/components/roles/volunteers/RoleVolunteersDialogAdd";
 import { RoleVolunteersDialogRemove } from "src/components/roles/volunteers/RoleVolunteersDialogRemove";
 import type {
-  IResRoleListItem,
+  IResRoleRowItem,
   IResRoleVolunteerItem,
 } from "src/components/types/roles";
 import { fetcherGet } from "src/utils/fetcher";
@@ -72,7 +72,7 @@ export const RoleVolunteers = () => {
     data: dataRoleItem,
     error: errorRoleItem,
   }: {
-    data: IResRoleListItem;
+    data: IResRoleRowItem;
     error: Error | undefined;
   } = useSWR(isMounted ? `/api/roles/${roleId}` : null, fetcherGet);
   const {

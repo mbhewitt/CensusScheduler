@@ -5,24 +5,27 @@ export interface IReqRoleBehavioralStandardsItem {
   shiftboardId: number;
 }
 
+// details
+// --------------------
+export interface IReqRoleItem {
+  name: string;
+}
+
 // display
 // --------------------
 export interface IReqRoleDisplayItem {
   checked: boolean;
 }
 
-// role list
+// row table
 // --------------------
-export interface IReqRoleListItem {
-  name: string;
-}
-export interface IResRoleListItem {
+export interface IResRoleRowItem {
   display: boolean;
   id: number;
   name: string;
 }
 
-// volunteer
+// volunteers
 // --------------------
 export interface IReqRoleVolunteerItem {
   shiftboardId: number;
