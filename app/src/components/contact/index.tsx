@@ -28,6 +28,7 @@ import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
+import { IReqContact } from "src/components/types/contact";
 import type { IResVolunteerDropdownItem } from "src/components/types/volunteers";
 import { GENERAL_ROLE_LIST } from "src/constants";
 import { SessionContext } from "src/state/session/context";
@@ -64,10 +65,13 @@ export const Contact = () => {
 
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR(
-    "/api/volunteers/dropdown?filter=core",
-    fetcherGet
-  );
+  const {
+    data,
+    error,
+  }: {
+    data: IResVolunteerDropdownItem[];
+    error: Error | undefined;
+  } = useSWR("/api/volunteers/dropdown?filter=core", fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     "/api/contact",
     fetcherTrigger
@@ -118,7 +122,10 @@ export const Contact = () => {
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
-      await trigger({ body: formValues, method: "POST" });
+      const body: IReqContact = formValues;
+
+      // update database
+      await trigger({ body, method: "POST" });
 
       reset(defaultValues);
       enqueueSnackbar(
@@ -243,20 +250,15 @@ export const Contact = () => {
                             </MenuItem>
                           ))}
                           <ListSubheader>Core volunteers</ListSubheader>
-                          {data.map(
-                            ({
-                              playaName,
-                              worldName,
-                            }: IResVolunteerDropdownItem) => (
-                              <MenuItem
-                                key={`${playaName}-${worldName}`}
-                                value={`${playaName} "${worldName}"`}
-                                sx={{ pl: 4 }}
-                              >
-                                {`${playaName} "${worldName}"`}
-                              </MenuItem>
-                            )
-                          )}
+                          {data.map(({ playaName, worldName }) => (
+                            <MenuItem
+                              key={`${playaName}-${worldName}`}
+                              value={`${playaName} "${worldName}"`}
+                              sx={{ pl: 4 }}
+                            >
+                              {`${playaName} "${worldName}"`}
+                            </MenuItem>
+                          ))}
                         </Select>
                       </FormControl>
                     )}
