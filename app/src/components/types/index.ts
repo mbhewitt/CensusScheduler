@@ -29,55 +29,6 @@ export type TAccountActions =
   | "accountTypeAuthenticated"
   | "accountTypeUnauthenticated";
 
-// shift types
-// --------------------
-export interface IResShiftTypeCategoryItem {
-  id: number;
-  name: string;
-}
-export interface IResShiftTypeDefaultItem {
-  id: number;
-  name: string;
-}
-export interface IResShiftTypeInformation {
-  categoryName: string;
-  details: string;
-  isCore: boolean;
-  isOffPlaya: boolean;
-  name: string;
-}
-export interface IResShiftTypeItem {
-  categoryName: string;
-  id: number;
-  name: string;
-}
-export interface IResShiftTypePositionItem {
-  critical: boolean;
-  details: string;
-  endTimeOffset: string;
-  lead: boolean;
-  name: string;
-  positionId: number;
-  prerequisite: string;
-  role: string;
-  startTimeOffset: string;
-}
-export interface IResShiftTypeTimeItem {
-  date: string;
-  endTime: string;
-  instance: string;
-  notes: string;
-  startTime: string;
-  timeId: number;
-}
-export interface IReqShiftTypeInfoItem extends IResShiftTypeInformation {
-  categoryId: string;
-}
-export interface IReqShiftTypePositionItem extends IResShiftTypePositionItem {
-  totalSlots: string;
-  wapPoints: string;
-}
-
 // shifts
 // --------------------
 export interface IResShiftItem {

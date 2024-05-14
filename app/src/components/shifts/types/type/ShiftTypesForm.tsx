@@ -43,35 +43,56 @@ import {
 } from "react-hook-form";
 
 import type {
-  IReqShiftTypePositionItem,
   IResShiftTypeCategoryItem,
-  IResShiftTypeInformation,
-  IResShiftTypeItem,
-  IResShiftTypePositionItem,
-  IResShiftTypeTimeItem,
-} from "src/components/types";
+  IResShiftTypeDefaults,
+} from "src/components/types/shifts/types";
 import { COLOR_BURNING_MAN_BROWN } from "src/constants";
+import { ensure } from "src/utils/ensure";
 import { formatDateName, formatTime } from "src/utils/formatDateTime";
 
 export interface IFormValues {
-  information: IResShiftTypeInformation;
-  positionList: IReqShiftTypePositionItem[];
-  timeList: IResShiftTypeTimeItem[];
-}
-interface IDataDefaults {
-  categoryList: IResShiftTypeCategoryItem[];
-  positionList: IResShiftTypePositionItem[];
-  typeList: IResShiftTypeItem[];
+  information: {
+    category: { name: string };
+    details: string;
+    isCore: boolean;
+    isOffPlaya: boolean;
+    name: string;
+  };
+  positionList: {
+    critical: boolean;
+    details: string;
+    endTimeOffset: string;
+    lead: boolean;
+    name: string;
+    positionId: number;
+    prerequisite: string;
+    role: string;
+    startTimeOffset: string;
+    totalSlots: string;
+    wapPoints: string;
+  }[];
+  timeList: {
+    date: string;
+    endTime: string;
+    instance: string;
+    notes: string;
+    startTime: string;
+    timeId: number;
+  }[];
 }
 interface IShiftTypesFormProps {
   clearErrors: UseFormClearErrors<IFormValues>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<IFormValues, any>;
-  dataDefaults: IDataDefaults;
+  dataDefaults: IResShiftTypeDefaults;
   errors: FieldErrors<IFormValues>;
   getValues: UseFormGetValues<IFormValues>;
-  handlePositionRemove: (index: number, name: string, id: number) => void;
-  handleTimeRemove: (index: number, name: string, id: number) => void;
+  handlePositionRemove: (
+    index: number,
+    name: string,
+    positionId: number
+  ) => void;
+  handleTimeRemove: (index: number, name: string, timeId: number) => void;
   positionAppend: UseFieldArrayAppend<IFormValues, "positionList">;
   positionFields: FieldArrayWithId<IFormValues, "positionList", "id">[];
   setError: UseFormSetError<IFormValues>;
@@ -86,30 +107,30 @@ interface IShiftTypesFormProps {
 // utilities
 // --------------------
 export const findCategoryId = (
-  dataDefaults: IDataDefaults,
+  dataDefaults: IResShiftTypeDefaults,
   formValues: IFormValues
 ) => {
-  const categoryItem = dataDefaults.categoryList.find(
-    ({ name }: { name: string }) => {
-      return name === formValues.information.categoryName;
-    }
+  const categoryIdFound = ensure(
+    dataDefaults.categoryList.find(({ name }) => {
+      return name === formValues.information.category.name;
+    })
   );
 
-  return categoryItem?.id;
+  return categoryIdFound;
 };
 export const processPositionList = (
-  dataDefaults: IDataDefaults,
+  dataDefaults: IResShiftTypeDefaults,
   formValues: IFormValues
 ) => {
   return formValues.positionList.map(({ name, totalSlots, wapPoints }) => {
-    const positionFound = dataDefaults.positionList.find(
-      (positionItem: IResShiftTypePositionItem) => {
+    const positionIdFound = ensure(
+      dataDefaults.positionList.find((positionItem) => {
         return positionItem.name === name;
-      }
-    );
+      })
+    ).id;
 
     return {
-      positionId: positionFound?.positionId,
+      positionId: positionIdFound,
       totalSlots,
       wapPoints,
     };
@@ -134,7 +155,7 @@ export const processTimeList = (formValues: IFormValues) => {
 
 export const defaultValues: IFormValues = {
   information: {
-    categoryName: "",
+    category: { name: "" },
     details: "",
     isCore: false,
     isOffPlaya: false,
@@ -159,10 +180,10 @@ export const defaultValues: IFormValues = {
     {
       date: "",
       endTime: "",
-      timeId: 0,
       instance: "",
       notes: "",
       startTime: "",
+      timeId: 0,
     },
   ],
 };
@@ -247,7 +268,7 @@ export const ShiftTypesForm = ({
               <Grid item xs={6}>
                 <Controller
                   control={control}
-                  name="information.categoryName"
+                  name="information.category.name"
                   render={({ field }) => (
                     <FormControl fullWidth variant="standard">
                       <InputLabel id="to">Category *</InputLabel>
@@ -255,7 +276,7 @@ export const ShiftTypesForm = ({
                         {...field}
                         error={
                           errors.information &&
-                          Boolean(errors.information.categoryName)
+                          Boolean(errors.information.category?.name)
                         }
                         label="Category"
                         labelId="category"
@@ -270,9 +291,9 @@ export const ShiftTypesForm = ({
                         )}
                       </Select>
                       {errors.information &&
-                        errors.information.categoryName && (
+                        errors.information.category?.name && (
                           <FormHelperText error>
-                            {errors.information.categoryName?.message}
+                            {errors.information.category?.name.message}
                           </FormHelperText>
                         )}
                     </FormControl>

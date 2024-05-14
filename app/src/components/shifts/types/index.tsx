@@ -26,7 +26,7 @@ import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { Hero } from "src/components/layout/Hero";
 import { ShiftTypesDialogDelete } from "src/components/shifts/types/ShiftTypesDialogDelete";
-import type { IResShiftTypeItem } from "src/components/types";
+import type { IResShiftTypeRowItem } from "src/components/types/shifts/types";
 import { fetcherGet } from "src/utils/fetcher";
 import {
   setCellHeaderPropsCenter,
@@ -43,7 +43,7 @@ export const ShiftTypes = () => {
   const [dialogCurrent, setDialogCurrent] = useState({
     dialogItem: 0,
     type: {
-      categoryName: "",
+      category: { name: "" },
       id: 0,
       name: "",
     },
@@ -52,7 +52,13 @@ export const ShiftTypes = () => {
 
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR("/api/shifts/types", fetcherGet);
+  const {
+    data,
+    error,
+  }: {
+    data: IResShiftTypeRowItem[];
+    error: Error | undefined;
+  } = useSWR("/api/shifts/types", fetcherGet);
 
   // other hooks
   // --------------------
@@ -89,16 +95,20 @@ export const ShiftTypes = () => {
     },
   ];
   const dataTable = data.map(
-    ({ categoryName, id, name }: IResShiftTypeItem) => {
+    ({
+      category: { name: categoryName },
+      id: typeId,
+      name: typeName,
+    }: IResShiftTypeRowItem) => {
       return [
-        name,
+        typeName,
         categoryName,
         <MoreMenu
           Icon={<MoreHorizIcon />}
-          key={`${id}-menu`}
+          key={`${typeId}-menu`}
           MenuList={
             <MenuList>
-              <Link href={`/shifts/types/update/${id}`}>
+              <Link href={`/shifts/types/update/${typeId}`}>
                 <MenuItem>
                   <ListItemIcon>
                     <EditCalendarIcon />
@@ -110,7 +120,11 @@ export const ShiftTypes = () => {
                 onClick={() => {
                   setDialogCurrent({
                     dialogItem: DialogList.Delete,
-                    type: { categoryName, id, name },
+                    type: {
+                      category: { name: categoryName },
+                      id: typeId,
+                      name: typeName,
+                    },
                   });
                   setIsDialogOpen(true);
                 }}

@@ -34,8 +34,7 @@ const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
         WHERE pt.position_type_id=?`,
         [positionId]
       );
-      const [dbShiftPositionFirst] = dbShiftPositionList;
-      const resShiftPositionFirst = dbShiftPositionFirst.map(
+      const [resShiftPositionFirst] = dbShiftPositionList.map(
         ({
           critical,
           end_time_offset,

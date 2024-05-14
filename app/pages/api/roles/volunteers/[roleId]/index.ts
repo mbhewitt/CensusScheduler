@@ -2,7 +2,10 @@ import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
-import type { IResRoleVolunteerItem } from "src/components/types/roles";
+import type {
+  IReqRoleVolunteerItem,
+  IResRoleVolunteerItem,
+} from "src/components/types/roles";
 
 const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   const { roleId } = req.query;
@@ -27,8 +30,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         ORDER BY v.playa_name`,
         [roleId]
       );
-      const [dbRoleVolunteerFirst] = dbRoleVolunteerList;
-      const resRoleVolunteerFirst = dbRoleVolunteerFirst.map(
+      const [resRoleVolunteerFirst] = dbRoleVolunteerList.map(
         ({ playa_name, shiftboard_id, world_name }: RowDataPacket) => {
           const resRoleVolunteerItem: IResRoleVolunteerItem = {
             playaName: playa_name,
@@ -93,7 +95,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     // --------------------
     case "DELETE": {
       // remove role volunteer
-      const { shiftboardId } = JSON.parse(req.body);
+      const { shiftboardId }: IReqRoleVolunteerItem = JSON.parse(req.body);
 
       await pool.query<RowDataPacket[]>(
         `UPDATE op_volunteer_roles

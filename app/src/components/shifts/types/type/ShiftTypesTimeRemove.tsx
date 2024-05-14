@@ -20,6 +20,7 @@ import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
+import type { IResShiftTypeTimePositionItem } from "src/components/types/shifts/types";
 import { fetcherGet } from "src/utils/fetcher";
 
 interface ITimeItem {
@@ -48,7 +49,13 @@ export const ShiftTypesTimeRemove = ({
 }: IShiftTypesTimeRemoveProps) => {
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR(
+  const {
+    data,
+    error,
+  }: {
+    data: IResShiftTypeTimePositionItem[];
+    error: Error | undefined;
+  } = useSWR(
     `/api/shifts/types/${typeId}/times/${timeItem.id}/positions`,
     fetcherGet
   );

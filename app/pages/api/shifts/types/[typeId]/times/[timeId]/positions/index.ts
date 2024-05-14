@@ -2,6 +2,7 @@ import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
+import { IResShiftTypeTimePositionItem } from "src/components/types/shifts/types";
 
 const shiftTypeTimePositions = async (
   req: NextApiRequest,
@@ -35,10 +36,12 @@ const shiftTypeTimePositions = async (
       );
       const resPositionList = dbPositionList.map(
         ({ position, position_type_id }) => {
-          return {
+          const resPositionItem: IResShiftTypeTimePositionItem = {
             id: position_type_id,
             name: position,
           };
+
+          return resPositionItem;
         }
       );
 

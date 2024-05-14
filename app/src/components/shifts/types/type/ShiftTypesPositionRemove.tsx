@@ -20,15 +20,12 @@ import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
+import type { IResShiftTypePositionTimeItem } from "src/components/types/shifts/types";
 import { fetcherGet } from "src/utils/fetcher";
 
 interface IPositionItem {
   id: number;
   index: number;
-  name: string;
-}
-interface ITimeItem {
-  id: number;
   name: string;
 }
 interface IShiftTypesPositionRemoveProps {
@@ -48,7 +45,13 @@ export const ShiftTypesPositionRemove = ({
 }: IShiftTypesPositionRemoveProps) => {
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR(
+  const {
+    data,
+    error,
+  }: {
+    data: IResShiftTypePositionTimeItem[];
+    error: Error | undefined;
+  } = useSWR(
     `/api/shifts/types/${typeId}/positions/${positionItem.id}/times`,
     fetcherGet
   );
@@ -111,7 +114,7 @@ export const ShiftTypesPositionRemove = ({
             </Typography>
           </DialogContentText>
           <List sx={{ display: "inline-block", pl: 2, listStyleType: "disc" }}>
-            {data.map((timeItem: ITimeItem) => {
+            {data.map((timeItem) => {
               return (
                 <ListItem
                   disablePadding

@@ -4,9 +4,9 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { pool } from "lib/database";
 import {
   IResShiftTypeCategoryItem,
-  IResShiftTypeDefaultItem,
+  IResShiftTypeItem,
   IResShiftTypePositionItem,
-} from "src/components/types";
+} from "src/components/types/shifts/types";
 
 const shiftTypeDefaults = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
@@ -21,12 +21,14 @@ const shiftTypeDefaults = async (req: NextApiRequest, res: NextApiResponse) => {
         FROM op_shift_name
         ORDER BY shift_name`
       );
-      const resTypeList: IResShiftTypeDefaultItem[] = dbTypeList.map(
-        ({ shift_name, shift_name_id }) => ({
+      const resTypeList = dbTypeList.map(({ shift_name, shift_name_id }) => {
+        const resTypeItem: IResShiftTypeItem = {
           id: shift_name_id,
           name: shift_name,
-        })
-      );
+        };
+
+        return resTypeItem;
+      });
       // get all categories
       const [dbCategoryList] = await pool.query<RowDataPacket[]>(
         `SELECT
@@ -36,10 +38,14 @@ const shiftTypeDefaults = async (req: NextApiRequest, res: NextApiResponse) => {
         ORDER BY shift_category`
       );
       const resCategoryList: IResShiftTypeCategoryItem[] = dbCategoryList.map(
-        ({ shift_category, shift_category_id }) => ({
-          id: shift_category_id,
-          name: shift_category,
-        })
+        ({ shift_category, shift_category_id }) => {
+          const resCategoryItem: IResShiftTypeCategoryItem = {
+            id: shift_category_id,
+            name: shift_category,
+          };
+
+          return resCategoryItem;
+        }
       );
       // get all positions
       const [dbPositionList] = await pool.query<RowDataPacket[]>(
@@ -71,17 +77,21 @@ const shiftTypeDefaults = async (req: NextApiRequest, res: NextApiResponse) => {
           role,
           shift_category,
           start_time_offset,
-        }) => ({
-          critical: Boolean(critical),
-          details: position_details,
-          endTimeOffset: end_time_offset,
-          lead: Boolean(lead),
-          name: position,
-          positionId: position_type_id,
-          prerequisite: shift_category ?? "",
-          role: role ?? "",
-          startTimeOffset: start_time_offset,
-        })
+        }) => {
+          const resPositionItem: IResShiftTypePositionItem = {
+            critical: Boolean(critical),
+            details: position_details,
+            endTimeOffset: end_time_offset,
+            lead: Boolean(lead),
+            name: position,
+            positionId: position_type_id,
+            prerequisite: shift_category ?? "",
+            role: role ?? "",
+            startTimeOffset: start_time_offset,
+          };
+
+          return resPositionItem;
+        }
       );
 
       return res.status(200).json({

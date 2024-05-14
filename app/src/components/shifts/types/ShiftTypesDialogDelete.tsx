@@ -22,17 +22,16 @@ import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import type {
-  IResShiftTypeItem,
-  IResShiftTypePositionItem,
-  IResShiftTypeTimeItem,
-} from "src/components/types";
+  IResShiftTypeCurrent,
+  IResShiftTypeRowItem,
+} from "src/components/types/shifts/types";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 import { formatDateName, formatTime } from "src/utils/formatDateTime";
 
 interface IShiftTypesDialogDeleteProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
-  typeItem: IResShiftTypeItem;
+  typeItem: IResShiftTypeRowItem;
 }
 
 export const ShiftTypesDialogDelete = ({
@@ -42,7 +41,13 @@ export const ShiftTypesDialogDelete = ({
 }: IShiftTypesDialogDeleteProps) => {
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR(`/api/shifts/types/${id}`, fetcherGet);
+  const {
+    data,
+    error,
+  }: {
+    data: IResShiftTypeCurrent;
+    error: Error | undefined;
+  } = useSWR(`/api/shifts/types/${id}`, fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     `/api/shifts/types/${id}`,
     fetcherTrigger
@@ -134,19 +139,17 @@ export const ShiftTypesDialogDelete = ({
               <List
                 sx={{ display: "inline-block", pl: 2, listStyleType: "disc" }}
               >
-                {data.positionList.map(
-                  ({ positionId, name }: IResShiftTypePositionItem) => {
-                    return (
-                      <ListItem
-                        disablePadding
-                        key={positionId}
-                        sx={{ display: "list-item", pl: 0 }}
-                      >
-                        <ListItemText>{name}</ListItemText>
-                      </ListItem>
-                    );
-                  }
-                )}
+                {data.positionList.map(({ positionId, name }) => {
+                  return (
+                    <ListItem
+                      disablePadding
+                      key={positionId}
+                      sx={{ display: "list-item", pl: 0 }}
+                    >
+                      <ListItemText>{name}</ListItemText>
+                    </ListItem>
+                  );
+                })}
               </List>
             </Box>
           )}
@@ -158,27 +161,20 @@ export const ShiftTypesDialogDelete = ({
               <List
                 sx={{ display: "inline-block", pl: 2, listStyleType: "disc" }}
               >
-                {data.timeList.map(
-                  ({
-                    date,
-                    endTime,
-                    timeId,
-                    startTime,
-                  }: IResShiftTypeTimeItem) => {
-                    return (
-                      <ListItem
-                        disablePadding
-                        key={timeId}
-                        sx={{ display: "list-item", pl: 0 }}
-                      >
-                        <ListItemText>{`${formatDateName(date)}, ${formatTime(
-                          startTime,
-                          endTime
-                        )}`}</ListItemText>
-                      </ListItem>
-                    );
-                  }
-                )}
+                {data.timeList.map(({ date, endTime, timeId, startTime }) => {
+                  return (
+                    <ListItem
+                      disablePadding
+                      key={timeId}
+                      sx={{ display: "list-item", pl: 0 }}
+                    >
+                      <ListItemText>{`${formatDateName(date)}, ${formatTime(
+                        startTime,
+                        endTime
+                      )}`}</ListItemText>
+                    </ListItem>
+                  );
+                })}
               </List>
             </Box>
           )}

@@ -21,8 +21,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
         WHERE role_id=?`,
         [roleId]
       );
-      const [dbRoleFirst] = dbRoleList;
-      const resRoleFirst = dbRoleFirst.map(
+      const [resRoleFirst] = dbRoleList.map(
         ({ display, role, role_id }: RowDataPacket) => {
           const resRoleItem: IResRoleRowItem = {
             display: Boolean(display),
