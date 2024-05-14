@@ -77,17 +77,17 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         [timeId]
       );
       const [resShiftPositionFirst] = dbShiftPositionList;
-      const resShiftPositionList: IResShiftPositionCountItem[] =
-        dbShiftPositionList.map(
-          ({
-            position_details,
-            position_type_id,
-            position,
-            prerequisite_id,
-            role_id,
-            shift_position_id,
-            total_slots,
-          }) => ({
+      const resShiftPositionList = dbShiftPositionList.map(
+        ({
+          position_details,
+          position_type_id,
+          position,
+          prerequisite_id,
+          role_id,
+          shift_position_id,
+          total_slots,
+        }) => {
+          const resShiftPositionItem: IResShiftPositionCountItem = {
             filledSlots: 0,
             positionName: position,
             positionDetails: position_details,
@@ -96,28 +96,33 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             roleRequiredId: role_id ?? 0,
             shiftPositionId: shift_position_id,
             totalSlots: total_slots,
-          })
-        );
-      const resShiftVolunteerList: IResShiftVolunteerItem[] =
-        dbShiftVolunteerList.map(
-          ({
-            noshow,
-            playa_name,
-            position,
-            shift_position_id,
-            shift_times_id,
-            shiftboard_id,
-            world_name,
-          }) => ({
-            noShow: noshow,
+          };
+
+          return resShiftPositionItem;
+        }
+      );
+      const resShiftVolunteerList = dbShiftVolunteerList.map(
+        ({
+          noshow,
+          playa_name,
+          position,
+          shift_position_id,
+          shift_times_id,
+          shiftboard_id,
+          world_name,
+        }) => {
+          const resShiftVolunteerItem: IResShiftVolunteerItem = {
+            isCheckedIn: noshow,
             playaName: playa_name,
             positionName: position,
             shiftboardId: shiftboard_id,
             shiftPositionId: shift_position_id,
             timeId: shift_times_id,
             worldName: world_name,
-          })
-        );
+          };
+          return resShiftVolunteerItem;
+        }
+      );
 
       resShiftVolunteerList.forEach((shiftVolunteerItem) => {
         const positionFound = resShiftPositionList.find(

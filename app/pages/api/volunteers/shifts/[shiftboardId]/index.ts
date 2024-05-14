@@ -6,7 +6,7 @@ import {
   shiftVolunteerCheckIn,
   shiftVolunteerRemove,
 } from "pages/api/general/shiftVolunteers";
-import type { IResVolunteerShiftItem } from "src/components/types";
+import type { IResVolunteerShiftItem } from "src/components/types/volunteers";
 
 const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
@@ -44,30 +44,33 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
         ORDER BY st.start_time`,
         [shiftboardId]
       );
-      const resVolunteerShiftList: IResVolunteerShiftItem[] =
-        dbVolunteerShiftList.map(
-          ({
-            department,
-            date,
-            datename,
-            end_time,
-            noshow,
-            position,
-            shift_position_id,
-            shift_times_id,
-            start_time,
-          }) => ({
+      const resVolunteerShiftList = dbVolunteerShiftList.map(
+        ({
+          department,
+          date,
+          datename,
+          end_time,
+          noshow,
+          position,
+          shift_position_id,
+          shift_times_id,
+          start_time,
+        }) => {
+          const resVolunterShiftItem: IResVolunteerShiftItem = {
             date,
             dateName: datename ?? "",
-            departmentName: department ?? "",
+            department: { name: department ?? "" },
             endTime: end_time,
             noShow: noshow,
-            positionName: position,
+            position: { name: position },
             shiftPositionId: shift_position_id,
             startTime: start_time,
             timeId: shift_times_id,
-          })
-        );
+          };
+
+          return resVolunterShiftItem;
+        }
+      );
 
       return res.status(200).json(resVolunteerShiftList);
     }

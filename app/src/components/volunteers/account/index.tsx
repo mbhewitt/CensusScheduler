@@ -38,7 +38,11 @@ import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
-import type { IResVolunteerRoleItem } from "src/components/types";
+import type {
+  IReqVolunteerAccount,
+  IResVolunteerAccount,
+  IResVolunteerRoleItem,
+} from "src/components/types/volunteers";
 import { DeveloperMode } from "src/components/volunteers/account/DeveloperMode";
 import { ResetPasscodeDialog } from "src/components/volunteers/account/ResetPasscodeDialog";
 import { VolunteerShifts } from "src/components/volunteers/shifts";
@@ -88,7 +92,13 @@ export const Account = () => {
   // --------------------
   const router = useRouter();
   const { shiftboardId } = router.query;
-  const { data, error } = useSWR(
+  const {
+    data,
+    error,
+  }: {
+    data: IResVolunteerAccount;
+    error: Error | undefined;
+  } = useSWR(
     isMounted ? `/api/volunteers/account/${shiftboardId}` : null,
     fetcherGet
   );
@@ -151,7 +161,9 @@ export const Account = () => {
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
-      await trigger({ body: formValues, method: "PATCH" });
+      const body: IReqVolunteerAccount = formValues;
+
+      await trigger({ body, method: "PATCH" });
 
       enqueueSnackbar(
         <SnackbarText>

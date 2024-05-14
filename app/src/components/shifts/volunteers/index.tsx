@@ -223,9 +223,9 @@ export const ShiftVolunteers = () => {
   const isAdmin = checkIsAdmin(accountType, roleList);
 
   const handleCheckInToggle = async ({
-    checked,
+    isCheckedIn,
     playaName,
-    positionName,
+    position: { name: positionName },
     shiftboardId,
     shiftPositionId,
     timeId,
@@ -234,7 +234,7 @@ export const ShiftVolunteers = () => {
     try {
       await trigger({
         body: {
-          checked,
+          isCheckedIn,
           shiftboardId,
           shiftPositionId,
           timeId,
@@ -242,7 +242,7 @@ export const ShiftVolunteers = () => {
         method: "PATCH",
       });
       socket.emit("req-check-in-toggle", {
-        checked,
+        isCheckedIn,
         shiftboardId,
         shiftPositionId,
         timeId,
@@ -253,7 +253,7 @@ export const ShiftVolunteers = () => {
             {playaName} &quot;{worldName}&quot;
           </strong>{" "}
           for <strong>{positionName}</strong> has{" "}
-          <strong>checked {checked ? "in" : "out"}</strong>
+          <strong>checked {isCheckedIn ? "in" : "out"}</strong>
         </SnackbarText>,
         {
           variant: "success",
@@ -349,7 +349,7 @@ export const ShiftVolunteers = () => {
     dataShiftVolunteersItem.shiftVolunteerList
   ).map(
     ({
-      noShow,
+      isCheckedIn,
       playaName,
       positionName,
       shiftboardId,
@@ -362,13 +362,15 @@ export const ShiftVolunteers = () => {
         worldName,
         positionName,
         <Switch
-          checked={noShow === ""}
+          checked={isCheckedIn === ""}
           disabled={!isCheckInAvailable}
           onChange={(event) =>
             handleCheckInToggle({
-              checked: event.target.checked,
+              isCheckedIn: event.target.checked,
               playaName,
-              positionName,
+              position: {
+                name: positionName,
+              },
               shiftboardId,
               shiftPositionId,
               timeId,

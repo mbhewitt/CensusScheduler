@@ -2,7 +2,10 @@ import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
-import type { IResVolunteerAccount } from "src/components/types";
+import type {
+  IReqVolunteerAccount,
+  IResVolunteerAccount,
+} from "src/components/types/volunteers";
 
 const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   const { shiftboardId } = req.query;
@@ -73,7 +76,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         phone,
         playaName,
         worldName,
-      } = JSON.parse(req.body);
+      }: IReqVolunteerAccount = JSON.parse(req.body);
 
       await pool.query<RowDataPacket[]>(
         `UPDATE op_volunteers

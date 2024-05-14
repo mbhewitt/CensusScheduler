@@ -5,7 +5,7 @@ import { pool } from "lib/database";
 import type {
   IResVolunteerDropdownItem,
   IResVolunteerRoleItem,
-} from "src/components/types";
+} from "src/components/types/volunteers";
 import { ROLE_CORE_CREW_ID } from "src/constants";
 
 const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -14,7 +14,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     // --------------------
     case "GET": {
       const { filter } = req.query;
-      let dbVolunteerList = [];
+      let dbVolunteerList: RowDataPacket[] = [];
 
       switch (filter) {
         // get core volunteers

@@ -33,11 +33,13 @@ import type {
   IResShiftItem,
   IResShiftPositionCountItem,
   IResShiftVolunteerItem,
-  IResVolunteerDropdownItem,
-  IResVolunteerShiftItem,
   IVolunteerOption,
   TCheckInTypes,
 } from "src/components/types";
+import type {
+  IResVolunteerDropdownItem,
+  IResVolunteerShiftItem,
+} from "src/components/types/volunteers";
 import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";

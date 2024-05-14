@@ -19,15 +19,13 @@ import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
-import type {
-  IResVolunteerDropdownItem,
-  IVolunteerOption,
-} from "src/components/types";
+import type { IVolunteerOption } from "src/components/types";
 import type {
   IReqRoleVolunteerItem,
   IResRoleRowItem,
   IResRoleVolunteerItem,
 } from "src/components/types/roles";
+import type { IResVolunteerDropdownItem } from "src/components/types/volunteers";
 import { ensure } from "src/utils/ensure";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 

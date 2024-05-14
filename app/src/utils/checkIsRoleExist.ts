@@ -1,4 +1,4 @@
-import { IResVolunteerRoleItem } from "src/components/types";
+import { IResVolunteerRoleItem } from "src/components/types/volunteers";
 import {
   ACCOUNT_TYPE_ADMIN,
   ACCOUNT_TYPE_AUTHENTICATED,

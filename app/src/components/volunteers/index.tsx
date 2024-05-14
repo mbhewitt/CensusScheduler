@@ -28,7 +28,7 @@ import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { Hero } from "src/components/layout/Hero";
-import type { IResVolunteerShiftCountItem } from "src/components/types";
+import type { IResVolunteerShiftCountItem } from "src/components/types/volunteers";
 import { fetcherGet } from "src/utils/fetcher";
 import {
   setCellHeaderPropsCenter,
@@ -54,7 +54,13 @@ const sortCompareShiftCount = (order: string) => {
 export const Volunteers = () => {
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR("/api/volunteers", fetcherGet);
+  const {
+    data,
+    error,
+  }: {
+    data: IResVolunteerShiftCountItem[];
+    error: Error | undefined;
+  } = useSWR("/api/volunteers", fetcherGet);
 
   // other hooks
   // --------------------
@@ -199,7 +205,7 @@ export const Volunteers = () => {
       remainingCount,
       shiftboardId,
       worldName,
-    }: IResVolunteerShiftCountItem) => {
+    }) => {
       return [
         shiftboardId,
         playaName,
