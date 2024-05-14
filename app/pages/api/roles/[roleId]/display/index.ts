@@ -2,6 +2,7 @@ import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
+import type { IReqRoleDisplayItem } from "src/components/types/roles";
 
 const roles = async (req: NextApiRequest, res: NextApiResponse) => {
   const { roleId } = req.query;
@@ -11,7 +12,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
     // --------------------
     case "PATCH": {
       // update role display
-      const { checked } = req.body;
+      const { checked }: IReqRoleDisplayItem = req.body;
 
       await pool.query<RowDataPacket[]>(
         `UPDATE op_roles

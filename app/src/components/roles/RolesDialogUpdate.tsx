@@ -13,14 +13,14 @@ import {
   IFormValues,
   RolesDialogForm,
 } from "src/components/roles/RolesDialogForm";
-import type { IResRoleItem } from "src/components/types";
+import type { IResRoleListItem } from "src/components/types/roles";
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IRolesDialogUpdateProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
-  roleItem: IResRoleItem;
-  roleList: IResRoleItem[];
+  roleItem: IResRoleListItem;
+  roleList: IResRoleListItem[];
 }
 
 export const RolesDialogUpdate = ({

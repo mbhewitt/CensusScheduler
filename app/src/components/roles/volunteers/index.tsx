@@ -31,7 +31,10 @@ import { MoreMenu } from "src/components/general/MoreMenu";
 import { Hero } from "src/components/layout/Hero";
 import { RoleVolunteersDialogAdd } from "src/components/roles/volunteers/RoleVolunteersDialogAdd";
 import { RoleVolunteersDialogRemove } from "src/components/roles/volunteers/RoleVolunteersDialogRemove";
-import type { IResRoleVolunteerItem } from "src/components/types";
+import type {
+  IResRoleListItem,
+  IResRoleVolunteerItem,
+} from "src/components/types/roles";
 import { fetcherGet } from "src/utils/fetcher";
 import {
   setCellHeaderPropsCenter,
@@ -65,14 +68,20 @@ export const RoleVolunteers = () => {
   // --------------------
   const router = useRouter();
   const { roleId } = router.query;
-  const { data: dataRoleItem, error: errorRoleItem } = useSWR(
-    isMounted ? `/api/roles/${roleId}` : null,
-    fetcherGet
-  );
-  const { data: dataRoleVolunteerList, error: errorRoleVolunteerList } = useSWR(
-    isMounted ? `/api/roles/volunteers/${roleId}` : null,
-    fetcherGet
-  );
+  const {
+    data: dataRoleItem,
+    error: errorRoleItem,
+  }: {
+    data: IResRoleListItem;
+    error: Error | undefined;
+  } = useSWR(isMounted ? `/api/roles/${roleId}` : null, fetcherGet);
+  const {
+    data: dataRoleVolunteerList,
+    error: errorRoleVolunteerList,
+  }: {
+    data: IResRoleVolunteerItem[];
+    error: Error | undefined;
+  } = useSWR(isMounted ? `/api/roles/volunteers/${roleId}` : null, fetcherGet);
 
   // side effects
   // --------------------
@@ -116,7 +125,7 @@ export const RoleVolunteers = () => {
     },
   ];
   const dataTable = dataRoleVolunteerList.map(
-    ({ playaName, shiftboardId, worldName }: IResRoleVolunteerItem) => {
+    ({ playaName, shiftboardId, worldName }) => {
       return [
         shiftboardId,
         playaName,

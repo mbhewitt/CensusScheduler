@@ -29,19 +29,6 @@ export type TAccountActions =
   | "accountTypeAuthenticated"
   | "accountTypeUnauthenticated";
 
-// roles
-// --------------------
-export interface IResRoleItem {
-  display: boolean;
-  id: number;
-  name: string;
-}
-export interface IResRoleVolunteerItem {
-  playaName: string;
-  shiftboardId: number;
-  worldName: string;
-}
-
 // shift categories
 // --------------------
 export interface IResShiftCategoryItem {

@@ -2,7 +2,7 @@ import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
-import type { IResRoleVolunteerItem } from "src/components/types";
+import type { IResRoleVolunteerItem } from "src/components/types/roles";
 
 const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   const { roleId } = req.query;
@@ -27,14 +27,17 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         ORDER BY v.playa_name`,
         [roleId]
       );
-      const resRoleVolunteerList: IResRoleVolunteerItem[] =
-        dbRoleVolunteerList.map(({ playa_name, shiftboard_id, world_name }) => {
-          return {
-            shiftboardId: shiftboard_id,
+      const resRoleVolunteerList = dbRoleVolunteerList.map(
+        ({ playa_name, shiftboard_id, world_name }) => {
+          const resRoleVolunteerItem: IResRoleVolunteerItem = {
             playaName: playa_name,
+            shiftboardId: shiftboard_id,
             worldName: world_name,
           };
-        });
+
+          return resRoleVolunteerItem;
+        }
+      );
 
       return res.status(200).json(resRoleVolunteerList);
     }

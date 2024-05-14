@@ -20,10 +20,15 @@ import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import type {
-  IResRoleVolunteerItem,
   IResVolunteerDropdownItem,
   IVolunteerOption,
 } from "src/components/types";
+import type {
+  IReqRoleVolunteerItem,
+  IResRoleListItem,
+  IResRoleVolunteerItem,
+} from "src/components/types/roles";
+import { ensure } from "src/utils/ensure";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IFormValues {
@@ -32,10 +37,7 @@ interface IFormValues {
 interface IRoleVolunteersDialogAddProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
-  roleItem: {
-    id: number;
-    name: string;
-  };
+  roleItem: IResRoleListItem;
   roleVolunteerList: IResRoleVolunteerItem[];
 }
 
@@ -50,7 +52,13 @@ export const RoleVolunteersDialogAdd = ({
 }: IRoleVolunteersDialogAddProps) => {
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR("/api/volunteers/dropdown", fetcherGet);
+  const {
+    data,
+    error,
+  }: {
+    data: IResVolunteerDropdownItem[];
+    error: Error | undefined;
+  } = useSWR("/api/volunteers/dropdown", fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     `/api/roles/volunteers/${roleId}`,
     fetcherTrigger
@@ -106,11 +114,13 @@ export const RoleVolunteersDialogAdd = ({
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
+      const body: IReqRoleVolunteerItem = {
+        shiftboardId: ensure(formValues.volunteer?.shiftboardId),
+      };
+
       // update database
       await trigger({
-        body: {
-          shiftboardId: formValues.volunteer?.shiftboardId,
-        },
+        body,
         method: "POST",
       });
 
@@ -160,16 +170,10 @@ export const RoleVolunteersDialogAdd = ({
                 option.shiftboardId === value.shiftboardId
               }
               onChange={(_, data) => field.onChange(data)}
-              options={data.map(
-                ({
-                  playaName,
-                  shiftboardId,
-                  worldName,
-                }: IResVolunteerDropdownItem) => ({
-                  label: `${playaName} "${worldName}"`,
-                  shiftboardId,
-                })
-              )}
+              options={data.map(({ playaName, shiftboardId, worldName }) => ({
+                label: `${playaName} "${worldName}"`,
+                shiftboardId,
+              }))}
               renderInput={(params) => (
                 <TextField
                   {...params}

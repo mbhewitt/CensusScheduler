@@ -1,7 +1,7 @@
 import { TextField } from "@mui/material";
 import { Control, Controller, FieldErrors } from "react-hook-form";
 
-import { IResRoleItem } from "src/components/types";
+import { IResRoleListItem } from "src/components/types/roles";
 
 export interface IFormValues {
   name: string;
@@ -11,7 +11,7 @@ interface IRolesDialogFormProps {
   control: Control<IFormValues, any>;
   errors: FieldErrors<IFormValues>;
   roleName: string;
-  roleList: IResRoleItem[];
+  roleList: IResRoleListItem[];
 }
 
 export const defaultValues: IFormValues = {
