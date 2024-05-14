@@ -18,7 +18,9 @@ import useSWRMutation from "swr/mutation";
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import type { IVolunteerAccountFormValues } from "src/components/types";
+import type { IReqPasscode } from "src/components/types/volunteers";
 import { ResetPasscodeForm } from "src/components/volunteers/account/ResetPasscodeForm";
+import { ensure } from "src/utils/ensure";
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IResetPasscodeDialogProps {
@@ -84,9 +86,13 @@ export const ResetPasscodeDialog = ({
     formValues
   ) => {
     try {
+      const body: IReqPasscode = {
+        passcode: ensure(formValues.passcodeCreate),
+      };
+
       // update database
       await trigger({
-        body: { passcode: formValues.passcodeCreate },
+        body,
         method: "PATCH",
       });
 

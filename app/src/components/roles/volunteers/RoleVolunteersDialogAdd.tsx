@@ -19,11 +19,14 @@ import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
+import type { IVolunteerOption } from "src/components/types";
 import type {
+  IReqRoleVolunteerItem,
+  IResRoleRowItem,
   IResRoleVolunteerItem,
-  IResVolunteerDropdownItem,
-  IVolunteerOption,
-} from "src/components/types";
+} from "src/components/types/roles";
+import type { IResVolunteerDefaultItem } from "src/components/types/volunteers";
+import { ensure } from "src/utils/ensure";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IFormValues {
@@ -32,10 +35,7 @@ interface IFormValues {
 interface IRoleVolunteersDialogAddProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
-  roleItem: {
-    id: number;
-    name: string;
-  };
+  roleItem: IResRoleRowItem;
   roleVolunteerList: IResRoleVolunteerItem[];
 }
 
@@ -50,7 +50,13 @@ export const RoleVolunteersDialogAdd = ({
 }: IRoleVolunteersDialogAddProps) => {
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR("/api/volunteers/dropdown", fetcherGet);
+  const {
+    data,
+    error,
+  }: {
+    data: IResVolunteerDefaultItem[];
+    error: Error | undefined;
+  } = useSWR("/api/volunteers/dropdown", fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     `/api/roles/volunteers/${roleId}`,
     fetcherTrigger
@@ -106,11 +112,13 @@ export const RoleVolunteersDialogAdd = ({
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
+      const body: IReqRoleVolunteerItem = {
+        shiftboardId: ensure(formValues.volunteer?.shiftboardId),
+      };
+
       // update database
       await trigger({
-        body: {
-          shiftboardId: formValues.volunteer?.shiftboardId,
-        },
+        body,
         method: "POST",
       });
 
@@ -160,16 +168,10 @@ export const RoleVolunteersDialogAdd = ({
                 option.shiftboardId === value.shiftboardId
               }
               onChange={(_, data) => field.onChange(data)}
-              options={data.map(
-                ({
-                  playaName,
-                  shiftboardId,
-                  worldName,
-                }: IResVolunteerDropdownItem) => ({
-                  label: `${playaName} "${worldName}"`,
-                  shiftboardId,
-                })
-              )}
+              options={data.map(({ playaName, shiftboardId, worldName }) => ({
+                label: `${playaName} "${worldName}"`,
+                shiftboardId,
+              }))}
               renderInput={(params) => (
                 <TextField
                   {...params}

@@ -20,13 +20,16 @@ import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
-import type { IResRoleItem, IResRoleVolunteerItem } from "src/components/types";
+import type {
+  IResRoleRowItem,
+  IResRoleVolunteerItem,
+} from "src/components/types/roles";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IRolesDialogDeleteProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
-  roleItem: IResRoleItem;
+  roleItem: IResRoleRowItem;
 }
 
 export const RolesDialogDelete = ({
@@ -36,7 +39,13 @@ export const RolesDialogDelete = ({
 }: IRolesDialogDeleteProps) => {
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR(`/api/roles/volunteers/${id}`, fetcherGet);
+  const {
+    data,
+    error,
+  }: {
+    data: IResRoleVolunteerItem[];
+    error: Error | undefined;
+  } = useSWR(`/api/roles/volunteers/${id}`, fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     `/api/roles/${id}`,
     fetcherTrigger
@@ -121,23 +130,17 @@ export const RolesDialogDelete = ({
             </Typography>
           </DialogContentText>
           <List sx={{ pl: 2, listStyleType: "disc" }}>
-            {data.map(
-              ({
-                playaName,
-                shiftboardId,
-                worldName,
-              }: IResRoleVolunteerItem) => {
-                return (
-                  <ListItem
-                    disablePadding
-                    key={shiftboardId}
-                    sx={{ display: "list-item", pl: 0 }}
-                  >
-                    <ListItemText primary={`${playaName} "${worldName}"`} />
-                  </ListItem>
-                );
-              }
-            )}
+            {data.map(({ playaName, shiftboardId, worldName }) => {
+              return (
+                <ListItem
+                  disablePadding
+                  key={shiftboardId}
+                  sx={{ display: "list-item", pl: 0 }}
+                >
+                  <ListItemText primary={`${playaName} "${worldName}"`} />
+                </ListItem>
+              );
+            })}
           </List>
         </>
       ) : (

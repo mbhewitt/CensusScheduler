@@ -2,7 +2,8 @@ import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
-import type { IResVolunteerAccount } from "src/components/types";
+import { IReqSignIn } from "src/components/types/sign-in";
+import type { IResVolunteerAccount } from "src/components/types/volunteers";
 
 const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
@@ -10,7 +11,7 @@ const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
     // --------------------
     case "POST": {
       // check email and passcode credentials
-      const { passcode, shiftboardId } = JSON.parse(req.body);
+      const { passcode, shiftboardId }: IReqSignIn = JSON.parse(req.body);
       const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT
           core_crew,
@@ -24,7 +25,7 @@ const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
         AND shiftboard_id=?`,
         [passcode, shiftboardId]
       );
-      const volunteerFirst = dbVolunteerList[0];
+      const [volunteerFirst] = dbVolunteerList;
 
       // if credentials do not exist
       // then send error message

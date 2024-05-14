@@ -15,7 +15,7 @@ import {
   IFormValues,
   ShiftCategoriesDialogForm,
 } from "src/components/shifts/categories/ShiftCategoriesDialogForm";
-import type { IResShiftCategoryItem } from "src/components/types";
+import type { IResShiftCategoryItem } from "src/components/types/shifts/categories";
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IShiftCategoriesDialogCreateProps {
@@ -57,7 +57,7 @@ export const ShiftCategoriesDialogCreate = ({
   useEffect(() => {
     if (isDialogOpen) {
       clearErrors();
-      setValue("departmentName", categoryItem.departmentName);
+      setValue("department.name", categoryItem.department.name);
       setValue("name", categoryItem.name);
     }
   }, [categoryItem, clearErrors, isDialogOpen, setValue]);

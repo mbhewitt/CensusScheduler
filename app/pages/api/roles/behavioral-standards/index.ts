@@ -2,6 +2,7 @@ import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
+import type { IReqRoleBehavioralStandardsItem } from "src/components/types/roles";
 import { ROLE_BEHAVIORAL_STANDARDS_ID } from "src/constants";
 
 const contact = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -10,9 +11,10 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
     // --------------------
     case "POST": {
       // create volunteer account
-      const { isBehavioralStandardsSigned, shiftboardId } = JSON.parse(
-        req.body
-      );
+      const {
+        isBehavioralStandardsSigned,
+        shiftboardId,
+      }: IReqRoleBehavioralStandardsItem = JSON.parse(req.body);
       const [dbVolunteerRoleList] = await pool.query<RowDataPacket[]>(
         `SELECT shiftboard_id
         FROM op_volunteer_roles AS vr
@@ -22,7 +24,7 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
         AND vr.shiftboard_id=?`,
         [ROLE_BEHAVIORAL_STANDARDS_ID, shiftboardId]
       );
-      const dbVolunteerRoleFirst = dbVolunteerRoleList[0];
+      const [dbVolunteerRoleFirst] = dbVolunteerRoleList;
       const [addRole, removeRole] = [
         isBehavioralStandardsSigned === true,
         isBehavioralStandardsSigned === false,

@@ -23,7 +23,7 @@ import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
 import { useContext, useEffect, useState } from "react";
 import io from "socket.io-client";
-import useSWR from "swr";
+import useSWR, { KeyedMutator } from "swr";
 import useSWRMutation from "swr/mutation";
 
 import { DataTable } from "src/components/general/DataTable";
@@ -31,10 +31,8 @@ import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { SnackbarText } from "src/components/general/SnackbarText";
-import type {
-  IResVolunteerShiftItem,
-  ISwitchValues,
-} from "src/components/types";
+import type { IReqSwitchValues, ISwitchValues } from "src/components/types";
+import type { IResVolunteerShiftItem } from "src/components/types/volunteers";
 import { VolunteerShiftsDialogRemove } from "src/components/volunteers/shifts/VolunteerShiftsDialogRemove";
 import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
@@ -79,7 +77,7 @@ export const VolunteerShifts = () => {
       date: "",
       dateName: "",
       endTime: "",
-      positionName: "",
+      position: { name: "" },
       shiftPositionId: 0,
       timeId: 0,
       startTime: "",
@@ -91,7 +89,16 @@ export const VolunteerShifts = () => {
   // --------------------
   const router = useRouter();
   const { shiftboardId } = router.query;
-  const { data, error, mutate } = useSWR(
+  const {
+    data,
+    error,
+    mutate,
+  }: {
+    data: IResVolunteerShiftItem[];
+    error: Error | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mutate: KeyedMutator<any>;
+  } = useSWR(
     isMounted ? `/api/volunteers/shifts/${shiftboardId}` : null,
     fetcherGet
   );
@@ -137,9 +144,8 @@ export const VolunteerShifts = () => {
               (volunteerShiftItem: IResVolunteerShiftItem) =>
                 volunteerShiftItem.timeId !== timeId
             );
-            dataMutate.volunteerShiftList = volunteerShiftListNew;
 
-            mutate(dataMutate);
+            mutate(volunteerShiftListNew);
           }
         });
       } catch (error) {
@@ -193,30 +199,28 @@ export const VolunteerShifts = () => {
   const isAdmin = checkIsAdmin(accountType, roleList);
 
   const handleCheckInToggle = async ({
-    checked,
+    isCheckedIn,
     playaName,
-    positionName,
+    position: { name: positionName },
     shiftboardId,
     shiftPositionId,
     timeId,
     worldName,
   }: ISwitchValues) => {
     try {
-      await trigger({
-        body: {
-          checked,
-          shiftboardId,
-          shiftPositionId,
-          timeId,
-        },
-        method: "PATCH",
-      });
-      socket.emit("req-check-in-toggle", {
-        checked,
+      const body: IReqSwitchValues = {
+        isCheckedIn,
         shiftboardId,
         shiftPositionId,
         timeId,
+      };
+
+      // update database
+      await trigger({
+        body,
+        method: "PATCH",
       });
+      socket.emit("req-check-in-toggle", body);
 
       enqueueSnackbar(
         <SnackbarText>
@@ -224,7 +228,7 @@ export const VolunteerShifts = () => {
             {playaName} &quot;{worldName}&quot;
           </strong>{" "}
           for <strong>{positionName}</strong> has{" "}
-          <strong>checked {checked ? "in" : "out"}</strong>
+          <strong>checked {isCheckedIn ? "in" : "out"}</strong>
         </SnackbarText>,
         {
           variant: "success",
@@ -292,10 +296,10 @@ export const VolunteerShifts = () => {
     ({
       date,
       dateName,
-      departmentName,
+      department: { name: departmentName },
       endTime,
       noShow,
-      positionName,
+      position: { name: positionName },
       shiftPositionId,
       startTime,
       timeId,
@@ -343,9 +347,11 @@ export const VolunteerShifts = () => {
           disabled={!isCheckInAvailable}
           onChange={(event) =>
             handleCheckInToggle({
-              checked: event.target.checked,
+              isCheckedIn: event.target.checked,
               playaName,
-              positionName,
+              position: {
+                name: positionName,
+              },
               shiftboardId: Number(shiftboardId),
               shiftPositionId,
               timeId,
@@ -376,7 +382,7 @@ export const VolunteerShifts = () => {
                       date,
                       dateName,
                       endTime,
-                      positionName,
+                      position: { name: positionName },
                       shiftPositionId,
                       startTime,
                       timeId,

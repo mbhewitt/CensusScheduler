@@ -37,11 +37,11 @@ import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import { ShiftVolunteersDialogAdd } from "src/components/shifts/volunteers/ShiftVolunteersDialogAdd";
 import { ShiftVolunteersDialogRemove } from "src/components/shifts/volunteers/ShiftVolunteersDialogRemove";
+import type { ISwitchValues } from "src/components/types";
 import type {
   IResShiftPositionCountItem,
-  IResShiftVolunteerItem,
-  ISwitchValues,
-} from "src/components/types";
+  IResShiftVolunteerRowItem,
+} from "src/components/types/shifts";
 import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
@@ -170,7 +170,7 @@ export const ShiftVolunteers = () => {
               const shiftboardIdNum = Number(shiftboardId);
               const shiftVolunteerItemUpdate =
                 dataMutate.shiftVolunteerList.find(
-                  (volunteerItem: IResShiftVolunteerItem) =>
+                  (volunteerItem: IResShiftVolunteerRowItem) =>
                     volunteerItem.shiftboardId === shiftboardIdNum
                 );
               if (shiftVolunteerItemUpdate) {
@@ -185,7 +185,7 @@ export const ShiftVolunteers = () => {
           if (dataShiftVolunteersItem) {
             const dataMutate = structuredClone(dataShiftVolunteersItem);
             const volunteerListNew = dataMutate.shiftVolunteerList.filter(
-              (volunteerItem: IResShiftVolunteerItem) =>
+              (volunteerItem: IResShiftVolunteerRowItem) =>
                 volunteerItem.shiftboardId !== shiftboardId
             );
             dataMutate.shiftVolunteerList = volunteerListNew;
@@ -223,9 +223,9 @@ export const ShiftVolunteers = () => {
   const isAdmin = checkIsAdmin(accountType, roleList);
 
   const handleCheckInToggle = async ({
-    checked,
+    isCheckedIn,
     playaName,
-    positionName,
+    position: { name: positionName },
     shiftboardId,
     shiftPositionId,
     timeId,
@@ -234,7 +234,7 @@ export const ShiftVolunteers = () => {
     try {
       await trigger({
         body: {
-          checked,
+          isCheckedIn,
           shiftboardId,
           shiftPositionId,
           timeId,
@@ -242,7 +242,7 @@ export const ShiftVolunteers = () => {
         method: "PATCH",
       });
       socket.emit("req-check-in-toggle", {
-        checked,
+        isCheckedIn,
         shiftboardId,
         shiftPositionId,
         timeId,
@@ -253,7 +253,7 @@ export const ShiftVolunteers = () => {
             {playaName} &quot;{worldName}&quot;
           </strong>{" "}
           for <strong>{positionName}</strong> has{" "}
-          <strong>checked {checked ? "in" : "out"}</strong>
+          <strong>checked {isCheckedIn ? "in" : "out"}</strong>
         </SnackbarText>,
         {
           variant: "success",
@@ -349,26 +349,28 @@ export const ShiftVolunteers = () => {
     dataShiftVolunteersItem.shiftVolunteerList
   ).map(
     ({
-      noShow,
+      isCheckedIn,
       playaName,
       positionName,
       shiftboardId,
       shiftPositionId,
       timeId,
       worldName,
-    }: IResShiftVolunteerItem) => {
+    }: IResShiftVolunteerRowItem) => {
       return [
         playaName,
         worldName,
         positionName,
         <Switch
-          checked={noShow === ""}
+          checked={isCheckedIn === ""}
           disabled={!isCheckInAvailable}
           onChange={(event) =>
             handleCheckInToggle({
-              checked: event.target.checked,
+              isCheckedIn: event.target.checked,
               playaName,
-              positionName,
+              position: {
+                name: positionName,
+              },
               shiftboardId,
               shiftPositionId,
               timeId,

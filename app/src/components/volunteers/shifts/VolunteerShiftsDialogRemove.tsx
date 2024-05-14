@@ -25,7 +25,7 @@ interface IVolunteerShiftsDialogRemoveProps {
     date: string;
     dateName: string;
     endTime: string;
-    positionName: string;
+    position: { name: string };
     shiftPositionId: number;
     startTime: string;
     timeId: number;
@@ -41,7 +41,7 @@ export const VolunteerShiftsDialogRemove = ({
     date,
     dateName,
     endTime,
-    positionName,
+    position: { name: positionName },
     shiftPositionId,
     startTime,
     timeId,

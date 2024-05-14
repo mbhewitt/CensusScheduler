@@ -35,15 +35,22 @@ import {
   processTimeList,
   ShiftTypesForm,
 } from "src/components/shifts/types/type/ShiftTypesForm";
+import type {
+  IReqShiftTypeItem,
+  IResShiftTypeDefaults,
+} from "src/components/types/shifts/types";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 export const ShiftTypesCreate = () => {
   // fetching, mutation, and revalidation
   // --------------------
-  const { data: dataDefaults, error: errorDefaults } = useSWR(
-    "/api/shifts/types/defaults",
-    fetcherGet
-  );
+  const {
+    data: dataDefaults,
+    error: errorDefaults,
+  }: {
+    data: IResShiftTypeDefaults;
+    error: Error | undefined;
+  } = useSWR("/api/shifts/types/defaults", fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     "/api/shifts/types",
     fetcherTrigger
@@ -100,23 +107,26 @@ export const ShiftTypesCreate = () => {
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
-      const categoryId = findCategoryId(dataDefaults, formValues);
+      const categoryIdFound = findCategoryId(dataDefaults, formValues);
       const positionList = processPositionList(dataDefaults, formValues);
       const timeList = processTimeList(formValues);
+      const body: IReqShiftTypeItem = {
+        information: {
+          category: {
+            id: categoryIdFound,
+          },
+          details: formValues.information.details,
+          isCore: formValues.information.isCore,
+          isOffPlaya: formValues.information.isOffPlaya,
+          name: formValues.information.name,
+        },
+        positionList,
+        timeList,
+      };
 
       // update database
       await trigger({
-        body: {
-          information: {
-            categoryId,
-            details: formValues.information.details,
-            isCore: formValues.information.isCore,
-            isOffPlaya: formValues.information.isOffPlaya,
-            name: formValues.information.name,
-          },
-          positionList,
-          timeList,
-        },
+        body,
         method: "POST",
       });
 

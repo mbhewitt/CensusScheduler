@@ -27,12 +27,17 @@ import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
+import type {
+  IReqRoleBehavioralStandardsItem,
+  IResRoleRowItem,
+} from "src/components/types/roles";
 import {
   ROLE_BEHAVIORAL_STANDARDS_ID,
   SESSION_BEHAVIORAL_STANDARDS,
 } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
+import { ensure } from "src/utils/ensure";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 import { signOut } from "src/utils/signOut";
 
@@ -55,10 +60,13 @@ export const BehavioralStandards = () => {
 
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR(
-    `/api/roles/${ROLE_BEHAVIORAL_STANDARDS_ID}`,
-    fetcherGet
-  );
+  const {
+    data,
+    error,
+  }: {
+    data: IResRoleRowItem;
+    error: Error | undefined;
+  } = useSWR(`/api/roles/${ROLE_BEHAVIORAL_STANDARDS_ID}`, fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     "/api/roles/behavioral-standards",
     fetcherTrigger
@@ -77,9 +85,14 @@ export const BehavioralStandards = () => {
 
   const handleDecline = async () => {
     try {
+      const body: IReqRoleBehavioralStandardsItem = {
+        isBehavioralStandardsSigned: false,
+        shiftboardId: ensure(shiftboardId),
+      };
+
       // update database
       await trigger({
-        body: { isBehavioralStandardsSigned: false, shiftboardId },
+        body,
         method: "POST",
       });
       enqueueSnackbar(
@@ -121,16 +134,21 @@ export const BehavioralStandards = () => {
   };
   const handleSign = async () => {
     try {
+      const body: IReqRoleBehavioralStandardsItem = {
+        isBehavioralStandardsSigned: true,
+        shiftboardId: ensure(shiftboardId),
+      };
+
       // update database
       await trigger({
-        body: { isBehavioralStandardsSigned: true, shiftboardId },
+        body,
         method: "POST",
       });
       // update state
       sessionDispatch({
         payload: {
           id: ROLE_BEHAVIORAL_STANDARDS_ID,
-          name: data.roleName,
+          name: data.name,
         },
         type: SESSION_BEHAVIORAL_STANDARDS,
       });

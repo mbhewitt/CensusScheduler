@@ -13,7 +13,7 @@ import { DataTable } from "src/components/general/DataTable";
 import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { Hero } from "src/components/layout/Hero";
-import type { IResShiftItem } from "src/components/types";
+import type { IResShiftRowItem } from "src/components/types/shifts";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { fetcherGet } from "src/utils/fetcher";
 import { formatDateName, formatTime } from "src/utils/formatDateTime";
@@ -112,7 +112,13 @@ export const Shifts = () => {
 
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR("/api/shifts", fetcherGet);
+  const {
+    data,
+    error,
+  }: {
+    data: IResShiftRowItem[];
+    error: Error | undefined;
+  } = useSWR("/api/shifts", fetcherGet);
 
   // other hooks
   // --------------------
@@ -172,7 +178,7 @@ export const Shifts = () => {
       const dateFilterList: string[] = [];
       const typeFilterList: string[] = [];
 
-      data.forEach(({ date, dateName, type }: IResShiftItem) => {
+      data.forEach(({ date, dateName, type }) => {
         dateFilterList.push(
           dateName ? formatDateName(date, dateName) : formatDateName(date)
         );
@@ -219,23 +225,23 @@ export const Shifts = () => {
     ({
       date,
       dateName,
-      departmentName,
+      department: { name: departmentName },
       endTime,
       filledSlots,
+      id,
       startTime,
-      timeId,
       totalSlots,
       type,
       year,
-    }: IResShiftItem) => {
+    }) => {
       return [
-        timeId,
+        id,
         `${date} ${year}`,
         formatDateName(date, dateName),
         formatTime(startTime, endTime),
         type,
         <Chip
-          key={`${timeId}-chip`}
+          key={`${id}-chip`}
           label={type}
           sx={{ backgroundColor: colorMapDisplay[departmentName] }}
         />,

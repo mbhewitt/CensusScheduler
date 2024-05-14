@@ -3,12 +3,12 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
 import {
-  IReqShiftTypeInfoItem,
-  IReqShiftTypePositionItem,
+  IReqShiftTypeItem,
+  IResShiftTypeCurrent,
   IResShiftTypeInformation,
   IResShiftTypePositionItem,
   IResShiftTypeTimeItem,
-} from "src/components/types";
+} from "src/components/types/shifts/types";
 import { generateId } from "src/utils/generateId";
 
 const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -32,16 +32,25 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         WHERE sn.shift_name_id=?`,
         [typeId]
       );
-      const [resInformation]: IResShiftTypeInformation[] =
-        dbInformationList.map(
-          ({ core, off_playa, shift_category, shift_details, shift_name }) => ({
+      const [resInformation] = dbInformationList.map(
+        ({
+          core,
+          off_playa,
+          shift_category,
+          shift_details,
+          shift_name,
+        }: RowDataPacket) => {
+          const information: IResShiftTypeInformation = {
             categoryName: shift_category ?? "",
             details: shift_details,
             isCore: Boolean(core),
             isOffPlaya: Boolean(off_playa),
             name: shift_name,
-          })
-        );
+          };
+
+          return information;
+        }
+      );
       // get all current positions
       const [dbPositionList] = await pool.query<RowDataPacket[]>(
         `SELECT
@@ -68,7 +77,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         ORDER BY pt.position`,
         [typeId]
       );
-      const resPositionList: IResShiftTypePositionItem[] = dbPositionList.map(
+      const resPositionList = dbPositionList.map(
         ({
           critical,
           end_time_offset,
@@ -82,7 +91,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           total_slots,
           wap_points,
         }) => {
-          return {
+          const resPositionItem: IResShiftTypePositionItem = {
             critical: Boolean(critical),
             details: position_details,
             endTimeOffset: end_time_offset,
@@ -95,6 +104,8 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
             totalSlots: total_slots,
             wapPoints: wap_points,
           };
+
+          return resPositionItem;
         }
       );
       // get all current times
@@ -112,7 +123,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         ORDER BY start_time`,
         [typeId]
       );
-      const resTimeList: IResShiftTypeTimeItem[] = dbTimeList.map(
+      const resTimeList = dbTimeList.map(
         ({
           date,
           end_time,
@@ -120,21 +131,27 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           shift_instance,
           shift_times_id,
           start_time,
-        }) => ({
-          date,
-          endTime: end_time,
-          instance: shift_instance,
-          notes: notes ?? "",
-          startTime: start_time,
-          timeId: shift_times_id,
-        })
+        }) => {
+          const resTimeItem: IResShiftTypeTimeItem = {
+            date,
+            endTime: end_time,
+            instance: shift_instance,
+            notes: notes ?? "",
+            startTime: start_time,
+            timeId: shift_times_id,
+          };
+
+          return resTimeItem;
+        }
       );
 
-      return res.status(200).json({
+      const resShiftTypeCurrent: IResShiftTypeCurrent = {
         information: resInformation,
         positionList: resPositionList,
         timeList: resTimeList,
-      });
+      };
+
+      return res.status(200).json(resShiftTypeCurrent);
     }
 
     // patch
@@ -142,14 +159,16 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
     case "PATCH": {
       // update type
       const {
-        information: { categoryId, details, isCore, isOffPlaya, name },
+        information: {
+          category: { id: categoryId },
+          details,
+          isCore,
+          isOffPlaya,
+          name,
+        },
         positionList,
         timeList,
-      }: {
-        information: IReqShiftTypeInfoItem;
-        positionList: IReqShiftTypePositionItem[];
-        timeList: IResShiftTypeTimeItem[];
-      } = JSON.parse(req.body);
+      }: IReqShiftTypeItem = JSON.parse(req.body);
 
       // update information row
       await pool.query(
@@ -244,22 +263,20 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
       );
       const timeListUpdate = timeList.filter(({ timeId }) => {
         return dbTimeList.some(
-          ({ shift_times_id: shiftTimesId }) => shiftTimesId === timeId
+          ({ shift_times_id }) => shift_times_id === timeId
         );
       });
       const timeListAdd = timeList.filter(({ timeId }) => {
         return !dbTimeList.some(
-          ({ shift_times_id: shiftTimesId }) => shiftTimesId === timeId
+          ({ shift_times_id }) => shift_times_id === timeId
         );
       });
-      const timeListRemove = dbTimeList.filter(
-        ({ shift_times_id: shiftTimesId }) => {
-          return !timeList.some(({ timeId }) => timeId === shiftTimesId);
-        }
-      );
+      const timeListRemove = dbTimeList.filter(({ shift_times_id }) => {
+        return !timeList.some(({ timeId }) => timeId === shift_times_id);
+      });
 
       timeListUpdate.forEach(
-        async ({ date, endTime, instance, notes, startTime, timeId }) => {
+        async ({ date, endTime, timeId, instance, notes, startTime }) => {
           await pool.query<RowDataPacket[]>(
             `UPDATE op_shift_times
             SET
@@ -316,12 +333,12 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           );
         }
       );
-      timeListRemove.forEach(async ({ shift_times_id: shiftTimeId }) => {
+      timeListRemove.forEach(async ({ shift_times_id }) => {
         await pool.query<RowDataPacket[]>(
           `UPDATE op_shift_times
           SET remove_shift_time=true
           WHERE shift_times_id=?`,
-          [shiftTimeId]
+          [shift_times_id]
         );
       });
 

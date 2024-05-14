@@ -2,7 +2,11 @@ import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
-import { IResShiftPositionDefaultItem } from "src/components/types";
+import {
+  IResShiftPositionPrerequisiteItem,
+  IResShiftPositionRoleItem,
+  IResShiftPositionRowItem,
+} from "src/components/types/shifts/positions";
 
 const shiftPositionDefaults = async (
   req: NextApiRequest,
@@ -20,11 +24,16 @@ const shiftPositionDefaults = async (
         FROM op_position_type
         ORDER BY position`
       );
-      const resPositionList: IResShiftPositionDefaultItem[] =
-        dbPositionList.map(({ position, position_type_id }) => ({
-          id: position_type_id,
-          name: position,
-        }));
+      const resPositionList = dbPositionList.map(
+        ({ position, position_type_id }) => {
+          const resPositionItem: IResShiftPositionRowItem = {
+            id: position_type_id,
+            name: position,
+          };
+
+          return resPositionItem;
+        }
+      );
       // get all prerequisites
       const [dbPrerequisiteList] = await pool.query<RowDataPacket[]>(
         `SELECT
@@ -33,11 +42,16 @@ const shiftPositionDefaults = async (
         FROM op_shift_category
         ORDER BY shift_category`
       );
-      const resPrerequisiteList: IResShiftPositionDefaultItem[] =
-        dbPrerequisiteList.map(({ shift_category, shift_category_id }) => ({
-          id: shift_category_id,
-          name: shift_category,
-        }));
+      const resPrerequisiteList = dbPrerequisiteList.map(
+        ({ shift_category, shift_category_id }) => {
+          const resPrerequisiteItem: IResShiftPositionPrerequisiteItem = {
+            id: shift_category_id,
+            name: shift_category,
+          };
+
+          return resPrerequisiteItem;
+        }
+      );
       // get all roles
       const [dbRoleList] = await pool.query<RowDataPacket[]>(
         `SELECT
@@ -46,12 +60,14 @@ const shiftPositionDefaults = async (
         FROM op_roles
         ORDER BY role`
       );
-      const resRoleList: IResShiftPositionDefaultItem[] = dbRoleList.map(
-        ({ role, role_id }) => ({
+      const resRoleList = dbRoleList.map(({ role, role_id }) => {
+        const resRoleItem: IResShiftPositionRoleItem = {
           id: role_id,
           name: role,
-        })
-      );
+        };
+
+        return resRoleItem;
+      });
 
       return res.status(200).json({
         positionList: resPositionList,

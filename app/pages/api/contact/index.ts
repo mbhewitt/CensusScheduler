@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
+import { IReqContact } from "src/components/types/contact";
 
 const contact = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
@@ -8,7 +9,8 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
     // --------------------
     case "POST": {
       // store message
-      const { email, isReplyWanted, message, name, to } = JSON.parse(req.body);
+      const { email, isReplyWanted, message, name, to }: IReqContact =
+        JSON.parse(req.body);
 
       await pool.query(
         `INSERT INTO op_messages (

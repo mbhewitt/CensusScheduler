@@ -3,10 +3,9 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
 import type {
-  IReqShiftTypePositionItem,
-  IResShiftTypeItem,
-  IResShiftTypeTimeItem,
-} from "src/components/types";
+  IReqShiftTypeItem,
+  IResShiftTypeRowItem,
+} from "src/components/types/shifts/types";
 import { generateId } from "src/utils/generateId";
 
 const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -26,13 +25,15 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
         WHERE delete_shift=false
         ORDER BY shift_name`
       );
-      const resTypeList: IResShiftTypeItem[] = dbTypeList.map(
+      const resTypeList = dbTypeList.map(
         ({ shift_category, shift_name, shift_name_id }) => {
-          return {
-            categoryName: shift_category ?? "Not assigned",
+          const resTypeItem: IResShiftTypeRowItem = {
+            category: { name: shift_category ?? "" },
             id: shift_name_id,
             name: shift_name,
           };
+
+          return resTypeItem;
         }
       );
 
@@ -44,10 +45,16 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
     case "POST": {
       // create type
       const {
-        information: { categoryId, details, isCore, isOffPlaya, name },
+        information: {
+          category: { id },
+          details,
+          isCore,
+          isOffPlaya,
+          name,
+        },
         positionList,
         timeList,
-      } = JSON.parse(req.body);
+      }: IReqShiftTypeItem = JSON.parse(req.body);
       const typeIdNew = generateId(
         `SELECT shift_name_id
         FROM op_shift_name
@@ -66,23 +73,18 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
           shift_name_id
         )
         VALUES (?, true, ?, ?, ?, ?, ?)`,
-        [isCore, isOffPlaya, categoryId, details, name, typeIdNew]
+        [isCore, isOffPlaya, id, details, name, typeIdNew]
       );
       // insert new shift position rows
-      positionList.forEach(
-        async ({
-          positionId,
-          totalSlots,
-          wapPoints,
-        }: IReqShiftTypePositionItem) => {
-          const shiftPositionIdNew = generateId(
-            `SELECT shift_position_id
+      positionList.forEach(async ({ positionId, totalSlots, wapPoints }) => {
+        const shiftPositionIdNew = generateId(
+          `SELECT shift_position_id
             FROM op_shift_position
             WHERE shift_position_id=?`
-          );
+        );
 
-          await pool.query(
-            `INSERT INTO op_shift_position (
+        await pool.query(
+          `INSERT INTO op_shift_position (
               add_shift_position,
               position_type_id,
               shift_name_id,
@@ -91,19 +93,12 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
               wap_points
             )
             VALUES (true, ?, ?, ?, ?, ?)`,
-            [positionId, typeIdNew, shiftPositionIdNew, totalSlots, wapPoints]
-          );
-        }
-      );
+          [positionId, typeIdNew, shiftPositionIdNew, totalSlots, wapPoints]
+        );
+      });
       // insert new shift time rows
       timeList.forEach(
-        async ({
-          date,
-          endTime,
-          instance,
-          notes,
-          startTime,
-        }: IResShiftTypeTimeItem) => {
+        async ({ date, endTime, instance, notes, startTime }) => {
           const timeIdNew = generateId(
             `SELECT shift_times_id
             FROM op_shift_times

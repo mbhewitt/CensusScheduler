@@ -26,7 +26,7 @@ import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { Hero } from "src/components/layout/Hero";
 import { ShiftPositionsDialogDelete } from "src/components/shifts/positions/ShiftPositionsDialogDelete";
-import type { IResShiftPositionItem } from "src/components/types";
+import type { IResShiftPositionRowItem } from "src/components/types/shifts/positions";
 import { fetcherGet } from "src/utils/fetcher";
 import {
   setCellHeaderPropsCenter,
@@ -53,7 +53,13 @@ export const ShiftPositions = () => {
 
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR("/api/shifts/positions", fetcherGet);
+  const {
+    data,
+    error,
+  }: { data: IResShiftPositionRowItem[]; error: Error | undefined } = useSWR(
+    "/api/shifts/positions",
+    fetcherGet
+  );
 
   // other hooks
   // --------------------
@@ -81,7 +87,7 @@ export const ShiftPositions = () => {
       },
     },
   ];
-  const dataTable = data.map(({ id, name }: IResShiftPositionItem) => {
+  const dataTable = data.map(({ id, name }) => {
     return [
       name,
       <MoreMenu

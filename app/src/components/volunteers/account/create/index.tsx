@@ -27,10 +27,8 @@ import useSWRMutation from "swr/mutation";
 
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
-import type {
-  IResVolunteerAccount,
-  IVolunteerAccountFormValues,
-} from "src/components/types";
+import type { IVolunteerAccountFormValues } from "src/components/types";
+import type { IResVolunteerAccount } from "src/components/types/volunteers";
 import { ResetPasscodeForm } from "src/components/volunteers/account/ResetPasscodeForm";
 import { SESSION_SIGN_IN } from "src/constants";
 import { SessionContext } from "src/state/session/context";

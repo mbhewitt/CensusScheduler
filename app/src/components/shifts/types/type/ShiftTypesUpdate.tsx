@@ -39,9 +39,10 @@ import {
 import { ShiftTypesPositionRemove } from "src/components/shifts/types/type/ShiftTypesPositionRemove";
 import { ShiftTypesTimeRemove } from "src/components/shifts/types/type/ShiftTypesTimeRemove";
 import {
-  IResShiftTypePositionItem,
-  IResShiftTypeTimeItem,
-} from "src/components/types";
+  IReqShiftTypeItem,
+  IResShiftTypeCurrent,
+  IResShiftTypeDefaults,
+} from "src/components/types/shifts/types";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 enum DialogList {
@@ -53,7 +54,7 @@ export const ShiftTypesUpdate = () => {
   // state
   // --------------------
   const [isMounted, setIsMounted] = useState(false);
-  const [dialogCurrent, setDialogCurrent] = useState({
+  const [dialogActive, setDialogActive] = useState({
     dialogItem: 0,
     item: {
       id: 0,
@@ -67,14 +68,20 @@ export const ShiftTypesUpdate = () => {
   // --------------------
   const router = useRouter();
   const { typeId } = router.query;
-  const { data: dataDefaults, error: errorDefaults } = useSWR(
-    isMounted ? "/api/shifts/types/defaults" : null,
-    fetcherGet
-  );
-  const { data: dataCurrent, error: errorCurrent } = useSWR(
-    isMounted ? `/api/shifts/types/${typeId}` : null,
-    fetcherGet
-  );
+  const {
+    data: dataDefaults,
+    error: errorDefaults,
+  }: {
+    data: IResShiftTypeDefaults;
+    error: Error | undefined;
+  } = useSWR(isMounted ? "/api/shifts/types/defaults" : null, fetcherGet);
+  const {
+    data: dataCurrent,
+    error: errorCurrent,
+  }: {
+    data: IResShiftTypeCurrent;
+    error: Error | undefined;
+  } = useSWR(isMounted ? `/api/shifts/types/${typeId}` : null, fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     `/api/shifts/types/${typeId}`,
     fetcherTrigger
@@ -145,12 +152,11 @@ export const ShiftTypesUpdate = () => {
     positionId: number
   ) => {
     const positionFound = dataCurrent.positionList.find(
-      (positionItem: IResShiftTypePositionItem) =>
-        positionItem.positionId === positionId
+      (positionItem) => positionItem.positionId === positionId
     );
 
     if (typeId && positionFound) {
-      setDialogCurrent({
+      setDialogActive({
         dialogItem: DialogList.PositionRemove,
         item: {
           id: positionId,
@@ -163,16 +169,16 @@ export const ShiftTypesUpdate = () => {
       positionRemove(index);
     }
   };
-  const handleTimeRemove = (index: number, name: string, timeId: number) => {
+  const handleTimeRemove = (index: number, name: string, id: number) => {
     const timeFound = dataCurrent.timeList.find(
-      (timeItem: IResShiftTypeTimeItem) => timeItem.timeId === timeId
+      (timeItem) => timeItem.timeId === id
     );
 
     if (typeId && timeFound) {
-      setDialogCurrent({
+      setDialogActive({
         dialogItem: DialogList.TimeRemove,
         item: {
-          id: timeId,
+          id,
           index,
           name,
         },
@@ -187,23 +193,26 @@ export const ShiftTypesUpdate = () => {
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
-      const categoryId = findCategoryId(dataDefaults, formValues);
+      const categoryIdFound = findCategoryId(dataDefaults, formValues);
       const positionList = processPositionList(dataDefaults, formValues);
       const timeList = processTimeList(formValues);
+      const body: IReqShiftTypeItem = {
+        information: {
+          category: {
+            id: categoryIdFound,
+          },
+          details: formValues.information.details,
+          isCore: formValues.information.isCore,
+          isOffPlaya: formValues.information.isOffPlaya,
+          name: formValues.information.name,
+        },
+        positionList,
+        timeList,
+      };
 
       // update database
       await trigger({
-        body: {
-          information: {
-            categoryId,
-            details: formValues.information.details,
-            isCore: formValues.information.isCore,
-            isOffPlaya: formValues.information.isOffPlaya,
-            name: formValues.information.name,
-          },
-          positionList,
-          timeList,
-        },
+        body,
         method: "PATCH",
       });
 
@@ -345,9 +354,9 @@ export const ShiftTypesUpdate = () => {
       <ShiftTypesPositionRemove
         handleDialogClose={() => setIsDialogOpen(false)}
         isDialogOpen={
-          dialogCurrent.dialogItem === DialogList.PositionRemove && isDialogOpen
+          dialogActive.dialogItem === DialogList.PositionRemove && isDialogOpen
         }
-        positionItem={dialogCurrent.item}
+        positionItem={dialogActive.item}
         positionRemove={positionRemove}
         typeId={Number(typeId)}
       />
@@ -356,9 +365,9 @@ export const ShiftTypesUpdate = () => {
       <ShiftTypesTimeRemove
         handleDialogClose={() => setIsDialogOpen(false)}
         isDialogOpen={
-          dialogCurrent.dialogItem === DialogList.TimeRemove && isDialogOpen
+          dialogActive.dialogItem === DialogList.TimeRemove && isDialogOpen
         }
-        timeItem={dialogCurrent.item}
+        timeItem={dialogActive.item}
         timeRemove={timeRemove}
         typeId={Number(typeId)}
       />

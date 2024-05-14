@@ -14,20 +14,18 @@ import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "src/components/general/DialogContainer";
 import { SnackbarText } from "src/components/general/SnackbarText";
+import type {
+  IReqRoleVolunteerItem,
+  IResRoleRowItem,
+  IResRoleVolunteerItem,
+} from "src/components/types/roles";
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IRoleVolunteersDialogRemoveProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
-  roleItem: {
-    id: number;
-    name: string;
-  };
-  volunteerItem: {
-    playaName: string;
-    shiftboardId: number;
-    worldName: string;
-  };
+  roleItem: IResRoleRowItem;
+  volunteerItem: IResRoleVolunteerItem;
 }
 
 export const RoleVolunteersDialogRemove = ({
@@ -51,11 +49,13 @@ export const RoleVolunteersDialogRemove = ({
   // --------------------
   const handleRoleVolunteerRemove = async () => {
     try {
+      const body: IReqRoleVolunteerItem = {
+        shiftboardId,
+      };
+
       // update database
       await trigger({
-        body: {
-          shiftboardId,
-        },
+        body,
         method: "DELETE",
       });
 

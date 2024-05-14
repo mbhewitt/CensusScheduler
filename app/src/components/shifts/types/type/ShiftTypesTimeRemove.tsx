@@ -20,6 +20,7 @@ import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
+import type { IResShiftTypeTimePositionItem } from "src/components/types/shifts/types";
 import { fetcherGet } from "src/utils/fetcher";
 
 interface ITimeItem {
@@ -40,16 +41,22 @@ interface IShiftTypesTimeRemoveProps {
 }
 
 export const ShiftTypesTimeRemove = ({
-  handleDialogClose: handleDialogRemoveClose,
-  isDialogOpen: isDialogRemoveOpen,
+  handleDialogClose,
+  isDialogOpen,
   timeItem,
   timeRemove,
   typeId,
 }: IShiftTypesTimeRemoveProps) => {
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR(
-    `/api/shifts/types/${typeId}/times/${timeItem.id}`,
+  const {
+    data,
+    error,
+  }: {
+    data: IResShiftTypeTimePositionItem[];
+    error: Error | undefined;
+  } = useSWR(
+    `/api/shifts/types/${typeId}/times/${timeItem.id}/positions`,
     fetcherGet
   );
 
@@ -62,8 +69,8 @@ export const ShiftTypesTimeRemove = ({
   if (error)
     return (
       <DialogContainer
-        handleDialogClose={handleDialogRemoveClose}
-        isDialogOpen={isDialogRemoveOpen}
+        handleDialogClose={handleDialogClose}
+        isDialogOpen={isDialogOpen}
         text="Remove time"
       >
         <ErrorAlert />
@@ -72,8 +79,8 @@ export const ShiftTypesTimeRemove = ({
   if (!data)
     return (
       <DialogContainer
-        handleDialogClose={handleDialogRemoveClose}
-        isDialogOpen={isDialogRemoveOpen}
+        handleDialogClose={handleDialogClose}
+        isDialogOpen={isDialogOpen}
         text="Remove role"
       >
         <Loading />
@@ -91,15 +98,15 @@ export const ShiftTypesTimeRemove = ({
         variant: "warning",
       }
     );
-    handleDialogRemoveClose();
+    handleDialogClose();
   };
 
   // render
   // --------------------
   return (
     <DialogContainer
-      handleDialogClose={handleDialogRemoveClose}
-      isDialogOpen={isDialogRemoveOpen}
+      handleDialogClose={handleDialogClose}
+      isDialogOpen={isDialogOpen}
       text="Remove time"
     >
       {data && data.length > 0 ? (
@@ -139,7 +146,7 @@ export const ShiftTypesTimeRemove = ({
       <DialogActions>
         <Button
           startIcon={<CloseIcon />}
-          onClick={handleDialogRemoveClose}
+          onClick={handleDialogClose}
           type="button"
           variant="outlined"
         >

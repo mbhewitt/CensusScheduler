@@ -2,7 +2,7 @@ import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
-import type { IResShiftCategoryItem } from "src/components/types";
+import type { IReqShiftCategoryItem } from "src/components/types/shifts/categories";
 
 const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
   const { categoryId } = req.query;
@@ -12,9 +12,10 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
     // --------------------
     case "PATCH": {
       // update category
-      const { departmentName, name }: IResShiftCategoryItem = JSON.parse(
-        req.body
-      );
+      const {
+        department: { name: departmentName },
+        name: categoryName,
+      }: IReqShiftCategoryItem = JSON.parse(req.body);
 
       await pool.query<RowDataPacket[]>(
         `UPDATE op_shift_category
@@ -23,7 +24,7 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
           shift_category=?,
           update_category=true
         WHERE shift_category_id=?`,
-        [departmentName, name, categoryId]
+        [departmentName, categoryName, categoryId]
       );
 
       return res.status(200).json({

@@ -32,7 +32,10 @@ import { Hero } from "src/components/layout/Hero";
 import { RolesDialogCreate } from "src/components/roles/RolesDialogCreate";
 import { RolesDialogDelete } from "src/components/roles/RolesDialogDelete";
 import { RolesDialogUpdate } from "src/components/roles/RolesDialogUpdate";
-import type { IResRoleItem } from "src/components/types";
+import type {
+  IReqRoleDisplayItem,
+  IResRoleRowItem,
+} from "src/components/types/roles";
 import {
   ROLE_ADMIN_ID,
   ROLE_BEHAVIORAL_STANDARDS_ID,
@@ -71,7 +74,13 @@ export const Roles = () => {
 
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR("/api/roles", fetcherGet);
+  const {
+    data,
+    error,
+  }: {
+    data: IResRoleRowItem[];
+    error: Error | undefined;
+  } = useSWR("/api/roles", fetcherGet);
   const { mutate } = useSWRConfig();
 
   // other hooks
@@ -85,10 +94,14 @@ export const Roles = () => {
 
   const handleDisplayToggle = async ({ checked, id, name }: IRoleDisplay) => {
     try {
+      const body: IReqRoleDisplayItem = {
+        checked,
+      };
+
       // update database
       // workaround to handle dynamic routing
       await axios.patch(`/api/roles/${id}/display`, {
-        checked,
+        checked: body.checked,
       });
       mutate("/api/roles");
 
@@ -142,7 +155,7 @@ export const Roles = () => {
       },
     },
   ];
-  const dataTable = data.map(({ display, id, name }: IResRoleItem) => {
+  const dataTable = data.map(({ display, id, name }) => {
     // if role ID is super admin, admin, or behavioral standards
     // then disable actions
     if (

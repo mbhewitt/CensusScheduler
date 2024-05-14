@@ -2,6 +2,7 @@ import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
+import type { IReqPasscode } from "src/components/types/volunteers";
 
 const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   const { shiftboardId } = req.query;
@@ -11,7 +12,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     // --------------------
     case "PATCH": {
       // reset volunteer passcode
-      const { passcode } = JSON.parse(req.body);
+      const { passcode }: IReqPasscode = JSON.parse(req.body);
 
       await pool.query<RowDataPacket[]>(
         `UPDATE op_volunteers

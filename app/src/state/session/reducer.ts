@@ -1,4 +1,4 @@
-import type { IResVolunteerAccount } from "src/components/types";
+import type { IResVolunteerAccount } from "src/components/types/volunteers";
 import {
   SESSION_BEHAVIORAL_STANDARDS,
   SESSION_SIGN_IN,

@@ -2,7 +2,7 @@ import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
-import type { IResRoleItem } from "src/components/types";
+import type { IReqRoleItem, IResRoleRowItem } from "src/components/types/roles";
 
 const roles = async (req: NextApiRequest, res: NextApiResponse) => {
   const { roleId } = req.query;
@@ -18,16 +18,20 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
           role,
           role_id
         FROM op_roles
-        WHERE role_id=?
-        ORDER BY role`,
+        WHERE role_id=?`,
         [roleId]
       );
-      const resRoleList: IResRoleItem[] = dbRoleList.map(
-        ({ display, role, role_id }) => {
-          return { display: Boolean(display), id: role_id, name: role };
+      const [resRoleFirst] = dbRoleList.map(
+        ({ display, role, role_id }: RowDataPacket) => {
+          const resRoleItem: IResRoleRowItem = {
+            display: Boolean(display),
+            id: role_id,
+            name: role,
+          };
+
+          return resRoleItem;
         }
       );
-      const resRoleFirst = resRoleList[0];
 
       return res.status(200).json(resRoleFirst);
     }
@@ -36,7 +40,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
     // --------------------
     case "PATCH": {
       // update role
-      const { name } = JSON.parse(req.body);
+      const { name }: IReqRoleItem = JSON.parse(req.body);
 
       await pool.query<RowDataPacket[]>(
         `UPDATE op_roles

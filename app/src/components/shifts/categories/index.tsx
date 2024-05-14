@@ -27,7 +27,7 @@ import { Hero } from "src/components/layout/Hero";
 import { ShiftCategoriesDialogCreate } from "src/components/shifts/categories/ShiftCategoriesDialogCreate";
 import { ShiftCategoriesDialogDelete } from "src/components/shifts/categories/ShiftCategoriesDialogDelete";
 import { ShiftCategoriesDialogUpdate } from "src/components/shifts/categories/ShiftCategoriesDialogUpdate";
-import type { IResShiftCategoryItem } from "src/components/types";
+import type { IResShiftCategoryItem } from "src/components/types/shifts/categories";
 import { fetcherGet } from "src/utils/fetcher";
 import { getColorMap } from "src/utils/getColorMap";
 import {
@@ -46,7 +46,7 @@ export const ShiftCategories = () => {
   // --------------------
   const [dialogCurrent, setDialogCurrent] = useState({
     category: {
-      departmentName: "",
+      department: { name: "" },
       id: 0,
       name: "",
     },
@@ -56,7 +56,13 @@ export const ShiftCategories = () => {
 
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR("/api/shifts/categories", fetcherGet);
+  const {
+    data,
+    error,
+  }: {
+    data: IResShiftCategoryItem[];
+    error: Error | undefined;
+  } = useSWR("/api/shifts/categories", fetcherGet);
 
   // logic
   // --------------------
@@ -111,9 +117,13 @@ export const ShiftCategories = () => {
   ];
   const colorMapDisplay = getColorMap(data);
   const dataTable = data.map(
-    ({ departmentName, id, name }: IResShiftCategoryItem) => {
+    ({
+      department: { name: departmentName },
+      id: categoryId,
+      name: categoryName,
+    }) => {
       return [
-        name,
+        categoryName,
         departmentName,
         <Chip
           key={`${departmentName}-chip`}
@@ -122,13 +132,17 @@ export const ShiftCategories = () => {
         />,
         <MoreMenu
           Icon={<MoreHorizIcon />}
-          key={`${id}-menu`}
+          key={`${categoryId}-menu`}
           MenuList={
             <MenuList>
               <MenuItem
                 onClick={() => {
                   setDialogCurrent({
-                    category: { departmentName, id, name },
+                    category: {
+                      department: { name: departmentName },
+                      id: categoryId,
+                      name: categoryName,
+                    },
                     dialogItem: DialogList.Update,
                   });
                   setIsDialogOpen(true);
@@ -142,7 +156,11 @@ export const ShiftCategories = () => {
               <MenuItem
                 onClick={() => {
                   setDialogCurrent({
-                    category: { departmentName, id, name },
+                    category: {
+                      department: { name: departmentName },
+                      id: categoryId,
+                      name: categoryName,
+                    },
                     dialogItem: DialogList.Delete,
                   });
                   setIsDialogOpen(true);
@@ -186,7 +204,7 @@ export const ShiftCategories = () => {
               onClick={() => {
                 setDialogCurrent({
                   category: {
-                    departmentName: "",
+                    department: { name: "" },
                     id: 0,
                     name: "",
                   },

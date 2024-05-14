@@ -15,38 +15,27 @@ import {
 } from "@mui/material";
 import { Control, Controller, FieldErrors } from "react-hook-form";
 
-import type { IResShiftPositionItem } from "src/components/types";
+import type { IResShiftPositionDefaults } from "src/components/types/shifts/positions";
 import { COLOR_BURNING_MAN_BROWN } from "src/constants";
+import { ensure } from "src/utils/ensure";
 
-interface IDataDefaults {
-  positionList: IResShiftPositionItem[];
-  prerequisiteList: IResShiftPositionPrerequisiteItem[];
-  roleList: IResShiftPositionRoleItem[];
-}
 export interface IFormValues {
   critical: boolean;
-  endTimeOffset: number;
-  lead: boolean;
   details: string;
-  positionDetails: string;
+  endTimeOffset: number;
   id: number;
+  lead: boolean;
   name: string;
-  prerequisiteName: string;
+  prerequisite: {
+    name: string;
+  };
+  role: { name: string };
   startTimeOffset: number;
-  roleName: string;
-}
-interface IResShiftPositionPrerequisiteItem {
-  id: number;
-  name: string;
-}
-interface IResShiftPositionRoleItem {
-  id: number;
-  name: string;
 }
 interface IShiftPositionsFormProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<IFormValues, any>;
-  dataDefaults: IDataDefaults;
+  dataDefaults: IResShiftPositionDefaults;
   errors: FieldErrors<IFormValues>;
   positionName: string;
 }
@@ -54,32 +43,35 @@ interface IShiftPositionsFormProps {
 // utilities
 // --------------------
 export const findList = (
-  dataDefaults: IDataDefaults,
+  dataDefaults: IResShiftPositionDefaults,
   formValues: IFormValues
 ) => {
-  const prerequisiteFound = dataDefaults.prerequisiteList.find(
-    ({ name }: { name: string }) => {
-      return name === formValues.prerequisiteName;
-    }
-  );
-  const roleFound = dataDefaults.roleList.find(({ name }: { name: string }) => {
-    return name === formValues.roleName;
-  });
+  const prerequisiteIdFound = ensure(
+    dataDefaults.prerequisiteList.find(({ name }: { name: string }) => {
+      return name === formValues.prerequisite.name;
+    })
+  ).id;
+  const roleIdFound = ensure(
+    dataDefaults.roleList.find(({ name }: { name: string }) => {
+      return name === formValues.role.name;
+    })
+  ).id;
 
-  return [prerequisiteFound, roleFound];
+  return [prerequisiteIdFound, roleIdFound];
 };
 
 export const defaultValues: IFormValues = {
   critical: false,
-  endTimeOffset: 0,
   details: "",
-  lead: false,
-  positionDetails: "",
+  endTimeOffset: 0,
   id: 0,
+  lead: false,
   name: "",
-  prerequisiteName: "",
+  prerequisite: {
+    name: "",
+  },
+  role: { name: "" },
   startTimeOffset: 0,
-  roleName: "",
 };
 export const ShiftPositionsForm = ({
   control,
@@ -175,23 +167,21 @@ export const ShiftPositionsForm = ({
               <Grid item xs={6}>
                 <Controller
                   control={control}
-                  name="roleName"
+                  name="role.name"
                   render={({ field }) => (
                     <FormControl fullWidth variant="standard">
                       <InputLabel id="to">Role</InputLabel>
                       <Select
                         {...field}
-                        error={Boolean(errors.roleName)}
+                        error={Boolean(errors.role?.name)}
                         label="Role"
                         labelId="role"
                       >
-                        {dataDefaults.roleList.map(
-                          ({ id, name }: IResShiftPositionRoleItem) => (
-                            <MenuItem key={id} value={name}>
-                              {name}
-                            </MenuItem>
-                          )
-                        )}
+                        {dataDefaults.roleList.map(({ id, name }) => (
+                          <MenuItem key={id} value={name}>
+                            {name}
+                          </MenuItem>
+                        ))}
                       </Select>
                     </FormControl>
                   )}
@@ -200,24 +190,22 @@ export const ShiftPositionsForm = ({
               <Grid item xs={6}>
                 <Controller
                   control={control}
-                  name="prerequisiteName"
+                  name="prerequisite.name"
                   render={({ field }) => (
                     <FormControl fullWidth variant="standard">
                       <InputLabel id="to">Prerequisite</InputLabel>
                       <Select
                         {...field}
-                        error={Boolean(errors.prerequisiteName)}
+                        error={Boolean(errors.prerequisite?.name)}
                         label="Prerequisite"
                         labelId="prerequisite"
                         required
                       >
-                        {dataDefaults.prerequisiteList.map(
-                          ({ id, name }: IResShiftPositionPrerequisiteItem) => (
-                            <MenuItem key={id} value={name}>
-                              {name}
-                            </MenuItem>
-                          )
-                        )}
+                        {dataDefaults.prerequisiteList.map(({ id, name }) => (
+                          <MenuItem key={id} value={name}>
+                            {name}
+                          </MenuItem>
+                        ))}
                       </Select>
                     </FormControl>
                   )}

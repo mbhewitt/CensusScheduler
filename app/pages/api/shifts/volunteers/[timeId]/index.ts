@@ -7,9 +7,11 @@ import {
   shiftVolunteerRemove,
 } from "pages/api/general/shiftVolunteers";
 import type {
+  IReqShiftVolunteerItem,
   IResShiftPositionCountItem,
-  IResShiftVolunteerItem,
-} from "src/components/types";
+  IResShiftVolunteerDetails,
+  IResShiftVolunteerRowItem,
+} from "src/components/types/shifts";
 
 const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
@@ -76,18 +78,18 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         ORDER BY v.playa_name`,
         [timeId]
       );
-      const resShiftPositionFirst = dbShiftPositionList[0];
-      const resShiftPositionList: IResShiftPositionCountItem[] =
-        dbShiftPositionList.map(
-          ({
-            position_details,
-            position_type_id,
-            position,
-            prerequisite_id,
-            role_id,
-            shift_position_id,
-            total_slots,
-          }) => ({
+      const [resShiftPositionFirst] = dbShiftPositionList;
+      const resShiftPositionList = dbShiftPositionList.map(
+        ({
+          position_details,
+          position_type_id,
+          position,
+          prerequisite_id,
+          role_id,
+          shift_position_id,
+          total_slots,
+        }) => {
+          const resShiftPositionItem: IResShiftPositionCountItem = {
             filledSlots: 0,
             positionName: position,
             positionDetails: position_details,
@@ -96,28 +98,33 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             roleRequiredId: role_id ?? 0,
             shiftPositionId: shift_position_id,
             totalSlots: total_slots,
-          })
-        );
-      const resShiftVolunteerList: IResShiftVolunteerItem[] =
-        dbShiftVolunteerList.map(
-          ({
-            noshow,
-            playa_name,
-            position,
-            shift_position_id,
-            shift_times_id,
-            shiftboard_id,
-            world_name,
-          }) => ({
-            noShow: noshow,
+          };
+
+          return resShiftPositionItem;
+        }
+      );
+      const resShiftVolunteerList = dbShiftVolunteerList.map(
+        ({
+          noshow,
+          playa_name,
+          position,
+          shift_position_id,
+          shift_times_id,
+          shiftboard_id,
+          world_name,
+        }) => {
+          const resShiftVolunteerItem: IResShiftVolunteerRowItem = {
+            isCheckedIn: noshow,
             playaName: playa_name,
             positionName: position,
             shiftboardId: shiftboard_id,
             shiftPositionId: shift_position_id,
             timeId: shift_times_id,
             worldName: world_name,
-          })
-        );
+          };
+          return resShiftVolunteerItem;
+        }
+      );
 
       resShiftVolunteerList.forEach((shiftVolunteerItem) => {
         const positionFound = resShiftPositionList.find(
@@ -128,24 +135,29 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         if (positionFound) positionFound.filledSlots += 1;
       });
 
-      return res.status(200).json({
+      const resShiftVolunteerDetails: IResShiftVolunteerDetails = {
         date: resShiftPositionFirst.date,
         dateName: resShiftPositionFirst.datename ?? "",
         endTime: resShiftPositionFirst.end_time,
-        shiftPositionList: resShiftPositionList,
-        shiftVolunteerList: resShiftVolunteerList,
+        positionList: resShiftPositionList,
         startTime: resShiftPositionFirst.start_time,
         type: resShiftPositionFirst.shift_name,
-      });
+        volunteerList: resShiftVolunteerList,
+      };
+
+      return res.status(200).json(resShiftVolunteerDetails);
     }
 
     // post
     // --------------------
     case "POST": {
       // add volunteer to shift
-      const { noShow, shiftboardId, shiftPositionId, timeId } = JSON.parse(
-        req.body
-      );
+      const {
+        id: timeId,
+        noShow,
+        shiftboardId,
+        shiftPositionId,
+      }: IReqShiftVolunteerItem = JSON.parse(req.body);
       const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT *
         FROM op_volunteer_shifts

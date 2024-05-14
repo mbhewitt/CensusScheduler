@@ -20,15 +20,12 @@ import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
+import type { IResShiftTypePositionTimeItem } from "src/components/types/shifts/types";
 import { fetcherGet } from "src/utils/fetcher";
 
 interface IPositionItem {
   id: number;
   index: number;
-  name: string;
-}
-interface ITimeItem {
-  id: number;
   name: string;
 }
 interface IShiftTypesPositionRemoveProps {
@@ -40,16 +37,22 @@ interface IShiftTypesPositionRemoveProps {
 }
 
 export const ShiftTypesPositionRemove = ({
-  handleDialogClose: handleDialogRemoveClose,
-  isDialogOpen: isDialogRemoveOpen,
+  handleDialogClose,
+  isDialogOpen,
   positionItem,
   positionRemove,
   typeId,
 }: IShiftTypesPositionRemoveProps) => {
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR(
-    `/api/shifts/types/${typeId}/positions/${positionItem.id}`,
+  const {
+    data,
+    error,
+  }: {
+    data: IResShiftTypePositionTimeItem[];
+    error: Error | undefined;
+  } = useSWR(
+    `/api/shifts/types/${typeId}/positions/${positionItem.id}/times`,
     fetcherGet
   );
 
@@ -62,8 +65,8 @@ export const ShiftTypesPositionRemove = ({
   if (error)
     return (
       <DialogContainer
-        handleDialogClose={handleDialogRemoveClose}
-        isDialogOpen={isDialogRemoveOpen}
+        handleDialogClose={handleDialogClose}
+        isDialogOpen={isDialogOpen}
         text="Remove position"
       >
         <ErrorAlert />
@@ -72,8 +75,8 @@ export const ShiftTypesPositionRemove = ({
   if (!data)
     return (
       <DialogContainer
-        handleDialogClose={handleDialogRemoveClose}
-        isDialogOpen={isDialogRemoveOpen}
+        handleDialogClose={handleDialogClose}
+        isDialogOpen={isDialogOpen}
         text="Remove position"
       >
         <Loading />
@@ -91,15 +94,15 @@ export const ShiftTypesPositionRemove = ({
         variant: "warning",
       }
     );
-    handleDialogRemoveClose();
+    handleDialogClose();
   };
 
   // render
   // --------------------
   return (
     <DialogContainer
-      handleDialogClose={handleDialogRemoveClose}
-      isDialogOpen={isDialogRemoveOpen}
+      handleDialogClose={handleDialogClose}
+      isDialogOpen={isDialogOpen}
       text="Remove position"
     >
       {data && data.length > 0 ? (
@@ -111,7 +114,7 @@ export const ShiftTypesPositionRemove = ({
             </Typography>
           </DialogContentText>
           <List sx={{ display: "inline-block", pl: 2, listStyleType: "disc" }}>
-            {data.map((timeItem: ITimeItem) => {
+            {data.map((timeItem) => {
               return (
                 <ListItem
                   disablePadding
@@ -137,7 +140,7 @@ export const ShiftTypesPositionRemove = ({
       <DialogActions>
         <Button
           startIcon={<CloseIcon />}
-          onClick={handleDialogRemoveClose}
+          onClick={handleDialogClose}
           type="button"
           variant="outlined"
         >

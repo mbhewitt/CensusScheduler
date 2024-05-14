@@ -2,7 +2,10 @@ import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
-import type { IResRoleVolunteerItem } from "src/components/types";
+import type {
+  IReqRoleVolunteerItem,
+  IResRoleVolunteerItem,
+} from "src/components/types/roles";
 
 const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   const { roleId } = req.query;
@@ -27,16 +30,19 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         ORDER BY v.playa_name`,
         [roleId]
       );
-      const resRoleVolunteerList: IResRoleVolunteerItem[] =
-        dbRoleVolunteerList.map(({ playa_name, shiftboard_id, world_name }) => {
-          return {
-            shiftboardId: shiftboard_id,
+      const [resRoleVolunteerFirst] = dbRoleVolunteerList.map(
+        ({ playa_name, shiftboard_id, world_name }: RowDataPacket) => {
+          const resRoleVolunteerItem: IResRoleVolunteerItem = {
             playaName: playa_name,
+            shiftboardId: shiftboard_id,
             worldName: world_name,
           };
-        });
 
-      return res.status(200).json(resRoleVolunteerList);
+          return resRoleVolunteerItem;
+        }
+      );
+
+      return res.status(200).json(resRoleVolunteerFirst);
     }
 
     // post
@@ -51,7 +57,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         AND shiftboard_id=?`,
         [roleId, shiftboardId]
       );
-      const dbRoleVolunteerFirst = dbRoleVolunteerList[0];
+      const [dbRoleVolunteerFirst] = dbRoleVolunteerList;
 
       // if role volunteer row exists
       // then update role volunteer row
@@ -89,7 +95,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     // --------------------
     case "DELETE": {
       // remove role volunteer
-      const { shiftboardId } = JSON.parse(req.body);
+      const { shiftboardId }: IReqRoleVolunteerItem = JSON.parse(req.body);
 
       await pool.query<RowDataPacket[]>(
         `UPDATE op_volunteer_roles

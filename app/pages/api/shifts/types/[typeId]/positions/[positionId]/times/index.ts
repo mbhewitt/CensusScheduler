@@ -2,6 +2,7 @@ import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
+import { IResShiftTypePositionTimeItem } from "src/components/types/shifts/types";
 import { formatDateName, formatTime } from "src/utils/formatDateTime";
 
 const shiftTypePositionTimes = async (
@@ -39,13 +40,15 @@ const shiftTypePositionTimes = async (
       );
       const resTimeList = dbTimeList.map(
         ({ date, datename, end_time, shift_times_id, start_time }) => {
-          return {
+          const resTimeItem: IResShiftTypePositionTimeItem = {
             id: shift_times_id,
             name: `${formatDateName(date, datename)}, ${formatTime(
               start_time,
               end_time
             )}`,
           };
+
+          return resTimeItem;
         }
       );
 
