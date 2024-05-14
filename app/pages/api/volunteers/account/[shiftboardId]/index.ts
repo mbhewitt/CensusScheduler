@@ -44,7 +44,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         id: role_id,
         name: role,
       }));
-      const dbVolunteerFirst = dbVolunteerList[0];
+      const [dbVolunteerFirst] = dbVolunteerList;
       const resVolunteerItem: IResVolunteerAccount = {
         email: dbVolunteerFirst.email ?? "",
         emergencyContact: dbVolunteerFirst.emergency_contact ?? "",

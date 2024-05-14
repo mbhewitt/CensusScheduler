@@ -76,7 +76,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         ORDER BY v.playa_name`,
         [timeId]
       );
-      const resShiftPositionFirst = dbShiftPositionList[0];
+      const [resShiftPositionFirst] = dbShiftPositionList;
       const resShiftPositionList: IResShiftPositionCountItem[] =
         dbShiftPositionList.map(
           ({

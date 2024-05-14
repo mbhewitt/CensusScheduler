@@ -21,16 +21,18 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
         WHERE role_id=?`,
         [roleId]
       );
-      const resRoleList = dbRoleList.map(({ display, role, role_id }) => {
-        const resRoleItem: IResRoleRowItem = {
-          display: Boolean(display),
-          id: role_id,
-          name: role,
-        };
+      const [dbRoleFirst] = dbRoleList;
+      const resRoleFirst = dbRoleFirst.map(
+        ({ display, role, role_id }: RowDataPacket) => {
+          const resRoleItem: IResRoleRowItem = {
+            display: Boolean(display),
+            id: role_id,
+            name: role,
+          };
 
-        return resRoleItem;
-      });
-      const [resRoleFirst] = resRoleList;
+          return resRoleItem;
+        }
+      );
 
       return res.status(200).json(resRoleFirst);
     }

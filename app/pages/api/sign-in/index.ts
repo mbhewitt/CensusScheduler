@@ -24,7 +24,7 @@ const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
         AND shiftboard_id=?`,
         [passcode, shiftboardId]
       );
-      const volunteerFirst = dbVolunteerList[0];
+      const [volunteerFirst] = dbVolunteerList;
 
       // if credentials do not exist
       // then send error message

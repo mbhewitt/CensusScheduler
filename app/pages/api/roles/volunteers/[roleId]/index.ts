@@ -27,8 +27,9 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         ORDER BY v.playa_name`,
         [roleId]
       );
-      const resRoleVolunteerList = dbRoleVolunteerList.map(
-        ({ playa_name, shiftboard_id, world_name }) => {
+      const [dbRoleVolunteerFirst] = dbRoleVolunteerList;
+      const resRoleVolunteerFirst = dbRoleVolunteerFirst.map(
+        ({ playa_name, shiftboard_id, world_name }: RowDataPacket) => {
           const resRoleVolunteerItem: IResRoleVolunteerItem = {
             playaName: playa_name,
             shiftboardId: shiftboard_id,
@@ -39,7 +40,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         }
       );
 
-      return res.status(200).json(resRoleVolunteerList);
+      return res.status(200).json(resRoleVolunteerFirst);
     }
 
     // post
@@ -54,7 +55,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         AND shiftboard_id=?`,
         [roleId, shiftboardId]
       );
-      const dbRoleVolunteerFirst = dbRoleVolunteerList[0];
+      const [dbRoleVolunteerFirst] = dbRoleVolunteerList;
 
       // if role volunteer row exists
       // then update role volunteer row

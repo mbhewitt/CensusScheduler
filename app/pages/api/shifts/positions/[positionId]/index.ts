@@ -34,7 +34,8 @@ const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
         WHERE pt.position_type_id=?`,
         [positionId]
       );
-      const resShiftPositionFirst = dbShiftPositionList.map(
+      const [dbShiftPositionFirst] = dbShiftPositionList;
+      const resShiftPositionFirst = dbShiftPositionFirst.map(
         ({
           critical,
           end_time_offset,
@@ -44,7 +45,7 @@ const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
           start_time_offset,
           role,
           shift_category,
-        }) => {
+        }: RowDataPacket) => {
           const resShiftPositionItem: IResShiftPositionItem = {
             critical: Boolean(critical),
             endTimeOffset: end_time_offset,
@@ -62,7 +63,7 @@ const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
 
           return resShiftPositionItem;
         }
-      )[0];
+      );
 
       return res.status(200).json(resShiftPositionFirst);
     }
