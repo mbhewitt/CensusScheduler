@@ -69,7 +69,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           shiftboard_id,
           world_name,
         }: RowDataPacket) => {
-          const resVolunteerLast =
+          const resVolunteerLast: IResVolunteerDropdownItem =
             resVolunteerList[resVolunteerList.length - 1];
 
           // if volunteer in last row is same as this row
@@ -84,7 +84,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             });
             // else add new volunteer
           } else {
-            const resVolunteerNew = {
+            const resVolunteerNew: IResVolunteerDropdownItem = {
               playaName: playa_name,
               roleList: [] as IResVolunteerRoleItem[],
               shiftboardId: shiftboard_id,

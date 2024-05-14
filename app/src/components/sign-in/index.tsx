@@ -30,9 +30,11 @@ import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import type { IVolunteerOption } from "src/components/types";
+import { IReqSignIn } from "src/components/types/sign-in";
 import type { IResVolunteerDropdownItem } from "src/components/types/volunteers";
 import { SESSION_SIGN_IN } from "src/constants";
 import { SessionContext } from "src/state/session/context";
+import { ensure } from "src/utils/ensure";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IFormValues {
@@ -55,7 +57,13 @@ export const SignIn = () => {
 
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR("/api/volunteers/dropdown", fetcherGet);
+  const {
+    data,
+    error,
+  }: {
+    data: IResVolunteerDropdownItem[];
+    error: Error | undefined;
+  } = useSWR("/api/volunteers/dropdown", fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     "/api/sign-in",
     fetcherTrigger
@@ -84,12 +92,14 @@ export const SignIn = () => {
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
+      const body: IReqSignIn = {
+        passcode: formValues.passcode,
+        shiftboardId: ensure(formValues.volunteer?.shiftboardId),
+      };
+
       // check database
       const dataVolunteerItem = await trigger({
-        body: {
-          passcode: formValues.passcode,
-          shiftboardId: formValues.volunteer?.shiftboardId,
-        },
+        body,
         method: "POST",
       });
 
@@ -183,11 +193,7 @@ export const SignIn = () => {
                       }
                       onChange={(_, data) => field.onChange(data)}
                       options={data.map(
-                        ({
-                          playaName,
-                          shiftboardId,
-                          worldName,
-                        }: IResVolunteerDropdownItem) => ({
+                        ({ playaName, shiftboardId, worldName }) => ({
                           label: `${playaName} "${worldName}"`,
                           shiftboardId,
                         })
