@@ -32,13 +32,12 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
             vs.shiftboard_id
           FROM op_shift_times AS st
           JOIN op_shift_name AS sn
-          ON sn.delete_shift=false 
+          ON sn.delete_shift=false
           AND sn.off_playa=false
           AND sn.shift_name_id=st.shift_name_id
           LEFT JOIN op_shift_category AS sc
           ON sc.delete_category=false
           AND sc.shift_category_id=sn.shift_category_id
-          AND sc.department="Training"
           LEFT JOIN op_dates AS d
           ON d.date=st.date
           JOIN op_shift_position AS sp
@@ -49,6 +48,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
           AND vs.shift_position_id=sp.shift_position_id
           AND vs.shift_times_id=st.shift_times_id
           WHERE st.remove_shift_time=false
+          AND sc.department="Training"
           ORDER BY st.start_time`
         );
       } else {

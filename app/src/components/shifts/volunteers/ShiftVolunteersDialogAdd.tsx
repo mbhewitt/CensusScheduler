@@ -65,9 +65,9 @@ interface IShiftVolunteersDialogAddProps {
     dateName: string;
     endTime: string;
     positionList: IResShiftPositionCountItem[];
-    shiftVolunteerList: IResShiftVolunteerRowItem[];
     startTime: string;
     type: string;
+    volunteerList: IResShiftVolunteerRowItem[];
   };
   timeId: string | string[] | undefined;
 }
@@ -88,9 +88,9 @@ export const ShiftVolunteersDialogAdd = ({
     dateName,
     endTime,
     positionList,
-    shiftVolunteerList,
     startTime,
     type,
+    volunteerList,
   },
   timeId,
 }: IShiftVolunteersDialogAddProps) => {
@@ -211,7 +211,7 @@ export const ShiftVolunteersDialogAdd = ({
 
   useEffect(() => {
     if (dataVolunteerShiftList) {
-      const isVolunteerSlotAvailable = shiftVolunteerList.every((volunteer) => {
+      const isVolunteerSlotAvailable = volunteerList.every((volunteer) => {
         return volunteer.shiftboardId !== Number(shiftboardId);
       });
       const isVolunteerShiftAvailable = dataVolunteerShiftList.every(
@@ -256,8 +256,8 @@ export const ShiftVolunteersDialogAdd = ({
     enqueueSnackbar,
     shiftboardId,
     type,
-    shiftVolunteerList,
     startTime,
+    volunteerList,
     volunteerSelected,
   ]);
 
@@ -667,7 +667,7 @@ export const ShiftVolunteersDialogAdd = ({
                 required: "Volunteer is required",
                 validate: (value) => {
                   if (value) {
-                    const isVolunteerSlotAvailable = shiftVolunteerList.every(
+                    const isVolunteerSlotAvailable = volunteerList.every(
                       (volunteer) =>
                         volunteer.shiftboardId !== value.shiftboardId
                     );
