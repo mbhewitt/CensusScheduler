@@ -8,17 +8,17 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
 
   dbShiftList.forEach(
     ({
-      shift_category_id,
       date,
       datename,
       department,
       end_time,
       position_type_id,
+      shift_category_id,
+      shift_name,
+      shift_times_id,
       shiftboard_id,
       start_time,
-      shift_times_id,
       total_slots,
-      shift_name,
       year,
     }: RowDataPacket) => {
       const shiftPositionIdItem = `${shift_times_id}${position_type_id}`;
@@ -56,7 +56,7 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
       }
       // if volunteer ID exists
       // then add to filled slots
-      if (shiftboard_id) dbShiftLast.filledSlots += 1;
+      if (dbShiftLast && shiftboard_id) dbShiftLast.filledSlots += 1;
     }
   );
 

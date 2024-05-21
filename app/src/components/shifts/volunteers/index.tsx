@@ -142,7 +142,7 @@ export const ShiftVolunteers = () => {
           }) => {
             if (dataShiftVolunteersItem) {
               const dataMutate = structuredClone(dataShiftVolunteersItem);
-              dataMutate.shiftVolunteerList.push({
+              dataMutate.volunteerList.push({
                 noShow,
                 playaName,
                 positionName,
@@ -168,11 +168,10 @@ export const ShiftVolunteers = () => {
             if (dataShiftVolunteersItem) {
               const dataMutate = structuredClone(dataShiftVolunteersItem);
               const shiftboardIdNum = Number(shiftboardId);
-              const shiftVolunteerItemUpdate =
-                dataMutate.shiftVolunteerList.find(
-                  (volunteerItem: IResShiftVolunteerRowItem) =>
-                    volunteerItem.shiftboardId === shiftboardIdNum
-                );
+              const shiftVolunteerItemUpdate = dataMutate.volunteerList.find(
+                (volunteerItem: IResShiftVolunteerRowItem) =>
+                  volunteerItem.shiftboardId === shiftboardIdNum
+              );
               if (shiftVolunteerItemUpdate) {
                 shiftVolunteerItemUpdate.noShow = checked ? "" : "Yes";
               }
@@ -184,11 +183,11 @@ export const ShiftVolunteers = () => {
         socket.on("res-shift-volunteer-remove", ({ shiftboardId }) => {
           if (dataShiftVolunteersItem) {
             const dataMutate = structuredClone(dataShiftVolunteersItem);
-            const volunteerListNew = dataMutate.shiftVolunteerList.filter(
+            const volunteerListNew = dataMutate.volunteerList.filter(
               (volunteerItem: IResShiftVolunteerRowItem) =>
                 volunteerItem.shiftboardId !== shiftboardId
             );
-            dataMutate.shiftVolunteerList = volunteerListNew;
+            dataMutate.volunteerList = volunteerListNew;
 
             mutateShiftVolunteersItem(dataMutate);
           }
@@ -290,7 +289,7 @@ export const ShiftVolunteers = () => {
       isVolunteerAddAvailable =
         (isAuthenticated && isAdmin) ||
         (isAuthenticated &&
-          dataShiftVolunteersItem.shiftPositionList.some(
+          dataShiftVolunteersItem.positionList.some(
             (positionItem: IResShiftPositionCountItem) =>
               positionItem.filledSlots > 0
           ));
@@ -345,9 +344,7 @@ export const ShiftVolunteers = () => {
       },
     });
   }
-  const dataTable = structuredClone(
-    dataShiftVolunteersItem.shiftVolunteerList
-  ).map(
+  const dataTable = dataShiftVolunteersItem.volunteerList.map(
     ({
       isCheckedIn,
       playaName,
@@ -492,7 +489,7 @@ export const ShiftVolunteers = () => {
                 {dataShiftVolunteersItem.type}
               </Typography>
               <Typography component="h3" variant="h6">
-                {dataShiftVolunteersItem.shiftPositionList.map(
+                {dataShiftVolunteersItem.positionList.map(
                   ({
                     filledSlots,
                     positionName,
