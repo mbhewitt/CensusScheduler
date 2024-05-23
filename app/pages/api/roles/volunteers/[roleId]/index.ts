@@ -30,7 +30,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         ORDER BY v.playa_name`,
         [roleId]
       );
-      const [resRoleVolunteerFirst] = dbRoleVolunteerList.map(
+      const resRoleVolunteerList = dbRoleVolunteerList.map(
         ({ playa_name, shiftboard_id, world_name }: RowDataPacket) => {
           const resRoleVolunteerItem: IResRoleVolunteerItem = {
             playaName: playa_name,
@@ -42,7 +42,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         }
       );
 
-      return res.status(200).json(resRoleVolunteerFirst);
+      return res.status(200).json(resRoleVolunteerList);
     }
 
     // post

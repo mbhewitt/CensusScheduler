@@ -13,8 +13,8 @@ import {
   MenuItem,
   MenuList,
   Stack,
+  useTheme,
 } from "@mui/material";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -63,6 +63,7 @@ export const ShiftTypes = () => {
   // other hooks
   // --------------------
   const router = useRouter();
+  const theme = useTheme();
 
   // logic
   // --------------------
@@ -147,17 +148,10 @@ export const ShiftTypes = () => {
   return (
     <>
       <Hero
-        Image={
-          <Image
-            alt="census camp at burning man"
-            fill
-            priority
-            src="/home/hero.jpg"
-            style={{
-              objectFit: "cover",
-            }}
-          />
-        }
+        imageStyles={{
+          backgroundColor: theme.palette.primary.light,
+          backgroundImage: `linear-gradient(${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+        }}
         text="Shift types"
       />
       <Container component="main">

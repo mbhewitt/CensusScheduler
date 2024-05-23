@@ -25,7 +25,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
@@ -198,17 +197,10 @@ export const Account = () => {
   return (
     <>
       <Hero
-        Image={
-          <Image
-            alt="census art car illuminating at night"
-            fill
-            priority
-            src="/volunteers/account/hero.jpg"
-            style={{
-              objectFit: "cover",
-            }}
-          />
-        }
+        imageStyles={{
+          backgroundImage: "url(/banners/man-at-night.jpg)",
+          backgroundSize: "cover",
+        }}
         text="Account"
       />
       <Container component="main">

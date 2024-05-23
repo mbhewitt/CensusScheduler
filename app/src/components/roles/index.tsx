@@ -17,7 +17,6 @@ import {
   Switch,
 } from "@mui/material";
 import axios from "axios";
-import Image from "next/image";
 import Link from "next/link";
 import { useSnackbar } from "notistack";
 import { useState } from "react";
@@ -253,17 +252,10 @@ export const Roles = () => {
   return (
     <>
       <Hero
-        Image={
-          <Image
-            alt="census camp at burning man"
-            fill
-            priority
-            src="/home/hero.jpg"
-            style={{
-              objectFit: "cover",
-            }}
-          />
-        }
+        imageStyles={{
+          backgroundImage: "url(/banners/storage.jpg)",
+          backgroundSize: "cover",
+        }}
         text="Roles"
       />
       <Container component="main">

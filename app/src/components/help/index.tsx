@@ -26,17 +26,10 @@ export const Help = () => {
   return (
     <>
       <Hero
-        Image={
-          <Image
-            alt="census volunteers riding the census art car"
-            fill
-            priority
-            src="/help/hero.jpg"
-            style={{
-              objectFit: "cover",
-            }}
-          />
-        }
+        imageStyles={{
+          backgroundImage: "url(/banners/question-seamless.jpg)",
+          backgroundSize: "300px 300px",
+        }}
         text="Help"
       />
       <Container component="main">

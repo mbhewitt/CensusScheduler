@@ -19,7 +19,6 @@ import {
 } from "@mui/material";
 import { green, grey, red } from "@mui/material/colors";
 import { FilterType } from "mui-datatables";
-import Image from "next/image";
 import Link from "next/link";
 import useSWR from "swr";
 
@@ -256,17 +255,10 @@ export const Volunteers = () => {
   return (
     <>
       <Hero
-        Image={
-          <Image
-            alt="census volunteers cheering"
-            fill
-            priority
-            src="/volunteers/hero.jpg"
-            style={{
-              objectFit: "cover",
-            }}
-          />
-        }
+        imageStyles={{
+          backgroundImage: "url(/banners/volunteers-greeting.jpg)",
+          backgroundSize: "cover",
+        }}
         text="Volunteers"
       />
       <Container component="main">

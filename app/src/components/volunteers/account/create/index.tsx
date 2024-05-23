@@ -17,7 +17,6 @@ import {
   Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
@@ -133,17 +132,10 @@ export const AccountCreate = () => {
   return (
     <>
       <Hero
-        Image={
-          <Image
-            alt="volunteers riding the census art car"
-            fill
-            priority
-            src="/volunteers/account/create/hero.jpg"
-            style={{
-              objectFit: "cover",
-            }}
-          />
-        }
+        imageStyles={{
+          backgroundImage: "url(/banners/desk-person.jpg)",
+          backgroundSize: "cover",
+        }}
         text="Create account"
       />
       <Container component="main">
