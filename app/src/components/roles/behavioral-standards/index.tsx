@@ -244,9 +244,11 @@ export const BehavioralStandards = () => {
                 Additional information is provided about potential outcomes if a
                 report of concerning behavior is received, and about available
                 resources for communicating with members of BRC Census
-                leadership. It is expected that all members of the BRC Census
-                team will review and sign this document prior to their first
-                volunteer shift.
+                leadership. It is required for each member of the BRC Census
+                Team to agree to the terms and sign this document prior to their
+                first volunteer shift. Concerns or questions that need to be
+                resolved prior to signing should be sent to
+                censusvolunteercoordinators@burningman.org
               </Typography>
             </CardContent>
           </Card>
@@ -259,13 +261,13 @@ export const BehavioralStandards = () => {
             <CardContent>
               <Typography>
                 Members of BRC Census leadership are committed to being
-                available to any member of the BRC Census team who wish to share
-                feedback, thoughts, concerns, requests for assistance, or any
-                other communication. As Black Rock City staff, these individuals
-                have access to a wide range of resources available to them to
-                help them to do their jobs and navigate difficult situations.
-                They rely on their fellow team members to notify them of issues
-                which could require these resources.
+                available to any member of the BRC Census team who wishes to
+                share feedback, thoughts, concerns, requests for assistance, or
+                any other communication. As Black Rock City staff, these
+                individuals have access to a wide range of resources available
+                to them to help them to do their jobs and navigate difficult
+                situations. They rely on their fellow team members to notify
+                them of issues which could require these resources.
               </Typography>
               <Typography>
                 Volunteer Coordinators, members of BRC Census management, and
@@ -273,20 +275,21 @@ export const BehavioralStandards = () => {
                 Burning Man email addresses to enable communication in the
                 off-season. The Census Management group alias
                 census@burningman.org can always be used to bring issues to the
-                attention of BRC Census leadership. (As of Feb 2023, the members
-                of this group alias are Sonder-Census Manager and Captain
-                Mew-Scheduling Coordinator. They are also reachable at
-                sonder@burningman.org, mu@burningman.org) If direct
+                attention of BRC Census leadership. (As of Jan 2024, the members
+                of this group alias are Sonder-Census Manager, Captain
+                Mew-Scheduling Coordinator, and JOBI-Communications
+                Coordination. They are also reachable at sonder@burningman.org,
+                mu@burningman.org, and jobi@burningman.org) If direct
                 communication with another member of BRC Census leadership is
                 preferred, the group alias can be used to request contact
-                information for someone else.
+                information.
               </Typography>
               <Typography>
                 On-playa, members of BRC Census leadership can be found at the
-                Census Lab or reached via radio during daytime hours. Additional
-                on-playa resources are made available by other teams, including
-                peer mediators, private locations for conversations outside of
-                Census Lab, etc.
+                Census Lab or reached via radio on the Census channel while
+                shifts are active. Additional on-playa resources are made
+                available by other teams, including peer mediators, private
+                locations for conversations outside of Census Lab, etc.
               </Typography>
               <Typography>
                 If a situation ever arises in which a member of the BRC Census
@@ -322,8 +325,8 @@ export const BehavioralStandards = () => {
                 Sexual assault or unsolicited sexual contact of any kind,
                 destruction or theft of property, or attempts thereof, are
                 similarly inappropriate. Discrimination against any person based
-                on any demographic factor is also inappropriate at any time and
-                in any setting.
+                on any irrelevant demographic factor is also inappropriate at
+                any time and in any setting.
               </Typography>
             </CardContent>
           </Card>
@@ -378,7 +381,7 @@ export const BehavioralStandards = () => {
                 taken on by all BRC Census volunteers any time they are actively
                 representing their team (e.g., wearing a BRC Census lab coat,
                 BRC Census hoodie, etc.) When a person has a negative
-                interaction with someone wearing Census regalia, there is a risk
+                interaction with someone wearing Census regalia, there are risks
                 of long-lasting impacts for the entire team.
               </Typography>
               <Typography>
@@ -391,7 +394,7 @@ export const BehavioralStandards = () => {
                 associations with the BRC Census team and its members. Whenever
                 possible, BRC Census team members should keep this in mind and
                 behave in a way that will make the people around them want to
-                help us with our core project.
+                help us with our core mission.
               </Typography>
               <Typography>
                 It is important to note that there may be situations where some
@@ -429,22 +432,21 @@ export const BehavioralStandards = () => {
                 Members of the BRC Census team are asked to help with a task
                 that is nearly impossible: conducting careful, methodical,
                 reliable science in the middle of a harsh environment during an
-                unpredictable event. This can be inherently stressful. The work
-                also attracts people from a wide variety of backgrounds,
-                interests, personalities, cultures, etc. It is important that
-                all members of the BRC Census team approach each other with
-                respect, keeping in mind all of the expectations listed in
-                earlier sections of this document.
+                unpredictable event. This is inherently stressful. The work also
+                attracts people from a wide variety of backgrounds, interests,
+                personalities, cultures, etc. It is important that all members
+                of the BRC Census team approach each other with respect, keeping
+                in mind all of the expectations listed in earlier sections of
+                this document.
               </Typography>
               <Typography>
                 If a conflict between members of the BRC Census team occurs, it
-                is expected that all team members will remain polite and
-                respectful while interacting with one another. If the conflict
-                could lead to an interruption in responsibilities, it is vitally
-                important that team members request assistance from a Shift Lead
-                or some other member of BRC Census leadership. (Even if no
-                interruption of responsibilities is likely, this step is highly
-                encouraged!)
+                is expected that each team member will remain polite and
+                respectful. If the conflict could lead to an interruption in
+                responsibilities, it is vitally important that team members
+                request assistance from a Shift Lead or some other member of BRC
+                Census leadership. (Even if no interruption of responsibilities
+                is likely, this step is highly encouraged!)
               </Typography>
               <Typography>
                 In some cases, the environment or situation may preclude
@@ -453,9 +455,8 @@ export const BehavioralStandards = () => {
                 further discussion or action until a safer and more appropriate
                 setting can be arranged and all participants have had time for
                 any necessary self-care. In these cases, team members may be
-                asked to accept an alternate role, lane assignment, etc. so as
-                to prevent recurrence or exacerbation of an issue during a
-                shift.
+                asked to accept an alternate role, lane assignment, etc. to
+                prevent recurrence or exacerbation of an issue during a shift.
               </Typography>
               <Typography>
                 Even if it is unnecessary or impossible to bring members of BRC
@@ -512,7 +513,7 @@ export const BehavioralStandards = () => {
                     onChange={() => setIsSigned((prev) => !prev)}
                   />
                 }
-                label="I understand that by clicking the checkbox and Sign button, I acknowledge that I have read this document, and will abide by these standards to the best of my abilities."
+                label="I understand that by clicking the checkbox and Sign agreement button, I acknowledge that I have read this document, and will abide by these standards to the best of my abilities."
               />
             </CardContent>
             <CardActions
