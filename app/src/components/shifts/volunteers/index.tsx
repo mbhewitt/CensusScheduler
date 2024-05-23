@@ -20,7 +20,6 @@ import {
   Typography,
 } from "@mui/material";
 import dayjs from "dayjs";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
@@ -429,17 +428,10 @@ export const ShiftVolunteers = () => {
   return (
     <>
       <Hero
-        Image={
-          <Image
-            alt="census volunteers gathering"
-            fill
-            priority
-            src="/shifts/volunteers/hero.jpg"
-            style={{
-              objectFit: "cover",
-            }}
-          />
-        }
+        imageStyles={{
+          backgroundImage: "url(/banners/databeast-volunteers-waving.jpg)",
+          backgroundSize: "cover",
+        }}
         text="Shift volunteers"
       />
       <Container component="main">

@@ -18,7 +18,6 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -178,17 +177,10 @@ export const RoleVolunteers = () => {
   return (
     <>
       <Hero
-        Image={
-          <Image
-            alt="temple burning"
-            fill
-            priority
-            src="/reports/hero.jpg"
-            style={{
-              objectFit: "cover",
-            }}
-          />
-        }
+        imageStyles={{
+          backgroundImage: "url(/banners/databeast-volunteers-riding.jpg)",
+          backgroundSize: "cover",
+        }}
         text="Role volunteers"
       />
       <Container component="main" sx={{ flex: 1 }}>

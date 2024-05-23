@@ -14,8 +14,8 @@ import {
   MenuItem,
   MenuList,
   Stack,
+  useTheme,
 } from "@mui/material";
-import Image from "next/image";
 import { useState } from "react";
 import useSWR from "swr";
 
@@ -63,6 +63,10 @@ export const ShiftCategories = () => {
     data: IResShiftCategoryItem[];
     error: Error | undefined;
   } = useSWR("/api/shifts/categories", fetcherGet);
+
+  // other hooks
+  // --------------------
+  const theme = useTheme();
 
   // logic
   // --------------------
@@ -184,17 +188,10 @@ export const ShiftCategories = () => {
   return (
     <>
       <Hero
-        Image={
-          <Image
-            alt="census camp at burning man"
-            fill
-            priority
-            src="/home/hero.jpg"
-            style={{
-              objectFit: "cover",
-            }}
-          />
-        }
+        imageStyles={{
+          backgroundColor: theme.palette.primary.light,
+          backgroundImage: `linear-gradient(${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+        }}
         text="Shift categories"
       />
       <Container component="main">

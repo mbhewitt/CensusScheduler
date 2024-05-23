@@ -1,5 +1,4 @@
 import { Box, Card, CardContent, Container, Typography } from "@mui/material";
-import Image from "next/image";
 import Link from "next/link";
 
 import { Hero } from "src/components/layout/Hero";
@@ -10,17 +9,10 @@ export const Home = () => {
   return (
     <>
       <Hero
-        Image={
-          <Image
-            alt="census camp at burning man"
-            fill
-            priority
-            src="/home/hero.jpg"
-            style={{
-              objectFit: "cover",
-            }}
-          />
-        }
+        imageStyles={{
+          backgroundImage: "url(/banners/camp-at-day.jpg)",
+          backgroundSize: "cover",
+        }}
         text="Home"
       />
       <Container component="main">

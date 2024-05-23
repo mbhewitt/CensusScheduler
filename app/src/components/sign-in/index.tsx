@@ -17,7 +17,6 @@ import {
   TextField,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
 import { useContext, useState } from "react";
@@ -158,17 +157,10 @@ export const SignIn = () => {
   return (
     <>
       <Hero
-        Image={
-          <Image
-            alt="census volunteers greeting behind desks"
-            fill
-            priority
-            src="/sign-in/hero.jpg"
-            style={{
-              objectFit: "cover",
-            }}
-          />
-        }
+        imageStyles={{
+          backgroundImage: "url(/banners/desk-group.jpg)",
+          backgroundSize: "cover",
+        }}
         text="Sign in"
       />
       <Container component="main">

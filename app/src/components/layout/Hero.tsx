@@ -2,11 +2,11 @@ import { Box, Container, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
 interface IHeroProps {
-  Image: JSX.Element;
+  imageStyles: { [key: string]: string };
   text: string;
 }
 
-export const Hero = ({ Image, text }: IHeroProps) => {
+export const Hero = ({ imageStyles, text }: IHeroProps) => {
   // other hooks
   // --------------------
   const theme = useTheme();
@@ -15,7 +15,14 @@ export const Hero = ({ Image, text }: IHeroProps) => {
   // --------------------
   return (
     <Box
-      sx={{ height: theme.spacing(30), mb: 3, position: "relative", width: 1 }}
+      sx={{
+        ...imageStyles,
+        backgroundPosition: "center",
+        height: theme.spacing(30),
+        mb: 3,
+        position: "relative",
+        width: 1,
+      }}
     >
       <Box
         sx={{
@@ -36,7 +43,6 @@ export const Hero = ({ Image, text }: IHeroProps) => {
           </Typography>
         </Container>
       </Box>
-      {Image}
     </Box>
   );
 };

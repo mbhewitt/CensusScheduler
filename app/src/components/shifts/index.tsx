@@ -3,7 +3,6 @@ import { useTheme } from "@mui/material/styles";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import { MUIDataTableColumn } from "mui-datatables";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { useContext, useEffect } from "react";
 import useSWR from "swr";
@@ -289,17 +288,10 @@ export const Shifts = () => {
   return (
     <>
       <Hero
-        Image={
-          <Image
-            alt="census volunteers riding the census art car"
-            fill
-            priority
-            src="/shifts/hero.jpg"
-            style={{
-              objectFit: "cover",
-            }}
-          />
-        }
+        imageStyles={{
+          backgroundImage: "url(/banners/databeast-volunteers-exiting.jpg)",
+          backgroundSize: "cover",
+        }}
         text="Shifts"
       />
       <Container component="main">

@@ -16,7 +16,6 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
 import { useContext, useEffect, useState } from "react";
@@ -159,17 +158,10 @@ export const Contact = () => {
   return (
     <>
       <Hero
-        Image={
-          <Image
-            alt="census camp illuminated"
-            fill
-            priority
-            src="/contact/hero.jpg"
-            style={{
-              objectFit: "cover",
-            }}
-          />
-        }
+        imageStyles={{
+          backgroundImage: "url(/banners/camp-at-night.jpg)",
+          backgroundSize: "cover",
+        }}
         text="Contact"
       />
       <Container component="main">

@@ -16,7 +16,6 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
 import { useContext, useState } from "react";
@@ -190,17 +189,10 @@ export const BehavioralStandards = () => {
   return (
     <>
       <Hero
-        Image={
-          <Image
-            alt="census camp at burning man"
-            fill
-            priority
-            src="/home/hero.jpg"
-            style={{
-              objectFit: "cover",
-            }}
-          />
-        }
+        imageStyles={{
+          backgroundImage: "url(/banners/flags.jpg)",
+          backgroundSize: "cover",
+        }}
         text="Behavioral Standards Agreement"
       />
       <Container component="main">

@@ -12,10 +12,10 @@ import {
   CircularProgress,
   Container,
   Typography,
+  useTheme,
 } from "@mui/material";
 import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
@@ -89,6 +89,7 @@ export const ShiftTypesCreate = () => {
   });
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
+  const theme = useTheme();
   dayjs.extend(isSameOrBefore);
 
   // logic
@@ -166,17 +167,10 @@ export const ShiftTypesCreate = () => {
   return (
     <>
       <Hero
-        Image={
-          <Image
-            alt="volunteers riding the census art car"
-            fill
-            priority
-            src="/volunteers/account/create/hero.jpg"
-            style={{
-              objectFit: "cover",
-            }}
-          />
-        }
+        imageStyles={{
+          backgroundColor: theme.palette.primary.light,
+          backgroundImage: `linear-gradient(${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+        }}
         text="Create shift type"
       />
       <Container component="main">

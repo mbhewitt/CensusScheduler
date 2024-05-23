@@ -1,5 +1,4 @@
 import { Card, CardContent, Container, Typography } from "@mui/material";
-import Image from "next/image";
 
 import { Hero } from "src/components/layout/Hero";
 
@@ -9,17 +8,9 @@ export const Reports = () => {
   return (
     <>
       <Hero
-        Image={
-          <Image
-            alt="temple burning"
-            fill
-            priority
-            src="/reports/hero.jpg"
-            style={{
-              objectFit: "cover",
-            }}
-          />
-        }
+        imageStyles={{
+          backgroundImage: "url(/banners/dotted-seamless.avif)",
+        }}
         text="Reports"
       />
       <Container component="main" sx={{ flex: 1 }}>

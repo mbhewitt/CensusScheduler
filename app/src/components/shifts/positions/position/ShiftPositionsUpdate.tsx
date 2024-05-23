@@ -12,8 +12,8 @@ import {
   CircularProgress,
   Container,
   Typography,
+  useTheme,
 } from "@mui/material";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
@@ -82,6 +82,7 @@ export const ShiftPositionsUpdate = () => {
     mode: "onBlur",
   });
   const { enqueueSnackbar } = useSnackbar();
+  const theme = useTheme();
 
   // side effects
   // --------------------
@@ -183,17 +184,10 @@ export const ShiftPositionsUpdate = () => {
   return (
     <>
       <Hero
-        Image={
-          <Image
-            alt="volunteers riding the census art car"
-            fill
-            priority
-            src="/volunteers/account/create/hero.jpg"
-            style={{
-              objectFit: "cover",
-            }}
-          />
-        }
+        imageStyles={{
+          backgroundColor: theme.palette.primary.light,
+          backgroundImage: `linear-gradient(${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+        }}
         text="Update shift position"
       />
       <Container component="main">
