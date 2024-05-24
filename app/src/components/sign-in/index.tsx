@@ -183,7 +183,7 @@ export const SignIn = () => {
                       isOptionEqualToValue={(option, value: IVolunteerOption) =>
                         option.shiftboardId === value.shiftboardId
                       }
-                      onChange={(_, data) => field.onChange(data)}
+                      onChange={(_event, value) => field.onChange(value)}
                       options={data.map(
                         ({ playaName, shiftboardId, worldName }) => ({
                           label: `${playaName} "${worldName}"`,
