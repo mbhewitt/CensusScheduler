@@ -24,7 +24,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
 import { Fragment, useContext, useEffect, useState } from "react";
-import io from "socket.io-client";
+import { io } from "socket.io-client";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 

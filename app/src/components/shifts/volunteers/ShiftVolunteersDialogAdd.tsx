@@ -21,7 +21,7 @@ import isBetween from "dayjs/plugin/isBetween";
 import { useSnackbar } from "notistack";
 import { useContext, useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import io from "socket.io-client";
+import { io } from "socket.io-client";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
@@ -649,7 +649,7 @@ export const ShiftVolunteersDialogAdd = ({
                   isOptionEqualToValue={(option, value: IVolunteerOption) =>
                     option.shiftboardId === value.shiftboardId
                   }
-                  onChange={(_, data) => field.onChange(data)}
+                  onChange={(_event, value) => field.onChange(value)}
                   options={volunteerListDisplay}
                   renderInput={(params) => (
                     <TextField
