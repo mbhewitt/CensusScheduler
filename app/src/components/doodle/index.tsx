@@ -7,16 +7,24 @@ import {
   Container,
   Stack,
 } from "@mui/material";
+import { useSnackbar } from "notistack";
 import { useEffect, useRef, useState } from "react";
 import { CirclePicker } from "react-color";
+import { io } from "socket.io-client";
 
+import { SnackbarText } from "src/components/general/SnackbarText";
 import { COLOR_BURNING_MAN_BROWN, COLOR_CENSUS_PINK } from "src/constants";
 
+const socket = io();
 export const Doodle = () => {
   // state
   // --------------------
   const [color, setColor] = useState(COLOR_BURNING_MAN_BROWN);
   const [pointerDown, setPointerDown] = useState(false);
+
+  // other hooks
+  // --------------------
+  const { enqueueSnackbar } = useSnackbar();
 
   // side effects
   // --------------------
@@ -30,8 +38,6 @@ export const Doodle = () => {
     if (canvas && container) {
       canvas.height = container.offsetHeight - 7; // remove vertical scrollbar
       canvas.width = container.offsetWidth;
-      canvas.style.background = "#fff";
-      canvas.style.borderRadius = "4px";
     }
   }, []);
   useEffect(() => {
@@ -59,6 +65,9 @@ export const Doodle = () => {
         canvasContext.beginPath();
 
         setPointerDown(true);
+
+        // emit event
+        socket.emit("req-draw-start", { color });
       }
     };
     const handleDrawMove = (event: MouseEvent | TouchEvent) => {
@@ -70,6 +79,11 @@ export const Doodle = () => {
 
           canvasContext.lineTo(pointerPos.x, pointerPos.y);
           canvasContext.stroke();
+
+          // emit event
+          socket.emit("req-draw-move", {
+            pointerPos,
+          });
         }
       }
     };
@@ -106,8 +120,6 @@ export const Doodle = () => {
     };
   }, [color, pointerDown]);
 
-  // logic
-  // --------------------
   const clearCanvas = () => {
     const canvas = canvasRef.current;
     const canvasContext = canvas?.getContext("2d");
@@ -116,6 +128,52 @@ export const Doodle = () => {
       canvasContext.clearRect(0, 0, canvas.width, canvas.height);
     }
   };
+
+  // listen for socket events
+  useEffect(() => {
+    (async () => {
+      try {
+        await fetch("/api/socket");
+
+        socket.on("res-draw-start", ({ color: colorSocket }) => {
+          const canvas = canvasRef.current;
+          const canvasContext = canvas?.getContext("2d");
+
+          if (canvasContext) {
+            canvasContext.lineCap = "round";
+            canvasContext.lineJoin = "round";
+            canvasContext.lineWidth = 10;
+            canvasContext.strokeStyle = colorSocket;
+            canvasContext.beginPath();
+          }
+        });
+        socket.on("res-draw-move", ({ pointerPos }) => {
+          const canvas = canvasRef.current;
+          const canvasContext = canvas?.getContext("2d");
+
+          if (canvasContext) {
+            canvasContext.lineTo(pointerPos.x, pointerPos.y);
+            canvasContext.stroke();
+          }
+        });
+        socket.on("res-canvas-clear", clearCanvas);
+      } catch (error) {
+        if (error instanceof Error) {
+          enqueueSnackbar(
+            <SnackbarText>
+              <strong>{error.message}</strong>
+            </SnackbarText>,
+            {
+              persist: true,
+              variant: "error",
+            }
+          );
+        }
+
+        throw error;
+      }
+    })();
+  }, [enqueueSnackbar]);
 
   // render
   // --------------------
@@ -160,7 +218,10 @@ export const Doodle = () => {
         }}
       >
         <Box ref={containerRef} sx={{ flex: 1, mb: 1 }}>
-          <canvas ref={canvasRef} />
+          <canvas
+            ref={canvasRef}
+            style={{ background: "#fff", borderRadius: "4px" }}
+          />
         </Box>
         <Card>
           <CardContent>
@@ -176,7 +237,12 @@ export const Doodle = () => {
                 width="420px"
               />
               <Button
-                onClick={clearCanvas}
+                onClick={() => {
+                  clearCanvas();
+
+                  // emit event
+                  socket.emit("req-canvas-clear");
+                }}
                 type="button"
                 startIcon={<DeleteIcon />}
                 variant="contained"
