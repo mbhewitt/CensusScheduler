@@ -28,6 +28,7 @@
     "next-pwa": "^5.6.0",
     "notistack": "^2.0.8",
     "react": "18.2.0",
+    "react-color": "^2.19.3",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.41.1",
     "react-idle-timer": "4.6.4",
@@ -41,6 +42,7 @@
   },
   "devDependencies": {
     "@types/mui-datatables": "^3.7.9",
+    "@types/react-color": "^3.0.12",
     "@typescript-eslint/eslint-plugin": "^5.42.1",
     "@typescript-eslint/parser": "^5.42.1",
     "eslint-config-airbnb": "^19.0.4",

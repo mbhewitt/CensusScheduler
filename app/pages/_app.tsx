@@ -13,7 +13,6 @@ import SnackbarButtonClose from "src/components/general/SnackbarButtonClose";
 import { Layout } from "src/components/layout/Layout";
 import { COLOR_BURNING_MAN_BROWN, COLOR_CENSUS_PINK } from "src/constants";
 import { DeveloperModeProvider } from "src/state/developer-mode/context";
-import { EasterEggProvider } from "src/state/easter-egg/context";
 import { SessionProvider } from "src/state/session/context";
 
 const rockwellFont = localFont({
@@ -197,11 +196,9 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps) => {
       <DeveloperModeProvider>
         <SessionProvider>
           <StyledSnackbarProvider action={SnackbarAction}>
-            <EasterEggProvider>
-              <Layout>
-                <Component {...pageProps} />
-              </Layout>
-            </EasterEggProvider>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
           </StyledSnackbarProvider>
         </SessionProvider>
       </DeveloperModeProvider>
