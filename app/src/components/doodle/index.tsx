@@ -1,49 +1,81 @@
 import { Delete as DeleteIcon } from "@mui/icons-material";
 import {
+  Backdrop,
   Box,
   Button,
   Card,
   CardContent,
+  CircularProgress,
   Container,
   Stack,
+  useTheme,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useEffect, useRef, useState } from "react";
 import { CirclePicker } from "react-color";
 import { io } from "socket.io-client";
+import useSWR from "swr";
+import useSWRMutation from "swr/mutation";
 
+import { ErrorPage } from "src/components/general/ErrorPage";
 import { SnackbarText } from "src/components/general/SnackbarText";
+import { IReqDoodle, IResDoodle } from "src/components/types/doodle";
 import { COLOR_BURNING_MAN_BROWN, COLOR_CENSUS_PINK } from "src/constants";
+import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 const socket = io();
 export const Doodle = () => {
   // state
   // --------------------
+  const [isFetched, setIsFetched] = useState(false);
   const [color, setColor] = useState(COLOR_BURNING_MAN_BROWN);
-  const [pointerDown, setPointerDown] = useState(false);
+  const [isPointerDown, setIsPointerDown] = useState(false);
+
+  // fetching, mutation, and revalidation
+  // --------------------
+  const {
+    data,
+    error,
+  }: {
+    data: IResDoodle;
+    error: Error | undefined;
+  } = useSWR(!isFetched ? "/api/doodle" : null, fetcherGet);
+  const { trigger } = useSWRMutation("/api/doodle", fetcherTrigger);
 
   // other hooks
   // --------------------
   const { enqueueSnackbar } = useSnackbar();
+  const theme = useTheme();
 
   // side effects
   // --------------------
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLCanvasElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerValue = containerRef.current;
+  const canvasValue = canvasRef.current;
+  const canvasContext = canvasValue?.getContext("2d");
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const container = containerRef.current;
+  const clearCanvas = () => {
+    const canvasValue = canvasRef.current;
+    const canvasContext = canvasValue?.getContext("2d");
 
-    if (canvas && container) {
-      canvas.height = container.offsetHeight - 7; // remove vertical scrollbar
-      canvas.width = container.offsetWidth;
+    if (canvasValue && canvasContext) {
+      canvasContext.clearRect(0, 0, canvasValue.width, canvasValue.height);
     }
-  }, []);
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const canvasContext = canvas?.getContext("2d");
+  };
 
+  useEffect(() => {
+    if (canvasContext && data && !isFetched) {
+      const img = new Image();
+
+      img.src = data.imageUrl;
+      img.addEventListener("load", () => {
+        canvasContext.drawImage(img, 0, 0);
+      });
+      setIsFetched(true);
+    }
+  }, [canvasContext, data, isFetched]);
+  useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const getPointerPositionOnCanvas = (event: any) => {
       const clientX = event.clientX || event.touches[0].clientX;
@@ -64,7 +96,7 @@ export const Doodle = () => {
         canvasContext.strokeStyle = color;
         canvasContext.beginPath();
 
-        setPointerDown(true);
+        setIsPointerDown(true);
 
         // emit event
         socket.emit("req-draw-start", { color });
@@ -74,7 +106,7 @@ export const Doodle = () => {
       if (canvasContext) {
         event.preventDefault();
 
-        if (pointerDown) {
+        if (isPointerDown) {
           const pointerPos = getPointerPositionOnCanvas(event);
 
           canvasContext.lineTo(pointerPos.x, pointerPos.y);
@@ -87,47 +119,66 @@ export const Doodle = () => {
         }
       }
     };
-    const handleDrawEnd = (event: MouseEvent | TouchEvent) => {
-      if (canvasContext) {
+    const handleDrawEnd = async (event: MouseEvent | TouchEvent) => {
+      if (canvasValue) {
         event.preventDefault();
 
-        setPointerDown(false);
+        setIsPointerDown(false);
+
+        try {
+          const body: IReqDoodle = { imageUrl: canvasValue.toDataURL() };
+
+          // update database
+          await trigger({ body, method: "PATCH" });
+        } catch (error) {
+          if (error instanceof Error) {
+            enqueueSnackbar(
+              <SnackbarText>
+                <strong>{error.message}</strong>
+              </SnackbarText>,
+              {
+                persist: true,
+                variant: "error",
+              }
+            );
+          }
+
+          throw error;
+        }
       }
     };
 
     // add event listeners
-    if (canvas) {
-      canvas.addEventListener("mousedown", handleDrawStart);
-      canvas.addEventListener("mousemove", handleDrawMove);
-      canvas.addEventListener("mouseup", handleDrawEnd);
-      canvas.addEventListener("mouseout", handleDrawEnd);
-      canvas.addEventListener("touchstart", handleDrawStart);
-      canvas.addEventListener("touchmove", handleDrawMove);
-      canvas.addEventListener("touchend", handleDrawEnd);
+    if (canvasValue) {
+      canvasValue.addEventListener("mousedown", handleDrawStart);
+      canvasValue.addEventListener("mousemove", handleDrawMove);
+      canvasValue.addEventListener("mouseup", handleDrawEnd);
+      canvasValue.addEventListener("mouseout", handleDrawEnd);
+      canvasValue.addEventListener("touchstart", handleDrawStart);
+      canvasValue.addEventListener("touchmove", handleDrawMove);
+      canvasValue.addEventListener("touchend", handleDrawEnd);
     }
 
     // clean up event listeners
     return () => {
-      if (canvas) {
-        canvas.removeEventListener("mousedown", handleDrawStart);
-        canvas.removeEventListener("mousemove", handleDrawMove);
-        canvas.removeEventListener("mouseup", handleDrawEnd);
-        canvas.removeEventListener("mouseout", handleDrawEnd);
-        canvas.removeEventListener("touchstart", handleDrawStart);
-        canvas.removeEventListener("touchmove", handleDrawMove);
-        canvas.removeEventListener("touchend", handleDrawEnd);
+      if (canvasValue) {
+        canvasValue.removeEventListener("mousedown", handleDrawStart);
+        canvasValue.removeEventListener("mousemove", handleDrawMove);
+        canvasValue.removeEventListener("mouseup", handleDrawEnd);
+        canvasValue.removeEventListener("mouseout", handleDrawEnd);
+        canvasValue.removeEventListener("touchstart", handleDrawStart);
+        canvasValue.removeEventListener("touchmove", handleDrawMove);
+        canvasValue.removeEventListener("touchend", handleDrawEnd);
       }
     };
-  }, [color, pointerDown]);
-
-  const clearCanvas = () => {
-    const canvas = canvasRef.current;
-    const canvasContext = canvas?.getContext("2d");
-
-    if (canvas && canvasContext) {
-      canvasContext.clearRect(0, 0, canvas.width, canvas.height);
-    }
-  };
+  }, [
+    canvasContext,
+    canvasValue,
+    color,
+    enqueueSnackbar,
+    isPointerDown,
+    trigger,
+  ]);
 
   // listen for socket events
   useEffect(() => {
@@ -175,6 +226,10 @@ export const Doodle = () => {
     })();
   }, [enqueueSnackbar]);
 
+  // logic
+  // --------------------
+  if (error) return <ErrorPage />;
+
   // render
   // --------------------
   const colorList = [
@@ -201,58 +256,96 @@ export const Doodle = () => {
   ];
 
   return (
-    <Container
-      component="main"
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        mt: 3,
-      }}
-    >
-      <Box
-        component="section"
+    <>
+      <Container
+        component="main"
         sx={{
           display: "flex",
           flexDirection: "column",
-          flex: 1,
+          mt: 3,
         }}
       >
-        <Box ref={containerRef} sx={{ flex: 1, mb: 1 }}>
-          <canvas
-            ref={canvasRef}
-            style={{ background: "#fff", borderRadius: "4px" }}
-          />
-        </Box>
-        <Card>
-          <CardContent>
-            <Stack
-              alignItems="flex-end"
-              direction="row"
-              justifyContent="space-between"
-            >
-              <CirclePicker
-                color={color}
-                colors={colorList}
-                onChangeComplete={(event) => setColor(event.hex)}
-                width="420px"
-              />
-              <Button
-                onClick={() => {
-                  clearCanvas();
-
-                  // emit event
-                  socket.emit("req-canvas-clear");
-                }}
-                type="button"
-                startIcon={<DeleteIcon />}
-                variant="contained"
+        <Box
+          component="section"
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            flex: 1,
+          }}
+        >
+          <Box ref={containerRef} sx={{ flex: 1, mb: 1 }}>
+            <canvas
+              height={containerValue ? containerValue.offsetHeight - 7 : 0} // remove vertical scrollbar
+              ref={canvasRef}
+              style={{
+                background: theme.palette.common.white,
+                borderRadius: "4px",
+              }}
+              width={containerValue ? containerValue.offsetWidth : 0}
+            />
+          </Box>
+          <Card>
+            <CardContent>
+              <Stack
+                alignItems="flex-end"
+                direction="row"
+                justifyContent="space-between"
               >
-                Clear
-              </Button>
-            </Stack>
-          </CardContent>
-        </Card>
-      </Box>
-    </Container>
+                <CirclePicker
+                  color={color}
+                  colors={colorList}
+                  onChangeComplete={(event) => setColor(event.hex)}
+                  width="420px"
+                />
+                <Button
+                  onClick={async () => {
+                    try {
+                      const canvas = canvasRef.current;
+
+                      if (canvas) {
+                        const body: IReqDoodle = {
+                          imageUrl: canvas.toDataURL(),
+                        };
+
+                        // update database
+                        await trigger({ body, method: "PATCH" });
+
+                        clearCanvas();
+
+                        // emit event
+                        socket.emit("req-canvas-clear");
+                      }
+                    } catch (error) {
+                      if (error instanceof Error) {
+                        enqueueSnackbar(
+                          <SnackbarText>
+                            <strong>{error.message}</strong>
+                          </SnackbarText>,
+                          {
+                            persist: true,
+                            variant: "error",
+                          }
+                        );
+                      }
+
+                      throw error;
+                    }
+                  }}
+                  type="button"
+                  startIcon={<DeleteIcon />}
+                  variant="contained"
+                >
+                  Clear
+                </Button>
+              </Stack>
+            </CardContent>
+          </Card>
+        </Box>
+      </Container>
+
+      <Backdrop sx={{ zIndex: theme.zIndex.drawer + 1 }} open={!isFetched}>
+        <CircularProgress color="secondary" />
+      </Backdrop>
+    </>
   );
 };
