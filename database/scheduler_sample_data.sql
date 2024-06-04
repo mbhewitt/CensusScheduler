@@ -358,8 +358,8 @@ INSERT INTO `op_shift_name` VALUES
 (1,0,21,19,'Our Statistician is the mastermind behind the numbers, transforming raw data into meaningful insights. They take the data entered on playa and work their magic to create our preliminary analysis, which is then shared with the community at the highly anticipated Data Release Bash. With their expertise, they uncover trends, patterns, and findings that help us better understand the Burning Man community and its evolution.','Statistician Makes Magic',0,0,0),
 (1,0,22,20,'Creating the Census Data Infoboard entails designing and developing a visually engaging and informative display that showcases key findings and insights from the Census data. The Census Data Infoboard serves as a central hub for participants to explore and interact with the Census data while on playa, sparking conversations, insights, and connections within the Burning Man community.','Infoboard',0,0,0),
 (0,0,19,21,'Tech Support','Tech Support',0,0,0),
-(0,1,14,22,'The Online Random Sampling Training Class is a pre-playa training program designed for Gate Random Samplers, Airport Random Samplers, and Traffic Tamers. This interactive online course prepares participants for their critical roles in the Census Lab\'s random sampling process.','Random Sampling Training',0,0,0),
-(0,1,13,23,'The Census Lab Host Online Pre-Playa Training Class is a comprehensive training program designed for Census Lab Hosts. This interactive online course prepares Hosts for their vital role in welcoming and supporting participants at the Census Lab.','Lab Host Training',0,0,0),
+(0,1,14,22,'This is a placeholder for The Online Sampling Training which can be completed at your own pace through hive. Please sign up for this shift if you are an Airport Sampler, Gate Sampler, or Traffic Tamer for tracking purposes and complete the hive training at your leasure.','Random Sampling Training',0,0,0),
+(0,1,13,23,'This is a placeholder for The Online Lab Host Training which can be completed at your own pace through hive. Please sign up for this shift if you are an lab host for tracking purposes and complete the hive training at your leasure.','Lab Host Training',0,0,0),
 (1,0,2,24,'Gate Sampling is the process of collecting survey data from Burning Man participants as they arrive on-playa via Gate Road. This crucial initiative helps Burning Man organizers,researchers, and governments understand the demographics, interests, and experiences of the community.','SatSun Gate Sampling',0,0,0),
 (1,0,6,25,'Lab Hosting is a vital role within the Census Lab, responsible for hosting daily activities and ensuring a welcoming and engaging environment for participants with Data and support Data Bashes, parties, games, and other events.','Friday Lab Hosting',0,0,0),
 (1,0,7,26,'Pop Up Labs play a critical role in Census outreach efforts. The DataBeast is sent to a random location on playa to set up a Pop-Up Census Lab, inviting Burners to learn more about Census by exploring past years\' results, participating in on-playa data collection by answering question sets in our Field Note Journals, etc. ','Sat PopUp Lab',0,0,0),
@@ -505,7 +505,7 @@ LOCK TABLES `op_shift_times` WRITE;
 INSERT INTO `op_shift_times` VALUES
 ('2024','2024-08-21','11:30 AM  - 3:30 PM',1,'Gate PreWed1','2024-08-21 11:30','2024-08-21 15:30',1,'',0,0,0,NULL,NULL,'Lunch Before','3265, 5193, 33843'),
 ('2024','2024-08-22','2:30 PM  - 6:30 PM',1,'Gate PreThur2','2024-08-22 14:30','2024-08-22 18:30',2,'',0,0,0,NULL,NULL,'Dinner After','18998,24027, 20593'),
-('2024','2024-08-23','11:00 AM  - 6:30 PM',7,'Lead Training PreFri3','2024-08-23 11:00','2024-08-23 18:30',3,'Both Lunch and Dinner are included for Shift Leads.',0,0,0,NULL,NULL,'Dinner After','18998, 5252, 24027, 839242, 20593, 3265, 836478, 3230, 5193, 33843, 836634, 29387'),
+('2024','2024-08-23','11:00 AM  - 6:30 PM',7,'Lead Training PreFri3','2024-08-23 11:00','2024-08-23 18:30',3,'Both Lunch and Dinner are included for Shift Leads.',0,0,0,NULL,NULL,'Dinner After','18998, 5252, 24027, 839242, 20593, 3265, 836478, 3230, 5193, 836634, 29387'),
 ('2024','2024-08-23','12:30 PM  - 5:00 PM',2,'Gate PreFri4','2024-08-23 12:30','2024-08-23 17:00',4,'This sampling shift is very chaotic, please remember to be forgiving of the chaos.',0,0,0,NULL,NULL,'Lunch Before',''),
 ('2024','2024-08-24','6:30 PM  - 10:30 PM',24,'Gate PreSat5','2024-08-24 18:30','2024-08-24 22:30',5,'',0,0,0,NULL,NULL,'Dinner Before','20593, 3230, 33843'),
 ('2024','2024-08-25','4:00 AM  - 8:00 AM',24,'Gate OpenSun6','2024-08-25 04:00','2024-08-25 08:00',6,'',0,0,0,NULL,NULL,'Breakfast After','18998, 836634, 23697'),
@@ -520,7 +520,7 @@ INSERT INTO `op_shift_times` VALUES
 ('2024','2024-08-28','2:00 PM  - 6:00 PM',4,'Gate Wed15','2024-08-28 14:00','2024-08-28 18:00',15,'NUDITY WARNING: In keeping with our 2016 agreement with Media Mecca, volunteers on this shift must be naked except for lab coat and closed-toe shoes. Please cover your bits in commissary. IF THIS DOES NOT SOUND FUN TO YOU, PLEASE SIGN UP FOR A DIFFERENT SHIFT.',0,0,0,NULL,NULL,'Dinner After','24027, 836478, 3230'),
 ('2024','2024-08-29','4:00 PM  - 8:00 PM',6,'Airport Thur16','2024-08-29 16:00','2024-08-29 20:00',16,'',0,0,0,NULL,NULL,'Dinner Before','5252, 839242'),
 ('2024','2024-08-30','10:30 AM  - 2:30 PM',6,'Airport Fri17','2024-08-30 10:30','2024-08-30 14:30',17,'',0,0,0,NULL,NULL,'Lunch Before','5252, 33843'),
-('2024','2024-08-25','12:00 PM  - 6:00 PM',8,'LH Lead Training OpenSun18','2024-08-25 12:00','2024-08-25 18:00',18,'',0,0,0,NULL,NULL,'Dinner After','836634, 5174, 23697, 9957, 831716, 819845, 3265, 821391'),
+('2024','2024-08-25','12:00 PM  - 6:00 PM',8,'LH Lead Training OpenSun18','2024-08-25 12:00','2024-08-25 18:00',18,'',0,0,0,NULL,NULL,'Dinner After','836634, 23697, 9957, 831716, 819845, 3265, 821391'),
 ('2024','2024-08-26','9:00 AM  - 12:00 PM',10,'PopUp Lab Mon19','2024-08-26 09:00','2024-08-26 12:00',19,'',0,0,0,NULL,NULL,'','821391'),
 ('2024','2024-08-26','2:00 PM  - 6:00 PM',9,'Lab Hosting Mon20','2024-08-26 14:00','2024-08-26 18:00',20,'Monday Talk “Get to Know Black Rock City Census” given by our Census Manger, Sonder',0,0,0,NULL,NULL,'Dinner After','9957'),
 ('2024','2024-08-27','10:00 AM  - 1:00 PM',10,'PopUp Lab Tue21','2024-08-27 10:00','2024-08-27 13:00',21,'',0,0,0,NULL,NULL,'','831716'),
@@ -542,7 +542,7 @@ INSERT INTO `op_shift_times` VALUES
 ('2024','2024-08-28','3:30 PM  - 6:30 PM',12,'Data Entry Wed37','2024-08-28 15:30','2024-08-28 18:30',37,'',0,0,0,NULL,NULL,'','15084'),
 ('2024','2024-08-29','3:30 PM  - 6:30 PM',12,'Data Entry Thur38','2024-08-29 15:30','2024-08-29 18:30',38,'',0,0,0,NULL,NULL,'','15084'),
 ('2024','2024-08-31','9:00 AM  - 12:00 PM',12,'Data Entry BurnSat39','2024-08-31 09:00','2024-08-31 12:00',39,'',0,0,0,NULL,NULL,'','15084'),
-('2024','2024-08-25','7:00 AM  - 9:00 AM',13,'Party OpenSun40','2024-08-25 07:00','2024-08-25 09:00',40,'',0,0,0,NULL,NULL,'',''),
+('2024','2024-08-25','7:00 AM  - 9:00 AM',13,'Party OpenSun40','2024-08-25 07:00','2024-08-25 09:00',40,'',0,0,0,NULL,NULL,'','875'),
 ('2024','2024-08-18','12:00 PM  - 4:00 PM',27,'Construction PreSun41','2024-08-18 12:00','2024-08-18 16:00',41,'Only volunteers with staff or ticket in hand are eligible for this shift. NO will call or ticket-aid',0,0,0,NULL,NULL,'Dinner After','5193, 5174, 23697, 3234, 834159, 3966, 875, 38872'),
 ('2024','2024-08-19','9:00 AM  - 1:00 PM',14,'Construction PreMon42','2024-08-19 09:00','2024-08-19 13:00',42,'Only volunteers with staff or ticket in hand are eligible for this shift. NO will call or ticket-aid',0,0,0,NULL,NULL,'Lunch After','38872'),
 ('2024','2024-08-19','2:00 PM  - 6:00 PM',14,'Construction PreMon43','2024-08-19 14:00','2024-08-19 18:00',43,'Only volunteers with staff or ticket in hand are eligible for this shift. NO will call or ticket-aid',0,0,0,NULL,NULL,'Dinner After','38872'),
@@ -564,7 +564,7 @@ INSERT INTO `op_shift_times` VALUES
 ('2024','2024-09-02','2:00 PM  - 6:00 PM',16,'Deconstruction PostMon59','2024-09-02 14:00','2024-09-02 18:00',59,'',0,0,0,NULL,NULL,'Dinner After','834159'),
 ('2024','2024-09-03','9:00 AM  - 1:00 PM',16,'Deconstruction PostTue60','2024-09-03 09:00','2024-09-03 13:00',60,'',0,0,0,NULL,NULL,'Lunch After','834159'),
 ('2024','2024-09-03','2:00 PM  - 6:00 PM',16,'Deconstruction PostTue61','2024-09-03 14:00','2024-09-03 18:00',61,'',0,0,0,NULL,NULL,'Dinner After','834159'),
-('2024','2024-08-30','3:00 PM  - 6:00 PM',16,'Data Dissemination Fri62','2024-08-30 15:00','2024-08-30 18:00',62,'You may choose the option of traveling on the DataBeast to random locations on Playa to disseminate Census preliminary data. ',0,0,0,NULL,NULL,'',''),
+('2024','2024-08-30','3:00 PM  - 6:00 PM',17,'Data Dissemination Fri62','2024-08-30 15:00','2024-08-30 18:00',62,'You may choose the option of traveling on the DataBeast to random locations on Playa to disseminate Census preliminary data. ',0,0,0,NULL,NULL,'',''),
 ('2024','2024-08-20','8:00 AM  - 2:00 PM',18,'Cova Art PreTue63','2024-08-20 08:00','2024-08-20 14:00',63,'',0,0,0,NULL,NULL,'','836085'),
 ('2024','2024-08-21','8:00 AM  - 2:00 PM',18,'Cova Art PreWed64','2024-08-21 08:00','2024-08-21 14:00',64,'',0,0,0,NULL,NULL,'','836085'),
 ('2024','2024-08-22','8:00 AM  - 2:00 PM',18,'Cova Art PreThur65','2024-08-22 08:00','2024-08-22 14:00',65,'',0,0,0,NULL,NULL,'','836085'),
@@ -699,7 +699,4 @@ UNLOCK TABLES;
 insert ignore into op_volunteers (shiftboard_id,world_name,playa_name,passcode) values (1,'Admin','Admin','123456');
 insert ignore into op_roles (role_id,role,display,role_src) values (1,'SuperAdmin',1,'tablet'),(2,'Admin',1,'tablet');
 insert ignore into op_volunteer_roles (shiftboard_id,role_id) values (1,1),(1,2);
-alter table op_volunteers add timestamp timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
-alter table op_volunteer_shifts add timestamp timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
-alter table op_shift_times add end_time timestamp,add start_time timestamp;
 update op_shift_times set start_time=concat(start_time_lt,':00-07:00'),end_time=concat(end_time_lt,':00-07:00');
