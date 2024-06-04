@@ -9,6 +9,9 @@ drop table if exists op_roles;
 drop table if exists op_messages;
 drop table if exists op_shift_category;
 drop table if exists op_dates;
+drop table if exists op_doodles;
+
+create table op_doodles (id int not null auto_increment, image_url longtext, primary key(id), timestamp timestamp  DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP);
 
 update bm_volunteers v inner join shiftboard_pinfo p using (shiftboard_id) inner join shiftboard_rinfo2 r using (shiftboard_id) 
        set v.playaname=p.playaname,v.first=p.first,v.last=p.last,v.account=r.account;
@@ -108,7 +111,7 @@ create table op_messages (timestamp timestamp DEFAULT CURRENT_TIMESTAMP ON UPDAT
 
 
 create table op_shift_category (
-   department varchar(128) not null,shift_category varchar(128) not null,shift_category_id bigint auto_increment not null,
+   department varchar(128) not null,shift_category varchar(128) not null,shift_category_id bigint auto_increment not null,description longtext,
    create_category boolean default false, delete_category boolean default false,update_category boolean default false,
    primary key (shift_category_id), key(department),unique(shift_category));
 
@@ -168,6 +171,7 @@ create table op_shift_times (
    year varchar(4), date date,shift varchar(32),shift_name_id bigint, 
    shift_instance varchar(32),start_time_lt varchar(32),end_time_lt varchar(32), 
    shift_times_id bigint auto_increment not null, notes longtext,
+   meal varchar(32),lead_assigned_shiftboard_ids longtext,
    add_shift_time boolean default false, remove_shift_time boolean default false,update_shift_time boolean default false,
    foreign key (shift_name_id) references op_shift_name(shift_name_id),
    unique(date,shift_instance), 

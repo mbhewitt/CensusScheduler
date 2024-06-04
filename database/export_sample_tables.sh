@@ -1,7 +1,9 @@
-SFILE="scheduler_schema.sql"
-cat create_tables_from_source.sql | mysql -u root census
+SFILE="scheduler_sample_data.sql"
+
 echo "SET time_zone = '-07:00';" > $SFILE
-mysqldump -u root -y census --no-data op_dates op_messages op_position_type op_roles op_shift_category op_shift_name op_shift_position op_shift_times op_volunteer_roles op_volunteer_shifts op_volunteers| sed 's$VALUES ($VALUES\n($g' | sed 's$),($),\n($g' |grep -v -- '-- Dump completed on '>> $SFILE
+echo "SET FOREIGN_KEY_CHECKS=0;delete from op_volunteers;delete from op_volunteer_roles;delete from op_volunteer_shifts;SET FOREIGN_KEY_CHECKS=1;"|mysql -u root census
+
+mysqldump -u root -y census op_doodles op_dates op_messages op_position_type op_roles op_shift_category op_shift_name op_shift_position op_shift_times op_volunteer_roles op_volunteer_shifts op_volunteers| sed 's$VALUES ($VALUES\n($g' | sed 's$),($),\n($g' |grep -v -- '-- Dump completed on '>> $SFILE
 
 #echo "-- Test shifts now and in future" >>$SFILE
 #echo "INSERT INTO \`op_shifts\` (year,datename,date,shift,position,total_slots,free_slots,role,category,core,\`lead\`,critical,position_category,prerequisite,off_playa,shift_category,shift_id,shift_position_id,details,wap_points,start_time_lt,end_time_lt,shiftname,shortname) VALUES " >>$SFILE
@@ -13,7 +15,6 @@ mysqldump -u root -y census --no-data op_dates op_messages op_position_type op_r
 echo "insert ignore into op_volunteers (shiftboard_id,world_name,playa_name,passcode) values (1,'Admin','Admin','123456');" >>$SFILE
 echo "insert ignore into op_roles (role_id,role,display,role_src) values (1,'SuperAdmin',1,'tablet'),(2,'Admin',1,'tablet');" >>$SFILE
 echo "insert ignore into op_volunteer_roles (shiftboard_id,role_id) values (1,1),(1,2);" >>$SFILE
-
 
 echo "alter table op_volunteers add timestamp timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;" >>$SFILE
 echo "alter table op_volunteer_shifts add timestamp timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;" >>$SFILE

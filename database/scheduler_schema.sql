@@ -17,6 +17,21 @@ SET time_zone = '-07:00';
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `op_doodles`
+--
+
+DROP TABLE IF EXISTS `op_doodles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `op_doodles` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `image_url` longtext,
+  `timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `op_dates`
 --
 
@@ -118,7 +133,7 @@ CREATE TABLE `op_shift_category` (
   `update_category` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`shift_category_id`),
   UNIQUE KEY `shift_category` (`shift_category`),
-  KEY `category` (`department`)
+  KEY `department` (`department`)
 ) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -281,10 +296,9 @@ CREATE TABLE `op_volunteers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-insert ignore into op_volunteers (shiftboard_id,playa_name,world_name,passcode) values (1,'Admin','Admin','123456');
+insert ignore into op_volunteers (shiftboard_id,world_name,playa_name,passcode) values (1,'Admin','Admin','123456');
 insert ignore into op_roles (role_id,role,display,role_src) values (1,'SuperAdmin',1,'tablet'),(2,'Admin',1,'tablet');
 insert ignore into op_volunteer_roles (shiftboard_id,role_id) values (1,1),(1,2);
-
 alter table op_volunteers add timestamp timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 alter table op_volunteer_shifts add timestamp timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 alter table op_shift_times add end_time timestamp,add start_time timestamp;
