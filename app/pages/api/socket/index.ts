@@ -32,6 +32,14 @@ const socket = (_req: NextApiRequest, res: INextApiResponseWithSocket) => {
       socket.on("req-shift-volunteer-remove", (data) => {
         socket.broadcast.emit("res-shift-volunteer-remove", data);
       });
+      // draw move
+      socket.on("req-draw-move", (data) => {
+        socket.broadcast.emit("res-draw-move", data);
+      });
+      // clear canvas
+      socket.on("req-canvas-clear", (data) => {
+        socket.broadcast.emit("res-canvas-clear", data);
+      });
     });
 
     res.socket.server.io = io;

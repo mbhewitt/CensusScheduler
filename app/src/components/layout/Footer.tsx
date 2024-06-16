@@ -11,6 +11,7 @@ import {
 import { useTheme } from "@mui/material/styles";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useContext } from "react";
 
 import {
@@ -19,7 +20,6 @@ import {
   pageListSuperAdmin,
 } from "src/components/layout/pageList";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
-import { EasterEggContext } from "src/state/easter-egg/context";
 import { SessionContext } from "src/state/session/context";
 import {
   checkIsAdmin,
@@ -39,10 +39,10 @@ export const Footer = () => {
       user: { roleList },
     },
   } = useContext(SessionContext);
-  const { setIsEasterEggOpen } = useContext(EasterEggContext);
 
   // other hooks
   // --------------------
+  const router = useRouter();
   const theme = useTheme();
 
   // logic
@@ -196,7 +196,7 @@ export const Footer = () => {
               alt="census logo"
               height={120}
               onClick={() => {
-                setIsEasterEggOpen(true);
+                router.push("/doodle");
               }}
               src="/general/logo-census.png"
               width={120}
@@ -221,7 +221,7 @@ export const Footer = () => {
               color: theme.palette.common.white,
             }}
           >
-            2024.S.00053.Prizmo
+            2024.U.00055.Prizmo
           </Typography>
         </Stack>
       </Container>
