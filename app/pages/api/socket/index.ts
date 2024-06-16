@@ -32,10 +32,6 @@ const socket = (_req: NextApiRequest, res: INextApiResponseWithSocket) => {
       socket.on("req-shift-volunteer-remove", (data) => {
         socket.broadcast.emit("res-shift-volunteer-remove", data);
       });
-      // draw start
-      socket.on("req-draw-start", (data) => {
-        socket.broadcast.emit("res-draw-start", data);
-      });
       // draw move
       socket.on("req-draw-move", (data) => {
         socket.broadcast.emit("res-draw-move", data);

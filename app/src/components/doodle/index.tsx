@@ -97,9 +97,6 @@ export const Doodle = () => {
         canvasContext.beginPath();
 
         setIsPointerDown(true);
-
-        // emit event
-        socket.emit("req-draw-start", { color });
       }
     };
     const handleDrawMove = (event: MouseEvent | TouchEvent) => {
@@ -112,10 +109,12 @@ export const Doodle = () => {
           canvasContext.lineTo(pointerPos.x, pointerPos.y);
           canvasContext.stroke();
 
-          // emit event
-          socket.emit("req-draw-move", {
-            pointerPos,
-          });
+          if (canvasValue) {
+            // emit event
+            socket.emit("req-draw-move", {
+              imageUrl: canvasValue.toDataURL(),
+            });
+          }
         }
       }
     };
@@ -186,25 +185,17 @@ export const Doodle = () => {
       try {
         await fetch("/api/socket");
 
-        socket.on("res-draw-start", ({ color: colorSocket }) => {
+        socket.on("res-draw-move", ({ imageUrl: imageSocketUrl }) => {
           const canvas = canvasRef.current;
           const canvasContext = canvas?.getContext("2d");
 
           if (canvasContext) {
-            canvasContext.lineCap = "round";
-            canvasContext.lineJoin = "round";
-            canvasContext.lineWidth = 10;
-            canvasContext.strokeStyle = colorSocket;
-            canvasContext.beginPath();
-          }
-        });
-        socket.on("res-draw-move", ({ pointerPos }) => {
-          const canvas = canvasRef.current;
-          const canvasContext = canvas?.getContext("2d");
+            const imageSocketNew = new Image();
 
-          if (canvasContext) {
-            canvasContext.lineTo(pointerPos.x, pointerPos.y);
-            canvasContext.stroke();
+            imageSocketNew.src = imageSocketUrl;
+            imageSocketNew.onload = () => {
+              canvasContext.drawImage(imageSocketNew, 0, 0);
+            };
           }
         });
         socket.on("res-canvas-clear", clearCanvas);
