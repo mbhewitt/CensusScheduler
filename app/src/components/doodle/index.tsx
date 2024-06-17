@@ -66,12 +66,13 @@ export const Doodle = () => {
 
   useEffect(() => {
     if (canvasContext && data && !isFetched) {
-      const img = new Image();
+      const imageNew = new Image();
 
-      img.src = data.imageUrl;
-      img.addEventListener("load", () => {
-        canvasContext.drawImage(img, 0, 0);
+      imageNew.src = data.imageUrl;
+      imageNew.addEventListener("load", () => {
+        canvasContext.drawImage(imageNew, 0, 0);
       });
+
       setIsFetched(true);
     }
   }, [canvasContext, data, isFetched]);

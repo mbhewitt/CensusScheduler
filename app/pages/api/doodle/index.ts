@@ -18,7 +18,7 @@ const doodle = async (req: NextApiRequest, res: NextApiResponse) => {
       const [resImageUrlFirst] = dbImageUrlList.map(({ id, image_url }) => {
         const resImageUrlItem: IResDoodle = {
           id,
-          imageUrl: image_url,
+          imageUrl: image_url ?? "",
         };
 
         return resImageUrlItem;
