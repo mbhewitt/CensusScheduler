@@ -113,9 +113,7 @@ export const ShiftTypesCreate = () => {
       const timeList = processTimeList(formValues);
       const body: IReqShiftTypeItem = {
         information: {
-          category: {
-            id: categoryIdFound,
-          },
+          category: categoryIdFound,
           details: formValues.information.details,
           isCore: formValues.information.isCore,
           isOffPlaya: formValues.information.isOffPlaya,

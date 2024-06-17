@@ -83,11 +83,10 @@ export const AccountCreate = () => {
   ) => {
     try {
       // update database
-      const { data: dataVolunteerItem }: { data: IResVolunteerAccount } =
-        await trigger({
-          body: formValues,
-          method: "POST",
-        });
+      const dataVolunteerItem: IResVolunteerAccount = await trigger({
+        body: formValues,
+        method: "POST",
+      });
       // update state
       sessionDispatch({
         payload: dataVolunteerItem,
