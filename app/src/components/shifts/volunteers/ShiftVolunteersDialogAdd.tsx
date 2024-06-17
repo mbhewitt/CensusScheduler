@@ -423,7 +423,6 @@ export const ShiftVolunteersDialogAdd = ({
             }
           );
       }
-
       break;
     }
     case SHIFT_DURING:
@@ -493,7 +492,6 @@ export const ShiftVolunteersDialogAdd = ({
             )
           );
       }
-
       break;
     }
     default: {

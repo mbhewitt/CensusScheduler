@@ -35,7 +35,6 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             ORDER BY playa_name`,
             [ROLE_CORE_CREW_ID]
           );
-
           break;
         }
         // get all volunteers
@@ -54,7 +53,6 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             ON r.role_id=vr.role_id
             ORDER BY playa_name`
           );
-
           break;
         }
       }

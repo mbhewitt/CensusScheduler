@@ -290,7 +290,7 @@ export const ShiftVolunteers = () => {
         (isAuthenticated &&
           dataShiftVolunteersItem.positionList.some(
             (positionItem: IResShiftPositionCountItem) =>
-              positionItem.filledSlots > 0
+              positionItem.totalSlots - positionItem.filledSlots > 0
           ));
       break;
     }
