@@ -2,7 +2,8 @@ SFILE="scheduler_schema.sql"
 DFILE="scheduler_schema.sql"
 cat create_tables_from_source.sql | mysql -u root census
 echo "SET time_zone = '-07:00';" > $SFILE
-mysqldump -u root -y census --no-data op_doodles op_dates op_messages op_position_type op_roles op_shift_category op_shift_name op_shift_position op_shift_times op_volunteer_roles op_volunteer_shifts op_volunteers| sed 's$VALUES ($VALUES\n($g' | sed 's$),($),\n($g' |grep -v -- '-- Dump completed on '>> $SFILE
+TABLE_LIST=`echo "show tables"|mysql |grep op_`
+mysqldump -u root -y census --no-data $TABLE_LIST| sed 's$VALUES ($VALUES\n($g' | sed 's$),($),\n($g' |grep -v -- '-- Dump completed on '>> $SFILE
 
 echo "insert ignore into op_volunteers (shiftboard_id,world_name,playa_name,passcode) values (1,'Admin','Admin','123456');" >>$SFILE
 echo "insert ignore into op_roles (role_id,role,display,role_src) values (1,'SuperAdmin',1,'tablet'),(2,'Admin',1,'tablet');" >>$SFILE
