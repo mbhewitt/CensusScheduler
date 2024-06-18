@@ -28,7 +28,7 @@ CREATE TABLE `op_doodles` (
   `image_url` longtext,
   `timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -37,6 +37,8 @@ CREATE TABLE `op_doodles` (
 
 LOCK TABLES `op_doodles` WRITE;
 /*!40000 ALTER TABLE `op_doodles` DISABLE KEYS */;
+INSERT INTO `op_doodles` VALUES
+(1,'','2024-06-18 00:49:42');
 /*!40000 ALTER TABLE `op_doodles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -627,7 +629,6 @@ CREATE TABLE `op_volunteer_shifts` (
   `add_shift` tinyint(1) DEFAULT '0',
   `remove_shift` tinyint(1) DEFAULT '0',
   `update_shift` tinyint(1) DEFAULT '0',
-  `timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`shiftboard_id`,`shift_position_id`,`shiftboard_shift_id`),
   KEY `shift_times_id` (`shift_times_id`),
   KEY `shift_position_id` (`shift_position_id`),
@@ -672,7 +673,6 @@ CREATE TABLE `op_volunteers` (
   `notes` longtext,
   `location` longtext,
   `emergency_contact` longtext,
-  `timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`shiftboard_id`),
   KEY `passcode` (`passcode`,`shiftboard_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -699,5 +699,5 @@ UNLOCK TABLES;
 insert ignore into op_volunteers (shiftboard_id,world_name,playa_name,passcode) values (1,'Admin','Admin','123456');
 insert ignore into op_roles (role_id,role,display,role_src) values (1,'SuperAdmin',1,'tablet'),(2,'Admin',1,'tablet');
 insert ignore into op_volunteer_roles (shiftboard_id,role_id) values (1,1),(1,2);
-insert into op_doodles (image_url) values ('');
 update op_shift_times set start_time=concat(start_time_lt,':00-07:00'),end_time=concat(end_time_lt,':00-07:00');
+update op_position_type set role_id=NULL where role_id in ('43174','21215');
