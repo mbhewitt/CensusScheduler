@@ -34,6 +34,7 @@ import type {
   IResRoleRowItem,
   IResRoleVolunteerItem,
 } from "src/components/types/roles";
+import { ROLE_SUPER_ADMIN_ID } from "src/constants";
 import { fetcherGet } from "src/utils/fetcher";
 import {
   setCellHeaderPropsCenter,
@@ -143,6 +144,7 @@ export const RoleVolunteers = () => {
                 </MenuItem>
               </Link>
               <MenuItem
+                disabled={shiftboardId === ROLE_SUPER_ADMIN_ID}
                 onClick={() => {
                   setDialogCurrent({
                     dialogItem: DialogList.Remove,
