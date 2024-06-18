@@ -43,7 +43,7 @@ import { ShiftVolunteersDialogRemove } from "src/components/shifts/volunteers/Sh
 import type { ISwitchValues } from "src/components/types";
 import type {
   IResShiftPositionCountItem,
-  IResShiftVolunteerDetails,
+  IResShiftVolunteerInformation,
   IResShiftVolunteerRowItem,
 } from "src/components/types/shifts";
 import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
@@ -107,7 +107,7 @@ export const ShiftVolunteers = () => {
     error: errorShiftVolunteersItem,
     mutate: mutateShiftVolunteersItem,
   }: {
-    data: IResShiftVolunteerDetails;
+    data: IResShiftVolunteerInformation;
     error: Error | undefined;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mutate: KeyedMutator<any>;

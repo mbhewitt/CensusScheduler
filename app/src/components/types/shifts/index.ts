@@ -45,7 +45,7 @@ export interface IResShiftVolunteerRowItem {
   timeId: number;
   worldName: string;
 }
-export interface IResShiftVolunteerDetails {
+export interface IResShiftVolunteerInformation {
   date: string;
   dateName: string;
   details: string;

@@ -34,7 +34,7 @@ import type {
   IReqShiftVolunteerItem,
   IResShiftPositionCountItem,
   IResShiftRowItem,
-  IResShiftVolunteerDetails,
+  IResShiftVolunteerInformation,
   IResShiftVolunteerRowItem,
 } from "src/components/types/shifts";
 import type {
@@ -154,7 +154,7 @@ export const ShiftVolunteersDialogAdd = ({
     data: dataTrainingVolunteerDetails,
     error: errorTrainingVolunteerDetails,
   }: {
-    data: IResShiftVolunteerDetails;
+    data: IResShiftVolunteerInformation;
     error: Error | undefined;
   } = useSWR(
     trainingTimesIdWatch

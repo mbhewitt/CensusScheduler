@@ -9,7 +9,7 @@ import {
 import type {
   IReqShiftVolunteerItem,
   IResShiftPositionCountItem,
-  IResShiftVolunteerDetails,
+  IResShiftVolunteerInformation,
   IResShiftVolunteerRowItem,
 } from "src/components/types/shifts";
 
@@ -137,7 +137,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         if (positionFound) positionFound.filledSlots += 1;
       });
 
-      const resShiftVolunteerDetails: IResShiftVolunteerDetails = {
+      const resShiftVolunteerDetails: IResShiftVolunteerInformation = {
         date: resShiftPositionFirst.date,
         dateName: resShiftPositionFirst.datename ?? "",
         details: resShiftPositionFirst.shift_details,
