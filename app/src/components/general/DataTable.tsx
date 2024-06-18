@@ -17,6 +17,13 @@ interface ITableProps {
 
 const theme = createTheme({
   components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          overflow: "hidden",
+        },
+      },
+    },
     MuiPopover: {
       styleOverrides: {
         root: {

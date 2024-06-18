@@ -262,8 +262,6 @@ export const Shifts = () => {
       router.push(`/shifts/volunteers/${row[0]}`);
     },
     rowHover: true,
-    rowsPerPage: 200,
-    rowsPerPageOptions: [10, 15, 100, 200],
     search: false,
     setRowProps: (row: string[]) => {
       if (row[1] !== shiftDateCurrent) {

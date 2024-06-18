@@ -48,7 +48,10 @@ export interface IResShiftVolunteerRowItem {
 export interface IResShiftVolunteerDetails {
   date: string;
   dateName: string;
+  details: string;
   endTime: string;
+  meal: string;
+  notes: string;
   positionList: IResShiftPositionCountItem[];
   startTime: string;
   type: string;

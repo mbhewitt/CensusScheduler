@@ -57,7 +57,7 @@ export const DeveloperMode = () => {
   return (
     <>
       <Grid item xs={4}>
-        <Typography component="h3" variant="h6" sx={{ mb: 1 }}>
+        <Typography component="h3" variant="h6">
           Developer mode
         </Typography>
       </Grid>
