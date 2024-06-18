@@ -30,7 +30,7 @@ export interface IResShiftTypeCurrent {
   timeList: IResShiftTypeTimeItem[];
 }
 export interface IResShiftTypeInformation {
-  categoryName: string;
+  category: { name: string };
   details: string;
   isCore: boolean;
   isOffPlaya: boolean;

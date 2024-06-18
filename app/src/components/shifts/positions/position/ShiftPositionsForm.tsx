@@ -51,11 +51,13 @@ export const findList = (
       return name === formValues.prerequisite.name;
     })
   ).id;
-  const roleIdFound = ensure(
-    dataDefaults.roleList.find(({ name }: { name: string }) => {
-      return name === formValues.role.name;
-    })
-  ).id;
+  const roleIdFound = formValues.role.name
+    ? ensure(
+        dataDefaults.roleList.find(({ name }: { name: string }) => {
+          return name === formValues.role.name;
+        })
+      ).id
+    : null;
 
   return [prerequisiteIdFound, roleIdFound];
 };

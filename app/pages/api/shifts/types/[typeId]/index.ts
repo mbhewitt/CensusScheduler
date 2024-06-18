@@ -41,7 +41,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           shift_name,
         }: RowDataPacket) => {
           const information: IResShiftTypeInformation = {
-            categoryName: shift_category ?? "",
+            category: { name: shift_category ?? "" },
             details: shift_details,
             isCore: Boolean(core),
             isOffPlaya: Boolean(off_playa),
