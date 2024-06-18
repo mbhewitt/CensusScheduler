@@ -114,7 +114,7 @@ export const findCategoryId = (
     dataDefaults.categoryList.find(({ name }) => {
       return name === formValues.information.category.name;
     })
-  );
+  ).id;
 
   return categoryIdFound;
 };
@@ -127,7 +127,7 @@ export const processPositionList = (
       dataDefaults.positionList.find((positionItem) => {
         return positionItem.name === name;
       })
-    ).id;
+    ).positionId;
 
     return {
       positionId: positionIdFound,
