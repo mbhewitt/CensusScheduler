@@ -128,6 +128,7 @@ CREATE TABLE `op_shift_category` (
   `department` varchar(128) NOT NULL,
   `shift_category` varchar(128) NOT NULL,
   `shift_category_id` bigint NOT NULL AUTO_INCREMENT,
+  `description` longtext,
   `create_category` tinyint(1) DEFAULT '0',
   `delete_category` tinyint(1) DEFAULT '0',
   `update_category` tinyint(1) DEFAULT '0',
@@ -202,6 +203,8 @@ CREATE TABLE `op_shift_times` (
   `end_time_lt` varchar(32) DEFAULT NULL,
   `shift_times_id` bigint NOT NULL AUTO_INCREMENT,
   `notes` longtext,
+  `meal` varchar(32) DEFAULT NULL,
+  `lead_assigned_shiftboard_ids` longtext,
   `add_shift_time` tinyint(1) DEFAULT '0',
   `remove_shift_time` tinyint(1) DEFAULT '0',
   `update_shift_time` tinyint(1) DEFAULT '0',
@@ -299,7 +302,5 @@ CREATE TABLE `op_volunteers` (
 insert ignore into op_volunteers (shiftboard_id,world_name,playa_name,passcode) values (1,'Admin','Admin','123456');
 insert ignore into op_roles (role_id,role,display,role_src) values (1,'SuperAdmin',1,'tablet'),(2,'Admin',1,'tablet');
 insert ignore into op_volunteer_roles (shiftboard_id,role_id) values (1,1),(1,2);
-alter table op_volunteers add timestamp timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
-alter table op_volunteer_shifts add timestamp timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
-alter table op_shift_times add end_time timestamp,add start_time timestamp;
+insert into op_doodles (image_url) values ('');
 update op_shift_times set start_time=concat(start_time_lt,':00-07:00'),end_time=concat(end_time_lt,':00-07:00');
