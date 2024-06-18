@@ -547,7 +547,7 @@ export const ShiftVolunteers = () => {
           </Card>
         </Box>
         <Box component="section">
-          <Typography component="h2" variant="h4" sx={{ mb: 1 }}>
+          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
             Positions
           </Typography>
           <DataTable
