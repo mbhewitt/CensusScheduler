@@ -214,7 +214,7 @@ export const BehavioralStandards = () => {
           </Card>
         </Box>
         <Box component="section">
-          <Typography component="h2" variant="h4" sx={{ mb: 1 }}>
+          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
             Purpose Statement
           </Typography>
           <Card>
@@ -254,7 +254,7 @@ export const BehavioralStandards = () => {
           </Card>
         </Box>
         <Box component="section">
-          <Typography component="h2" variant="h4" sx={{ mb: 1 }}>
+          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
             Methods and Expectations of Communication
           </Typography>
           <Card>
@@ -305,7 +305,7 @@ export const BehavioralStandards = () => {
           </Card>
         </Box>
         <Box component="section">
-          <Typography component="h2" variant="h4" sx={{ mb: 1 }}>
+          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
             General Expectations in any Setting
           </Typography>
           <Card>
@@ -332,7 +332,7 @@ export const BehavioralStandards = () => {
           </Card>
         </Box>
         <Box component="section">
-          <Typography component="h2" variant="h4" sx={{ mb: 1 }}>
+          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
             Expectations within Black Rock City
           </Typography>
           <Card>
@@ -370,7 +370,7 @@ export const BehavioralStandards = () => {
           </Card>
         </Box>
         <Box component="section">
-          <Typography component="h2" variant="h4" sx={{ mb: 1 }}>
+          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
             Expectations When in a Census Lab Coat
           </Typography>
           <Card>
@@ -423,7 +423,7 @@ export const BehavioralStandards = () => {
           </Card>
         </Box>
         <Box component="section">
-          <Typography component="h2" variant="h4" sx={{ mb: 1 }}>
+          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
             Situations with Fellow Team Members
           </Typography>
           <Card>
@@ -470,7 +470,7 @@ export const BehavioralStandards = () => {
           </Card>
         </Box>
         <Box component="section">
-          <Typography component="h2" variant="h4" sx={{ mb: 1 }}>
+          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
             Potential Outcomes
           </Typography>
           <Card>
@@ -500,7 +500,7 @@ export const BehavioralStandards = () => {
           </Card>
         </Box>
         <Box component="section">
-          <Typography component="h2" variant="h4" sx={{ mb: 1 }}>
+          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
             Acknowledgement
           </Typography>
           <Card>

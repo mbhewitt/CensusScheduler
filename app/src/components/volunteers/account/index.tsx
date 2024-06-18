@@ -264,7 +264,7 @@ export const Account = () => {
 
         {/* profile */}
         <Box component="section">
-          <Typography component="h2" variant="h4" sx={{ mb: 1 }}>
+          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
             Profile
           </Typography>
           <Card>
@@ -400,14 +400,14 @@ export const Account = () => {
         {/* admin */}
         {isAuthenticated && isAdmin && (
           <Box component="section">
-            <Typography component="h2" variant="h4" sx={{ mb: 1 }}>
+            <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
               Admin
             </Typography>
             <Card sx={{ mb: 2 }}>
               <CardContent>
                 <Grid container>
                   <Grid item xs={4}>
-                    <Typography component="h3" variant="h6" sx={{ mb: 1 }}>
+                    <Typography component="h3" variant="h6">
                       Roles
                     </Typography>
                   </Grid>
@@ -419,14 +419,16 @@ export const Account = () => {
                             ({
                               id: roleId,
                               name: roleName,
-                            }: IResVolunteerRoleItem) => (
-                              <ListItem disablePadding key={`${roleId}-item`}>
-                                <ListItemIcon sx={{ pr: 1 }}>
-                                  <VerifiedUserIcon color="secondary" />
-                                </ListItemIcon>
-                                <ListItemText>{roleName}</ListItemText>
-                              </ListItem>
-                            )
+                            }: IResVolunteerRoleItem) => {
+                              return (
+                                <ListItem disablePadding key={`${roleId}-item`}>
+                                  <ListItemIcon sx={{ pr: 1 }}>
+                                    <VerifiedUserIcon color="secondary" />
+                                  </ListItemIcon>
+                                  <ListItemText>{roleName}</ListItemText>
+                                </ListItem>
+                              );
+                            }
                           )}
                         </>
                       ) : (
@@ -438,7 +440,7 @@ export const Account = () => {
                     <Divider sx={{ my: 2 }} />
                   </Grid>
                   <Grid item xs={4}>
-                    <Typography component="h3" variant="h6" sx={{ mb: 1 }}>
+                    <Typography component="h3" variant="h6">
                       Notes
                     </Typography>
                   </Grid>
@@ -482,7 +484,7 @@ export const Account = () => {
               <CardContent>
                 <Grid container>
                   <Grid item xs={4}>
-                    <Typography component="h3" variant="h6" sx={{ mb: 1 }}>
+                    <Typography component="h3" variant="h6">
                       Security
                     </Typography>
                   </Grid>

@@ -21,7 +21,10 @@ import { DialogContainer } from "src/components/general/DialogContainer";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
-import type { IResShiftCategoryItem } from "src/components/types/shifts/categories";
+import type {
+  IResShiftCategoryItem,
+  IResShiftCategoryTypeItem,
+} from "src/components/types/shifts/categories";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
 interface IShiftCategoriesDialogDeleteProps {
@@ -37,10 +40,13 @@ export const ShiftCategoriesDialogDelete = ({
 }: IShiftCategoriesDialogDeleteProps) => {
   // fetching, mutation, and revalidation
   // --------------------
-  const { data, error } = useSWR(
-    `/api/shifts/categories/${categoryId}/types`,
-    fetcherGet
-  );
+  const {
+    data,
+    error,
+  }: {
+    data: IResShiftCategoryTypeItem[];
+    error: Error | undefined;
+  } = useSWR(`/api/shifts/categories/${categoryId}/types`, fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     `/api/shifts/categories/${categoryId}`,
     fetcherTrigger

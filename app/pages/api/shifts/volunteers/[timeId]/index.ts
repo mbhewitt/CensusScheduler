@@ -9,7 +9,7 @@ import {
 import type {
   IReqShiftVolunteerItem,
   IResShiftPositionCountItem,
-  IResShiftVolunteerDetails,
+  IResShiftVolunteerInformation,
   IResShiftVolunteerRowItem,
 } from "src/components/types/shifts";
 
@@ -27,12 +27,14 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           pt.position,
           pt.prerequisite_id,
           pt.role_id,
+          sn.shift_details,
           sn.shift_name,
           sp.position_type_id,
           sp.shift_position_id,
           sp.total_slots,
           st.date,
           st.end_time,
+          st.meal,
           st.notes,
           st.start_time,
           st.year
@@ -135,10 +137,13 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         if (positionFound) positionFound.filledSlots += 1;
       });
 
-      const resShiftVolunteerDetails: IResShiftVolunteerDetails = {
+      const resShiftVolunteerDetails: IResShiftVolunteerInformation = {
         date: resShiftPositionFirst.date,
         dateName: resShiftPositionFirst.datename ?? "",
+        details: resShiftPositionFirst.shift_details,
         endTime: resShiftPositionFirst.end_time,
+        meal: resShiftPositionFirst.meal,
+        notes: resShiftPositionFirst.notes,
         positionList: resShiftPositionList,
         startTime: resShiftPositionFirst.start_time,
         type: resShiftPositionFirst.shift_name,

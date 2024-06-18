@@ -10,7 +10,11 @@ import {
   Box,
   Breadcrumbs,
   Button,
+  Card,
+  CardContent,
   Container,
+  Divider,
+  Grid,
   ListItemIcon,
   ListItemText,
   MenuItem,
@@ -23,9 +27,9 @@ import dayjs from "dayjs";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
-import { Fragment, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import useSWR from "swr";
+import useSWR, { KeyedMutator } from "swr";
 import useSWRMutation from "swr/mutation";
 
 import { DataTable } from "src/components/general/DataTable";
@@ -39,6 +43,7 @@ import { ShiftVolunteersDialogRemove } from "src/components/shifts/volunteers/Sh
 import type { ISwitchValues } from "src/components/types";
 import type {
   IResShiftPositionCountItem,
+  IResShiftVolunteerInformation,
   IResShiftVolunteerRowItem,
 } from "src/components/types/shifts";
 import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
@@ -101,6 +106,11 @@ export const ShiftVolunteers = () => {
     data: dataShiftVolunteersItem,
     error: errorShiftVolunteersItem,
     mutate: mutateShiftVolunteersItem,
+  }: {
+    data: IResShiftVolunteerInformation;
+    error: Error | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mutate: KeyedMutator<any>;
   } = useSWR(
     isMounted ? `/api/shifts/volunteers/${timeIdQuery}` : null,
     fetcherGet
@@ -131,7 +141,7 @@ export const ShiftVolunteers = () => {
         socket.on(
           "res-shift-volunteer-add",
           ({
-            noShow,
+            isCheckedIn,
             playaName,
             positionName,
             shiftboardId,
@@ -142,7 +152,7 @@ export const ShiftVolunteers = () => {
             if (dataShiftVolunteersItem) {
               const dataMutate = structuredClone(dataShiftVolunteersItem);
               dataMutate.volunteerList.push({
-                noShow,
+                isCheckedIn,
                 playaName,
                 positionName,
                 shiftboardId,
@@ -172,7 +182,7 @@ export const ShiftVolunteers = () => {
                   volunteerItem.shiftboardId === shiftboardIdNum
               );
               if (shiftVolunteerItemUpdate) {
-                shiftVolunteerItemUpdate.noShow = checked ? "" : "Yes";
+                shiftVolunteerItemUpdate.isCheckedIn = checked ? "" : "Yes";
               }
 
               mutateShiftVolunteersItem(dataMutate);
@@ -309,8 +319,32 @@ export const ShiftVolunteers = () => {
     }
   }
 
-  // prepare datatable
-  const columnList = [
+  // prepare datatable positions
+  const columnListPositions = [
+    {
+      name: "Name",
+      options: { sortThirdClickReset: true },
+    },
+    {
+      name: "Filled / Total",
+      options: {
+        sort: false,
+      },
+    },
+  ];
+  const dataTablePositions = dataShiftVolunteersItem.positionList.map(
+    ({ filledSlots, positionName, totalSlots }: IResShiftPositionCountItem) => {
+      return [positionName, `${filledSlots} / ${totalSlots}`];
+    }
+  );
+  const optionListCustomPositions = {
+    filter: false,
+    pagination: false,
+    search: false,
+  };
+
+  // prepare datatable volunteers
+  const columnListVolunteers = [
     {
       name: "Playa name",
       options: { filter: false, sortThirdClickReset: true },
@@ -332,7 +366,7 @@ export const ShiftVolunteers = () => {
     },
   ];
   if (isAuthenticated && isAdmin) {
-    columnList.push({
+    columnListVolunteers.push({
       name: "Admin",
       options: {
         filter: false,
@@ -343,7 +377,7 @@ export const ShiftVolunteers = () => {
       },
     });
   }
-  const dataTable = dataShiftVolunteersItem.volunteerList.map(
+  const dataTableVolunteers = dataShiftVolunteersItem.volunteerList.map(
     ({
       isCheckedIn,
       playaName,
@@ -421,7 +455,7 @@ export const ShiftVolunteers = () => {
       ];
     }
   );
-  const optionListCustom = {};
+  const optionListCustomVolunteers = {};
 
   // render
   // --------------------
@@ -460,43 +494,78 @@ export const ShiftVolunteers = () => {
           </Breadcrumbs>
         </Box>
         <Box component="section">
+          <Box>
+            <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
+              {formatDateName(
+                dataShiftVolunteersItem.date,
+                dataShiftVolunteersItem.dateName
+              )}
+              <br />
+              {formatTime(
+                dataShiftVolunteersItem.startTime,
+                dataShiftVolunteersItem.endTime
+              )}
+              <br />
+              {dataShiftVolunteersItem.type}
+            </Typography>
+          </Box>
+          <Card sx={{ mb: 2 }}>
+            <CardContent>
+              <Grid container>
+                <Grid item xs={4}>
+                  <Typography component="h3" variant="h6">
+                    Details
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  {dataShiftVolunteersItem.details}
+                </Grid>
+                <Grid item xs={12}>
+                  <Divider sx={{ my: 2 }} />
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography component="h3" variant="h6">
+                    Meal
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  {dataShiftVolunteersItem.meal}
+                </Grid>
+                <Grid item xs={12}>
+                  <Divider sx={{ my: 2 }} />
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography component="h3" variant="h6">
+                    Notes
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  {dataShiftVolunteersItem.notes}
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
+        </Box>
+        <Box component="section">
+          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
+            Positions
+          </Typography>
+          <DataTable
+            columnList={columnListPositions}
+            dataTable={dataTablePositions}
+            optionListCustom={optionListCustomPositions}
+          />
+        </Box>
+        <Box component="section">
           <Stack
             alignItems="flex-end"
             direction="row"
             justifyContent="space-between"
             sx={{ mb: 2 }}
           >
-            <Box>
-              <Typography component="h2" gutterBottom variant="h4">
-                {formatDateName(
-                  dataShiftVolunteersItem.date,
-                  dataShiftVolunteersItem.dateName
-                )}
-                <br />
-                {formatTime(
-                  dataShiftVolunteersItem.startTime,
-                  dataShiftVolunteersItem.endTime
-                )}
-                <br />
-                {dataShiftVolunteersItem.type}
-              </Typography>
-              <Typography component="h3" variant="h6">
-                {dataShiftVolunteersItem.positionList.map(
-                  ({
-                    filledSlots,
-                    positionName,
-                    totalSlots,
-                  }: IResShiftPositionCountItem) => {
-                    return (
-                      <Fragment key={positionName}>
-                        {positionName}: {filledSlots} / {totalSlots}
-                        <br />
-                      </Fragment>
-                    );
-                  }
-                )}
-              </Typography>
-            </Box>
+            <Typography component="h2" variant="h4">
+              Volunteers
+            </Typography>
             <Button
               disabled={!isVolunteerAddAvailable}
               onClick={() => {
@@ -523,9 +592,9 @@ export const ShiftVolunteers = () => {
             </Button>
           </Stack>
           <DataTable
-            columnList={columnList}
-            dataTable={dataTable}
-            optionListCustom={optionListCustom}
+            columnList={columnListVolunteers}
+            dataTable={dataTableVolunteers}
+            optionListCustom={optionListCustomVolunteers}
           />
         </Box>
 

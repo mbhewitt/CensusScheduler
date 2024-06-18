@@ -44,7 +44,7 @@ export const Help = () => {
           </Card>
         </Box>
         <Box component="section">
-          <Typography component="h2" variant="h4" sx={{ mb: 1 }}>
+          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
             Sign a volunteer in for a shift
           </Typography>
           <Card>
@@ -145,7 +145,7 @@ export const Help = () => {
           </Card>
         </Box>
         <Box component="section">
-          <Typography component="h2" variant="h4" sx={{ mb: 1 }}>
+          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
             Create an account for a new volunteer
           </Typography>
           <Card>
@@ -234,7 +234,7 @@ export const Help = () => {
           </Card>
         </Box>
         <Box component="section">
-          <Typography component="h2" variant="h4" sx={{ mb: 1 }}>
+          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
             Send a message
           </Typography>
           <Card>
