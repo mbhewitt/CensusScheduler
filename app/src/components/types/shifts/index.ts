@@ -15,7 +15,6 @@ export interface IResShiftRowItem {
   startTime: string;
   totalSlots: number;
   type: string;
-  year: string;
 }
 export interface IReqShiftVolunteerItem {
   id: number;

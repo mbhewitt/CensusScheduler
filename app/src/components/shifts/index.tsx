@@ -15,7 +15,11 @@ import { Hero } from "src/components/layout/Hero";
 import type { IResShiftRowItem } from "src/components/types/shifts";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { fetcherGet } from "src/utils/fetcher";
-import { formatDateName, formatTime } from "src/utils/formatDateTime";
+import {
+  dateTimezone,
+  formatDateName,
+  formatTime,
+} from "src/utils/formatDateTime";
 import { getColorMap } from "src/utils/getColorMap";
 
 export const Shifts = () => {
@@ -159,9 +163,12 @@ export const Shifts = () => {
           ) => {
             const show =
               (filterValue.indexOf("Present / Future") >= 0 &&
-                dayjs(dateHiddenValue).isSameOrAfter(dateTimeValue, "date")) ||
+                dateTimezone(dateHiddenValue).isSameOrAfter(
+                  dateTimeValue,
+                  "date"
+                )) ||
               (filterValue.indexOf("Past") >= 0 &&
-                dayjs(dateHiddenValue).isBefore(dateTimeValue, "date"));
+                dateTimezone(dateHiddenValue).isBefore(dateTimeValue, "date"));
 
             // returning false means that the value will display
             return !show;
@@ -231,14 +238,13 @@ export const Shifts = () => {
       startTime,
       totalSlots,
       type,
-      year,
     }) => {
       return [
-        id,
-        `${date} ${year}`,
+        id, // hide for row click
+        date, // hide for filter dialog
         formatDateName(date, dateName),
         formatTime(startTime, endTime),
-        type,
+        type, // hide for filter dialog
         <Chip
           key={`${id}-chip`}
           label={type}

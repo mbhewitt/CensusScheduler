@@ -2,11 +2,11 @@ import TextField from "@mui/material/TextField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import dayjs from "dayjs";
 import { useContext } from "react";
 
 import { DEVELOPER_MODE_DATE_TIME } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
+import { dateTimezone } from "src/utils/formatDateTime";
 
 export const DateTime = () => {
   // context
@@ -29,7 +29,7 @@ export const DateTime = () => {
           developerModeDispatch({
             payload: {
               isEnabled: true,
-              value: dayjs(dateTime).toISOString(),
+              value: dateTimezone(dateTime).toISOString(),
             },
             type: DEVELOPER_MODE_DATE_TIME,
           });

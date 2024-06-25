@@ -27,7 +27,6 @@ import { TimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import dayjs from "dayjs";
 import {
   Control,
   Controller,
@@ -48,7 +47,11 @@ import type {
 } from "src/components/types/shifts/types";
 import { COLOR_BURNING_MAN_BROWN } from "src/constants";
 import { ensure } from "src/utils/ensure";
-import { formatDateName, formatTime } from "src/utils/formatDateTime";
+import {
+  dateTimezone,
+  formatDateName,
+  formatTime,
+} from "src/utils/formatDateTime";
 
 export interface IFormValues {
   information: {
@@ -139,14 +142,16 @@ export const processPositionList = (
 export const processTimeList = (formValues: IFormValues) => {
   return formValues.timeList.map(
     ({ date, endTime, instance, notes, startTime, timeId }) => {
-      const dateFormat = dayjs(date).format("YYYY-MM-DD");
+      const dateFormat = dateTimezone(date).format("YYYY-MM-DD");
 
       return {
         date: dateFormat,
-        endTime: `${dateFormat} ${dayjs(endTime).format("HH:mm:ss")}`,
+        endTime: `${dateFormat} ${dateTimezone(endTime).format("HH:mm:ss")}`,
         instance,
         notes,
-        startTime: `${dateFormat} ${dayjs(startTime).format("HH:mm:ss")}`,
+        startTime: `${dateFormat} ${dateTimezone(startTime).format(
+          "HH:mm:ss"
+        )}`,
         timeId,
       };
     }
@@ -823,22 +828,22 @@ export const ShiftTypesForm = ({
 
                               if (event) {
                                 // validate end time occurs after start time
-                                const dateFormat = dayjs(
+                                const dateFormat = dateTimezone(
                                   getValues(`timeList.${index}.date`)
                                 ).format("YYYY-MM-DD");
-                                const startTimeFormat = dayjs(
-                                  `${dateFormat} ${dayjs(
+                                const startTimeFormat = dateTimezone(
+                                  `${dateFormat} ${dateTimezone(
                                     getValues(`timeList.${index}.startTime`)
                                   ).format("HH:mm")}`
                                 );
-                                const endTimeFormat = dayjs(
-                                  `${dateFormat} ${dayjs(event).format(
+                                const endTimeFormat = dateTimezone(
+                                  `${dateFormat} ${dateTimezone(event).format(
                                     "HH:mm"
                                   )}`
                                 );
 
                                 if (
-                                  dayjs(endTimeFormat).isSameOrBefore(
+                                  dateTimezone(endTimeFormat).isSameOrBefore(
                                     startTimeFormat
                                   )
                                 ) {

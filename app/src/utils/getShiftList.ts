@@ -19,7 +19,6 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
       shiftboard_id,
       start_time,
       total_slots,
-      year,
     }: RowDataPacket) => {
       const shiftPositionIdItem = `${shift_times_id}${position_type_id}`;
       const dbShiftLast: IResShiftRowItem =
@@ -41,7 +40,6 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
           startTime: start_time,
           totalSlots: total_slots,
           type: shift_name,
-          year,
         };
 
         shiftListNew.push(dbShiftItemNew);
