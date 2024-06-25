@@ -56,7 +56,8 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
       }
       // if volunteer ID exists
       // then add to filled slots
-      if (dbShiftLast && shiftboard_id) dbShiftLast.filledSlots += 1;
+      if (dbShiftLast && dbShiftLast.id === shift_times_id && shiftboard_id)
+        dbShiftLast.filledSlots += 1;
     }
   );
 
