@@ -8,7 +8,6 @@ import {
   Switch,
   Typography,
 } from "@mui/material";
-import dayjs from "dayjs";
 import { useSnackbar } from "notistack";
 import { useContext } from "react";
 
@@ -21,6 +20,7 @@ import {
   DEVELOPER_MODE_RESET,
 } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
+import { dateTimezone } from "src/utils/formatDateTime";
 
 export const DeveloperMode = () => {
   // context
@@ -101,7 +101,7 @@ export const DeveloperMode = () => {
                     developerModeDispatch({
                       payload: {
                         isEnabled: event.target.checked,
-                        value: dayjs().toISOString(),
+                        value: dateTimezone().toISOString(),
                       },
                       type: DEVELOPER_MODE_DATE_TIME,
                     });

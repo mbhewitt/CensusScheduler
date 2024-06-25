@@ -1,4 +1,3 @@
-import dayjs from "dayjs";
 import {
   createContext,
   Dispatch,
@@ -14,6 +13,7 @@ import {
   IDeveloperModeAction,
   IDeveloperModeState,
 } from "src/state/developer-mode/reducer";
+import { dateTimezone } from "src/utils/formatDateTime";
 
 interface IDeveloperModeProviderValue {
   developerModeState: IDeveloperModeState;
@@ -34,7 +34,7 @@ const developerModeInitial: IDeveloperModeState = {
   },
   dateTime: {
     isEnabled: false,
-    value: dayjs().toISOString(),
+    value: dateTimezone().toISOString(),
   },
   disableIdle: {
     isEnabled: false,
@@ -64,11 +64,6 @@ export const DeveloperModeProvider = ({
     const developerModeStateStorage = JSON.parse(
       sessionStorage.getItem("developerModeState") ?? "{}"
     );
-    if (developerModeStateStorage.dateTime) {
-      developerModeStateStorage.dateTime.value = dayjs(
-        developerModeStateStorage.dateTime.value
-      );
-    }
 
     // if developer mode state is stored in session storage
     // then update context state with developer mode state
