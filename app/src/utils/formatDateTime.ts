@@ -17,8 +17,10 @@ export const dateTimezone = (dateTime?: Dayjs | null | string) => {
 const dateFormat = (dateTime: string) => {
   return dateTimezone(dateTime).format("MMM DD");
 };
-export const formatDateName = (date: string, dateName?: string) => {
-  return dateName ? `${dateFormat(date)} - ${dateName}` : dateFormat(date);
+export const formatDateName = (startTime: string, dateName?: string) => {
+  return dateName
+    ? `${dateFormat(startTime)} - ${dateName}`
+    : dateFormat(startTime);
 };
 export const formatTime = (dateTimeStart: string, dateTimeEnd: string) => {
   return `${dateTimezone(dateTimeStart).format("HH:mm")} - ${dateTimezone(

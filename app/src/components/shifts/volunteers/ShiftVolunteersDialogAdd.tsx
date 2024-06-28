@@ -65,7 +65,6 @@ interface IShiftVolunteersDialogAddProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
   shiftVolunteersItem: {
-    date: string;
     dateName: string;
     endTime: string;
     positionList: IResShiftPositionCountItem[];
@@ -88,7 +87,6 @@ export const ShiftVolunteersDialogAdd = ({
   handleDialogClose,
   isDialogOpen,
   shiftVolunteersItem: {
-    date,
     dateName,
     endTime,
     positionList,
@@ -235,7 +233,7 @@ export const ShiftVolunteersDialogAdd = ({
         enqueueSnackbar(
           <SnackbarText>
             Adding{" "}
-            <strong>{`${formatDateName(date, dateName)}, ${formatTime(
+            <strong>{`${formatDateName(startTime, dateName)}, ${formatTime(
               startTime,
               endTime
             )}, ${type}`}</strong>{" "}
@@ -254,7 +252,6 @@ export const ShiftVolunteersDialogAdd = ({
     }
   }, [
     dataVolunteerShiftList,
-    date,
     dateName,
     endTime,
     enqueueSnackbar,
@@ -367,7 +364,6 @@ export const ShiftVolunteersDialogAdd = ({
       // display training list
       trainingListDisplay = trainingList.map(
         ({
-          date,
           endTime,
           filledSlots,
           id: timeId,
@@ -386,7 +382,7 @@ export const ShiftVolunteersDialogAdd = ({
               key={`${timeId}-training`}
               value={timeId}
             >
-              {`${formatDateName(date)}, ${formatTime(
+              {`${formatDateName(startTime)}, ${formatTime(
                 startTime,
                 endTime
               )}, ${type}: ${filledSlots} / ${totalSlots}`}
@@ -454,7 +450,6 @@ export const ShiftVolunteersDialogAdd = ({
       // display training list
       trainingListDisplay = trainingList.map(
         ({
-          date,
           endTime,
           filledSlots,
           id,
@@ -473,7 +468,7 @@ export const ShiftVolunteersDialogAdd = ({
               key={`${id}-training`}
               value={id}
             >
-              {`${formatDateName(date)}, ${formatTime(
+              {`${formatDateName(startTime)}, ${formatTime(
                 startTime,
                 endTime
               )}, ${type}: ${filledSlots} / ${totalSlots}`}

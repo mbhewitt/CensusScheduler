@@ -500,7 +500,7 @@ export const ShiftVolunteers = () => {
           <Box>
             <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
               {formatDateName(
-                dataShiftVolunteersItem.date,
+                dataShiftVolunteersItem.startTime,
                 dataShiftVolunteersItem.dateName
               )}
               <br />
