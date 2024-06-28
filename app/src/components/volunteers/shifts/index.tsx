@@ -77,7 +77,6 @@ export const VolunteerShifts = () => {
   const [dialogCurrent, setDialogCurrent] = useState({
     dialogItem: 0,
     shift: {
-      date: "",
       dateName: "",
       endTime: "",
       position: { name: "" },
@@ -297,7 +296,6 @@ export const VolunteerShifts = () => {
   const colorMapDisplay = getColorMap(data);
   const dataTable = data.map(
     ({
-      date,
       dateName,
       department: { name: departmentName },
       endTime,
@@ -337,7 +335,7 @@ export const VolunteerShifts = () => {
       }
 
       return [
-        formatDateName(date, dateName),
+        formatDateName(startTime, dateName),
         formatTime(startTime, endTime),
         positionName,
         <Chip
@@ -382,7 +380,6 @@ export const VolunteerShifts = () => {
                   setDialogCurrent({
                     dialogItem: DialogList.Remove,
                     shift: {
-                      date,
                       dateName,
                       endTime,
                       position: { name: positionName },

@@ -50,7 +50,6 @@ export interface IResVolunteerShiftCountItem {
   worldName: string;
 }
 export interface IResVolunteerShiftItem {
-  date: string;
   dateName: string;
   department: { name: string };
   endTime: string;

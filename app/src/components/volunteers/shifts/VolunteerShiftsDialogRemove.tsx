@@ -22,7 +22,6 @@ interface IVolunteerShiftsDialogRemoveProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
   shiftItem: {
-    date: string;
     dateName: string;
     endTime: string;
     position: { name: string };
@@ -38,7 +37,6 @@ export const VolunteerShiftsDialogRemove = ({
   handleDialogClose,
   isDialogOpen,
   shiftItem: {
-    date,
     dateName,
     endTime,
     position: { name: positionName },
@@ -76,7 +74,7 @@ export const VolunteerShiftsDialogRemove = ({
 
       enqueueSnackbar(
         <SnackbarText>
-          <strong>{formatDateName(date, dateName)}</strong> at{" "}
+          <strong>{formatDateName(startTime, dateName)}</strong> at{" "}
           <strong>{formatTime(startTime, endTime)}</strong> for{" "}
           <strong>{positionName}</strong> has been removed
         </SnackbarText>,
@@ -113,7 +111,7 @@ export const VolunteerShiftsDialogRemove = ({
       <DialogContentText>
         <Typography component="span">
           Are you sure you want to remove{" "}
-          <strong>{formatDateName(date, dateName)}</strong> at{" "}
+          <strong>{formatDateName(startTime, dateName)}</strong> at{" "}
           <strong>{formatTime(startTime, endTime)}</strong> for{" "}
           <strong>{positionName}</strong>?
         </Typography>

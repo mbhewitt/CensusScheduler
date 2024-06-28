@@ -32,7 +32,6 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           sp.position_type_id,
           sp.shift_position_id,
           sp.total_slots,
-          st.date,
           st.end_time,
           st.meal,
           st.notes,
@@ -138,7 +137,6 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       });
 
       const resShiftVolunteerDetails: IResShiftVolunteerInformation = {
-        date: resShiftPositionFirst.date,
         dateName: resShiftPositionFirst.datename ?? "",
         details: resShiftPositionFirst.shift_details,
         endTime: resShiftPositionFirst.end_time,
