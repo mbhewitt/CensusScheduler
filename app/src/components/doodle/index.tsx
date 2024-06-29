@@ -109,13 +109,6 @@ export const Doodle = () => {
 
           canvasContext.lineTo(pointerPos.x, pointerPos.y);
           canvasContext.stroke();
-
-          if (canvasValue) {
-            // emit event
-            socket.emit("req-draw-move", {
-              imageUrl: canvasValue.toDataURL(),
-            });
-          }
         }
       }
     };
@@ -130,6 +123,10 @@ export const Doodle = () => {
 
           // update database
           await trigger({ body, method: "PATCH" });
+          // emit event
+          socket.emit("req-draw-move", {
+            imageUrl: canvasValue.toDataURL(),
+          });
         } catch (error) {
           if (error instanceof Error) {
             enqueueSnackbar(
@@ -301,11 +298,10 @@ export const Doodle = () => {
 
                         // update database
                         await trigger({ body, method: "PATCH" });
-
-                        clearCanvas();
-
                         // emit event
                         socket.emit("req-canvas-clear");
+
+                        clearCanvas();
                       }
                     } catch (error) {
                       if (error instanceof Error) {
