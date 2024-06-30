@@ -271,8 +271,8 @@ export const Shifts = () => {
     rowHover: true,
     search: false,
     setRowProps: (row: string[]) => {
-      if (row[1] !== shiftDateCurrent) {
-        [, shiftDateCurrent] = row;
+      if (row[2] !== shiftDateCurrent) {
+        [, , shiftDateCurrent] = row;
         shiftDateToggle = !shiftDateToggle;
       }
 
