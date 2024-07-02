@@ -58,6 +58,7 @@ const shiftPositionDefaults = async (
           role,
           role_id
         FROM op_roles
+        WHERE display=true
         ORDER BY role`
       );
       const resRoleList = dbRoleList.map(({ role, role_id }) => {
