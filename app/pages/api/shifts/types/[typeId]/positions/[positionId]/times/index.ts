@@ -19,7 +19,6 @@ const shiftTypePositionTimes = async (
       const [dbTimeList] = await pool.query<RowDataPacket[]>(
         `SELECT DISTINCT
           d.datename,
-          st.date, 
           st.end_time,
           st.shift_times_id,
           st.start_time
@@ -39,10 +38,10 @@ const shiftTypePositionTimes = async (
         [positionId, typeId]
       );
       const resTimeList = dbTimeList.map(
-        ({ date, datename, end_time, shift_times_id, start_time }) => {
+        ({ datename, end_time, shift_times_id, start_time }) => {
           const resTimeItem: IResShiftTypePositionTimeItem = {
             id: shift_times_id,
-            name: `${formatDateName(date, datename)}, ${formatTime(
+            name: `${formatDateName(start_time, datename)}, ${formatTime(
               start_time,
               end_time
             )}`,

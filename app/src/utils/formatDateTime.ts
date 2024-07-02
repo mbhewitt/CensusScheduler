@@ -13,14 +13,14 @@ export const dateTimezone = (dateTime?: Dayjs | null | string) => {
     : dayjs().tz(brcTimezone, true);
 };
 
-// format for date, datename, and time display
-const dateFormat = (dateTime: string) => {
-  return dateTimezone(dateTime).format("MMM DD");
+// format for start date time, date name, and time display
+const dateFormat = (startDateTime: string) => {
+  return dateTimezone(startDateTime).format("MMM DD");
 };
-export const formatDateName = (startTime: string, dateName?: string) => {
+export const formatDateName = (startDateTime: string, dateName?: string) => {
   return dateName
-    ? `${dateFormat(startTime)} - ${dateName}`
-    : dateFormat(startTime);
+    ? `${dateFormat(startDateTime)} - ${dateName}`
+    : dateFormat(startDateTime);
 };
 export const formatTime = (dateTimeStart: string, dateTimeEnd: string) => {
   return `${dateTimezone(dateTimeStart).format("HH:mm")} - ${dateTimezone(

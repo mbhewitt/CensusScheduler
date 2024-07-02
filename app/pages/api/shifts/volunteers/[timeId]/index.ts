@@ -36,7 +36,6 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           st.meal,
           st.notes,
           st.start_time,
-          st.year
         FROM op_shift_times AS st
         LEFT JOIN op_dates AS d
         ON d.date=st.date

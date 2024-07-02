@@ -792,7 +792,7 @@ export const ShiftVolunteersDialogAdd = ({
                               <SnackbarText>
                                 Adding{" "}
                                 <strong>{`${formatDateName(
-                                  trainingItemFound.date,
+                                  trainingItemFound.startTime,
                                   trainingItemFound.dateName
                                 )}, ${formatTime(
                                   trainingItemFound.startTime,
