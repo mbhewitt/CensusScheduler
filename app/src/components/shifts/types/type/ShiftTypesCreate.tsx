@@ -32,7 +32,6 @@ import {
   findCategoryId,
   IFormValues,
   processPositionList,
-  processTimeList,
   ShiftTypesForm,
 } from "src/components/shifts/types/type/ShiftTypesForm";
 import type {
@@ -110,7 +109,6 @@ export const ShiftTypesCreate = () => {
     try {
       const categoryIdFound = findCategoryId(dataDefaults, formValues);
       const positionList = processPositionList(dataDefaults, formValues);
-      const timeList = processTimeList(formValues);
       const body: IReqShiftTypeItem = {
         information: {
           category: categoryIdFound,
@@ -120,7 +118,7 @@ export const ShiftTypesCreate = () => {
           name: formValues.information.name,
         },
         positionList,
-        timeList,
+        timeList: formValues.timeList,
       };
 
       // update database

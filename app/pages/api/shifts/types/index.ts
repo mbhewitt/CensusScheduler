@@ -97,40 +97,27 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
         );
       });
       // insert new shift time rows
-      timeList.forEach(
-        async ({ date, endTime, instance, notes, startTime }) => {
-          const timeIdNew = generateId(
-            `SELECT shift_times_id
+      timeList.forEach(async ({ endTime, instance, notes, startDateTime }) => {
+        const timeIdNew = generateId(
+          `SELECT shift_times_id
             FROM op_shift_times
             WHERE shift_times_id=?`
-          );
+        );
 
-          await pool.query(
-            `INSERT INTO op_shift_times (
+        await pool.query(
+          `INSERT INTO op_shift_times (
               add_shift_time,
-              date,
               end_time,
               notes,
               shift_instance,
               shift_name_id,
               shift_times_id,
               start_time,
-              year
             )
-            VALUES (true, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [
-              date,
-              endTime,
-              notes,
-              instance,
-              typeIdNew,
-              timeIdNew,
-              startTime,
-              date.split("-")[0],
-            ]
-          );
-        }
-      );
+            VALUES (true, ?, ?, ?, ?, ?, ?,)`,
+          [endTime, notes, instance, typeIdNew, timeIdNew, startDateTime]
+        );
+      });
 
       return res.status(201).json({
         statusCode: 201,

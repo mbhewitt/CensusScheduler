@@ -111,7 +111,6 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
       // get all current times
       const [dbTimeList] = await pool.query<RowDataPacket[]>(
         `SELECT
-          date,
           end_time,
           notes,
           shift_instance,
@@ -124,20 +123,12 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         [typeId]
       );
       const resTimeList = dbTimeList.map(
-        ({
-          date,
-          end_time,
-          notes,
-          shift_instance,
-          shift_times_id,
-          start_time,
-        }) => {
+        ({ end_time, notes, shift_instance, shift_times_id, start_time }) => {
           const resTimeItem: IResShiftTypeTimeItem = {
-            date,
             endTime: end_time,
             instance: shift_instance,
             notes: notes ?? "",
-            startTime: start_time,
+            startDateTime: start_time,
             timeId: shift_times_id,
           };
 
@@ -276,32 +267,22 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
       });
 
       timeListUpdate.forEach(
-        async ({ date, endTime, timeId, instance, notes, startTime }) => {
+        async ({ endTime, timeId, instance, notes, startDateTime }) => {
           await pool.query<RowDataPacket[]>(
             `UPDATE op_shift_times
             SET
-              date=?,
               end_time=?,
               notes=?,
               update_shift_time=true,
               shift_instance=?,
-              start_time=?,
-              year=?
+              start_time=?
             WHERE shift_times_id=?`,
-            [
-              date,
-              endTime,
-              notes,
-              instance,
-              startTime,
-              date.split("-")[0],
-              timeId,
-            ]
+            [endTime, notes, instance, startDateTime, timeId]
           );
         }
       );
       timeListAdd.forEach(
-        async ({ date, endTime, instance, notes, startTime }) => {
+        async ({ endTime, instance, notes, startDateTime }) => {
           const idNew = generateId(
             `SELECT shift_times_id
             FROM op_shift_times
@@ -310,26 +291,15 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           await pool.query(
             `INSERT INTO op_shift_times (
               add_shift_time,
-              date,
               end_time,
               notes,
               shift_instance,
               shift_name_id,
               shift_times_id,
               start_time,
-              year
             )
-            VALUES (true, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [
-              date,
-              endTime,
-              notes,
-              instance,
-              typeId,
-              idNew,
-              startTime,
-              date.split("-")[0],
-            ]
+            VALUES (true, ?, ?, ?, ?, ?, ?,)`,
+            [endTime, notes, instance, typeId, idNew, startDateTime]
           );
         }
       );

@@ -50,12 +50,11 @@ export interface IResShiftTypePositionItem {
   wapPoints?: string;
 }
 export interface IResShiftTypeTimeItem {
-  date: string;
   endTime: string;
   timeId: number; // "id" is already taken by useFieldArray
   instance: string;
   notes: string;
-  startTime: string;
+  startDateTime: string;
 }
 export interface IReqShiftTypeItem {
   information: IReqShiftTypeInformation;
@@ -77,11 +76,10 @@ export interface IReqShiftTypePositionItem {
   wapPoints: string;
 }
 export interface IReqShiftTypeTimeItem {
-  date: string;
   endTime: string;
   instance: string;
   notes: string;
-  startTime: string;
+  startDateTime: string;
   timeId: number; // "id" is already taken by useFieldArray
 }
 
