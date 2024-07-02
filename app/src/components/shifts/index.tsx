@@ -16,7 +16,7 @@ import type { IResShiftRowItem } from "src/components/types/shifts";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { fetcherGet } from "src/utils/fetcher";
 import {
-  dateTimezone,
+  dateTimeZone,
   formatDateName,
   formatTime,
 } from "src/utils/formatDateTime";
@@ -163,12 +163,12 @@ export const Shifts = () => {
           ) => {
             const show =
               (filterValue.indexOf("Present / Future") >= 0 &&
-                dateTimezone(dateHiddenValue).isSameOrAfter(
+                dateTimeZone(dateHiddenValue).isSameOrAfter(
                   dateTimeValue,
                   "date"
                 )) ||
               (filterValue.indexOf("Past") >= 0 &&
-                dateTimezone(dateHiddenValue).isBefore(dateTimeValue, "date"));
+                dateTimeZone(dateHiddenValue).isBefore(dateTimeValue, "date"));
 
             // returning false means that the value will display
             return !show;

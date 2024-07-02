@@ -5,7 +5,7 @@ import {
   DEVELOPER_MODE_RESET,
   DEVELOPER_MODE_STATE_STORAGE,
 } from "src/constants";
-import { dateTimezone } from "src/utils/formatDateTime";
+import { dateTimeZone } from "src/utils/formatDateTime";
 
 export interface IAccountTypePayload {
   isEnabled: boolean;
@@ -76,7 +76,7 @@ export const developerModeReducer = (
         },
         dateTime: {
           isEnabled: false,
-          value: dateTimezone().toISOString(),
+          value: dateTimeZone().toISOString(),
         },
         disableIdle: {
           isEnabled: false,

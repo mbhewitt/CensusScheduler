@@ -48,7 +48,7 @@ import type {
 import { COLOR_BURNING_MAN_BROWN } from "src/constants";
 import { ensure } from "src/utils/ensure";
 import {
-  dateTimezone,
+  dateTimeZone,
   formatDateName,
   formatTime,
 } from "src/utils/formatDateTime";
@@ -142,10 +142,10 @@ export const processTimeList = (formValues: IFormValues) => {
   return formValues.timeList.map(
     ({ endTime, instance, notes, startDateTime, timeId }) => {
       return {
-        endTime: dateTimezone(endTime).format("YYYY-MM-DD HH:mm:ss"),
+        endTime: dateTimeZone(endTime).format("YYYY-MM-DD HH:mm:ss"),
         instance,
         notes,
-        startDateTime: dateTimezone(startDateTime).format(
+        startDateTime: dateTimeZone(startDateTime).format(
           "YYYY-MM-DD HH:mm:ss"
         ),
         timeId,

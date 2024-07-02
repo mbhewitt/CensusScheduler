@@ -20,7 +20,7 @@ import {
   DEVELOPER_MODE_RESET,
 } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
-import { dateTimezone } from "src/utils/formatDateTime";
+import { dateTimeZone } from "src/utils/formatDateTime";
 
 export const DeveloperMode = () => {
   // context
@@ -101,7 +101,7 @@ export const DeveloperMode = () => {
                     developerModeDispatch({
                       payload: {
                         isEnabled: event.target.checked,
-                        value: dateTimezone().toISOString(),
+                        value: dateTimeZone().toISOString(),
                       },
                       type: DEVELOPER_MODE_DATE_TIME,
                     });

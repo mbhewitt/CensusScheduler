@@ -45,7 +45,7 @@ import {
   IResShiftTypeTimeItem,
 } from "src/components/types/shifts/types";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
-import { dateTimezone } from "src/utils/formatDateTime";
+import { dateTimeZone } from "src/utils/formatDateTime";
 
 enum DialogList {
   PositionRemove,
@@ -138,8 +138,8 @@ export const ShiftTypesUpdate = () => {
       const timeListNew: IResShiftTypeTimeItem[] = timeList.map((timeItem) => {
         return {
           ...timeItem,
-          endTime: dateTimezone(timeItem.endTime).toISOString(),
-          startDateTime: dateTimezone(timeItem.startDateTime).toISOString(),
+          endTime: dateTimeZone(timeItem.endTime).toISOString(),
+          startDateTime: dateTimeZone(timeItem.startDateTime).toISOString(),
         };
       });
 

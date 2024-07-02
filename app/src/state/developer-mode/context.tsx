@@ -13,7 +13,7 @@ import {
   IDeveloperModeAction,
   IDeveloperModeState,
 } from "src/state/developer-mode/reducer";
-import { dateTimezone } from "src/utils/formatDateTime";
+import { dateTimeZone } from "src/utils/formatDateTime";
 
 interface IDeveloperModeProviderValue {
   developerModeState: IDeveloperModeState;
@@ -34,7 +34,7 @@ const developerModeInitial: IDeveloperModeState = {
   },
   dateTime: {
     isEnabled: false,
-    value: dateTimezone().toISOString(),
+    value: dateTimeZone().toISOString(),
   },
   disableIdle: {
     isEnabled: false,
