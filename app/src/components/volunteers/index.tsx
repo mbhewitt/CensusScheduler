@@ -6,16 +6,16 @@ import {
 } from "@mui/icons-material";
 import {
   Box,
+  Card,
+  CardContent,
   Chip,
   Container,
-  Divider,
+  Grid,
   ListItemIcon,
   ListItemText,
   MenuItem,
   MenuList,
-  Stack,
   Typography,
-  useTheme,
 } from "@mui/material";
 import { green, grey, red } from "@mui/material/colors";
 import { FilterType } from "mui-datatables";
@@ -60,10 +60,6 @@ export const Volunteers = () => {
     data: IResVolunteerShiftCountItem[];
     error: Error | undefined;
   } = useSWR("/api/volunteers", fetcherGet);
-
-  // other hooks
-  // --------------------
-  const theme = useTheme();
 
   // logic
   // --------------------
@@ -263,33 +259,46 @@ export const Volunteers = () => {
       />
       <Container component="main">
         <Box component="section">
-          <Stack direction="row" sx={{ mb: 2 }}>
-            <Typography component="p" variant="h6">
-              Att.
-              <br />
-              Abs.
-              <br />
-              Rem.
-            </Typography>
-            <Divider
-              flexItem
-              orientation="vertical"
-              sx={{ marginX: theme.spacing(2) }}
-              variant="middle"
-            />
-            <Typography component="p" variant="h6">
-              Attended
-              <br />
-              Absent
-              <br />
-              Remaining
-            </Typography>
-          </Stack>
           <DataTable
             columnList={columnList}
             dataTable={dataTable}
             optionListCustom={optionListCustom}
           />
+        </Box>
+        <Box component="section">
+          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
+            Legend
+          </Typography>
+          <Card sx={{ mb: 2 }}>
+            <CardContent>
+              <Grid container>
+                <Grid item xs={2}>
+                  <Typography component="p" variant="h6">
+                    Att.
+                  </Typography>
+                </Grid>
+                <Grid alignItems="center" container item xs={10}>
+                  <Typography component="p">Attended</Typography>
+                </Grid>
+                <Grid item xs={2}>
+                  <Typography component="p" variant="h6">
+                    Abs.
+                  </Typography>
+                </Grid>
+                <Grid alignItems="center" container item xs={10}>
+                  <Typography component="p">Absent</Typography>
+                </Grid>
+                <Grid item xs={2}>
+                  <Typography component="p" variant="h6">
+                    Rem.
+                  </Typography>
+                </Grid>
+                <Grid alignItems="center" container item xs={10}>
+                  <Typography component="p">Remaining</Typography>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
         </Box>
       </Container>
     </>
