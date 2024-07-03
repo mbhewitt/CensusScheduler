@@ -39,7 +39,7 @@ import { SessionContext } from "src/state/session/context";
 import { checkIsAdmin, checkIsAuthenticated } from "src/utils/checkIsRoleExist";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 import {
-  dateTimezone,
+  dateTimeZone,
   formatDateName,
   formatTime,
 } from "src/utils/formatDateTime";
@@ -307,9 +307,9 @@ export const VolunteerShifts = () => {
     }: IResVolunteerShiftItem) => {
       // evaluate the check-in type and available features
       const checkInType = getCheckInType({
-        dateTime: dateTimezone(dateTimeValue),
-        endTime: dateTimezone(endTime),
-        startTime: dateTimezone(startTime),
+        dateTime: dateTimeZone(dateTimeValue),
+        endTime: dateTimeZone(endTime),
+        startTime: dateTimeZone(startTime),
       });
       let isVolunteerRemoveAvailable = false;
       let isCheckInAvailable = false;

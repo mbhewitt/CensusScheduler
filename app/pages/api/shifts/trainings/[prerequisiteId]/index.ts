@@ -19,7 +19,6 @@ const shiftTrainings = async (req: NextApiRequest, res: NextApiResponse) => {
           sn.shift_name,
           sp.position_type_id,
           sp.total_slots,
-          st.date,
           st.end_time,
           st.shift_times_id,
           st.start_time,

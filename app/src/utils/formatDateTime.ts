@@ -5,25 +5,25 @@ import utc from "dayjs/plugin/utc";
 dayjs.extend(timezone);
 dayjs.extend(utc);
 
-// convert to black rock city timezone
-const brcTimezone = "America/Los_Angeles";
-export const dateTimezone = (dateTime?: Dayjs | null | string) => {
+// convert to black rock city time zone
+const brcTimeZone = "America/Los_Angeles";
+export const dateTimeZone = (dateTime?: Dayjs | null | string) => {
   return dateTime
-    ? dayjs(dateTime).tz(brcTimezone)
-    : dayjs().tz(brcTimezone, true);
+    ? dayjs(dateTime).tz(brcTimeZone)
+    : dayjs().tz(brcTimeZone, true);
 };
 
-// format for date, datename, and time display
-const dateFormat = (dateTime: string) => {
-  return dateTimezone(dateTime).format("MMM DD");
+// format for start date time, date name, and time display
+const dateFormat = (startDateTime: string) => {
+  return dateTimeZone(startDateTime).format("MMM DD");
 };
-export const formatDateName = (startTime: string, dateName?: string) => {
+export const formatDateName = (startDateTime: string, dateName?: string) => {
   return dateName
-    ? `${dateFormat(startTime)} - ${dateName}`
-    : dateFormat(startTime);
+    ? `${dateFormat(startDateTime)} - ${dateName}`
+    : dateFormat(startDateTime);
 };
 export const formatTime = (dateTimeStart: string, dateTimeEnd: string) => {
-  return `${dateTimezone(dateTimeStart).format("HH:mm")} - ${dateTimezone(
+  return `${dateTimeZone(dateTimeStart).format("HH:mm")} - ${dateTimeZone(
     dateTimeEnd
   ).format("HH:mm")}`;
 };

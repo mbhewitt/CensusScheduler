@@ -42,8 +42,10 @@ import {
   IReqShiftTypeItem,
   IResShiftTypeCurrent,
   IResShiftTypeDefaults,
+  IResShiftTypeTimeItem,
 } from "src/components/types/shifts/types";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
+import { dateTimeZone } from "src/utils/formatDateTime";
 
 enum DialogList {
   PositionRemove,
@@ -133,11 +135,18 @@ export const ShiftTypesUpdate = () => {
   useEffect(() => {
     if (dataCurrent) {
       const { information, positionList, timeList } = dataCurrent;
+      const timeListNew: IResShiftTypeTimeItem[] = timeList.map((timeItem) => {
+        return {
+          ...timeItem,
+          endTime: dateTimeZone(timeItem.endTime).toISOString(),
+          startDateTime: dateTimeZone(timeItem.startDateTime).toISOString(),
+        };
+      });
 
       reset({
         information,
         positionList,
-        timeList,
+        timeList: timeListNew,
       });
     }
   }, [dataCurrent, reset]);
@@ -230,7 +239,7 @@ export const ShiftTypesUpdate = () => {
       );
 
       // route to types page
-      router.push("/shifts/types");
+      // router.push("/shifts/types");
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(

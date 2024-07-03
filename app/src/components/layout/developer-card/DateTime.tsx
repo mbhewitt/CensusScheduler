@@ -6,7 +6,7 @@ import { useContext } from "react";
 
 import { DEVELOPER_MODE_DATE_TIME } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
-import { dateTimezone } from "src/utils/formatDateTime";
+import { dateTimeZone } from "src/utils/formatDateTime";
 
 export const DateTime = () => {
   // context
@@ -29,7 +29,7 @@ export const DateTime = () => {
           developerModeDispatch({
             payload: {
               isEnabled: true,
-              value: dateTimezone(dateTime).toISOString(),
+              value: dateTimeZone(dateTime).toISOString(),
             },
             type: DEVELOPER_MODE_DATE_TIME,
           });

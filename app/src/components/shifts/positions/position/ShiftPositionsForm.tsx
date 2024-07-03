@@ -46,11 +46,13 @@ export const findList = (
   dataDefaults: IResShiftPositionDefaults,
   formValues: IFormValues
 ) => {
-  const prerequisiteIdFound = ensure(
-    dataDefaults.prerequisiteList.find(({ name }: { name: string }) => {
-      return name === formValues.prerequisite.name;
-    })
-  ).id;
+  const prerequisiteIdFound = formValues.prerequisite.name
+    ? ensure(
+        dataDefaults.prerequisiteList.find(({ name }: { name: string }) => {
+          return name === formValues.prerequisite.name;
+        })
+      ).id
+    : null;
   const roleIdFound = formValues.role.name
     ? ensure(
         dataDefaults.roleList.find(({ name }: { name: string }) => {
@@ -179,6 +181,9 @@ export const ShiftPositionsForm = ({
                         label="Role"
                         labelId="role"
                       >
+                        <MenuItem key={0} value="">
+                          <em>None</em>
+                        </MenuItem>
                         {dataDefaults.roleList.map(({ id, name }) => (
                           <MenuItem key={id} value={name}>
                             {name}
@@ -201,8 +206,10 @@ export const ShiftPositionsForm = ({
                         error={Boolean(errors.prerequisite?.name)}
                         label="Prerequisite"
                         labelId="prerequisite"
-                        required
                       >
+                        <MenuItem key={0} value="">
+                          <em>None</em>
+                        </MenuItem>
                         {dataDefaults.prerequisiteList.map(({ id, name }) => (
                           <MenuItem key={id} value={name}>
                             {name}

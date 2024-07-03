@@ -62,7 +62,6 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
             st.end_time,
             st.shift_times_id,
             st.start_time,
-            st.year,
             vs.remove_shift,
             vs.shiftboard_id
           FROM op_shift_times AS st
