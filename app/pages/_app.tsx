@@ -51,6 +51,11 @@ const theme = createTheme({
           "> *:not(:last-child)": {
             marginBottom: theme.spacing(2),
           },
+          // reports start
+          a: {
+            span: { color: COLOR_CENSUS_PINK, textDecoration: "underline" },
+          },
+          // reports end
         }),
       },
     },
@@ -80,6 +85,7 @@ const theme = createTheme({
           minHeight: "100vh",
           paddingTop: "64px",
         },
+        // breadcrumbs start
         a: {
           color: "inherit",
           textDecoration: "none",
@@ -87,6 +93,7 @@ const theme = createTheme({
             textDecoration: "underline",
           },
         },
+        // breadcrumbs end
         p: {
           a: {
             color: COLOR_CENSUS_PINK,
