@@ -251,13 +251,7 @@ export const SignIn = () => {
                 onClick={() => {
                   router.push("/volunteers/account/create");
                 }}
-                startIcon={
-                  isMutating ? (
-                    <CircularProgress size="1rem" />
-                  ) : (
-                    <PersonAddAlt1Icon />
-                  )
-                }
+                startIcon={<PersonAddAlt1Icon />}
                 type="button"
                 variant="outlined"
               >
