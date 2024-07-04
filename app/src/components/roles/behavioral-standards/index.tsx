@@ -55,7 +55,9 @@ export const BehavioralStandards = () => {
 
   // state
   // --------------------
-  const [isSigned, setIsSigned] = useState(false);
+  const [isSignedChecked, setIsSignedChecked] = useState(false);
+  const [isDeclinedLoading, setIsDeclinedLoading] = useState(false);
+  const [isSignedLoading, setIsSignedLoading] = useState(false);
 
   // fetching, mutation, and revalidation
   // --------------------
@@ -90,10 +92,12 @@ export const BehavioralStandards = () => {
       };
 
       // update database
+      setIsDeclinedLoading(true);
       await trigger({
         body,
         method: "POST",
       });
+      setIsDeclinedLoading(false);
       enqueueSnackbar(
         <SnackbarText>
           <strong>
@@ -139,10 +143,12 @@ export const BehavioralStandards = () => {
       };
 
       // update database
+      setIsSignedLoading(true);
       await trigger({
         body,
         method: "POST",
       });
+      setIsSignedLoading(false);
       // update state
       sessionDispatch({
         payload: {
@@ -508,9 +514,9 @@ export const BehavioralStandards = () => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={isSigned}
+                    checked={isSignedChecked}
                     color="secondary"
-                    onChange={() => setIsSigned((prev) => !prev)}
+                    onChange={() => setIsSignedChecked((prev) => !prev)}
                   />
                 }
                 label="I understand that by clicking the checkbox and Sign agreement button, I acknowledge that I have read this document, and will abide by these standards to the best of my abilities."
@@ -528,7 +534,11 @@ export const BehavioralStandards = () => {
                 disabled={isMutating}
                 onClick={handleDecline}
                 startIcon={
-                  isMutating ? <CircularProgress size="1rem" /> : <CloseIcon />
+                  isDeclinedLoading ? (
+                    <CircularProgress size="1rem" />
+                  ) : (
+                    <CloseIcon />
+                  )
                 }
                 type="button"
                 variant="outlined"
@@ -536,10 +546,14 @@ export const BehavioralStandards = () => {
                 Decline agreement
               </Button>
               <Button
-                disabled={isMutating || !isSigned}
+                disabled={isMutating || !isSignedChecked}
                 onClick={handleSign}
                 startIcon={
-                  isMutating ? <CircularProgress size="1rem" /> : <CheckIcon />
+                  isSignedLoading ? (
+                    <CircularProgress size="1rem" />
+                  ) : (
+                    <CheckIcon />
+                  )
                 }
                 type="button"
                 variant="contained"
