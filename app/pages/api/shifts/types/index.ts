@@ -112,7 +112,7 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
               shift_instance,
               shift_name_id,
               shift_times_id,
-              start_time,
+              start_time
             )
             VALUES (true, ?, ?, ?, ?, ?, ?,)`,
           [endTime, notes, instance, typeIdNew, timeIdNew, startDateTime]
