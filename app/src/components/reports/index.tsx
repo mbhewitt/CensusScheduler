@@ -15,14 +15,14 @@ import { Hero } from "src/components/layout/Hero";
 export const Reports = () => {
   const reportList = [
     {
-      id: "2022",
-      text: "Black Rock City Census: 2013-2022 Population Analysis",
-      url: "/reports/2013-2022/index.html",
-    },
-    {
       id: "2023",
       text: "Black Rock City Census 2023 Population Report",
       url: "/reports/2023/index.html",
+    },
+    {
+      id: "2022",
+      text: "Black Rock City Census: 2013-2022 Population Analysis",
+      url: "/reports/2013-2022/index.html",
     },
   ];
 

@@ -69,11 +69,8 @@ export const Home = () => {
                 To learn more, please visit our portal in the Burning Man
                 Journal and the Census Results Archive for reports on past
                 years&apos; Census data. The most recent{" "}
-                <a
-                  href="/reports/population-analysis/index.html"
-                  target="_blank"
-                >
-                  population analysis (2013-2022)
+                <a href="/reports/2023/index.html" target="_blank">
+                  population analysis (2023)
                 </a>{" "}
                 is located under the{" "}
                 <Link href={{ pathname: "/reports" }}>Census reports</Link> tab
