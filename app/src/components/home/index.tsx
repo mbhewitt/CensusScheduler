@@ -68,13 +68,13 @@ export const Home = () => {
               <Typography>
                 To learn more, please visit our portal in the Burning Man
                 Journal and the Census Results Archive for reports on past
-                years&apos; Census data. The most recent{" "}
+                years&apos; Census data. The most recent report,{" "}
                 <a href="/reports/2023/index.html" target="_blank">
-                  population analysis (2023)
-                </a>{" "}
-                is located under the{" "}
-                <Link href={{ pathname: "/reports" }}>Census reports</Link> tab
-                in the menu of this tablet.
+                  Black Rock City Census 2023 Population Report
+                </a>
+                , is located under the{" "}
+                <Link href={{ pathname: "/reports" }}>Reports</Link> tab in the
+                menu of this tablet.
               </Typography>
               <Typography>
                 If you have a question, comment, concern, or if you would like a
