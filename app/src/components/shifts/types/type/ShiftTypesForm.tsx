@@ -142,10 +142,10 @@ export const processTimeList = (formValues: IFormValues) => {
   return formValues.timeList.map(
     ({ endTime, instance, notes, startDateTime, timeId }) => {
       return {
-        endTime: dateTimeZone(endTime).format("YYYY-MM-DD HH:mm:ss"),
+        endTime: dateTimeZone(endTime, true).format("YYYY-MM-DD HH:mm:ss"),
         instance,
         notes,
-        startDateTime: dateTimeZone(startDateTime).format(
+        startDateTime: dateTimeZone(startDateTime, true).format(
           "YYYY-MM-DD HH:mm:ss"
         ),
         timeId,
@@ -530,14 +530,14 @@ export const ShiftTypesForm = ({
                             errors.positionList &&
                             errors.positionList[index]?.wapPoints?.message
                           }
-                          label="WAP points"
+                          label="SAP points"
                           required
                           type="number"
                           variant="standard"
                         />
                       )}
                       rules={{
-                        required: "WAP points is required",
+                        required: "SAP points is required",
                       }}
                     />
                   </Grid>

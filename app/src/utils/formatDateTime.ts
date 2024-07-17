@@ -7,10 +7,13 @@ dayjs.extend(utc);
 
 // convert to black rock city time zone
 const brcTimeZone = "America/Los_Angeles";
-export const dateTimeZone = (dateTime?: Dayjs | null | string) => {
+export const dateTimeZone = (
+  dateTime?: Dayjs | null | string,
+  local = false
+) => {
   return dateTime
-    ? dayjs(dateTime).tz(brcTimeZone)
-    : dayjs().tz(brcTimeZone, true);
+    ? dayjs(dateTime).tz(brcTimeZone, local)
+    : dayjs().tz(brcTimeZone, local);
 };
 
 // format for start date time, date name, and time display

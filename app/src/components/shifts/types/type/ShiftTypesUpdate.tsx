@@ -138,8 +138,10 @@ export const ShiftTypesUpdate = () => {
       const timeListNew: IResShiftTypeTimeItem[] = timeList.map((timeItem) => {
         return {
           ...timeItem,
-          endTime: dateTimeZone(timeItem.endTime).toISOString(),
-          startDateTime: dateTimeZone(timeItem.startDateTime).toISOString(),
+          endTime: dateTimeZone(timeItem.endTime).format("YYYY-MM-DDTHH:mm"),
+          startDateTime: dateTimeZone(timeItem.startDateTime).format(
+            "YYYY-MM-DDTHH:mm"
+          ),
         };
       });
 
@@ -239,7 +241,7 @@ export const ShiftTypesUpdate = () => {
       );
 
       // route to types page
-      // router.push("/shifts/types");
+      router.push("/shifts/types");
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(

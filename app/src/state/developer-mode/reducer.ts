@@ -76,7 +76,7 @@ export const developerModeReducer = (
         },
         dateTime: {
           isEnabled: false,
-          value: dateTimeZone().toISOString(),
+          value: dateTimeZone(null, true).toISOString(),
         },
         disableIdle: {
           isEnabled: false,

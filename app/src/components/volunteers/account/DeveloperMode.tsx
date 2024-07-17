@@ -101,7 +101,7 @@ export const DeveloperMode = () => {
                     developerModeDispatch({
                       payload: {
                         isEnabled: event.target.checked,
-                        value: dateTimeZone().toISOString(),
+                        value: dateTimeZone(null, true).toISOString(),
                       },
                       type: DEVELOPER_MODE_DATE_TIME,
                     });

@@ -56,7 +56,9 @@ export const ShiftTypesTimeRemove = ({
     data: IResShiftTypeTimePositionItem[];
     error: Error | undefined;
   } = useSWR(
-    `/api/shifts/types/${typeId}/times/${timeItem.id}/positions`,
+    timeItem.id
+      ? `/api/shifts/types/${typeId}/times/${timeItem.id}/positions`
+      : null,
     fetcherGet
   );
 
