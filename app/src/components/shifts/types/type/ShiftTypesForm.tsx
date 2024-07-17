@@ -530,14 +530,14 @@ export const ShiftTypesForm = ({
                             errors.positionList &&
                             errors.positionList[index]?.wapPoints?.message
                           }
-                          label="WAP points"
+                          label="SAP points"
                           required
                           type="number"
                           variant="standard"
                         />
                       )}
                       rules={{
-                        required: "WAP points is required",
+                        required: "SAP points is required",
                       }}
                     />
                   </Grid>
