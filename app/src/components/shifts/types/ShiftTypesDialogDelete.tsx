@@ -47,7 +47,7 @@ export const ShiftTypesDialogDelete = ({
   }: {
     data: IResShiftTypeCurrent;
     error: Error | undefined;
-  } = useSWR(`/api/shifts/types/${id}`, fetcherGet);
+  } = useSWR(id === 0 ? null : `/api/shifts/types/${id}`, fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     `/api/shifts/types/${id}`,
     fetcherTrigger

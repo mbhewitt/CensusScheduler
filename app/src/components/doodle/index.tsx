@@ -39,7 +39,7 @@ export const Doodle = () => {
   }: {
     data: IResDoodle;
     error: Error | undefined;
-  } = useSWR(!isFetched ? "/api/doodle" : null, fetcherGet);
+  } = useSWR(isFetched ? null : "/api/doodle", fetcherGet);
   const { trigger } = useSWRMutation("/api/doodle", fetcherTrigger);
 
   // other hooks
