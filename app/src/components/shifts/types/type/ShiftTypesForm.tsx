@@ -27,6 +27,7 @@ import { DateTimePicker, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import {
   Control,
   Controller,
@@ -47,11 +48,9 @@ import type {
 } from "src/components/types/shifts/types";
 import { COLOR_BURNING_MAN_BROWN } from "src/constants";
 import { ensure } from "src/utils/ensure";
-import {
-  dateTimeZone,
-  formatDateName,
-  formatTime,
-} from "src/utils/formatDateTime";
+import { formatDateName, formatTime } from "src/utils/formatDateTime";
+
+dayjs.extend(utc);
 
 export interface IFormValues {
   information: {
@@ -142,12 +141,18 @@ export const processTimeList = (formValues: IFormValues) => {
   return formValues.timeList.map(
     ({ endTime, instance, notes, startDateTime, timeId }) => {
       return {
-        endTime: dateTimeZone(endTime, true).format("YYYY-MM-DD HH:mm:ss"),
+        // production hack
+        endTime: dayjs(endTime).utc().format("YYYY-MM-DD HH:mm:ss"),
+        // // local development
+        // endTime: dateTimeZone(endTime, true).format("YYYY-MM-DD HH:mm:ss"),
         instance,
         notes,
-        startDateTime: dateTimeZone(startDateTime, true).format(
-          "YYYY-MM-DD HH:mm:ss"
-        ),
+        // production hack
+        startDateTime: dayjs(startDateTime).utc().format("YYYY-MM-DD HH:mm:ss"),
+        // // local development
+        // startDateTime: dateTimeZone(startDateTime, true).format(
+        //   "YYYY-MM-DD HH:mm:ss"
+        // ),
         timeId,
       };
     }
