@@ -20,8 +20,8 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
           d.datename,
           pt.position,
           sc.department,
-          st.end_time,
-          st.start_time,
+          st.end_time_lt,
+          st.start_time_lt,
           vs.noshow,
           vs.shift_position_id,
           vs.shift_times_id
@@ -40,28 +40,28 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
         ON d.date=st.date
         WHERE vs.remove_shift=false
         AND vs.shiftboard_id=?
-        ORDER BY st.start_time`,
+        ORDER BY st.start_time_lt`,
         [shiftboardId]
       );
       const resVolunteerShiftList = dbVolunteerShiftList.map(
         ({
           datename,
           department,
-          end_time,
+          end_time_lt,
           noshow,
           position,
           shift_position_id,
           shift_times_id,
-          start_time,
+          start_time_lt,
         }) => {
           const resVolunterShiftItem: IResVolunteerShiftItem = {
             dateName: datename ?? "",
             department: { name: department ?? "" },
-            endTime: end_time,
+            endTime: end_time_lt,
             noShow: noshow,
             position: { name: position },
             shiftPositionId: shift_position_id,
-            startTime: start_time,
+            startTime: start_time_lt,
             timeId: shift_times_id,
           };
 

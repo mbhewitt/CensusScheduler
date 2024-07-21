@@ -15,6 +15,7 @@ import {
   useTheme,
 } from "@mui/material";
 import dayjs from "dayjs";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -30,8 +31,8 @@ import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
 import {
   defaultValues,
-  findCategoryId,
   IFormValues,
+  processInformation,
   processPositionList,
   processTimeList,
   ShiftTypesForm,
@@ -45,7 +46,6 @@ import {
   IResShiftTypeTimeItem,
 } from "src/components/types/shifts/types";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
-import { dateTimeZone } from "src/utils/formatDateTime";
 
 enum DialogList {
   PositionRemove,
@@ -123,6 +123,7 @@ export const ShiftTypesUpdate = () => {
   });
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
+  dayjs.extend(isSameOrAfter);
   dayjs.extend(isSameOrBefore);
 
   // side effects
@@ -138,10 +139,9 @@ export const ShiftTypesUpdate = () => {
       const timeListNew: IResShiftTypeTimeItem[] = timeList.map((timeItem) => {
         return {
           ...timeItem,
-          endTime: dateTimeZone(timeItem.endTime).format("YYYY-MM-DDTHH:mm"),
-          startDateTime: dateTimeZone(timeItem.startDateTime).format(
-            "YYYY-MM-DDTHH:mm"
-          ),
+          endTime: timeItem.endTime,
+          date: timeItem.startTime,
+          startTime: timeItem.startTime,
         };
       });
 
@@ -205,19 +205,11 @@ export const ShiftTypesUpdate = () => {
   // --------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
-      const categoryIdFound = findCategoryId(dataDefaults, formValues);
+      const information = processInformation(dataDefaults, formValues);
       const positionList = processPositionList(dataDefaults, formValues);
       const timeList = processTimeList(formValues);
       const body: IReqShiftTypeItem = {
-        information: {
-          category: {
-            id: categoryIdFound,
-          },
-          details: formValues.information.details,
-          isCore: formValues.information.isCore,
-          isOffPlaya: formValues.information.isOffPlaya,
-          name: formValues.information.name,
-        },
+        information,
         positionList,
         timeList,
       };

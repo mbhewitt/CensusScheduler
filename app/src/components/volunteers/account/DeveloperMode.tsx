@@ -20,7 +20,7 @@ import {
   DEVELOPER_MODE_RESET,
 } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
-import { dateTimeZone } from "src/utils/formatDateTime";
+import { formatDateTime } from "src/utils/formatDateTime";
 
 export const DeveloperMode = () => {
   // context
@@ -90,7 +90,7 @@ export const DeveloperMode = () => {
                   }}
                 />
               }
-              label="Account type"
+              label="Mock account type"
             />
             <FormControlLabel
               control={
@@ -101,14 +101,14 @@ export const DeveloperMode = () => {
                     developerModeDispatch({
                       payload: {
                         isEnabled: event.target.checked,
-                        value: dateTimeZone(null, true).toISOString(),
+                        value: formatDateTime(),
                       },
                       type: DEVELOPER_MODE_DATE_TIME,
                     });
                   }}
                 />
               }
-              label="Date and time"
+              label="Mock date and time"
             />
             <FormControlLabel
               control={
@@ -125,7 +125,7 @@ export const DeveloperMode = () => {
                   }}
                 />
               }
-              label="Disable idle"
+              label="Disable idle logout"
             />
           </FormGroup>
         </Box>

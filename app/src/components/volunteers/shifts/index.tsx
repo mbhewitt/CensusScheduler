@@ -17,6 +17,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import dayjs from "dayjs";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
@@ -38,11 +39,7 @@ import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
 import { checkIsAdmin, checkIsAuthenticated } from "src/utils/checkIsRoleExist";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
-import {
-  dateTimeZone,
-  formatDateName,
-  formatTime,
-} from "src/utils/formatDateTime";
+import { formatDateName, formatTime } from "src/utils/formatDateTime";
 import { getCheckInType } from "src/utils/getCheckInType";
 import { getColorMap } from "src/utils/getColorMap";
 import {
@@ -307,9 +304,9 @@ export const VolunteerShifts = () => {
     }: IResVolunteerShiftItem) => {
       // evaluate the check-in type and available features
       const checkInType = getCheckInType({
-        dateTime: dateTimeZone(dateTimeValue),
-        endTime: dateTimeZone(endTime),
-        startTime: dateTimeZone(startTime),
+        dateTime: dayjs(dateTimeValue),
+        endTime: dayjs(endTime),
+        startTime: dayjs(startTime),
       });
       let isVolunteerRemoveAvailable = false;
       let isCheckInAvailable = false;

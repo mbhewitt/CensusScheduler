@@ -32,10 +32,10 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           sp.position_type_id,
           sp.shift_position_id,
           sp.total_slots,
-          st.end_time,
+          st.end_time_lt,
           st.meal,
           st.notes,
-          st.start_time
+          st.start_time_lt
         FROM op_shift_times AS st
         LEFT JOIN op_dates AS d
         ON d.date=st.date
@@ -138,11 +138,11 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       const resShiftVolunteerDetails: IResShiftVolunteerInformation = {
         dateName: resShiftPositionFirst.datename ?? "",
         details: resShiftPositionFirst.shift_details,
-        endTime: resShiftPositionFirst.end_time,
+        endTime: resShiftPositionFirst.end_time_lt,
         meal: resShiftPositionFirst.meal,
         notes: resShiftPositionFirst.notes,
         positionList: resShiftPositionList,
-        startTime: resShiftPositionFirst.start_time,
+        startTime: resShiftPositionFirst.start_time_lt,
         type: resShiftPositionFirst.shift_name,
         volunteerList: resShiftVolunteerList,
       };

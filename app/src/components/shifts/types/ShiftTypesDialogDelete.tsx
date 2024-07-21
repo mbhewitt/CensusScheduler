@@ -161,7 +161,7 @@ export const ShiftTypesDialogDelete = ({
               <List
                 sx={{ display: "inline-block", pl: 2, listStyleType: "disc" }}
               >
-                {data.timeList.map(({ endTime, timeId, startDateTime }) => {
+                {data.timeList.map(({ endTime, timeId, startTime }) => {
                   return (
                     <ListItem
                       disablePadding
@@ -169,8 +169,8 @@ export const ShiftTypesDialogDelete = ({
                       sx={{ display: "list-item", pl: 0 }}
                     >
                       <ListItemText>{`${formatDateName(
-                        startDateTime
-                      )}, ${formatTime(startDateTime, endTime)}`}</ListItemText>
+                        startTime
+                      )}, ${formatTime(startTime, endTime)}`}</ListItemText>
                     </ListItem>
                   );
                 })}

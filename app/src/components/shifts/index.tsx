@@ -15,11 +15,7 @@ import { Hero } from "src/components/layout/Hero";
 import type { IResShiftRowItem } from "src/components/types/shifts";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { fetcherGet } from "src/utils/fetcher";
-import {
-  dateTimeZone,
-  formatDateName,
-  formatTime,
-} from "src/utils/formatDateTime";
+import { formatDateName, formatTime } from "src/utils/formatDateTime";
 import { getColorMap } from "src/utils/getColorMap";
 
 export const Shifts = () => {
@@ -163,12 +159,9 @@ export const Shifts = () => {
           ) => {
             const show =
               (filterValue.indexOf("Present / Future") >= 0 &&
-                dateTimeZone(dateHiddenValue).isSameOrAfter(
-                  dateTimeValue,
-                  "date"
-                )) ||
+                dayjs(dateHiddenValue).isSameOrAfter(dateTimeValue, "date")) ||
               (filterValue.indexOf("Past") >= 0 &&
-                dateTimeZone(dateHiddenValue).isBefore(dateTimeValue, "date"));
+                dayjs(dateHiddenValue).isBefore(dateTimeValue, "date"));
 
             // returning false means that the value will display
             return !show;
