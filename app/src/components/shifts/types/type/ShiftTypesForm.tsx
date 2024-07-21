@@ -23,7 +23,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { DateTimePicker, TimePicker } from "@mui/x-date-pickers";
+import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
@@ -48,7 +48,11 @@ import type {
 } from "src/components/types/shifts/types";
 import { COLOR_BURNING_MAN_BROWN } from "src/constants";
 import { ensure } from "src/utils/ensure";
-import { formatDateName, formatTime } from "src/utils/formatDateTime";
+import {
+  formatDateName,
+  formatDateTime,
+  formatTime,
+} from "src/utils/formatDateTime";
 
 dayjs.extend(utc);
 
@@ -75,9 +79,10 @@ export interface IFormValues {
   }[];
   timeList: {
     endTime: string;
+    date: string;
     instance: string;
     notes: string;
-    startDateTime: string;
+    startTime: string;
     timeId: number;
   }[];
 }
@@ -107,7 +112,7 @@ interface IShiftTypesFormProps {
 
 // utilities
 // --------------------
-export const findCategoryId = (
+export const processInformation = (
   dataDefaults: IResShiftTypeDefaults,
   formValues: IFormValues
 ) => {
@@ -117,7 +122,15 @@ export const findCategoryId = (
     })
   ).id;
 
-  return categoryIdFound;
+  return {
+    category: {
+      id: categoryIdFound,
+    },
+    details: formValues.information.details,
+    isCore: formValues.information.isCore,
+    isOffPlaya: formValues.information.isOffPlaya,
+    name: formValues.information.name,
+  };
 };
 export const processPositionList = (
   dataDefaults: IResShiftTypeDefaults,
@@ -139,20 +152,12 @@ export const processPositionList = (
 };
 export const processTimeList = (formValues: IFormValues) => {
   return formValues.timeList.map(
-    ({ endTime, instance, notes, startDateTime, timeId }) => {
+    ({ endTime, instance, notes, startTime, timeId }) => {
       return {
-        // production hack
-        endTime: dayjs(endTime).utc().format("YYYY-MM-DD HH:mm:ss"),
-        // // local development
-        // endTime: dateTimeZone(endTime, true).format("YYYY-MM-DD HH:mm:ss"),
+        endTime: formatDateTime(endTime),
         instance,
         notes,
-        // production hack
-        startDateTime: dayjs(startDateTime).utc().format("YYYY-MM-DD HH:mm:ss"),
-        // // local development
-        // startDateTime: dateTimeZone(startDateTime, true).format(
-        //   "YYYY-MM-DD HH:mm:ss"
-        // ),
+        startTime: formatDateTime(startTime),
         timeId,
       };
     }
@@ -185,9 +190,10 @@ export const defaultValues: IFormValues = {
   timeList: [
     {
       endTime: "",
+      date: "",
       instance: "",
       notes: "",
-      startDateTime: "",
+      startTime: "",
       timeId: 0,
     },
   ],
@@ -722,19 +728,39 @@ export const ShiftTypesForm = ({
                   <Grid item xs={3}>
                     <Controller
                       control={control}
-                      name={`timeList.${index}.startDateTime`}
+                      name={`timeList.${index}.date`}
                       render={({ field }) => (
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <DateTimePicker
+                          <DatePicker
                             {...field}
-                            ampm={false}
-                            label="Start date and time"
+                            label="Date"
                             onChange={(event) => {
                               // update field
                               field.onChange(event);
 
+                              // update start and end time dates
+                              const dateCurrent = dayjs(event);
+                              const startTimeNew = formatDateTime(
+                                dayjs(getValues(`timeList.${index}.startTime`))
+                                  .set("year", dateCurrent.year())
+                                  .set("month", dateCurrent.month())
+                                  .set("date", dateCurrent.date())
+                              );
+                              const endTimeNew = formatDateTime(
+                                dayjs(getValues(`timeList.${index}.endTime`))
+                                  .set("year", dateCurrent.year())
+                                  .set("month", dateCurrent.month())
+                                  .set("date", dateCurrent.date())
+                              );
+
+                              setValue(
+                                `timeList.${index}.startTime`,
+                                startTimeNew
+                              );
+                              setValue(`timeList.${index}.endTime`, endTimeNew);
+
                               if (event) {
-                                clearErrors(`timeList.${index}.startDateTime`);
+                                clearErrors(`timeList.${index}.date`);
                               }
                             }}
                             renderInput={(params) => (
@@ -742,23 +768,80 @@ export const ShiftTypesForm = ({
                                 {...params}
                                 error={
                                   errors.timeList &&
-                                  Boolean(errors.timeList[index]?.startDateTime)
+                                  Boolean(errors.timeList[index]?.date)
                                 }
                                 fullWidth
                                 helperText={
                                   errors.timeList &&
-                                  errors.timeList[index]?.startDateTime?.message
+                                  errors.timeList[index]?.date?.message
                                 }
                                 onBlur={(event) => {
                                   if (!event.target.value) {
-                                    setError(
-                                      `timeList.${index}.startDateTime`,
-                                      {
-                                        type: "required",
-                                        message:
-                                          "Start date and time is required",
-                                      }
-                                    );
+                                    setError(`timeList.${index}.date`, {
+                                      type: "required",
+                                      message: "Date is required",
+                                    });
+                                  }
+                                }}
+                                required
+                                variant="standard"
+                              />
+                            )}
+                          />
+                        </LocalizationProvider>
+                      )}
+                    />
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Controller
+                      control={control}
+                      name={`timeList.${index}.startTime`}
+                      render={({ field }) => (
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <TimePicker
+                            {...field}
+                            ampm={false}
+                            label="Start time"
+                            onChange={(event) => {
+                              const endTime = dayjs(
+                                getValues(`timeList.${index}.endTime`)
+                              );
+
+                              // update field
+                              field.onChange(event);
+
+                              // validate start time occurs before end time
+                              if (event) {
+                                if (dayjs(event).isSameOrAfter(endTime)) {
+                                  setError(`timeList.${index}.startTime`, {
+                                    type: "custom",
+                                    message:
+                                      "Start time must occur before end time",
+                                  });
+                                } else {
+                                  clearErrors(`timeList.${index}.startTime`);
+                                  clearErrors(`timeList.${index}.endTime`);
+                                }
+                              }
+                            }}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                error={
+                                  errors.timeList &&
+                                  Boolean(errors.timeList[index]?.startTime)
+                                }
+                                fullWidth
+                                helperText={
+                                  errors.timeList &&
+                                  errors.timeList[index]?.startTime?.message
+                                }
+                                onBlur={(event) => {
+                                  if (!event.target.value) {
+                                    setError(`timeList.${index}.startTime`, {
+                                      type: "required",
+                                      message: "Start time is required",
+                                    });
                                   }
                                 }}
                                 required
@@ -781,26 +864,23 @@ export const ShiftTypesForm = ({
                             ampm={false}
                             label="End time"
                             onChange={(event) => {
-                              // update field
-                              const startDateTime = dayjs(
-                                getValues(`timeList.${index}.startDateTime`)
+                              const startTime = dayjs(
+                                getValues(`timeList.${index}.startTime`)
                               );
-                              const endTimeNew = dayjs(event)
-                                .set("year", startDateTime.year())
-                                .set("month", startDateTime.month())
-                                .set("date", startDateTime.date());
 
-                              field.onChange(endTimeNew);
+                              // update field
+                              field.onChange(event);
 
                               // validate end time occurs after start time
                               if (event) {
-                                if (endTimeNew.isSameOrBefore(startDateTime)) {
+                                if (dayjs(event).isSameOrBefore(startTime)) {
                                   setError(`timeList.${index}.endTime`, {
                                     type: "custom",
                                     message:
                                       "End time must occur after start time",
                                   });
                                 } else {
+                                  clearErrors(`timeList.${index}.startTime`);
                                   clearErrors(`timeList.${index}.endTime`);
                                 }
                               }
@@ -834,6 +914,31 @@ export const ShiftTypesForm = ({
                       )}
                     />
                   </Grid>
+                  <Grid
+                    item
+                    sx={{
+                      alignItems: "flex-start",
+                      display: "flex",
+                      justifyContent: "flex-end",
+                    }}
+                    xs={3}
+                  >
+                    <IconButton
+                      onClick={() => {
+                        handleTimeRemove(
+                          index,
+                          `${formatDateName(item.date)}, ${formatTime(
+                            item.startTime,
+                            item.endTime
+                          )}`,
+                          item.timeId
+                        );
+                      }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </Grid>
+
                   <Grid item xs={3}>
                     <Controller
                       control={control}
@@ -848,31 +953,7 @@ export const ShiftTypesForm = ({
                       )}
                     />
                   </Grid>
-                  <Grid
-                    item
-                    sx={{
-                      alignItems: "flex-start",
-                      display: "flex",
-                      justifyContent: "flex-end",
-                    }}
-                    xs={3}
-                  >
-                    <IconButton
-                      onClick={() => {
-                        handleTimeRemove(
-                          index,
-                          `${formatDateName(item.startDateTime)}, ${formatTime(
-                            item.startDateTime,
-                            item.endTime
-                          )}`,
-                          item.timeId
-                        );
-                      }}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </Grid>
-                  <Grid item xs={12}>
+                  <Grid item xs={9}>
                     <Controller
                       control={control}
                       name={`timeList.${index}.notes`}

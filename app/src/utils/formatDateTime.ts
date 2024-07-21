@@ -1,32 +1,21 @@
 import dayjs, { Dayjs } from "dayjs";
-import timezone from "dayjs/plugin/timezone";
-import utc from "dayjs/plugin/utc";
-
-dayjs.extend(timezone);
-dayjs.extend(utc);
-
-// convert to black rock city time zone
-const brcTimeZone = "America/Los_Angeles";
-export const dateTimeZone = (
-  dateTime?: Dayjs | null | string,
-  local = false
-) => {
-  return dateTime
-    ? dayjs(dateTime).tz(brcTimeZone, local)
-    : dayjs().tz(brcTimeZone, local);
-};
 
 // format for start date time, date name, and time display
-const dateFormat = (startDateTime: string) => {
-  return dateTimeZone(startDateTime).format("MMM DD");
+const formatDate = (startDateTime: string) => {
+  return dayjs(startDateTime).format("MMM DD");
 };
 export const formatDateName = (startDateTime: string, dateName?: string) => {
   return dateName
-    ? `${dateFormat(startDateTime)} - ${dateName}`
-    : dateFormat(startDateTime);
+    ? `${formatDate(startDateTime)} - ${dateName}`
+    : formatDate(startDateTime);
 };
 export const formatTime = (dateTimeStart: string, dateTimeEnd: string) => {
-  return `${dateTimeZone(dateTimeStart).format("HH:mm")} - ${dateTimeZone(
-    dateTimeEnd
-  ).format("HH:mm")}`;
+  return `${dayjs(dateTimeStart).format("HH:mm")} - ${dayjs(dateTimeEnd).format(
+    "HH:mm"
+  )}`;
+};
+export const formatDateTime = (dateTime?: Dayjs | null | string) => {
+  return dateTime
+    ? dayjs(dateTime).format("YYYY-MM-DD HH:mm")
+    : dayjs().format("YYYY-MM-DD HH:mm");
 };

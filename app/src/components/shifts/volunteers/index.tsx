@@ -23,6 +23,7 @@ import {
   Switch,
   Typography,
 } from "@mui/material";
+import dayjs from "dayjs";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
@@ -50,11 +51,7 @@ import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
 import { checkIsAdmin, checkIsAuthenticated } from "src/utils/checkIsRoleExist";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
-import {
-  dateTimeZone,
-  formatDateName,
-  formatTime,
-} from "src/utils/formatDateTime";
+import { formatDateName, formatTime } from "src/utils/formatDateTime";
 import { getCheckInType } from "src/utils/getCheckInType";
 import {
   setCellHeaderPropsCenter,
@@ -289,9 +286,9 @@ export const ShiftVolunteers = () => {
 
   // evaluate the check-in type and available features
   const checkInType = getCheckInType({
-    dateTime: dateTimeZone(dateTimeValue),
-    endTime: dateTimeZone(dataShiftVolunteersItem.endTime),
-    startTime: dateTimeZone(dataShiftVolunteersItem.startTime),
+    dateTime: dayjs(dateTimeValue),
+    endTime: dayjs(dataShiftVolunteersItem.endTime),
+    startTime: dayjs(dataShiftVolunteersItem.startTime),
   });
   let isVolunteerAddAvailable = false;
   let isCheckInAvailable = false;

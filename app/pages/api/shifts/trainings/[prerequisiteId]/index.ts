@@ -19,9 +19,9 @@ const shiftTrainings = async (req: NextApiRequest, res: NextApiResponse) => {
           sn.shift_name,
           sp.position_type_id,
           sp.total_slots,
-          st.end_time,
+          st.end_time_lt,
           st.shift_times_id,
-          st.start_time,
+          st.start_time_lt,
           vs.remove_shift,
           vs.shiftboard_id
         FROM op_shift_times AS st
@@ -43,7 +43,7 @@ const shiftTrainings = async (req: NextApiRequest, res: NextApiResponse) => {
         AND vs.shift_position_id=sp.shift_position_id
         AND vs.shift_times_id=st.shift_times_id
         WHERE st.remove_shift_time=false
-        ORDER BY st.start_time`,
+        ORDER BY st.start_time_lt`,
         [prerequisiteId]
       );
       const resShiftList = getShiftList(dbTrainingList);

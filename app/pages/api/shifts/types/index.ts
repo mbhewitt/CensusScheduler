@@ -97,7 +97,7 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
         );
       });
       // insert new shift time rows
-      timeList.forEach(async ({ endTime, instance, notes, startDateTime }) => {
+      timeList.forEach(async ({ endTime, instance, notes, startTime }) => {
         const timeIdNew = generateId(
           `SELECT shift_times_id
             FROM op_shift_times
@@ -107,15 +107,15 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
         await pool.query(
           `INSERT INTO op_shift_times (
               add_shift_time,
-              end_time,
+              end_time_lt,
               notes,
               shift_instance,
               shift_name_id,
               shift_times_id,
-              start_time
+              start_time_lt
             )
-            VALUES (true, ?, ?, ?, ?, ?, ?,)`,
-          [endTime, notes, instance, typeIdNew, timeIdNew, startDateTime]
+            VALUES (true, ?, ?, ?, ?, ?, ?)`,
+          [endTime, notes, instance, typeIdNew, timeIdNew, startTime]
         );
       });
 

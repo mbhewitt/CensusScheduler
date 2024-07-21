@@ -47,11 +47,7 @@ import { SessionContext } from "src/state/session/context";
 import { checkIsAdmin, checkIsAuthenticated } from "src/utils/checkIsRoleExist";
 import { ensure } from "src/utils/ensure";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
-import {
-  dateTimeZone,
-  formatDateName,
-  formatTime,
-} from "src/utils/formatDateTime";
+import { formatDateName, formatTime } from "src/utils/formatDateTime";
 import { getCheckInType } from "src/utils/getCheckInType";
 
 interface IFormValues {
@@ -218,9 +214,9 @@ export const ShiftVolunteersDialogAdd = ({
       });
       const isVolunteerShiftAvailable = dataVolunteerShiftList.every(
         (volunteerShiftItem) => {
-          return !dateTimeZone(startTime).isBetween(
-            dateTimeZone(volunteerShiftItem.startTime),
-            dateTimeZone(volunteerShiftItem.endTime),
+          return !dayjs(startTime).isBetween(
+            dayjs(volunteerShiftItem.startTime),
+            dayjs(volunteerShiftItem.endTime),
             null,
             "[]"
           );
@@ -374,7 +370,7 @@ export const ShiftVolunteersDialogAdd = ({
           const isShiftPositionAvailable =
             (isAuthenticated && isAdmin) ||
             (totalSlots - filledSlots > 0 &&
-              dateTimeZone(dateTimeValue).isBefore(dateTimeZone(startTime)));
+              dayjs(dateTimeValue).isBefore(dayjs(startTime)));
 
           return (
             <MenuItem
@@ -460,7 +456,7 @@ export const ShiftVolunteersDialogAdd = ({
           const isShiftPositionAvailable =
             (isAuthenticated && isAdmin) ||
             (totalSlots - filledSlots > 0 &&
-              dateTimeZone(dateTimeValue).isBefore(dateTimeZone(startTime)));
+              dayjs(dateTimeValue).isBefore(dayjs(startTime)));
 
           return (
             <MenuItem
@@ -527,9 +523,9 @@ export const ShiftVolunteersDialogAdd = ({
       // evaluate the check-in type and value for training
       if (trainingAdd) {
         const checkInTypeTraining = getCheckInType({
-          dateTime: dateTimeZone(dateTimeValue),
-          endTime: dateTimeZone(trainingAdd.endTime),
-          startTime: dateTimeZone(trainingAdd.startTime),
+          dateTime: dayjs(dateTimeValue),
+          endTime: dayjs(trainingAdd.endTime),
+          startTime: dayjs(trainingAdd.startTime),
         });
 
         switch (checkInTypeTraining) {
@@ -770,13 +766,9 @@ export const ShiftVolunteersDialogAdd = ({
                           const isVolunteerTrainingAvailable =
                             dataVolunteerShiftList.every(
                               (dataVolunteerShiftList) =>
-                                !dateTimeZone(
-                                  trainingItemFound.startTime
-                                ).isBetween(
-                                  dateTimeZone(
-                                    dataVolunteerShiftList.startTime
-                                  ),
-                                  dateTimeZone(dataVolunteerShiftList.endTime),
+                                !dayjs(trainingItemFound.startTime).isBetween(
+                                  dayjs(dataVolunteerShiftList.startTime),
+                                  dayjs(dataVolunteerShiftList.endTime),
                                   null,
                                   "[]"
                                 )

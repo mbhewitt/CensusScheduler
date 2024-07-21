@@ -111,24 +111,30 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
       // get all current times
       const [dbTimeList] = await pool.query<RowDataPacket[]>(
         `SELECT
-          end_time,
+          end_time_lt,
           notes,
           shift_instance,
           shift_times_id,
-          start_time
+          start_time_lt
         FROM op_shift_times
         WHERE shift_name_id=?
         AND remove_shift_time=false
-        ORDER BY start_time`,
+        ORDER BY start_time_lt`,
         [typeId]
       );
       const resTimeList = dbTimeList.map(
-        ({ end_time, notes, shift_instance, shift_times_id, start_time }) => {
+        ({
+          end_time_lt,
+          notes,
+          shift_instance,
+          shift_times_id,
+          start_time_lt,
+        }) => {
           const resTimeItem: IResShiftTypeTimeItem = {
-            endTime: end_time,
+            endTime: end_time_lt,
             instance: shift_instance,
             notes: notes ?? "",
-            startDateTime: start_time,
+            startTime: start_time_lt,
             timeId: shift_times_id,
           };
 
@@ -267,42 +273,40 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
       });
 
       timeListUpdate.forEach(
-        async ({ endTime, timeId, instance, notes, startDateTime }) => {
+        async ({ endTime, timeId, instance, notes, startTime }) => {
           await pool.query<RowDataPacket[]>(
             `UPDATE op_shift_times
             SET
-              end_time=?,
+              end_time_lt=?,
               notes=?,
               update_shift_time=true,
               shift_instance=?,
-              start_time=?
+              start_time_lt=?
             WHERE shift_times_id=?`,
-            [endTime, notes, instance, startDateTime, timeId]
+            [endTime, notes, instance, startTime, timeId]
           );
         }
       );
-      timeListAdd.forEach(
-        async ({ endTime, instance, notes, startDateTime }) => {
-          const idNew = generateId(
-            `SELECT shift_times_id
+      timeListAdd.forEach(async ({ endTime, instance, notes, startTime }) => {
+        const idNew = generateId(
+          `SELECT shift_times_id
             FROM op_shift_times
             WHERE shift_times_id=?`
-          );
-          await pool.query(
-            `INSERT INTO op_shift_times (
+        );
+        await pool.query(
+          `INSERT INTO op_shift_times (
               add_shift_time,
-              end_time,
+              end_time_lt,
               notes,
               shift_instance,
               shift_name_id,
               shift_times_id,
-              start_time
+              start_time_lt
             )
-            VALUES (true, ?, ?, ?, ?, ?, ?,)`,
-            [endTime, notes, instance, typeId, idNew, startDateTime]
-          );
-        }
-      );
+            VALUES (true, ?, ?, ?, ?, ?, ?)`,
+          [endTime, notes, instance, typeId, idNew, startTime]
+        );
+      });
       timeListRemove.forEach(async ({ shift_times_id }) => {
         await pool.query<RowDataPacket[]>(
           `UPDATE op_shift_times

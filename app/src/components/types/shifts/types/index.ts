@@ -54,7 +54,7 @@ export interface IResShiftTypeTimeItem {
   timeId: number; // "id" is already taken by useFieldArray
   instance: string;
   notes: string;
-  startDateTime: string;
+  startTime: string;
 }
 export interface IReqShiftTypeItem {
   information: IReqShiftTypeInformation;
@@ -79,7 +79,7 @@ export interface IReqShiftTypeTimeItem {
   endTime: string;
   instance: string;
   notes: string;
-  startDateTime: string;
+  startTime: string;
   timeId: number; // "id" is already taken by useFieldArray
 }
 
