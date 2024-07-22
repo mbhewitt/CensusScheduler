@@ -487,8 +487,8 @@ CREATE TABLE `op_shift_times` (
   `add_shift_time` tinyint(1) DEFAULT '0',
   `remove_shift_time` tinyint(1) DEFAULT '0',
   `update_shift_time` tinyint(1) DEFAULT '0',
-  `end_time` timestamp NULL DEFAULT NULL,
-  `start_time` timestamp NULL DEFAULT NULL,
+  `end_time` datetime NULL DEFAULT NULL,
+  `start_time` datetime NULL DEFAULT NULL,
   `meal` varchar(32) DEFAULT NULL,
   `lead_assigned_shiftboard_ids` text,
   PRIMARY KEY (`shift_times_id`),
@@ -699,5 +699,6 @@ UNLOCK TABLES;
 insert ignore into op_volunteers (shiftboard_id,world_name,playa_name,passcode) values (1,'Admin','Admin','123456');
 insert ignore into op_roles (role_id,role,display,role_src) values (1,'SuperAdmin',1,'tablet'),(2,'Admin',1,'tablet');
 insert ignore into op_volunteer_roles (shiftboard_id,role_id) values (1,1),(1,2);
-update op_shift_times set start_time=concat(start_time_lt,':00-07:00'),end_time=concat(end_time_lt,':00-07:00');
+update op_shift_times set start_time=date_add(concat(start_time_lt,':00'),interval 7 hour) , end_time=date_add(concat(end_time_lt,':00'), interval 7 hour);
 update op_position_type set role_id=NULL where role_id in ('43174','21215');
+
