@@ -303,4 +303,4 @@ insert ignore into op_volunteers (shiftboard_id,world_name,playa_name,passcode) 
 insert ignore into op_roles (role_id,role,display,role_src) values (1,'SuperAdmin',1,'tablet'),(2,'Admin',1,'tablet');
 insert ignore into op_volunteer_roles (shiftboard_id,role_id) values (1,1),(1,2);
 insert into op_doodles (image_url) values ('');
-update op_shift_times set start_time=concat(start_time_lt,':00-07:00'),end_time=concat(end_time_lt,':00-07:00');
+update op_shift_times set start_time=date_add(concat(start_time_lt,':00'),interval 7 hour) , end_time=date_add(concat(end_time_lt,':00'), interval 7 hour);
