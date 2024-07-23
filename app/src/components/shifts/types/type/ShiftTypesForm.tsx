@@ -152,12 +152,16 @@ export const processPositionList = (
 };
 export const processTimeList = (formValues: IFormValues) => {
   return formValues.timeList.map(
-    ({ endTime, instance, notes, startTime, timeId }) => {
+    ({ endTime, date, instance, notes, startTime, timeId }) => {
       return {
-        endTime: formatDateTime(endTime),
+        endTime: `${dayjs(date).format("YYYY-MM-DD")} ${dayjs(endTime).format(
+          "HH:mm"
+        )}`,
         instance,
         notes,
-        startTime: formatDateTime(startTime),
+        startTime: `${dayjs(date).format("YYYY-MM-DD")} ${dayjs(
+          startTime
+        ).format("HH:mm")}`,
         timeId,
       };
     }
@@ -738,27 +742,6 @@ export const ShiftTypesForm = ({
                               // update field
                               field.onChange(event);
 
-                              // update start and end time dates
-                              const dateCurrent = dayjs(event);
-                              const startTimeNew = formatDateTime(
-                                dayjs(getValues(`timeList.${index}.startTime`))
-                                  .set("year", dateCurrent.year())
-                                  .set("month", dateCurrent.month())
-                                  .set("date", dateCurrent.date())
-                              );
-                              const endTimeNew = formatDateTime(
-                                dayjs(getValues(`timeList.${index}.endTime`))
-                                  .set("year", dateCurrent.year())
-                                  .set("month", dateCurrent.month())
-                                  .set("date", dateCurrent.date())
-                              );
-
-                              setValue(
-                                `timeList.${index}.startTime`,
-                                startTimeNew
-                              );
-                              setValue(`timeList.${index}.endTime`, endTimeNew);
-
                               if (event) {
                                 clearErrors(`timeList.${index}.date`);
                               }
@@ -803,16 +786,26 @@ export const ShiftTypesForm = ({
                             ampm={false}
                             label="Start time"
                             onChange={(event) => {
-                              const endTime = dayjs(
-                                getValues(`timeList.${index}.endTime`)
-                              );
-
                               // update field
                               field.onChange(event);
 
                               // validate start time occurs before end time
+                              const startTimeActive =
+                                dayjs(event).format("HH:mm");
+                              const endTimeActive = dayjs(
+                                getValues(`timeList.${index}.endTime`)
+                              ).format("HH:mm");
+
+                              const dateCurrent = dayjs().format("YYYY-MM-DD");
+                              const startTimeCurrent = `${dateCurrent} ${startTimeActive}`;
+                              const endTimeCurrent = `${dateCurrent} ${endTimeActive}`;
+
                               if (event) {
-                                if (dayjs(event).isSameOrAfter(endTime)) {
+                                if (
+                                  dayjs(startTimeCurrent).isSameOrAfter(
+                                    endTimeCurrent
+                                  )
+                                ) {
                                   setError(`timeList.${index}.startTime`, {
                                     type: "custom",
                                     message:
@@ -864,24 +857,34 @@ export const ShiftTypesForm = ({
                             ampm={false}
                             label="End time"
                             onChange={(event) => {
-                              const startTime = dayjs(
-                                getValues(`timeList.${index}.startTime`)
-                              );
-
                               // update field
                               field.onChange(event);
 
                               // validate end time occurs after start time
+                              const endTimeActive =
+                                dayjs(event).format("HH:mm");
+                              const startTimeActive = dayjs(
+                                getValues(`timeList.${index}.startTime`)
+                              ).format("HH:mm");
+
+                              const dateCurrent = dayjs().format("YYYY-MM-DD");
+                              const endTimeCurrent = `${dateCurrent} ${endTimeActive}`;
+                              const startTimeCurrent = `${dateCurrent} ${startTimeActive}`;
+
                               if (event) {
-                                if (dayjs(event).isSameOrBefore(startTime)) {
+                                if (
+                                  dayjs(endTimeCurrent).isSameOrBefore(
+                                    startTimeCurrent
+                                  )
+                                ) {
                                   setError(`timeList.${index}.endTime`, {
                                     type: "custom",
                                     message:
                                       "End time must occur after start time",
                                   });
                                 } else {
-                                  clearErrors(`timeList.${index}.startTime`);
                                   clearErrors(`timeList.${index}.endTime`);
+                                  clearErrors(`timeList.${index}.startTime`);
                                 }
                               }
                             }}
