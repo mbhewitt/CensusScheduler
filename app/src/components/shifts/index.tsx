@@ -144,6 +144,8 @@ export const Shifts = () => {
     }
   }, [setColumnList]);
   useEffect(() => {
+    const dateTimeActive = dateTimeValue ?? dayjs();
+
     // if dateTimeValue updates
     // then update filter logic for "Date - hidden" column
     setColumnList((prevColumnList) => {
@@ -159,9 +161,9 @@ export const Shifts = () => {
           ) => {
             const show =
               (filterValue.indexOf("Present / Future") >= 0 &&
-                dayjs(dateHiddenValue).isSameOrAfter(dateTimeValue, "date")) ||
+                dayjs(dateHiddenValue).isSameOrAfter(dateTimeActive, "date")) ||
               (filterValue.indexOf("Past") >= 0 &&
-                dayjs(dateHiddenValue).isBefore(dateTimeValue, "date"));
+                dayjs(dateHiddenValue).isBefore(dateTimeActive, "date"));
 
             // returning false means that the value will display
             return !show;
