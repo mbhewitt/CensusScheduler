@@ -47,7 +47,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
           AND vs.shift_times_id=st.shift_times_id
           WHERE st.remove_shift_time=false
           AND sc.department="Training"
-          ORDER BY st.start_time_lt`
+          ORDER BY st.start_time_lt, shift_times_id`
         );
       } else {
         // get all shifts
@@ -82,7 +82,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
           AND vs.shift_position_id=sp.shift_position_id
           AND vs.shift_times_id=st.shift_times_id
           WHERE st.remove_shift_time=false
-          ORDER BY st.start_time_lt`
+          ORDER BY st.start_time_lt, shift_times_id`
         );
       }
       const resShiftList = getShiftList(dbShiftList);
