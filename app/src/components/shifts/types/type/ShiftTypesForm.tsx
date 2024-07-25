@@ -48,11 +48,7 @@ import type {
 } from "src/components/types/shifts/types";
 import { COLOR_BURNING_MAN_BROWN } from "src/constants";
 import { ensure } from "src/utils/ensure";
-import {
-  formatDateName,
-  formatDateTime,
-  formatTime,
-} from "src/utils/formatDateTime";
+import { formatDateName, formatTime } from "src/utils/formatDateTime";
 
 dayjs.extend(utc);
 
