@@ -45,6 +45,7 @@ export const Shifts = () => {
       label: "Timeline",
       options: {
         display: false,
+        filterList: ["Present / Future"],
         filterOptions: {
           names: ["Present / Future", "Past"],
         },
