@@ -58,7 +58,7 @@ const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
 
       await pool.query(
         // must use backticks for "lead" keyword
-        "INSERT INTO op_position_type (create_position, critical, end_time_offset, `lead`, position_details, position_type_id, position, prerequisite_id, role_id, start_time_offset)VALUES (true, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO op_position_type (create_position, critical, end_time_offset, `lead`, position_details, position_type_id, position, prerequisite_id, role_id, start_time_offset) VALUES (true, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         [
           critical,
           endTimeOffset,
