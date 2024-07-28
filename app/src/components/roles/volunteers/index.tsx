@@ -20,7 +20,7 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import useSWR from "swr";
 
 import { DataTable } from "src/components/general/DataTable";
@@ -35,6 +35,8 @@ import type {
   IResRoleVolunteerItem,
 } from "src/components/types/roles";
 import { ROLE_SUPER_ADMIN_ID } from "src/constants";
+import { SessionContext } from "src/state/session/context";
+import { checkIsSuperAdmin } from "src/utils/checkIsRoleExist";
 import { fetcherGet } from "src/utils/fetcher";
 import {
   setCellHeaderPropsCenter,
@@ -47,6 +49,14 @@ enum DialogList {
 }
 
 export const RoleVolunteers = () => {
+  // context
+  // --------------------
+  const {
+    sessionState: {
+      user: { roleList },
+    },
+  } = useContext(SessionContext);
+
   // state
   // --------------------
   const [isMounted, setIsMounted] = useState(false);
@@ -222,28 +232,31 @@ export const RoleVolunteers = () => {
                 {dataRoleItem.name}
               </Typography>
             </Box>
-            <Button
-              onClick={() => {
-                setDialogCurrent({
-                  dialogItem: DialogList.Add,
-                  role: {
-                    id: 0,
-                    name: "",
-                  },
-                  volunteer: {
-                    playaName: "",
-                    shiftboardId: 0,
-                    worldName: "",
-                  },
-                });
-                setIsDialogOpen(true);
-              }}
-              startIcon={<PersonAddAlt1Icon />}
-              type="button"
-              variant="contained"
-            >
-              Add volunteer
-            </Button>
+            {(Number(roleId) !== ROLE_SUPER_ADMIN_ID ||
+              checkIsSuperAdmin(roleList)) && (
+              <Button
+                onClick={() => {
+                  setDialogCurrent({
+                    dialogItem: DialogList.Add,
+                    role: {
+                      id: 0,
+                      name: "",
+                    },
+                    volunteer: {
+                      playaName: "",
+                      shiftboardId: 0,
+                      worldName: "",
+                    },
+                  });
+                  setIsDialogOpen(true);
+                }}
+                startIcon={<PersonAddAlt1Icon />}
+                type="button"
+                variant="contained"
+              >
+                Add volunteer
+              </Button>
+            )}
           </Stack>
           <DataTable
             columnList={columnList}
