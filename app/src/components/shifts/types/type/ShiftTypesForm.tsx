@@ -28,6 +28,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+import { useSnackbar } from "notistack";
 import {
   Control,
   Controller,
@@ -42,6 +43,7 @@ import {
   UseFormWatch,
 } from "react-hook-form";
 
+import { SnackbarText } from "src/components/general/SnackbarText";
 import type {
   IResShiftTypeCategoryItem,
   IResShiftTypeDefaults,
@@ -215,6 +217,10 @@ export const ShiftTypesForm = ({
   typeName,
   watch,
 }: IShiftTypesFormProps) => {
+  // other hooks
+  // --------------------
+  const { enqueueSnackbar } = useSnackbar();
+
   // logic
   // --------------------
   const watchPositionList = watch("positionList");
@@ -387,6 +393,17 @@ export const ShiftTypesForm = ({
           <Button
             onClick={() => {
               positionAppend(structuredClone(defaultValues.positionList[0]));
+              enqueueSnackbar(
+                <SnackbarText>
+                  <strong>New</strong> position has been added
+                  <br />
+                  Click on the <strong>Update type</strong> button to finalize
+                  your changes
+                </SnackbarText>,
+                {
+                  variant: "success",
+                }
+              );
             }}
             startIcon={<GroupAddIcon />}
             type="button"
@@ -562,9 +579,20 @@ export const ShiftTypesForm = ({
                     xs={2}
                   >
                     <IconButton
-                      onClick={() =>
-                        handlePositionRemove(index, item.name, item.positionId)
-                      }
+                      onClick={() => {
+                        handlePositionRemove(index, item.name, item.positionId);
+                        enqueueSnackbar(
+                          <SnackbarText>
+                            <strong>New</strong> position has been removed
+                            <br />
+                            Click on the <strong>Update type</strong> button to
+                            finalize your changes
+                          </SnackbarText>,
+                          {
+                            variant: "success",
+                          }
+                        );
+                      }}
                     >
                       <CloseIcon />
                     </IconButton>
@@ -707,6 +735,17 @@ export const ShiftTypesForm = ({
           <Button
             onClick={() => {
               timeAppend(structuredClone(defaultValues.timeList[0]));
+              enqueueSnackbar(
+                <SnackbarText>
+                  <strong>New</strong> time has been added
+                  <br />
+                  Click on the <strong>Update type</strong> button to finalize
+                  your changes
+                </SnackbarText>,
+                {
+                  variant: "success",
+                }
+              );
             }}
             startIcon={<MoreTimeIcon />}
             type="button"
@@ -931,6 +970,17 @@ export const ShiftTypesForm = ({
                             item.endTime
                           )}`,
                           item.timeId
+                        );
+                        enqueueSnackbar(
+                          <SnackbarText>
+                            <strong>New</strong> time has been removed
+                            <br />
+                            Click on the <strong>Update type</strong> button to
+                            finalize your changes
+                          </SnackbarText>,
+                          {
+                            variant: "success",
+                          }
                         );
                       }}
                     >

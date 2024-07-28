@@ -93,11 +93,13 @@ export const ShiftTypesTimeRemove = ({
     timeRemove(timeItem.index);
     enqueueSnackbar(
       <SnackbarText>
+        {timeItem.name} position has been removed
+        <br />
         Click on the <strong>Update type</strong> button to finalize your
         changes
       </SnackbarText>,
       {
-        variant: "warning",
+        variant: "success",
       }
     );
     handleDialogClose();
