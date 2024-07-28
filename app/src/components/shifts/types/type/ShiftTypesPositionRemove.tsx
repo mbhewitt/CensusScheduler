@@ -89,11 +89,13 @@ export const ShiftTypesPositionRemove = ({
     positionRemove(positionItem.index);
     enqueueSnackbar(
       <SnackbarText>
+        {positionItem.name} position has been removed
+        <br />
         Click on the <strong>Update type</strong> button to finalize your
         changes
       </SnackbarText>,
       {
-        variant: "warning",
+        variant: "success",
       }
     );
     handleDialogClose();
