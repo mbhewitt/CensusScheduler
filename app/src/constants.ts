@@ -31,6 +31,8 @@ export const ACCOUNT_TYPE_LIST = [
 
 // action types - session
 export const SESSION_BEHAVIORAL_STANDARDS = "sessionBehavioralStandards";
+export const SESSION_ROLE_ITEM_ADD = "sessionRoleItemAdd";
+export const SESSION_ROLE_ITEM_REMOVE = "sessionRoleItemRemove";
 export const SESSION_SIGN_IN = "sessionSignIn";
 export const SESSION_SIGN_OUT = "sessionSignOut";
 export const SESSION_STATE_STORAGE = "sessionStateStorage";

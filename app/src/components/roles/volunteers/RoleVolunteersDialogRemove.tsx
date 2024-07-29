@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
+import { useContext } from "react";
 import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "src/components/general/DialogContainer";
@@ -19,6 +20,8 @@ import type {
   IResRoleRowItem,
   IResRoleVolunteerItem,
 } from "src/components/types/roles";
+import { SESSION_ROLE_ITEM_REMOVE } from "src/constants";
+import { SessionContext } from "src/state/session/context";
 import { fetcherTrigger } from "src/utils/fetcher";
 
 interface IRoleVolunteersDialogRemoveProps {
@@ -32,8 +35,17 @@ export const RoleVolunteersDialogRemove = ({
   handleDialogClose,
   isDialogOpen,
   roleItem: { id: roleId, name: roleName },
-  volunteerItem: { playaName, shiftboardId, worldName },
+  volunteerItem: { playaName, shiftboardId: shiftboardIdSelected, worldName },
 }: IRoleVolunteersDialogRemoveProps) => {
+  // context
+  // --------------------
+  const {
+    sessionDispatch,
+    sessionState: {
+      user: { shiftboardId: shiftboardIdAuthenticated },
+    },
+  } = useContext(SessionContext);
+
   // fetching, mutation, and revalidation
   // --------------------
   const { isMutating, trigger } = useSWRMutation(
@@ -50,7 +62,7 @@ export const RoleVolunteersDialogRemove = ({
   const handleRoleVolunteerRemove = async () => {
     try {
       const body: IReqRoleVolunteerItem = {
-        shiftboardId,
+        shiftboardId: shiftboardIdSelected,
       };
 
       // update database
@@ -58,6 +70,17 @@ export const RoleVolunteersDialogRemove = ({
         body,
         method: "DELETE",
       });
+      // if the selected volunteer is the same as the authenticated volunteer
+      // then update state
+      if (shiftboardIdSelected === shiftboardIdAuthenticated) {
+        sessionDispatch({
+          payload: {
+            id: roleId,
+            name: roleName,
+          },
+          type: SESSION_ROLE_ITEM_REMOVE,
+        });
+      }
 
       enqueueSnackbar(
         <SnackbarText>

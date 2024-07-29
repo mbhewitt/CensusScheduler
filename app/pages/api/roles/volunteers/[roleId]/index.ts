@@ -67,7 +67,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           SET
             add_role=true,
             remove_role=false
-          WHERE roles=?
+          WHERE role_id=?
           AND shiftboard_id=?`,
           [roleId, shiftboardId]
         );

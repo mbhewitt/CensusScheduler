@@ -1,12 +1,13 @@
 import type { IResVolunteerAccount } from "src/components/types/volunteers";
 import {
-  SESSION_BEHAVIORAL_STANDARDS,
+  SESSION_ROLE_ITEM_ADD,
+  SESSION_ROLE_ITEM_REMOVE,
   SESSION_SIGN_IN,
   SESSION_SIGN_OUT,
   SESSION_STATE_STORAGE,
 } from "src/constants";
 
-interface IBehavioralStandardsPayload {
+interface IRoleItemPayload {
   id: number;
   name: string;
 }
@@ -18,8 +19,12 @@ export interface ISessionState {
 }
 export type ISessionAction =
   | {
-      payload: IBehavioralStandardsPayload;
-      type: typeof SESSION_BEHAVIORAL_STANDARDS;
+      payload: IRoleItemPayload;
+      type: typeof SESSION_ROLE_ITEM_ADD;
+    }
+  | {
+      payload: IRoleItemPayload;
+      type: typeof SESSION_ROLE_ITEM_REMOVE;
     }
   | { payload: IResVolunteerAccount; type: typeof SESSION_SIGN_IN }
   | { type: typeof SESSION_SIGN_OUT }
@@ -30,10 +35,19 @@ export const sessionReducer = (
   action: ISessionAction
 ): ISessionState => {
   switch (action.type) {
-    case SESSION_BEHAVIORAL_STANDARDS: {
+    case SESSION_ROLE_ITEM_ADD: {
       const stateClone = structuredClone(state);
 
       stateClone.user.roleList.push(action.payload);
+
+      return stateClone;
+    }
+    case SESSION_ROLE_ITEM_REMOVE: {
+      const stateClone = structuredClone(state);
+
+      stateClone.user.roleList = state.user.roleList.filter((roleItem) => {
+        return roleItem.id !== action.payload.id;
+      });
 
       return stateClone;
     }
