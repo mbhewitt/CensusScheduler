@@ -153,29 +153,30 @@ export const RoleVolunteers = () => {
                   <ListItemText>View account</ListItemText>
                 </MenuItem>
               </Link>
-              <MenuItem
-                disabled={shiftboardId === ROLE_SUPER_ADMIN_ID}
-                onClick={() => {
-                  setDialogCurrent({
-                    dialogItem: DialogList.Remove,
-                    role: {
-                      id: dataRoleItem.id,
-                      name: dataRoleItem.name,
-                    },
-                    volunteer: {
-                      playaName,
-                      shiftboardId,
-                      worldName,
-                    },
-                  });
-                  setIsDialogOpen(true);
-                }}
-              >
-                <ListItemIcon>
-                  <PersonRemoveIcon />
-                </ListItemIcon>
-                <ListItemText>Remove volunteer</ListItemText>
-              </MenuItem>
+              {shiftboardId !== ROLE_SUPER_ADMIN_ID && (
+                <MenuItem
+                  onClick={() => {
+                    setDialogCurrent({
+                      dialogItem: DialogList.Remove,
+                      role: {
+                        id: dataRoleItem.id,
+                        name: dataRoleItem.name,
+                      },
+                      volunteer: {
+                        playaName,
+                        shiftboardId,
+                        worldName,
+                      },
+                    });
+                    setIsDialogOpen(true);
+                  }}
+                >
+                  <ListItemIcon>
+                    <PersonRemoveIcon />
+                  </ListItemIcon>
+                  <ListItemText>Remove volunteer</ListItemText>
+                </MenuItem>
+              )}
             </MenuList>
           }
         />,
