@@ -32,7 +32,7 @@ import type {
 } from "src/components/types/roles";
 import {
   ROLE_BEHAVIORAL_STANDARDS_ID,
-  SESSION_BEHAVIORAL_STANDARDS,
+  SESSION_ROLE_ITEM_ADD,
 } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
@@ -155,7 +155,7 @@ export const BehavioralStandards = () => {
           id: ROLE_BEHAVIORAL_STANDARDS_ID,
           name: data.name,
         },
-        type: SESSION_BEHAVIORAL_STANDARDS,
+        type: SESSION_ROLE_ITEM_ADD,
       });
 
       enqueueSnackbar(

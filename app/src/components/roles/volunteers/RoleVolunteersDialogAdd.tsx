@@ -10,7 +10,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
@@ -26,6 +26,8 @@ import type {
   IResRoleVolunteerItem,
 } from "src/components/types/roles";
 import type { IResVolunteerDefaultItem } from "src/components/types/volunteers";
+import { SESSION_ROLE_ITEM_ADD } from "src/constants";
+import { SessionContext } from "src/state/session/context";
 import { ensure } from "src/utils/ensure";
 import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
 
@@ -48,6 +50,15 @@ export const RoleVolunteersDialogAdd = ({
   roleItem: { id: roleId, name: roleName },
   roleVolunteerList,
 }: IRoleVolunteersDialogAddProps) => {
+  // context
+  // --------------------
+  const {
+    sessionDispatch,
+    sessionState: {
+      user: { shiftboardId },
+    },
+  } = useContext(SessionContext);
+
   // fetching, mutation, and revalidation
   // --------------------
   const {
@@ -121,6 +132,17 @@ export const RoleVolunteersDialogAdd = ({
         body,
         method: "POST",
       });
+      // if the selected volunteer is the same as the authenticated volunteer
+      // then update state
+      if (formValues.volunteer?.shiftboardId === shiftboardId) {
+        sessionDispatch({
+          payload: {
+            id: roleId,
+            name: roleName,
+          },
+          type: SESSION_ROLE_ITEM_ADD,
+        });
+      }
 
       enqueueSnackbar(
         <SnackbarText>
