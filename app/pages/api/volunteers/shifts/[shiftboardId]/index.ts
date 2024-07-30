@@ -37,7 +37,7 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
         LEFT JOIN op_shift_category AS sc
         ON sc.shift_category_id=sn.shift_category_id
         LEFT JOIN op_dates AS d
-        ON d.date=st.date
+        ON d.date=LEFT(st.start_time_lt, 10)
         WHERE vs.remove_shift=false
         AND vs.shiftboard_id=?
         ORDER BY st.start_time_lt`,
