@@ -38,7 +38,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           st.start_time_lt
         FROM op_shift_times AS st
         LEFT JOIN op_dates AS d
-        ON d.date=st.date
+        ON d.date=LEFT(st.start_time_lt, 10)
         JOIN op_shift_name AS sn
         ON sn.delete_shift=false
         AND sn.shift_name_id=st.shift_name_id

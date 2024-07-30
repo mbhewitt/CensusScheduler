@@ -37,7 +37,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
           ON sc.delete_category=false
           AND sc.shift_category_id=sn.shift_category_id
           LEFT JOIN op_dates AS d
-          ON d.date=st.date
+          ON d.date=LEFT(st.start_time_lt, 10)
           JOIN op_shift_position AS sp
           ON sp.remove_shift_position=false
           AND sp.shift_name_id=sn.shift_name_id
@@ -73,7 +73,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
           ON sc.delete_category=false
           AND sc.shift_category_id=sn.shift_category_id
           LEFT JOIN op_dates AS d
-          ON d.date=st.date
+          ON d.date=LEFT(st.start_time_lt, 10)
           JOIN op_shift_position AS sp
           ON sp.remove_shift_position=false
           AND sp.shift_name_id=sn.shift_name_id
