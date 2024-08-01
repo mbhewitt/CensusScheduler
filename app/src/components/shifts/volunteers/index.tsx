@@ -512,34 +512,34 @@ export const ShiftVolunteers = () => {
           <Card sx={{ mb: 2 }}>
             <CardContent>
               <Grid container>
-                <Grid item xs={4}>
+                <Grid item xs={2}>
                   <Typography component="h3" variant="h6">
                     Details
                   </Typography>
                 </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={10}>
                   {dataShiftVolunteersItem.details}
                 </Grid>
                 <Grid item xs={12}>
                   <Divider sx={{ my: 2 }} />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={2}>
                   <Typography component="h3" variant="h6">
                     Meal
                   </Typography>
                 </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={10}>
                   {dataShiftVolunteersItem.meal}
                 </Grid>
                 <Grid item xs={12}>
                   <Divider sx={{ my: 2 }} />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={2}>
                   <Typography component="h3" variant="h6">
                     Notes
                   </Typography>
                 </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={10}>
                   {dataShiftVolunteersItem.notes}
                 </Grid>
               </Grid>
