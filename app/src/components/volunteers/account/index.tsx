@@ -169,7 +169,7 @@ export const Account = () => {
           <strong>
             {formValues.playaName} &quot;{formValues.worldName}&quot;
           </strong>
-          &apos;s profile has been updated
+          &apos;s account has been updated
         </SnackbarText>,
         {
           variant: "success",

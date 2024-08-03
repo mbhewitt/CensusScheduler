@@ -101,7 +101,7 @@ export const Contact = () => {
     if (isMounted && isAuthenticated) {
       reset({
         ...defaultValues,
-        email,
+        email: email ?? "",
         name: `${playaName} "${worldName}"`,
         to:
           router.query.reminder === "true"
@@ -256,7 +256,6 @@ export const Contact = () => {
                     )}
                   />
                 </Grid>
-                <Grid item xs={6} />
                 <Grid item xs={6}>
                   <Controller
                     control={control}
