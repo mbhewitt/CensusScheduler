@@ -67,8 +67,8 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           shiftboard_id,
           world_name,
         }: RowDataPacket) => {
-          const resVolunteerLast: IResVolunteerDefaultItem =
-            resVolunteerList[resVolunteerList.length - 1];
+          const resVolunteerLast: IResVolunteerDefaultItem | undefined =
+            resVolunteerList.at(-1);
 
           // if volunteer in last row is same as this row
           // then add role

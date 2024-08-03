@@ -20,8 +20,7 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
       total_slots,
     }: RowDataPacket) => {
       const shiftPositionIdItem = `${shift_times_id}${position_type_id}`;
-      const dbShiftLast: IResShiftRowItem =
-        shiftListNew[shiftListNew.length - 1];
+      const dbShiftLast: IResShiftRowItem | undefined = shiftListNew.at(-1);
 
       // if the database row has new shift times ID
       // then create new object
@@ -46,7 +45,7 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
       // if database row has same shift times ID
       // but has new position ID
       // then add to total slots
-      if (!shiftPositionIdMap[shiftPositionIdItem]) {
+      if (dbShiftLast && !shiftPositionIdMap[shiftPositionIdItem]) {
         shiftPositionIdMap[shiftPositionIdItem] = true;
         dbShiftLast.totalSlots += total_slots;
       }
