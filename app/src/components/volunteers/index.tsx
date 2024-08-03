@@ -1,6 +1,4 @@
 import {
-  ManageAccounts as ManageAccountsIcon,
-  MoreHoriz,
   SpeakerNotes as SpeakerNotesIcon,
   SpeakerNotesOff as SpeakerNotesOffIcon,
 } from "@mui/icons-material";
@@ -11,21 +9,16 @@ import {
   Chip,
   Container,
   Grid,
-  ListItemIcon,
-  ListItemText,
-  MenuItem,
-  MenuList,
   Typography,
 } from "@mui/material";
 import { green, grey, red } from "@mui/material/colors";
 import { FilterType } from "mui-datatables";
-import Link from "next/link";
+import { useRouter } from "next/router";
 import useSWR from "swr";
 
 import { DataTable } from "src/components/general/DataTable";
 import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
-import { MoreMenu } from "src/components/general/MoreMenu";
 import { Hero } from "src/components/layout/Hero";
 import type { IResVolunteerShiftCountItem } from "src/components/types/volunteers";
 import { fetcherGet } from "src/utils/fetcher";
@@ -51,6 +44,10 @@ const sortCompareShiftCount = (order: string) => {
 };
 
 export const Volunteers = () => {
+  // other hooks
+  // --------------------
+  const router = useRouter();
+
   // fetching, mutation, and revalidation
   // --------------------
   const {
@@ -181,15 +178,6 @@ export const Volunteers = () => {
         sortThirdClickReset: true,
       },
     },
-    {
-      name: "Actions",
-      options: {
-        filter: false,
-        setCellHeaderProps: setCellHeaderPropsCenter,
-        setCellProps: setCellPropsCenter,
-        sort: false,
-      },
-    },
   ];
   const dataTable = data.map(
     ({
@@ -225,26 +213,22 @@ export const Volunteers = () => {
         ) : (
           <SpeakerNotesOffIcon color="disabled" />
         ),
-        <MoreMenu
-          Icon={<MoreHoriz />}
-          key={`${shiftboardId}-menu`}
-          MenuList={
-            <MenuList>
-              <Link href={`/volunteers/account/${shiftboardId}`}>
-                <MenuItem>
-                  <ListItemIcon>
-                    <ManageAccountsIcon />
-                  </ListItemIcon>
-                  <ListItemText>View account</ListItemText>
-                </MenuItem>
-              </Link>
-            </MenuList>
-          }
-        />,
       ];
     }
   );
-  const optionListCustom = {};
+  const optionListCustom = {
+    onRowClick: (row: string[]) => {
+      router.push(`/volunteers/account/${row[0]}`);
+    },
+    rowHover: true,
+    setRowProps: () => {
+      return {
+        sx: {
+          cursor: "pointer",
+        },
+      };
+    },
+  };
 
   // render
   // --------------------
