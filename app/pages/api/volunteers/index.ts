@@ -26,8 +26,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
 
       dbVolunteerList.forEach(
         ({ noshow, notes, playa_name, shiftboard_id, world_name }) => {
-          const resVolunteerLast =
-            resVolunteerList[resVolunteerList.length - 1];
+          const resVolunteerLast = resVolunteerList.at(-1);
 
           // if volunteer in last row is same as this row
           // then add shift count
@@ -36,11 +35,11 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             resVolunteerLast.shiftboardId === shiftboard_id
           ) {
             switch (noshow) {
-              case "Yes":
-                resVolunteerLast.noShowCount += 1;
-                break;
               case "":
                 resVolunteerLast.attendedCount += 1;
+                break;
+              case "Yes":
+                resVolunteerLast.noShowCount += 1;
                 break;
               case "X":
                 resVolunteerLast.remainingCount += 1;
@@ -58,6 +57,19 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
               shiftboardId: shiftboard_id,
               worldName: world_name,
             };
+
+            switch (noshow) {
+              case "":
+                resVolunteerNew.attendedCount += 1;
+                break;
+              case "Yes":
+                resVolunteerNew.noShowCount += 1;
+                break;
+              case "X":
+                resVolunteerNew.remainingCount += 1;
+                break;
+              default:
+            }
 
             resVolunteerList.push(resVolunteerNew);
           }
