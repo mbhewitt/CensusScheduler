@@ -1,4 +1,5 @@
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { useContext } from "react";
 
 import { Roles } from "src/components/roles";
@@ -16,9 +17,13 @@ const RolesPage = () => {
   const {
     sessionState: {
       settings: { isAuthenticated: isAuthenticatedSession },
-      user: { roleList },
+      user: { roleList, shiftboardId },
     },
   } = useContext(SessionContext);
+
+  // other hooks
+  // --------------------
+  const router = useRouter();
 
   // logic
   // --------------------
@@ -30,6 +35,16 @@ const RolesPage = () => {
 
   // render
   // --------------------
+  let body;
+
+  if (isAuthenticated && isAdmin) {
+    body = <Roles />;
+  } else if (isAuthenticated) {
+    router.push(`/volunteers/account/${shiftboardId}`);
+  } else {
+    body = <SignIn />;
+  }
+
   return (
     <>
       <Head>
@@ -37,7 +52,7 @@ const RolesPage = () => {
         <meta name="description" content="" />
         <link rel="icon" href="/general/favicon.ico" />
       </Head>
-      {isAuthenticated && isAdmin ? <Roles /> : <SignIn />}
+      {body}
     </>
   );
 };
