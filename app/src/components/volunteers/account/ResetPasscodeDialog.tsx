@@ -131,7 +131,7 @@ export const ResetPasscodeDialog = ({
     <DialogContainer
       handleDialogClose={handleDialogClose}
       isDialogOpen={isDialogOpen}
-      text="Reset passcode"
+      text="Update passcode"
     >
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
         <DialogContentText paragraph>
@@ -172,7 +172,7 @@ export const ResetPasscodeDialog = ({
             type="submit"
             variant="contained"
           >
-            Reset passcode
+            Update passcode
           </Button>
         </DialogActions>
       </form>

@@ -11,7 +11,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     // patch
     // --------------------
     case "PATCH": {
-      // reset volunteer passcode
+      // update volunteer passcode
       const { passcode }: IReqPasscode = JSON.parse(req.body);
 
       await pool.query<RowDataPacket[]>(
