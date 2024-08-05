@@ -5,6 +5,7 @@ import {
   DEVELOPER_MODE_RESET,
   DEVELOPER_MODE_STATE_STORAGE,
 } from "src/constants";
+import { formatDateTime } from "src/utils/formatDateTime";
 
 export interface IAccountTypePayload {
   isEnabled: boolean;
@@ -75,7 +76,7 @@ export const developerModeReducer = (
         },
         dateTime: {
           isEnabled: false,
-          value: null,
+          value: formatDateTime(),
         },
         disableIdle: {
           isEnabled: false,

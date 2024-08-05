@@ -496,7 +496,7 @@ export const Account = () => {
                         type="button"
                         variant="contained"
                       >
-                        Reset passcode
+                        Update passcode
                       </Button>
                     </Stack>
                   </Grid>
