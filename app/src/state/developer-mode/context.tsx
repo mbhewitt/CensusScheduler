@@ -13,6 +13,7 @@ import {
   IDeveloperModeAction,
   IDeveloperModeState,
 } from "src/state/developer-mode/reducer";
+import { formatDateTime } from "src/utils/formatDateTime";
 
 interface IDeveloperModeProviderValue {
   developerModeState: IDeveloperModeState;
@@ -33,7 +34,7 @@ const developerModeInitial: IDeveloperModeState = {
   },
   dateTime: {
     isEnabled: false,
-    value: null,
+    value: formatDateTime(),
   },
   disableIdle: {
     isEnabled: false,
