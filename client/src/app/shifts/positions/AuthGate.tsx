@@ -2,9 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { useContext, useEffect } from "react";
-import { Loading } from "src/components/general/Loading";
 
 import { ShiftPositions } from "src/app/shifts/positions/ShiftPositions";
+import { Loading } from "src/components/general/Loading";
 import { SessionContext } from "src/state/session/context";
 import { checkIsSuperAdmin } from "src/utils/checkIsRoleExist";
 
@@ -31,7 +31,7 @@ export const AuthGate = () => {
     if (!isSuperAdmin) {
       router.push("/sign-in");
     }
-  }, [router]);
+  }, [isSuperAdmin, router]);
 
   // render
   // --------------------

@@ -12,7 +12,7 @@ const BehavioralStandardsPage = async ({
 }: IBehavioralStandardsPageProps) => {
   // logic
   // --------------------
-  const shiftboardId = (await params).shiftboardId;
+  const { shiftboardId } = await params;
 
   // render
   // --------------------

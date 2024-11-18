@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Login as LoginIcon,
   PersonAddAlt1 as PersonAddAlt1Icon,

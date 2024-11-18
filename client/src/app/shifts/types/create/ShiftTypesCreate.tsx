@@ -24,10 +24,6 @@ import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { ErrorPage } from "src/components/general/ErrorPage";
-import { Loading } from "src/components/general/Loading";
-import { SnackbarText } from "src/components/general/SnackbarText";
-import { Hero } from "src/components/layout/Hero";
 import {
   defaultValues,
   IFormValues,
@@ -36,6 +32,10 @@ import {
   processTimeList,
   ShiftTypesForm,
 } from "src/app/shifts/types/type/ShiftTypesForm";
+import { ErrorPage } from "src/components/general/ErrorPage";
+import { Loading } from "src/components/general/Loading";
+import { SnackbarText } from "src/components/general/SnackbarText";
+import { Hero } from "src/components/layout/Hero";
 import type {
   IReqShiftTypeItem,
   IResShiftTypeDefaults,

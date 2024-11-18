@@ -1,10 +1,12 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import { useContext, useEffect } from "react";
 
 import { ShiftTypesUpdate } from "src/app/shifts/types/update/[typeId]/ShiftTypesUpdate";
+import { Loading } from "src/components/general/Loading";
 import { SessionContext } from "src/state/session/context";
 import { checkIsSuperAdmin } from "src/utils/checkIsRoleExist";
-import { Loading } from "src/components/general/Loading";
-import { useRouter } from "next/navigation";
 
 interface IAuthGateProps {
   typeId: string;
@@ -33,7 +35,7 @@ export const AuthGate = ({ typeId }: IAuthGateProps) => {
     if (!isSuperAdmin) {
       router.push("/sign-in");
     }
-  }, [router]);
+  }, [isSuperAdmin, router]);
 
   // render
   // --------------------

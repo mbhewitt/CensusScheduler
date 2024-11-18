@@ -6,13 +6,13 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useSWRConfig } from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { DialogContainer } from "src/components/general/DialogContainer";
-import { SnackbarText } from "src/components/general/SnackbarText";
 import {
   defaultValues,
   IFormValues,
   RolesDialogForm,
 } from "src/app/roles/RolesDialogForm";
+import { DialogContainer } from "src/components/general/DialogContainer";
+import { SnackbarText } from "src/components/general/SnackbarText";
 import type { IResRoleRowItem } from "src/components/types/roles";
 import { fetcherTrigger } from "src/utils/fetcher";
 

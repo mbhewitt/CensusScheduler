@@ -32,6 +32,9 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
+import { DeveloperMode } from "src/app/volunteers/account/[shiftboardId]/DeveloperMode";
+import { ResetPasscodeDialog } from "src/app/volunteers/account/[shiftboardId]/ResetPasscodeDialog";
+import { VolunteerShifts } from "src/app/volunteers/account/[shiftboardId]/VolunteerShifts";
 import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { SnackbarText } from "src/components/general/SnackbarText";
@@ -41,9 +44,6 @@ import type {
   IResVolunteerAccount,
   IResVolunteerRoleItem,
 } from "src/components/types/volunteers";
-import { DeveloperMode } from "src/app/volunteers/account/[shiftboardId]/DeveloperMode";
-import { ResetPasscodeDialog } from "src/app/volunteers/account/[shiftboardId]/ResetPasscodeDialog";
-import { VolunteerShifts } from "src/app/volunteers/account/[shiftboardId]/VolunteerShifts";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
 import { checkIsAdmin, checkIsAuthenticated } from "src/utils/checkIsRoleExist";

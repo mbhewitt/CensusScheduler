@@ -12,7 +12,7 @@ const ShiftPositionsUpdatePage = async ({
 }: IShiftPositionsUpdatePageProps) => {
   // logic
   // --------------------
-  const positionId = (await params).positionId;
+  const { positionId } = await params;
 
   // render
   // --------------------

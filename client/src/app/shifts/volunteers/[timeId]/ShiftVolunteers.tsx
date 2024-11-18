@@ -33,14 +33,14 @@ import { io } from "socket.io-client";
 import useSWR, { KeyedMutator } from "swr";
 import useSWRMutation from "swr/mutation";
 
+import { ShiftVolunteersDialogAdd } from "src/app/shifts/volunteers/[timeId]/ShiftVolunteersDialogAdd";
+import { ShiftVolunteersDialogRemove } from "src/app/shifts/volunteers/[timeId]/ShiftVolunteersDialogRemove";
 import { DataTable } from "src/components/general/DataTable";
 import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import { Hero } from "src/components/layout/Hero";
-import { ShiftVolunteersDialogAdd } from "src/app/shifts/volunteers/[timeId]/ShiftVolunteersDialogAdd";
-import { ShiftVolunteersDialogRemove } from "src/app/shifts/volunteers/[timeId]/ShiftVolunteersDialogRemove";
 import type { ISwitchValues } from "src/components/types";
 import type {
   IResShiftPositionCountItem,

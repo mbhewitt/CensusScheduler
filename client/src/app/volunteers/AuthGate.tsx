@@ -1,11 +1,13 @@
+"use client";
+
 import { useRouter } from "next/navigation";
 import { useContext, useEffect } from "react";
 
 import { Volunteers } from "src/app/volunteers/Volunteers";
+import { Loading } from "src/components/general/Loading";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
 import { checkIsAdmin } from "src/utils/checkIsRoleExist";
-import { Loading } from "src/components/general/Loading";
 
 export const AuthGate = () => {
   // context
@@ -33,7 +35,7 @@ export const AuthGate = () => {
     if (!isAdmin) {
       router.push("/sign-in");
     }
-  }, [router]);
+  }, [isAdmin, router]);
 
   // render
   // --------------------

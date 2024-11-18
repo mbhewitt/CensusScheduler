@@ -20,12 +20,12 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import useSWR from "swr";
 
+import { ShiftPositionsDialogDelete } from "src/app/shifts/positions/ShiftPositionsDialogDelete";
 import { DataTable } from "src/components/general/DataTable";
 import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { Hero } from "src/components/layout/Hero";
-import { ShiftPositionsDialogDelete } from "src/app/shifts/positions/ShiftPositionsDialogDelete";
 import type { IResShiftPositionRowItem } from "src/components/types/shifts/positions";
 import { fetcherGet } from "src/utils/fetcher";
 import {

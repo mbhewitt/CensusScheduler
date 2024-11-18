@@ -8,13 +8,13 @@ import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 
-import { DialogContainer } from "src/components/general/DialogContainer";
-import { SnackbarText } from "src/components/general/SnackbarText";
 import {
   defaultValues,
   IFormValues,
   ShiftCategoriesDialogForm,
 } from "src/app/shifts/categories/ShiftCategoriesDialogForm";
+import { DialogContainer } from "src/components/general/DialogContainer";
+import { SnackbarText } from "src/components/general/SnackbarText";
 import type { IResShiftCategoryItem } from "src/components/types/shifts/categories";
 import { fetcherTrigger } from "src/utils/fetcher";
 

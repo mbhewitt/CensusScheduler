@@ -19,14 +19,14 @@ import {
 import { useState } from "react";
 import useSWR from "swr";
 
+import { ShiftCategoriesDialogCreate } from "src/app/shifts/categories/ShiftCategoriesDialogCreate";
+import { ShiftCategoriesDialogDelete } from "src/app/shifts/categories/ShiftCategoriesDialogDelete";
+import { ShiftCategoriesDialogUpdate } from "src/app/shifts/categories/ShiftCategoriesDialogUpdate";
 import { DataTable } from "src/components/general/DataTable";
 import { ErrorPage } from "src/components/general/ErrorPage";
 import { Loading } from "src/components/general/Loading";
 import { MoreMenu } from "src/components/general/MoreMenu";
 import { Hero } from "src/components/layout/Hero";
-import { ShiftCategoriesDialogCreate } from "src/app/shifts/categories/ShiftCategoriesDialogCreate";
-import { ShiftCategoriesDialogDelete } from "src/app/shifts/categories/ShiftCategoriesDialogDelete";
-import { ShiftCategoriesDialogUpdate } from "src/app/shifts/categories/ShiftCategoriesDialogUpdate";
 import type { IResShiftCategoryItem } from "src/components/types/shifts/categories";
 import { fetcherGet } from "src/utils/fetcher";
 import { getColorMap } from "src/utils/getColorMap";

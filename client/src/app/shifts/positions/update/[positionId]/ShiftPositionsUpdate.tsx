@@ -17,21 +17,21 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSnackbar } from "notistack";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { ErrorPage } from "src/components/general/ErrorPage";
-import { Loading } from "src/components/general/Loading";
-import { SnackbarText } from "src/components/general/SnackbarText";
-import { Hero } from "src/components/layout/Hero";
 import {
   defaultValues,
   findList,
   IFormValues,
   ShiftPositionsForm,
 } from "src/app/shifts/positions/ShiftPositionsForm";
+import { ErrorPage } from "src/components/general/ErrorPage";
+import { Loading } from "src/components/general/Loading";
+import { SnackbarText } from "src/components/general/SnackbarText";
+import { Hero } from "src/components/layout/Hero";
 import type {
   IReqShiftPositionItem,
   IResShiftPositionDefaults,

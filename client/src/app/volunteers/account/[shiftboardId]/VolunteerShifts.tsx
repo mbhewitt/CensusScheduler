@@ -26,6 +26,7 @@ import { io } from "socket.io-client";
 import useSWR, { KeyedMutator } from "swr";
 import useSWRMutation from "swr/mutation";
 
+import { VolunteerShiftsDialogRemove } from "src/app/volunteers/account/[shiftboardId]/VolunteerShiftsDialogRemove";
 import { DataTable } from "src/components/general/DataTable";
 import { ErrorAlert } from "src/components/general/ErrorAlert";
 import { Loading } from "src/components/general/Loading";
@@ -33,7 +34,6 @@ import { MoreMenu } from "src/components/general/MoreMenu";
 import { SnackbarText } from "src/components/general/SnackbarText";
 import type { IReqSwitchValues, ISwitchValues } from "src/components/types";
 import type { IResVolunteerShiftItem } from "src/components/types/volunteers";
-import { VolunteerShiftsDialogRemove } from "src/app/volunteers/account/[shiftboardId]/VolunteerShiftsDialogRemove";
 import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";

@@ -10,7 +10,7 @@ export const metadata = {
 const AccountPage = async ({ params }: IAccountPageProps) => {
   // logic
   // --------------------
-  const shiftboardId = (await params).shiftboardId;
+  const { shiftboardId } = await params;
 
   // render
   // --------------------

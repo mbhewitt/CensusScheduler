@@ -19,14 +19,17 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": [
+    ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx",
     "next-env.d.ts",
-    "prettier.config.js",
-    ".next/types/**/*.ts"
+    "prettier.config.js"
   ],
   "exclude": ["node_modules"]
 }

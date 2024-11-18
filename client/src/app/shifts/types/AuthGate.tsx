@@ -1,10 +1,12 @@
+"use client";
+
 import { useRouter } from "next/navigation";
 import { useContext, useEffect } from "react";
 
 import { ShiftTypes } from "src/app/shifts/types/ShiftTypes";
+import { Loading } from "src/components/general/Loading";
 import { SessionContext } from "src/state/session/context";
 import { checkIsSuperAdmin } from "src/utils/checkIsRoleExist";
-import { Loading } from "src/components/general/Loading";
 
 export const AuthGate = () => {
   // context
@@ -29,7 +31,7 @@ export const AuthGate = () => {
     if (!isSuperAdmin) {
       router.push("/sign-in");
     }
-  }, [router]);
+  }, [isSuperAdmin, router]);
 
   // render
   // --------------------

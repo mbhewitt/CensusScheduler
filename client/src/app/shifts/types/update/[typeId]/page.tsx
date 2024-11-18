@@ -10,7 +10,7 @@ export const metadata = {
 const ShiftTypesUpdatePage = async ({ params }: IShiftTypesUpdatePageProps) => {
   // logic
   // --------------------
-  const typeId = (await params).typeId;
+  const { typeId } = await params;
 
   // render
   // --------------------

@@ -98,7 +98,13 @@ export const Header = () => {
     ) {
       router.push(`/roles/behavioral-standards/${shiftboardId}`);
     }
-  }, [isAuthenticated, isBehavioralStandardsSigned, router, shiftboardId]);
+  }, [
+    isAuthenticated,
+    isBehavioralStandardsSigned,
+    pathname,
+    router,
+    shiftboardId,
+  ]);
 
   // logic
   // --------------------

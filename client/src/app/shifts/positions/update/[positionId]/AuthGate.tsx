@@ -4,9 +4,9 @@ import { useRouter } from "next/navigation";
 import { useContext, useEffect } from "react";
 
 import { ShiftPositionsUpdate } from "src/app/shifts/positions/update/[positionId]/ShiftPositionsUpdate";
+import { Loading } from "src/components/general/Loading";
 import { SessionContext } from "src/state/session/context";
 import { checkIsSuperAdmin } from "src/utils/checkIsRoleExist";
-import { Loading } from "src/components/general/Loading";
 
 interface IAuthGateProps {
   positionId: string;
@@ -35,7 +35,7 @@ export const AuthGate = ({ positionId }: IAuthGateProps) => {
     if (!isSuperAdmin) {
       router.push("/sign-in");
     }
-  }, [router]);
+  }, [isSuperAdmin, router]);
 
   // render
   // --------------------

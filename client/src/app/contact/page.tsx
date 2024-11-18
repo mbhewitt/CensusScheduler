@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+
 import { Contact } from "src/app/contact/Contact";
 
 export const metadata = {
@@ -6,7 +8,11 @@ export const metadata = {
 const ContactPage = () => {
   // render
   // --------------------
-  return <Contact />;
+  return (
+    <Suspense>
+      <Contact />
+    </Suspense>
+  );
 };
 
 export default ContactPage;

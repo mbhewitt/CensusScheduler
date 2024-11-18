@@ -4,10 +4,10 @@ import { useRouter } from "next/navigation";
 import { useContext, useEffect } from "react";
 
 import { RoleVolunteers } from "src/app/roles/volunteers/[roleId]/RoleVolunteers";
+import { Loading } from "src/components/general/Loading";
 import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
 import { checkIsAdmin } from "src/utils/checkIsRoleExist";
-import { Loading } from "src/components/general/Loading";
 
 interface IAuthGateProps {
   roleId: string;
@@ -39,7 +39,7 @@ export const AuthGate = ({ roleId }: IAuthGateProps) => {
     if (!isAdmin) {
       router.push("/sign-in");
     }
-  }, [router]);
+  }, [isAdmin, router]);
 
   // render
   // --------------------

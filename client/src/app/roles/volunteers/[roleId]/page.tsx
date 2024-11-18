@@ -10,7 +10,7 @@ export const metadata = {
 const RoleVolunteersPage = async ({ params }: IRoleVolunteersPageProps) => {
   // logic
   // --------------------
-  const roleId = (await params).roleId;
+  const { roleId } = await params;
 
   // render
   // --------------------
