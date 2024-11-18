@@ -12,13 +12,12 @@ services:
     restart: always
   census:
     build:
-      context: app
+      context: client
       dockerfile: Dockerfile
     container_name: census-app
     env_file:
-      - ./app/.env.production
+      - ./client/.env.production
     image: burning-man/census-app
     ports:
       - "3000:3000"
     restart: always
-
