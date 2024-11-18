@@ -16,7 +16,7 @@ import {
   CircularProgress,
   Container,
   Divider,
-  Grid,
+  Grid2 as Grid,
   List,
   ListItem,
   ListItemIcon,
@@ -262,7 +262,7 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
             <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
               <CardContent>
                 <Grid container spacing={2}>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <Controller
                       control={control}
                       name="playaName"
@@ -277,7 +277,7 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
                       )}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <Controller
                       control={control}
                       name="worldName"
@@ -293,7 +293,7 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
                       )}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <Controller
                       control={control}
                       name="email"
@@ -310,7 +310,7 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
                       )}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <Controller
                       control={control}
                       name="phone"
@@ -326,7 +326,7 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
                       )}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <Controller
                       control={control}
                       name="location"
@@ -340,7 +340,7 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
                       )}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <Controller
                       control={control}
                       name="emergencyContact"
@@ -397,12 +397,12 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
             <Card sx={{ mb: 2 }}>
               <CardContent>
                 <Grid container>
-                  <Grid item xs={4}>
+                  <Grid size={4}>
                     <Typography component="h3" variant="h6">
                       Roles
                     </Typography>
                   </Grid>
-                  <Grid item xs={8}>
+                  <Grid size={8}>
                     <List disablePadding>
                       {roleListData.length ? (
                         <>
@@ -427,15 +427,15 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
                       )}
                     </List>
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <Divider sx={{ my: 2 }} />
                   </Grid>
-                  <Grid item xs={4}>
+                  <Grid size={4}>
                     <Typography component="h3" variant="h6">
                       Notes
                     </Typography>
                   </Grid>
-                  <Grid item xs={8}>
+                  <Grid size={8}>
                     <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
                       <Controller
                         control={control}
@@ -474,12 +474,12 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
             <Card>
               <CardContent>
                 <Grid container>
-                  <Grid item xs={4}>
+                  <Grid size={4}>
                     <Typography component="h3" variant="h6">
                       Security
                     </Typography>
                   </Grid>
-                  <Grid item xs={8}>
+                  <Grid size={8}>
                     <Stack direction="row" justifyContent="flex-end">
                       <Button
                         onClick={() => setIsDialogOpen(true)}
@@ -491,7 +491,7 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
                       </Button>
                     </Stack>
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <Divider sx={{ my: 2 }} />
                   </Grid>
 

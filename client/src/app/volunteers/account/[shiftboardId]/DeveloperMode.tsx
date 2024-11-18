@@ -4,7 +4,7 @@ import {
   Button,
   FormControlLabel,
   FormGroup,
-  Grid,
+  Grid2 as Grid,
   Switch,
   Typography,
 } from "@mui/material";
@@ -56,12 +56,12 @@ export const DeveloperMode = () => {
   // --------------------
   return (
     <>
-      <Grid item xs={4}>
+      <Grid size={4}>
         <Typography component="h3" variant="h6">
           Developer mode
         </Typography>
       </Grid>
-      <Grid item xs={8}>
+      <Grid size={8}>
         <Box sx={{ display: "inline-block" }}>
           <FormGroup>
             <FormControlLabel
@@ -132,12 +132,11 @@ export const DeveloperMode = () => {
       </Grid>
       <Grid
         container
-        item
         justifyContent="flex-end"
+        size={12}
         sx={{
           mt: 2,
         }}
-        xs={12}
       >
         <Button
           onClick={onReset}

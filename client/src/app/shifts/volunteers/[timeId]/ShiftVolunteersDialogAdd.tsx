@@ -9,7 +9,7 @@ import {
   DialogActions,
   FormControl,
   FormHelperText,
-  Grid,
+  Grid2 as Grid,
   InputLabel,
   MenuItem,
   Select,
@@ -631,7 +631,7 @@ export const ShiftVolunteersDialogAdd = ({
     >
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={2}>
-          <Grid item xs={6}>
+          <Grid size={6}>
             <Controller
               control={control}
               name="volunteer"
@@ -676,7 +676,7 @@ export const ShiftVolunteersDialogAdd = ({
               }}
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid size={6}>
             <Controller
               control={control}
               name="shiftPositionId"
@@ -741,7 +741,7 @@ export const ShiftVolunteersDialogAdd = ({
           </Grid>
           {trainingListDisplay.length > 0 && (
             <>
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <Controller
                   control={control}
                   name="trainingTimesId"
@@ -819,7 +819,7 @@ export const ShiftVolunteersDialogAdd = ({
                   }}
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <Controller
                   control={control}
                   name="trainingPositionId"
@@ -890,7 +890,7 @@ export const ShiftVolunteersDialogAdd = ({
             </>
           )}
           {shiftPositionIdWatch && (
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Typography gutterBottom>Position Details:</Typography>
               {positionList.find(
                 (shiftPositionItem) =>

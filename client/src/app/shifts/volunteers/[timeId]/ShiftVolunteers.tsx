@@ -16,7 +16,7 @@ import {
   CardContent,
   Container,
   Divider,
-  Grid,
+  Grid2 as Grid,
   ListItemIcon,
   ListItemText,
   MenuItem,
@@ -506,36 +506,30 @@ export const ShiftVolunteers = ({
           <Card sx={{ mb: 2 }}>
             <CardContent>
               <Grid container>
-                <Grid item xs={2}>
+                <Grid size={2}>
                   <Typography component="h3" variant="h6">
                     Details
                   </Typography>
                 </Grid>
-                <Grid item xs={10}>
-                  {dataShiftVolunteersItem.details}
-                </Grid>
-                <Grid item xs={12}>
+                <Grid size={10}>{dataShiftVolunteersItem.details}</Grid>
+                <Grid size={12}>
                   <Divider sx={{ my: 2 }} />
                 </Grid>
-                <Grid item xs={2}>
+                <Grid size={2}>
                   <Typography component="h3" variant="h6">
                     Meal
                   </Typography>
                 </Grid>
-                <Grid item xs={10}>
-                  {dataShiftVolunteersItem.meal}
-                </Grid>
-                <Grid item xs={12}>
+                <Grid size={10}>{dataShiftVolunteersItem.meal}</Grid>
+                <Grid size={12}>
                   <Divider sx={{ my: 2 }} />
                 </Grid>
-                <Grid item xs={2}>
+                <Grid size={2}>
                   <Typography component="h3" variant="h6">
                     Notes
                   </Typography>
                 </Grid>
-                <Grid item xs={10}>
-                  {dataShiftVolunteersItem.notes}
-                </Grid>
+                <Grid size={10}>{dataShiftVolunteersItem.notes}</Grid>
               </Grid>
             </CardContent>
           </Card>

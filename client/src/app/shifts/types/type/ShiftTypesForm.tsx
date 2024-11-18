@@ -14,7 +14,7 @@ import {
   FormControlLabel,
   FormGroup,
   FormHelperText,
-  Grid,
+  Grid2 as Grid,
   IconButton,
   InputLabel,
   MenuItem,
@@ -241,7 +241,7 @@ export const ShiftTypesForm = ({
         <Card>
           <CardContent>
             <Grid container spacing={2}>
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <Controller
                   control={control}
                   name="information.name"
@@ -282,7 +282,7 @@ export const ShiftTypesForm = ({
                   }}
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <Controller
                   control={control}
                   name="information.category.name"
@@ -320,7 +320,7 @@ export const ShiftTypesForm = ({
                   }}
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <Controller
                   control={control}
                   name="information.details"
@@ -334,7 +334,7 @@ export const ShiftTypesForm = ({
                   )}
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <FormGroup row>
                   <Controller
                     control={control}
@@ -422,7 +422,7 @@ export const ShiftTypesForm = ({
             >
               <CardContent>
                 <Grid container spacing={2}>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <Controller
                       control={control}
                       name={`positionList.${index}.name`}
@@ -515,7 +515,7 @@ export const ShiftTypesForm = ({
                       }}
                     />
                   </Grid>
-                  <Grid item xs={2}>
+                  <Grid size={2}>
                     <Controller
                       control={control}
                       name={`positionList.${index}.totalSlots`}
@@ -542,7 +542,7 @@ export const ShiftTypesForm = ({
                       }}
                     />
                   </Grid>
-                  <Grid item xs={2}>
+                  <Grid size={2}>
                     <Controller
                       control={control}
                       name={`positionList.${index}.wapPoints`}
@@ -570,13 +570,12 @@ export const ShiftTypesForm = ({
                     />
                   </Grid>
                   <Grid
-                    item
                     sx={{
                       alignItems: "flex-start",
                       display: "flex",
                       justifyContent: "flex-end",
                     }}
-                    xs={2}
+                    size={2}
                   >
                     <IconButton
                       onClick={() => {
@@ -597,7 +596,7 @@ export const ShiftTypesForm = ({
                       <CloseIcon />
                     </IconButton>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <Controller
                       control={control}
                       name={`positionList.${index}.role`}
@@ -612,7 +611,7 @@ export const ShiftTypesForm = ({
                       )}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <Controller
                       control={control}
                       name={`positionList.${index}.prerequisite`}
@@ -627,7 +626,7 @@ export const ShiftTypesForm = ({
                       )}
                     />
                   </Grid>
-                  <Grid item xs={3}>
+                  <Grid size={3}>
                     <Controller
                       control={control}
                       name={`positionList.${index}.startTimeOffset`}
@@ -642,7 +641,7 @@ export const ShiftTypesForm = ({
                       )}
                     />
                   </Grid>
-                  <Grid item xs={3}>
+                  <Grid size={3}>
                     <Controller
                       control={control}
                       name={`positionList.${index}.endTimeOffset`}
@@ -657,7 +656,7 @@ export const ShiftTypesForm = ({
                       )}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={6}>
                     <FormGroup row>
                       <Controller
                         control={control}
@@ -695,7 +694,7 @@ export const ShiftTypesForm = ({
                       />
                     </FormGroup>
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <Controller
                       control={control}
                       name={`positionList.${index}.details`}
@@ -764,7 +763,7 @@ export const ShiftTypesForm = ({
             >
               <CardContent>
                 <Grid container spacing={2}>
-                  <Grid item xs={3}>
+                  <Grid size={3}>
                     <Controller
                       control={control}
                       name={`timeList.${index}.date`}
@@ -810,7 +809,7 @@ export const ShiftTypesForm = ({
                       )}
                     />
                   </Grid>
-                  <Grid item xs={3}>
+                  <Grid size={3}>
                     <Controller
                       control={control}
                       name={`timeList.${index}.startTime`}
@@ -877,7 +876,7 @@ export const ShiftTypesForm = ({
                       )}
                     />
                   </Grid>
-                  <Grid item xs={3}>
+                  <Grid size={3}>
                     <Controller
                       control={control}
                       name={`timeList.${index}.endTime`}
@@ -945,13 +944,12 @@ export const ShiftTypesForm = ({
                     />
                   </Grid>
                   <Grid
-                    item
                     sx={{
                       alignItems: "flex-start",
                       display: "flex",
                       justifyContent: "flex-end",
                     }}
-                    xs={3}
+                    size={3}
                   >
                     <IconButton
                       onClick={() => {
@@ -980,7 +978,7 @@ export const ShiftTypesForm = ({
                     </IconButton>
                   </Grid>
 
-                  <Grid item xs={3}>
+                  <Grid size={3}>
                     <Controller
                       control={control}
                       name={`timeList.${index}.instance`}
@@ -994,7 +992,7 @@ export const ShiftTypesForm = ({
                       )}
                     />
                   </Grid>
-                  <Grid item xs={9}>
+                  <Grid size={9}>
                     <Controller
                       control={control}
                       name={`timeList.${index}.notes`}

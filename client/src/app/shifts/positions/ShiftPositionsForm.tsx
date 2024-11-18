@@ -7,7 +7,7 @@ import {
   FormControl,
   FormControlLabel,
   FormGroup,
-  Grid,
+  Grid2 as Grid,
   InputLabel,
   MenuItem,
   Select,
@@ -95,7 +95,7 @@ export const ShiftPositionsForm = ({
         <Card>
           <CardContent>
             <Grid container spacing={2}>
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <Controller
                   control={control}
                   name="name"
@@ -132,7 +132,7 @@ export const ShiftPositionsForm = ({
                   }}
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <FormGroup row>
                   <Controller
                     control={control}
@@ -168,7 +168,7 @@ export const ShiftPositionsForm = ({
                   />
                 </FormGroup>
               </Grid>
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <Controller
                   control={control}
                   name="role.name"
@@ -194,7 +194,7 @@ export const ShiftPositionsForm = ({
                   )}
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid size={6}>
                 <Controller
                   control={control}
                   name="prerequisite.name"
@@ -220,7 +220,7 @@ export const ShiftPositionsForm = ({
                   )}
                 />
               </Grid>
-              <Grid item xs={3}>
+              <Grid size={3}>
                 <Controller
                   control={control}
                   name="startTimeOffset"
@@ -234,7 +234,7 @@ export const ShiftPositionsForm = ({
                   )}
                 />
               </Grid>
-              <Grid item xs={3}>
+              <Grid size={3}>
                 <Controller
                   control={control}
                   name="endTimeOffset"
@@ -248,7 +248,7 @@ export const ShiftPositionsForm = ({
                   )}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Controller
                   control={control}
                   name="details"

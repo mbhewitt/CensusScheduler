@@ -11,7 +11,7 @@ import {
   Container,
   FormControl,
   FormControlLabel,
-  Grid,
+  Grid2 as Grid,
   InputLabel,
   ListSubheader,
   MenuItem,
@@ -161,7 +161,7 @@ export const Contact = () => {
           <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
             <CardContent>
               <Grid container spacing={2}>
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Controller
                     control={control}
                     name="name"
@@ -184,7 +184,7 @@ export const Contact = () => {
                     }}
                   />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Controller
                     control={control}
                     name="email"
@@ -208,7 +208,7 @@ export const Contact = () => {
                     }}
                   />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Controller
                     control={control}
                     name="to"
@@ -248,7 +248,7 @@ export const Contact = () => {
                     )}
                   />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid size={6}>
                   <Controller
                     control={control}
                     name="isReplyWanted"
@@ -266,7 +266,7 @@ export const Contact = () => {
                     )}
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Controller
                     control={control}
                     name="message"
