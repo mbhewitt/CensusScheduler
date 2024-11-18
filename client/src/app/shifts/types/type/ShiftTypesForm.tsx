@@ -789,10 +789,6 @@ export const ShiftTypesForm = ({
                                   errors.timeList &&
                                   errors.timeList[index]?.date?.message,
                                 onBlur: (event) => {
-                                  console.log(
-                                    "event.target.value: ",
-                                    event.target.value
-                                  );
                                   if (event.target.value === "MM/DD/YYYY") {
                                     setError(`timeList.${index}.date`, {
                                       type: "required",

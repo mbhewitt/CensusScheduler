@@ -459,6 +459,13 @@
   dependencies:
     "@babel/runtime" "^7.26.0"
 
+"@mui/material-nextjs@^6.1.7":
+  version "6.1.7"
+  resolved "https://registry.yarnpkg.com/@mui/material-nextjs/-/material-nextjs-6.1.7.tgz#303ac64bd85d0810d77d63d538bf682dd60b5b03"
+  integrity sha512-v3cudN/JWuudUOlmrKvy9rTKB2o2Bu4SN1aZQvNXpWKqL4MwpQvBiq3j6jLA3I748HRvHjCNZAxoNXn1lToMqg==
+  dependencies:
+    "@babel/runtime" "^7.26.0"
+
 "@mui/material@^5.11.4":
   version "5.16.7"
   resolved "https://registry.yarnpkg.com/@mui/material/-/material-5.16.7.tgz#6e814e2eefdaf065a769cecf549c3569e107a50b"

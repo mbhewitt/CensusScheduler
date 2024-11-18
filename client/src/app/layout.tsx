@@ -7,6 +7,7 @@ import {
   styled,
   ThemeProvider,
 } from "@mui/material/styles";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import localFont from "next/font/local";
 import { SnackbarProvider } from "notistack";
 
@@ -199,16 +200,18 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">
       <body>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <DeveloperModeProvider>
-            <SessionProvider>
-              <StyledSnackbarProvider action={SnackbarAction}>
-                <Layout>{children}</Layout>
-              </StyledSnackbarProvider>
-            </SessionProvider>
-          </DeveloperModeProvider>
-        </ThemeProvider>
+        <AppRouterCacheProvider>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <DeveloperModeProvider>
+              <SessionProvider>
+                <StyledSnackbarProvider action={SnackbarAction}>
+                  <Layout>{children}</Layout>
+                </StyledSnackbarProvider>
+              </SessionProvider>
+            </DeveloperModeProvider>
+          </ThemeProvider>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );
