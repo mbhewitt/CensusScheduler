@@ -221,7 +221,7 @@ export const Footer = () => {
               color: theme.palette.common.white,
             }}
           >
-            2024.Y.00088.Prizmo
+            2025.F.00089.Prizmo
           </Typography>
         </Stack>
       </Container>
