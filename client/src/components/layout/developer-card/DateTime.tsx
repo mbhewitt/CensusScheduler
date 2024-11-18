@@ -2,6 +2,7 @@ import TextField from "@mui/material/TextField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import dayjs from "dayjs";
 import { useContext } from "react";
 
 import { DEVELOPER_MODE_DATE_TIME } from "src/constants";
@@ -34,8 +35,12 @@ export const DateTime = () => {
             type: DEVELOPER_MODE_DATE_TIME,
           });
         }}
-        renderInput={(params) => <TextField {...params} variant="standard" />}
-        value={value}
+        slotProps={{
+          textField: {
+            variant: "standard",
+          },
+        }}
+        value={dayjs(value)}
       />
     </LocalizationProvider>
   );

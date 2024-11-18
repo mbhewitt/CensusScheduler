@@ -768,43 +768,43 @@ export const ShiftTypesForm = ({
                     <Controller
                       control={control}
                       name={`timeList.${index}.date`}
-                      render={({ field }) => (
+                      render={({ field: { onChange } }) => (
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <DatePicker
-                            {...field}
                             label="Date"
                             onChange={(event) => {
                               // update field
-                              field.onChange(event);
+                              onChange(event);
 
                               if (event) {
                                 clearErrors(`timeList.${index}.date`);
                               }
                             }}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                error={
+                            slotProps={{
+                              textField: {
+                                error:
                                   errors.timeList &&
-                                  Boolean(errors.timeList[index]?.date)
-                                }
-                                fullWidth
-                                helperText={
+                                  Boolean(errors.timeList[index]?.date),
+                                fullWidth: true,
+                                helperText:
                                   errors.timeList &&
-                                  errors.timeList[index]?.date?.message
-                                }
-                                onBlur={(event) => {
-                                  if (!event.target.value) {
+                                  errors.timeList[index]?.date?.message,
+                                onBlur: (event) => {
+                                  console.log(
+                                    "event.target.value: ",
+                                    event.target.value
+                                  );
+                                  if (event.target.value === "MM/DD/YYYY") {
                                     setError(`timeList.${index}.date`, {
                                       type: "required",
                                       message: "Date is required",
                                     });
                                   }
-                                }}
-                                required
-                                variant="standard"
-                              />
-                            )}
+                                },
+                                required: true,
+                                variant: "standard",
+                              },
+                            }}
                           />
                         </LocalizationProvider>
                       )}
@@ -814,15 +814,14 @@ export const ShiftTypesForm = ({
                     <Controller
                       control={control}
                       name={`timeList.${index}.startTime`}
-                      render={({ field }) => (
+                      render={({ field: { onChange } }) => (
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <TimePicker
-                            {...field}
                             ampm={false}
                             label="Start time"
                             onChange={(event) => {
                               // update field
-                              field.onChange(event);
+                              onChange(event);
 
                               // validate start time occurs before end time
                               const startTimeActive =
@@ -852,30 +851,27 @@ export const ShiftTypesForm = ({
                                 }
                               }
                             }}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                error={
+                            slotProps={{
+                              textField: {
+                                error:
                                   errors.timeList &&
-                                  Boolean(errors.timeList[index]?.startTime)
-                                }
-                                fullWidth
-                                helperText={
+                                  Boolean(errors.timeList[index]?.startTime),
+                                fullWidth: true,
+                                helperText:
                                   errors.timeList &&
-                                  errors.timeList[index]?.startTime?.message
-                                }
-                                onBlur={(event) => {
-                                  if (!event.target.value) {
+                                  errors.timeList[index]?.startTime?.message,
+                                onBlur: (event) => {
+                                  if (event.target.value === "hh:mm") {
                                     setError(`timeList.${index}.startTime`, {
                                       type: "required",
                                       message: "Start time is required",
                                     });
                                   }
-                                }}
-                                required
-                                variant="standard"
-                              />
-                            )}
+                                },
+                                required: true,
+                                variant: "standard",
+                              },
+                            }}
                           />
                         </LocalizationProvider>
                       )}
@@ -885,15 +881,14 @@ export const ShiftTypesForm = ({
                     <Controller
                       control={control}
                       name={`timeList.${index}.endTime`}
-                      render={({ field }) => (
+                      render={({ field: { onChange } }) => (
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <TimePicker
-                            {...field}
                             ampm={false}
                             label="End time"
                             onChange={(event) => {
                               // update field
-                              field.onChange(event);
+                              onChange(event);
 
                               // validate end time occurs after start time
                               const endTimeActive =
@@ -923,30 +918,27 @@ export const ShiftTypesForm = ({
                                 }
                               }
                             }}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                error={
+                            slotProps={{
+                              textField: {
+                                error:
                                   errors.timeList &&
-                                  Boolean(errors.timeList[index]?.endTime)
-                                }
-                                fullWidth
-                                helperText={
+                                  Boolean(errors.timeList[index]?.endTime),
+                                fullWidth: true,
+                                helperText:
                                   errors.timeList &&
-                                  errors.timeList[index]?.endTime?.message
-                                }
-                                onBlur={(event) => {
-                                  if (!event.target.value) {
+                                  errors.timeList[index]?.endTime?.message,
+                                onBlur: (event) => {
+                                  if (event.target.value === "hh:mm") {
                                     setError(`timeList.${index}.endTime`, {
                                       type: "required",
                                       message: "End time is required",
                                     });
                                   }
-                                }}
-                                required
-                                variant="standard"
-                              />
-                            )}
+                                },
+                                required: true,
+                                variant: "standard",
+                              },
+                            }}
                           />
                         </LocalizationProvider>
                       )}
