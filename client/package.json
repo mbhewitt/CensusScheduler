@@ -11,9 +11,9 @@
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
-    "@mui/icons-material": "^5.14.16",
-    "@mui/material": "^5.10.13",
-    "@mui/x-date-pickers": "^5.0.15",
+    "@mui/icons-material": "^6.1.7",
+    "@mui/material": "^6.1.7",
+    "@mui/x-date-pickers": "^7.22.2",
     "axios": "^1.6.7",
     "dayjs": "^1.11.7",
     "immer": "^10.0.3",
@@ -33,7 +33,7 @@
     "use-immer": "^0.9.0"
   },
   "devDependencies": {
-    "@types/mui-datatables": "^3.7.9",
+    "@types/mui-datatables": "^4.3.12",
     "@types/node": "^22.9.0",
     "@types/react": "^18.3.12",
     "@types/react-color": "^3.0.12",
