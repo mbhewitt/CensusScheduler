@@ -1,4 +1,4 @@
-import { NextRouter } from "next/router";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { OptionsObject, SnackbarKey, SnackbarMessage } from "notistack";
 import { Dispatch } from "react";
 
@@ -15,7 +15,7 @@ export const signOut = (
   ) => SnackbarKey,
   isAuthenticated: boolean,
   playaName: string,
-  router: NextRouter,
+  router: AppRouterInstance,
   sessionDispatch: Dispatch<ISessionAction>,
   worldName: string
 ) => {

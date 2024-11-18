@@ -26,7 +26,7 @@ import {
 import { useTheme } from "@mui/material/styles";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { usePathname, useRouter } from "next/navigation";
 import { useSnackbar } from "notistack";
 import { useContext, useEffect, useState } from "react";
 import IdleTimer from "react-idle-timer";
@@ -72,6 +72,7 @@ export const Header = () => {
 
   // other hooks
   // --------------------
+  const pathname = usePathname();
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
@@ -93,7 +94,7 @@ export const Header = () => {
     if (
       isAuthenticated &&
       !isBehavioralStandardsSigned &&
-      !router.pathname.includes("behavioral-standards")
+      !pathname?.includes("behavioral-standards")
     ) {
       router.push(`/roles/behavioral-standards/${shiftboardId}`);
     }
