@@ -312,7 +312,7 @@ export const ShiftVolunteersDialogAdd = ({
       noShowShift = "X";
 
       // display volunteer list
-      if (isAuthenticated && isAdmin) {
+      if (isAdmin) {
         volunteerListDisplay = dataVolunteerList.map(
           ({ playaName, shiftboardId, worldName }) => ({
             label: `${playaName} "${worldName}"`,
@@ -338,7 +338,7 @@ export const ShiftVolunteersDialogAdd = ({
           totalSlots,
         }) => {
           const isShiftPositionAvailable =
-            (isAuthenticated && isAdmin) ||
+            isAdmin ||
             (totalSlots - filledSlots > 0 &&
               (roleRequiredId === 0 ||
                 volunteerSelected?.roleList?.some(
@@ -368,7 +368,7 @@ export const ShiftVolunteersDialogAdd = ({
           type,
         }: IResShiftRowItem) => {
           const isShiftPositionAvailable =
-            (isAuthenticated && isAdmin) ||
+            isAdmin ||
             (totalSlots - filledSlots > 0 &&
               dayjs(dateTimeValue).isBefore(dayjs(startTime)));
 
@@ -399,7 +399,7 @@ export const ShiftVolunteersDialogAdd = ({
               totalSlots,
             }) => {
               const isShiftPositionAvailable =
-                (isAuthenticated && isAdmin) ||
+                isAdmin ||
                 (totalSlots - filledSlots > 0 &&
                   (roleRequiredId === 0 ||
                     volunteerSelected?.roleList?.some(
@@ -454,7 +454,7 @@ export const ShiftVolunteersDialogAdd = ({
           type,
         }: IResShiftRowItem) => {
           const isShiftPositionAvailable =
-            (isAuthenticated && isAdmin) ||
+            isAdmin ||
             (totalSlots - filledSlots > 0 &&
               dayjs(dateTimeValue).isBefore(dayjs(startTime)));
 

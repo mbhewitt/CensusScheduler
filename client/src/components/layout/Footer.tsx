@@ -21,11 +21,7 @@ import {
 } from "@/components/layout/pageList";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
-import {
-  checkIsAdmin,
-  checkIsAuthenticated,
-  checkIsSuperAdmin,
-} from "@/utils/checkIsRoleExist";
+import { checkIsAdmin, checkIsSuperAdmin } from "@/utils/checkIsRoleExist";
 
 export const Footer = () => {
   // context
@@ -35,7 +31,6 @@ export const Footer = () => {
   } = useContext(DeveloperModeContext);
   const {
     sessionState: {
-      settings: { isAuthenticated: isAuthenticatedSession },
       user: { roleList },
     },
   } = useContext(SessionContext);
@@ -47,12 +42,8 @@ export const Footer = () => {
 
   // logic
   // --------------------
-  const isAuthenticated = checkIsAuthenticated(
-    accountType,
-    isAuthenticatedSession
-  );
   const isAdmin = checkIsAdmin(accountType, roleList);
-  const isSuperAdmin = checkIsSuperAdmin(roleList);
+  const isSuperAdmin = checkIsSuperAdmin(accountType, roleList);
 
   // render
   // --------------------
@@ -117,7 +108,7 @@ export const Footer = () => {
               </Stack>
             </Box>
             {/* admin */}
-            {isAuthenticated && isAdmin && (
+            {isAdmin && (
               <Box>
                 <Typography
                   component="h3"
@@ -146,7 +137,7 @@ export const Footer = () => {
               </Box>
             )}
             {/* super admin */}
-            {isAuthenticated && isSuperAdmin && (
+            {isSuperAdmin && (
               <Box>
                 <Typography
                   component="h3"
@@ -221,7 +212,7 @@ export const Footer = () => {
               color: theme.palette.common.white,
             }}
           >
-            2025.F.00091.Prizmo
+            2025.F.00092.Prizmo
           </Typography>
         </Stack>
       </Container>

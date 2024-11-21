@@ -109,7 +109,7 @@ export const Header = () => {
   // logic
   // --------------------
   const isAdmin = checkIsAdmin(accountType, roleList);
-  const isSuperAdmin = checkIsSuperAdmin(roleList);
+  const isSuperAdmin = checkIsSuperAdmin(accountType, roleList);
 
   const handleShiftsNavClick = () => {
     setIsShiftsNavOpen((prev) => !prev);

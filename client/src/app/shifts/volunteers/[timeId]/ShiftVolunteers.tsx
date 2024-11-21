@@ -290,7 +290,7 @@ export const ShiftVolunteers = ({
   switch (checkInType) {
     case SHIFT_FUTURE: {
       isVolunteerAddAvailable =
-        (isAuthenticated && isAdmin) ||
+        isAdmin ||
         (isAuthenticated &&
           dataShiftVolunteersItem.positionList.some(
             (positionItem: IResShiftPositionCountItem) =>
@@ -304,8 +304,8 @@ export const ShiftVolunteers = ({
       break;
     }
     case SHIFT_PAST: {
-      isVolunteerAddAvailable = isAuthenticated && isAdmin;
-      isCheckInAvailable = isAuthenticated && isAdmin;
+      isVolunteerAddAvailable = isAdmin;
+      isCheckInAvailable = isAdmin;
       break;
     }
     default: {
@@ -359,7 +359,7 @@ export const ShiftVolunteers = ({
       },
     },
   ];
-  if (isAuthenticated && isAdmin) {
+  if (isAdmin) {
     columnListVolunteers.push({
       name: "Admin",
       options: {
@@ -403,9 +403,9 @@ export const ShiftVolunteers = ({
           }
           key={`${shiftboardId}-switch`}
         />,
-        // if volunteer is authenticated and is core crew
+        // if volunteer is admin
         // then display volunteer shift volunteer menu
-        isAuthenticated && isAdmin && (
+        isAdmin && (
           <MoreMenu
             Icon={<MoreHorizIcon />}
             key={`${shiftboardId}-menu`}

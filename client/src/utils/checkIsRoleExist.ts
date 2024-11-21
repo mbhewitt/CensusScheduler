@@ -42,6 +42,9 @@ export const checkIsBehavioralStandardsSigned = (
   return checkIsRoleExist(ROLE_BEHAVIORAL_STANDARDS_ID, roleList);
 };
 // check for super admin role, including when dev mode is on
-export const checkIsSuperAdmin = (roleList: IResVolunteerRoleItem[]) => {
-  return checkIsRoleExist(ROLE_SUPER_ADMIN_ID, roleList);
+export const checkIsSuperAdmin = (
+  { isEnabled }: IAccountTypePayload,
+  roleList: IResVolunteerRoleItem[]
+) => {
+  return !isEnabled && checkIsRoleExist(ROLE_SUPER_ADMIN_ID, roleList);
 };

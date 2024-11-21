@@ -45,7 +45,7 @@ export const AuthGate = ({ accountTypeToCheck, children }: IAuthGateProps) => {
 
   switch (accountTypeToCheck) {
     case ACCOUNT_TYPE_SUPER_ADMIN:
-      isAuthorized = checkIsSuperAdmin(roleList);
+      isAuthorized = checkIsSuperAdmin(accountType, roleList);
       break;
     case ACCOUNT_TYPE_ADMIN:
       isAuthorized = checkIsAdmin(accountType, roleList);
