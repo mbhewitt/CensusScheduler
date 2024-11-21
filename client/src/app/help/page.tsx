@@ -1,4 +1,4 @@
-import { Help } from "src/app/help/Help";
+import { Help } from "@/app/help/Help";
 
 export const metadata = {
   title: "Census | Help",

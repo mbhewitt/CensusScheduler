@@ -13,9 +13,9 @@ import { useSnackbar } from "notistack";
 import { io } from "socket.io-client";
 import useSWRMutation from "swr/mutation";
 
-import { DialogContainer } from "src/components/general/DialogContainer";
-import { SnackbarText } from "src/components/general/SnackbarText";
-import { fetcherTrigger } from "src/utils/fetcher";
+import { DialogContainer } from "@/components/general/DialogContainer";
+import { SnackbarText } from "@/components/general/SnackbarText";
+import { fetcherTrigger } from "@/utils/fetcher";
 
 interface IShiftVolunteersDialogRemoveProps {
   handleDialogClose: () => void;

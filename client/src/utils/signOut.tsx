@@ -2,10 +2,10 @@ import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.share
 import { OptionsObject, SnackbarKey, SnackbarMessage } from "notistack";
 import { Dispatch } from "react";
 
-import { SnackbarText } from "src/components/general/SnackbarText";
-import { DEVELOPER_MODE_RESET, SESSION_SIGN_OUT } from "src/constants";
-import { IDeveloperModeAction } from "src/state/developer-mode/reducer";
-import { ISessionAction } from "src/state/session/reducer";
+import { SnackbarText } from "@/components/general/SnackbarText";
+import { DEVELOPER_MODE_RESET, SESSION_SIGN_OUT } from "@/constants";
+import { IDeveloperModeAction } from "@/state/developer-mode/reducer";
+import { ISessionAction } from "@/state/session/reducer";
 
 export const signOut = (
   developerModeDispatch: Dispatch<IDeveloperModeAction>,

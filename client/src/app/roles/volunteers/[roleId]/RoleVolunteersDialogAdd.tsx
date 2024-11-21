@@ -15,21 +15,21 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { DialogContainer } from "src/components/general/DialogContainer";
-import { ErrorAlert } from "src/components/general/ErrorAlert";
-import { Loading } from "src/components/general/Loading";
-import { SnackbarText } from "src/components/general/SnackbarText";
-import type { IVolunteerOption } from "src/components/types";
+import { DialogContainer } from "@/components/general/DialogContainer";
+import { ErrorAlert } from "@/components/general/ErrorAlert";
+import { Loading } from "@/components/general/Loading";
+import { SnackbarText } from "@/components/general/SnackbarText";
+import type { IVolunteerOption } from "@/components/types";
 import type {
   IReqRoleVolunteerItem,
   IResRoleRowItem,
   IResRoleVolunteerItem,
-} from "src/components/types/roles";
-import type { IResVolunteerDefaultItem } from "src/components/types/volunteers";
-import { SESSION_ROLE_ITEM_ADD } from "src/constants";
-import { SessionContext } from "src/state/session/context";
-import { ensure } from "src/utils/ensure";
-import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
+} from "@/components/types/roles";
+import type { IResVolunteerDefaultItem } from "@/components/types/volunteers";
+import { SESSION_ROLE_ITEM_ADD } from "@/constants";
+import { SessionContext } from "@/state/session/context";
+import { ensure } from "@/utils/ensure";
+import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 
 interface IFormValues {
   volunteer: null | IVolunteerOption;

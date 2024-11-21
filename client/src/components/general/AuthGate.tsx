@@ -3,19 +3,19 @@
 import { useRouter } from "next/navigation";
 import { useContext, useEffect } from "react";
 
-import { Loading } from "src/components/general/Loading";
+import { Loading } from "@/components/general/Loading";
 import {
   ACCOUNT_TYPE_ADMIN,
   ACCOUNT_TYPE_AUTHENTICATED,
   ACCOUNT_TYPE_SUPER_ADMIN,
-} from "src/constants";
-import { DeveloperModeContext } from "src/state/developer-mode/context";
-import { SessionContext } from "src/state/session/context";
+} from "@/constants";
+import { DeveloperModeContext } from "@/state/developer-mode/context";
+import { SessionContext } from "@/state/session/context";
 import {
   checkIsAdmin,
   checkIsAuthenticated,
   checkIsSuperAdmin,
-} from "src/utils/checkIsRoleExist";
+} from "@/utils/checkIsRoleExist";
 
 interface IAuthGateProps {
   accountTypeToCheck: string;

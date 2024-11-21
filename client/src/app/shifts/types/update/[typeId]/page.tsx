@@ -1,6 +1,6 @@
-import { ShiftTypesUpdate } from "src/app/shifts/types/update/[typeId]/ShiftTypesUpdate";
-import { AuthGate } from "src/components/general/AuthGate";
-import { ACCOUNT_TYPE_SUPER_ADMIN } from "src/constants";
+import { ShiftTypesUpdate } from "@/app/shifts/types/update/[typeId]/ShiftTypesUpdate";
+import { AuthGate } from "@/components/general/AuthGate";
+import { ACCOUNT_TYPE_SUPER_ADMIN } from "@/constants";
 
 interface IShiftTypesUpdatePageProps {
   params: Promise<{ typeId: string }>;

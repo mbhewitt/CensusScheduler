@@ -1,12 +1,12 @@
 import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import type { IResVolunteerShiftItem } from "@/components/types/volunteers";
 import { pool } from "lib/database";
 import {
   shiftVolunteerCheckIn,
   shiftVolunteerRemove,
 } from "pages/api/general/shiftVolunteers";
-import type { IResVolunteerShiftItem } from "src/components/types/volunteers";
 
 const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {

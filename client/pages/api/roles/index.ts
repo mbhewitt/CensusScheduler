@@ -1,9 +1,9 @@
 import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
+import type { IResRoleRowItem } from "@/components/types/roles";
+import { generateId } from "@/utils/generateId";
 import { pool } from "lib/database";
-import type { IResRoleRowItem } from "src/components/types/roles";
-import { generateId } from "src/utils/generateId";
 
 const roles = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {

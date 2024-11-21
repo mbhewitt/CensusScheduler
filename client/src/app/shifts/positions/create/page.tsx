@@ -1,6 +1,6 @@
-import { ShiftPositionsCreate } from "src/app/shifts/positions/create/ShiftPositionsCreate";
-import { AuthGate } from "src/components/general/AuthGate";
-import { ACCOUNT_TYPE_SUPER_ADMIN } from "src/constants";
+import { ShiftPositionsCreate } from "@/app/shifts/positions/create/ShiftPositionsCreate";
+import { AuthGate } from "@/components/general/AuthGate";
+import { ACCOUNT_TYPE_SUPER_ADMIN } from "@/constants";
 
 export const metadata = {
   title: "Census | Create shift position",

@@ -1,9 +1,9 @@
 import { ReactNode, useContext } from "react";
 
-import { DeveloperCard } from "src/components/layout/developer-card";
-import { Footer } from "src/components/layout/Footer";
-import { Header } from "src/components/layout/Header";
-import { DeveloperModeContext } from "src/state/developer-mode/context";
+import { DeveloperCard } from "@/components/layout/developer-card";
+import { Footer } from "@/components/layout/Footer";
+import { Header } from "@/components/layout/Header";
+import { DeveloperModeContext } from "@/state/developer-mode/context";
 
 interface ILayoutProps {
   children: ReactNode;

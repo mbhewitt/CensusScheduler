@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 
-import { Hero } from "src/components/layout/Hero";
+import { Hero } from "@/components/layout/Hero";
 
 export const Reports = () => {
   const reportList = [

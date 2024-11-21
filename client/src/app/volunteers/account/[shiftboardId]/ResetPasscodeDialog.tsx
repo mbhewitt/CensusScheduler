@@ -15,13 +15,13 @@ import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 
-import { ResetPasscodeForm } from "src/app/volunteers/account/ResetPasscodeForm";
-import { DialogContainer } from "src/components/general/DialogContainer";
-import { SnackbarText } from "src/components/general/SnackbarText";
-import type { IVolunteerAccountFormValues } from "src/components/types";
-import type { IReqPasscode } from "src/components/types/volunteers";
-import { ensure } from "src/utils/ensure";
-import { fetcherTrigger } from "src/utils/fetcher";
+import { ResetPasscodeForm } from "@/app/volunteers/account/ResetPasscodeForm";
+import { DialogContainer } from "@/components/general/DialogContainer";
+import { SnackbarText } from "@/components/general/SnackbarText";
+import type { IVolunteerAccountFormValues } from "@/components/types";
+import type { IReqPasscode } from "@/components/types/volunteers";
+import { ensure } from "@/utils/ensure";
+import { fetcherTrigger } from "@/utils/fetcher";
 
 interface IResetPasscodeDialogProps {
   handleDialogClose: () => void;

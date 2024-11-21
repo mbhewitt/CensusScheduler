@@ -28,14 +28,14 @@ import {
   findList,
   IFormValues,
   ShiftPositionsForm,
-} from "src/app/shifts/positions/ShiftPositionsForm";
-import { ErrorPage } from "src/components/general/ErrorPage";
-import { Loading } from "src/components/general/Loading";
-import { SnackbarText } from "src/components/general/SnackbarText";
-import { Hero } from "src/components/layout/Hero";
-import { IReqShiftPositionItem } from "src/components/types/shifts/positions";
-import type { IResShiftPositionDefaults } from "src/components/types/shifts/positions";
-import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
+} from "@/app/shifts/positions/ShiftPositionsForm";
+import { ErrorPage } from "@/components/general/ErrorPage";
+import { Loading } from "@/components/general/Loading";
+import { SnackbarText } from "@/components/general/SnackbarText";
+import { Hero } from "@/components/layout/Hero";
+import { IReqShiftPositionItem } from "@/components/types/shifts/positions";
+import type { IResShiftPositionDefaults } from "@/components/types/shifts/positions";
+import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 
 export const ShiftPositionsCreate = () => {
   // fetching, mutation, and revalidation

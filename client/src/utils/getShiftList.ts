@@ -1,6 +1,6 @@
 import { RowDataPacket } from "mysql2";
 
-import type { IResShiftRowItem } from "src/components/types/shifts";
+import type { IResShiftRowItem } from "@/components/types/shifts";
 
 export const getShiftList = (dbShiftList: RowDataPacket[]) => {
   const shiftPositionIdMap: { [key: string]: boolean } = {};

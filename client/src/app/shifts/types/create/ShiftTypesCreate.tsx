@@ -33,16 +33,16 @@ import {
   processPositionList,
   processTimeList,
   ShiftTypesForm,
-} from "src/app/shifts/types/type/ShiftTypesForm";
-import { ErrorPage } from "src/components/general/ErrorPage";
-import { Loading } from "src/components/general/Loading";
-import { SnackbarText } from "src/components/general/SnackbarText";
-import { Hero } from "src/components/layout/Hero";
+} from "@/app/shifts/types/type/ShiftTypesForm";
+import { ErrorPage } from "@/components/general/ErrorPage";
+import { Loading } from "@/components/general/Loading";
+import { SnackbarText } from "@/components/general/SnackbarText";
+import { Hero } from "@/components/layout/Hero";
 import type {
   IReqShiftTypeItem,
   IResShiftTypeDefaults,
-} from "src/components/types/shifts/types";
-import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
+} from "@/components/types/shifts/types";
+import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 
 export const ShiftTypesCreate = () => {
   // fetching, mutation, and revalidation

@@ -1,6 +1,6 @@
-import { ShiftPositionsUpdate } from "src/app/shifts/positions/update/[positionId]/ShiftPositionsUpdate";
-import { AuthGate } from "src/components/general/AuthGate";
-import { ACCOUNT_TYPE_SUPER_ADMIN } from "src/constants";
+import { ShiftPositionsUpdate } from "@/app/shifts/positions/update/[positionId]/ShiftPositionsUpdate";
+import { AuthGate } from "@/components/general/AuthGate";
+import { ACCOUNT_TYPE_SUPER_ADMIN } from "@/constants";
 
 interface IShiftPositionsUpdatePageProps {
   params: Promise<{ positionId: string }>;

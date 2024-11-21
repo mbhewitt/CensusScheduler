@@ -1,6 +1,6 @@
-import { ShiftPositions } from "src/app/shifts/positions/ShiftPositions";
-import { AuthGate } from "src/components/general/AuthGate";
-import { ACCOUNT_TYPE_SUPER_ADMIN } from "src/constants";
+import { ShiftPositions } from "@/app/shifts/positions/ShiftPositions";
+import { AuthGate } from "@/components/general/AuthGate";
+import { ACCOUNT_TYPE_SUPER_ADMIN } from "@/constants";
 
 export const metadata = {
   title: "Census | Shift positions",

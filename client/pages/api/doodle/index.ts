@@ -1,8 +1,8 @@
 import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
+import type { IReqDoodle, IResDoodle } from "@/components/types/doodle";
 import { pool } from "lib/database";
-import type { IReqDoodle, IResDoodle } from "src/components/types/doodle";
 
 const doodle = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {

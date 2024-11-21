@@ -1,6 +1,6 @@
-import { Volunteers } from "src/app/volunteers/Volunteers";
-import { AuthGate } from "src/components/general/AuthGate";
-import { ACCOUNT_TYPE_ADMIN } from "src/constants";
+import { Volunteers } from "@/app/volunteers/Volunteers";
+import { AuthGate } from "@/components/general/AuthGate";
+import { ACCOUNT_TYPE_ADMIN } from "@/constants";
 
 export const metadata = {
   title: "Census | Volunteers",

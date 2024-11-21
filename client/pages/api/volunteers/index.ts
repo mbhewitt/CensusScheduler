@@ -1,8 +1,8 @@
 import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import type { IResVolunteerShiftCountItem } from "@/components/types/volunteers";
 import { pool } from "lib/database";
-import type { IResVolunteerShiftCountItem } from "src/components/types/volunteers";
 
 const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {

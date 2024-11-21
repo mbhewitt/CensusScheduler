@@ -1,6 +1,6 @@
-import { Account } from "src/app/volunteers/account/[shiftboardId]/Account";
-import { AuthGate } from "src/components/general/AuthGate";
-import { ACCOUNT_TYPE_AUTHENTICATED } from "src/constants";
+import { Account } from "@/app/volunteers/account/[shiftboardId]/Account";
+import { AuthGate } from "@/components/general/AuthGate";
+import { ACCOUNT_TYPE_AUTHENTICATED } from "@/constants";
 
 interface IAccountPageProps {
   params: Promise<{ shiftboardId: string }>;

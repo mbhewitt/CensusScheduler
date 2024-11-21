@@ -1,17 +1,17 @@
 import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { pool } from "lib/database";
-import {
-  shiftVolunteerCheckIn,
-  shiftVolunteerRemove,
-} from "pages/api/general/shiftVolunteers";
 import type {
   IReqShiftVolunteerItem,
   IResShiftPositionCountItem,
   IResShiftVolunteerInformation,
   IResShiftVolunteerRowItem,
-} from "src/components/types/shifts";
+} from "@/components/types/shifts";
+import { pool } from "lib/database";
+import {
+  shiftVolunteerCheckIn,
+  shiftVolunteerRemove,
+} from "pages/api/general/shiftVolunteers";
 
 const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {

@@ -1,6 +1,6 @@
-import { Roles } from "src/app/roles/Roles";
-import { AuthGate } from "src/components/general/AuthGate";
-import { ACCOUNT_TYPE_ADMIN } from "src/constants";
+import { Roles } from "@/app/roles/Roles";
+import { AuthGate } from "@/components/general/AuthGate";
+import { ACCOUNT_TYPE_ADMIN } from "@/constants";
 
 export const metadata = {
   title: "Census | Roles",

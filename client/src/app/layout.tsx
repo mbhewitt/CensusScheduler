@@ -11,11 +11,11 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import localFont from "next/font/local";
 import { SnackbarProvider } from "notistack";
 
-import SnackbarButtonClose from "src/components/general/SnackbarButtonClose";
-import { Layout } from "src/components/layout/Layout";
-import { COLOR_BURNING_MAN_BROWN, COLOR_CENSUS_PINK } from "src/constants";
-import { DeveloperModeProvider } from "src/state/developer-mode/context";
-import { SessionProvider } from "src/state/session/context";
+import SnackbarButtonClose from "@/components/general/SnackbarButtonClose";
+import { Layout } from "@/components/layout/Layout";
+import { COLOR_BURNING_MAN_BROWN, COLOR_CENSUS_PINK } from "@/constants";
+import { DeveloperModeProvider } from "@/state/developer-mode/context";
+import { SessionProvider } from "@/state/session/context";
 
 const rockwellFont = localFont({
   display: "swap",

@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 
-import { SignInAuthGate } from "src/app/sign-in/SignInAuthGate";
+import { SignInAuthGate } from "@/app/sign-in/SignInAuthGate";
 
 export const metadata = {
   title: "Census | Sign in",

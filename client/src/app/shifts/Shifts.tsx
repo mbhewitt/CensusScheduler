@@ -10,15 +10,15 @@ import { useContext, useEffect } from "react";
 import useSWR from "swr";
 import { useImmer } from "use-immer";
 
-import { DataTable } from "src/components/general/DataTable";
-import { ErrorPage } from "src/components/general/ErrorPage";
-import { Loading } from "src/components/general/Loading";
-import { Hero } from "src/components/layout/Hero";
-import type { IResShiftRowItem } from "src/components/types/shifts";
-import { DeveloperModeContext } from "src/state/developer-mode/context";
-import { fetcherGet } from "src/utils/fetcher";
-import { formatDateName, formatTime } from "src/utils/formatDateTime";
-import { getColorMap } from "src/utils/getColorMap";
+import { DataTable } from "@/components/general/DataTable";
+import { ErrorPage } from "@/components/general/ErrorPage";
+import { Loading } from "@/components/general/Loading";
+import { Hero } from "@/components/layout/Hero";
+import type { IResShiftRowItem } from "@/components/types/shifts";
+import { DeveloperModeContext } from "@/state/developer-mode/context";
+import { fetcherGet } from "@/utils/fetcher";
+import { formatDateName, formatTime } from "@/utils/formatDateTime";
+import { getColorMap } from "@/utils/getColorMap";
 
 export const Shifts = () => {
   // context

@@ -1,9 +1,9 @@
 import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import type { IResVolunteerAccount } from "@/components/types/volunteers";
+import { generateId } from "@/utils/generateId";
 import { pool } from "lib/database";
-import type { IResVolunteerAccount } from "src/components/types/volunteers";
-import { generateId } from "src/utils/generateId";
 
 const account = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {

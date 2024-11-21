@@ -1,12 +1,12 @@
 import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
-import { pool } from "lib/database";
 import type {
   IReqShiftCategoryItem,
   IResShiftCategoryItem,
-} from "src/components/types/shifts/categories";
-import { generateId } from "src/utils/generateId";
+} from "@/components/types/shifts/categories";
+import { generateId } from "@/utils/generateId";
+import { pool } from "lib/database";
 
 const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {

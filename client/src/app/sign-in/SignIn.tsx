@@ -24,17 +24,17 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { ErrorPage } from "src/components/general/ErrorPage";
-import { Loading } from "src/components/general/Loading";
-import { SnackbarText } from "src/components/general/SnackbarText";
-import { Hero } from "src/components/layout/Hero";
-import type { IVolunteerOption } from "src/components/types";
-import { IReqSignIn } from "src/components/types/sign-in";
-import type { IResVolunteerDefaultItem } from "src/components/types/volunteers";
-import { SESSION_SIGN_IN } from "src/constants";
-import { SessionContext } from "src/state/session/context";
-import { ensure } from "src/utils/ensure";
-import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
+import { ErrorPage } from "@/components/general/ErrorPage";
+import { Loading } from "@/components/general/Loading";
+import { SnackbarText } from "@/components/general/SnackbarText";
+import { Hero } from "@/components/layout/Hero";
+import type { IVolunteerOption } from "@/components/types";
+import { IReqSignIn } from "@/components/types/sign-in";
+import type { IResVolunteerDefaultItem } from "@/components/types/volunteers";
+import { SESSION_SIGN_IN } from "@/constants";
+import { SessionContext } from "@/state/session/context";
+import { ensure } from "@/utils/ensure";
+import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 
 interface IFormValues {
   volunteer: null | IVolunteerOption;

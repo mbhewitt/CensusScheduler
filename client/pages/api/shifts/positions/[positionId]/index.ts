@@ -1,11 +1,11 @@
 import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
-import { pool } from "lib/database";
 import type {
   IReqShiftPositionItem,
   IResShiftPositionItem,
-} from "src/components/types/shifts/positions";
+} from "@/components/types/shifts/positions";
+import { pool } from "lib/database";
 
 const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
   const { positionId } = req.query;

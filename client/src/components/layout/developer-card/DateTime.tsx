@@ -4,9 +4,9 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
 import { useContext } from "react";
 
-import { DEVELOPER_MODE_DATE_TIME } from "src/constants";
-import { DeveloperModeContext } from "src/state/developer-mode/context";
-import { formatDateTime } from "src/utils/formatDateTime";
+import { DEVELOPER_MODE_DATE_TIME } from "@/constants";
+import { DeveloperModeContext } from "@/state/developer-mode/context";
+import { formatDateTime } from "@/utils/formatDateTime";
 
 export const DateTime = () => {
   // context

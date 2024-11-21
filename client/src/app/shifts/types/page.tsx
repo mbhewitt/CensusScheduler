@@ -1,6 +1,6 @@
-import { ShiftTypes } from "src/app/shifts/types/ShiftTypes";
-import { AuthGate } from "src/components/general/AuthGate";
-import { ACCOUNT_TYPE_SUPER_ADMIN } from "src/constants";
+import { ShiftTypes } from "@/app/shifts/types/ShiftTypes";
+import { AuthGate } from "@/components/general/AuthGate";
+import { ACCOUNT_TYPE_SUPER_ADMIN } from "@/constants";
 
 export const metadata = {
   title: "Census | Shift types",

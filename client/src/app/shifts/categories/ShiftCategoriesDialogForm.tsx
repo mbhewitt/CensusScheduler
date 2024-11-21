@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { Control, Controller, FieldErrors } from "react-hook-form";
 
-import { IResShiftCategoryItem } from "src/components/types/shifts/categories";
+import { IResShiftCategoryItem } from "@/components/types/shifts/categories";
 
 export interface IFormValues {
   department: { name: string };

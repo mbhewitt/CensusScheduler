@@ -19,11 +19,11 @@ import { io } from "socket.io-client";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { ErrorPage } from "src/components/general/ErrorPage";
-import { SnackbarText } from "src/components/general/SnackbarText";
-import { IReqDoodle, IResDoodle } from "src/components/types/doodle";
-import { COLOR_BURNING_MAN_BROWN, COLOR_CENSUS_PINK } from "src/constants";
-import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
+import { ErrorPage } from "@/components/general/ErrorPage";
+import { SnackbarText } from "@/components/general/SnackbarText";
+import { IReqDoodle, IResDoodle } from "@/components/types/doodle";
+import { COLOR_BURNING_MAN_BROWN, COLOR_CENSUS_PINK } from "@/constants";
+import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 
 const socket = io();
 export const Doodle = () => {

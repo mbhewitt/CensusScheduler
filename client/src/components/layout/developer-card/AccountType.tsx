@@ -1,8 +1,8 @@
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useContext } from "react";
 
-import { ACCOUNT_TYPE_LIST, DEVELOPER_MODE_ACCOUNT_TYPE } from "src/constants";
-import { DeveloperModeContext } from "src/state/developer-mode/context";
+import { ACCOUNT_TYPE_LIST, DEVELOPER_MODE_ACCOUNT_TYPE } from "@/constants";
+import { DeveloperModeContext } from "@/state/developer-mode/context";
 
 export const AccountType = () => {
   // context

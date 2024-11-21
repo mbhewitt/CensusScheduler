@@ -34,20 +34,20 @@ import {
   processPositionList,
   processTimeList,
   ShiftTypesForm,
-} from "src/app/shifts/types/type/ShiftTypesForm";
-import { ShiftTypesPositionRemove } from "src/app/shifts/types/type/ShiftTypesPositionRemove";
-import { ShiftTypesTimeRemove } from "src/app/shifts/types/type/ShiftTypesTimeRemove";
-import { ErrorPage } from "src/components/general/ErrorPage";
-import { Loading } from "src/components/general/Loading";
-import { SnackbarText } from "src/components/general/SnackbarText";
-import { Hero } from "src/components/layout/Hero";
+} from "@/app/shifts/types/type/ShiftTypesForm";
+import { ShiftTypesPositionRemove } from "@/app/shifts/types/type/ShiftTypesPositionRemove";
+import { ShiftTypesTimeRemove } from "@/app/shifts/types/type/ShiftTypesTimeRemove";
+import { ErrorPage } from "@/components/general/ErrorPage";
+import { Loading } from "@/components/general/Loading";
+import { SnackbarText } from "@/components/general/SnackbarText";
+import { Hero } from "@/components/layout/Hero";
 import {
   IReqShiftTypeItem,
   IResShiftTypeCurrent,
   IResShiftTypeDefaults,
   IResShiftTypeTimeItem,
-} from "src/components/types/shifts/types";
-import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
+} from "@/components/types/shifts/types";
+import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 
 enum DialogList {
   PositionRemove,

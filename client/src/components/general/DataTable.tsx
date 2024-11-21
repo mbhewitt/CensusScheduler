@@ -6,7 +6,7 @@ import MUITable, {
   Responsive,
 } from "mui-datatables";
 
-import { COLOR_CENSUS_PINK } from "src/constants";
+import { COLOR_CENSUS_PINK } from "@/constants";
 
 interface ITableProps {
   columnList: MUIDataTableColumn[];

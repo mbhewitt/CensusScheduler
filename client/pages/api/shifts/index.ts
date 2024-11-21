@@ -1,8 +1,8 @@
 import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import { getShiftList } from "@/utils/getShiftList";
 import { pool } from "lib/database";
-import { getShiftList } from "src/utils/getShiftList";
 
 const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
   const { filter } = req.query;

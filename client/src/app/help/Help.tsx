@@ -16,7 +16,7 @@ import {
 import { useTheme } from "@mui/material/styles";
 import Image from "next/image";
 
-import { Hero } from "src/components/layout/Hero";
+import { Hero } from "@/components/layout/Hero";
 
 export const Help = () => {
   // other hooks

@@ -18,16 +18,16 @@ import { FilterType } from "mui-datatables";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
 
-import { DataTable } from "src/components/general/DataTable";
-import { ErrorPage } from "src/components/general/ErrorPage";
-import { Loading } from "src/components/general/Loading";
-import { Hero } from "src/components/layout/Hero";
-import type { IResVolunteerShiftCountItem } from "src/components/types/volunteers";
-import { fetcherGet } from "src/utils/fetcher";
+import { DataTable } from "@/components/general/DataTable";
+import { ErrorPage } from "@/components/general/ErrorPage";
+import { Loading } from "@/components/general/Loading";
+import { Hero } from "@/components/layout/Hero";
+import type { IResVolunteerShiftCountItem } from "@/components/types/volunteers";
+import { fetcherGet } from "@/utils/fetcher";
 import {
   setCellHeaderPropsCenter,
   setCellPropsCenter,
-} from "src/utils/setCellPropsCenter";
+} from "@/utils/setCellPropsCenter";
 
 const sortCompareShiftCount = (order: string) => {
   return (

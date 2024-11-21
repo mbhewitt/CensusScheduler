@@ -11,7 +11,7 @@ import {
   UseFormGetValues,
 } from "react-hook-form";
 
-import type { IVolunteerAccountFormValues } from "src/components/types";
+import type { IVolunteerAccountFormValues } from "@/components/types";
 
 interface IResetPasscodeFormProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

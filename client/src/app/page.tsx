@@ -1,4 +1,4 @@
-import { Home } from "src/app/Home";
+import { Home } from "@/app/Home";
 
 export const metadata = {
   title: "Census | Home",

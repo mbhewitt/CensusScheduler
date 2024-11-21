@@ -2,7 +2,7 @@ import { RowDataPacket } from "mysql2";
 import { Pool } from "mysql2/promise";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import type { IReqSwitchValues } from "src/components/types";
+import type { IReqSwitchValues } from "@/components/types";
 
 // patch - shift volunteer check-in
 export const shiftVolunteerCheckIn = async (

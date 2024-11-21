@@ -10,11 +10,11 @@ import {
   defaultValues,
   IFormValues,
   RolesDialogForm,
-} from "src/app/roles/RolesDialogForm";
-import { DialogContainer } from "src/components/general/DialogContainer";
-import { SnackbarText } from "src/components/general/SnackbarText";
-import type { IResRoleRowItem } from "src/components/types/roles";
-import { fetcherTrigger } from "src/utils/fetcher";
+} from "@/app/roles/RolesDialogForm";
+import { DialogContainer } from "@/components/general/DialogContainer";
+import { SnackbarText } from "@/components/general/SnackbarText";
+import type { IResRoleRowItem } from "@/components/types/roles";
+import { fetcherTrigger } from "@/utils/fetcher";
 
 interface IRolesDialogUpdateProps {
   handleDialogClose: () => void;

@@ -3,11 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useContext, useEffect } from "react";
 
-import { SignIn } from "src/app/sign-in/SignIn";
-import { Loading } from "src/components/general/Loading";
-import { DeveloperModeContext } from "src/state/developer-mode/context";
-import { SessionContext } from "src/state/session/context";
-import { checkIsAuthenticated } from "src/utils/checkIsRoleExist";
+import { SignIn } from "@/app/sign-in/SignIn";
+import { Loading } from "@/components/general/Loading";
+import { DeveloperModeContext } from "@/state/developer-mode/context";
+import { SessionContext } from "@/state/session/context";
+import { checkIsAuthenticated } from "@/utils/checkIsRoleExist";
 
 export const SignInAuthGate = () => {
   // context

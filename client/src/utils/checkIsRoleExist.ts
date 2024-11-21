@@ -1,12 +1,12 @@
-import { IResVolunteerRoleItem } from "src/components/types/volunteers";
+import { IResVolunteerRoleItem } from "@/components/types/volunteers";
 import {
   ACCOUNT_TYPE_ADMIN,
   ACCOUNT_TYPE_AUTHENTICATED,
   ROLE_ADMIN_ID,
   ROLE_BEHAVIORAL_STANDARDS_ID,
   ROLE_SUPER_ADMIN_ID,
-} from "src/constants";
-import { IAccountTypePayload } from "src/state/developer-mode/reducer";
+} from "@/constants";
+import { IAccountTypePayload } from "@/state/developer-mode/reducer";
 
 // check for authentication
 export const checkIsAuthenticated = (

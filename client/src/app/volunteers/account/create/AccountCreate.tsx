@@ -26,14 +26,14 @@ import { useContext, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 
-import { ResetPasscodeForm } from "src/app/volunteers/account/ResetPasscodeForm";
-import { SnackbarText } from "src/components/general/SnackbarText";
-import { Hero } from "src/components/layout/Hero";
-import type { IVolunteerAccountFormValues } from "src/components/types";
-import type { IResVolunteerAccount } from "src/components/types/volunteers";
-import { SESSION_SIGN_IN } from "src/constants";
-import { SessionContext } from "src/state/session/context";
-import { fetcherTrigger } from "src/utils/fetcher";
+import { ResetPasscodeForm } from "@/app/volunteers/account/ResetPasscodeForm";
+import { SnackbarText } from "@/components/general/SnackbarText";
+import { Hero } from "@/components/layout/Hero";
+import type { IVolunteerAccountFormValues } from "@/components/types";
+import type { IResVolunteerAccount } from "@/components/types/volunteers";
+import { SESSION_SIGN_IN } from "@/constants";
+import { SessionContext } from "@/state/session/context";
+import { fetcherTrigger } from "@/utils/fetcher";
 
 const defaultValues: IVolunteerAccountFormValues = {
   email: "",

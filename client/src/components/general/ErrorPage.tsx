@@ -1,7 +1,7 @@
 import { Container } from "@mui/material";
 
-import { ErrorAlert } from "src/components/general/ErrorAlert";
-import { Hero } from "src/components/layout/Hero";
+import { ErrorAlert } from "@/components/general/ErrorAlert";
+import { Hero } from "@/components/layout/Hero";
 
 export const ErrorPage = () => {
   // render

@@ -1,15 +1,15 @@
 import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { pool } from "lib/database";
 import {
   IReqShiftTypeItem,
   IResShiftTypeCurrent,
   IResShiftTypeInformation,
   IResShiftTypePositionItem,
   IResShiftTypeTimeItem,
-} from "src/components/types/shifts/types";
-import { generateId } from "src/utils/generateId";
+} from "@/components/types/shifts/types";
+import { generateId } from "@/utils/generateId";
+import { pool } from "lib/database";
 
 const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
   const { typeId } = req.query;

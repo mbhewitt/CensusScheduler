@@ -1,6 +1,6 @@
-import { RoleVolunteers } from "src/app/roles/volunteers/[roleId]/RoleVolunteers";
-import { AuthGate } from "src/components/general/AuthGate";
-import { ACCOUNT_TYPE_ADMIN } from "src/constants";
+import { RoleVolunteers } from "@/app/roles/volunteers/[roleId]/RoleVolunteers";
+import { AuthGate } from "@/components/general/AuthGate";
+import { ACCOUNT_TYPE_ADMIN } from "@/constants";
 
 interface IRoleVolunteersPageProps {
   params: Promise<{ roleId: string }>;

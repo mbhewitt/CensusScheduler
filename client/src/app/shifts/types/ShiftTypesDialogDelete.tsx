@@ -17,16 +17,16 @@ import { useSnackbar } from "notistack";
 import useSWR, { useSWRConfig } from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { DialogContainer } from "src/components/general/DialogContainer";
-import { ErrorAlert } from "src/components/general/ErrorAlert";
-import { Loading } from "src/components/general/Loading";
-import { SnackbarText } from "src/components/general/SnackbarText";
+import { DialogContainer } from "@/components/general/DialogContainer";
+import { ErrorAlert } from "@/components/general/ErrorAlert";
+import { Loading } from "@/components/general/Loading";
+import { SnackbarText } from "@/components/general/SnackbarText";
 import type {
   IResShiftTypeCurrent,
   IResShiftTypeRowItem,
-} from "src/components/types/shifts/types";
-import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
-import { formatDateName, formatTime } from "src/utils/formatDateTime";
+} from "@/components/types/shifts/types";
+import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
+import { formatDateName, formatTime } from "@/utils/formatDateTime";
 
 interface IShiftTypesDialogDeleteProps {
   handleDialogClose: () => void;
