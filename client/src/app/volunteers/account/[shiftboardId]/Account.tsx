@@ -1,3 +1,5 @@
+"use client";
+
 import {
   AccountCircle as AccountCircleIcon,
   Groups3 as Groups3Icon,

@@ -1,4 +1,6 @@
-import { AuthGate } from "src/app/shifts/types/update/[typeId]/AuthGate";
+import { ShiftTypesUpdate } from "src/app/shifts/types/update/[typeId]/ShiftTypesUpdate";
+import { AuthGate } from "src/components/general/AuthGate";
+import { ACCOUNT_TYPE_SUPER_ADMIN } from "src/constants";
 
 interface IShiftTypesUpdatePageProps {
   params: Promise<{ typeId: string }>;
@@ -14,7 +16,11 @@ const ShiftTypesUpdatePage = async ({ params }: IShiftTypesUpdatePageProps) => {
 
   // render
   // --------------------
-  return <AuthGate typeId={typeId} />;
+  return (
+    <AuthGate accountTypeToCheck={ACCOUNT_TYPE_SUPER_ADMIN}>
+      <ShiftTypesUpdate typeId={typeId} />
+    </AuthGate>
+  );
 };
 
 export default ShiftTypesUpdatePage;

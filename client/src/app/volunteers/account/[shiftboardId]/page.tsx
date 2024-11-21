@@ -1,4 +1,6 @@
-import { AuthGate } from "src/app/volunteers/account/[shiftboardId]/AuthGate";
+import { Account } from "src/app/volunteers/account/[shiftboardId]/Account";
+import { AuthGate } from "src/components/general/AuthGate";
+import { ACCOUNT_TYPE_AUTHENTICATED } from "src/constants";
 
 interface IAccountPageProps {
   params: Promise<{ shiftboardId: string }>;
@@ -14,7 +16,11 @@ const AccountPage = async ({ params }: IAccountPageProps) => {
 
   // render
   // --------------------
-  return <AuthGate shiftboardId={shiftboardId} />;
+  return (
+    <AuthGate accountTypeToCheck={ACCOUNT_TYPE_AUTHENTICATED}>
+      <Account shiftboardId={shiftboardId} />
+    </AuthGate>
+  );
 };
 
 export default AccountPage;

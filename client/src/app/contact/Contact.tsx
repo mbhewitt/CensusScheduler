@@ -91,7 +91,7 @@ export const Contact = () => {
   // side effects
   // --------------------
   useEffect(() => {
-    const reminderParam = searchParams?.get("reminder") || "";
+    const reminderParam = searchParams?.get("reminder");
 
     if (reminderParam && isAuthenticated) {
       reset({

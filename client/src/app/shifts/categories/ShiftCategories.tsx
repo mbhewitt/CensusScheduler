@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Edit as EditIcon,
   MoreHoriz as MoreHorizIcon,

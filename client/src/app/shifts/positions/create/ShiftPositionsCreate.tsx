@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Close as CloseIcon,
   GroupAdd as GroupAddIcon,

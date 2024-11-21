@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Groups3 as Groups3Icon,
   ManageAccounts as ManageAccountsIcon,

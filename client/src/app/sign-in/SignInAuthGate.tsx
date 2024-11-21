@@ -9,7 +9,7 @@ import { DeveloperModeContext } from "src/state/developer-mode/context";
 import { SessionContext } from "src/state/session/context";
 import { checkIsAuthenticated } from "src/utils/checkIsRoleExist";
 
-export const AuthGate = () => {
+export const SignInAuthGate = () => {
   // context
   // --------------------
   const {

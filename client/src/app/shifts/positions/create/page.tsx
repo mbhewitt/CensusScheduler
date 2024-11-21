@@ -1,4 +1,6 @@
-import { AuthGate } from "src/app/shifts/positions/create/AuthGate";
+import { ShiftPositionsCreate } from "src/app/shifts/positions/create/ShiftPositionsCreate";
+import { AuthGate } from "src/components/general/AuthGate";
+import { ACCOUNT_TYPE_SUPER_ADMIN } from "src/constants";
 
 export const metadata = {
   title: "Census | Create shift position",
@@ -6,7 +8,11 @@ export const metadata = {
 const ShiftPositionsCreatePage = () => {
   // render
   // --------------------
-  return <AuthGate />;
+  return (
+    <AuthGate accountTypeToCheck={ACCOUNT_TYPE_SUPER_ADMIN}>
+      <ShiftPositionsCreate />
+    </AuthGate>
+  );
 };
 
 export default ShiftPositionsCreatePage;

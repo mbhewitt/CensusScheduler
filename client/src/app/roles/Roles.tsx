@@ -1,3 +1,5 @@
+"use client";
+
 import {
   AddModerator as AddModeratorIcon,
   Edit as EditIcon,

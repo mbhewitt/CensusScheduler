@@ -1,3 +1,5 @@
+"use client";
+
 import {
   EditCalendar as EditCalendarIcon,
   EventAvailable as EventAvailableIcon,

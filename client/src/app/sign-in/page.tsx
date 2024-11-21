@@ -1,4 +1,6 @@
-import { AuthGate } from "src/app/sign-in/AuthGate";
+import { Suspense } from "react";
+
+import { SignInAuthGate } from "src/app/sign-in/SignInAuthGate";
 
 export const metadata = {
   title: "Census | Sign in",
@@ -6,7 +8,11 @@ export const metadata = {
 const SignInPage = () => {
   // render
   // --------------------
-  return <AuthGate />;
+  return (
+    <Suspense>
+      <SignInAuthGate />
+    </Suspense>
+  );
 };
 
 export default SignInPage;

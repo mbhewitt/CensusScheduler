@@ -1,4 +1,6 @@
-import { AuthGate } from "src/app/roles/volunteers/[roleId]/AuthGate";
+import { RoleVolunteers } from "src/app/roles/volunteers/[roleId]/RoleVolunteers";
+import { AuthGate } from "src/components/general/AuthGate";
+import { ACCOUNT_TYPE_ADMIN } from "src/constants";
 
 interface IRoleVolunteersPageProps {
   params: Promise<{ roleId: string }>;
@@ -14,7 +16,11 @@ const RoleVolunteersPage = async ({ params }: IRoleVolunteersPageProps) => {
 
   // render
   // --------------------
-  return <AuthGate roleId={roleId} />;
+  return (
+    <AuthGate accountTypeToCheck={ACCOUNT_TYPE_ADMIN}>
+      <RoleVolunteers roleId={roleId} />
+    </AuthGate>
+  );
 };
 
 export default RoleVolunteersPage;

@@ -17,9 +17,9 @@ import {
   TextField,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSnackbar } from "notistack";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
@@ -80,7 +80,23 @@ export const SignIn = () => {
   });
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const theme = useTheme();
+
+  // side effects
+  // --------------------
+  useEffect(() => {
+    const notAuthorizedParam = searchParams?.get("notAuthorized");
+
+    if (notAuthorizedParam) {
+      enqueueSnackbar(
+        <SnackbarText>You are not authorized to view this page</SnackbarText>,
+        {
+          variant: "error",
+        }
+      );
+    }
+  }, [enqueueSnackbar, searchParams]);
 
   // logic
   // --------------------
