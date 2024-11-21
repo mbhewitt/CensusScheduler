@@ -184,7 +184,7 @@ export const Header = () => {
               {pageListDefault.map(({ icon, label, path }) => (
                 <ListItem disablePadding key={path}>
                   <Link href={path} onClick={handleDrawerClose}>
-                    <ListItemButton>
+                    <ListItemButton selected={pathname === path}>
                       <ListItemIcon>{icon}</ListItemIcon>
                       <ListItemText primary={label} />
                     </ListItemButton>
@@ -193,14 +193,14 @@ export const Header = () => {
               ))}
             </List>
             {/* admin nav */}
-            {isAuthenticated && isAdmin && (
+            {isAdmin && (
               <>
                 <Divider />
                 <List subheader={<ListSubheader>Admin</ListSubheader>}>
                   {pageListAdmin.map(({ icon, label, path }) => (
                     <ListItem disablePadding key={path}>
                       <Link href={path} onClick={handleDrawerClose}>
-                        <ListItemButton>
+                        <ListItemButton selected={pathname === path}>
                           <ListItemIcon>{icon}</ListItemIcon>
                           <ListItemText primary={label} />
                         </ListItemButton>
@@ -211,7 +211,7 @@ export const Header = () => {
               </>
             )}
             {/* super admin nav */}
-            {isAuthenticated && isSuperAdmin && (
+            {isSuperAdmin && (
               <>
                 <Divider />
                 <List subheader={<ListSubheader>Super admin</ListSubheader>}>
@@ -233,7 +233,10 @@ export const Header = () => {
                       {pageListSuperAdmin.map(({ icon, label, path }) => (
                         <ListItem disablePadding key={path}>
                           <Link href={path} onClick={handleDrawerClose}>
-                            <ListItemButton sx={{ pl: 4 }}>
+                            <ListItemButton
+                              selected={pathname === path}
+                              sx={{ pl: 4 }}
+                            >
                               <ListItemIcon>{icon}</ListItemIcon>
                               <ListItemText primary={label} />
                             </ListItemButton>
@@ -262,7 +265,11 @@ export const Header = () => {
                     href={`/volunteers/account/${shiftboardId}`}
                     onClick={handleDrawerClose}
                   >
-                    <ListItemButton>
+                    <ListItemButton
+                      selected={
+                        pathname === `/volunteers/account/${shiftboardId}`
+                      }
+                    >
                       <ListItemIcon>
                         <ManageAccountsIcon />
                       </ListItemIcon>
@@ -291,7 +298,7 @@ export const Header = () => {
               <List>
                 <ListItem disablePadding>
                   <Link href="/sign-in" onClick={handleDrawerClose}>
-                    <ListItemButton>
+                    <ListItemButton selected={pathname === "/sign-in"}>
                       <ListItemIcon>
                         <LoginIcon />
                       </ListItemIcon>

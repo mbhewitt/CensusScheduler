@@ -153,6 +153,20 @@ const theme = createTheme({
         },
       },
     },
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          "&.Mui-selected": {
+            ".MuiListItemIcon-root": {
+              color: COLOR_CENSUS_PINK,
+            },
+            ".MuiTypography-root": {
+              color: COLOR_CENSUS_PINK,
+            },
+          },
+        },
+      },
+    },
     MuiListItemIcon: {
       styleOverrides: {
         root: ({ theme }) => ({
