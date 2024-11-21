@@ -37,7 +37,7 @@ import type { IResVolunteerShiftItem } from "@/components/types/volunteers";
 import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "@/constants";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
-import { checkIsAdmin, checkIsAuthenticated } from "@/utils/checkIsRoleExist";
+import { checkIsAdmin } from "@/utils/checkIsRoleExist";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
 import { getCheckInType } from "@/utils/getCheckInType";
@@ -66,7 +66,6 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
   } = useContext(DeveloperModeContext);
   const {
     sessionState: {
-      settings: { isAuthenticated: isAuthenticatedSession },
       user: { roleList, playaName, worldName },
     },
   } = useContext(SessionContext);
@@ -184,12 +183,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
       </>
     );
 
-  const isAuthenticated = checkIsAuthenticated(
-    accountType,
-    isAuthenticatedSession
-  );
   const isAdmin = checkIsAdmin(accountType, roleList);
-
   const handleCheckInToggle = async ({
     isCheckedIn,
     playaName,
@@ -315,8 +309,8 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
           break;
         }
         case SHIFT_PAST: {
-          isVolunteerRemoveAvailable = isAuthenticated && isAdmin;
-          isCheckInAvailable = isAuthenticated && isAdmin;
+          isVolunteerRemoveAvailable = isAdmin;
+          isCheckInAvailable = isAdmin;
           break;
         }
         default: {

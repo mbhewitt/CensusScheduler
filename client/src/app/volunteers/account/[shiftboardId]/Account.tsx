@@ -48,7 +48,7 @@ import type {
 } from "@/components/types/volunteers";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
-import { checkIsAdmin, checkIsAuthenticated } from "@/utils/checkIsRoleExist";
+import { checkIsAdmin } from "@/utils/checkIsRoleExist";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 
 interface IAccountProps {
@@ -82,7 +82,6 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
   const {
     sessionState: {
       user: { roleList: roleListSession },
-      settings: { isAuthenticated: isAuthenticatedSession },
     },
   } = useContext(SessionContext);
 
@@ -143,10 +142,6 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
   if (!data) return <Loading />;
 
   const { isCreated, playaName, roleList: roleListData, worldName } = data;
-  const isAuthenticated = checkIsAuthenticated(
-    accountType,
-    isAuthenticatedSession
-  );
   const isAdmin = checkIsAdmin(accountType, roleListSession);
 
   // form submission
@@ -198,7 +193,7 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
       />
       <Container component="main">
         {/* admin */}
-        {isAuthenticated && isAdmin && (
+        {isAdmin && (
           <Box component="section">
             <Breadcrumbs>
               <Link href="/volunteers">
@@ -391,7 +386,7 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
         </Box>
 
         {/* admin */}
-        {isAuthenticated && isAdmin && (
+        {isAdmin && (
           <Box component="section">
             <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
               Admin

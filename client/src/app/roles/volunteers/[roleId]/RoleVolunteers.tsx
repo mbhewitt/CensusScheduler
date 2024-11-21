@@ -36,6 +36,7 @@ import type {
   IResRoleVolunteerItem,
 } from "@/components/types/roles";
 import { ROLE_SUPER_ADMIN_ID } from "@/constants";
+import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
 import { checkIsSuperAdmin } from "@/utils/checkIsRoleExist";
 import { fetcherGet } from "@/utils/fetcher";
@@ -55,6 +56,9 @@ interface IRoleVolunteersProps {
 export const RoleVolunteers = ({ roleId }: IRoleVolunteersProps) => {
   // context
   // --------------------
+  const {
+    developerModeState: { accountType },
+  } = useContext(DeveloperModeContext);
   const {
     sessionState: {
       user: { roleList },
@@ -227,7 +231,7 @@ export const RoleVolunteers = ({ roleId }: IRoleVolunteersProps) => {
               </Typography>
             </Box>
             {(Number(roleId) !== ROLE_SUPER_ADMIN_ID ||
-              checkIsSuperAdmin(roleList)) && (
+              checkIsSuperAdmin(accountType, roleList)) && (
               <Button
                 onClick={() => {
                   setDialogCurrent({
