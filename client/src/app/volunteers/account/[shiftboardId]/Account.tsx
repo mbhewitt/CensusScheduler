@@ -10,7 +10,6 @@ import {
 } from "@mui/icons-material";
 import {
   Box,
-  Breadcrumbs,
   Button,
   Card,
   CardActions,
@@ -37,6 +36,7 @@ import useSWRMutation from "swr/mutation";
 import { DeveloperMode } from "@/app/volunteers/account/[shiftboardId]/DeveloperMode";
 import { ResetPasscodeDialog } from "@/app/volunteers/account/[shiftboardId]/ResetPasscodeDialog";
 import { VolunteerShifts } from "@/app/volunteers/account/[shiftboardId]/VolunteerShifts";
+import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
 import { ErrorPage } from "@/components/general/ErrorPage";
 import { Loading } from "@/components/general/Loading";
 import { SnackbarText } from "@/components/general/SnackbarText";
@@ -195,7 +195,7 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
         {/* admin */}
         {isAdmin && (
           <Box component="section">
-            <Breadcrumbs>
+            <BreadcrumbsNav>
               <Link href="/volunteers">
                 <Typography
                   sx={{
@@ -216,7 +216,7 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
                 <ManageAccountsIcon sx={{ mr: 0.5 }} />
                 Account
               </Typography>
-            </Breadcrumbs>
+            </BreadcrumbsNav>
           </Box>
         )}
 

@@ -23,6 +23,17 @@ const rockwellFont = localFont({
 });
 const theme = createTheme({
   components: {
+    MuiBreadcrumbs: {
+      styleOverrides: {
+        root: {
+          "li:last-child": {
+            p: {
+              color: COLOR_CENSUS_PINK,
+            },
+          },
+        },
+      },
+    },
     MuiButton: {
       defaultProps: {
         disableElevation: true,
@@ -85,7 +96,6 @@ const theme = createTheme({
           minHeight: "100vh",
           paddingTop: "64px",
         },
-        // breadcrumbs start
         a: {
           color: "inherit",
           textDecoration: "none",
@@ -93,7 +103,6 @@ const theme = createTheme({
             textDecoration: "underline",
           },
         },
-        // breadcrumbs end
         p: {
           a: {
             color: COLOR_CENSUS_PINK,

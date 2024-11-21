@@ -7,7 +7,6 @@ import {
 } from "@mui/icons-material";
 import {
   Box,
-  Breadcrumbs,
   Button,
   Card,
   CardActions,
@@ -37,6 +36,7 @@ import {
 } from "@/app/shifts/types/type/ShiftTypesForm";
 import { ShiftTypesPositionRemove } from "@/app/shifts/types/type/ShiftTypesPositionRemove";
 import { ShiftTypesTimeRemove } from "@/app/shifts/types/type/ShiftTypesTimeRemove";
+import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
 import { ErrorPage } from "@/components/general/ErrorPage";
 import { Loading } from "@/components/general/Loading";
 import { SnackbarText } from "@/components/general/SnackbarText";
@@ -262,7 +262,7 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
       />
       <Container component="main">
         <Box component="section">
-          <Breadcrumbs>
+          <BreadcrumbsNav>
             <Link href="/shifts/types">
               <Typography
                 sx={{
@@ -283,7 +283,7 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
               <EditCalendarIcon sx={{ mr: 0.5 }} />
               Update type
             </Typography>
-          </Breadcrumbs>
+          </BreadcrumbsNav>
         </Box>
         <Box component="section">
           <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>

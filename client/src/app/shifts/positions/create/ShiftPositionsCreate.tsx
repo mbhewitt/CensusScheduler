@@ -7,7 +7,6 @@ import {
 } from "@mui/icons-material";
 import {
   Box,
-  Breadcrumbs,
   Button,
   Card,
   CardActions,
@@ -29,6 +28,7 @@ import {
   IFormValues,
   ShiftPositionsForm,
 } from "@/app/shifts/positions/ShiftPositionsForm";
+import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
 import { ErrorPage } from "@/components/general/ErrorPage";
 import { Loading } from "@/components/general/Loading";
 import { SnackbarText } from "@/components/general/SnackbarText";
@@ -141,7 +141,7 @@ export const ShiftPositionsCreate = () => {
       />
       <Container component="main">
         <Box component="section">
-          <Breadcrumbs>
+          <BreadcrumbsNav>
             <Link href="/shifts/positions">
               <Typography
                 sx={{
@@ -162,7 +162,7 @@ export const ShiftPositionsCreate = () => {
               <GroupAddIcon sx={{ mr: 0.5 }} />
               Create position
             </Typography>
-          </Breadcrumbs>
+          </BreadcrumbsNav>
         </Box>
         <Box component="section">
           <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>

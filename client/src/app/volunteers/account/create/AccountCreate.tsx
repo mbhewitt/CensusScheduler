@@ -7,7 +7,6 @@ import {
 } from "@mui/icons-material";
 import {
   Box,
-  Breadcrumbs,
   Button,
   Card,
   CardActions,
@@ -27,6 +26,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 
 import { ResetPasscodeForm } from "@/app/volunteers/account/ResetPasscodeForm";
+import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
 import { SnackbarText } from "@/components/general/SnackbarText";
 import { Hero } from "@/components/layout/Hero";
 import type { IVolunteerAccountFormValues } from "@/components/types";
@@ -141,7 +141,7 @@ export const AccountCreate = () => {
       />
       <Container component="main">
         <Box component="section">
-          <Breadcrumbs>
+          <BreadcrumbsNav>
             <Link href="/sign-in">
               <Typography
                 sx={{
@@ -162,7 +162,7 @@ export const AccountCreate = () => {
               <PersonAddAlt1Icon sx={{ mr: 0.5 }} />
               Create account
             </Typography>
-          </Breadcrumbs>
+          </BreadcrumbsNav>
         </Box>
         <Box component="section">
           <Card
