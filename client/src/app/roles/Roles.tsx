@@ -1,3 +1,5 @@
+"use client";
+
 import {
   AddModerator as AddModeratorIcon,
   Edit as EditIcon,
@@ -22,30 +24,30 @@ import { useSnackbar } from "notistack";
 import { useState } from "react";
 import useSWR, { useSWRConfig } from "swr";
 
-import { RolesDialogCreate } from "src/app/roles/RolesDialogCreate";
-import { RolesDialogDelete } from "src/app/roles/RolesDialogDelete";
-import { RolesDialogUpdate } from "src/app/roles/RolesDialogUpdate";
-import { DataTable } from "src/components/general/DataTable";
-import { ErrorPage } from "src/components/general/ErrorPage";
-import { Loading } from "src/components/general/Loading";
-import { MoreMenu } from "src/components/general/MoreMenu";
-import { SnackbarText } from "src/components/general/SnackbarText";
-import { Hero } from "src/components/layout/Hero";
+import { RolesDialogCreate } from "@/app/roles/RolesDialogCreate";
+import { RolesDialogDelete } from "@/app/roles/RolesDialogDelete";
+import { RolesDialogUpdate } from "@/app/roles/RolesDialogUpdate";
+import { DataTable } from "@/components/general/DataTable";
+import { ErrorPage } from "@/components/general/ErrorPage";
+import { Loading } from "@/components/general/Loading";
+import { MoreMenu } from "@/components/general/MoreMenu";
+import { SnackbarText } from "@/components/general/SnackbarText";
+import { Hero } from "@/components/layout/Hero";
 import type {
   IReqRoleDisplayItem,
   IResRoleRowItem,
-} from "src/components/types/roles";
+} from "@/components/types/roles";
 import {
   ROLE_ADMIN_ID,
   ROLE_BEHAVIORAL_STANDARDS_ID,
   ROLE_CORE_CREW_ID,
   ROLE_SUPER_ADMIN_ID,
-} from "src/constants";
-import { fetcherGet } from "src/utils/fetcher";
+} from "@/constants";
+import { fetcherGet } from "@/utils/fetcher";
 import {
   setCellHeaderPropsCenter,
   setCellPropsCenter,
-} from "src/utils/setCellPropsCenter";
+} from "@/utils/setCellPropsCenter";
 
 enum DialogList {
   Create,

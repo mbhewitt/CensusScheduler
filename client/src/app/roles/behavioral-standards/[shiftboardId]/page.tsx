@@ -1,4 +1,4 @@
-import { BehavioralStandards } from "src/app/roles/behavioral-standards/[shiftboardId]/BehavioralStandards";
+import { BehavioralStandards } from "@/app/roles/behavioral-standards/[shiftboardId]/BehavioralStandards";
 
 interface IBehavioralStandardsPageProps {
   params: Promise<{ shiftboardId: string }>;

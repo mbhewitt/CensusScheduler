@@ -10,14 +10,14 @@ import {
   defaultValues,
   IFormValues,
   ShiftCategoriesDialogForm,
-} from "src/app/shifts/categories/ShiftCategoriesDialogForm";
-import { DialogContainer } from "src/components/general/DialogContainer";
-import { SnackbarText } from "src/components/general/SnackbarText";
+} from "@/app/shifts/categories/ShiftCategoriesDialogForm";
+import { DialogContainer } from "@/components/general/DialogContainer";
+import { SnackbarText } from "@/components/general/SnackbarText";
 import type {
   IReqShiftCategoryItem,
   IResShiftCategoryItem,
-} from "src/components/types/shifts/categories";
-import { fetcherTrigger } from "src/utils/fetcher";
+} from "@/components/types/shifts/categories";
+import { fetcherTrigger } from "@/utils/fetcher";
 
 interface IShiftCategoriesDialogUpdateProps {
   categoryItem: IResShiftCategoryItem;

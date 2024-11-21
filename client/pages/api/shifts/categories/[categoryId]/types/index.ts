@@ -1,8 +1,8 @@
 import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
+import type { IResShiftCategoryTypeItem } from "@/components/types/shifts/categories";
 import { pool } from "lib/database";
-import type { IResShiftCategoryTypeItem } from "src/components/types/shifts/categories";
 
 const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
   const { categoryId } = req.query;

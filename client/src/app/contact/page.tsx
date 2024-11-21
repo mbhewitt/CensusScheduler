@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 
-import { Contact } from "src/app/contact/Contact";
+import { Contact } from "@/app/contact/Contact";
 
 export const metadata = {
   title: "Census | Contact",

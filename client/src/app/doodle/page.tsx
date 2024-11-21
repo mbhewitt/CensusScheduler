@@ -1,4 +1,4 @@
-import { Doodle } from "src/app/doodle/Doodle";
+import { Doodle } from "@/app/doodle/Doodle";
 
 export const metadata = {
   title: "Census | Doodle",

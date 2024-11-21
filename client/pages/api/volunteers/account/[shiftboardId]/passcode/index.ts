@@ -1,8 +1,8 @@
 import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import type { IReqPasscode } from "@/components/types/volunteers";
 import { pool } from "lib/database";
-import type { IReqPasscode } from "src/components/types/volunteers";
 
 const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   const { shiftboardId } = req.query;

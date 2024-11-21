@@ -1,4 +1,6 @@
-import { AuthGate } from "src/app/volunteers/AuthGate";
+import { Volunteers } from "@/app/volunteers/Volunteers";
+import { AuthGate } from "@/components/general/AuthGate";
+import { ACCOUNT_TYPE_ADMIN } from "@/constants";
 
 export const metadata = {
   title: "Census | Volunteers",
@@ -6,7 +8,11 @@ export const metadata = {
 const VolunteersPage = () => {
   // render
   // --------------------
-  return <AuthGate />;
+  return (
+    <AuthGate accountTypeToCheck={ACCOUNT_TYPE_ADMIN}>
+      <Volunteers />
+    </AuthGate>
+  );
 };
 
 export default VolunteersPage;

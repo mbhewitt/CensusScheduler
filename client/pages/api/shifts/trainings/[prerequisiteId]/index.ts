@@ -1,8 +1,8 @@
 import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import { getShiftList } from "@/utils/getShiftList";
 import { pool } from "lib/database";
-import { getShiftList } from "src/utils/getShiftList";
 
 const shiftTrainings = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {

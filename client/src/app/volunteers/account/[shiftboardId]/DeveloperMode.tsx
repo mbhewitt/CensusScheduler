@@ -11,16 +11,16 @@ import {
 import { useSnackbar } from "notistack";
 import { useContext } from "react";
 
-import { SnackbarText } from "src/components/general/SnackbarText";
+import { SnackbarText } from "@/components/general/SnackbarText";
 import {
   ACCOUNT_TYPE_ADMIN,
   DEVELOPER_MODE_ACCOUNT_TYPE,
   DEVELOPER_MODE_DATE_TIME,
   DEVELOPER_MODE_DISABLE_IDLE,
   DEVELOPER_MODE_RESET,
-} from "src/constants";
-import { DeveloperModeContext } from "src/state/developer-mode/context";
-import { formatDateTime } from "src/utils/formatDateTime";
+} from "@/constants";
+import { DeveloperModeContext } from "@/state/developer-mode/context";
+import { formatDateTime } from "@/utils/formatDateTime";
 
 export const DeveloperMode = () => {
   // context

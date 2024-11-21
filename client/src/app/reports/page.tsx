@@ -1,4 +1,4 @@
-import { Reports } from "src/app/reports/Reports";
+import { Reports } from "@/app/reports/Reports";
 
 export const metadata = {
   title: "Census | Reports",

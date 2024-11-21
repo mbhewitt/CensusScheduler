@@ -43,14 +43,14 @@ import {
   UseFormWatch,
 } from "react-hook-form";
 
-import { SnackbarText } from "src/components/general/SnackbarText";
+import { SnackbarText } from "@/components/general/SnackbarText";
 import type {
   IResShiftTypeCategoryItem,
   IResShiftTypeDefaults,
-} from "src/components/types/shifts/types";
-import { COLOR_BURNING_MAN_BROWN } from "src/constants";
-import { ensure } from "src/utils/ensure";
-import { formatDateName, formatTime } from "src/utils/formatDateTime";
+} from "@/components/types/shifts/types";
+import { COLOR_BURNING_MAN_BROWN } from "@/constants";
+import { ensure } from "@/utils/ensure";
+import { formatDateName, formatTime } from "@/utils/formatDateTime";
 
 dayjs.extend(utc);
 

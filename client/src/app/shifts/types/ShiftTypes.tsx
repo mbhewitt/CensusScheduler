@@ -1,3 +1,5 @@
+"use client";
+
 import {
   EditCalendar as EditCalendarIcon,
   EventAvailable as EventAvailableIcon,
@@ -20,18 +22,18 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import useSWR from "swr";
 
-import { ShiftTypesDialogDelete } from "src/app/shifts/types/ShiftTypesDialogDelete";
-import { DataTable } from "src/components/general/DataTable";
-import { ErrorPage } from "src/components/general/ErrorPage";
-import { Loading } from "src/components/general/Loading";
-import { MoreMenu } from "src/components/general/MoreMenu";
-import { Hero } from "src/components/layout/Hero";
-import type { IResShiftTypeRowItem } from "src/components/types/shifts/types";
-import { fetcherGet } from "src/utils/fetcher";
+import { ShiftTypesDialogDelete } from "@/app/shifts/types/ShiftTypesDialogDelete";
+import { DataTable } from "@/components/general/DataTable";
+import { ErrorPage } from "@/components/general/ErrorPage";
+import { Loading } from "@/components/general/Loading";
+import { MoreMenu } from "@/components/general/MoreMenu";
+import { Hero } from "@/components/layout/Hero";
+import type { IResShiftTypeRowItem } from "@/components/types/shifts/types";
+import { fetcherGet } from "@/utils/fetcher";
 import {
   setCellHeaderPropsCenter,
   setCellPropsCenter,
-} from "src/utils/setCellPropsCenter";
+} from "@/utils/setCellPropsCenter";
 
 enum DialogList {
   Delete,

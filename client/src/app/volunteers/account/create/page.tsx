@@ -1,4 +1,6 @@
-import { AccountCreate } from "src/app/volunteers/account/create/AccountCreate";
+import { AccountCreate } from "@/app/volunteers/account/create/AccountCreate";
+import { AuthGate } from "@/components/general/AuthGate";
+import { ACCOUNT_TYPE_ADMIN } from "@/constants";
 
 export const metadata = {
   title: "Census | Create account",
@@ -6,7 +8,11 @@ export const metadata = {
 const AccountCreatePage = () => {
   // render
   // --------------------
-  return <AccountCreate />;
+  return (
+    <AuthGate accountTypeToCheck={ACCOUNT_TYPE_ADMIN}>
+      <AccountCreate />
+    </AuthGate>
+  );
 };
 
 export default AccountCreatePage;

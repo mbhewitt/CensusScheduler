@@ -1,11 +1,11 @@
-import type { IResVolunteerAccount } from "src/components/types/volunteers";
+import type { IResVolunteerAccount } from "@/components/types/volunteers";
 import {
   SESSION_ROLE_ITEM_ADD,
   SESSION_ROLE_ITEM_REMOVE,
   SESSION_SIGN_IN,
   SESSION_SIGN_OUT,
   SESSION_STATE_STORAGE,
-} from "src/constants";
+} from "@/constants";
 
 interface IRoleItemPayload {
   id: number;

@@ -24,23 +24,23 @@ import { useContext, useState } from "react";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { ErrorPage } from "src/components/general/ErrorPage";
-import { Loading } from "src/components/general/Loading";
-import { SnackbarText } from "src/components/general/SnackbarText";
-import { Hero } from "src/components/layout/Hero";
+import { ErrorPage } from "@/components/general/ErrorPage";
+import { Loading } from "@/components/general/Loading";
+import { SnackbarText } from "@/components/general/SnackbarText";
+import { Hero } from "@/components/layout/Hero";
 import type {
   IReqRoleBehavioralStandardsItem,
   IResRoleRowItem,
-} from "src/components/types/roles";
+} from "@/components/types/roles";
 import {
   ROLE_BEHAVIORAL_STANDARDS_ID,
   SESSION_ROLE_ITEM_ADD,
-} from "src/constants";
-import { DeveloperModeContext } from "src/state/developer-mode/context";
-import { SessionContext } from "src/state/session/context";
-import { ensure } from "src/utils/ensure";
-import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
-import { signOut } from "src/utils/signOut";
+} from "@/constants";
+import { DeveloperModeContext } from "@/state/developer-mode/context";
+import { SessionContext } from "@/state/session/context";
+import { ensure } from "@/utils/ensure";
+import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
+import { signOut } from "@/utils/signOut";
 
 interface IBehavioralStandardsProps {
   shiftboardId: string;

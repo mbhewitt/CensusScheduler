@@ -1,3 +1,5 @@
+"use client";
+
 import {
   AccountCircle as AccountCircleIcon,
   Groups3 as Groups3Icon,
@@ -32,22 +34,22 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { DeveloperMode } from "src/app/volunteers/account/[shiftboardId]/DeveloperMode";
-import { ResetPasscodeDialog } from "src/app/volunteers/account/[shiftboardId]/ResetPasscodeDialog";
-import { VolunteerShifts } from "src/app/volunteers/account/[shiftboardId]/VolunteerShifts";
-import { ErrorPage } from "src/components/general/ErrorPage";
-import { Loading } from "src/components/general/Loading";
-import { SnackbarText } from "src/components/general/SnackbarText";
-import { Hero } from "src/components/layout/Hero";
+import { DeveloperMode } from "@/app/volunteers/account/[shiftboardId]/DeveloperMode";
+import { ResetPasscodeDialog } from "@/app/volunteers/account/[shiftboardId]/ResetPasscodeDialog";
+import { VolunteerShifts } from "@/app/volunteers/account/[shiftboardId]/VolunteerShifts";
+import { ErrorPage } from "@/components/general/ErrorPage";
+import { Loading } from "@/components/general/Loading";
+import { SnackbarText } from "@/components/general/SnackbarText";
+import { Hero } from "@/components/layout/Hero";
 import type {
   IReqVolunteerAccount,
   IResVolunteerAccount,
   IResVolunteerRoleItem,
-} from "src/components/types/volunteers";
-import { DeveloperModeContext } from "src/state/developer-mode/context";
-import { SessionContext } from "src/state/session/context";
-import { checkIsAdmin, checkIsAuthenticated } from "src/utils/checkIsRoleExist";
-import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
+} from "@/components/types/volunteers";
+import { DeveloperModeContext } from "@/state/developer-mode/context";
+import { SessionContext } from "@/state/session/context";
+import { checkIsAdmin, checkIsAuthenticated } from "@/utils/checkIsRoleExist";
+import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 
 interface IAccountProps {
   shiftboardId: string;

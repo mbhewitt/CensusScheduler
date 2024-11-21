@@ -1,4 +1,6 @@
-import { AuthGate } from "src/app/shifts/positions/update/[positionId]/AuthGate";
+import { ShiftPositionsUpdate } from "@/app/shifts/positions/update/[positionId]/ShiftPositionsUpdate";
+import { AuthGate } from "@/components/general/AuthGate";
+import { ACCOUNT_TYPE_SUPER_ADMIN } from "@/constants";
 
 interface IShiftPositionsUpdatePageProps {
   params: Promise<{ positionId: string }>;
@@ -16,7 +18,11 @@ const ShiftPositionsUpdatePage = async ({
 
   // render
   // --------------------
-  return <AuthGate positionId={positionId} />;
+  return (
+    <AuthGate accountTypeToCheck={ACCOUNT_TYPE_SUPER_ADMIN}>
+      <ShiftPositionsUpdate positionId={positionId} />
+    </AuthGate>
+  );
 };
 
 export default ShiftPositionsUpdatePage;

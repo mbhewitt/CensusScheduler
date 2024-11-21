@@ -18,14 +18,14 @@ import {
   pageListAdmin,
   pageListDefault,
   pageListSuperAdmin,
-} from "src/components/layout/pageList";
-import { DeveloperModeContext } from "src/state/developer-mode/context";
-import { SessionContext } from "src/state/session/context";
+} from "@/components/layout/pageList";
+import { DeveloperModeContext } from "@/state/developer-mode/context";
+import { SessionContext } from "@/state/session/context";
 import {
   checkIsAdmin,
   checkIsAuthenticated,
   checkIsSuperAdmin,
-} from "src/utils/checkIsRoleExist";
+} from "@/utils/checkIsRoleExist";
 
 export const Footer = () => {
   // context
@@ -221,7 +221,7 @@ export const Footer = () => {
               color: theme.palette.common.white,
             }}
           >
-            2025.F.00089.Prizmo
+            2025.F.00090.Prizmo
           </Typography>
         </Stack>
       </Container>

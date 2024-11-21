@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Edit as EditIcon,
   MoreHoriz as MoreHorizIcon,
@@ -19,21 +21,21 @@ import {
 import { useState } from "react";
 import useSWR from "swr";
 
-import { ShiftCategoriesDialogCreate } from "src/app/shifts/categories/ShiftCategoriesDialogCreate";
-import { ShiftCategoriesDialogDelete } from "src/app/shifts/categories/ShiftCategoriesDialogDelete";
-import { ShiftCategoriesDialogUpdate } from "src/app/shifts/categories/ShiftCategoriesDialogUpdate";
-import { DataTable } from "src/components/general/DataTable";
-import { ErrorPage } from "src/components/general/ErrorPage";
-import { Loading } from "src/components/general/Loading";
-import { MoreMenu } from "src/components/general/MoreMenu";
-import { Hero } from "src/components/layout/Hero";
-import type { IResShiftCategoryItem } from "src/components/types/shifts/categories";
-import { fetcherGet } from "src/utils/fetcher";
-import { getColorMap } from "src/utils/getColorMap";
+import { ShiftCategoriesDialogCreate } from "@/app/shifts/categories/ShiftCategoriesDialogCreate";
+import { ShiftCategoriesDialogDelete } from "@/app/shifts/categories/ShiftCategoriesDialogDelete";
+import { ShiftCategoriesDialogUpdate } from "@/app/shifts/categories/ShiftCategoriesDialogUpdate";
+import { DataTable } from "@/components/general/DataTable";
+import { ErrorPage } from "@/components/general/ErrorPage";
+import { Loading } from "@/components/general/Loading";
+import { MoreMenu } from "@/components/general/MoreMenu";
+import { Hero } from "@/components/layout/Hero";
+import type { IResShiftCategoryItem } from "@/components/types/shifts/categories";
+import { fetcherGet } from "@/utils/fetcher";
+import { getColorMap } from "@/utils/getColorMap";
 import {
   setCellHeaderPropsCenter,
   setCellPropsCenter,
-} from "src/utils/setCellPropsCenter";
+} from "@/utils/setCellPropsCenter";
 
 enum DialogList {
   Create,

@@ -7,7 +7,7 @@ import {
   SHIFT_DURING,
   SHIFT_FUTURE,
   SHIFT_PAST,
-} from "src/constants";
+} from "@/constants";
 
 interface IGetCheckInType {
   dateTime: Dayjs;

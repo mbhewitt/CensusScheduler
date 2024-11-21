@@ -1,8 +1,8 @@
 import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
+import type { IReqRoleItem, IResRoleRowItem } from "@/components/types/roles";
 import { pool } from "lib/database";
-import type { IReqRoleItem, IResRoleRowItem } from "src/components/types/roles";
 
 const roles = async (req: NextApiRequest, res: NextApiResponse) => {
   const { roleId } = req.query;

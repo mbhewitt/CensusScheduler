@@ -15,9 +15,9 @@ import {
 } from "@mui/material";
 import { Control, Controller, FieldErrors } from "react-hook-form";
 
-import type { IResShiftPositionDefaults } from "src/components/types/shifts/positions";
-import { COLOR_BURNING_MAN_BROWN } from "src/constants";
-import { ensure } from "src/utils/ensure";
+import type { IResShiftPositionDefaults } from "@/components/types/shifts/positions";
+import { COLOR_BURNING_MAN_BROWN } from "@/constants";
+import { ensure } from "@/utils/ensure";
 
 export interface IFormValues {
   critical: boolean;

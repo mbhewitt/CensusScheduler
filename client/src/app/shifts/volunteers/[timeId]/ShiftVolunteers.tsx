@@ -33,31 +33,31 @@ import { io } from "socket.io-client";
 import useSWR, { KeyedMutator } from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { ShiftVolunteersDialogAdd } from "src/app/shifts/volunteers/[timeId]/ShiftVolunteersDialogAdd";
-import { ShiftVolunteersDialogRemove } from "src/app/shifts/volunteers/[timeId]/ShiftVolunteersDialogRemove";
-import { DataTable } from "src/components/general/DataTable";
-import { ErrorPage } from "src/components/general/ErrorPage";
-import { Loading } from "src/components/general/Loading";
-import { MoreMenu } from "src/components/general/MoreMenu";
-import { SnackbarText } from "src/components/general/SnackbarText";
-import { Hero } from "src/components/layout/Hero";
-import type { ISwitchValues } from "src/components/types";
+import { ShiftVolunteersDialogAdd } from "@/app/shifts/volunteers/[timeId]/ShiftVolunteersDialogAdd";
+import { ShiftVolunteersDialogRemove } from "@/app/shifts/volunteers/[timeId]/ShiftVolunteersDialogRemove";
+import { DataTable } from "@/components/general/DataTable";
+import { ErrorPage } from "@/components/general/ErrorPage";
+import { Loading } from "@/components/general/Loading";
+import { MoreMenu } from "@/components/general/MoreMenu";
+import { SnackbarText } from "@/components/general/SnackbarText";
+import { Hero } from "@/components/layout/Hero";
+import type { ISwitchValues } from "@/components/types";
 import type {
   IResShiftPositionCountItem,
   IResShiftVolunteerInformation,
   IResShiftVolunteerRowItem,
-} from "src/components/types/shifts";
-import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
-import { DeveloperModeContext } from "src/state/developer-mode/context";
-import { SessionContext } from "src/state/session/context";
-import { checkIsAdmin, checkIsAuthenticated } from "src/utils/checkIsRoleExist";
-import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
-import { formatDateName, formatTime } from "src/utils/formatDateTime";
-import { getCheckInType } from "src/utils/getCheckInType";
+} from "@/components/types/shifts";
+import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "@/constants";
+import { DeveloperModeContext } from "@/state/developer-mode/context";
+import { SessionContext } from "@/state/session/context";
+import { checkIsAdmin, checkIsAuthenticated } from "@/utils/checkIsRoleExist";
+import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
+import { formatDateName, formatTime } from "@/utils/formatDateTime";
+import { getCheckInType } from "@/utils/getCheckInType";
 import {
   setCellHeaderPropsCenter,
   setCellPropsCenter,
-} from "src/utils/setCellPropsCenter";
+} from "@/utils/setCellPropsCenter";
 
 enum DialogList {
   Add,

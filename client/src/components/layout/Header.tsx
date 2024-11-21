@@ -35,17 +35,17 @@ import {
   pageListAdmin,
   pageListDefault,
   pageListSuperAdmin,
-} from "src/components/layout/pageList";
-import { IDLE_MINUTES } from "src/constants";
-import { DeveloperModeContext } from "src/state/developer-mode/context";
-import { SessionContext } from "src/state/session/context";
+} from "@/components/layout/pageList";
+import { IDLE_MINUTES } from "@/constants";
+import { DeveloperModeContext } from "@/state/developer-mode/context";
+import { SessionContext } from "@/state/session/context";
 import {
   checkIsAdmin,
   checkIsAuthenticated,
   checkIsBehavioralStandardsSigned,
   checkIsSuperAdmin,
-} from "src/utils/checkIsRoleExist";
-import { signOut } from "src/utils/signOut";
+} from "@/utils/checkIsRoleExist";
+import { signOut } from "@/utils/signOut";
 
 export const Header = () => {
   // context

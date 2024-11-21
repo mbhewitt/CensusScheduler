@@ -1,4 +1,4 @@
-import { Shifts } from "src/app/shifts/Shifts";
+import { Shifts } from "@/app/shifts/Shifts";
 
 export const metadata = {
   title: "Census | Shifts",

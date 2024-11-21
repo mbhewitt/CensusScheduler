@@ -16,12 +16,12 @@ import { useSnackbar } from "notistack";
 import { UseFieldArrayRemove } from "react-hook-form";
 import useSWR from "swr";
 
-import { DialogContainer } from "src/components/general/DialogContainer";
-import { ErrorAlert } from "src/components/general/ErrorAlert";
-import { Loading } from "src/components/general/Loading";
-import { SnackbarText } from "src/components/general/SnackbarText";
-import type { IResShiftTypePositionTimeItem } from "src/components/types/shifts/types";
-import { fetcherGet } from "src/utils/fetcher";
+import { DialogContainer } from "@/components/general/DialogContainer";
+import { ErrorAlert } from "@/components/general/ErrorAlert";
+import { Loading } from "@/components/general/Loading";
+import { SnackbarText } from "@/components/general/SnackbarText";
+import type { IResShiftTypePositionTimeItem } from "@/components/types/shifts/types";
+import { fetcherGet } from "@/utils/fetcher";
 
 interface IPositionItem {
   id: number;

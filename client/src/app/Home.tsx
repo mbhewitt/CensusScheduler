@@ -3,7 +3,7 @@
 import { Box, Card, CardContent, Container, Typography } from "@mui/material";
 import Link from "next/link";
 
-import { Hero } from "src/components/layout/Hero";
+import { Hero } from "@/components/layout/Hero";
 
 export const Home = () => {
   // render

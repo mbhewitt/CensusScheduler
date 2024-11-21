@@ -7,12 +7,12 @@ import {
   useReducer,
 } from "react";
 
-import { SESSION_STATE_STORAGE } from "src/constants";
+import { SESSION_STATE_STORAGE } from "@/constants";
 import {
   ISessionAction,
   ISessionState,
   sessionReducer,
-} from "src/state/session/reducer";
+} from "@/state/session/reducer";
 
 interface ISessionProviderValue {
   sessionState: ISessionState;

@@ -2,9 +2,9 @@ import { Card, Stack } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useContext } from "react";
 
-import { AccountType } from "src/components/layout/developer-card/AccountType";
-import { DateTime } from "src/components/layout/developer-card/DateTime";
-import { DeveloperModeContext } from "src/state/developer-mode/context";
+import { AccountType } from "@/components/layout/developer-card/AccountType";
+import { DateTime } from "@/components/layout/developer-card/DateTime";
+import { DeveloperModeContext } from "@/state/developer-mode/context";
 
 export const DeveloperCard = () => {
   // context

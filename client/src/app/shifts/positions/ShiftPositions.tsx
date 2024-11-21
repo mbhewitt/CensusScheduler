@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Edit as EditIcon,
   GroupAdd as GroupAddIcon,
@@ -20,18 +22,18 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import useSWR from "swr";
 
-import { ShiftPositionsDialogDelete } from "src/app/shifts/positions/ShiftPositionsDialogDelete";
-import { DataTable } from "src/components/general/DataTable";
-import { ErrorPage } from "src/components/general/ErrorPage";
-import { Loading } from "src/components/general/Loading";
-import { MoreMenu } from "src/components/general/MoreMenu";
-import { Hero } from "src/components/layout/Hero";
-import type { IResShiftPositionRowItem } from "src/components/types/shifts/positions";
-import { fetcherGet } from "src/utils/fetcher";
+import { ShiftPositionsDialogDelete } from "@/app/shifts/positions/ShiftPositionsDialogDelete";
+import { DataTable } from "@/components/general/DataTable";
+import { ErrorPage } from "@/components/general/ErrorPage";
+import { Loading } from "@/components/general/Loading";
+import { MoreMenu } from "@/components/general/MoreMenu";
+import { Hero } from "@/components/layout/Hero";
+import type { IResShiftPositionRowItem } from "@/components/types/shifts/positions";
+import { fetcherGet } from "@/utils/fetcher";
 import {
   setCellHeaderPropsCenter,
   setCellPropsCenter,
-} from "src/utils/setCellPropsCenter";
+} from "@/utils/setCellPropsCenter";
 
 enum DialogList {
   Create,

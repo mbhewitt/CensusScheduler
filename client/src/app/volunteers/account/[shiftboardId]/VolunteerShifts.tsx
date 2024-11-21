@@ -26,26 +26,26 @@ import { io } from "socket.io-client";
 import useSWR, { KeyedMutator } from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { VolunteerShiftsDialogRemove } from "src/app/volunteers/account/[shiftboardId]/VolunteerShiftsDialogRemove";
-import { DataTable } from "src/components/general/DataTable";
-import { ErrorAlert } from "src/components/general/ErrorAlert";
-import { Loading } from "src/components/general/Loading";
-import { MoreMenu } from "src/components/general/MoreMenu";
-import { SnackbarText } from "src/components/general/SnackbarText";
-import type { IReqSwitchValues, ISwitchValues } from "src/components/types";
-import type { IResVolunteerShiftItem } from "src/components/types/volunteers";
-import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "src/constants";
-import { DeveloperModeContext } from "src/state/developer-mode/context";
-import { SessionContext } from "src/state/session/context";
-import { checkIsAdmin, checkIsAuthenticated } from "src/utils/checkIsRoleExist";
-import { fetcherGet, fetcherTrigger } from "src/utils/fetcher";
-import { formatDateName, formatTime } from "src/utils/formatDateTime";
-import { getCheckInType } from "src/utils/getCheckInType";
-import { getColorMap } from "src/utils/getColorMap";
+import { VolunteerShiftsDialogRemove } from "@/app/volunteers/account/[shiftboardId]/VolunteerShiftsDialogRemove";
+import { DataTable } from "@/components/general/DataTable";
+import { ErrorAlert } from "@/components/general/ErrorAlert";
+import { Loading } from "@/components/general/Loading";
+import { MoreMenu } from "@/components/general/MoreMenu";
+import { SnackbarText } from "@/components/general/SnackbarText";
+import type { IReqSwitchValues, ISwitchValues } from "@/components/types";
+import type { IResVolunteerShiftItem } from "@/components/types/volunteers";
+import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "@/constants";
+import { DeveloperModeContext } from "@/state/developer-mode/context";
+import { SessionContext } from "@/state/session/context";
+import { checkIsAdmin, checkIsAuthenticated } from "@/utils/checkIsRoleExist";
+import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
+import { formatDateName, formatTime } from "@/utils/formatDateTime";
+import { getCheckInType } from "@/utils/getCheckInType";
+import { getColorMap } from "@/utils/getColorMap";
 import {
   setCellHeaderPropsCenter,
   setCellPropsCenter,
-} from "src/utils/setCellPropsCenter";
+} from "@/utils/setCellPropsCenter";
 
 enum DialogList {
   Remove,

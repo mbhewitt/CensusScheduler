@@ -29,6 +29,9 @@ export const ACCOUNT_TYPE_LIST = [
   { label: "Unauthenticated", value: ACCOUNT_TYPE_UNAUTHENTICATED },
 ];
 
+// auth gate - account type
+export const ACCOUNT_TYPE_SUPER_ADMIN = "accountTypeSuperAdmin";
+
 // action types - session
 export const SESSION_BEHAVIORAL_STANDARDS = "sessionBehavioralStandards";
 export const SESSION_ROLE_ITEM_ADD = "sessionRoleItemAdd";

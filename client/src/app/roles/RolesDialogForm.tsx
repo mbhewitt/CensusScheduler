@@ -1,7 +1,7 @@
 import { TextField } from "@mui/material";
 import { Control, Controller, FieldErrors } from "react-hook-form";
 
-import { IResRoleRowItem } from "src/components/types/roles";
+import { IResRoleRowItem } from "@/components/types/roles";
 
 export interface IFormValues {
   name: string;

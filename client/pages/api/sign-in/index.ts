@@ -1,9 +1,9 @@
 import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import { IReqSignIn } from "@/components/types/sign-in";
+import type { IResVolunteerAccount } from "@/components/types/volunteers";
 import { pool } from "lib/database";
-import { IReqSignIn } from "src/components/types/sign-in";
-import type { IResVolunteerAccount } from "src/components/types/volunteers";
 
 const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {

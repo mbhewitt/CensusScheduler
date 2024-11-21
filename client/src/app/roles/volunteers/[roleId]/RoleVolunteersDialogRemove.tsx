@@ -13,16 +13,16 @@ import { useSnackbar } from "notistack";
 import { useContext } from "react";
 import useSWRMutation from "swr/mutation";
 
-import { DialogContainer } from "src/components/general/DialogContainer";
-import { SnackbarText } from "src/components/general/SnackbarText";
+import { DialogContainer } from "@/components/general/DialogContainer";
+import { SnackbarText } from "@/components/general/SnackbarText";
 import type {
   IReqRoleVolunteerItem,
   IResRoleRowItem,
   IResRoleVolunteerItem,
-} from "src/components/types/roles";
-import { SESSION_ROLE_ITEM_REMOVE } from "src/constants";
-import { SessionContext } from "src/state/session/context";
-import { fetcherTrigger } from "src/utils/fetcher";
+} from "@/components/types/roles";
+import { SESSION_ROLE_ITEM_REMOVE } from "@/constants";
+import { SessionContext } from "@/state/session/context";
+import { fetcherTrigger } from "@/utils/fetcher";
 
 interface IRoleVolunteersDialogRemoveProps {
   handleDialogClose: () => void;

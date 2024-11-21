@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
+import { IReqContact } from "@/components/types/contact";
 import { pool } from "lib/database";
-import { IReqContact } from "src/components/types/contact";
 
 const contact = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {

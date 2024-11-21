@@ -1,4 +1,6 @@
-import { AuthGate } from "src/app/roles/AuthGate";
+import { Roles } from "@/app/roles/Roles";
+import { AuthGate } from "@/components/general/AuthGate";
+import { ACCOUNT_TYPE_ADMIN } from "@/constants";
 
 export const metadata = {
   title: "Census | Roles",
@@ -6,7 +8,11 @@ export const metadata = {
 const RolesPage = () => {
   // render
   // --------------------
-  return <AuthGate />;
+  return (
+    <AuthGate accountTypeToCheck={ACCOUNT_TYPE_ADMIN}>
+      <Roles />
+    </AuthGate>
+  );
 };
 
 export default RolesPage;

@@ -4,8 +4,8 @@ import {
   DEVELOPER_MODE_DISABLE_IDLE,
   DEVELOPER_MODE_RESET,
   DEVELOPER_MODE_STATE_STORAGE,
-} from "src/constants";
-import { formatDateTime } from "src/utils/formatDateTime";
+} from "@/constants";
+import { formatDateTime } from "@/utils/formatDateTime";
 
 export interface IAccountTypePayload {
   isEnabled: boolean;

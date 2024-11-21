@@ -1,12 +1,12 @@
 import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { pool } from "lib/database";
 import type {
   IResVolunteerDefaultItem,
   IResVolunteerRoleItem,
-} from "src/components/types/volunteers";
-import { ROLE_CORE_CREW_ID } from "src/constants";
+} from "@/components/types/volunteers";
+import { ROLE_CORE_CREW_ID } from "@/constants";
+import { pool } from "lib/database";
 
 const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {

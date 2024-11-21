@@ -1,12 +1,12 @@
 import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { pool } from "lib/database";
 import {
   IResShiftPositionPrerequisiteItem,
   IResShiftPositionRoleItem,
   IResShiftPositionRowItem,
-} from "src/components/types/shifts/positions";
+} from "@/components/types/shifts/positions";
+import { pool } from "lib/database";
 
 const shiftPositionDefaults = async (
   req: NextApiRequest,

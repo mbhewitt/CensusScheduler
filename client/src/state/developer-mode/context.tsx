@@ -7,13 +7,13 @@ import {
   useReducer,
 } from "react";
 
-import { DEVELOPER_MODE_STATE_STORAGE } from "src/constants";
+import { DEVELOPER_MODE_STATE_STORAGE } from "@/constants";
 import {
   developerModeReducer,
   IDeveloperModeAction,
   IDeveloperModeState,
-} from "src/state/developer-mode/reducer";
-import { formatDateTime } from "src/utils/formatDateTime";
+} from "@/state/developer-mode/reducer";
+import { formatDateTime } from "@/utils/formatDateTime";
 
 interface IDeveloperModeProviderValue {
   developerModeState: IDeveloperModeState;

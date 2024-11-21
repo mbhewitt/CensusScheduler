@@ -1,9 +1,9 @@
 import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
+import type { IReqRoleBehavioralStandardsItem } from "@/components/types/roles";
+import { ROLE_BEHAVIORAL_STANDARDS_ID } from "@/constants";
 import { pool } from "lib/database";
-import type { IReqRoleBehavioralStandardsItem } from "src/components/types/roles";
-import { ROLE_BEHAVIORAL_STANDARDS_ID } from "src/constants";
 
 const contact = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {

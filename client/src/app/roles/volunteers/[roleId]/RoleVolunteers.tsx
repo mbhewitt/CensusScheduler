@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Groups3 as Groups3Icon,
   ManageAccounts as ManageAccountsIcon,
@@ -22,25 +24,25 @@ import Link from "next/link";
 import { useContext, useState } from "react";
 import useSWR from "swr";
 
-import { RoleVolunteersDialogAdd } from "src/app/roles/volunteers/[roleId]/RoleVolunteersDialogAdd";
-import { RoleVolunteersDialogRemove } from "src/app/roles/volunteers/[roleId]/RoleVolunteersDialogRemove";
-import { DataTable } from "src/components/general/DataTable";
-import { ErrorPage } from "src/components/general/ErrorPage";
-import { Loading } from "src/components/general/Loading";
-import { MoreMenu } from "src/components/general/MoreMenu";
-import { Hero } from "src/components/layout/Hero";
+import { RoleVolunteersDialogAdd } from "@/app/roles/volunteers/[roleId]/RoleVolunteersDialogAdd";
+import { RoleVolunteersDialogRemove } from "@/app/roles/volunteers/[roleId]/RoleVolunteersDialogRemove";
+import { DataTable } from "@/components/general/DataTable";
+import { ErrorPage } from "@/components/general/ErrorPage";
+import { Loading } from "@/components/general/Loading";
+import { MoreMenu } from "@/components/general/MoreMenu";
+import { Hero } from "@/components/layout/Hero";
 import type {
   IResRoleRowItem,
   IResRoleVolunteerItem,
-} from "src/components/types/roles";
-import { ROLE_SUPER_ADMIN_ID } from "src/constants";
-import { SessionContext } from "src/state/session/context";
-import { checkIsSuperAdmin } from "src/utils/checkIsRoleExist";
-import { fetcherGet } from "src/utils/fetcher";
+} from "@/components/types/roles";
+import { ROLE_SUPER_ADMIN_ID } from "@/constants";
+import { SessionContext } from "@/state/session/context";
+import { checkIsSuperAdmin } from "@/utils/checkIsRoleExist";
+import { fetcherGet } from "@/utils/fetcher";
 import {
   setCellHeaderPropsCenter,
   setCellPropsCenter,
-} from "src/utils/setCellPropsCenter";
+} from "@/utils/setCellPropsCenter";
 
 enum DialogList {
   Add,
