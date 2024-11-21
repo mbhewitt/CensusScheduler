@@ -10,7 +10,6 @@ import {
 } from "@mui/icons-material";
 import {
   Box,
-  Breadcrumbs,
   Button,
   Container,
   ListItemIcon,
@@ -26,6 +25,7 @@ import useSWR from "swr";
 
 import { RoleVolunteersDialogAdd } from "@/app/roles/volunteers/[roleId]/RoleVolunteersDialogAdd";
 import { RoleVolunteersDialogRemove } from "@/app/roles/volunteers/[roleId]/RoleVolunteersDialogRemove";
+import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
 import { DataTable } from "@/components/general/DataTable";
 import { ErrorPage } from "@/components/general/ErrorPage";
 import { Loading } from "@/components/general/Loading";
@@ -195,7 +195,7 @@ export const RoleVolunteers = ({ roleId }: IRoleVolunteersProps) => {
       />
       <Container component="main" sx={{ flex: 1 }}>
         <Box component="section">
-          <Breadcrumbs>
+          <BreadcrumbsNav>
             <Link href="/roles">
               <Typography
                 sx={{
@@ -216,7 +216,7 @@ export const RoleVolunteers = ({ roleId }: IRoleVolunteersProps) => {
               <Groups3Icon sx={{ mr: 0.5 }} />
               Role volunteers
             </Typography>
-          </Breadcrumbs>
+          </BreadcrumbsNav>
         </Box>
         <Box component="section">
           <Stack

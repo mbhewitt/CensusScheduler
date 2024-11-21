@@ -7,7 +7,6 @@ import {
 } from "@mui/icons-material";
 import {
   Box,
-  Breadcrumbs,
   Button,
   Card,
   CardActions,
@@ -34,6 +33,7 @@ import {
   processTimeList,
   ShiftTypesForm,
 } from "@/app/shifts/types/type/ShiftTypesForm";
+import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
 import { ErrorPage } from "@/components/general/ErrorPage";
 import { Loading } from "@/components/general/Loading";
 import { SnackbarText } from "@/components/general/SnackbarText";
@@ -171,7 +171,7 @@ export const ShiftTypesCreate = () => {
       />
       <Container component="main">
         <Box component="section">
-          <Breadcrumbs>
+          <BreadcrumbsNav>
             <Link href="/shifts/types">
               <Typography
                 sx={{
@@ -192,7 +192,7 @@ export const ShiftTypesCreate = () => {
               <EventAvailableIcon sx={{ mr: 0.5 }} />
               Create type
             </Typography>
-          </Breadcrumbs>
+          </BreadcrumbsNav>
         </Box>
         <Box component="section">
           <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>

@@ -10,7 +10,6 @@ import {
 } from "@mui/icons-material";
 import {
   Box,
-  Breadcrumbs,
   Button,
   Card,
   CardContent,
@@ -35,6 +34,7 @@ import useSWRMutation from "swr/mutation";
 
 import { ShiftVolunteersDialogAdd } from "@/app/shifts/volunteers/[timeId]/ShiftVolunteersDialogAdd";
 import { ShiftVolunteersDialogRemove } from "@/app/shifts/volunteers/[timeId]/ShiftVolunteersDialogRemove";
+import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
 import { DataTable } from "@/components/general/DataTable";
 import { ErrorPage } from "@/components/general/ErrorPage";
 import { Loading } from "@/components/general/Loading";
@@ -464,7 +464,7 @@ export const ShiftVolunteers = ({
       />
       <Container component="main">
         <Box component="section">
-          <Breadcrumbs>
+          <BreadcrumbsNav>
             <Link href="/shifts">
               <Typography
                 sx={{
@@ -485,7 +485,7 @@ export const ShiftVolunteers = ({
               <Groups3Icon sx={{ mr: 0.5 }} />
               Shift volunteers
             </Typography>
-          </Breadcrumbs>
+          </BreadcrumbsNav>
         </Box>
         <Box component="section">
           <Box>
