@@ -1,7 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 
 import { Loading } from "@/components/general/Loading";
 import {
@@ -35,10 +34,6 @@ export const AuthGate = ({ accountTypeToCheck, children }: IAuthGateProps) => {
     },
   } = useContext(SessionContext);
 
-  // other hooks
-  // --------------------
-  const router = useRouter();
-
   // logic
   // --------------------
   let isAuthorized = false;
@@ -55,14 +50,6 @@ export const AuthGate = ({ accountTypeToCheck, children }: IAuthGateProps) => {
       break;
     default:
   }
-
-  // side effects
-  // --------------------
-  useEffect(() => {
-    if (!isAuthorized) {
-      router.push("/sign-in?notAuthorized=true");
-    }
-  }, [isAuthorized, router]);
 
   // render
   // --------------------
