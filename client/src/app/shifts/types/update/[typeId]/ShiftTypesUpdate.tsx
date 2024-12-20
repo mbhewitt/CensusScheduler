@@ -138,7 +138,7 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
         return {
           ...timeItem,
           endTime: timeItem.endTime,
-          date: timeItem.startTime,
+          date: timeItem.startTime.split(" ")[0],
           startTime: timeItem.startTime,
         };
       });

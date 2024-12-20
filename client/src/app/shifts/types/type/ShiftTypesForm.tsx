@@ -767,7 +767,7 @@ export const ShiftTypesForm = ({
                     <Controller
                       control={control}
                       name={`timeList.${index}.date`}
-                      render={({ field: { onChange } }) => (
+                      render={({ field: { onChange, value } }) => (
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <DatePicker
                             label="Date"
@@ -800,6 +800,7 @@ export const ShiftTypesForm = ({
                                 variant: "standard",
                               },
                             }}
+                            value={dayjs(value)}
                           />
                         </LocalizationProvider>
                       )}
@@ -809,7 +810,7 @@ export const ShiftTypesForm = ({
                     <Controller
                       control={control}
                       name={`timeList.${index}.startTime`}
-                      render={({ field: { onChange } }) => (
+                      render={({ field: { onChange, value } }) => (
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <TimePicker
                             ampm={false}
@@ -867,6 +868,7 @@ export const ShiftTypesForm = ({
                                 variant: "standard",
                               },
                             }}
+                            value={dayjs(value)}
                           />
                         </LocalizationProvider>
                       )}
@@ -876,7 +878,7 @@ export const ShiftTypesForm = ({
                     <Controller
                       control={control}
                       name={`timeList.${index}.endTime`}
-                      render={({ field: { onChange } }) => (
+                      render={({ field: { onChange, value } }) => (
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <TimePicker
                             ampm={false}
@@ -934,6 +936,7 @@ export const ShiftTypesForm = ({
                                 variant: "standard",
                               },
                             }}
+                            value={dayjs(value)}
                           />
                         </LocalizationProvider>
                       )}
