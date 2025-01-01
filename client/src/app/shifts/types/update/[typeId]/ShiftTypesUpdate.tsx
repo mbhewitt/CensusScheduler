@@ -177,6 +177,14 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
       setIsDialogOpen(true);
     } else {
       positionRemove(index);
+      enqueueSnackbar(
+        <SnackbarText>
+          <strong>New</strong> position has been removed
+        </SnackbarText>,
+        {
+          variant: "success",
+        }
+      );
     }
   };
   const handleTimeRemove = (index: number, name: string, id: number) => {
@@ -196,6 +204,14 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
       setIsDialogOpen(true);
     } else {
       timeRemove(index);
+      enqueueSnackbar(
+        <SnackbarText>
+          <strong>New</strong> time has been removed
+        </SnackbarText>,
+        {
+          variant: "success",
+        }
+      );
     }
   };
 

@@ -580,17 +580,6 @@ export const ShiftTypesForm = ({
                     <IconButton
                       onClick={() => {
                         handlePositionRemove(index, item.name, item.positionId);
-                        enqueueSnackbar(
-                          <SnackbarText>
-                            <strong>New</strong> position has been removed
-                            <br />
-                            Click on the <strong>Update type</strong> button to
-                            finalize your changes
-                          </SnackbarText>,
-                          {
-                            variant: "success",
-                          }
-                        );
                       }}
                     >
                       <CloseIcon />
@@ -959,17 +948,6 @@ export const ShiftTypesForm = ({
                             item.endTime
                           )}`,
                           item.timeId
-                        );
-                        enqueueSnackbar(
-                          <SnackbarText>
-                            <strong>New</strong> time has been removed
-                            <br />
-                            Click on the <strong>Update type</strong> button to
-                            finalize your changes
-                          </SnackbarText>,
-                          {
-                            variant: "success",
-                          }
                         );
                       }}
                     >

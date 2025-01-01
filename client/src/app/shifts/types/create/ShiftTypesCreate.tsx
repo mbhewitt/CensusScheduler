@@ -103,9 +103,25 @@ export const ShiftTypesCreate = () => {
 
   const handlePositionRemove = (index: number) => {
     positionRemove(index);
+    enqueueSnackbar(
+      <SnackbarText>
+        <strong>New</strong> position has been removed
+      </SnackbarText>,
+      {
+        variant: "success",
+      }
+    );
   };
   const handleTimeRemove = (index: number) => {
     timeRemove(index);
+    enqueueSnackbar(
+      <SnackbarText>
+        <strong>New</strong> time has been removed
+      </SnackbarText>,
+      {
+        variant: "success",
+      }
+    );
   };
 
   // form submission
