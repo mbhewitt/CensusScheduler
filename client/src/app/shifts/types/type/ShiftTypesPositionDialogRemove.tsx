@@ -1,6 +1,6 @@
 import {
   Close as CloseIcon,
-  UpdateDisabled as UpdateDisabledIcon,
+  GroupRemove as GroupRemoveIcon,
 } from "@mui/icons-material";
 import {
   Button,
@@ -20,44 +20,40 @@ import { DialogContainer } from "@/components/general/DialogContainer";
 import { ErrorAlert } from "@/components/general/ErrorAlert";
 import { Loading } from "@/components/general/Loading";
 import { SnackbarText } from "@/components/general/SnackbarText";
-import type { IResShiftTypeTimePositionItem } from "@/components/types/shifts/types";
+import type { IResShiftTypePositionTimeItem } from "@/components/types/shifts/types";
 import { fetcherGet } from "@/utils/fetcher";
 
-interface ITimeItem {
+interface IPositionItem {
   id: number;
   index: number;
   name: string;
 }
-interface IPositionItem {
-  id: number;
-  name: string;
-}
-interface IShiftTypesTimeRemoveProps {
+interface IShiftTypesPositionDialogRemoveProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
-  timeItem: ITimeItem;
-  timeRemove: UseFieldArrayRemove;
+  positionItem: IPositionItem;
+  positionRemove: UseFieldArrayRemove;
   typeId: number;
 }
 
-export const ShiftTypesTimeRemove = ({
+export const ShiftTypesPositionDialogRemove = ({
   handleDialogClose,
   isDialogOpen,
-  timeItem,
-  timeRemove,
+  positionItem,
+  positionRemove,
   typeId,
-}: IShiftTypesTimeRemoveProps) => {
+}: IShiftTypesPositionDialogRemoveProps) => {
   // fetching, mutation, and revalidation
   // --------------------
   const {
     data,
     error,
   }: {
-    data: IResShiftTypeTimePositionItem[];
+    data: IResShiftTypePositionTimeItem[];
     error: Error | undefined;
   } = useSWR(
-    timeItem.id
-      ? `/api/shifts/types/${typeId}/times/${timeItem.id}/positions`
+    positionItem.id
+      ? `/api/shifts/types/${typeId}/positions/${positionItem.id}/times`
       : null,
     fetcherGet
   );
@@ -73,7 +69,7 @@ export const ShiftTypesTimeRemove = ({
       <DialogContainer
         handleDialogClose={handleDialogClose}
         isDialogOpen={isDialogOpen}
-        text="Remove time"
+        text="Remove position"
       >
         <ErrorAlert />
       </DialogContainer>
@@ -83,20 +79,17 @@ export const ShiftTypesTimeRemove = ({
       <DialogContainer
         handleDialogClose={handleDialogClose}
         isDialogOpen={isDialogOpen}
-        text="Remove role"
+        text="Remove position"
       >
         <Loading />
       </DialogContainer>
     );
 
-  const handleTimeRemove = async () => {
-    timeRemove(timeItem.index);
+  const handlePositionRemove = async () => {
+    positionRemove(positionItem.index);
     enqueueSnackbar(
       <SnackbarText>
-        {timeItem.name} position has been removed
-        <br />
-        Click on the <strong>Update type</strong> button to finalize your
-        changes
+        {positionItem.name} position has been removed
       </SnackbarText>,
       {
         variant: "success",
@@ -111,29 +104,27 @@ export const ShiftTypesTimeRemove = ({
     <DialogContainer
       handleDialogClose={handleDialogClose}
       isDialogOpen={isDialogOpen}
-      text="Remove time"
+      text="Remove position"
     >
       {data && data.length > 0 ? (
         <>
           <DialogContentText>
             <Typography component="span">
-              To remove{" "}
-              <Link href={`/shifts/volunteers/${timeItem.id}`}>
-                <strong>{timeItem.name}</strong>
-              </Link>
-              , volunteers must be removed from this time in the following
-              positions:
+              To remove <strong>{positionItem.name}</strong>, volunteers must be
+              removed from this position in the following times:
             </Typography>
           </DialogContentText>
           <List sx={{ display: "inline-block", pl: 2, listStyleType: "disc" }}>
-            {data.map((positionItem: IPositionItem) => {
+            {data.map((timeItem) => {
               return (
                 <ListItem
                   disablePadding
-                  key={positionItem.id}
+                  key={timeItem.id}
                   sx={{ display: "list-item", pl: 0 }}
                 >
-                  <ListItemText>{positionItem.name}</ListItemText>
+                  <Link href={`/shifts/volunteers/${timeItem.id}`}>
+                    <ListItemText>{timeItem.name}</ListItemText>
+                  </Link>
                 </ListItem>
               );
             })}
@@ -142,8 +133,8 @@ export const ShiftTypesTimeRemove = ({
       ) : (
         <DialogContentText>
           <Typography component="span">
-            Are you sure you want to remove <strong>{timeItem.name}</strong>{" "}
-            time?
+            Are you sure you want to remove <strong>{positionItem.name}</strong>{" "}
+            position?
           </Typography>
         </DialogContentText>
       )}
@@ -158,12 +149,12 @@ export const ShiftTypesTimeRemove = ({
         </Button>
         <Button
           disabled={data && data.length > 0}
-          onClick={handleTimeRemove}
-          startIcon={<UpdateDisabledIcon />}
+          onClick={handlePositionRemove}
+          startIcon={<GroupRemoveIcon />}
           type="submit"
           variant="contained"
         >
-          Remove time
+          Remove position
         </Button>
       </DialogActions>
     </DialogContainer>

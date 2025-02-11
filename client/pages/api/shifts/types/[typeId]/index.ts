@@ -51,9 +51,9 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           return information;
         }
       );
-      // get all current positions
+      // get current positions
       const [dbPositionList] = await pool.query<RowDataPacket[]>(
-        `SELECT
+        `SELECT DISTINCT
           pt.critical,
           pt.end_time_offset,
           pt.lead,
@@ -62,18 +62,17 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           pt.position,
           pt.start_time_offset,
           r.role,
-          sc.shift_category,
-          sp.total_slots,
-          sp.wap_points
-        FROM op_shift_position AS sp
+          sc.shift_category
+        FROM op_shift_times AS st
+        LEFT JOIN op_shift_time_position AS stp
+        ON stp.shift_times_id=st.shift_times_id
         LEFT JOIN op_position_type AS pt
-        ON pt.position_type_id=sp.position_type_id
+        ON pt.position_type_id=stp.position_type_id
         LEFT JOIN op_roles AS r
         ON r.role_id=pt.role_id
         LEFT JOIN op_shift_category AS sc
         ON sc.shift_category_id=pt.prerequisite_id
-        WHERE sp.shift_name_id=?
-        AND sp.remove_shift_position=false
+        WHERE st.shift_name_id=?
         ORDER BY pt.position`,
         [typeId]
       );
@@ -88,8 +87,6 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           role,
           shift_category, // of prerequisite
           start_time_offset,
-          total_slots,
-          wap_points,
         }) => {
           const resPositionItem: IResShiftTypePositionItem = {
             critical: Boolean(critical),
@@ -101,44 +98,86 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
             prerequisite: shift_category ?? "",
             role: role ?? "",
             startTimeOffset: start_time_offset,
-            totalSlots: total_slots,
-            wapPoints: wap_points,
           };
 
           return resPositionItem;
         }
       );
-      // get all current times
+      // get current times and time positions
       const [dbTimeList] = await pool.query<RowDataPacket[]>(
         `SELECT
-          end_time_lt,
-          notes,
-          shift_instance,
-          shift_times_id,
-          start_time_lt
-        FROM op_shift_times
-        WHERE shift_name_id=?
+          pt.position,
+          pt.position_type_id,
+          st.end_time_lt,
+          st.notes,
+          st.shift_instance,
+          st.shift_times_id,
+          st.start_time_lt,
+          stp.position_alias,
+          stp.sap_points,
+          stp.slots,
+          stp.time_position_id
+        FROM op_shift_times AS st
+        LEFT JOIN op_shift_time_position AS stp
+        ON stp.shift_times_id=st.shift_times_id
+        LEFT JOIN op_position_type AS pt
+        ON pt.position_type_id=stp.position_type_id
+        WHERE st.shift_name_id=?
         AND remove_shift_time=false
         ORDER BY start_time_lt`,
         [typeId]
       );
-      const resTimeList = dbTimeList.map(
+
+      const resTimeMap: { [key: string]: boolean } = {};
+      const resTimeList: IResShiftTypeTimeItem[] = [];
+
+      dbTimeList.forEach(
         ({
           end_time_lt,
           notes,
+          position,
+          position_alias,
+          position_type_id,
+          sap_points,
           shift_instance,
           shift_times_id,
+          slots,
           start_time_lt,
+          time_position_id,
         }) => {
-          const resTimeItem: IResShiftTypeTimeItem = {
-            endTime: end_time_lt,
-            instance: shift_instance,
-            notes: notes ?? "",
-            startTime: start_time_lt,
-            timeId: shift_times_id,
-          };
+          if (resTimeMap[shift_times_id]) {
+            const resTimeFound = resTimeList.find(
+              (resTimeItem) => resTimeItem.timeId === shift_times_id
+            );
 
-          return resTimeItem;
+            resTimeFound?.positionList.push({
+              alias: position_alias,
+              name: position,
+              positionId: position_type_id,
+              sapPoints: sap_points,
+              slots,
+              timePositionId: time_position_id,
+            });
+          } else {
+            resTimeMap[shift_times_id] = true;
+            resTimeList.push({
+              endTime: end_time_lt,
+              instance: shift_instance,
+              notes: notes ?? "",
+              positionList: [
+                {
+                  alias: position_alias,
+                  name: position,
+                  positionId: position_type_id,
+                  sapPoints: sap_points,
+                  slots,
+                  timePositionId: time_position_id,
+                },
+              ],
+              startTime: start_time_lt,
+              timeId: shift_times_id,
+            });
+          }
         }
       );
 

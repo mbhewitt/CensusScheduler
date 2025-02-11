@@ -174,7 +174,7 @@ export const ShiftPositionsForm = ({
                   name="role.name"
                   render={({ field }) => (
                     <FormControl fullWidth variant="standard">
-                      <InputLabel id="to">Role</InputLabel>
+                      <InputLabel id="role">Role</InputLabel>
                       <Select
                         {...field}
                         error={Boolean(errors.role?.name)}
@@ -200,7 +200,7 @@ export const ShiftPositionsForm = ({
                   name="prerequisite.name"
                   render={({ field }) => (
                     <FormControl fullWidth variant="standard">
-                      <InputLabel id="to">Prerequisite</InputLabel>
+                      <InputLabel id="prerequisite">Prerequisite</InputLabel>
                       <Select
                         {...field}
                         error={Boolean(errors.prerequisite?.name)}

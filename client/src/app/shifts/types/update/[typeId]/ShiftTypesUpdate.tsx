@@ -26,16 +26,16 @@ import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
+import { IFormValues } from "@/app/shifts/types/type";
 import {
   defaultValues,
-  IFormValues,
   processInformation,
   processPositionList,
   processTimeList,
   ShiftTypesForm,
 } from "@/app/shifts/types/type/ShiftTypesForm";
-import { ShiftTypesPositionRemove } from "@/app/shifts/types/type/ShiftTypesPositionRemove";
-import { ShiftTypesTimeRemove } from "@/app/shifts/types/type/ShiftTypesTimeRemove";
+import { ShiftTypesPositionDialogRemove } from "@/app/shifts/types/type/ShiftTypesPositionDialogRemove";
+import { ShiftTypesTimeDialogRemove } from "@/app/shifts/types/type/ShiftTypesTimeDialogRemove";
 import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
 import { ErrorPage } from "@/components/general/ErrorPage";
 import { Loading } from "@/components/general/Loading";
@@ -109,20 +109,28 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
     mode: "onBlur",
   });
   const {
-    append: timeAppend,
-    fields: timeFields,
-    remove: timeRemove,
-  } = useFieldArray({
-    control,
-    name: "timeList",
-  });
-  const {
     append: positionAppend,
     fields: positionFields,
     remove: positionRemove,
   } = useFieldArray({
     control,
     name: "positionList",
+  });
+  const {
+    append: timeAppend,
+    fields: timeFields,
+    remove: timeRemove,
+    replace: timeReplace,
+  } = useFieldArray({
+    control,
+    name: "timeList",
+  });
+  const {
+    append: timePositionListAddAppend,
+    fields: timePositionListAddFields,
+  } = useFieldArray({
+    control,
+    name: "timeAdd.positionList",
   });
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
@@ -142,10 +150,26 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
           startTime: timeItem.startTime,
         };
       });
+      const timePositionListAddNew = positionList.map(
+        ({ name, positionId }) => {
+          return {
+            alias: name,
+            name,
+            positionId,
+            sapPoints: "1",
+            slots: "1",
+          };
+        }
+      );
 
       reset({
         information,
+        positionAdd: defaultValues.positionAdd,
         positionList,
+        timeAdd: {
+          ...defaultValues.timeAdd,
+          positionList: timePositionListAddNew,
+        },
         timeList: timeListNew,
       });
     }
@@ -317,7 +341,10 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
               setValue={setValue}
               timeAppend={timeAppend}
               timeFields={timeFields}
+              timePositionListAddAppend={timePositionListAddAppend}
+              timePositionListAddFields={timePositionListAddFields}
               timeRemove={timeRemove}
+              timeReplace={timeReplace}
               typeName={dataCurrent.information.name}
               watch={watch}
             />
@@ -362,7 +389,7 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
       </Container>
 
       {/* position dialog remove */}
-      <ShiftTypesPositionRemove
+      <ShiftTypesPositionDialogRemove
         handleDialogClose={() => setIsDialogOpen(false)}
         isDialogOpen={
           dialogActive.dialogItem === DialogList.PositionRemove && isDialogOpen
@@ -373,7 +400,7 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
       />
 
       {/* time dialog remove */}
-      <ShiftTypesTimeRemove
+      <ShiftTypesTimeDialogRemove
         handleDialogClose={() => setIsDialogOpen(false)}
         isDialogOpen={
           dialogActive.dialogItem === DialogList.TimeRemove && isDialogOpen

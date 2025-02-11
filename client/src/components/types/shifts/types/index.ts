@@ -51,14 +51,22 @@ export interface IResShiftTypePositionItem {
 }
 export interface IResShiftTypeTimeItem {
   endTime: string;
-  timeId: number; // "id" is already taken by useFieldArray
   instance: string;
   notes: string;
+  positionList: {
+    alias: string;
+    name: string;
+    positionId: number;
+    sapPoints: string;
+    slots: string;
+    timePositionId: number;
+  }[];
   startTime: string;
+  timeId: number; // "id" is already taken by useFieldArray
 }
 export interface IReqShiftTypeItem {
   information: IReqShiftTypeInformation;
-  positionList: IReqShiftTypePositionItem[];
+  // positionList: IReqShiftTypePositionItem[];
   timeList: IReqShiftTypeTimeItem[];
 }
 export interface IReqShiftTypeInformation {
