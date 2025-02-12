@@ -29,6 +29,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { useSnackbar } from "notistack";
+import { useState } from "react";
 import {
   Control,
   Controller,
@@ -36,6 +37,7 @@ import {
   FieldErrors,
   UseFieldArrayAppend,
   UseFieldArrayRemove,
+  UseFieldArrayReplace,
   UseFormClearErrors,
   UseFormGetValues,
   UseFormSetError,
@@ -43,6 +45,13 @@ import {
   UseFormWatch,
 } from "react-hook-form";
 
+import {
+  IFormValues,
+  IPositionAddValues,
+  ITimeAddValues,
+} from "@/app/shifts/types/type";
+import { ShiftTypesPositionDialogAdd } from "@/app/shifts/types/type/ShiftTypesPositionDialogAdd";
+import { ShiftTypesTimeDialogAdd } from "@/app/shifts/types/type/ShiftTypesTimeDialogAdd";
 import { SnackbarText } from "@/components/general/SnackbarText";
 import type {
   IResShiftTypeCategoryItem,
@@ -54,36 +63,11 @@ import { formatDateName, formatTime } from "@/utils/formatDateTime";
 
 dayjs.extend(utc);
 
-export interface IFormValues {
-  information: {
-    category: { name: string };
-    details: string;
-    isCore: boolean;
-    isOffPlaya: boolean;
-    name: string;
-  };
-  positionList: {
-    critical: boolean;
-    details: string;
-    endTimeOffset: string;
-    lead: boolean;
-    name: string;
-    positionId: number;
-    prerequisite: string;
-    role: string;
-    startTimeOffset: string;
-    totalSlots: string;
-    wapPoints: string;
-  }[];
-  timeList: {
-    endTime: string;
-    date: string;
-    instance: string;
-    notes: string;
-    startTime: string;
-    timeId: number;
-  }[];
+enum DialogList {
+  PositionAdd,
+  TimeAdd,
 }
+
 interface IShiftTypesFormProps {
   clearErrors: UseFormClearErrors<IFormValues>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -103,7 +87,17 @@ interface IShiftTypesFormProps {
   setValue: UseFormSetValue<IFormValues>;
   timeAppend: UseFieldArrayAppend<IFormValues, "timeList">;
   timeFields: FieldArrayWithId<IFormValues, "timeList", "id">[];
+  timePositionListAddAppend: UseFieldArrayAppend<
+    IFormValues,
+    "timeAdd.positionList"
+  >;
+  timePositionListAddFields: FieldArrayWithId<
+    IFormValues,
+    "timeAdd.positionList",
+    "id"
+  >[];
   timeRemove: UseFieldArrayRemove;
+  timeReplace: UseFieldArrayReplace<IFormValues, "timeList">;
   typeName: string;
   watch: UseFormWatch<IFormValues>;
 }
@@ -130,24 +124,24 @@ export const processInformation = (
     name: formValues.information.name,
   };
 };
-export const processPositionList = (
-  dataDefaults: IResShiftTypeDefaults,
-  formValues: IFormValues
-) => {
-  return formValues.positionList.map(({ name, totalSlots, wapPoints }) => {
-    const positionIdFound = ensure(
-      dataDefaults.positionList.find((positionItem) => {
-        return positionItem.name === name;
-      })
-    ).positionId;
+// export const processPositionList = (
+//   dataDefaults: IResShiftTypeDefaults,
+//   formValues: IFormValues
+// ) => {
+//   return formValues.positionList.map(({ name, totalSlots, wapPoints }) => {
+//     const positionIdFound = ensure(
+//       dataDefaults.positionList.find((positionItem) => {
+//         return positionItem.name === name;
+//       })
+//     ).positionId;
 
-    return {
-      positionId: positionIdFound,
-      totalSlots,
-      wapPoints,
-    };
-  });
-};
+//     return {
+//       positionId: positionIdFound,
+//       totalSlots,
+//       wapPoints,
+//     };
+//   });
+// };
 export const processTimeList = (formValues: IFormValues) => {
   return formValues.timeList.map(
     ({ endTime, date, instance, notes, startTime, timeId }) => {
@@ -174,6 +168,20 @@ export const defaultValues: IFormValues = {
     isOffPlaya: false,
     name: "",
   },
+  positionAdd: {
+    alias: "",
+    critical: false,
+    details: "",
+    endTimeOffset: "",
+    lead: false,
+    name: "",
+    positionId: 0,
+    prerequisite: "",
+    role: "",
+    sapPoints: "1",
+    slots: "1",
+    startTimeOffset: "",
+  },
   positionList: [
     {
       critical: false,
@@ -185,16 +193,32 @@ export const defaultValues: IFormValues = {
       prerequisite: "",
       role: "",
       startTimeOffset: "",
-      totalSlots: "",
-      wapPoints: "",
     },
   ],
+  timeAdd: {
+    date: "",
+    endTime: "",
+    instance: "",
+    notes: "",
+    positionList: [],
+    startTime: "",
+  },
   timeList: [
     {
-      endTime: "",
       date: "",
+      endTime: "",
       instance: "",
       notes: "",
+      positionList: [
+        {
+          alias: "",
+          name: "",
+          positionId: 0,
+          sapPoints: "",
+          slots: "",
+          timePositionId: 0,
+        },
+      ],
       startTime: "",
       timeId: 0,
     },
@@ -214,16 +238,101 @@ export const ShiftTypesForm = ({
   setValue,
   timeAppend,
   timeFields,
+  timePositionListAddAppend,
+  timePositionListAddFields,
+  timeReplace,
   typeName,
-  watch,
 }: IShiftTypesFormProps) => {
+  // state
+  // --------------------
+  const [dialogCurrent, setDialogCurrent] = useState({
+    dialogItem: 0,
+  });
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   // other hooks
   // --------------------
   const { enqueueSnackbar } = useSnackbar();
 
   // logic
   // --------------------
-  const watchPositionList = watch("positionList");
+  const handlePositionAdd = ({
+    alias,
+    name,
+    positionId,
+    sapPoints,
+    slots,
+  }: IPositionAddValues) => {
+    const positionFound = dataDefaults.positionList.find(
+      (positionItem) => positionItem.name === name
+    );
+
+    if (positionFound) {
+      const timeFieldsNew = structuredClone(timeFields);
+
+      positionAppend(positionFound);
+      timeFieldsNew.forEach((timeFieldsItem) => {
+        timeFieldsItem.positionList.push({
+          alias,
+          name,
+          positionId,
+          sapPoints,
+          slots,
+          timePositionId: 0,
+        });
+      });
+      timeReplace(timeFieldsNew);
+      timePositionListAddAppend({
+        alias,
+        name,
+        positionId: positionFound.positionId,
+        sapPoints,
+        slots,
+      });
+
+      enqueueSnackbar(
+        <SnackbarText>
+          <strong>{name}</strong> position has been added
+        </SnackbarText>,
+        {
+          variant: "success",
+        }
+      );
+    }
+  };
+  const handleTimeAdd = ({
+    date,
+    endTime,
+    instance,
+    notes,
+    positionList,
+    startTime,
+  }: ITimeAddValues) => {
+    const timeNew = {
+      date,
+      endTime,
+      instance,
+      notes,
+      positionList,
+      startTime,
+      timeId: 0,
+    };
+
+    timeAppend(timeNew);
+
+    enqueueSnackbar(
+      <SnackbarText>
+        <strong>{dayjs(date).format("MM/DD/YYYY")}</strong> at{" "}
+        <strong>
+          {dayjs(startTime).format("HH:mm")}-{dayjs(endTime).format("HH:mm")}
+        </strong>{" "}
+        time has been added
+      </SnackbarText>,
+      {
+        variant: "success",
+      }
+    );
+  };
 
   // render
   // --------------------
@@ -248,13 +357,9 @@ export const ShiftTypesForm = ({
                   render={({ field }) => (
                     <TextField
                       {...field}
-                      error={
-                        errors.information && Boolean(errors.information.name)
-                      }
+                      error={Boolean(errors.information?.name)}
                       fullWidth
-                      helperText={
-                        errors.information && errors.information.name?.message
-                      }
+                      helperText={errors.information?.name?.message}
                       label="Name"
                       required
                       variant="standard"
@@ -288,13 +393,10 @@ export const ShiftTypesForm = ({
                   name="information.category.name"
                   render={({ field }) => (
                     <FormControl fullWidth variant="standard">
-                      <InputLabel id="to">Category *</InputLabel>
+                      <InputLabel id="category">Category *</InputLabel>
                       <Select
                         {...field}
-                        error={
-                          errors.information &&
-                          Boolean(errors.information.category?.name)
-                        }
+                        error={Boolean(errors.information?.category?.name)}
                         label="Category"
                         labelId="category"
                         required
@@ -307,12 +409,11 @@ export const ShiftTypesForm = ({
                           )
                         )}
                       </Select>
-                      {errors.information &&
-                        errors.information.category?.name && (
-                          <FormHelperText error>
-                            {errors.information.category?.name.message}
-                          </FormHelperText>
-                        )}
+                      {errors.information?.category?.name && (
+                        <FormHelperText error>
+                          {errors.information.category?.name.message}
+                        </FormHelperText>
+                      )}
                     </FormControl>
                   )}
                   rules={{
@@ -392,18 +493,10 @@ export const ShiftTypesForm = ({
           </Typography>
           <Button
             onClick={() => {
-              positionAppend(structuredClone(defaultValues.positionList[0]));
-              enqueueSnackbar(
-                <SnackbarText>
-                  <strong>New</strong> position has been added
-                  <br />
-                  Click on the <strong>Update type</strong> button to finalize
-                  your changes
-                </SnackbarText>,
-                {
-                  variant: "success",
-                }
-              );
+              setDialogCurrent({
+                dialogItem: DialogList.PositionAdd,
+              });
+              setIsDialogOpen(true);
             }}
             startIcon={<GroupAddIcon />}
             type="button"
@@ -412,10 +505,10 @@ export const ShiftTypesForm = ({
             Add position
           </Button>
         </Stack>
-        {positionFields.map((item, index) => {
+        {positionFields.map((positionItem, positionIndex) => {
           return (
             <Card
-              key={item.id}
+              key={positionItem.id}
               sx={{
                 mb: 1,
               }}
@@ -425,242 +518,23 @@ export const ShiftTypesForm = ({
                   <Grid size={6}>
                     <Controller
                       control={control}
-                      name={`positionList.${index}.name`}
-                      render={({ field }) => (
-                        <FormControl fullWidth variant="standard">
-                          <InputLabel id="to">Position *</InputLabel>
-                          <Select
-                            {...field}
-                            error={
-                              errors.positionList &&
-                              Boolean(errors.positionList[index]?.name)
-                            }
-                            label="Position *"
-                            labelId="position"
-                            onChange={(event) => {
-                              const positionSelected = event.target.value;
-                              const positionItem =
-                                dataDefaults.positionList.find(({ name }) => {
-                                  return name === positionSelected;
-                                });
-
-                              // update field
-                              field.onChange(positionSelected);
-
-                              if (positionItem) {
-                                // auto-populate fields
-                                setValue(
-                                  `positionList.${index}.critical`,
-                                  positionItem.critical
-                                );
-                                setValue(
-                                  `positionList.${index}.endTimeOffset`,
-                                  positionItem.endTimeOffset
-                                );
-                                setValue(
-                                  `positionList.${index}.lead`,
-                                  positionItem.lead
-                                );
-                                setValue(
-                                  `positionList.${index}.details`,
-                                  positionItem.details
-                                );
-                                setValue(
-                                  `positionList.${index}.prerequisite`,
-                                  positionItem.prerequisite
-                                );
-                                setValue(
-                                  `positionList.${index}.role`,
-                                  positionItem.role
-                                );
-                                setValue(
-                                  `positionList.${index}.startTimeOffset`,
-                                  positionItem.startTimeOffset
-                                );
-                              }
-                            }}
-                            required
-                          >
-                            {dataDefaults.positionList.map(
-                              ({ positionId, name: nameDefault }) => {
-                                const isPositionAvailable =
-                                  watchPositionList.every(
-                                    ({ name: nameCurrent }) => {
-                                      return nameCurrent !== nameDefault;
-                                    }
-                                  );
-
-                                return (
-                                  <MenuItem
-                                    disabled={!isPositionAvailable}
-                                    key={positionId}
-                                    value={nameDefault}
-                                  >
-                                    {nameDefault}
-                                  </MenuItem>
-                                );
-                              }
-                            )}
-                          </Select>
-                          {errors.positionList &&
-                            errors.positionList[index]?.name && (
-                              <FormHelperText error>
-                                {errors.positionList[index]?.name?.message}
-                              </FormHelperText>
-                            )}
-                        </FormControl>
-                      )}
-                      rules={{
-                        required: "Position is required",
-                      }}
-                    />
-                  </Grid>
-                  <Grid size={2}>
-                    <Controller
-                      control={control}
-                      name={`positionList.${index}.totalSlots`}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          error={
-                            errors.positionList &&
-                            Boolean(errors.positionList[index]?.totalSlots)
-                          }
-                          fullWidth
-                          helperText={
-                            errors.positionList &&
-                            errors.positionList[index]?.totalSlots?.message
-                          }
-                          label="Total slots"
-                          required
-                          type="number"
-                          variant="standard"
-                        />
-                      )}
-                      rules={{
-                        required: "Total slots is required",
-                      }}
-                    />
-                  </Grid>
-                  <Grid size={2}>
-                    <Controller
-                      control={control}
-                      name={`positionList.${index}.wapPoints`}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          error={
-                            errors.positionList &&
-                            Boolean(errors.positionList[index]?.wapPoints)
-                          }
-                          fullWidth
-                          helperText={
-                            errors.positionList &&
-                            errors.positionList[index]?.wapPoints?.message
-                          }
-                          label="SAP points"
-                          required
-                          type="number"
-                          variant="standard"
-                        />
-                      )}
-                      rules={{
-                        required: "SAP points is required",
-                      }}
-                    />
-                  </Grid>
-                  <Grid
-                    sx={{
-                      alignItems: "flex-start",
-                      display: "flex",
-                      justifyContent: "flex-end",
-                    }}
-                    size={2}
-                  >
-                    <IconButton
-                      onClick={() => {
-                        handlePositionRemove(index, item.name, item.positionId);
-                        enqueueSnackbar(
-                          <SnackbarText>
-                            <strong>New</strong> position has been removed
-                            <br />
-                            Click on the <strong>Update type</strong> button to
-                            finalize your changes
-                          </SnackbarText>,
-                          {
-                            variant: "success",
-                          }
-                        );
-                      }}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </Grid>
-                  <Grid size={6}>
-                    <Controller
-                      control={control}
-                      name={`positionList.${index}.role`}
+                      name={`positionList.${positionIndex}.name`}
                       render={({ field }) => (
                         <TextField
                           {...field}
                           disabled
                           fullWidth
-                          label="Role"
+                          label="Position"
                           variant="standard"
                         />
                       )}
                     />
                   </Grid>
-                  <Grid size={6}>
-                    <Controller
-                      control={control}
-                      name={`positionList.${index}.prerequisite`}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          disabled
-                          fullWidth
-                          label="Prerequisite"
-                          variant="standard"
-                        />
-                      )}
-                    />
-                  </Grid>
-                  <Grid size={3}>
-                    <Controller
-                      control={control}
-                      name={`positionList.${index}.startTimeOffset`}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          disabled
-                          fullWidth
-                          label="Start time offset (min)"
-                          variant="standard"
-                        />
-                      )}
-                    />
-                  </Grid>
-                  <Grid size={3}>
-                    <Controller
-                      control={control}
-                      name={`positionList.${index}.endTimeOffset`}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          disabled
-                          fullWidth
-                          label="End time offset (min)"
-                          variant="standard"
-                        />
-                      )}
-                    />
-                  </Grid>
-                  <Grid size={6}>
+                  <Grid size={4}>
                     <FormGroup row>
                       <Controller
                         control={control}
-                        name={`positionList.${index}.critical`}
+                        name={`positionList.${positionIndex}.critical`}
                         render={({ field: { value, ...field } }) => (
                           <FormControlLabel
                             control={
@@ -677,7 +551,7 @@ export const ShiftTypesForm = ({
                       />
                       <Controller
                         control={control}
-                        name={`positionList.${index}.lead`}
+                        name={`positionList.${positionIndex}.lead`}
                         render={({ field: { value, ...field } }) => (
                           <FormControlLabel
                             control={
@@ -694,10 +568,90 @@ export const ShiftTypesForm = ({
                       />
                     </FormGroup>
                   </Grid>
+                  <Grid
+                    size={2}
+                    sx={{
+                      alignItems: "flex-start",
+                      display: "flex",
+                      justifyContent: "flex-end",
+                    }}
+                  >
+                    <IconButton
+                      onClick={() => {
+                        handlePositionRemove(
+                          positionIndex,
+                          positionItem.name,
+                          positionItem.positionId
+                        );
+                      }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </Grid>
+                  <Grid size={6}>
+                    <Controller
+                      control={control}
+                      name={`positionList.${positionIndex}.role`}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          disabled
+                          fullWidth
+                          label="Role"
+                          variant="standard"
+                        />
+                      )}
+                    />
+                  </Grid>
+                  <Grid size={6}>
+                    <Controller
+                      control={control}
+                      name={`positionList.${positionIndex}.prerequisite`}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          disabled
+                          fullWidth
+                          label="Prerequisite"
+                          variant="standard"
+                        />
+                      )}
+                    />
+                  </Grid>
+                  <Grid size={6}>
+                    <Controller
+                      control={control}
+                      name={`positionList.${positionIndex}.startTimeOffset`}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          disabled
+                          fullWidth
+                          label="Start time offset (min)"
+                          variant="standard"
+                        />
+                      )}
+                    />
+                  </Grid>
+                  <Grid size={6}>
+                    <Controller
+                      control={control}
+                      name={`positionList.${positionIndex}.endTimeOffset`}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          disabled
+                          fullWidth
+                          label="End time offset (min)"
+                          variant="standard"
+                        />
+                      )}
+                    />
+                  </Grid>
                   <Grid size={12}>
                     <Controller
                       control={control}
-                      name={`positionList.${index}.details`}
+                      name={`positionList.${positionIndex}.details`}
                       render={({ field }) => (
                         <TextField
                           {...field}
@@ -726,25 +680,54 @@ export const ShiftTypesForm = ({
           alignItems="flex-end"
           direction="row"
           justifyContent="space-between"
-          sx={{ mb: 2 }}
+          sx={{ mb: 1 }}
         >
           <Typography component="h2" variant="h4">
             Times
           </Typography>
           <Button
             onClick={() => {
-              timeAppend(structuredClone(defaultValues.timeList[0]));
-              enqueueSnackbar(
-                <SnackbarText>
-                  <strong>New</strong> time has been added
-                  <br />
-                  Click on the <strong>Update type</strong> button to finalize
-                  your changes
-                </SnackbarText>,
-                {
-                  variant: "success",
-                }
-              );
+              // const timeNew = structuredClone(defaultValues.timeList[0]);
+              // const positionListNew = timeFields[0].positionList.map(
+              //   (positionItem) => {
+              //     return {
+              //       ...positionItem,
+              //       sapPoints: "",
+              //       slots: "",
+              //     };
+              //   }
+              // );
+
+              // timeNew.positionList = positionListNew;
+              // timeAppend(timeNew);
+
+              // // keep form submit button disabled
+              // setError(`timeList.${timeFields.length}.date`, {
+              //   type: "required",
+              //   message: "Date is required",
+              // });
+              // setError(`timeList.${timeFields.length}.startTime`, {
+              //   type: "required",
+              //   message: "Start time is required",
+              // });
+              // setError(`timeList.${timeFields.length}.endTime`, {
+              //   type: "required",
+              //   message: "End time is required",
+              // });
+
+              // enqueueSnackbar(
+              //   <SnackbarText>
+              //     <strong>New</strong> time has been added
+              //   </SnackbarText>,
+              //   {
+              //     variant: "success",
+              //   }
+              // );
+
+              setDialogCurrent({
+                dialogItem: DialogList.TimeAdd,
+              });
+              setIsDialogOpen(true);
             }}
             startIcon={<MoreTimeIcon />}
             type="button"
@@ -753,265 +736,354 @@ export const ShiftTypesForm = ({
             Add time
           </Button>
         </Stack>
-        {timeFields.map((item, index) => {
+        {timeFields.map((timeItem, timeIndex) => {
           return (
-            <Card
-              key={item.id}
-              sx={{
-                mb: 1,
-              }}
-            >
-              <CardContent>
-                <Grid container spacing={2}>
-                  <Grid size={3}>
-                    <Controller
-                      control={control}
-                      name={`timeList.${index}.date`}
-                      render={({ field: { onChange, value } }) => (
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <DatePicker
-                            label="Date"
-                            onChange={(event) => {
-                              // update field
-                              onChange(event);
-
-                              if (event) {
-                                clearErrors(`timeList.${index}.date`);
-                              }
-                            }}
-                            slotProps={{
-                              textField: {
-                                error:
-                                  errors.timeList &&
-                                  Boolean(errors.timeList[index]?.date),
-                                fullWidth: true,
-                                helperText:
-                                  errors.timeList &&
-                                  errors.timeList[index]?.date?.message,
-                                onBlur: (event) => {
-                                  if (event.target.value === "MM/DD/YYYY") {
-                                    setError(`timeList.${index}.date`, {
-                                      type: "required",
-                                      message: "Date is required",
-                                    });
-                                  }
+            <Box key={timeItem.id} sx={{ mb: 3 }}>
+              <Typography component="h3" variant="h6">
+                Time
+              </Typography>
+              <Card
+                sx={{
+                  mb: 1,
+                }}
+              >
+                <CardContent>
+                  <Grid container spacing={2}>
+                    <Grid size={3}>
+                      <Controller
+                        control={control}
+                        name={`timeList.${timeIndex}.date`}
+                        render={({ field: { value } }) => (
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DatePicker
+                              disabled
+                              label="Date"
+                              slotProps={{
+                                textField: {
+                                  fullWidth: true,
+                                  variant: "standard",
                                 },
-                                required: true,
-                                variant: "standard",
-                              },
-                            }}
-                            value={dayjs(value)}
-                          />
-                        </LocalizationProvider>
-                      )}
-                    />
-                  </Grid>
-                  <Grid size={3}>
-                    <Controller
-                      control={control}
-                      name={`timeList.${index}.startTime`}
-                      render={({ field: { onChange, value } }) => (
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <TimePicker
-                            ampm={false}
-                            label="Start time"
-                            onChange={(event) => {
-                              // update field
-                              onChange(event);
-
-                              // validate start time occurs before end time
-                              const startTimeActive =
-                                dayjs(event).format("HH:mm");
-                              const endTimeActive = dayjs(
-                                getValues(`timeList.${index}.endTime`)
-                              ).format("HH:mm");
-
-                              const dateCurrent = dayjs().format("YYYY-MM-DD");
-                              const startTimeCurrent = `${dateCurrent} ${startTimeActive}`;
-                              const endTimeCurrent = `${dateCurrent} ${endTimeActive}`;
-
-                              if (event) {
-                                if (
-                                  dayjs(startTimeCurrent).isSameOrAfter(
-                                    endTimeCurrent
-                                  )
-                                ) {
-                                  setError(`timeList.${index}.startTime`, {
-                                    type: "custom",
-                                    message:
-                                      "Start time must occur before end time",
-                                  });
-                                } else {
-                                  clearErrors(`timeList.${index}.startTime`);
-                                  clearErrors(`timeList.${index}.endTime`);
-                                }
-                              }
-                            }}
-                            slotProps={{
-                              textField: {
-                                error:
-                                  errors.timeList &&
-                                  Boolean(errors.timeList[index]?.startTime),
-                                fullWidth: true,
-                                helperText:
-                                  errors.timeList &&
-                                  errors.timeList[index]?.startTime?.message,
-                                onBlur: (event) => {
-                                  if (event.target.value === "hh:mm") {
-                                    setError(`timeList.${index}.startTime`, {
-                                      type: "required",
-                                      message: "Start time is required",
-                                    });
-                                  }
+                              }}
+                              value={dayjs(value)}
+                            />
+                          </LocalizationProvider>
+                        )}
+                      />
+                    </Grid>
+                    <Grid size={3}>
+                      <Controller
+                        control={control}
+                        name={`timeList.${timeIndex}.startTime`}
+                        render={({ field: { value } }) => (
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <TimePicker
+                              ampm={false}
+                              disabled
+                              label="Start time"
+                              slotProps={{
+                                textField: {
+                                  fullWidth: true,
+                                  variant: "standard",
                                 },
-                                required: true,
-                                variant: "standard",
-                              },
-                            }}
-                            value={dayjs(value)}
-                          />
-                        </LocalizationProvider>
-                      )}
-                    />
-                  </Grid>
-                  <Grid size={3}>
-                    <Controller
-                      control={control}
-                      name={`timeList.${index}.endTime`}
-                      render={({ field: { onChange, value } }) => (
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <TimePicker
-                            ampm={false}
-                            label="End time"
-                            onChange={(event) => {
-                              // update field
-                              onChange(event);
-
-                              // validate end time occurs after start time
-                              const endTimeActive =
-                                dayjs(event).format("HH:mm");
-                              const startTimeActive = dayjs(
-                                getValues(`timeList.${index}.startTime`)
-                              ).format("HH:mm");
-
-                              const dateCurrent = dayjs().format("YYYY-MM-DD");
-                              const endTimeCurrent = `${dateCurrent} ${endTimeActive}`;
-                              const startTimeCurrent = `${dateCurrent} ${startTimeActive}`;
-
-                              if (event) {
-                                if (
-                                  dayjs(endTimeCurrent).isSameOrBefore(
-                                    startTimeCurrent
-                                  )
-                                ) {
-                                  setError(`timeList.${index}.endTime`, {
-                                    type: "custom",
-                                    message:
-                                      "End time must occur after start time",
-                                  });
-                                } else {
-                                  clearErrors(`timeList.${index}.endTime`);
-                                  clearErrors(`timeList.${index}.startTime`);
-                                }
-                              }
-                            }}
-                            slotProps={{
-                              textField: {
-                                error:
-                                  errors.timeList &&
-                                  Boolean(errors.timeList[index]?.endTime),
-                                fullWidth: true,
-                                helperText:
-                                  errors.timeList &&
-                                  errors.timeList[index]?.endTime?.message,
-                                onBlur: (event) => {
-                                  if (event.target.value === "hh:mm") {
-                                    setError(`timeList.${index}.endTime`, {
-                                      type: "required",
-                                      message: "End time is required",
-                                    });
-                                  }
+                              }}
+                              value={dayjs(value)}
+                            />
+                          </LocalizationProvider>
+                        )}
+                      />
+                    </Grid>
+                    <Grid size={3}>
+                      <Controller
+                        control={control}
+                        name={`timeList.${timeIndex}.endTime`}
+                        render={({ field: { value } }) => (
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <TimePicker
+                              ampm={false}
+                              disabled
+                              label="End time"
+                              slotProps={{
+                                textField: {
+                                  fullWidth: true,
+                                  variant: "standard",
                                 },
-                                required: true,
-                                variant: "standard",
-                              },
-                            }}
-                            value={dayjs(value)}
-                          />
-                        </LocalizationProvider>
-                      )}
-                    />
-                  </Grid>
-                  <Grid
-                    sx={{
-                      alignItems: "flex-start",
-                      display: "flex",
-                      justifyContent: "flex-end",
-                    }}
-                    size={3}
-                  >
-                    <IconButton
-                      onClick={() => {
-                        handleTimeRemove(
-                          index,
-                          `${formatDateName(item.date)}, ${formatTime(
-                            item.startTime,
-                            item.endTime
-                          )}`,
-                          item.timeId
-                        );
-                        enqueueSnackbar(
-                          <SnackbarText>
-                            <strong>New</strong> time has been removed
-                            <br />
-                            Click on the <strong>Update type</strong> button to
-                            finalize your changes
-                          </SnackbarText>,
-                          {
-                            variant: "success",
-                          }
-                        );
+                              }}
+                              value={dayjs(value)}
+                            />
+                          </LocalizationProvider>
+                        )}
+                      />
+                    </Grid>
+                    <Grid
+                      sx={{
+                        alignItems: "flex-start",
+                        display: "flex",
+                        justifyContent: "flex-end",
                       }}
+                      size={3}
                     >
-                      <CloseIcon />
-                    </IconButton>
+                      <IconButton
+                        onClick={() => {
+                          handleTimeRemove(
+                            timeIndex,
+                            `${formatDateName(timeItem.date)}, ${formatTime(
+                              timeItem.startTime,
+                              timeItem.endTime
+                            )}`,
+                            timeItem.timeId
+                          );
+                        }}
+                      >
+                        <CloseIcon />
+                      </IconButton>
+                    </Grid>
+                    <Grid size={3}>
+                      <Controller
+                        control={control}
+                        name={`timeList.${timeIndex}.instance`}
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            fullWidth
+                            label="Instance"
+                            required
+                            variant="standard"
+                          />
+                        )}
+                      />
+                    </Grid>
+                    <Grid size={9}>
+                      <Controller
+                        control={control}
+                        name={`timeList.${timeIndex}.notes`}
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            fullWidth
+                            label="Notes"
+                            variant="standard"
+                          />
+                        )}
+                      />
+                    </Grid>
                   </Grid>
+                </CardContent>
+              </Card>
 
-                  <Grid size={3}>
-                    <Controller
-                      control={control}
-                      name={`timeList.${index}.instance`}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          fullWidth
-                          label="Instance"
-                          variant="standard"
-                        />
-                      )}
-                    />
-                  </Grid>
-                  <Grid size={9}>
-                    <Controller
-                      control={control}
-                      name={`timeList.${index}.notes`}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          fullWidth
-                          label="Notes"
-                          variant="standard"
-                        />
-                      )}
-                    />
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
+              {/* time positions */}
+              <Box sx={{ pl: 3 }}>
+                <Typography component="h3" variant="h6">
+                  Positions
+                </Typography>
+                {timeItem.positionList.map(
+                  ({ timePositionId, positionId }, timePositionIndex) => {
+                    return (
+                      <Card
+                        key={`${timePositionId}-${positionId}`}
+                        sx={{
+                          mb: 1,
+                        }}
+                      >
+                        <CardContent>
+                          <Grid container spacing={2}>
+                            <Grid size={6}>
+                              <Controller
+                                control={control}
+                                name={`timeList.${timeIndex}.positionList.${timePositionIndex}.name`}
+                                render={({ field }) => (
+                                  <TextField
+                                    {...field}
+                                    disabled
+                                    fullWidth
+                                    label="Position"
+                                    variant="standard"
+                                  />
+                                )}
+                              />
+                            </Grid>
+                            <Grid size={6} />
+                            <Grid size={6}>
+                              <Controller
+                                control={control}
+                                name={`timeList.${timeIndex}.positionList.${timePositionIndex}.alias`}
+                                render={({ field }) => (
+                                  <TextField
+                                    {...field}
+                                    fullWidth
+                                    label="Alias"
+                                    required
+                                    variant="standard"
+                                  />
+                                )}
+                              />
+                            </Grid>
+                            <Grid size={3}>
+                              <Controller
+                                control={control}
+                                name={`timeList.${timeIndex}.positionList.${timePositionIndex}.slots`}
+                                render={({ field: { onChange, value } }) => (
+                                  <TextField
+                                    error={
+                                      errors.timeList &&
+                                      errors.timeList[timeIndex]
+                                        ?.positionList &&
+                                      Boolean(
+                                        errors.timeList[timeIndex].positionList[
+                                          timePositionIndex
+                                        ]?.slots
+                                      )
+                                    }
+                                    fullWidth
+                                    helperText={
+                                      errors.timeList &&
+                                      errors.timeList[timeIndex]
+                                        ?.positionList &&
+                                      errors.timeList[timeIndex].positionList[
+                                        timePositionIndex
+                                      ]?.slots?.message
+                                    }
+                                    label="Slots"
+                                    onChange={(event) => {
+                                      // update field
+                                      onChange(event);
+
+                                      if (event.target.value) {
+                                        clearErrors(
+                                          `timeList.${timeIndex}.positionList.${timePositionIndex}.slots`
+                                        );
+                                      }
+                                    }}
+                                    onBlur={(event) => {
+                                      if (event.target.value === "") {
+                                        setError(
+                                          `timeList.${timeIndex}.positionList.${timePositionIndex}.slots`,
+                                          {
+                                            type: "required",
+                                            message: "Slots is required",
+                                          }
+                                        );
+                                      }
+                                    }}
+                                    required
+                                    type="number"
+                                    value={value}
+                                    variant="standard"
+                                  />
+                                )}
+                                rules={{
+                                  required: "Total slots is required",
+                                }}
+                              />
+                            </Grid>
+                            <Grid size={3}>
+                              <Controller
+                                control={control}
+                                name={`timeList.${timeIndex}.positionList.${timePositionIndex}.sapPoints`}
+                                render={({ field: { onChange, value } }) => (
+                                  <TextField
+                                    error={
+                                      errors.timeList &&
+                                      errors.timeList[timeIndex]
+                                        ?.positionList &&
+                                      Boolean(
+                                        errors.timeList[timeIndex].positionList[
+                                          timePositionIndex
+                                        ]?.sapPoints
+                                      )
+                                    }
+                                    fullWidth
+                                    helperText={
+                                      errors.timeList &&
+                                      errors.timeList[timeIndex]
+                                        ?.positionList &&
+                                      errors.timeList[timeIndex].positionList[
+                                        timePositionIndex
+                                      ]?.sapPoints?.message
+                                    }
+                                    label="SAP points"
+                                    onChange={(event) => {
+                                      // update field
+                                      onChange(event);
+
+                                      if (event.target.value) {
+                                        clearErrors(
+                                          `timeList.${timeIndex}.positionList.${timePositionIndex}.sapPoints`
+                                        );
+                                      }
+                                    }}
+                                    onBlur={(event) => {
+                                      if (event.target.value === "") {
+                                        setError(
+                                          `timeList.${timeIndex}.positionList.${timePositionIndex}.sapPoints`,
+                                          {
+                                            type: "required",
+                                            message: "SAP Points is required",
+                                          }
+                                        );
+                                      }
+                                    }}
+                                    required
+                                    type="number"
+                                    variant="standard"
+                                    value={value}
+                                  />
+                                )}
+                                rules={{
+                                  required: "SAP points is required",
+                                }}
+                              />
+                            </Grid>
+                          </Grid>
+                        </CardContent>
+                      </Card>
+                    );
+                  }
+                )}
+              </Box>
+            </Box>
           );
         })}
       </Box>
       <Divider sx={{ borderColor: COLOR_BURNING_MAN_BROWN, mb: 3 }} />
+
+      {/* position dialog add */}
+      <ShiftTypesPositionDialogAdd
+        control={control}
+        errors={errors}
+        getValues={getValues}
+        handleDialogClose={() => {
+          setIsDialogOpen(false);
+          setValue("positionAdd", defaultValues.positionAdd);
+          clearErrors("positionAdd");
+        }}
+        isDialogOpen={
+          dialogCurrent.dialogItem === DialogList.PositionAdd && isDialogOpen
+        }
+        handlePositionAdd={handlePositionAdd}
+        positionListDefaults={dataDefaults.positionList}
+        setError={setError}
+        setValue={setValue}
+      />
+
+      {/* time dialog add */}
+      <ShiftTypesTimeDialogAdd
+        control={control}
+        clearErrors={clearErrors}
+        errors={errors}
+        getValues={getValues}
+        handleDialogClose={() => {
+          setIsDialogOpen(false);
+          setValue("timeAdd", defaultValues.timeAdd);
+          clearErrors("timeAdd");
+        }}
+        handleTimeAdd={handleTimeAdd}
+        isDialogOpen={
+          dialogCurrent.dialogItem === DialogList.TimeAdd && isDialogOpen
+        }
+        setError={setError}
+        timeFields={timeFields}
+        timePositionListAddFields={timePositionListAddFields}
+      />
     </>
   );
 };

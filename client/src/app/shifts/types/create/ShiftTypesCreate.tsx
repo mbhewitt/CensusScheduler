@@ -29,7 +29,7 @@ import {
   defaultValues,
   IFormValues,
   processInformation,
-  processPositionList,
+  // processPositionList,
   processTimeList,
   ShiftTypesForm,
 } from "@/app/shifts/types/type/ShiftTypesForm";
@@ -78,6 +78,7 @@ export const ShiftTypesCreate = () => {
     append: timeAppend,
     fields: timeFields,
     remove: timeRemove,
+    replace: timeReplace,
   } = useFieldArray({
     control,
     name: "timeList",
@@ -103,9 +104,25 @@ export const ShiftTypesCreate = () => {
 
   const handlePositionRemove = (index: number) => {
     positionRemove(index);
+    enqueueSnackbar(
+      <SnackbarText>
+        <strong>New</strong> position has been removed
+      </SnackbarText>,
+      {
+        variant: "success",
+      }
+    );
   };
   const handleTimeRemove = (index: number) => {
     timeRemove(index);
+    enqueueSnackbar(
+      <SnackbarText>
+        <strong>New</strong> time has been removed
+      </SnackbarText>,
+      {
+        variant: "success",
+      }
+    );
   };
 
   // form submission
@@ -113,11 +130,11 @@ export const ShiftTypesCreate = () => {
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       const information = processInformation(dataDefaults, formValues);
-      const positionList = processPositionList(dataDefaults, formValues);
+      // const positionList = processPositionList(dataDefaults, formValues);
       const timeList = processTimeList(formValues);
       const body: IReqShiftTypeItem = {
         information,
-        positionList,
+        // positionList,
         timeList,
       };
 
@@ -211,6 +228,7 @@ export const ShiftTypesCreate = () => {
               timeAppend={timeAppend}
               timeFields={timeFields}
               timeRemove={timeRemove}
+              timeReplace={timeReplace}
               typeName={defaultValues.information.name}
               watch={watch}
             />

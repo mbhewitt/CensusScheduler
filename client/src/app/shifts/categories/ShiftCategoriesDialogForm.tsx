@@ -79,7 +79,7 @@ export const ShiftCategoriesDialogForm = ({
         name="department.name"
         render={({ field }) => (
           <FormControl fullWidth variant="standard">
-            <InputLabel id="to">Department *</InputLabel>
+            <InputLabel id="department">Department *</InputLabel>
             <Select
               {...field}
               error={Boolean(errors.department?.name)}
@@ -95,7 +95,7 @@ export const ShiftCategoriesDialogForm = ({
             </Select>
             {errors.department?.name && (
               <FormHelperText error>
-                {errors.department?.name.message}
+                {errors.department.name.message}
               </FormHelperText>
             )}
           </FormControl>

@@ -729,7 +729,7 @@ export const ShiftVolunteersDialogAdd = ({
                   </Select>
                   {errors.shiftPositionId && (
                     <FormHelperText error>
-                      {errors.shiftPositionId?.message}
+                      {errors.shiftPositionId.message}
                     </FormHelperText>
                   )}
                 </FormControl>
@@ -809,7 +809,7 @@ export const ShiftVolunteersDialogAdd = ({
                       </Select>
                       {errors.trainingTimesId && (
                         <FormHelperText error>
-                          {errors.trainingTimesId?.message}
+                          {errors.trainingTimesId.message}
                         </FormHelperText>
                       )}
                     </FormControl>
@@ -877,7 +877,7 @@ export const ShiftVolunteersDialogAdd = ({
                       </Select>
                       {errors.trainingPositionId && (
                         <FormHelperText error>
-                          {errors.trainingPositionId?.message}
+                          {errors.trainingPositionId.message}
                         </FormHelperText>
                       )}
                     </FormControl>
