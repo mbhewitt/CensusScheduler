@@ -333,25 +333,13 @@ export const ShiftTypesPositionDialogAdd = ({
             if (getValues("positionAdd.name") === "") {
               setError("positionAdd.name", {
                 type: "required",
-                message: "Name is required",
+                message: "Position is required",
               });
             }
             if (getValues("positionAdd.alias") === "") {
               setError("positionAdd.alias", {
                 type: "required",
                 message: "Alias is required",
-              });
-            }
-            if (getValues("positionAdd.sapPoints") === "") {
-              setError("positionAdd.sapPoints", {
-                type: "required",
-                message: "SAP points is required",
-              });
-            }
-            if (getValues("positionAdd.slots") === "") {
-              setError("positionAdd.slots", {
-                type: "required",
-                message: "Slots is required",
               });
             }
             if (!errors.positionAdd) {

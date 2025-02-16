@@ -57,8 +57,8 @@ export interface IResShiftTypeTimeItem {
     alias: string;
     name: string;
     positionId: number;
-    sapPoints: string;
-    slots: string;
+    sapPoints: number;
+    slots: number;
     timePositionId: number;
   }[];
   startTime: string;

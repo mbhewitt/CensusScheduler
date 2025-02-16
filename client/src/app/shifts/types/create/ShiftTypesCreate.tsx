@@ -25,11 +25,10 @@ import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
+import { IFormValues } from "@/app/shifts/types/type";
 import {
   defaultValues,
-  IFormValues,
   processInformation,
-  // processPositionList,
   processTimeList,
   ShiftTypesForm,
 } from "@/app/shifts/types/type/ShiftTypesForm";
@@ -84,6 +83,13 @@ export const ShiftTypesCreate = () => {
     name: "timeList",
   });
   const {
+    fields: timePositionListAddFields,
+    replace: timePositionListAddReplace,
+  } = useFieldArray({
+    control,
+    name: "timeAdd.positionList",
+  });
+  const {
     append: positionAppend,
     fields: positionFields,
     remove: positionRemove,
@@ -130,11 +136,9 @@ export const ShiftTypesCreate = () => {
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       const information = processInformation(dataDefaults, formValues);
-      // const positionList = processPositionList(dataDefaults, formValues);
       const timeList = processTimeList(formValues);
       const body: IReqShiftTypeItem = {
         information,
-        // positionList,
         timeList,
       };
 
@@ -227,6 +231,8 @@ export const ShiftTypesCreate = () => {
               setValue={setValue}
               timeAppend={timeAppend}
               timeFields={timeFields}
+              timePositionListAddReplace={timePositionListAddReplace}
+              timePositionListAddFields={timePositionListAddFields}
               timeRemove={timeRemove}
               timeReplace={timeReplace}
               typeName={defaultValues.information.name}

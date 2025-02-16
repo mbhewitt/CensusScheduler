@@ -87,15 +87,15 @@ interface IShiftTypesFormProps {
   setValue: UseFormSetValue<IFormValues>;
   timeAppend: UseFieldArrayAppend<IFormValues, "timeList">;
   timeFields: FieldArrayWithId<IFormValues, "timeList", "id">[];
-  timePositionListAddAppend: UseFieldArrayAppend<
-    IFormValues,
-    "timeAdd.positionList"
-  >;
   timePositionListAddFields: FieldArrayWithId<
     IFormValues,
     "timeAdd.positionList",
     "id"
   >[];
+  timePositionListAddReplace: UseFieldArrayReplace<
+    IFormValues,
+    "timeAdd.positionList"
+  >;
   timeRemove: UseFieldArrayRemove;
   timeReplace: UseFieldArrayReplace<IFormValues, "timeList">;
   typeName: string;
@@ -124,36 +124,15 @@ export const processInformation = (
     name: formValues.information.name,
   };
 };
-// export const processPositionList = (
-//   dataDefaults: IResShiftTypeDefaults,
-//   formValues: IFormValues
-// ) => {
-//   return formValues.positionList.map(({ name, totalSlots, wapPoints }) => {
-//     const positionIdFound = ensure(
-//       dataDefaults.positionList.find((positionItem) => {
-//         return positionItem.name === name;
-//       })
-//     ).positionId;
-
-//     return {
-//       positionId: positionIdFound,
-//       totalSlots,
-//       wapPoints,
-//     };
-//   });
-// };
 export const processTimeList = (formValues: IFormValues) => {
   return formValues.timeList.map(
-    ({ endTime, date, instance, notes, startTime, timeId }) => {
+    ({ endTime, instance, notes, positionList, startTime, timeId }) => {
       return {
-        endTime: `${dayjs(date).format("YYYY-MM-DD")} ${dayjs(endTime).format(
-          "HH:mm"
-        )}`,
+        endTime,
         instance,
         notes,
-        startTime: `${dayjs(date).format("YYYY-MM-DD")} ${dayjs(
-          startTime
-        ).format("HH:mm")}`,
+        positionList,
+        startTime,
         timeId,
       };
     }
@@ -178,8 +157,8 @@ export const defaultValues: IFormValues = {
     positionId: 0,
     prerequisite: "",
     role: "",
-    sapPoints: "1",
-    slots: "1",
+    sapPoints: 1,
+    slots: 1,
     startTimeOffset: "",
   },
   positionList: [
@@ -214,8 +193,8 @@ export const defaultValues: IFormValues = {
           alias: "",
           name: "",
           positionId: 0,
-          sapPoints: "",
-          slots: "",
+          sapPoints: 0,
+          slots: 0,
           timePositionId: 0,
         },
       ],
@@ -238,8 +217,8 @@ export const ShiftTypesForm = ({
   setValue,
   timeAppend,
   timeFields,
-  timePositionListAddAppend,
   timePositionListAddFields,
+  timePositionListAddReplace,
   timeReplace,
   typeName,
 }: IShiftTypesFormProps) => {
@@ -269,6 +248,7 @@ export const ShiftTypesForm = ({
 
     if (positionFound) {
       const timeFieldsNew = structuredClone(timeFields);
+      const timePositionListAddNew = structuredClone(timePositionListAddFields);
 
       positionAppend(positionFound);
       timeFieldsNew.forEach((timeFieldsItem) => {
@@ -282,13 +262,15 @@ export const ShiftTypesForm = ({
         });
       });
       timeReplace(timeFieldsNew);
-      timePositionListAddAppend({
+      timePositionListAddNew.push({
         alias,
+        id: "0",
         name,
         positionId: positionFound.positionId,
-        sapPoints,
-        slots,
+        sapPoints: 1,
+        slots: 1,
       });
+      timePositionListAddReplace(timePositionListAddNew);
 
       enqueueSnackbar(
         <SnackbarText>
@@ -308,13 +290,16 @@ export const ShiftTypesForm = ({
     positionList,
     startTime,
   }: ITimeAddValues) => {
+    const dateNew = dayjs(date).format("MM/DD/YYYY");
+    const endTimeNew = dayjs(endTime).format("HH:mm");
+    const startTimeNew = dayjs(startTime).format("HH:mm");
     const timeNew = {
-      date,
-      endTime,
+      date: dateNew,
+      endTime: `${dateNew} ${endTimeNew}`,
       instance,
       notes,
       positionList,
-      startTime,
+      startTime: `${dateNew} ${startTimeNew}`,
       timeId: 0,
     };
 
@@ -322,9 +307,9 @@ export const ShiftTypesForm = ({
 
     enqueueSnackbar(
       <SnackbarText>
-        <strong>{dayjs(date).format("MM/DD/YYYY")}</strong> at{" "}
+        <strong>{dateNew}</strong> at{" "}
         <strong>
-          {dayjs(startTime).format("HH:mm")}-{dayjs(endTime).format("HH:mm")}
+          {startTimeNew}-{endTimeNew}
         </strong>{" "}
         time has been added
       </SnackbarText>,
@@ -687,43 +672,6 @@ export const ShiftTypesForm = ({
           </Typography>
           <Button
             onClick={() => {
-              // const timeNew = structuredClone(defaultValues.timeList[0]);
-              // const positionListNew = timeFields[0].positionList.map(
-              //   (positionItem) => {
-              //     return {
-              //       ...positionItem,
-              //       sapPoints: "",
-              //       slots: "",
-              //     };
-              //   }
-              // );
-
-              // timeNew.positionList = positionListNew;
-              // timeAppend(timeNew);
-
-              // // keep form submit button disabled
-              // setError(`timeList.${timeFields.length}.date`, {
-              //   type: "required",
-              //   message: "Date is required",
-              // });
-              // setError(`timeList.${timeFields.length}.startTime`, {
-              //   type: "required",
-              //   message: "Start time is required",
-              // });
-              // setError(`timeList.${timeFields.length}.endTime`, {
-              //   type: "required",
-              //   message: "End time is required",
-              // });
-
-              // enqueueSnackbar(
-              //   <SnackbarText>
-              //     <strong>New</strong> time has been added
-              //   </SnackbarText>,
-              //   {
-              //     variant: "success",
-              //   }
-              // );
-
               setDialogCurrent({
                 dialogItem: DialogList.TimeAdd,
               });
