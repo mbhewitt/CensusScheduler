@@ -57,8 +57,8 @@ export interface IResShiftTypeTimeItem {
     alias: string;
     name: string;
     positionId: number;
-    sapPoints: string;
-    slots: string;
+    sapPoints: number;
+    slots: number;
     timePositionId: number;
   }[];
   startTime: string;
@@ -66,7 +66,6 @@ export interface IResShiftTypeTimeItem {
 }
 export interface IReqShiftTypeItem {
   information: IReqShiftTypeInformation;
-  // positionList: IReqShiftTypePositionItem[];
   timeList: IReqShiftTypeTimeItem[];
 }
 export interface IReqShiftTypeInformation {
@@ -78,15 +77,19 @@ export interface IReqShiftTypeInformation {
   isOffPlaya: boolean;
   name: string;
 }
-export interface IReqShiftTypePositionItem {
+export interface IReqShiftTypeTimePositionItem {
+  alias: string;
+  name: string;
   positionId: number; // "id" is already taken by useFieldArray
-  totalSlots: string;
-  wapPoints: string;
+  sapPoints: number;
+  slots: number;
+  timePositionId: number;
 }
 export interface IReqShiftTypeTimeItem {
   endTime: string;
   instance: string;
   notes: string;
+  positionList: IReqShiftTypeTimePositionItem[];
   startTime: string;
   timeId: number; // "id" is already taken by useFieldArray
 }

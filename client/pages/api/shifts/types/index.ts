@@ -52,13 +52,11 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
           isOffPlaya,
           name,
         },
-        positionList,
         timeList,
       }: IReqShiftTypeItem = JSON.parse(req.body);
       const typeIdNew = generateId(
         `SELECT shift_name_id
-        FROM op_shift_name
-        WHERE shift_name_id=?`
+        FROM op_shift_name`
       );
 
       // insert new shift name row
@@ -75,33 +73,11 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
         VALUES (?, true, ?, ?, ?, ?, ?)`,
         [isCore, isOffPlaya, id, details, name, typeIdNew]
       );
-      // insert new shift position rows
-      positionList.forEach(async ({ positionId, totalSlots, wapPoints }) => {
-        const shiftPositionIdNew = generateId(
-          `SELECT shift_position_id
-            FROM op_shift_position
-            WHERE shift_position_id=?`
-        );
-
-        await pool.query(
-          `INSERT INTO op_shift_position (
-              add_shift_position,
-              position_type_id,
-              shift_name_id,
-              shift_position_id,
-              total_slots,
-              wap_points
-            )
-            VALUES (true, ?, ?, ?, ?, ?)`,
-          [positionId, typeIdNew, shiftPositionIdNew, totalSlots, wapPoints]
-        );
-      });
       // insert new shift time rows
       timeList.forEach(async ({ endTime, instance, notes, startTime }) => {
         const timeIdNew = generateId(
           `SELECT shift_times_id
-            FROM op_shift_times
-            WHERE shift_times_id=?`
+          FROM op_shift_times`
         );
 
         await pool.query(

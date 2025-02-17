@@ -30,7 +30,6 @@ import { IFormValues } from "@/app/shifts/types/type";
 import {
   defaultValues,
   processInformation,
-  processPositionList,
   processTimeList,
   ShiftTypesForm,
 } from "@/app/shifts/types/type/ShiftTypesForm";
@@ -126,8 +125,8 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
     name: "timeList",
   });
   const {
-    append: timePositionListAddAppend,
     fields: timePositionListAddFields,
+    replace: timePositionListAddReplace,
   } = useFieldArray({
     control,
     name: "timeAdd.positionList",
@@ -156,8 +155,8 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
             alias: name,
             name,
             positionId,
-            sapPoints: "1",
-            slots: "1",
+            sapPoints: 1,
+            slots: 1,
           };
         }
       );
@@ -244,11 +243,9 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       const information = processInformation(dataDefaults, formValues);
-      const positionList = processPositionList(dataDefaults, formValues);
       const timeList = processTimeList(formValues);
       const body: IReqShiftTypeItem = {
         information,
-        positionList,
         timeList,
       };
 
@@ -341,8 +338,8 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
               setValue={setValue}
               timeAppend={timeAppend}
               timeFields={timeFields}
-              timePositionListAddAppend={timePositionListAddAppend}
               timePositionListAddFields={timePositionListAddFields}
+              timePositionListAddReplace={timePositionListAddReplace}
               timeRemove={timeRemove}
               timeReplace={timeReplace}
               typeName={dataCurrent.information.name}

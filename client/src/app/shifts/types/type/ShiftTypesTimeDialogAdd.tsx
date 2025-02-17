@@ -473,6 +473,12 @@ export const ShiftTypesTimeDialogAdd = ({
                 message: "End time is required",
               });
             }
+            if (getValues("timeAdd.instance") === "") {
+              setError("timeAdd.instance", {
+                type: "required",
+                message: "Instance is required",
+              });
+            }
             timeFields.forEach((timeFieldItem) => {
               if (timeFieldItem.instance === getValues("timeAdd.instance")) {
                 setError("timeAdd.instance", {
@@ -482,7 +488,7 @@ export const ShiftTypesTimeDialogAdd = ({
               }
             });
             if (!errors.timeAdd) {
-              const positionListNew = getValues("timeAdd.positionList").map(
+              const positionListNew = timePositionListAddFields.map(
                 ({ alias, name, positionId, sapPoints, slots }) => {
                   return {
                     alias,

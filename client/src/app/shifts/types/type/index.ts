@@ -16,8 +16,8 @@ export interface IFormValues {
     positionId: number;
     prerequisite: string;
     role: string;
-    sapPoints: string;
-    slots: string;
+    sapPoints: number;
+    slots: number;
     startTimeOffset: string;
   };
   positionList: {
@@ -40,8 +40,8 @@ export interface IFormValues {
       alias: string;
       name: string;
       positionId: number;
-      sapPoints: string;
-      slots: string;
+      sapPoints: number;
+      slots: number;
     }[];
     startTime: string;
   };
@@ -54,8 +54,8 @@ export interface IFormValues {
       alias: string;
       name: string;
       positionId: number;
-      sapPoints: string;
-      slots: string;
+      sapPoints: number;
+      slots: number;
       timePositionId: number;
     }[];
     startTime: string;
@@ -66,8 +66,8 @@ export interface IPositionAddValues {
   alias: string;
   name: string;
   positionId: number;
-  sapPoints: string;
-  slots: string;
+  sapPoints: number;
+  slots: number;
 }
 export interface ITimeAddValues {
   date: string;
@@ -78,8 +78,8 @@ export interface ITimeAddValues {
     alias: string;
     name: string;
     positionId: number;
-    sapPoints: string;
-    slots: string;
+    sapPoints: number;
+    slots: number;
     timePositionId: number;
   }[];
   startTime: string;
