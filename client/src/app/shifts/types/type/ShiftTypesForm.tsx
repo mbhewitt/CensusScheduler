@@ -128,11 +128,11 @@ export const processTimeList = (formValues: IFormValues) => {
   return formValues.timeList.map(
     ({ endTime, instance, notes, positionList, startTime, timeId }) => {
       return {
-        endTime,
+        endTime: dayjs(endTime).format("YYYY-MM-DD HH:mm"),
         instance,
         notes,
         positionList,
-        startTime,
+        startTime: dayjs(startTime).format("YYYY-MM-DD HH:mm"),
         timeId,
       };
     }
@@ -161,19 +161,7 @@ export const defaultValues: IFormValues = {
     slots: 1,
     startTimeOffset: "",
   },
-  positionList: [
-    {
-      critical: false,
-      details: "",
-      endTimeOffset: "",
-      lead: false,
-      name: "",
-      positionId: 0,
-      prerequisite: "",
-      role: "",
-      startTimeOffset: "",
-    },
-  ],
+  positionList: [],
   timeAdd: {
     date: "",
     endTime: "",
@@ -182,26 +170,7 @@ export const defaultValues: IFormValues = {
     positionList: [],
     startTime: "",
   },
-  timeList: [
-    {
-      date: "",
-      endTime: "",
-      instance: "",
-      notes: "",
-      positionList: [
-        {
-          alias: "",
-          name: "",
-          positionId: 0,
-          sapPoints: 0,
-          slots: 0,
-          timePositionId: 0,
-        },
-      ],
-      startTime: "",
-      timeId: 0,
-    },
-  ],
+  timeList: [],
 };
 export const ShiftTypesForm = ({
   clearErrors,

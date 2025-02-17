@@ -488,7 +488,7 @@ export const ShiftTypesTimeDialogAdd = ({
               }
             });
             if (!errors.timeAdd) {
-              const positionListNew = getValues("timeAdd.positionList").map(
+              const positionListNew = timePositionListAddFields.map(
                 ({ alias, name, positionId, sapPoints, slots }) => {
                   return {
                     alias,

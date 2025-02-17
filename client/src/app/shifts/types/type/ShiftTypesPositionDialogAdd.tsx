@@ -351,8 +351,8 @@ export const ShiftTypesPositionDialogAdd = ({
                 alias: getValues("positionAdd.alias"),
                 name: getValues("positionAdd.name"),
                 positionId: Number(positionFound?.positionId),
-                sapPoints: getValues("positionAdd.sapPoints"),
-                slots: getValues("positionAdd.slots"),
+                sapPoints: Number(getValues("positionAdd.sapPoints")),
+                slots: Number(getValues("positionAdd.slots")),
               });
               handleDialogClose();
             }
