@@ -13,7 +13,6 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import { useSnackbar } from "notistack";
-import { UseFieldArrayRemove } from "react-hook-form";
 import useSWR from "swr";
 
 import { DialogContainer } from "@/components/general/DialogContainer";
@@ -34,17 +33,17 @@ interface IPositionItem {
 }
 interface IShiftTypesTimeDialogRemoveProps {
   handleDialogClose: () => void;
+  handleTimeExistRemove: (index: number, positionId: number) => void;
   isDialogOpen: boolean;
   timeItem: ITimeItem;
-  timeRemove: UseFieldArrayRemove;
   typeId: number;
 }
 
 export const ShiftTypesTimeDialogRemove = ({
   handleDialogClose,
+  handleTimeExistRemove,
   isDialogOpen,
   timeItem,
-  timeRemove,
   typeId,
 }: IShiftTypesTimeDialogRemoveProps) => {
   // fetching, mutation, and revalidation
@@ -90,9 +89,11 @@ export const ShiftTypesTimeDialogRemove = ({
     );
 
   const handleTimeRemove = async () => {
-    timeRemove(timeItem.index);
+    handleTimeExistRemove(timeItem.index, timeItem.id);
     enqueueSnackbar(
-      <SnackbarText>{timeItem.name} position has been removed</SnackbarText>,
+      <SnackbarText>
+        <strong>{timeItem.name}</strong> time has been removed
+      </SnackbarText>,
       {
         variant: "success",
       }

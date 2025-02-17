@@ -179,6 +179,23 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
   if (errorDefaults || errorCurrent) return <ErrorPage />;
   if (!dataDefaults || !dataCurrent) return <Loading />;
 
+  const handlePositionExistRemove = (index: number, positionId: number) => {
+    const timeFieldsNew = structuredClone(timeFields);
+    const timePositionListAddNew = timePositionListAddFields.filter(
+      (timePositionListAddItem) =>
+        timePositionListAddItem.positionId !== positionId
+    );
+
+    for (let i = 0; i < timeFieldsNew.length; i += 1) {
+      timeFieldsNew[i].positionList = timeFieldsNew[i].positionList.filter(
+        (positionItem) => positionItem.positionId !== positionId
+      );
+    }
+
+    positionRemove(index);
+    timeReplace(timeFieldsNew);
+    timePositionListAddReplace(timePositionListAddNew);
+  };
   const handlePositionRemove = (
     index: number,
     name: string,
@@ -199,10 +216,10 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
       });
       setIsDialogOpen(true);
     } else {
-      positionRemove(index);
+      handlePositionExistRemove(index, positionId);
       enqueueSnackbar(
         <SnackbarText>
-          <strong>New</strong> position has been removed
+          <strong>{name}</strong> position has been removed
         </SnackbarText>,
         {
           variant: "success",
@@ -210,26 +227,34 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
       );
     }
   };
-  const handleTimeRemove = (index: number, name: string, id: number) => {
+  const handleTimeExistRemove = (index: number, timeId: number) => {
+    const timeFieldsNew = timeFields.filter(
+      (timeItem) => timeItem.timeId !== timeId
+    );
+
+    timeRemove(index);
+    timeReplace(timeFieldsNew);
+  };
+  const handleTimeRemove = (index: number, name: string, timeId: number) => {
     const timeFound = dataCurrent.timeList.find(
-      (timeItem) => timeItem.timeId === id
+      (timeItem) => timeItem.timeId === timeId
     );
 
     if (typeId && timeFound) {
       setDialogActive({
         dialogItem: DialogList.TimeRemove,
         item: {
-          id,
+          id: timeId,
           index,
           name,
         },
       });
       setIsDialogOpen(true);
     } else {
-      timeRemove(index);
+      handleTimeExistRemove(index, timeId);
       enqueueSnackbar(
         <SnackbarText>
-          <strong>New</strong> time has been removed
+          <strong>{name}</strong> time has been removed
         </SnackbarText>,
         {
           variant: "success",
@@ -388,22 +413,22 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
       {/* position dialog remove */}
       <ShiftTypesPositionDialogRemove
         handleDialogClose={() => setIsDialogOpen(false)}
+        handlePositionExistRemove={handlePositionExistRemove}
         isDialogOpen={
           dialogActive.dialogItem === DialogList.PositionRemove && isDialogOpen
         }
         positionItem={dialogActive.item}
-        positionRemove={positionRemove}
         typeId={Number(typeId)}
       />
 
       {/* time dialog remove */}
       <ShiftTypesTimeDialogRemove
         handleDialogClose={() => setIsDialogOpen(false)}
+        handleTimeExistRemove={handleTimeExistRemove}
         isDialogOpen={
           dialogActive.dialogItem === DialogList.TimeRemove && isDialogOpen
         }
         timeItem={dialogActive.item}
-        timeRemove={timeRemove}
         typeId={Number(typeId)}
       />
     </>
