@@ -29,7 +29,7 @@ interface IPositionItem {
 }
 interface IShiftTypesPositionDialogRemoveProps {
   handleDialogClose: () => void;
-  handleTimePositionRemove: (index: number, positionId: number) => void;
+  handlePositionExistRemove: (index: number, positionId: number) => void;
   isDialogOpen: boolean;
   positionItem: IPositionItem;
   typeId: number;
@@ -37,7 +37,7 @@ interface IShiftTypesPositionDialogRemoveProps {
 
 export const ShiftTypesPositionDialogRemove = ({
   handleDialogClose,
-  handleTimePositionRemove,
+  handlePositionExistRemove,
   isDialogOpen,
   positionItem,
   typeId,
@@ -85,7 +85,7 @@ export const ShiftTypesPositionDialogRemove = ({
     );
 
   const handlePositionRemove = async () => {
-    handleTimePositionRemove(positionItem.index, positionItem.id);
+    handlePositionExistRemove(positionItem.index, positionItem.id);
     enqueueSnackbar(
       <SnackbarText>
         <strong>{positionItem.name}</strong> position has been removed

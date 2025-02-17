@@ -273,7 +273,6 @@ export const ShiftTypesForm = ({
     };
 
     timeAppend(timeNew);
-
     enqueueSnackbar(
       <SnackbarText>
         <strong>{dateNew}</strong> at{" "}
