@@ -179,6 +179,22 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
   if (errorDefaults || errorCurrent) return <ErrorPage />;
   if (!dataDefaults || !dataCurrent) return <Loading />;
 
+  const handleTimePositionRemove = (index: number, positionId: number) => {
+    positionRemove(index);
+    const timeFieldsNew = structuredClone(timeFields);
+    const timePositionListAddNew = timePositionListAddFields.filter(
+      (timePositionListAddItem) =>
+        timePositionListAddItem.positionId !== positionId
+    );
+
+    for (let i = 0; i < timeFieldsNew.length; i += 1) {
+      timeFieldsNew[i].positionList = timeFieldsNew[i].positionList.filter(
+        (positionItem) => positionItem.positionId !== positionId
+      );
+    }
+    timeReplace(timeFieldsNew);
+    timePositionListAddReplace(timePositionListAddNew);
+  };
   const handlePositionRemove = (
     index: number,
     name: string,
@@ -199,10 +215,10 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
       });
       setIsDialogOpen(true);
     } else {
-      positionRemove(index);
+      handleTimePositionRemove(index, positionId);
       enqueueSnackbar(
         <SnackbarText>
-          <strong>New</strong> position has been removed
+          <strong>{name}</strong> position has been removed
         </SnackbarText>,
         {
           variant: "success",
@@ -227,6 +243,7 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
       setIsDialogOpen(true);
     } else {
       timeRemove(index);
+
       enqueueSnackbar(
         <SnackbarText>
           <strong>New</strong> time has been removed
@@ -388,11 +405,11 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
       {/* position dialog remove */}
       <ShiftTypesPositionDialogRemove
         handleDialogClose={() => setIsDialogOpen(false)}
+        handleTimePositionRemove={handleTimePositionRemove}
         isDialogOpen={
           dialogActive.dialogItem === DialogList.PositionRemove && isDialogOpen
         }
         positionItem={dialogActive.item}
-        positionRemove={positionRemove}
         typeId={Number(typeId)}
       />
 

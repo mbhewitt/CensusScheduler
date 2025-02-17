@@ -73,6 +73,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         LEFT JOIN op_shift_category AS sc
         ON sc.shift_category_id=pt.prerequisite_id
         WHERE st.shift_name_id=?
+        AND stp.remove_time_position=false
         ORDER BY pt.position`,
         [typeId]
       );
@@ -123,7 +124,8 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         LEFT JOIN op_position_type AS pt
         ON pt.position_type_id=stp.position_type_id
         WHERE st.shift_name_id=?
-        AND remove_shift_time=false
+        AND st.remove_shift_time=false
+        AND stp.remove_time_position=false
         ORDER BY st.start_time_lt, pt.position`,
         [typeId]
       );
@@ -259,19 +261,19 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         async ({ endTime, instance, notes, positionList, startTime }) => {
           const idNew = generateId(
             `SELECT shift_times_id
-          FROM op_shift_times`
+            FROM op_shift_times`
           );
           await pool.query(
             `INSERT INTO op_shift_times (
-            add_shift_time,
-            end_time_lt,
-            notes,
-            shift_instance,
-            shift_name_id,
-            shift_times_id,
-            start_time_lt
-          )
-          VALUES (true, ?, ?, ?, ?, ?, ?)`,
+              add_shift_time,
+              end_time_lt,
+              notes,
+              shift_instance,
+              shift_name_id,
+              shift_times_id,
+              start_time_lt
+            )
+            VALUES (true, ?, ?, ?, ?, ?, ?)`,
             [endTime, notes, instance, typeId, idNew, startTime]
           );
 
@@ -279,20 +281,20 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
             async ({ alias, positionId, sapPoints, slots }) => {
               const timePositionIdNew = generateId(
                 `SELECT time_position_id
-            FROM op_shift_time_position`
+                FROM op_shift_time_position`
               );
 
               await pool.query(
                 `INSERT INTO op_shift_time_position (
-              add_time_position,
-              position_alias,
-              position_type_id,
-              sap_points,
-              shift_times_id,
-              slots,
-              time_position_id
-            )
-            VALUES (true, ?, ?, ?, ?, ?, ?)`,
+                  add_time_position,
+                  position_alias,
+                  position_type_id,
+                  sap_points,
+                  shift_times_id,
+                  slots,
+                  time_position_id
+                )
+                VALUES (true, ?, ?, ?, ?, ?, ?)`,
                 [alias, positionId, sapPoints, idNew, slots, timePositionIdNew]
               );
             }
@@ -343,6 +345,13 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           );
         }
       );
+      const timePositionListAdd = timePositionList.filter(
+        ({ timePositionId }) => {
+          return !dbTimePositionList.some(
+            ({ time_position_id }) => time_position_id === timePositionId
+          );
+        }
+      );
       const timePositionListRemove = dbTimePositionList.filter(
         ({ time_position_id }) => {
           return !timePositionList.some(
@@ -365,11 +374,61 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           );
         }
       );
+      timePositionListAdd.forEach(
+        async ({ alias, positionId, sapPoints, slots, timeId }) => {
+          const [dbTimePosition] = await pool.query<RowDataPacket[]>(
+            `SELECT time_position_id
+            FROM op_shift_time_position
+            WHERE shift_times_id=?
+            AND position_type_id=?`,
+            [timeId, positionId]
+          );
+          const dbTimePositionFirst = dbTimePosition[0];
+
+          // if time position exists already
+          // then update add_time_position and remove_time_position fields
+          if (dbTimePositionFirst) {
+            await pool.query<RowDataPacket[]>(
+              `UPDATE op_shift_time_position
+              SET
+                add_time_position=true,
+                position_alias=?,
+                sap_points=?,
+                slots=?,
+                remove_time_position=false
+              WHERE time_position_id=?`,
+              [alias, sapPoints, slots, dbTimePositionFirst.time_position_id]
+            );
+            // else insert them into the table
+          } else {
+            const timePositionIdNew = generateId(
+              `SELECT time_position_id
+              FROM op_shift_time_position`
+            );
+
+            await pool.query(
+              `INSERT INTO op_shift_time_position (
+                add_time_position,
+                position_alias,
+                position_type_id,
+                sap_points,
+                shift_times_id,
+                slots,
+                time_position_id
+              )
+              VALUES (true, ?, ?, ?, ?, ?, ?)`,
+              [alias, positionId, sapPoints, timeId, slots, timePositionIdNew]
+            );
+          }
+        }
+      );
       timePositionListRemove.forEach(
         async ({ time_position_id: timePositionId }) => {
           await pool.query<RowDataPacket[]>(
             `UPDATE op_shift_time_position
-            SET remove_time_position=true
+            SET
+              add_time_position=false,
+              remove_time_position=true
             WHERE time_position_id=?`,
             [timePositionId]
           );
