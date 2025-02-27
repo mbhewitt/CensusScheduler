@@ -232,7 +232,7 @@ export const ShiftTypesForm = ({
       });
       timeReplace(timeFieldsNew);
       timePositionListAddNew.push({
-        alias,
+        alias: positionFound.name,
         id: "0",
         name,
         positionId: positionFound.positionId,
@@ -990,6 +990,7 @@ export const ShiftTypesForm = ({
         handleDialogClose={() => {
           setIsDialogOpen(false);
           setValue("timeAdd", defaultValues.timeAdd);
+          setValue("timeAdd.positionList", timePositionListAddFields);
           clearErrors("timeAdd");
         }}
         handleTimeAdd={handleTimeAdd}
