@@ -253,7 +253,7 @@ export const ShiftTypesPositionDialogAdd = ({
         <Grid size={12}>
           <DialogContentText>
             <Typography component="span">
-              Fields below will apply to all time positions, and they each can
+              Fields below will apply to all existing times, and they each can
               be customized.
             </Typography>
           </DialogContentText>

@@ -3,10 +3,66 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import type {
   IReqShiftTypeItem,
+  IReqShiftTypeTimeItem,
   IResShiftTypeRowItem,
 } from "@/components/types/shifts/types";
 import { generateId } from "@/utils/generateId";
 import { pool } from "lib/database";
+
+interface IHandleTimeListAdd {
+  timeList: IReqShiftTypeTimeItem[];
+  typeId: number;
+}
+
+export const handleTimeListAdd = async ({
+  timeList,
+  typeId,
+}: IHandleTimeListAdd) => {
+  // insert new shift time rows
+  timeList.forEach(
+    async ({ endTime, instance, notes, positionList, startTime }) => {
+      const timeIdNew = generateId(
+        `SELECT shift_times_id
+        FROM op_shift_times`
+      );
+
+      await pool.query(
+        `INSERT INTO op_shift_times (
+          add_shift_time,
+          end_time_lt,
+          notes,
+          shift_instance,
+          shift_name_id,
+          shift_times_id,
+          start_time_lt
+        )
+        VALUES (true, ?, ?, ?, ?, ?, ?)`,
+        [endTime, notes, instance, typeId, timeIdNew, startTime]
+      );
+
+      positionList.forEach(async ({ alias, positionId, sapPoints, slots }) => {
+        const timePositionIdNew = generateId(
+          `SELECT time_position_id
+          FROM op_shift_time_position`
+        );
+
+        await pool.query(
+          `INSERT INTO op_shift_time_position (
+            add_time_position,
+            position_alias,
+            position_type_id,
+            sap_points,
+            shift_times_id,
+            slots,
+            time_position_id
+          )
+          VALUES (true, ?, ?, ?, ?, ?, ?)`,
+          [alias, positionId, sapPoints, timeIdNew, slots, timePositionIdNew]
+        );
+      });
+    }
+  );
+};
 
 const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
@@ -73,27 +129,9 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
         VALUES (?, true, ?, ?, ?, ?, ?)`,
         [isCore, isOffPlaya, id, details, name, typeIdNew]
       );
-      // insert new shift time rows
-      timeList.forEach(async ({ endTime, instance, notes, startTime }) => {
-        const timeIdNew = generateId(
-          `SELECT shift_times_id
-          FROM op_shift_times`
-        );
 
-        await pool.query(
-          `INSERT INTO op_shift_times (
-              add_shift_time,
-              end_time_lt,
-              notes,
-              shift_instance,
-              shift_name_id,
-              shift_times_id,
-              start_time_lt
-            )
-            VALUES (true, ?, ?, ?, ?, ?, ?)`,
-          [endTime, notes, instance, typeIdNew, timeIdNew, startTime]
-        );
-      });
+      // insert new shift time rows
+      handleTimeListAdd({ timeList, typeId: typeIdNew });
 
       return res.status(201).json({
         statusCode: 201,
