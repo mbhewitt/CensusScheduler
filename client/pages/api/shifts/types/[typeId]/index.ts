@@ -10,6 +10,7 @@ import {
 } from "@/components/types/shifts/types";
 import { generateId } from "@/utils/generateId";
 import { pool } from "lib/database";
+import { handleTimeListAdd } from "pages/api/shifts/types";
 
 const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
   const { typeId } = req.query;
@@ -258,81 +259,33 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           );
         }
       );
-      timeListAdd.forEach(
-        async ({ endTime, instance, notes, positionList, startTime }) => {
-          const [dbTime] = await pool.query<RowDataPacket[]>(
-            `SELECT shift_times_id
-            FROM op_shift_times
-            WHERE end_time_lt=?
-            AND start_time_lt=?`,
-            [endTime, startTime]
+      timeListAdd.forEach(async ({ endTime, instance, notes, startTime }) => {
+        const [dbTime] = await pool.query<RowDataPacket[]>(
+          `SELECT shift_times_id
+          FROM op_shift_times
+          WHERE end_time_lt=?
+          AND start_time_lt=?`,
+          [endTime, startTime]
+        );
+        const dbTimeFirst = dbTime[0];
+        dbTimeIdExist = dbTimeFirst?.shift_times_id;
+
+        if (dbTimeFirst) {
+          await pool.query<RowDataPacket[]>(
+            `UPDATE op_shift_times
+            SET
+              add_shift_time=true,
+              notes=?,
+              remove_shift_time=false,
+              shift_instance=?
+            WHERE shift_times_id=?`,
+            [notes, instance, dbTimeIdExist]
           );
-          const dbTimeFirst = dbTime[0];
-          dbTimeIdExist = dbTimeFirst?.shift_times_id;
-
-          if (dbTimeFirst) {
-            await pool.query<RowDataPacket[]>(
-              `UPDATE op_shift_times
-              SET
-                add_shift_time=true,
-                notes=?,
-                remove_shift_time=false,
-                shift_instance=?
-              WHERE shift_times_id=?`,
-              [notes, instance, dbTimeIdExist]
-            );
-          } else {
-            const timeIdNew = generateId(
-              `SELECT shift_times_id
-              FROM op_shift_times`
-            );
-
-            await pool.query(
-              `INSERT INTO op_shift_times (
-                add_shift_time,
-                end_time_lt,
-                notes,
-                shift_instance,
-                shift_name_id,
-                shift_times_id,
-                start_time_lt
-              )
-              VALUES (true, ?, ?, ?, ?, ?, ?)`,
-              [endTime, notes, instance, typeId, timeIdNew, startTime]
-            );
-
-            positionList.forEach(
-              async ({ alias, positionId, sapPoints, slots }) => {
-                const timePositionIdNew = generateId(
-                  `SELECT time_position_id
-                  FROM op_shift_time_position`
-                );
-
-                await pool.query(
-                  `INSERT INTO op_shift_time_position (
-                    add_time_position,
-                    position_alias,
-                    position_type_id,
-                    sap_points,
-                    shift_times_id,
-                    slots,
-                    time_position_id
-                  )
-                  VALUES (true, ?, ?, ?, ?, ?, ?)`,
-                  [
-                    alias,
-                    positionId,
-                    sapPoints,
-                    timeIdNew,
-                    slots,
-                    timePositionIdNew,
-                  ]
-                );
-              }
-            );
-          }
+        } else {
+          // insert new shift time rows
+          handleTimeListAdd({ timeList: timeListAdd, typeId: Number(typeId) });
         }
-      );
+      });
       timeListRemove.forEach(async ({ shift_times_id }) => {
         await pool.query<RowDataPacket[]>(
           `UPDATE op_shift_times

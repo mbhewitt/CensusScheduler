@@ -84,6 +84,7 @@ export const ShiftTypesCreate = () => {
   });
   const {
     fields: timePositionListAddFields,
+    remove: timePositionListAddRemove,
     replace: timePositionListAddReplace,
   } = useFieldArray({
     control,
@@ -108,22 +109,23 @@ export const ShiftTypesCreate = () => {
   if (errorDefaults) return <ErrorPage />;
   if (!dataDefaults) return <Loading />;
 
-  const handlePositionRemove = (index: number) => {
+  const handlePositionRemove = (index: number, name: string) => {
     positionRemove(index);
+    timePositionListAddRemove(index);
     enqueueSnackbar(
       <SnackbarText>
-        <strong>New</strong> position has been removed
+        <strong>{name}</strong> position has been removed
       </SnackbarText>,
       {
         variant: "success",
       }
     );
   };
-  const handleTimeRemove = (index: number) => {
+  const handleTimeRemove = (index: number, name: string) => {
     timeRemove(index);
     enqueueSnackbar(
       <SnackbarText>
-        <strong>New</strong> time has been removed
+        <strong>{name}</strong> time has been removed
       </SnackbarText>,
       {
         variant: "success",
