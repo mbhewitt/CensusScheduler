@@ -269,7 +269,7 @@ export const ShiftTypesTimeDialogAdd = ({
         {timePositionListAddFields.map(
           (timePositionAddItem, timePositionAddIndex) => {
             return (
-              <Grid container size={12} key={timePositionAddItem.positionId}>
+              <Grid container size={12} key={timePositionAddItem.id}>
                 <Grid size={6}>
                   <Controller
                     control={control}

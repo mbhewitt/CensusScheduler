@@ -268,7 +268,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
             [endTime, startTime]
           );
           const dbTimeFirst = dbTime[0];
-          dbTimeIdExist = dbTimeFirst.shift_times_id;
+          dbTimeIdExist = dbTimeFirst?.shift_times_id;
 
           if (dbTimeFirst) {
             await pool.query<RowDataPacket[]>(
@@ -282,9 +282,9 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
               [notes, instance, dbTimeIdExist]
             );
           } else {
-            const idNew = generateId(
+            const timeIdNew = generateId(
               `SELECT shift_times_id
-            FROM op_shift_times`
+              FROM op_shift_times`
             );
 
             await pool.query(
@@ -298,7 +298,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
                 start_time_lt
               )
               VALUES (true, ?, ?, ?, ?, ?, ?)`,
-              [endTime, notes, instance, typeId, idNew, startTime]
+              [endTime, notes, instance, typeId, timeIdNew, startTime]
             );
 
             positionList.forEach(
@@ -323,7 +323,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
                     alias,
                     positionId,
                     sapPoints,
-                    idNew,
+                    timeIdNew,
                     slots,
                     timePositionIdNew,
                   ]
@@ -372,10 +372,15 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           });
         }
       }
+      // add new positions that are not associated with a new time
+      // new positions that are associated with a new time are added in timeListAdd
       const timePositionListAdd = timePositionList.filter(
-        ({ timePositionId }) => {
-          return !dbTimePositionList.some(
-            ({ time_position_id }) => time_position_id === timePositionId
+        ({ timeId, timePositionId }) => {
+          return !(
+            timeId === 0 ||
+            dbTimePositionList.some(
+              ({ time_position_id }) => time_position_id === timePositionId
+            )
           );
         }
       );
