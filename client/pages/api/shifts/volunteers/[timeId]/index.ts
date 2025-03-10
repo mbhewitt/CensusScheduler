@@ -29,25 +29,25 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           pt.role_id,
           sn.shift_details,
           sn.shift_name,
-          sp.position_type_id,
-          sp.shift_position_id,
-          sp.total_slots,
           st.end_time_lt,
           st.meal,
           st.notes,
-          st.start_time_lt
+          st.start_time_lt,
+          stp.position_type_id,
+          stp.slots,
+          stp.time_position_id
         FROM op_shift_times AS st
         LEFT JOIN op_dates AS d
         ON d.date=LEFT(st.start_time_lt, 10)
         JOIN op_shift_name AS sn
         ON sn.delete_shift=false
         AND sn.shift_name_id=st.shift_name_id
-        JOIN op_shift_position AS sp
-        ON sp.remove_shift_position=false
-        AND sp.shift_name_id=sn.shift_name_id
+        JOIN op_shift_time_position AS stp
+        ON stp.remove_time_position=false
+        AND stp.shift_times_id=st.shift_times_id
         JOIN op_position_type AS pt
         ON pt.delete_position=false
-        AND pt.position_type_id=sp.position_type_id
+        AND pt.position_type_id=stp.position_type_id
         WHERE st.remove_shift_time=false
         AND st.shift_times_id=?
         ORDER BY pt.position`,
@@ -56,20 +56,20 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT
           pt.position,
-          sp.position_type_id,
+          stp.position_type_id,
           v.playa_name,
           v.world_name,
           vs.noshow,
-          vs.shift_position_id,
           vs.shift_times_id,
-          vs.shiftboard_id
+          vs.shiftboard_id,
+          vs.time_position_id
         FROM op_volunteer_shifts AS vs
-        JOIN op_shift_position AS sp
-        ON sp.remove_shift_position=false
-        AND sp.shift_position_id=vs.shift_position_id
+        JOIN op_shift_time_position AS stp
+        ON stp.remove_time_position=false
+        AND stp.time_position_id=vs.time_position_id
         JOIN op_position_type AS pt
         ON pt.delete_position=false
-        AND pt.position_type_id=sp.position_type_id
+        AND pt.position_type_id=stp.position_type_id
         JOIN op_volunteers AS v
         ON v.delete_volunteer=false
         AND v.shiftboard_id=vs.shiftboard_id
@@ -86,8 +86,8 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           position,
           prerequisite_id,
           role_id,
-          shift_position_id,
-          total_slots,
+          slots,
+          time_position_id,
         }) => {
           const resShiftPositionItem: IResShiftPositionCountItem = {
             filledSlots: 0,
@@ -96,8 +96,8 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             positionId: position_type_id,
             prerequisiteId: prerequisite_id ?? 0,
             roleRequiredId: role_id ?? 0,
-            shiftPositionId: shift_position_id,
-            totalSlots: total_slots,
+            timePositionId: time_position_id,
+            totalSlots: slots,
           };
 
           return resShiftPositionItem;
@@ -108,7 +108,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           noshow,
           playa_name,
           position,
-          shift_position_id,
+          time_position_id,
           shift_times_id,
           shiftboard_id,
           world_name,
@@ -118,8 +118,8 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             playaName: playa_name,
             positionName: position,
             shiftboardId: shiftboard_id,
-            shiftPositionId: shift_position_id,
             timeId: shift_times_id,
+            timePositionId: time_position_id,
             worldName: world_name,
           };
           return resShiftVolunteerItem;
@@ -129,8 +129,8 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       resShiftVolunteerList.forEach((shiftVolunteerItem) => {
         const positionFound = resShiftPositionList.find(
           (resShiftPositionItem) =>
-            resShiftPositionItem.shiftPositionId ===
-            shiftVolunteerItem.shiftPositionId
+            resShiftPositionItem.timePositionId ===
+            shiftVolunteerItem.timePositionId
         );
         if (positionFound) positionFound.filledSlots += 1;
       });
@@ -158,15 +158,15 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         id: timeId,
         noShow,
         shiftboardId,
-        shiftPositionId,
+        timePositionId,
       }: IReqShiftVolunteerItem = JSON.parse(req.body);
       const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT *
         FROM op_volunteer_shifts
-        WHERE shift_position_id=?
-        AND shift_times_id=?
-        AND shiftboard_id=?`,
-        [shiftPositionId, timeId, shiftboardId]
+        WHERE shift_times_id=?
+        AND shiftboard_id=?
+        AND time_position_id=?`,
+        [timeId, shiftboardId, timePositionId]
       );
       const dbShiftVolunteerFirst = dbShiftVolunteerList[0];
 
@@ -179,10 +179,10 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             noshow=?,
             add_shift=true,
             remove_shift=false
-          WHERE shift_position_id=?
-          AND shift_times_id=?
-          AND shiftboard_id=?`,
-          [noShow, shiftPositionId, timeId, shiftboardId]
+          WHERE shift_times_id=?
+          AND shiftboard_id=?
+          AND time_position_id=?`,
+          [noShow, timeId, shiftboardId, timePositionId]
         );
         // else insert them into the table
       } else {
@@ -190,12 +190,12 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           `INSERT INTO op_volunteer_shifts (
             add_shift,
             noshow,
-            shift_position_id,
             shift_times_id,
-            shiftboard_id
+            shiftboard_id,
+            time_position_id
           )
           VALUES (true, ?, ?, ?, ?)`,
-          [noShow, shiftPositionId, timeId, shiftboardId]
+          [noShow, timeId, shiftboardId, timePositionId]
         );
       }
 

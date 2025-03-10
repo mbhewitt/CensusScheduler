@@ -19,7 +19,7 @@ export interface IReqShiftVolunteerItem {
   id: number;
   noShow: string;
   shiftboardId: number;
-  shiftPositionId: number | string;
+  timePositionId: number | string;
 }
 
 // details
@@ -31,7 +31,7 @@ export interface IResShiftPositionCountItem {
   positionId: number;
   prerequisiteId: number;
   roleRequiredId: number;
-  shiftPositionId: number;
+  timePositionId: number;
   totalSlots: number;
 }
 export interface IResShiftVolunteerRowItem {
@@ -39,8 +39,8 @@ export interface IResShiftVolunteerRowItem {
   playaName: string;
   positionName: string;
   shiftboardId: number;
-  shiftPositionId: number;
   timeId: number;
+  timePositionId: number;
   worldName: string;
 }
 export interface IResShiftVolunteerInformation {
