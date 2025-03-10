@@ -17,7 +17,7 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
       shift_times_id,
       shiftboard_id,
       start_time_lt,
-      total_slots,
+      slots,
     }: RowDataPacket) => {
       const shiftPositionIdItem = `${shift_times_id}${position_type_id}`;
       const dbShiftLast: IResShiftRowItem | undefined = shiftListNew.at(-1);
@@ -35,7 +35,7 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
           filledSlots: shiftboard_id ? 1 : 0,
           id: shift_times_id,
           startTime: start_time_lt,
-          totalSlots: total_slots,
+          totalSlots: slots,
           type: shift_name,
         };
 
@@ -47,7 +47,7 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
       // then add to total slots
       if (dbShiftLast && !shiftPositionIdMap[shiftPositionIdItem]) {
         shiftPositionIdMap[shiftPositionIdItem] = true;
-        dbShiftLast.totalSlots += total_slots;
+        dbShiftLast.totalSlots += slots;
       }
       // if volunteer ID exists
       // then add to filled slots
