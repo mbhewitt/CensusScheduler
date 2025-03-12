@@ -24,8 +24,8 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
             st.end_time_lt,
             st.shift_times_id,
             st.start_time_lt,
-            stp.position_type_id,
             stp.slots,
+            stp.time_position_id,
             vs.remove_shift,
             vs.shiftboard_id
           FROM op_shift_times AS st
@@ -59,8 +59,8 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
             st.end_time_lt,
             st.shift_times_id,
             st.start_time_lt,
-            stp.position_type_id,
             stp.slots,
+            stp.time_position_id,
             vs.shiftboard_id
           FROM op_shift_times AS st
           JOIN op_shift_name AS sn

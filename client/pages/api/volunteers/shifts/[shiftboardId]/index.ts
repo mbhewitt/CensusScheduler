@@ -23,7 +23,7 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
           st.end_time_lt,
           st.start_time_lt,
           vs.noshow,
-          vs.shift_position_id,
+          vs.time_position_id,
           vs.shift_times_id
         FROM op_volunteer_shifts AS vs
         JOIN op_shift_time_position AS stp
@@ -50,9 +50,9 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
           end_time_lt,
           noshow,
           position,
-          shift_position_id,
           shift_times_id,
           start_time_lt,
+          time_position_id,
         }) => {
           const resVolunterShiftItem: IResVolunteerShiftItem = {
             dateName: datename ?? "",
@@ -60,9 +60,9 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
             endTime: end_time_lt,
             noShow: noshow,
             position: { name: position },
-            shiftPositionId: shift_position_id,
             startTime: start_time_lt,
             timeId: shift_times_id,
+            timePositionId: time_position_id,
           };
 
           return resVolunterShiftItem;

@@ -229,7 +229,6 @@ export const ShiftVolunteers = ({
     playaName,
     position: { name: positionName },
     shiftboardId,
-    timeId,
     timePositionId,
     worldName,
   }: ISwitchValues) => {
@@ -238,7 +237,6 @@ export const ShiftVolunteers = ({
         body: {
           isCheckedIn,
           shiftboardId,
-          timeId,
           timePositionId,
         },
         method: "PATCH",
@@ -246,7 +244,6 @@ export const ShiftVolunteers = ({
       socket.emit("req-check-in-toggle", {
         isCheckedIn,
         shiftboardId,
-        timeId,
         timePositionId,
       });
       enqueueSnackbar(
@@ -396,7 +393,6 @@ export const ShiftVolunteers = ({
                 name: positionName,
               },
               shiftboardId,
-              timeId,
               timePositionId,
               worldName,
             })

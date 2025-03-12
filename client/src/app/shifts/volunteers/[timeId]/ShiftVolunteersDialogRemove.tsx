@@ -63,7 +63,6 @@ export const ShiftVolunteersDialogRemove = ({
       socket.emit("req-shift-volunteer-remove", {
         shiftboardId,
         timePositionId,
-        timeId,
       });
 
       enqueueSnackbar(

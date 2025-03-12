@@ -25,9 +25,8 @@ interface IVolunteerShiftsDialogRemoveProps {
     dateName: string;
     endTime: string;
     position: { name: string };
-    shiftPositionId: number;
     startTime: string;
-    timeId: number;
+    timePositionId: number;
   };
   shiftboardId: string | string[] | undefined;
 }
@@ -40,9 +39,8 @@ export const VolunteerShiftsDialogRemove = ({
     dateName,
     endTime,
     position: { name: positionName },
-    shiftPositionId,
     startTime,
-    timeId,
+    timePositionId,
   },
   shiftboardId,
 }: IVolunteerShiftsDialogRemoveProps) => {
@@ -63,13 +61,13 @@ export const VolunteerShiftsDialogRemove = ({
     try {
       // update database
       await trigger({
-        body: { shiftPositionId, timeId, shiftboardId },
+        body: { shiftboardId, timePositionId },
         method: "DELETE",
       });
       // emit event
       socket.emit("req-shift-volunteer-remove", {
         shiftboardId,
-        timeId,
+        timePositionId,
       });
 
       enqueueSnackbar(
