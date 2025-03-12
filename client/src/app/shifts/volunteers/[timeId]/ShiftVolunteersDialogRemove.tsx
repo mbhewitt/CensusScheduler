@@ -22,8 +22,8 @@ interface IShiftVolunteersDialogRemoveProps {
   isDialogOpen: boolean;
   shiftItem: {
     positionName: string;
-    shiftPositionId: number;
     timeId: number;
+    timePositionId: number;
   };
   volunteerItem: {
     playaName: string;
@@ -36,7 +36,7 @@ const socket = io();
 export const ShiftVolunteersDialogRemove = ({
   handleDialogClose,
   isDialogOpen,
-  shiftItem: { positionName, shiftPositionId, timeId },
+  shiftItem: { positionName, timeId, timePositionId },
   volunteerItem: { playaName, shiftboardId, worldName },
 }: IShiftVolunteersDialogRemoveProps) => {
   // fetching, mutation, and revalidation
@@ -56,14 +56,13 @@ export const ShiftVolunteersDialogRemove = ({
     try {
       // update database
       await trigger({
-        body: { shiftboardId, shiftPositionId, timeId },
+        body: { shiftboardId, timePositionId, timeId },
         method: "DELETE",
       });
       // emit event
       socket.emit("req-shift-volunteer-remove", {
         shiftboardId,
-        shiftPositionId,
-        timeId,
+        timePositionId,
       });
 
       enqueueSnackbar(

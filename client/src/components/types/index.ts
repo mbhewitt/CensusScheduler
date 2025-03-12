@@ -5,15 +5,13 @@ export interface ISwitchValues {
   playaName: string;
   position: { name: string };
   shiftboardId: number;
-  shiftPositionId: number;
-  timeId: number;
+  timePositionId: number;
   worldName: string;
 }
 export interface IReqSwitchValues {
   isCheckedIn: boolean;
   shiftboardId: number;
-  shiftPositionId: number;
-  timeId: number;
+  timePositionId: number;
 }
 export interface IVolunteerOption {
   label: string;

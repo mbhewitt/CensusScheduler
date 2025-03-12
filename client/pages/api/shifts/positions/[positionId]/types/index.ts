@@ -16,14 +16,16 @@ const shiftPositionTypes = async (
     case "GET": {
       // get all active types for position
       const [dbTypeList] = await pool.query<RowDataPacket[]>(
-        `SELECT
+        `SELECT DISTINCT
           sn.shift_name,
           sn.shift_name_id
         FROM op_shift_name AS sn
-        JOIN op_shift_position AS sp
-        ON sp.shift_name_id=sn.shift_name_id
+        JOIN op_shift_times as st
+        ON st.shift_name_id=sn.shift_name_id
+        JOIN op_shift_time_position AS stp
+        ON stp.shift_times_id=st.shift_times_id
         AND sn.delete_shift=false
-        WHERE sp.position_type_id=?
+        WHERE stp.position_type_id=?
         ORDER BY sn.shift_name`,
         [positionId]
       );

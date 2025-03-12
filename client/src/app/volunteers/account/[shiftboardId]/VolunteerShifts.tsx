@@ -78,8 +78,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
       dateName: "",
       endTime: "",
       position: { name: "" },
-      shiftPositionId: 0,
-      timeId: 0,
+      timePositionId: 0,
       startTime: "",
     },
   });
@@ -118,12 +117,18 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
 
         socket.on(
           "res-check-in-toggle",
-          ({ checked, timeId }: { checked: boolean; timeId: number }) => {
+          ({
+            checked,
+            timePositionId,
+          }: {
+            checked: boolean;
+            timePositionId: number;
+          }) => {
             if (data) {
               const dataMutate = structuredClone(data);
               const volunteerShiftItemFound = dataMutate.find(
                 (volunteerShiftItem: IResVolunteerShiftItem) =>
-                  volunteerShiftItem.timeId === timeId
+                  volunteerShiftItem.timePositionId === timePositionId
               );
               if (volunteerShiftItemFound) {
                 volunteerShiftItemFound.noShow = checked ? "" : "Yes";
@@ -133,12 +138,12 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
             }
           }
         );
-        socket.on("res-shift-volunteer-remove", ({ timeId }) => {
+        socket.on("res-shift-volunteer-remove", ({ timePositionId }) => {
           if (data) {
             const dataMutate = structuredClone(data);
             const volunteerShiftListNew = dataMutate.filter(
               (volunteerShiftItem: IResVolunteerShiftItem) =>
-                volunteerShiftItem.timeId !== timeId
+                volunteerShiftItem.timePositionId !== timePositionId
             );
 
             mutate(volunteerShiftListNew);
@@ -189,16 +194,14 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
     playaName,
     position: { name: positionName },
     shiftboardId,
-    shiftPositionId,
-    timeId,
+    timePositionId,
     worldName,
   }: ISwitchValues) => {
     try {
       const body: IReqSwitchValues = {
         isCheckedIn,
         shiftboardId,
-        shiftPositionId,
-        timeId,
+        timePositionId,
       };
 
       // update database
@@ -285,9 +288,9 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
       endTime,
       noShow,
       position: { name: positionName },
-      shiftPositionId,
       startTime,
       timeId,
+      timePositionId,
     }: IResVolunteerShiftItem) => {
       // evaluate the check-in type and available features
       const checkInType = getCheckInType({
@@ -323,7 +326,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
         formatTime(startTime, endTime),
         positionName,
         <Chip
-          key={`${timeId}${shiftPositionId}-chip`}
+          key={`${timePositionId}-chip`}
           label={positionName}
           sx={{ backgroundColor: colorMapDisplay[departmentName] }}
         />,
@@ -338,8 +341,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
                 name: positionName,
               },
               shiftboardId: Number(shiftboardId),
-              shiftPositionId,
-              timeId,
+              timePositionId,
               worldName,
             })
           }
@@ -367,9 +369,8 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
                       dateName,
                       endTime,
                       position: { name: positionName },
-                      shiftPositionId,
                       startTime,
-                      timeId,
+                      timePositionId,
                     },
                   });
                   setIsDialogOpen(true);

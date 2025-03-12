@@ -92,8 +92,8 @@ export const ShiftVolunteers = ({
     dialogItem: 0,
     shift: {
       positionName: "",
-      shiftPositionId: 0,
       timeId: 0,
+      timePositionId: 0,
     },
     volunteer: {
       playaName: "",
@@ -139,8 +139,8 @@ export const ShiftVolunteers = ({
             playaName,
             positionName,
             shiftboardId,
-            shiftPositionId,
             timeId,
+            timePositionId,
             worldName,
           }) => {
             if (dataShiftVolunteersItem) {
@@ -150,8 +150,8 @@ export const ShiftVolunteers = ({
                 playaName,
                 positionName,
                 shiftboardId,
-                shiftPositionId,
                 timeId,
+                timePositionId,
                 worldName,
               });
 
@@ -229,8 +229,7 @@ export const ShiftVolunteers = ({
     playaName,
     position: { name: positionName },
     shiftboardId,
-    shiftPositionId,
-    timeId,
+    timePositionId,
     worldName,
   }: ISwitchValues) => {
     try {
@@ -238,16 +237,14 @@ export const ShiftVolunteers = ({
         body: {
           isCheckedIn,
           shiftboardId,
-          shiftPositionId,
-          timeId,
+          timePositionId,
         },
         method: "PATCH",
       });
       socket.emit("req-check-in-toggle", {
         isCheckedIn,
         shiftboardId,
-        shiftPositionId,
-        timeId,
+        timePositionId,
       });
       enqueueSnackbar(
         <SnackbarText>
@@ -377,8 +374,8 @@ export const ShiftVolunteers = ({
       playaName,
       positionName,
       shiftboardId,
-      shiftPositionId,
       timeId,
+      timePositionId,
       worldName,
     }: IResShiftVolunteerRowItem) => {
       return [
@@ -396,8 +393,7 @@ export const ShiftVolunteers = ({
                 name: positionName,
               },
               shiftboardId,
-              shiftPositionId,
-              timeId,
+              timePositionId,
               worldName,
             })
           }
@@ -425,8 +421,8 @@ export const ShiftVolunteers = ({
                       dialogItem: DialogList.Remove,
                       shift: {
                         positionName,
-                        shiftPositionId,
                         timeId,
+                        timePositionId,
                       },
                       volunteer: {
                         playaName,
@@ -561,8 +557,8 @@ export const ShiftVolunteers = ({
                   dialogItem: DialogList.Add,
                   shift: {
                     positionName: "",
-                    shiftPositionId: 0,
                     timeId: 0,
+                    timePositionId: 0,
                   },
                   volunteer: {
                     playaName: "",

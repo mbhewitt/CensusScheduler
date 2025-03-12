@@ -27,9 +27,9 @@ const shiftTypePositionTimes = async (
         ON st.shift_times_id=vs.shift_times_id
         LEFT JOIN op_dates AS d
         ON d.date=LEFT(st.start_time_lt, 10)
-        JOIN op_shift_position AS sp
-        ON sp.shift_position_id=vs.shift_position_id
-        AND sp.position_type_id=?
+        JOIN op_shift_time_position AS stp
+        ON stp.shift_times_id=st.shift_times_id
+        AND stp.position_type_id=?
         JOIN op_shift_name AS sn
         ON sn.shift_name_id=st.shift_name_id
         AND sn.shift_name_id=?
