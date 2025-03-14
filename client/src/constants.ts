@@ -54,7 +54,7 @@ export const IDLE_MINUTES = 5;
 
 // palette
 export const COLOR_BURNING_MAN_BROWN = "#2f2f2f";
-export const COLOR_CENSUS_PINK = "#ed008c";
+export const COLOR_CENSUS_PINK = "#ea008b";
 
 // roles
 export const ROLE_ADMIN_ID = 2;
