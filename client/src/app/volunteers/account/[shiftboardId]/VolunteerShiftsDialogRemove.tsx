@@ -21,28 +21,24 @@ import { formatDateName, formatTime } from "@/utils/formatDateTime";
 interface IVolunteerShiftsDialogRemoveProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
-  shiftItem: {
+  shift: {
     dateName: string;
     endTime: string;
-    position: { name: string };
+    positionName: string;
     startTime: string;
     timePositionId: number;
   };
-  shiftboardId: string | string[] | undefined;
+  volunteer: {
+    shiftboardId: number;
+  };
 }
 
 const socket = io();
 export const VolunteerShiftsDialogRemove = ({
   handleDialogClose,
   isDialogOpen,
-  shiftItem: {
-    dateName,
-    endTime,
-    position: { name: positionName },
-    startTime,
-    timePositionId,
-  },
-  shiftboardId,
+  shift: { dateName, endTime, positionName, startTime, timePositionId },
+  volunteer: { shiftboardId },
 }: IVolunteerShiftsDialogRemoveProps) => {
   // fetching, mutation, and revalidation
   // --------------------

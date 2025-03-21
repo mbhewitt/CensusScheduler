@@ -61,14 +61,16 @@ interface IShiftVolunteersDialogAddProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
   shiftVolunteersItem: {
-    dateName: string;
-    endTime: string;
     positionList: IResShiftPositionCountItem[];
-    startTime: string;
-    type: string;
+    shift: {
+      dateName: string;
+      endTime: string;
+      startTime: string;
+      typeName: string;
+    };
+    timeId: number;
     volunteerList: IResShiftVolunteerRowItem[];
   };
-  timeId: string | string[] | undefined;
 }
 
 const socket = io();
@@ -83,14 +85,11 @@ export const ShiftVolunteersDialogAdd = ({
   handleDialogClose,
   isDialogOpen,
   shiftVolunteersItem: {
-    dateName,
-    endTime,
     positionList,
-    startTime,
-    type,
+    shift: { dateName, endTime, startTime, typeName },
+    timeId,
     volunteerList,
   },
-  timeId,
 }: IShiftVolunteersDialogAddProps) => {
   // context
   // --------------------
@@ -215,8 +214,8 @@ export const ShiftVolunteersDialogAdd = ({
       const isVolunteerShiftAvailable = dataVolunteerShiftList.every(
         (volunteerShiftItem) => {
           return !dayjs(startTime).isBetween(
-            dayjs(volunteerShiftItem.startTime),
-            dayjs(volunteerShiftItem.endTime),
+            dayjs(volunteerShiftItem.shift.startTime),
+            dayjs(volunteerShiftItem.shift.endTime),
             null,
             "[]"
           );
@@ -232,7 +231,7 @@ export const ShiftVolunteersDialogAdd = ({
             <strong>{`${formatDateName(startTime, dateName)}, ${formatTime(
               startTime,
               endTime
-            )}, ${type}`}</strong>{" "}
+            )}, ${typeName}`}</strong>{" "}
             shift will cause a time conflict for{" "}
             <strong>
               {volunteerSelected?.playaName} &quot;
@@ -252,7 +251,7 @@ export const ShiftVolunteersDialogAdd = ({
     endTime,
     enqueueSnackbar,
     shiftboardId,
-    type,
+    typeName,
     startTime,
     volunteerList,
     volunteerSelected,
@@ -766,8 +765,8 @@ export const ShiftVolunteersDialogAdd = ({
                             dataVolunteerShiftList.every(
                               (dataVolunteerShiftList) =>
                                 !dayjs(trainingItemFound.startTime).isBetween(
-                                  dayjs(dataVolunteerShiftList.startTime),
-                                  dayjs(dataVolunteerShiftList.endTime),
+                                  dayjs(dataVolunteerShiftList.shift.startTime),
+                                  dayjs(dataVolunteerShiftList.shift.endTime),
                                   null,
                                   "[]"
                                 )

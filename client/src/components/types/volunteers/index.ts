@@ -50,12 +50,20 @@ export interface IResVolunteerShiftCountItem {
   worldName: string;
 }
 export interface IResVolunteerShiftItem {
-  dateName: string;
-  department: { name: string };
-  endTime: string;
-  noShow: string;
-  position: { name: string };
-  timeId: number;
-  timePositionId: number;
-  startTime: string;
+  department: {
+    name: string;
+  };
+  shift: {
+    endTime: string;
+    dateName: string;
+    positionName: string;
+    startTime: string;
+    timeId: number;
+    timePositionId: number;
+  };
+  volunteer: {
+    noShow: string;
+    notes: string;
+    rating: null | number;
+  };
 }

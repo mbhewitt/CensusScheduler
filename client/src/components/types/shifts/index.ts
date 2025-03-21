@@ -36,21 +36,24 @@ export interface IResShiftPositionCountItem {
 }
 export interface IResShiftVolunteerRowItem {
   isCheckedIn: string;
+  notes: string;
   playaName: string;
   positionName: string;
+  rating: number;
   shiftboardId: number;
-  timeId: number;
   timePositionId: number;
   worldName: string;
 }
 export interface IResShiftVolunteerInformation {
-  dateName: string;
-  details: string;
-  endTime: string;
-  meal: string;
-  notes: string;
   positionList: IResShiftPositionCountItem[];
-  startTime: string;
-  type: string;
+  shift: {
+    dateName: string;
+    details: string;
+    endTime: string;
+    meal: string;
+    notes: string;
+    startTime: string;
+    typeName: string;
+  };
   volunteerList: IResShiftVolunteerRowItem[];
 }

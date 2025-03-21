@@ -1,12 +1,16 @@
 // general
 // --------------------
 export interface ISwitchValues {
-  isCheckedIn: boolean;
-  playaName: string;
-  position: { name: string };
-  shiftboardId: number;
-  timePositionId: number;
-  worldName: string;
+  shift: {
+    positionName: string;
+    timePositionId: number;
+  };
+  volunteer: {
+    isCheckedIn: boolean;
+    playaName: string;
+    shiftboardId: number;
+    worldName: string;
+  };
 }
 export interface IReqSwitchValues {
   isCheckedIn: boolean;

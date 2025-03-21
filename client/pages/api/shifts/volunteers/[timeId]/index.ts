@@ -60,7 +60,8 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           v.playa_name,
           v.world_name,
           vs.noshow,
-          vs.shift_times_id,
+          vs.notes,
+          vs.rating,
           vs.shiftboard_id,
           vs.time_position_id
         FROM op_volunteer_shifts AS vs
@@ -106,19 +107,21 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       const resShiftVolunteerList = dbShiftVolunteerList.map(
         ({
           noshow,
+          notes,
           playa_name,
           position,
-          time_position_id,
-          shift_times_id,
+          rating,
           shiftboard_id,
+          time_position_id,
           world_name,
         }) => {
           const resShiftVolunteerItem: IResShiftVolunteerRowItem = {
             isCheckedIn: noshow,
+            notes: notes ?? "",
             playaName: playa_name,
             positionName: position,
+            rating,
             shiftboardId: shiftboard_id,
-            timeId: shift_times_id,
             timePositionId: time_position_id,
             worldName: world_name,
           };
@@ -136,14 +139,16 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       });
 
       const resShiftVolunteerDetails: IResShiftVolunteerInformation = {
-        dateName: resShiftPositionFirst.datename ?? "",
-        details: resShiftPositionFirst.shift_details,
-        endTime: resShiftPositionFirst.end_time_lt,
-        meal: resShiftPositionFirst.meal,
-        notes: resShiftPositionFirst.notes,
         positionList: resShiftPositionList,
-        startTime: resShiftPositionFirst.start_time_lt,
-        type: resShiftPositionFirst.shift_name,
+        shift: {
+          dateName: resShiftPositionFirst.datename ?? "",
+          details: resShiftPositionFirst.shift_details,
+          endTime: resShiftPositionFirst.end_time_lt,
+          meal: resShiftPositionFirst.meal,
+          notes: resShiftPositionFirst.notes,
+          startTime: resShiftPositionFirst.start_time_lt,
+          typeName: resShiftPositionFirst.shift_name,
+        },
         volunteerList: resShiftVolunteerList,
       };
 

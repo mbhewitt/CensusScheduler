@@ -20,12 +20,12 @@ import { fetcherTrigger } from "@/utils/fetcher";
 interface IShiftVolunteersDialogRemoveProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
-  shiftItem: {
+  shift: {
     positionName: string;
     timeId: number;
     timePositionId: number;
   };
-  volunteerItem: {
+  volunteer: {
     playaName: string;
     shiftboardId: number;
     worldName: string;
@@ -36,8 +36,8 @@ const socket = io();
 export const ShiftVolunteersDialogRemove = ({
   handleDialogClose,
   isDialogOpen,
-  shiftItem: { positionName, timeId, timePositionId },
-  volunteerItem: { playaName, shiftboardId, worldName },
+  shift: { positionName, timeId, timePositionId },
+  volunteer: { playaName, shiftboardId, worldName },
 }: IShiftVolunteersDialogRemoveProps) => {
   // fetching, mutation, and revalidation
   // --------------------

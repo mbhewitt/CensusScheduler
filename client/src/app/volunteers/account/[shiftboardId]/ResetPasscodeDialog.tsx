@@ -27,7 +27,7 @@ interface IResetPasscodeDialogProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
   playaName: string;
-  shiftboardId: string | string[] | undefined;
+  shiftboardId: number;
   worldName: string;
 }
 
