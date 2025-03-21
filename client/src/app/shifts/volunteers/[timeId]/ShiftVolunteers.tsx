@@ -7,6 +7,8 @@ import {
   MoreHoriz as MoreHorizIcon,
   PersonAddAlt1 as PersonAddAlt1Icon,
   PersonRemove as PersonRemoveIcon,
+  SpeakerNotes as SpeakerNotesIcon,
+  SpeakerNotesOff as SpeakerNotesOffIcon,
 } from "@mui/icons-material";
 import {
   Box,
@@ -16,6 +18,7 @@ import {
   Container,
   Divider,
   Grid2 as Grid,
+  IconButton,
   ListItemIcon,
   ListItemText,
   MenuItem,
@@ -34,6 +37,7 @@ import useSWRMutation from "swr/mutation";
 
 import { ShiftVolunteersDialogAdd } from "@/app/shifts/volunteers/[timeId]/ShiftVolunteersDialogAdd";
 import { ShiftVolunteersDialogRemove } from "@/app/shifts/volunteers/[timeId]/ShiftVolunteersDialogRemove";
+import { ShiftVolunteersDialogReview } from "@/app/shifts/volunteers/[timeId]/ShiftVolunteersDialogReview";
 import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
 import { DataTable } from "@/components/general/DataTable";
 import { ErrorPage } from "@/components/general/ErrorPage";
@@ -62,9 +66,24 @@ import {
 enum DialogList {
   Add,
   Remove,
+  Review,
 }
 interface IShiftVolunteersProps {
-  timeId: string;
+  timeId: number;
+}
+interface IDialogCurrentState {
+  dialogItem: number;
+  shift: {
+    positionName: string;
+    timePositionId: number;
+  };
+  volunteer: {
+    notes: string;
+    playaName: string;
+    rating: null | number;
+    shiftboardId: number;
+    worldName: string;
+  };
 }
 
 const socket = io();
@@ -88,15 +107,16 @@ export const ShiftVolunteers = ({
 
   // state
   // --------------------
-  const [dialogCurrent, setDialogCurrent] = useState({
+  const [dialogCurrent, setDialogCurrent] = useState<IDialogCurrentState>({
     dialogItem: 0,
     shift: {
       positionName: "",
-      timeId: 0,
       timePositionId: 0,
     },
     volunteer: {
+      notes: "",
       playaName: "",
+      rating: null,
       shiftboardId: 0,
       worldName: "",
     },
@@ -136,10 +156,11 @@ export const ShiftVolunteers = ({
           "res-shift-volunteer-add",
           ({
             isCheckedIn,
+            notes,
             playaName,
             positionName,
+            rating,
             shiftboardId,
-            timeId,
             timePositionId,
             worldName,
           }) => {
@@ -147,10 +168,11 @@ export const ShiftVolunteers = ({
               const dataMutate = structuredClone(dataShiftVolunteersItem);
               dataMutate.volunteerList.push({
                 isCheckedIn,
+                notes,
                 playaName,
                 positionName,
+                rating,
                 shiftboardId,
-                timeId,
                 timePositionId,
                 worldName,
               });
@@ -225,12 +247,8 @@ export const ShiftVolunteers = ({
   const isAdmin = checkIsAdmin(accountType, roleList);
 
   const handleCheckInToggle = async ({
-    isCheckedIn,
-    playaName,
-    position: { name: positionName },
-    shiftboardId,
-    timePositionId,
-    worldName,
+    shift: { positionName, timePositionId },
+    volunteer: { isCheckedIn, playaName, shiftboardId, worldName },
   }: ISwitchValues) => {
     try {
       await trigger({
@@ -278,8 +296,8 @@ export const ShiftVolunteers = ({
   // evaluate the check-in type and available features
   const checkInType = getCheckInType({
     dateTime: dayjs(dateTimeValue),
-    endTime: dayjs(dataShiftVolunteersItem.endTime),
-    startTime: dayjs(dataShiftVolunteersItem.startTime),
+    endTime: dayjs(dataShiftVolunteersItem.shift.endTime),
+    startTime: dayjs(dataShiftVolunteersItem.shift.startTime),
   });
   let isVolunteerAddAvailable = false;
   let isCheckInAvailable = false;
@@ -357,24 +375,37 @@ export const ShiftVolunteers = ({
     },
   ];
   if (isAdmin) {
-    columnListVolunteers.push({
-      name: "Admin",
-      options: {
-        filter: false,
-        searchable: false,
-        setCellHeaderProps: setCellHeaderPropsCenter,
-        setCellProps: setCellPropsCenter,
-        sort: false,
+    columnListVolunteers.push(
+      {
+        name: "Admin review",
+        options: {
+          filter: false,
+          searchable: false,
+          setCellHeaderProps: setCellHeaderPropsCenter,
+          setCellProps: setCellPropsCenter,
+          sort: false,
+        },
       },
-    });
+      {
+        name: "Admin actions",
+        options: {
+          filter: false,
+          searchable: false,
+          setCellHeaderProps: setCellHeaderPropsCenter,
+          setCellProps: setCellPropsCenter,
+          sort: false,
+        },
+      }
+    );
   }
   const dataTableVolunteers = dataShiftVolunteersItem.volunteerList.map(
     ({
       isCheckedIn,
+      notes,
       playaName,
       positionName,
+      rating,
       shiftboardId,
-      timeId,
       timePositionId,
       worldName,
     }: IResShiftVolunteerRowItem) => {
@@ -387,20 +418,49 @@ export const ShiftVolunteers = ({
           disabled={!isCheckInAvailable}
           onChange={(event) =>
             handleCheckInToggle({
-              isCheckedIn: event.target.checked,
-              playaName,
-              position: {
-                name: positionName,
+              shift: {
+                positionName,
+                timePositionId,
               },
-              shiftboardId,
-              timePositionId,
-              worldName,
+              volunteer: {
+                isCheckedIn: event.target.checked,
+                playaName,
+                shiftboardId,
+                worldName,
+              },
             })
           }
           key={`${shiftboardId}-switch`}
         />,
         // if volunteer is admin
-        // then display volunteer shift volunteer menu
+        // then display volunteer shift review and volunteer menu
+        isAdmin && (
+          <IconButton
+            onClick={() => {
+              setDialogCurrent({
+                dialogItem: DialogList.Review,
+                shift: {
+                  positionName,
+                  timePositionId,
+                },
+                volunteer: {
+                  notes,
+                  playaName,
+                  rating,
+                  shiftboardId,
+                  worldName,
+                },
+              });
+              setIsDialogOpen(true);
+            }}
+          >
+            {rating || notes ? (
+              <SpeakerNotesIcon color="primary" />
+            ) : (
+              <SpeakerNotesOffIcon color="disabled" />
+            )}
+          </IconButton>
+        ),
         isAdmin && (
           <MoreMenu
             Icon={<MoreHorizIcon />}
@@ -421,11 +481,12 @@ export const ShiftVolunteers = ({
                       dialogItem: DialogList.Remove,
                       shift: {
                         positionName,
-                        timeId,
                         timePositionId,
                       },
                       volunteer: {
+                        notes: "",
                         playaName,
+                        rating: null,
                         shiftboardId,
                         worldName,
                       },
@@ -487,16 +548,16 @@ export const ShiftVolunteers = ({
           <Box>
             <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
               {formatDateName(
-                dataShiftVolunteersItem.startTime,
-                dataShiftVolunteersItem.dateName
+                dataShiftVolunteersItem.shift.startTime,
+                dataShiftVolunteersItem.shift.dateName
               )}
               <br />
               {formatTime(
-                dataShiftVolunteersItem.startTime,
-                dataShiftVolunteersItem.endTime
+                dataShiftVolunteersItem.shift.startTime,
+                dataShiftVolunteersItem.shift.endTime
               )}
               <br />
-              {dataShiftVolunteersItem.type}
+              {dataShiftVolunteersItem.shift.typeName}
             </Typography>
           </Box>
           <Card sx={{ mb: 2 }}>
@@ -507,7 +568,7 @@ export const ShiftVolunteers = ({
                     Details
                   </Typography>
                 </Grid>
-                <Grid size={10}>{dataShiftVolunteersItem.details}</Grid>
+                <Grid size={10}>{dataShiftVolunteersItem.shift.details}</Grid>
                 <Grid size={12}>
                   <Divider sx={{ my: 2 }} />
                 </Grid>
@@ -516,7 +577,7 @@ export const ShiftVolunteers = ({
                     Meal
                   </Typography>
                 </Grid>
-                <Grid size={10}>{dataShiftVolunteersItem.meal}</Grid>
+                <Grid size={10}>{dataShiftVolunteersItem.shift.meal}</Grid>
                 <Grid size={12}>
                   <Divider sx={{ my: 2 }} />
                 </Grid>
@@ -525,7 +586,7 @@ export const ShiftVolunteers = ({
                     Notes
                   </Typography>
                 </Grid>
-                <Grid size={10}>{dataShiftVolunteersItem.notes}</Grid>
+                <Grid size={10}>{dataShiftVolunteersItem.shift.notes}</Grid>
               </Grid>
             </CardContent>
           </Card>
@@ -557,11 +618,12 @@ export const ShiftVolunteers = ({
                   dialogItem: DialogList.Add,
                   shift: {
                     positionName: "",
-                    timeId: 0,
                     timePositionId: 0,
                   },
                   volunteer: {
+                    notes: "",
                     playaName: "",
+                    rating: null,
                     shiftboardId: 0,
                     worldName: "",
                   },
@@ -589,8 +651,10 @@ export const ShiftVolunteers = ({
           isDialogOpen={
             dialogCurrent.dialogItem === DialogList.Add && isDialogOpen
           }
-          shiftVolunteersItem={dataShiftVolunteersItem}
-          timeId={timeIdParam}
+          shiftVolunteersItem={{
+            ...dataShiftVolunteersItem,
+            timeId: timeIdParam,
+          }}
         />
 
         {/* remove dialog */}
@@ -599,8 +663,18 @@ export const ShiftVolunteers = ({
           isDialogOpen={
             dialogCurrent.dialogItem === DialogList.Remove && isDialogOpen
           }
-          shiftItem={dialogCurrent.shift}
-          volunteerItem={dialogCurrent.volunteer}
+          shift={{ ...dialogCurrent.shift, timeId: timeIdParam }}
+          volunteer={dialogCurrent.volunteer}
+        />
+
+        {/* review dialog */}
+        <ShiftVolunteersDialogReview
+          handleDialogClose={() => setIsDialogOpen(false)}
+          isDialogOpen={
+            dialogCurrent.dialogItem === DialogList.Review && isDialogOpen
+          }
+          shift={{ ...dialogCurrent.shift, timeId: timeIdParam }}
+          volunteer={dialogCurrent.volunteer}
         />
       </Container>
     </>

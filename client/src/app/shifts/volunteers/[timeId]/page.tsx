@@ -14,7 +14,7 @@ const ShiftVolunteersPage = async ({ params }: IShiftVolunteersPageProps) => {
 
   // render
   // --------------------
-  return <ShiftVolunteers timeId={timeId} />;
+  return <ShiftVolunteers timeId={Number(timeId)} />;
 };
 
 export default ShiftVolunteersPage;

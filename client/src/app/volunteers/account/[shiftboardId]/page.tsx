@@ -18,7 +18,7 @@ const AccountPage = async ({ params }: IAccountPageProps) => {
   // --------------------
   return (
     <AuthGate accountTypeToCheck={ACCOUNT_TYPE_AUTHENTICATED}>
-      <Account shiftboardId={shiftboardId} />
+      <Account shiftboardId={Number(shiftboardId)} />
     </AuthGate>
   );
 };

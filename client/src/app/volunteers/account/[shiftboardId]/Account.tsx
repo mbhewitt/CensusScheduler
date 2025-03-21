@@ -52,7 +52,7 @@ import { checkIsAdmin } from "@/utils/checkIsRoleExist";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 
 interface IAccountProps {
-  shiftboardId: string;
+  shiftboardId: number;
 }
 interface IFormValues {
   email: string;

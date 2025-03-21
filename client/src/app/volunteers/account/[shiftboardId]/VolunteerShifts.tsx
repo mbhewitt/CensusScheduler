@@ -3,10 +3,13 @@ import {
   EventBusy as EventBusyIcon,
   Groups3 as Groups3Icon,
   MoreHoriz as MoreHorizIcon,
+  SpeakerNotes as SpeakerNotesIcon,
+  SpeakerNotesOff as SpeakerNotesOffIcon,
 } from "@mui/icons-material";
 import {
   Button,
   Chip,
+  IconButton,
   lighten,
   ListItemIcon,
   ListItemText,
@@ -27,6 +30,7 @@ import useSWR, { KeyedMutator } from "swr";
 import useSWRMutation from "swr/mutation";
 
 import { VolunteerShiftsDialogRemove } from "@/app/volunteers/account/[shiftboardId]/VolunteerShiftsDialogRemove";
+import { VolunteerShiftsDialogReview } from "@/app/volunteers/account/[shiftboardId]/VolunteerShiftsDialogReview";
 import { DataTable } from "@/components/general/DataTable";
 import { ErrorAlert } from "@/components/general/ErrorAlert";
 import { Loading } from "@/components/general/Loading";
@@ -49,9 +53,26 @@ import {
 
 enum DialogList {
   Remove,
+  Review,
 }
 interface IVolunteerShiftsProps {
-  shiftboardId: string;
+  shiftboardId: number;
+}
+interface IState {
+  dialogItem: number;
+  shift: {
+    dateName: string;
+    endTime: string;
+    positionName: string;
+    startTime: string;
+    timeId: number;
+    timePositionId: number;
+  };
+  volunteer: {
+    noShow: string;
+    notes: string;
+    rating: null | number;
+  };
 }
 
 const socket = io();
@@ -72,16 +93,23 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
 
   // state
   // --------------------
-  const [dialogCurrent, setDialogCurrent] = useState({
+  const [dialogCurrent, setDialogCurrent] = useState<IState>({
     dialogItem: 0,
     shift: {
       dateName: "",
       endTime: "",
-      position: { name: "" },
-      timePositionId: 0,
+      positionName: "",
       startTime: "",
+      timeId: 0,
+      timePositionId: 0,
+    },
+    volunteer: {
+      noShow: "",
+      notes: "",
+      rating: null,
     },
   });
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // fetching, mutation, and revalidation
@@ -128,10 +156,10 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
               const dataMutate = structuredClone(data);
               const volunteerShiftItemFound = dataMutate.find(
                 (volunteerShiftItem: IResVolunteerShiftItem) =>
-                  volunteerShiftItem.timePositionId === timePositionId
+                  volunteerShiftItem.shift.timePositionId === timePositionId
               );
               if (volunteerShiftItemFound) {
-                volunteerShiftItemFound.noShow = checked ? "" : "Yes";
+                volunteerShiftItemFound.volunteer.noShow = checked ? "" : "Yes";
               }
 
               mutate(dataMutate);
@@ -143,7 +171,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
             const dataMutate = structuredClone(data);
             const volunteerShiftListNew = dataMutate.filter(
               (volunteerShiftItem: IResVolunteerShiftItem) =>
-                volunteerShiftItem.timePositionId !== timePositionId
+                volunteerShiftItem.shift.timePositionId !== timePositionId
             );
 
             mutate(volunteerShiftListNew);
@@ -190,12 +218,8 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
 
   const isAdmin = checkIsAdmin(accountType, roleList);
   const handleCheckInToggle = async ({
-    isCheckedIn,
-    playaName,
-    position: { name: positionName },
-    shiftboardId,
-    timePositionId,
-    worldName,
+    shift: { positionName, timePositionId },
+    volunteer: { isCheckedIn, playaName, shiftboardId, worldName },
   }: ISwitchValues) => {
     try {
       const body: IReqSwitchValues = {
@@ -270,6 +294,16 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
       },
     },
     {
+      name: "Admin review",
+      options: {
+        filter: false,
+        searchable: false,
+        setCellHeaderProps: setCellHeaderPropsCenter,
+        setCellProps: setCellPropsCenter,
+        sort: false,
+      },
+    },
+    {
       name: "Actions",
       options: {
         filter: false,
@@ -283,14 +317,16 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
   const colorMapDisplay = getColorMap(data);
   const dataTable = data.map(
     ({
-      dateName,
       department: { name: departmentName },
-      endTime,
-      noShow,
-      position: { name: positionName },
-      startTime,
-      timeId,
-      timePositionId,
+      shift: {
+        endTime,
+        dateName,
+        positionName,
+        startTime,
+        timeId,
+        timePositionId,
+      },
+      volunteer: { noShow, notes, rating },
     }: IResVolunteerShiftItem) => {
       // evaluate the check-in type and available features
       const checkInType = getCheckInType({
@@ -335,18 +371,52 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
           disabled={!isCheckInAvailable}
           onChange={(event) =>
             handleCheckInToggle({
-              isCheckedIn: event.target.checked,
-              playaName,
-              position: {
-                name: positionName,
+              shift: {
+                positionName,
+                timePositionId,
               },
-              shiftboardId: Number(shiftboardId),
-              timePositionId,
-              worldName,
+              volunteer: {
+                isCheckedIn: event.target.checked,
+                playaName,
+                shiftboardId: Number(shiftboardId),
+                worldName,
+              },
             })
           }
           key={`${shiftboardId}-switch`}
         />,
+
+        // if volunteer is admin
+        // then display volunteer shift review and volunteer menu
+        isAdmin && (
+          <IconButton
+            onClick={() => {
+              setDialogCurrent({
+                dialogItem: DialogList.Review,
+                shift: {
+                  dateName,
+                  endTime,
+                  positionName,
+                  startTime,
+                  timeId,
+                  timePositionId: 0,
+                },
+                volunteer: {
+                  noShow: "",
+                  notes,
+                  rating,
+                },
+              });
+              setIsDialogOpen(true);
+            }}
+          >
+            {rating || notes ? (
+              <SpeakerNotesIcon color="primary" />
+            ) : (
+              <SpeakerNotesOffIcon color="disabled" />
+            )}
+          </IconButton>
+        ),
         <MoreMenu
           Icon={<MoreHorizIcon />}
           key={`${shiftboardId}-menu`}
@@ -368,9 +438,15 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
                     shift: {
                       dateName,
                       endTime,
-                      position: { name: positionName },
+                      positionName,
                       startTime,
+                      timeId,
                       timePositionId,
+                    },
+                    volunteer: {
+                      noShow: "",
+                      notes: "",
+                      rating: null,
                     },
                   });
                   setIsDialogOpen(true);
@@ -441,8 +517,22 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
         isDialogOpen={
           dialogCurrent.dialogItem === DialogList.Remove && isDialogOpen
         }
-        shiftItem={dialogCurrent.shift}
-        shiftboardId={shiftboardId}
+        shift={dialogCurrent.shift}
+        volunteer={{ shiftboardId }}
+      />
+
+      {/* review dialog */}
+      <VolunteerShiftsDialogReview
+        handleDialogClose={() => setIsDialogOpen(false)}
+        isDialogOpen={
+          dialogCurrent.dialogItem === DialogList.Review && isDialogOpen
+        }
+        shift={dialogCurrent.shift}
+        volunteer={{
+          notes: dialogCurrent.volunteer.notes,
+          rating: dialogCurrent.volunteer.rating,
+          shiftboardId,
+        }}
       />
     </>
   );

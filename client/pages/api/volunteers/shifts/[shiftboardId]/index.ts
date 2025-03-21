@@ -23,8 +23,10 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
           st.end_time_lt,
           st.start_time_lt,
           vs.noshow,
-          vs.time_position_id,
-          vs.shift_times_id
+          vs.notes,
+          vs.rating,
+          vs.shift_times_id,
+          vs.time_position_id
         FROM op_volunteer_shifts AS vs
         JOIN op_shift_time_position AS stp
         ON stp.time_position_id=vs.time_position_id
@@ -49,20 +51,30 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
           department,
           end_time_lt,
           noshow,
+          notes,
           position,
+          rating,
           shift_times_id,
           start_time_lt,
           time_position_id,
         }) => {
           const resVolunterShiftItem: IResVolunteerShiftItem = {
-            dateName: datename ?? "",
-            department: { name: department ?? "" },
-            endTime: end_time_lt,
-            noShow: noshow,
-            position: { name: position },
-            startTime: start_time_lt,
-            timeId: shift_times_id,
-            timePositionId: time_position_id,
+            department: {
+              name: department ?? "",
+            },
+            shift: {
+              endTime: end_time_lt,
+              dateName: datename ?? "",
+              positionName: position,
+              startTime: start_time_lt,
+              timeId: shift_times_id,
+              timePositionId: time_position_id,
+            },
+            volunteer: {
+              noShow: noshow,
+              notes: notes ?? "",
+              rating,
+            },
           };
 
           return resVolunterShiftItem;
