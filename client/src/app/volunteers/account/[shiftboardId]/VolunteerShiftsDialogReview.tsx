@@ -23,7 +23,8 @@ import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "@/components/general/DialogContainer";
 import { SnackbarText } from "@/components/general/SnackbarText";
-import { legendList } from "@/constants";
+import { IReqReviewValues } from "@/components/types";
+import { legendList, UPDATE_TYPE_REVIEW } from "@/constants";
 import { fetcherTrigger } from "@/utils/fetcher";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
 
@@ -57,13 +58,13 @@ const defaultValues: IFormValues = {
 export const VolunteerShiftsDialogReview = ({
   handleDialogClose,
   isDialogOpen,
-  shift: { dateName, endTime, positionName, startTime, timeId, timePositionId },
+  shift: { dateName, endTime, positionName, startTime, timePositionId },
   volunteer: { notes, rating, shiftboardId },
 }: IVolunteerShiftsDialogReviewProps) => {
   // fetching, mutation, and revalidation
   // --------------------
   const { isMutating, trigger } = useSWRMutation(
-    `/api/shifts/volunteers/${timeId}/${shiftboardId}`,
+    `/api/volunteers/shifts/${shiftboardId}`,
     fetcherTrigger
   );
 
@@ -85,22 +86,27 @@ export const VolunteerShiftsDialogReview = ({
   useEffect(() => {
     if (isDialogOpen) {
       reset({
-        rating: rating ?? 3,
+        rating: rating ?? 3, // 3 is default rating value
         notes,
       });
     }
-  }, [isDialogOpen]);
+  }, [isDialogOpen, notes, rating, reset]);
 
   // form submission
   // --------------------
-  const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
+  const onSubmit: SubmitHandler<IFormValues> = async ({ notes, rating }) => {
+    const body: IReqReviewValues = {
+      notes,
+      rating: rating as number,
+      shiftboardId,
+      timePositionId,
+      updateType: UPDATE_TYPE_REVIEW,
+    };
+
     try {
-      // TODO: update database
-      // await trigger({
-      //   body: { notes, rating, shiftboardId, timePositionId },
-      //   method: "PATCH",
-      // });
-      // emit event
+      // update database
+      await trigger({ body, method: "PATCH" });
+      // // TODO: emit event
       // socket.emit("req-shift-volunteer-notes", {
       //   notes,
       //   rating,
@@ -153,7 +159,7 @@ export const VolunteerShiftsDialogReview = ({
       </DialogContentText>
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={2}>
-          <Grid size={12}>
+          <Grid size={6}>
             <FormLabel>Rating</FormLabel>
             <Controller
               control={control}

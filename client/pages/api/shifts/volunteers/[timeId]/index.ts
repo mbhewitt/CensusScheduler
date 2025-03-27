@@ -9,8 +9,8 @@ import type {
 } from "@/components/types/shifts";
 import { pool } from "lib/database";
 import {
-  shiftVolunteerCheckIn,
   shiftVolunteerRemove,
+  shiftVolunteerUpdate,
 } from "pages/api/general/shiftVolunteers";
 
 const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -214,7 +214,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     // --------------------
     case "PATCH": {
       // check volunteer into shift
-      return shiftVolunteerCheckIn(pool, req, res);
+      return shiftVolunteerUpdate(pool, req, res);
     }
 
     // delete

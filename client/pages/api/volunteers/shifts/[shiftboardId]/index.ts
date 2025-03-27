@@ -4,8 +4,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import type { IResVolunteerShiftItem } from "@/components/types/volunteers";
 import { pool } from "lib/database";
 import {
-  shiftVolunteerCheckIn,
   shiftVolunteerRemove,
+  shiftVolunteerUpdate,
 } from "pages/api/general/shiftVolunteers";
 
 const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -87,8 +87,8 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
     // patch
     // --------------------
     case "PATCH": {
-      // check volunteer into shift
-      return shiftVolunteerCheckIn(pool, req, res);
+      // update volunteer in shift
+      return shiftVolunteerUpdate(pool, req, res);
     }
 
     // delete

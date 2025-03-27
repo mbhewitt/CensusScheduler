@@ -1,7 +1,6 @@
 import {
   Close as CloseIcon,
   SpeakerNotes as SpeakerNotesIcon,
-  Star as StarIcon,
 } from "@mui/icons-material";
 import {
   Button,
@@ -13,7 +12,6 @@ import {
   Grid2 as Grid,
   Radio,
   RadioGroup,
-  Rating,
   TextField,
   Typography,
 } from "@mui/material";
@@ -25,7 +23,8 @@ import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "@/components/general/DialogContainer";
 import { SnackbarText } from "@/components/general/SnackbarText";
-import { legendList } from "@/constants";
+import { IReqReviewValues } from "@/components/types";
+import { legendList, UPDATE_TYPE_REVIEW } from "@/constants";
 import { fetcherTrigger } from "@/utils/fetcher";
 
 interface IFormValues {
@@ -63,7 +62,7 @@ export const ShiftVolunteersDialogReview = ({
   // fetching, mutation, and revalidation
   // --------------------
   const { isMutating, trigger } = useSWRMutation(
-    `/api/shifts/volunteers/${timeId}/${shiftboardId}`,
+    `/api/shifts/volunteers/${timeId}`,
     fetcherTrigger
   );
 
@@ -85,22 +84,27 @@ export const ShiftVolunteersDialogReview = ({
   useEffect(() => {
     if (isDialogOpen) {
       reset({
-        rating,
+        rating: rating ?? 3, // 3 is default rating value
         notes,
       });
     }
-  }, [isDialogOpen]);
+  }, [isDialogOpen, notes, rating, reset]);
 
   // form submission
   // --------------------
-  const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
+  const onSubmit: SubmitHandler<IFormValues> = async ({ notes, rating }) => {
+    const body: IReqReviewValues = {
+      notes,
+      rating: rating as number,
+      shiftboardId,
+      timePositionId,
+      updateType: UPDATE_TYPE_REVIEW,
+    };
+
     try {
-      // TODO: update database
-      // await trigger({
-      //   body: { notes, rating, shiftboardId, timePositionId },
-      //   method: "PATCH",
-      // });
-      // emit event
+      // update database
+      await trigger({ body, method: "PATCH" });
+      // // TODO: emit event
       // socket.emit("req-shift-volunteer-notes", {
       //   notes,
       //   rating,
@@ -156,7 +160,7 @@ export const ShiftVolunteersDialogReview = ({
       </DialogContentText>
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={2}>
-          <Grid size={12}>
+          <Grid size={6}>
             <FormLabel>Rating</FormLabel>
             <Controller
               control={control}

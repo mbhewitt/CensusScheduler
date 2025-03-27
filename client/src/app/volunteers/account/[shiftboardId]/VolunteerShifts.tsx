@@ -38,7 +38,12 @@ import { MoreMenu } from "@/components/general/MoreMenu";
 import { SnackbarText } from "@/components/general/SnackbarText";
 import type { IReqSwitchValues, ISwitchValues } from "@/components/types";
 import type { IResVolunteerShiftItem } from "@/components/types/volunteers";
-import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "@/constants";
+import {
+  SHIFT_DURING,
+  SHIFT_FUTURE,
+  SHIFT_PAST,
+  UPDATE_TYPE_CHECK_IN,
+} from "@/constants";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
 import { checkIsAdmin } from "@/utils/checkIsRoleExist";
@@ -226,6 +231,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
         isCheckedIn,
         shiftboardId,
         timePositionId,
+        updateType: UPDATE_TYPE_CHECK_IN,
       };
 
       // update database
@@ -398,8 +404,8 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
                   endTime,
                   positionName,
                   startTime,
-                  timeId,
-                  timePositionId: 0,
+                  timeId: 0,
+                  timePositionId,
                 },
                 volunteer: {
                   noShow: "",
@@ -410,7 +416,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
               setIsDialogOpen(true);
             }}
           >
-            {rating || notes ? (
+            {rating ? (
               <SpeakerNotesIcon color="primary" />
             ) : (
               <SpeakerNotesOffIcon color="disabled" />

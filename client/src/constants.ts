@@ -58,6 +58,10 @@ export const SHIFT_FUTURE = "shiftFuture";
 export const SHIFT_DURING = "shiftDuring";
 export const SHIFT_PAST = "shiftPast";
 
+// shift volunteer update types
+export const UPDATE_TYPE_CHECK_IN = "updateTypeCheckIn";
+export const UPDATE_TYPE_REVIEW = "updateTypeReview";
+
 // idle time
 export const IDLE_MINUTES = 5;
 
