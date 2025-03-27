@@ -29,12 +29,12 @@ export const handleTimeListAdd = async ({
       await pool.query(
         `INSERT INTO op_shift_times (
           add_shift_time,
-          end_time_lt,
+          end_time,
           notes,
           shift_instance,
           shift_name_id,
           shift_times_id,
-          start_time_lt
+          start_time
         )
         VALUES (true, ?, ?, ?, ?, ?, ?)`,
         [endTime, notes, instance, typeId, timeIdNew, startTime]

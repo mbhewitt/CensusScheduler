@@ -21,9 +21,9 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
             sc.department,
             sc.shift_category_id,
             sn.shift_name,
-            st.end_time_lt,
+            st.end_time,
             st.shift_times_id,
-            st.start_time_lt,
+            st.start_time,
             stp.slots,
             stp.time_position_id,
             vs.remove_shift,
@@ -37,16 +37,16 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
           ON sc.delete_category=false
           AND sc.shift_category_id=sn.shift_category_id
           LEFT JOIN op_dates AS d
-          ON d.date=LEFT(st.start_time_lt, 10)
+          ON d.date=LEFT(st.start_time, 10)
           JOIN op_shift_time_position AS stp
           ON stp.remove_time_position=false
           AND stp.shift_times_id=st.shift_times_id
           LEFT JOIN op_volunteer_shifts AS vs
           ON vs.remove_shift=false
-          AND vs.shift_times_id=st.shift_times_id
+          AND vs.time_position_id=stp.time_position_id
           WHERE st.remove_shift_time=false
           AND sc.department="Training"
-          ORDER BY st.start_time_lt, shift_times_id`
+          ORDER BY st.start_time, shift_times_id`
         );
       } else {
         // get all shifts
@@ -56,9 +56,9 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
             sc.department,
             sc.shift_category_id,
             sn.shift_name,
-            st.end_time_lt,
+            st.end_time,
             st.shift_times_id,
-            st.start_time_lt,
+            st.start_time,
             stp.slots,
             stp.time_position_id,
             vs.shiftboard_id
@@ -71,16 +71,15 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
           ON sc.delete_category=false
           AND sc.shift_category_id=sn.shift_category_id
           LEFT JOIN op_dates AS d
-          ON d.date=LEFT(st.start_time_lt, 10)
+          ON d.date=LEFT(st.start_time, 10)
           JOIN op_shift_time_position AS stp
           ON stp.remove_time_position=false
           AND stp.shift_times_id=st.shift_times_id
           LEFT JOIN op_volunteer_shifts AS vs
           ON vs.remove_shift=false
           AND vs.time_position_id=stp.time_position_id
-          AND vs.shift_times_id=st.shift_times_id
           WHERE st.remove_shift_time=false
-          ORDER BY st.start_time_lt, shift_times_id`
+          ORDER BY st.start_time, shift_times_id`
         );
       }
       const resShiftList = getShiftList(dbShiftList);

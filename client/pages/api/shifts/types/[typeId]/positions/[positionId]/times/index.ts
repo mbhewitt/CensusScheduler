@@ -19,31 +19,31 @@ const shiftTypePositionTimes = async (
       const [dbTimeList] = await pool.query<RowDataPacket[]>(
         `SELECT DISTINCT
           d.datename,
-          st.end_time_lt,
+          st.end_time,
           st.shift_times_id,
-          st.start_time_lt
+          st.start_time
         FROM op_volunteer_shifts AS vs
-        JOIN op_shift_times AS st
-        ON st.shift_times_id=vs.shift_times_id
-        LEFT JOIN op_dates AS d
-        ON d.date=LEFT(st.start_time_lt, 10)
         JOIN op_shift_time_position AS stp
-        ON stp.shift_times_id=st.shift_times_id
+        ON stp.time_position_id=vs.time_position_id
         AND stp.position_type_id=?
+        JOIN op_shift_times AS st
+        ON st.shift_times_id=stp.shift_times_id
+        LEFT JOIN op_dates AS d
+        ON d.date=LEFT(st.start_time, 10)
         JOIN op_shift_name AS sn
         ON sn.shift_name_id=st.shift_name_id
         AND sn.shift_name_id=?
         WHERE vs.remove_shift=false
-        ORDER BY st.start_time_lt`,
+        ORDER BY st.start_time`,
         [positionId, typeId]
       );
       const resTimeList = dbTimeList.map(
-        ({ datename, end_time_lt, shift_times_id, start_time_lt }) => {
+        ({ datename, end_time, shift_times_id, start_time }) => {
           const resTimeItem: IResShiftTypePositionTimeItem = {
             id: shift_times_id,
-            name: `${formatDateName(start_time_lt, datename)}, ${formatTime(
-              start_time_lt,
-              end_time_lt
+            name: `${formatDateName(start_time, datename)}, ${formatTime(
+              start_time,
+              end_time
             )}`,
           };
 
