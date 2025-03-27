@@ -9,8 +9,8 @@ import type {
 } from "@/components/types/shifts";
 import { pool } from "lib/database";
 import {
-  shiftVolunteerCheckIn,
   shiftVolunteerRemove,
+  shiftVolunteerUpdate,
 } from "pages/api/general/shiftVolunteers";
 
 const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -29,16 +29,16 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           pt.role_id,
           sn.shift_details,
           sn.shift_name,
-          st.end_time_lt,
+          st.end_time,
           st.meal,
           st.notes,
-          st.start_time_lt,
+          st.start_time,
           stp.position_type_id,
           stp.slots,
           stp.time_position_id
         FROM op_shift_times AS st
         LEFT JOIN op_dates AS d
-        ON d.date=LEFT(st.start_time_lt, 10)
+        ON d.date=LEFT(st.start_time, 10)
         JOIN op_shift_name AS sn
         ON sn.delete_shift=false
         AND sn.shift_name_id=st.shift_name_id
@@ -68,6 +68,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         JOIN op_shift_time_position AS stp
         ON stp.remove_time_position=false
         AND stp.time_position_id=vs.time_position_id
+        AND stp.shift_times_id=?
         JOIN op_position_type AS pt
         ON pt.delete_position=false
         AND pt.position_type_id=stp.position_type_id
@@ -75,7 +76,6 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         ON v.delete_volunteer=false
         AND v.shiftboard_id=vs.shiftboard_id
         WHERE vs.remove_shift=false
-        AND vs.shift_times_id=?
         ORDER BY v.playa_name`,
         [timeId]
       );
@@ -143,10 +143,10 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         shift: {
           dateName: resShiftPositionFirst.datename ?? "",
           details: resShiftPositionFirst.shift_details,
-          endTime: resShiftPositionFirst.end_time_lt,
+          endTime: resShiftPositionFirst.end_time,
           meal: resShiftPositionFirst.meal,
           notes: resShiftPositionFirst.notes,
-          startTime: resShiftPositionFirst.start_time_lt,
+          startTime: resShiftPositionFirst.start_time,
           typeName: resShiftPositionFirst.shift_name,
         },
         volunteerList: resShiftVolunteerList,
@@ -214,7 +214,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     // --------------------
     case "PATCH": {
       // check volunteer into shift
-      return shiftVolunteerCheckIn(pool, req, res);
+      return shiftVolunteerUpdate(pool, req, res);
     }
 
     // delete

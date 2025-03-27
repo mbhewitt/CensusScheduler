@@ -12,10 +12,18 @@ export interface ISwitchValues {
     worldName: string;
   };
 }
+export interface IReqReviewValues {
+  notes: string;
+  rating: number;
+  shiftboardId: number;
+  timePositionId: number;
+  updateType: string;
+}
 export interface IReqSwitchValues {
   isCheckedIn: boolean;
   shiftboardId: number;
   timePositionId: number;
+  updateType: string;
 }
 export interface IVolunteerOption {
   label: string;

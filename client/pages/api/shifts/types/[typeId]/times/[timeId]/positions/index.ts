@@ -21,11 +21,11 @@ const shiftTypeTimePositions = async (
           pt.position_type_id
         FROM op_volunteer_shifts AS vs
         JOIN op_shift_time_position AS stp
-        ON stp.shift_times_id=vs.shift_times_id
+        ON stp.time_position_id=vs.time_position_id
         JOIN op_position_type AS pt
         ON pt.position_type_id=stp.position_type_id
         JOIN op_shift_times AS st
-        ON st.shift_times_id=vs.shift_times_id
+        ON st.shift_times_id=stp.shift_times_id
         AND st.shift_times_id=?
         JOIN op_shift_name AS sn
         ON sn.shift_name_id=st.shift_name_id

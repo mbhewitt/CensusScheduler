@@ -1,17 +1,17 @@
 import {
   Close as CloseIcon,
   SpeakerNotes as SpeakerNotesIcon,
-  Star as StarIcon,
 } from "@mui/icons-material";
 import {
   Button,
   CircularProgress,
   DialogActions,
   DialogContentText,
+  FormControlLabel,
+  FormLabel,
   Grid2 as Grid,
-  List,
-  ListItem,
-  Rating,
+  Radio,
+  RadioGroup,
   TextField,
   Typography,
 } from "@mui/material";
@@ -23,6 +23,8 @@ import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "@/components/general/DialogContainer";
 import { SnackbarText } from "@/components/general/SnackbarText";
+import { IReqReviewValues } from "@/components/types";
+import { legendList, UPDATE_TYPE_REVIEW } from "@/constants";
 import { fetcherTrigger } from "@/utils/fetcher";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
 
@@ -53,23 +55,16 @@ const defaultValues: IFormValues = {
   notes: "",
   rating: null,
 };
-const legendList = [
-  "Consider for leadership",
-  "Exceeds expections",
-  "Meets expectations",
-  "Needs coaching",
-  "Not a good fit",
-];
 export const VolunteerShiftsDialogReview = ({
   handleDialogClose,
   isDialogOpen,
-  shift: { dateName, endTime, positionName, startTime, timeId, timePositionId },
+  shift: { dateName, endTime, positionName, startTime, timePositionId },
   volunteer: { notes, rating, shiftboardId },
 }: IVolunteerShiftsDialogReviewProps) => {
   // fetching, mutation, and revalidation
   // --------------------
   const { isMutating, trigger } = useSWRMutation(
-    `/api/shifts/volunteers/${timeId}/${shiftboardId}`,
+    `/api/volunteers/shifts/${shiftboardId}`,
     fetcherTrigger
   );
 
@@ -91,22 +86,27 @@ export const VolunteerShiftsDialogReview = ({
   useEffect(() => {
     if (isDialogOpen) {
       reset({
-        rating,
+        rating: rating ?? 3, // 3 is default rating value
         notes,
       });
     }
-  }, [isDialogOpen]);
+  }, [isDialogOpen, notes, rating, reset]);
 
   // form submission
   // --------------------
-  const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
+  const onSubmit: SubmitHandler<IFormValues> = async ({ notes, rating }) => {
+    const body: IReqReviewValues = {
+      notes,
+      rating: rating as number,
+      shiftboardId,
+      timePositionId,
+      updateType: UPDATE_TYPE_REVIEW,
+    };
+
     try {
-      // TODO: update database
-      // await trigger({
-      //   body: { notes, rating, shiftboardId, timePositionId },
-      //   method: "PATCH",
-      // });
-      // emit event
+      // update database
+      await trigger({ body, method: "PATCH" });
+      // // TODO: emit event
       // socket.emit("req-shift-volunteer-notes", {
       //   notes,
       //   rating,
@@ -160,30 +160,23 @@ export const VolunteerShiftsDialogReview = ({
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={2}>
           <Grid size={6}>
-            <Typography>Rating</Typography>
+            <FormLabel>Rating</FormLabel>
             <Controller
               control={control}
               name="rating"
-              render={({ field }) => <Rating {...field} />}
+              render={({ field }) => (
+                <RadioGroup {...field}>
+                  {legendList.map((legendItem, index) => (
+                    <FormControlLabel
+                      control={<Radio color="secondary" />}
+                      label={legendItem}
+                      key={legendItem}
+                      value={5 - index}
+                    />
+                  ))}
+                </RadioGroup>
+              )}
             />
-          </Grid>
-          <Grid size={6}>
-            <List disablePadding>
-              {legendList.map((legendItem, index) => {
-                return (
-                  <ListItem
-                    disableGutters
-                    disablePadding
-                    key={legendItem}
-                    sx={{ display: "flex" }}
-                  >
-                    <Typography>{legendList.length - index}</Typography>
-                    <StarIcon color="secondary" sx={{ pb: "2px" }} />
-                    <Typography>: {legendItem}</Typography>
-                  </ListItem>
-                );
-              })}
-            </List>
           </Grid>
           <Grid size={12}>
             <Controller

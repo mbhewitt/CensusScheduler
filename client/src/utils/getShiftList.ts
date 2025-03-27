@@ -10,12 +10,12 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
     ({
       datename,
       department,
-      end_time_lt,
+      end_time,
       shift_category_id,
       shift_name,
       shift_times_id,
       shiftboard_id,
-      start_time_lt,
+      start_time,
       slots,
       time_position_id,
     }: RowDataPacket) => {
@@ -30,10 +30,10 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
           category: { id: shift_category_id },
           dateName: datename ?? "",
           department: { name: department ?? "" },
-          endTime: end_time_lt,
+          endTime: end_time,
           filledSlots: shiftboard_id ? 1 : 0,
           id: shift_times_id,
-          startTime: start_time_lt,
+          startTime: start_time,
           totalSlots: slots,
           type: shift_name,
         };

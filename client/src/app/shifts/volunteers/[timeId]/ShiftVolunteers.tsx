@@ -45,13 +45,18 @@ import { Loading } from "@/components/general/Loading";
 import { MoreMenu } from "@/components/general/MoreMenu";
 import { SnackbarText } from "@/components/general/SnackbarText";
 import { Hero } from "@/components/layout/Hero";
-import type { ISwitchValues } from "@/components/types";
+import type { IReqSwitchValues, ISwitchValues } from "@/components/types";
 import type {
   IResShiftPositionCountItem,
   IResShiftVolunteerInformation,
   IResShiftVolunteerRowItem,
 } from "@/components/types/shifts";
-import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "@/constants";
+import {
+  SHIFT_DURING,
+  SHIFT_FUTURE,
+  SHIFT_PAST,
+  UPDATE_TYPE_CHECK_IN,
+} from "@/constants";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
 import { checkIsAdmin, checkIsAuthenticated } from "@/utils/checkIsRoleExist";
@@ -250,13 +255,16 @@ export const ShiftVolunteers = ({
     shift: { positionName, timePositionId },
     volunteer: { isCheckedIn, playaName, shiftboardId, worldName },
   }: ISwitchValues) => {
+    const body: IReqSwitchValues = {
+      isCheckedIn,
+      shiftboardId,
+      timePositionId,
+      updateType: UPDATE_TYPE_CHECK_IN,
+    };
+
     try {
       await trigger({
-        body: {
-          isCheckedIn,
-          shiftboardId,
-          timePositionId,
-        },
+        body,
         method: "PATCH",
       });
       socket.emit("req-check-in-toggle", {
@@ -454,7 +462,7 @@ export const ShiftVolunteers = ({
               setIsDialogOpen(true);
             }}
           >
-            {rating || notes ? (
+            {rating ? (
               <SpeakerNotesIcon color="primary" />
             ) : (
               <SpeakerNotesOffIcon color="disabled" />

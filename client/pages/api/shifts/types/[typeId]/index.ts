@@ -110,11 +110,11 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         `SELECT
           pt.position,
           pt.position_type_id,
-          st.end_time_lt,
+          st.end_time,
           st.notes,
           st.shift_instance,
           st.shift_times_id,
-          st.start_time_lt,
+          st.start_time,
           stp.position_alias,
           stp.sap_points,
           stp.slots,
@@ -127,7 +127,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         WHERE st.shift_name_id=?
         AND st.remove_shift_time=false
         AND stp.remove_time_position=false
-        ORDER BY st.start_time_lt, pt.position`,
+        ORDER BY st.start_time, pt.position`,
         [typeId]
       );
 
@@ -136,7 +136,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
 
       dbTimeList.forEach(
         ({
-          end_time_lt,
+          end_time,
           notes,
           position,
           position_alias,
@@ -145,7 +145,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           shift_instance,
           shift_times_id,
           slots,
-          start_time_lt,
+          start_time,
           time_position_id,
         }) => {
           if (resTimeMap[shift_times_id]) {
@@ -164,7 +164,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           } else {
             resTimeMap[shift_times_id] = true;
             resTimeList.push({
-              endTime: end_time_lt,
+              endTime: end_time,
               instance: shift_instance,
               notes: notes ?? "",
               positionList: [
@@ -177,7 +177,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
                   timePositionId: time_position_id,
                 },
               ],
-              startTime: start_time_lt,
+              startTime: start_time,
               timeId: shift_times_id,
             });
           }
@@ -249,11 +249,11 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           await pool.query<RowDataPacket[]>(
             `UPDATE op_shift_times
             SET
-              end_time_lt=?,
+              end_time=?,
               notes=?,
               update_shift_time=true,
               shift_instance=?,
-              start_time_lt=?
+              start_time=?
             WHERE shift_times_id=?`,
             [endTime, notes, instance, startTime, timeId]
           );
@@ -263,8 +263,8 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         const [dbTime] = await pool.query<RowDataPacket[]>(
           `SELECT shift_times_id
           FROM op_shift_times
-          WHERE end_time_lt=?
-          AND start_time_lt=?`,
+          WHERE end_time=?
+          AND start_time=?`,
           [endTime, startTime]
         );
         const dbTimeFirst = dbTime[0];

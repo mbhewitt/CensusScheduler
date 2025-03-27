@@ -10,6 +10,15 @@ export const GENERAL_ROLE_LIST = [
   "Volunteer Coordinator",
 ].sort();
 
+// review dialog - radio options
+export const legendList = [
+  "Consider for leadership",
+  "Exceeds expections",
+  "Meets expectations",
+  "Needs coaching",
+  "Not a good fit",
+];
+
 // action types - developer mode
 export const DEVELOPER_MODE_ACCOUNT_TYPE = "developerModeAccountType";
 export const DEVELOPER_MODE_DATE_TIME = "developerModeDateTime";
@@ -48,6 +57,10 @@ export const CHECK_OUT_AFTER_HOURS = 2;
 export const SHIFT_FUTURE = "shiftFuture";
 export const SHIFT_DURING = "shiftDuring";
 export const SHIFT_PAST = "shiftPast";
+
+// shift volunteer update types
+export const UPDATE_TYPE_CHECK_IN = "updateTypeCheckIn";
+export const UPDATE_TYPE_REVIEW = "updateTypeReview";
 
 // idle time
 export const IDLE_MINUTES = 5;
