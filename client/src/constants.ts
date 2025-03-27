@@ -10,6 +10,15 @@ export const GENERAL_ROLE_LIST = [
   "Volunteer Coordinator",
 ].sort();
 
+// review dialog - radio options
+export const legendList = [
+  "Consider for leadership",
+  "Exceeds expections",
+  "Meets expectations",
+  "Needs coaching",
+  "Not a good fit",
+];
+
 // action types - developer mode
 export const DEVELOPER_MODE_ACCOUNT_TYPE = "developerModeAccountType";
 export const DEVELOPER_MODE_DATE_TIME = "developerModeDateTime";

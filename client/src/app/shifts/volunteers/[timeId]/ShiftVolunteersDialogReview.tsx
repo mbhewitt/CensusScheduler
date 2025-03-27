@@ -8,9 +8,11 @@ import {
   CircularProgress,
   DialogActions,
   DialogContentText,
+  FormControlLabel,
+  FormLabel,
   Grid2 as Grid,
-  List,
-  ListItem,
+  Radio,
+  RadioGroup,
   Rating,
   TextField,
   Typography,
@@ -23,6 +25,7 @@ import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "@/components/general/DialogContainer";
 import { SnackbarText } from "@/components/general/SnackbarText";
+import { legendList } from "@/constants";
 import { fetcherTrigger } from "@/utils/fetcher";
 
 interface IFormValues {
@@ -51,13 +54,6 @@ const defaultValues: IFormValues = {
   notes: "",
   rating: null,
 };
-const legendList = [
-  "Consider for leadership",
-  "Exceeds expections",
-  "Meets expectations",
-  "Needs coaching",
-  "Not a good fit",
-];
 export const ShiftVolunteersDialogReview = ({
   handleDialogClose,
   isDialogOpen,
@@ -160,31 +156,24 @@ export const ShiftVolunteersDialogReview = ({
       </DialogContentText>
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={2}>
-          <Grid size={6}>
-            <Typography>Rating</Typography>
+          <Grid size={12}>
+            <FormLabel>Rating</FormLabel>
             <Controller
               control={control}
               name="rating"
-              render={({ field }) => <Rating {...field} />}
+              render={({ field }) => (
+                <RadioGroup {...field}>
+                  {legendList.map((legendItem, index) => (
+                    <FormControlLabel
+                      control={<Radio color="secondary" />}
+                      label={legendItem}
+                      key={legendItem}
+                      value={5 - index}
+                    />
+                  ))}
+                </RadioGroup>
+              )}
             />
-          </Grid>
-          <Grid size={6}>
-            <List disablePadding>
-              {legendList.map((legendItem, index) => {
-                return (
-                  <ListItem
-                    disableGutters
-                    disablePadding
-                    key={legendItem}
-                    sx={{ display: "flex" }}
-                  >
-                    <Typography>{legendList.length - index}</Typography>
-                    <StarIcon color="secondary" sx={{ pb: "2px" }} />
-                    <Typography>: {legendItem}</Typography>
-                  </ListItem>
-                );
-              })}
-            </List>
           </Grid>
           <Grid size={12}>
             <Controller
