@@ -106,13 +106,13 @@ export const VolunteerShiftsDialogReview = ({
     try {
       // update database
       await trigger({ body, method: "PATCH" });
-      // // TODO: emit event
-      // socket.emit("req-shift-volunteer-notes", {
-      //   notes,
-      //   rating,
-      //   shiftboardId,
-      //   timePositionId,
-      // });
+      // emit event
+      socket.emit("req-review-update", {
+        notes,
+        rating,
+        shiftboardId,
+        timePositionId,
+      });
 
       enqueueSnackbar(
         <SnackbarText>

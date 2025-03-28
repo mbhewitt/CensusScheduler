@@ -210,6 +210,55 @@ export const ShiftVolunteers = ({
             }
           }
         );
+        socket.on(
+          "res-check-in-toggle",
+          ({
+            checked,
+            shiftboardId,
+          }: {
+            checked: boolean;
+            shiftboardId: number;
+          }) => {
+            if (dataShiftVolunteersItem) {
+              const dataMutate = structuredClone(dataShiftVolunteersItem);
+              const shiftVolunteerItemUpdate = dataMutate.volunteerList.find(
+                (volunteerItem: IResShiftVolunteerRowItem) =>
+                  volunteerItem.shiftboardId === shiftboardId
+              );
+              if (shiftVolunteerItemUpdate) {
+                shiftVolunteerItemUpdate.isCheckedIn = checked ? "" : "Yes";
+              }
+
+              mutateShiftVolunteersItem(dataMutate);
+            }
+          }
+        );
+        socket.on(
+          "res-review-update",
+          ({
+            notes,
+            rating,
+            shiftboardId,
+          }: {
+            notes: string;
+            rating: number;
+            shiftboardId: number;
+          }) => {
+            if (dataShiftVolunteersItem) {
+              const dataMutate = structuredClone(dataShiftVolunteersItem);
+              const shiftVolunteerItemUpdate = dataMutate.volunteerList.find(
+                (volunteerItem: IResShiftVolunteerRowItem) =>
+                  volunteerItem.shiftboardId === shiftboardId
+              );
+              if (shiftVolunteerItemUpdate) {
+                shiftVolunteerItemUpdate.notes = notes;
+                shiftVolunteerItemUpdate.rating = rating;
+              }
+
+              mutateShiftVolunteersItem(dataMutate);
+            }
+          }
+        );
         socket.on("res-shift-volunteer-remove", ({ shiftboardId }) => {
           if (dataShiftVolunteersItem) {
             const dataMutate = structuredClone(dataShiftVolunteersItem);
