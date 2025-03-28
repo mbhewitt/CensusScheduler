@@ -28,6 +28,10 @@ const socket = (_req: NextApiRequest, res: INextApiResponseWithSocket) => {
       socket.on("req-check-in-toggle", (data) => {
         socket.broadcast.emit("res-check-in-toggle", data);
       });
+      // update shift volunteer review
+      socket.on("req-review-update", (data) => {
+        socket.broadcast.emit("res-review-update", data);
+      });
       // remove shift volunteer
       socket.on("req-shift-volunteer-remove", (data) => {
         socket.broadcast.emit("res-shift-volunteer-remove", data);

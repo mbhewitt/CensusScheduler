@@ -171,6 +171,32 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
             }
           }
         );
+        socket.on(
+          "res-review-update",
+          ({
+            notes,
+            rating,
+            timePositionId,
+          }: {
+            notes: string;
+            rating: number;
+            timePositionId: number;
+          }) => {
+            if (data) {
+              const dataMutate = structuredClone(data);
+              const volunteerShiftItemFound = dataMutate.find(
+                (volunteerShiftItem: IResVolunteerShiftItem) =>
+                  volunteerShiftItem.shift.timePositionId === timePositionId
+              );
+              if (volunteerShiftItemFound) {
+                volunteerShiftItemFound.volunteer.notes = notes;
+                volunteerShiftItemFound.volunteer.rating = rating;
+              }
+
+              mutate(dataMutate);
+            }
+          }
+        );
         socket.on("res-shift-volunteer-remove", ({ timePositionId }) => {
           if (data) {
             const dataMutate = structuredClone(data);
@@ -239,7 +265,11 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
         body,
         method: "PATCH",
       });
-      socket.emit("req-check-in-toggle", body);
+      socket.emit("req-check-in-toggle", {
+        isCheckedIn,
+        shiftboardId,
+        timePositionId,
+      });
 
       enqueueSnackbar(
         <SnackbarText>
