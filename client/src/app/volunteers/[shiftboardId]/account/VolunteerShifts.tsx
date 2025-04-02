@@ -29,8 +29,8 @@ import { io } from "socket.io-client";
 import useSWR, { KeyedMutator } from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { VolunteerShiftsDialogRemove } from "@/app/volunteers/account/[shiftboardId]/VolunteerShiftsDialogRemove";
-import { VolunteerShiftsDialogReview } from "@/app/volunteers/account/[shiftboardId]/VolunteerShiftsDialogReview";
+import { VolunteerShiftsDialogRemove } from "@/app/volunteers/[shiftboardId]/account/VolunteerShiftsDialogRemove";
+import { VolunteerShiftsDialogReview } from "@/app/volunteers/[shiftboardId]/account/VolunteerShiftsDialogReview";
 import { DataTable } from "@/components/general/DataTable";
 import { ErrorAlert } from "@/components/general/ErrorAlert";
 import { Loading } from "@/components/general/Loading";
@@ -133,9 +133,9 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
     error: Error | undefined;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mutate: KeyedMutator<any>;
-  } = useSWR(`/api/volunteers/shifts/${shiftboardId}`, fetcherGet);
+  } = useSWR(`/api/volunteers/${shiftboardId}/shifts`, fetcherGet);
   const { trigger } = useSWRMutation(
-    `/api/volunteers/shifts/${shiftboardId}`,
+    `/api/volunteers/${shiftboardId}/shifts`,
     fetcherTrigger
   );
 
@@ -462,7 +462,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
           key={`${shiftboardId}-menu`}
           MenuList={
             <MenuList>
-              <Link href={`/shifts/volunteers/${timeId}`}>
+              <Link href={`/shifts/${timeId}/volunteers`}>
                 <MenuItem>
                   <ListItemIcon>
                     <Groups3Icon />

@@ -62,7 +62,7 @@ export const ShiftVolunteersDialogReview = ({
   // fetching, mutation, and revalidation
   // ------------------------------------------------------------
   const { isMutating, trigger } = useSWRMutation(
-    `/api/shifts/volunteers/${timeId}`,
+    `/api/shifts/${timeId}/volunteers`,
     fetcherTrigger
   );
 

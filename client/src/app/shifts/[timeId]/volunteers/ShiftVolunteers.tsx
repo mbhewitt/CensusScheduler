@@ -35,9 +35,9 @@ import { io } from "socket.io-client";
 import useSWR, { KeyedMutator } from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { ShiftVolunteersDialogAdd } from "@/app/shifts/volunteers/[timeId]/ShiftVolunteersDialogAdd";
-import { ShiftVolunteersDialogRemove } from "@/app/shifts/volunteers/[timeId]/ShiftVolunteersDialogRemove";
-import { ShiftVolunteersDialogReview } from "@/app/shifts/volunteers/[timeId]/ShiftVolunteersDialogReview";
+import { ShiftVolunteersDialogAdd } from "@/app/shifts/[timeId]/volunteers/ShiftVolunteersDialogAdd";
+import { ShiftVolunteersDialogRemove } from "@/app/shifts/[timeId]/volunteers/ShiftVolunteersDialogRemove";
+import { ShiftVolunteersDialogReview } from "@/app/shifts/[timeId]/volunteers/ShiftVolunteersDialogReview";
 import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
 import { DataTable } from "@/components/general/DataTable";
 import { ErrorPage } from "@/components/general/ErrorPage";
@@ -144,9 +144,9 @@ export const ShiftVolunteers = ({
     error: Error | undefined;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mutate: KeyedMutator<any>;
-  } = useSWR(`/api/shifts/volunteers/${timeIdParam}`, fetcherGet);
+  } = useSWR(`/api/shifts/${timeIdParam}/volunteers`, fetcherGet);
   const { trigger } = useSWRMutation(
-    `/api/shifts/volunteers/${timeIdParam}`,
+    `/api/shifts/${timeIdParam}/volunteers`,
     fetcherTrigger
   );
 
@@ -505,7 +505,7 @@ export const ShiftVolunteers = ({
             key={`${shiftboardId}-menu`}
             MenuList={
               <MenuList>
-                <Link href={`/volunteers/account/${shiftboardId}`}>
+                <Link href={`/volunteers/${shiftboardId}/account`}>
                   <MenuItem>
                     <ListItemIcon>
                       <ManageAccountsIcon />

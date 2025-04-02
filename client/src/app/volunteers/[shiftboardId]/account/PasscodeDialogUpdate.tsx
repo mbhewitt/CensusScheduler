@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 
-import { ResetPasscodeForm } from "@/app/volunteers/account/ResetPasscodeForm";
+import { PasscodeForm } from "@/app/volunteers/account/PasscodeForm";
 import { DialogContainer } from "@/components/general/DialogContainer";
 import { SnackbarText } from "@/components/general/SnackbarText";
 import type { IVolunteerAccountFormValues } from "@/components/types";
@@ -23,7 +23,7 @@ import type { IReqPasscode } from "@/components/types/volunteers";
 import { ensure } from "@/utils/ensure";
 import { fetcherTrigger } from "@/utils/fetcher";
 
-interface IResetPasscodeDialogProps {
+interface IPasscodeDialogUpdateProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
   playaName: string;
@@ -35,13 +35,13 @@ const defaultValues: IVolunteerAccountFormValues = {
   passcodeConfirm: "",
   passcodeCreate: "",
 };
-export const ResetPasscodeDialog = ({
+export const PasscodeDialogUpdate = ({
   handleDialogClose,
   isDialogOpen,
   shiftboardId,
   playaName,
   worldName,
-}: IResetPasscodeDialogProps) => {
+}: IPasscodeDialogUpdateProps) => {
   // state
   // ------------------------------------------------------------
   const [isPasscodeCreateVisible, setIsPasscodeCreateVisible] = useState(false);
@@ -51,7 +51,7 @@ export const ResetPasscodeDialog = ({
   // fetching, mutation, and revalidation
   // ------------------------------------------------------------
   const { isMutating, trigger } = useSWRMutation(
-    `/api/volunteers/account/${shiftboardId}/passcode`,
+    `/api/volunteers/${shiftboardId}/account/passcode`,
     fetcherTrigger
   );
 
@@ -144,7 +144,7 @@ export const ResetPasscodeDialog = ({
         </DialogContentText>
 
         <Stack spacing={2}>
-          <ResetPasscodeForm
+          <PasscodeForm
             control={control}
             errors={errors}
             getValues={getValues}

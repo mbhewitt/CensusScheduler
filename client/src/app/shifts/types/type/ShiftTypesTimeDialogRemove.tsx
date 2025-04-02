@@ -114,7 +114,7 @@ export const ShiftTypesTimeDialogRemove = ({
           <DialogContentText>
             <Typography component="span">
               To remove{" "}
-              <Link href={`/shifts/volunteers/${timeItem.id}`}>
+              <Link href={`/shifts/${timeItem.id}/volunteers`}>
                 <strong>{timeItem.name}</strong>
               </Link>
               , volunteers must be removed from this time in the following

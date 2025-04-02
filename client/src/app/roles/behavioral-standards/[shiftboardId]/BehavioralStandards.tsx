@@ -179,7 +179,7 @@ export const BehavioralStandards = ({
       );
 
       // route to volunteer account page
-      router.push(`/volunteers/account/${shiftboardId}`);
+      router.push(`/volunteers/${shiftboardId}/account`);
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(

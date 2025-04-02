@@ -1,6 +1,6 @@
 import {
   Close as CloseIcon,
-  PersonRemove as PersonRemoveIcon,
+  EventBusy as EventBusyIcon,
 } from "@mui/icons-material";
 import {
   Button,
@@ -17,33 +17,34 @@ import { DialogContainer } from "@/components/general/DialogContainer";
 import { SnackbarText } from "@/components/general/SnackbarText";
 import { REMOVE_SHIFT_VOLUNTEER_REQ } from "@/constants";
 import { fetcherTrigger } from "@/utils/fetcher";
+import { formatDateName, formatTime } from "@/utils/formatDateTime";
 
-interface IShiftVolunteersDialogRemoveProps {
+interface IVolunteerShiftsDialogRemoveProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
   shift: {
+    dateName: string;
+    endTime: string;
     positionName: string;
-    timeId: number;
+    startTime: string;
     timePositionId: number;
   };
   volunteer: {
-    playaName: string;
     shiftboardId: number;
-    worldName: string;
   };
 }
 
 const socket = io();
-export const ShiftVolunteersDialogRemove = ({
+export const VolunteerShiftsDialogRemove = ({
   handleDialogClose,
   isDialogOpen,
-  shift: { positionName, timeId, timePositionId },
-  volunteer: { playaName, shiftboardId, worldName },
-}: IShiftVolunteersDialogRemoveProps) => {
+  shift: { dateName, endTime, positionName, startTime, timePositionId },
+  volunteer: { shiftboardId },
+}: IVolunteerShiftsDialogRemoveProps) => {
   // fetching, mutation, and revalidation
   // ------------------------------------------------------------
   const { isMutating, trigger } = useSWRMutation(
-    `/api/shifts/volunteers/${timeId}`,
+    `/api/volunteers/${shiftboardId}/shifts`,
     fetcherTrigger
   );
 
@@ -57,7 +58,7 @@ export const ShiftVolunteersDialogRemove = ({
     try {
       // update database
       await trigger({
-        body: { shiftboardId, timePositionId, timeId },
+        body: { shiftboardId, timePositionId },
         method: "DELETE",
       });
       // emit event
@@ -68,10 +69,9 @@ export const ShiftVolunteersDialogRemove = ({
 
       enqueueSnackbar(
         <SnackbarText>
-          <strong>
-            {playaName} &quot;{worldName}&quot;
-          </strong>{" "}
-          for <strong>{positionName}</strong> has been removed
+          <strong>{formatDateName(startTime, dateName)}</strong> at{" "}
+          <strong>{formatTime(startTime, endTime)}</strong> for{" "}
+          <strong>{positionName}</strong> has been removed
         </SnackbarText>,
         {
           variant: "success",
@@ -101,15 +101,14 @@ export const ShiftVolunteersDialogRemove = ({
     <DialogContainer
       handleDialogClose={handleDialogClose}
       isDialogOpen={isDialogOpen}
-      text="Remove volunteer"
+      text="Remove volunteer shift"
     >
       <DialogContentText>
         <Typography component="span">
           Are you sure you want to remove{" "}
-          <strong>
-            {playaName} &quot;{worldName}&quot;
-          </strong>{" "}
-          for <strong>{positionName}</strong>?
+          <strong>{formatDateName(startTime, dateName)}</strong> at{" "}
+          <strong>{formatTime(startTime, endTime)}</strong> for{" "}
+          <strong>{positionName}</strong>?
         </Typography>
       </DialogContentText>
       <DialogActions>
@@ -126,12 +125,12 @@ export const ShiftVolunteersDialogRemove = ({
           disabled={isMutating}
           onClick={handleVolunteerRemove}
           startIcon={
-            isMutating ? <CircularProgress size="1rem" /> : <PersonRemoveIcon />
+            isMutating ? <CircularProgress size="1rem" /> : <EventBusyIcon />
           }
           type="submit"
           variant="contained"
         >
-          Remove volunteer
+          Remove shift
         </Button>
       </DialogActions>
     </DialogContainer>

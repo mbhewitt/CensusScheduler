@@ -121,7 +121,7 @@ export const ShiftTypesPositionDialogRemove = ({
                   key={timeItem.id}
                   sx={{ display: "list-item", pl: 0 }}
                 >
-                  <Link href={`/shifts/volunteers/${timeItem.id}`}>
+                  <Link href={`/shifts/${timeItem.id}/volunteers`}>
                     <ListItemText>{timeItem.name}</ListItemText>
                   </Link>
                 </ListItem>

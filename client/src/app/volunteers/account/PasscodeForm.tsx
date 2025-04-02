@@ -13,7 +13,7 @@ import {
 
 import type { IVolunteerAccountFormValues } from "@/components/types";
 
-interface IResetPasscodeFormProps {
+interface IPasscodeFormProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<IVolunteerAccountFormValues, any>;
   errors: FieldErrors<IVolunteerAccountFormValues>;
@@ -24,7 +24,7 @@ interface IResetPasscodeFormProps {
   setIsPasscodeCreateVisible: Dispatch<SetStateAction<boolean>>;
 }
 
-export const ResetPasscodeForm = ({
+export const PasscodeForm = ({
   control,
   errors,
   getValues,
@@ -32,7 +32,7 @@ export const ResetPasscodeForm = ({
   isPasscodeCreateVisible,
   setIsPasscodeConfirmVisible,
   setIsPasscodeCreateVisible,
-}: IResetPasscodeFormProps) => {
+}: IPasscodeFormProps) => {
   // render
   // ------------------------------------------------------------
   return (
