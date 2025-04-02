@@ -25,7 +25,7 @@ import { useContext, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWRMutation from "swr/mutation";
 
-import { ResetPasscodeForm } from "@/app/volunteers/account/ResetPasscodeForm";
+import { PasscodeForm } from "@/app/volunteers/account/PasscodeForm";
 import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
 import { SnackbarText } from "@/components/general/SnackbarText";
 import { Hero } from "@/components/layout/Hero";
@@ -287,7 +287,7 @@ export const AccountCreate = () => {
                       />
                     )}
                   />
-                  <ResetPasscodeForm
+                  <PasscodeForm
                     control={control}
                     errors={errors}
                     getValues={getValues}

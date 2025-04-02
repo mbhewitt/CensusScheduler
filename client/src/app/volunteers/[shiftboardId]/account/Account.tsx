@@ -34,7 +34,7 @@ import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
 import { DeveloperMode } from "@/app/volunteers/[shiftboardId]/account/DeveloperMode";
-import { ResetPasscodeDialog } from "@/app/volunteers/[shiftboardId]/account/ResetPasscodeDialog";
+import { PasscodeDialogUpdate } from "@/app/volunteers/[shiftboardId]/account/PasscodeDialogUpdate";
 import { VolunteerShifts } from "@/app/volunteers/[shiftboardId]/account/VolunteerShifts";
 import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
 import { ErrorPage } from "@/components/general/ErrorPage";
@@ -501,8 +501,8 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
         )}
       </Container>
 
-      {/* remove dialog */}
-      <ResetPasscodeDialog
+      {/* passcode update dialog */}
+      <PasscodeDialogUpdate
         handleDialogClose={() => setIsDialogOpen(false)}
         isDialogOpen={isDialogOpen}
         playaName={playaName}
