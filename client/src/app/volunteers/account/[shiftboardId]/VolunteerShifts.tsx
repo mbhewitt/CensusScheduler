@@ -133,9 +133,9 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
     error: Error | undefined;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mutate: KeyedMutator<any>;
-  } = useSWR(`/api/volunteers/shifts/${shiftboardId}`, fetcherGet);
+  } = useSWR(`/api/volunteers/${shiftboardId}/shifts`, fetcherGet);
   const { trigger } = useSWRMutation(
-    `/api/volunteers/shifts/${shiftboardId}`,
+    `/api/volunteers/${shiftboardId}/shifts`,
     fetcherTrigger
   );
 

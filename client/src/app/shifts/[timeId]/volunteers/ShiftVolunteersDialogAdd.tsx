@@ -148,7 +148,7 @@ export const ShiftVolunteersDialogAdd = ({
     error: Error | undefined;
   } = useSWR(
     volunteerWatch
-      ? `/api/volunteers/shifts/${volunteerWatch?.shiftboardId}`
+      ? `/api/volunteers/${volunteerWatch?.shiftboardId}/shifts`
       : null,
     fetcherGet
   );
