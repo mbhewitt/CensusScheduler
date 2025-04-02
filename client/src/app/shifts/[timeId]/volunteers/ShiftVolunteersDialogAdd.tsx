@@ -160,12 +160,12 @@ export const ShiftVolunteersDialogAdd = ({
     error: Error | undefined;
   } = useSWR(
     trainingTimesIdWatch
-      ? `/api/shifts/volunteers/${trainingTimesIdWatch}`
+      ? `/api/shifts/${trainingTimesIdWatch}/volunteers`
       : null,
     fetcherGet
   );
   const { isMutating, trigger } = useSWRMutation(
-    `/api/shifts/volunteers/${timeId}`,
+    `/api/shifts/${timeId}/volunteers`,
     fetcherTrigger
   );
 

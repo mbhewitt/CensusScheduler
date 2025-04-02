@@ -1,4 +1,4 @@
-import { ShiftVolunteers } from "@/app/shifts/volunteers/[timeId]/ShiftVolunteers";
+import { ShiftVolunteers } from "@/app/shifts/[timeId]/volunteers/ShiftVolunteers";
 
 interface IShiftVolunteersPageProps {
   params: Promise<{ timeId: string }>;

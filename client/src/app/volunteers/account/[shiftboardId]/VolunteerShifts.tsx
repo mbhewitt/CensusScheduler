@@ -462,7 +462,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
           key={`${shiftboardId}-menu`}
           MenuList={
             <MenuList>
-              <Link href={`/shifts/volunteers/${timeId}`}>
+              <Link href={`/shifts/${timeId}/volunteers`}>
                 <MenuItem>
                   <ListItemIcon>
                     <Groups3Icon />
