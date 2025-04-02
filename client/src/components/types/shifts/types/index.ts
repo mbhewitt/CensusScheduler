@@ -46,7 +46,7 @@ export interface IResShiftTypePositionItem {
   prerequisite: string;
   role: string;
   startTimeOffset: string;
-  totalSlots?: string;
+  slotsTotal?: string;
   wapPoints?: string;
 }
 export interface IResShiftTypeTimeItem {

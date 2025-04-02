@@ -31,10 +31,10 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
           dateName: datename ?? "",
           department: { name: department ?? "" },
           endTime: end_time,
-          filledSlots: shiftboard_id ? 1 : 0,
           id: shift_times_id,
+          slotsFilled: shiftboard_id ? 1 : 0,
+          slotsTotal: slots,
           startTime: start_time,
-          totalSlots: slots,
           type: shift_name,
         };
 
@@ -46,12 +46,12 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
       // then add to total slots
       if (dbShiftLast && !timePositionIdMap[time_position_id]) {
         timePositionIdMap[time_position_id] = true;
-        dbShiftLast.totalSlots += slots;
+        dbShiftLast.slotsTotal += slots;
       }
       // if volunteer ID exists
       // then add to filled slots
       if (dbShiftLast && dbShiftLast.id === shift_times_id && shiftboard_id)
-        dbShiftLast.filledSlots += 1;
+        dbShiftLast.slotsFilled += 1;
     }
   );
 

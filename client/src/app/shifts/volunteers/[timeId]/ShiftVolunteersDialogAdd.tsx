@@ -330,15 +330,15 @@ export const ShiftVolunteersDialogAdd = ({
       // display position list
       positionListDisplay = positionList.map(
         ({
-          filledSlots,
           positionName,
           roleRequiredId,
+          slotsFilled,
+          slotsTotal,
           timePositionId,
-          totalSlots,
         }) => {
           const isShiftPositionAvailable =
             isAdmin ||
-            (totalSlots - filledSlots > 0 &&
+            (slotsTotal - slotsFilled > 0 &&
               (roleRequiredId === 0 ||
                 volunteerSelected?.roleList?.some(
                   ({ id: roleId }: { id: number }) => roleId === roleRequiredId
@@ -350,7 +350,7 @@ export const ShiftVolunteersDialogAdd = ({
               key={`${timePositionId}-position`}
               value={timePositionId}
             >
-              {positionName}: {filledSlots} / {totalSlots}
+              {positionName}: {slotsFilled} / {slotsTotal}
             </MenuItem>
           );
         }
@@ -360,15 +360,15 @@ export const ShiftVolunteersDialogAdd = ({
       trainingListDisplay = trainingList.map(
         ({
           endTime,
-          filledSlots,
           id: timeId,
+          slotsFilled,
+          slotsTotal,
           startTime,
-          totalSlots,
           type,
         }: IResShiftRowItem) => {
           const isShiftPositionAvailable =
             isAdmin ||
-            (totalSlots - filledSlots > 0 &&
+            (slotsTotal - slotsFilled > 0 &&
               dayjs(dateTimeValue).isBefore(dayjs(startTime)));
 
           return (
@@ -380,7 +380,7 @@ export const ShiftVolunteersDialogAdd = ({
               {`${formatDateName(startTime)}, ${formatTime(
                 startTime,
                 endTime
-              )}, ${type}: ${filledSlots} / ${totalSlots}`}
+              )}, ${type}: ${slotsFilled} / ${slotsTotal}`}
             </MenuItem>
           );
         }
@@ -391,15 +391,15 @@ export const ShiftVolunteersDialogAdd = ({
         trainingPositionListDisplay =
           dataTrainingVolunteerDetails.positionList.map(
             ({
-              filledSlots,
               positionName,
               roleRequiredId,
+              slotsFilled,
+              slotsTotal,
               timePositionId,
-              totalSlots,
             }) => {
               const isShiftPositionAvailable =
                 isAdmin ||
-                (totalSlots - filledSlots > 0 &&
+                (slotsTotal - slotsFilled > 0 &&
                   (roleRequiredId === 0 ||
                     volunteerSelected?.roleList?.some(
                       ({ id: roleId }: { id: number }) =>
@@ -412,7 +412,7 @@ export const ShiftVolunteersDialogAdd = ({
                   key={`${timePositionId}-position`}
                   value={timePositionId}
                 >
-                  {positionName}: {filledSlots} / {totalSlots}
+                  {positionName}: {slotsFilled} / {slotsTotal}
                 </MenuItem>
               );
             }
@@ -435,9 +435,9 @@ export const ShiftVolunteersDialogAdd = ({
 
       // display position list
       positionListDisplay = positionList.map(
-        ({ filledSlots, positionName, timePositionId, totalSlots }) => (
+        ({ positionName, slotsFilled, slotsTotal, timePositionId }) => (
           <MenuItem key={`${timePositionId}-position`} value={timePositionId}>
-            {positionName}: {filledSlots} / {totalSlots}
+            {positionName}: {slotsFilled} / {slotsTotal}
           </MenuItem>
         )
       );
@@ -446,15 +446,15 @@ export const ShiftVolunteersDialogAdd = ({
       trainingListDisplay = trainingList.map(
         ({
           endTime,
-          filledSlots,
           id,
+          slotsFilled,
+          slotsTotal,
           startTime,
-          totalSlots,
           type,
         }: IResShiftRowItem) => {
           const isShiftPositionAvailable =
             isAdmin ||
-            (totalSlots - filledSlots > 0 &&
+            (slotsTotal - slotsFilled > 0 &&
               dayjs(dateTimeValue).isBefore(dayjs(startTime)));
 
           return (
@@ -466,7 +466,7 @@ export const ShiftVolunteersDialogAdd = ({
               {`${formatDateName(startTime)}, ${formatTime(
                 startTime,
                 endTime
-              )}, ${type}: ${filledSlots} / ${totalSlots}`}
+              )}, ${type}: ${slotsFilled} / ${slotsTotal}`}
             </MenuItem>
           );
         }
@@ -476,12 +476,12 @@ export const ShiftVolunteersDialogAdd = ({
       if (dataTrainingVolunteerDetails) {
         trainingPositionListDisplay =
           dataTrainingVolunteerDetails.positionList.map(
-            ({ filledSlots, positionName, timePositionId, totalSlots }) => (
+            ({ positionName, slotsFilled, slotsTotal, timePositionId }) => (
               <MenuItem
                 key={`${timePositionId}-position`}
                 value={timePositionId}
               >
-                {positionName}: {filledSlots} / {totalSlots}
+                {positionName}: {slotsFilled} / {slotsTotal}
               </MenuItem>
             )
           );
@@ -702,15 +702,15 @@ export const ShiftVolunteersDialogAdd = ({
                       // then display warning notification
                       if (
                         shiftPositionFound &&
-                        shiftPositionFound.filledSlots >=
-                          shiftPositionFound.totalSlots
+                        shiftPositionFound.slotsFilled >=
+                          shiftPositionFound.slotsTotal
                       ) {
                         enqueueSnackbar(
                           <SnackbarText>
                             There are{" "}
                             <strong>
-                              {shiftPositionFound.totalSlots -
-                                shiftPositionFound.filledSlots}
+                              {shiftPositionFound.slotsTotal -
+                                shiftPositionFound.slotsFilled}
                             </strong>{" "}
                             openings available for{" "}
                             <strong>{shiftPositionFound.positionName}</strong>
@@ -848,15 +848,15 @@ export const ShiftVolunteersDialogAdd = ({
                           // then display warning notification
                           if (
                             trainingPositionFound &&
-                            trainingPositionFound.filledSlots >=
-                              trainingPositionFound.totalSlots
+                            trainingPositionFound.slotsFilled >=
+                              trainingPositionFound.slotsTotal
                           ) {
                             enqueueSnackbar(
                               <SnackbarText>
                                 There are{" "}
                                 <strong>
-                                  {trainingPositionFound.totalSlots -
-                                    trainingPositionFound.filledSlots}
+                                  {trainingPositionFound.slotsTotal -
+                                    trainingPositionFound.slotsFilled}
                                 </strong>{" "}
                                 openings available for{" "}
                                 <strong>

@@ -232,10 +232,10 @@ export const Shifts = () => {
       dateName,
       department: { name: departmentName },
       endTime,
-      filledSlots,
       id,
+      slotsFilled,
+      slotsTotal,
       startTime,
-      totalSlots,
       type,
     }) => {
       return [
@@ -249,7 +249,7 @@ export const Shifts = () => {
           label={type}
           sx={{ backgroundColor: colorMapDisplay[departmentName] }}
         />,
-        `${filledSlots} / ${totalSlots}`,
+        `${slotsFilled} / ${slotsTotal}`,
       ];
     }
   );

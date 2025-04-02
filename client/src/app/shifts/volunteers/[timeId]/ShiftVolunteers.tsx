@@ -366,7 +366,7 @@ export const ShiftVolunteers = ({
         (isAuthenticated &&
           dataShiftVolunteersItem.positionList.some(
             (positionItem: IResShiftPositionCountItem) =>
-              positionItem.totalSlots - positionItem.filledSlots > 0
+              positionItem.slotsTotal - positionItem.slotsFilled > 0
           ));
       break;
     }
@@ -399,8 +399,8 @@ export const ShiftVolunteers = ({
     },
   ];
   const dataTablePositions = dataShiftVolunteersItem.positionList.map(
-    ({ filledSlots, positionName, totalSlots }: IResShiftPositionCountItem) => {
-      return [positionName, `${filledSlots} / ${totalSlots}`];
+    ({ positionName, slotsFilled, slotsTotal }: IResShiftPositionCountItem) => {
+      return [positionName, `${slotsFilled} / ${slotsTotal}`];
     }
   );
   const optionListCustomPositions = {

@@ -91,14 +91,14 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           time_position_id,
         }) => {
           const resShiftPositionItem: IResShiftPositionCountItem = {
-            filledSlots: 0,
-            positionName: position,
             positionDetails: position_details,
             positionId: position_type_id,
+            positionName: position,
             prerequisiteId: prerequisite_id ?? 0,
             roleRequiredId: role_id ?? 0,
+            slotsFilled: 0,
+            slotsTotal: slots,
             timePositionId: time_position_id,
-            totalSlots: slots,
           };
 
           return resShiftPositionItem;
@@ -135,7 +135,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             resShiftPositionItem.timePositionId ===
             shiftVolunteerItem.timePositionId
         );
-        if (positionFound) positionFound.filledSlots += 1;
+        if (positionFound) positionFound.slotsFilled += 1;
       });
 
       const resShiftVolunteerDetails: IResShiftVolunteerInformation = {
