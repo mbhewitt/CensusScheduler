@@ -41,7 +41,12 @@ import type {
   IResVolunteerDefaultItem,
   IResVolunteerShiftItem,
 } from "@/components/types/volunteers";
-import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "@/constants";
+import {
+  ADD_SHIFT_VOLUNTEER_REQ,
+  SHIFT_DURING,
+  SHIFT_FUTURE,
+  SHIFT_PAST,
+} from "@/constants";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
 import { checkIsAdmin, checkIsAuthenticated } from "@/utils/checkIsRoleExist";
@@ -92,7 +97,7 @@ export const ShiftVolunteersDialogAdd = ({
   },
 }: IShiftVolunteersDialogAddProps) => {
   // context
-  // --------------------
+  // ------------------------------------------------------------
   const {
     developerModeState: {
       accountType,
@@ -107,7 +112,7 @@ export const ShiftVolunteersDialogAdd = ({
   } = useContext(SessionContext);
 
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const {
     control,
     formState: { errors },
@@ -165,11 +170,11 @@ export const ShiftVolunteersDialogAdd = ({
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
 
   // side effects
-  // --------------------
+  // ------------------------------------------------------------
   const isAuthenticated = checkIsAuthenticated(
     accountType,
     isAuthenticatedSession
@@ -258,7 +263,7 @@ export const ShiftVolunteersDialogAdd = ({
   ]);
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (
     errorShiftList ||
     errorTrainingVolunteerDetails ||
@@ -330,15 +335,15 @@ export const ShiftVolunteersDialogAdd = ({
       // display position list
       positionListDisplay = positionList.map(
         ({
-          filledSlots,
           positionName,
           roleRequiredId,
+          slotsFilled,
+          slotsTotal,
           timePositionId,
-          totalSlots,
         }) => {
           const isShiftPositionAvailable =
             isAdmin ||
-            (totalSlots - filledSlots > 0 &&
+            (slotsTotal - slotsFilled > 0 &&
               (roleRequiredId === 0 ||
                 volunteerSelected?.roleList?.some(
                   ({ id: roleId }: { id: number }) => roleId === roleRequiredId
@@ -350,7 +355,7 @@ export const ShiftVolunteersDialogAdd = ({
               key={`${timePositionId}-position`}
               value={timePositionId}
             >
-              {positionName}: {filledSlots} / {totalSlots}
+              {positionName}: {slotsFilled} / {slotsTotal}
             </MenuItem>
           );
         }
@@ -360,15 +365,15 @@ export const ShiftVolunteersDialogAdd = ({
       trainingListDisplay = trainingList.map(
         ({
           endTime,
-          filledSlots,
           id: timeId,
+          slotsFilled,
+          slotsTotal,
           startTime,
-          totalSlots,
           type,
         }: IResShiftRowItem) => {
           const isShiftPositionAvailable =
             isAdmin ||
-            (totalSlots - filledSlots > 0 &&
+            (slotsTotal - slotsFilled > 0 &&
               dayjs(dateTimeValue).isBefore(dayjs(startTime)));
 
           return (
@@ -380,7 +385,7 @@ export const ShiftVolunteersDialogAdd = ({
               {`${formatDateName(startTime)}, ${formatTime(
                 startTime,
                 endTime
-              )}, ${type}: ${filledSlots} / ${totalSlots}`}
+              )}, ${type}: ${slotsFilled} / ${slotsTotal}`}
             </MenuItem>
           );
         }
@@ -391,15 +396,15 @@ export const ShiftVolunteersDialogAdd = ({
         trainingPositionListDisplay =
           dataTrainingVolunteerDetails.positionList.map(
             ({
-              filledSlots,
               positionName,
               roleRequiredId,
+              slotsFilled,
+              slotsTotal,
               timePositionId,
-              totalSlots,
             }) => {
               const isShiftPositionAvailable =
                 isAdmin ||
-                (totalSlots - filledSlots > 0 &&
+                (slotsTotal - slotsFilled > 0 &&
                   (roleRequiredId === 0 ||
                     volunteerSelected?.roleList?.some(
                       ({ id: roleId }: { id: number }) =>
@@ -412,7 +417,7 @@ export const ShiftVolunteersDialogAdd = ({
                   key={`${timePositionId}-position`}
                   value={timePositionId}
                 >
-                  {positionName}: {filledSlots} / {totalSlots}
+                  {positionName}: {slotsFilled} / {slotsTotal}
                 </MenuItem>
               );
             }
@@ -435,9 +440,9 @@ export const ShiftVolunteersDialogAdd = ({
 
       // display position list
       positionListDisplay = positionList.map(
-        ({ filledSlots, positionName, timePositionId, totalSlots }) => (
+        ({ positionName, slotsFilled, slotsTotal, timePositionId }) => (
           <MenuItem key={`${timePositionId}-position`} value={timePositionId}>
-            {positionName}: {filledSlots} / {totalSlots}
+            {positionName}: {slotsFilled} / {slotsTotal}
           </MenuItem>
         )
       );
@@ -446,15 +451,15 @@ export const ShiftVolunteersDialogAdd = ({
       trainingListDisplay = trainingList.map(
         ({
           endTime,
-          filledSlots,
           id,
+          slotsFilled,
+          slotsTotal,
           startTime,
-          totalSlots,
           type,
         }: IResShiftRowItem) => {
           const isShiftPositionAvailable =
             isAdmin ||
-            (totalSlots - filledSlots > 0 &&
+            (slotsTotal - slotsFilled > 0 &&
               dayjs(dateTimeValue).isBefore(dayjs(startTime)));
 
           return (
@@ -466,7 +471,7 @@ export const ShiftVolunteersDialogAdd = ({
               {`${formatDateName(startTime)}, ${formatTime(
                 startTime,
                 endTime
-              )}, ${type}: ${filledSlots} / ${totalSlots}`}
+              )}, ${type}: ${slotsFilled} / ${slotsTotal}`}
             </MenuItem>
           );
         }
@@ -476,12 +481,12 @@ export const ShiftVolunteersDialogAdd = ({
       if (dataTrainingVolunteerDetails) {
         trainingPositionListDisplay =
           dataTrainingVolunteerDetails.positionList.map(
-            ({ filledSlots, positionName, timePositionId, totalSlots }) => (
+            ({ positionName, slotsFilled, slotsTotal, timePositionId }) => (
               <MenuItem
                 key={`${timePositionId}-position`}
                 value={timePositionId}
               >
-                {positionName}: {filledSlots} / {totalSlots}
+                {positionName}: {slotsFilled} / {slotsTotal}
               </MenuItem>
             )
           );
@@ -494,7 +499,7 @@ export const ShiftVolunteersDialogAdd = ({
   }
 
   // form submission
-  // --------------------
+  // ------------------------------------------------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       const volunteerAdd = ensure(
@@ -554,7 +559,7 @@ export const ShiftVolunteersDialogAdd = ({
         method: "POST",
       });
       // emit event
-      socket.emit("req-shift-volunteer-add", {
+      socket.emit(ADD_SHIFT_VOLUNTEER_REQ, {
         noShow: noShowShift,
         playaName: volunteerAdd.playaName,
         positionName: shiftPositionAdd.positionName,
@@ -579,7 +584,7 @@ export const ShiftVolunteersDialogAdd = ({
           method: "POST",
         });
         // emit event
-        socket.emit("req-shift-volunteer-add", {
+        socket.emit(ADD_SHIFT_VOLUNTEER_REQ, {
           noShow: noShowTraining,
           playaName: volunteerAdd.playaName,
           positionName: trainingPositionAdd?.positionName,
@@ -620,7 +625,7 @@ export const ShiftVolunteersDialogAdd = ({
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogClose}
@@ -702,15 +707,15 @@ export const ShiftVolunteersDialogAdd = ({
                       // then display warning notification
                       if (
                         shiftPositionFound &&
-                        shiftPositionFound.filledSlots >=
-                          shiftPositionFound.totalSlots
+                        shiftPositionFound.slotsFilled >=
+                          shiftPositionFound.slotsTotal
                       ) {
                         enqueueSnackbar(
                           <SnackbarText>
                             There are{" "}
                             <strong>
-                              {shiftPositionFound.totalSlots -
-                                shiftPositionFound.filledSlots}
+                              {shiftPositionFound.slotsTotal -
+                                shiftPositionFound.slotsFilled}
                             </strong>{" "}
                             openings available for{" "}
                             <strong>{shiftPositionFound.positionName}</strong>
@@ -848,15 +853,15 @@ export const ShiftVolunteersDialogAdd = ({
                           // then display warning notification
                           if (
                             trainingPositionFound &&
-                            trainingPositionFound.filledSlots >=
-                              trainingPositionFound.totalSlots
+                            trainingPositionFound.slotsFilled >=
+                              trainingPositionFound.slotsTotal
                           ) {
                             enqueueSnackbar(
                               <SnackbarText>
                                 There are{" "}
                                 <strong>
-                                  {trainingPositionFound.totalSlots -
-                                    trainingPositionFound.filledSlots}
+                                  {trainingPositionFound.slotsTotal -
+                                    trainingPositionFound.slotsFilled}
                                 </strong>{" "}
                                 openings available for{" "}
                                 <strong>

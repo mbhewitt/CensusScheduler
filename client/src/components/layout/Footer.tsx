@@ -25,7 +25,7 @@ import { checkIsAdmin, checkIsSuperAdmin } from "@/utils/checkIsRoleExist";
 
 export const Footer = () => {
   // context
-  // --------------------
+  // ------------------------------------------------------------
   const {
     developerModeState: { accountType },
   } = useContext(DeveloperModeContext);
@@ -36,17 +36,17 @@ export const Footer = () => {
   } = useContext(SessionContext);
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const router = useRouter();
   const theme = useTheme();
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   const isAdmin = checkIsAdmin(accountType, roleList);
   const isSuperAdmin = checkIsSuperAdmin(accountType, roleList);
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   const pageListHalfCount = Math.ceil(pageListDefault.length / 2);
   const pageListHalfFirst = pageListDefault.slice(0, pageListHalfCount);
   const pageListHalfSecond = pageListDefault.slice(
@@ -212,7 +212,7 @@ export const Footer = () => {
               color: theme.palette.common.white,
             }}
           >
-            2025.O.00170.Prizmo
+            2025.P.00171.Prizmo
           </Typography>
         </Stack>
       </Container>

@@ -5,7 +5,7 @@ export const metadata = {
 };
 const AccountCreatePage = () => {
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return <AccountCreate />;
 };
 

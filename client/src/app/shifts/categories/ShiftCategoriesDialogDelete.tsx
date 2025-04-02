@@ -39,7 +39,7 @@ export const ShiftCategoriesDialogDelete = ({
   isDialogOpen,
 }: IShiftCategoriesDialogDeleteProps) => {
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const {
     data,
     error,
@@ -54,11 +54,11 @@ export const ShiftCategoriesDialogDelete = ({
   const { mutate } = useSWRConfig();
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (error)
     return (
       <DialogContainer
@@ -115,7 +115,7 @@ export const ShiftCategoriesDialogDelete = ({
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogClose}

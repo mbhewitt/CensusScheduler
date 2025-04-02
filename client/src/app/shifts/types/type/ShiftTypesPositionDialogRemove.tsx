@@ -43,7 +43,7 @@ export const ShiftTypesPositionDialogRemove = ({
   typeId,
 }: IShiftTypesPositionDialogRemoveProps) => {
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const {
     data,
     error,
@@ -58,11 +58,11 @@ export const ShiftTypesPositionDialogRemove = ({
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (error)
     return (
       <DialogContainer
@@ -98,7 +98,7 @@ export const ShiftTypesPositionDialogRemove = ({
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogClose}

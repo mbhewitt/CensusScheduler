@@ -41,7 +41,7 @@ interface IShiftPositionsFormProps {
 }
 
 // utilities
-// --------------------
+// ------------------------------------------------------------
 export const findList = (
   dataDefaults: IResShiftPositionDefaults,
   formValues: IFormValues
@@ -84,7 +84,7 @@ export const ShiftPositionsForm = ({
   positionName,
 }: IShiftPositionsFormProps) => {
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       <Box

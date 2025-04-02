@@ -9,11 +9,11 @@ export const metadata = {
 };
 const ShiftVolunteersPage = async ({ params }: IShiftVolunteersPageProps) => {
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   const { timeId } = await params;
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return <ShiftVolunteers timeId={Number(timeId)} />;
 };
 

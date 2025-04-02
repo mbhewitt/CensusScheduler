@@ -1,11 +1,11 @@
 // passcode
-// --------------------
+// ------------------------------------------------------------
 export interface IReqPasscode {
   passcode: string;
 }
 
 // volunteers
-// --------------------
+// ------------------------------------------------------------
 export interface IReqVolunteerAccount {
   email: string;
   emergencyContact: string;
@@ -39,7 +39,7 @@ export interface IResVolunteerRoleItem {
 }
 
 // volunteer shifts
-// --------------------
+// ------------------------------------------------------------
 export interface IResVolunteerShiftCountItem {
   attendedCount: number;
   isNotes: boolean;

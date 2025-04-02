@@ -45,21 +45,21 @@ export const DeveloperModeProvider = ({
   children,
 }: IDeveloperModeProviderProps) => {
   // reducer
-  // --------------------
+  // ------------------------------------------------------------
   const [developerModeState, developerModeDispatch] = useReducer(
     developerModeReducer,
     developerModeInitial
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const developerModeProviderValue = useMemo(
     () => ({ developerModeState, developerModeDispatch }),
     [developerModeState, developerModeDispatch]
   );
 
   // side effects
-  // --------------------
+  // ------------------------------------------------------------
   useEffect(() => {
     const developerModeStateStorage = JSON.parse(
       sessionStorage.getItem("developerModeState") ?? "{}"
@@ -86,7 +86,7 @@ export const DeveloperModeProvider = ({
   }, [developerModeState]);
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <DeveloperModeContext.Provider value={developerModeProviderValue}>
       {children}

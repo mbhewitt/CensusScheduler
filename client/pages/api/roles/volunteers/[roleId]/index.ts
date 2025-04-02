@@ -12,7 +12,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
 
   switch (req.method) {
     // get
-    // --------------------
+    // ------------------------------------------------------------
     case "GET": {
       // get all role volunteers
       const [dbRoleVolunteerList] = await pool.query<RowDataPacket[]>(
@@ -46,7 +46,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // post
-    // --------------------
+    // ------------------------------------------------------------
     case "POST": {
       // add role volunteer
       const { shiftboardId } = JSON.parse(req.body);
@@ -92,7 +92,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // delete
-    // --------------------
+    // ------------------------------------------------------------
     case "DELETE": {
       // remove role volunteer
       const { shiftboardId }: IReqRoleVolunteerItem = JSON.parse(req.body);
@@ -114,7 +114,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // default
-    // --------------------
+    // ------------------------------------------------------------
     default: {
       // send error message
       return res.status(404).json({

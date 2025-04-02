@@ -55,7 +55,7 @@ interface IRoleVolunteersProps {
 
 export const RoleVolunteers = ({ roleId }: IRoleVolunteersProps) => {
   // context
-  // --------------------
+  // ------------------------------------------------------------
   const {
     developerModeState: { accountType },
   } = useContext(DeveloperModeContext);
@@ -66,7 +66,7 @@ export const RoleVolunteers = ({ roleId }: IRoleVolunteersProps) => {
   } = useContext(SessionContext);
 
   // state
-  // --------------------
+  // ------------------------------------------------------------
   const [dialogCurrent, setDialogCurrent] = useState({
     dialogItem: 0,
     role: {
@@ -82,7 +82,7 @@ export const RoleVolunteers = ({ roleId }: IRoleVolunteersProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const {
     data: dataRoleItem,
     error: errorRoleItem,
@@ -99,7 +99,7 @@ export const RoleVolunteers = ({ roleId }: IRoleVolunteersProps) => {
   } = useSWR(`/api/roles/volunteers/${roleId}`, fetcherGet);
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (errorRoleItem || errorRoleVolunteerList) return <ErrorPage />;
   if (!dataRoleItem || !dataRoleVolunteerList) return <Loading />;
 
@@ -183,7 +183,7 @@ export const RoleVolunteers = ({ roleId }: IRoleVolunteersProps) => {
   const optionListCustom = { filter: false };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       <Hero

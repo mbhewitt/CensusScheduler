@@ -6,7 +6,7 @@ import { pool } from "lib/database";
 const contact = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     // post
-    // --------------------
+    // ------------------------------------------------------------
     case "POST": {
       // store message
       const { email, isReplyWanted, message, name, to }: IReqContact =
@@ -25,7 +25,7 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // default
-    // --------------------
+    // ------------------------------------------------------------
     default: {
       // send error message
       return res.status(404).json({

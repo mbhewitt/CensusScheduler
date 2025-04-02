@@ -12,7 +12,7 @@ const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
 
   switch (req.method) {
     // get
-    // --------------------
+    // ------------------------------------------------------------
     case "GET": {
       // get position
       const [dbShiftPositionList] = await pool.query<RowDataPacket[]>(
@@ -68,7 +68,7 @@ const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // patch
-    // --------------------
+    // ------------------------------------------------------------
     case "PATCH": {
       // update position
       const {
@@ -105,7 +105,7 @@ const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // delete
-    // --------------------
+    // ------------------------------------------------------------
     case "DELETE": {
       // delete position
       await pool.query<RowDataPacket[]>(
@@ -122,7 +122,7 @@ const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // default
-    // --------------------
+    // ------------------------------------------------------------
     default: {
       // send error message
       return res.status(404).json({

@@ -7,7 +7,7 @@ export const metadata = {
 };
 const ContactPage = () => {
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <Suspense>
       <Contact />

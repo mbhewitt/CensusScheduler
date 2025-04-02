@@ -24,7 +24,7 @@ import useSWRMutation from "swr/mutation";
 import { DialogContainer } from "@/components/general/DialogContainer";
 import { SnackbarText } from "@/components/general/SnackbarText";
 import { IReqReviewValues } from "@/components/types";
-import { legendList, UPDATE_TYPE_REVIEW } from "@/constants";
+import { legendList, UPDATE_REVIEW_REQ, UPDATE_TYPE_REVIEW } from "@/constants";
 import { fetcherTrigger } from "@/utils/fetcher";
 
 interface IFormValues {
@@ -60,14 +60,14 @@ export const ShiftVolunteersDialogReview = ({
   volunteer: { notes, playaName, rating, shiftboardId, worldName },
 }: IShiftVolunteersDialogReviewProps) => {
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const { isMutating, trigger } = useSWRMutation(
     `/api/shifts/volunteers/${timeId}`,
     fetcherTrigger
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
   const {
     control,
@@ -80,7 +80,7 @@ export const ShiftVolunteersDialogReview = ({
   });
 
   // side effects
-  // --------------------
+  // ------------------------------------------------------------
   useEffect(() => {
     if (isDialogOpen) {
       reset({
@@ -91,7 +91,7 @@ export const ShiftVolunteersDialogReview = ({
   }, [isDialogOpen, notes, rating, reset]);
 
   // form submission
-  // --------------------
+  // ------------------------------------------------------------
   const onSubmit: SubmitHandler<IFormValues> = async ({ notes, rating }) => {
     const body: IReqReviewValues = {
       notes,
@@ -105,7 +105,7 @@ export const ShiftVolunteersDialogReview = ({
       // update database
       await trigger({ body, method: "PATCH" });
       // emit event
-      socket.emit("req-review-update", {
+      socket.emit(UPDATE_REVIEW_REQ, {
         notes,
         rating,
         shiftboardId,
@@ -143,7 +143,7 @@ export const ShiftVolunteersDialogReview = ({
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogClose}

@@ -34,7 +34,7 @@ export const ShiftCategoriesDialogForm = ({
   errors,
 }: IShiftCategoriesDialogFormProps) => {
   // render
-  // --------------------
+  // ------------------------------------------------------------
   const departmentListDisplay = [
     ...new Set(categoryList.map(({ department: { name } }) => name)),
   ].sort();

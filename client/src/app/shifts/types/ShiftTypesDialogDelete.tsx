@@ -40,7 +40,7 @@ export const ShiftTypesDialogDelete = ({
   typeItem: { id, name },
 }: IShiftTypesDialogDeleteProps) => {
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const {
     data,
     error,
@@ -55,11 +55,11 @@ export const ShiftTypesDialogDelete = ({
   const { mutate } = useSWRConfig();
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (error)
     return (
       <DialogContainer
@@ -116,7 +116,7 @@ export const ShiftTypesDialogDelete = ({
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogClose}

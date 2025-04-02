@@ -67,7 +67,7 @@ export const handleTimeListAdd = async ({
 const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     // get
-    // --------------------
+    // ------------------------------------------------------------
     case "GET": {
       // get all types
       const [dbTypeList] = await pool.query<RowDataPacket[]>(
@@ -97,7 +97,7 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // post
-    // --------------------
+    // ------------------------------------------------------------
     case "POST": {
       // create type
       const {
@@ -140,7 +140,7 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // default
-    // --------------------
+    // ------------------------------------------------------------
     default: {
       // send error message
       return res.status(404).json({

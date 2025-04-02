@@ -39,7 +39,7 @@ import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 
 export const ShiftPositionsCreate = () => {
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const {
     data: dataDefaults,
     error: errorDefaults,
@@ -53,7 +53,7 @@ export const ShiftPositionsCreate = () => {
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const {
     control,
     formState: { errors },
@@ -67,12 +67,12 @@ export const ShiftPositionsCreate = () => {
   const theme = useTheme();
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (errorDefaults) return <ErrorPage />;
   if (!dataDefaults) return <Loading />;
 
   // form submission
-  // --------------------
+  // ------------------------------------------------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       const [prerequisiteIdFound, roleIdFound] = findList(
@@ -129,7 +129,7 @@ export const ShiftPositionsCreate = () => {
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       <Hero

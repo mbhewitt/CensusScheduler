@@ -5,7 +5,7 @@ import { Hero } from "@/components/layout/Hero";
 
 export const ErrorPage = () => {
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       <Hero

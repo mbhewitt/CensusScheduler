@@ -39,9 +39,13 @@ import { SnackbarText } from "@/components/general/SnackbarText";
 import type { IReqSwitchValues, ISwitchValues } from "@/components/types";
 import type { IResVolunteerShiftItem } from "@/components/types/volunteers";
 import {
+  REMOVE_SHIFT_VOLUNTEER_RES,
   SHIFT_DURING,
   SHIFT_FUTURE,
   SHIFT_PAST,
+  TOGGLE_CHECK_IN_REQ,
+  TOGGLE_CHECK_IN_RES,
+  UPDATE_REVIEW_RES,
   UPDATE_TYPE_CHECK_IN,
 } from "@/constants";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
@@ -83,7 +87,7 @@ interface IState {
 const socket = io();
 export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
   // context
-  // --------------------
+  // ------------------------------------------------------------
   const {
     developerModeState: {
       accountType,
@@ -97,7 +101,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
   } = useContext(SessionContext);
 
   // state
-  // --------------------
+  // ------------------------------------------------------------
   const [dialogCurrent, setDialogCurrent] = useState<IState>({
     dialogItem: 0,
     shift: {
@@ -118,7 +122,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const router = useRouter();
   const {
     data,
@@ -136,12 +140,12 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
 
   // side effects
-  // --------------------
+  // ------------------------------------------------------------
   useEffect(() => {
     // listen for socket events
     (async () => {
@@ -149,7 +153,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
         await fetch("/api/socket");
 
         socket.on(
-          "res-check-in-toggle",
+          TOGGLE_CHECK_IN_RES,
           ({
             checked,
             timePositionId,
@@ -172,7 +176,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
           }
         );
         socket.on(
-          "res-review-update",
+          UPDATE_REVIEW_RES,
           ({
             notes,
             rating,
@@ -197,7 +201,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
             }
           }
         );
-        socket.on("res-shift-volunteer-remove", ({ timePositionId }) => {
+        socket.on(REMOVE_SHIFT_VOLUNTEER_RES, ({ timePositionId }) => {
           if (data) {
             const dataMutate = structuredClone(data);
             const volunteerShiftListNew = dataMutate.filter(
@@ -227,7 +231,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
   }, [data, enqueueSnackbar, mutate]);
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (error)
     return (
       <>
@@ -265,7 +269,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
         body,
         method: "PATCH",
       });
-      socket.emit("req-check-in-toggle", {
+      socket.emit(TOGGLE_CHECK_IN_REQ, {
         isCheckedIn,
         shiftboardId,
         timePositionId,
@@ -518,7 +522,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       <Stack

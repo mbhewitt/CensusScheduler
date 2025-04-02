@@ -52,9 +52,14 @@ import type {
   IResShiftVolunteerRowItem,
 } from "@/components/types/shifts";
 import {
+  ADD_SHIFT_VOLUNTEER_RES,
+  REMOVE_SHIFT_VOLUNTEER_RES,
   SHIFT_DURING,
   SHIFT_FUTURE,
   SHIFT_PAST,
+  TOGGLE_CHECK_IN_REQ,
+  TOGGLE_CHECK_IN_RES,
+  UPDATE_REVIEW_RES,
   UPDATE_TYPE_CHECK_IN,
 } from "@/constants";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
@@ -96,7 +101,7 @@ export const ShiftVolunteers = ({
   timeId: timeIdParam,
 }: IShiftVolunteersProps) => {
   // context
-  // --------------------
+  // ------------------------------------------------------------
   const {
     developerModeState: {
       accountType,
@@ -111,7 +116,7 @@ export const ShiftVolunteers = ({
   } = useContext(SessionContext);
 
   // state
-  // --------------------
+  // ------------------------------------------------------------
   const [dialogCurrent, setDialogCurrent] = useState<IDialogCurrentState>({
     dialogItem: 0,
     shift: {
@@ -129,7 +134,7 @@ export const ShiftVolunteers = ({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const {
     data: dataShiftVolunteersItem,
     error: errorShiftVolunteersItem,
@@ -146,11 +151,11 @@ export const ShiftVolunteers = ({
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
 
   // side effects
-  // --------------------
+  // ------------------------------------------------------------
   // listen for socket events
   useEffect(() => {
     (async () => {
@@ -158,7 +163,7 @@ export const ShiftVolunteers = ({
         await fetch("/api/socket");
 
         socket.on(
-          "res-shift-volunteer-add",
+          ADD_SHIFT_VOLUNTEER_RES,
           ({
             isCheckedIn,
             notes,
@@ -187,31 +192,7 @@ export const ShiftVolunteers = ({
           }
         );
         socket.on(
-          "res-check-in-toggle",
-          ({
-            checked,
-            shiftboardId,
-          }: {
-            checked: boolean;
-            shiftboardId: number | string;
-          }) => {
-            if (dataShiftVolunteersItem) {
-              const dataMutate = structuredClone(dataShiftVolunteersItem);
-              const shiftboardIdNum = Number(shiftboardId);
-              const shiftVolunteerItemUpdate = dataMutate.volunteerList.find(
-                (volunteerItem: IResShiftVolunteerRowItem) =>
-                  volunteerItem.shiftboardId === shiftboardIdNum
-              );
-              if (shiftVolunteerItemUpdate) {
-                shiftVolunteerItemUpdate.isCheckedIn = checked ? "" : "Yes";
-              }
-
-              mutateShiftVolunteersItem(dataMutate);
-            }
-          }
-        );
-        socket.on(
-          "res-check-in-toggle",
+          TOGGLE_CHECK_IN_RES,
           ({
             checked,
             shiftboardId,
@@ -234,7 +215,7 @@ export const ShiftVolunteers = ({
           }
         );
         socket.on(
-          "res-review-update",
+          UPDATE_REVIEW_RES,
           ({
             notes,
             rating,
@@ -259,7 +240,7 @@ export const ShiftVolunteers = ({
             }
           }
         );
-        socket.on("res-shift-volunteer-remove", ({ shiftboardId }) => {
+        socket.on(REMOVE_SHIFT_VOLUNTEER_RES, ({ shiftboardId }) => {
           if (dataShiftVolunteersItem) {
             const dataMutate = structuredClone(dataShiftVolunteersItem);
             const volunteerListNew = dataMutate.volunteerList.filter(
@@ -290,7 +271,7 @@ export const ShiftVolunteers = ({
   }, [dataShiftVolunteersItem, enqueueSnackbar, mutateShiftVolunteersItem]);
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (errorShiftVolunteersItem) return <ErrorPage />;
   if (!dataShiftVolunteersItem) return <Loading />;
 
@@ -316,7 +297,7 @@ export const ShiftVolunteers = ({
         body,
         method: "PATCH",
       });
-      socket.emit("req-check-in-toggle", {
+      socket.emit(TOGGLE_CHECK_IN_REQ, {
         isCheckedIn,
         shiftboardId,
         timePositionId,
@@ -366,7 +347,7 @@ export const ShiftVolunteers = ({
         (isAuthenticated &&
           dataShiftVolunteersItem.positionList.some(
             (positionItem: IResShiftPositionCountItem) =>
-              positionItem.totalSlots - positionItem.filledSlots > 0
+              positionItem.slotsTotal - positionItem.slotsFilled > 0
           ));
       break;
     }
@@ -399,8 +380,8 @@ export const ShiftVolunteers = ({
     },
   ];
   const dataTablePositions = dataShiftVolunteersItem.positionList.map(
-    ({ filledSlots, positionName, totalSlots }: IResShiftPositionCountItem) => {
-      return [positionName, `${filledSlots} / ${totalSlots}`];
+    ({ positionName, slotsFilled, slotsTotal }: IResShiftPositionCountItem) => {
+      return [positionName, `${slotsFilled} / ${slotsTotal}`];
     }
   );
   const optionListCustomPositions = {
@@ -566,7 +547,7 @@ export const ShiftVolunteers = ({
   const optionListCustomVolunteers = {};
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       <Hero

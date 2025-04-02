@@ -8,7 +8,7 @@ import { DeveloperModeContext } from "@/state/developer-mode/context";
 
 export const DeveloperCard = () => {
   // context
-  // --------------------
+  // ------------------------------------------------------------
   const {
     developerModeState: {
       accountType: { isEnabled: isAccountTypeEnabled },
@@ -17,11 +17,11 @@ export const DeveloperCard = () => {
   } = useContext(DeveloperModeContext);
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const theme = useTheme();
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <Card
       sx={{

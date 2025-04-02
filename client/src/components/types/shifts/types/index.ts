@@ -1,5 +1,5 @@
 // defaults
-// --------------------
+// ------------------------------------------------------------
 export interface IResShiftTypeDefaults {
   categoryList: IResShiftTypeCategoryItem[];
   positionList: IResShiftTypePositionItem[];
@@ -15,7 +15,7 @@ export interface IResShiftTypeItem {
 }
 
 // row table
-// --------------------
+// ------------------------------------------------------------
 export interface IResShiftTypeRowItem {
   category: { name: string };
   id: number;
@@ -23,7 +23,7 @@ export interface IResShiftTypeRowItem {
 }
 
 // shift types
-// --------------------
+// ------------------------------------------------------------
 export interface IResShiftTypeCurrent {
   information: IResShiftTypeInformation;
   positionList: IResShiftTypePositionItem[];
@@ -46,7 +46,7 @@ export interface IResShiftTypePositionItem {
   prerequisite: string;
   role: string;
   startTimeOffset: string;
-  totalSlots?: string;
+  slotsTotal?: string;
   wapPoints?: string;
 }
 export interface IResShiftTypeTimeItem {
@@ -95,14 +95,14 @@ export interface IReqShiftTypeTimeItem {
 }
 
 // positions
-// --------------------
+// ------------------------------------------------------------
 export interface IResShiftTypeTimePositionItem {
   id: number;
   name: string;
 }
 
 // times
-// --------------------
+// ------------------------------------------------------------
 export interface IResShiftTypePositionTimeItem {
   id: number;
   name: string;

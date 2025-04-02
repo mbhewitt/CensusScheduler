@@ -1,5 +1,5 @@
 // details
-// --------------------
+// ------------------------------------------------------------
 export interface IResShiftCategoryItem {
   department: {
     name: string;
@@ -15,7 +15,7 @@ export interface IReqShiftCategoryItem {
 }
 
 // types
-// --------------------
+// ------------------------------------------------------------
 export interface IResShiftCategoryTypeItem {
   id: number;
   name: string;

@@ -22,7 +22,7 @@ import { getColorMap } from "@/utils/getColorMap";
 
 export const Shifts = () => {
   // context
-  // --------------------
+  // ------------------------------------------------------------
   const {
     developerModeState: {
       dateTime: { value: dateTimeValue },
@@ -30,7 +30,7 @@ export const Shifts = () => {
   } = useContext(DeveloperModeContext);
 
   // state
-  // --------------------
+  // ------------------------------------------------------------
   const columnNameDateHidden = "Date - hidden";
   const columnNameDate = "Date";
   const columnNameTypeHidden = "Type - hidden";
@@ -113,7 +113,7 @@ export const Shifts = () => {
   ]);
 
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const {
     data,
     error,
@@ -123,12 +123,12 @@ export const Shifts = () => {
   } = useSWR("/api/shifts", fetcherGet);
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const router = useRouter();
   const theme = useTheme();
 
   // side effects
-  // --------------------
+  // ------------------------------------------------------------
   useEffect(() => {
     // if filter list state is stored in session storage
     // then update column list state with filter list state
@@ -219,7 +219,7 @@ export const Shifts = () => {
   }, [data, setColumnList]);
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
@@ -232,10 +232,10 @@ export const Shifts = () => {
       dateName,
       department: { name: departmentName },
       endTime,
-      filledSlots,
       id,
+      slotsFilled,
+      slotsTotal,
       startTime,
-      totalSlots,
       type,
     }) => {
       return [
@@ -249,7 +249,7 @@ export const Shifts = () => {
           label={type}
           sx={{ backgroundColor: colorMapDisplay[departmentName] }}
         />,
-        `${filledSlots} / ${totalSlots}`,
+        `${slotsFilled} / ${slotsTotal}`,
       ];
     }
   );
@@ -287,7 +287,7 @@ export const Shifts = () => {
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       <Hero

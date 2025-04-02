@@ -232,7 +232,7 @@ const SnackbarAction = (snackbarKey: number | string) => (
 );
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <html lang="en">
       <body>

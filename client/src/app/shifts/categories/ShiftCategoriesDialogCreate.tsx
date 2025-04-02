@@ -32,14 +32,14 @@ export const ShiftCategoriesDialogCreate = ({
   isDialogOpen,
 }: IShiftCategoriesDialogCreateProps) => {
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const { isMutating, trigger } = useSWRMutation(
     "/api/shifts/categories",
     fetcherTrigger
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const {
     clearErrors,
     control,
@@ -53,7 +53,7 @@ export const ShiftCategoriesDialogCreate = ({
   const { enqueueSnackbar } = useSnackbar();
 
   // side effects
-  // --------------------
+  // ------------------------------------------------------------
   useEffect(() => {
     if (isDialogOpen) {
       clearErrors();
@@ -63,7 +63,7 @@ export const ShiftCategoriesDialogCreate = ({
   }, [categoryItem, clearErrors, isDialogOpen, setValue]);
 
   // form submission
-  // --------------------
+  // ------------------------------------------------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       // update database
@@ -99,7 +99,7 @@ export const ShiftCategoriesDialogCreate = ({
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogClose}

@@ -12,7 +12,7 @@ const shiftPositionTypes = async (
 
   switch (req.method) {
     // get
-    // --------------------
+    // ------------------------------------------------------------
     case "GET": {
       // get all active types for position
       const [dbTypeList] = await pool.query<RowDataPacket[]>(
@@ -42,7 +42,7 @@ const shiftPositionTypes = async (
     }
 
     // default
-    // --------------------
+    // ------------------------------------------------------------
     default: {
       // send error message
       return res.status(404).json({

@@ -2,7 +2,7 @@ import { CircularProgress, Container } from "@mui/material";
 
 export const Loading = () => {
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <Container
       component="main"

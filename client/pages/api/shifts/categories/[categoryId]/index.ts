@@ -9,7 +9,7 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
 
   switch (req.method) {
     // patch
-    // --------------------
+    // ------------------------------------------------------------
     case "PATCH": {
       // update category
       const {
@@ -34,7 +34,7 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // delete
-    // --------------------
+    // ------------------------------------------------------------
     case "DELETE": {
       // delete category
       await pool.query<RowDataPacket[]>(
@@ -51,7 +51,7 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // default
-    // --------------------
+    // ------------------------------------------------------------
     default: {
       // send error message
       return res.status(404).json({

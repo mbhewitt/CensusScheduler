@@ -30,11 +30,11 @@ export const RolesDialogCreate = ({
   roleList,
 }: IRolesDialogCreateProps) => {
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const { isMutating, trigger } = useSWRMutation("/api/roles", fetcherTrigger);
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const {
     clearErrors,
     control,
@@ -48,7 +48,7 @@ export const RolesDialogCreate = ({
   const { enqueueSnackbar } = useSnackbar();
 
   // side effects
-  // --------------------
+  // ------------------------------------------------------------
   useEffect(() => {
     if (isDialogOpen) {
       clearErrors();
@@ -57,7 +57,7 @@ export const RolesDialogCreate = ({
   }, [clearErrors, isDialogOpen, setValue]);
 
   // form submission
-  // --------------------
+  // ------------------------------------------------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       const body: IReqRoleItem = formValues;
@@ -95,7 +95,7 @@ export const RolesDialogCreate = ({
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogClose}

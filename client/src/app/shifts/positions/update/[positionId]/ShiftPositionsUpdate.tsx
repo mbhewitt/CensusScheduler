@@ -49,7 +49,7 @@ export const ShiftPositionsUpdate = ({
   positionId,
 }: IShiftPositionsUpdateProps) => {
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const router = useRouter();
   const {
     data: dataDefaults,
@@ -71,7 +71,7 @@ export const ShiftPositionsUpdate = ({
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const {
     control,
     formState: { errors },
@@ -85,7 +85,7 @@ export const ShiftPositionsUpdate = ({
   const theme = useTheme();
 
   // side effects
-  // --------------------
+  // ------------------------------------------------------------
   useEffect(() => {
     if (dataCurrent) {
       const {
@@ -113,12 +113,12 @@ export const ShiftPositionsUpdate = ({
   }, [dataCurrent, reset]);
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (errorDefaults || errorCurrent) return <ErrorPage />;
   if (!dataDefaults || !dataCurrent) return <Loading />;
 
   // form submission
-  // --------------------
+  // ------------------------------------------------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       const [prerequisiteIdFound, roleIdFound] = findList(
@@ -175,7 +175,7 @@ export const ShiftPositionsUpdate = ({
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       <Hero

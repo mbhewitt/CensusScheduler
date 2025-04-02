@@ -7,7 +7,7 @@ export const metadata = {
 };
 const ShiftPositionsPage = () => {
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <AuthGate accountTypeToCheck={ACCOUNT_TYPE_SUPER_ADMIN}>
       <ShiftPositions />

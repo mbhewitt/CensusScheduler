@@ -44,14 +44,14 @@ const sessionInitial: ISessionState = {
 
 export const SessionProvider = ({ children }: ISessionProviderProps) => {
   // reducer
-  // --------------------
+  // ------------------------------------------------------------
   const [sessionState, sessionDispatch] = useReducer(
     sessionReducer,
     sessionInitial
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const sessionProviderValue = useMemo(
     () => ({
       sessionState,
@@ -61,7 +61,7 @@ export const SessionProvider = ({ children }: ISessionProviderProps) => {
   );
 
   // side effects
-  // --------------------
+  // ------------------------------------------------------------
   useEffect(() => {
     const sessionStateStorage = JSON.parse(
       sessionStorage.getItem("sessionState") ?? "{}"
@@ -80,7 +80,7 @@ export const SessionProvider = ({ children }: ISessionProviderProps) => {
   }, [sessionState]);
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <SessionContext.Provider value={sessionProviderValue}>
       {children}

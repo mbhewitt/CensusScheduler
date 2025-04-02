@@ -43,7 +43,7 @@ enum DialogList {
 
 export const ShiftPositions = () => {
   // state
-  // --------------------
+  // ------------------------------------------------------------
   const [dialogCurrent, setDialogCurrent] = useState({
     dialogItem: 0,
     position: {
@@ -54,7 +54,7 @@ export const ShiftPositions = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const {
     data,
     error,
@@ -64,12 +64,12 @@ export const ShiftPositions = () => {
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const router = useRouter();
   const theme = useTheme();
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
@@ -128,7 +128,7 @@ export const ShiftPositions = () => {
   const optionListCustom = { filter: false };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       <Hero

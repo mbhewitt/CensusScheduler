@@ -14,7 +14,7 @@ const shiftPositionDefaults = async (
 ) => {
   switch (req.method) {
     // get
-    // --------------------
+    // ------------------------------------------------------------
     case "GET": {
       // get all positions
       const [dbPositionList] = await pool.query<RowDataPacket[]>(
@@ -78,7 +78,7 @@ const shiftPositionDefaults = async (
     }
 
     // default
-    // --------------------
+    // ------------------------------------------------------------
     // send error message
     default: {
       return res.status(404).json({

@@ -1,5 +1,5 @@
 // shifts
-// --------------------
+// ------------------------------------------------------------
 export interface IResShiftRowItem {
   category: {
     id: number;
@@ -9,10 +9,10 @@ export interface IResShiftRowItem {
     name: string;
   };
   endTime: string;
-  filledSlots: number;
   id: number;
+  slotsFilled: number;
+  slotsTotal: number;
   startTime: string;
-  totalSlots: number;
   type: string;
 }
 export interface IReqShiftVolunteerItem {
@@ -23,16 +23,16 @@ export interface IReqShiftVolunteerItem {
 }
 
 // details
-// --------------------
+// ------------------------------------------------------------
 export interface IResShiftPositionCountItem {
-  filledSlots: number;
-  positionName: string;
   positionDetails: string;
   positionId: number;
+  positionName: string;
   prerequisiteId: number;
   roleRequiredId: number;
+  slotsFilled: number;
+  slotsTotal: number;
   timePositionId: number;
-  totalSlots: number;
 }
 export interface IResShiftVolunteerRowItem {
   isCheckedIn: string;

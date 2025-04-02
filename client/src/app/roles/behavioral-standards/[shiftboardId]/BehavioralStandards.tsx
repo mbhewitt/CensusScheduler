@@ -50,7 +50,7 @@ export const BehavioralStandards = ({
   shiftboardId,
 }: IBehavioralStandardsProps) => {
   // context
-  // --------------------
+  // ------------------------------------------------------------
   const {
     sessionDispatch,
     sessionState: {
@@ -62,13 +62,13 @@ export const BehavioralStandards = ({
   const { developerModeDispatch } = useContext(DeveloperModeContext);
 
   // state
-  // --------------------
+  // ------------------------------------------------------------
   const [isSignedChecked, setIsSignedChecked] = useState(false);
   const [isDeclinedLoading, setIsDeclinedLoading] = useState(false);
   const [isSignedLoading, setIsSignedLoading] = useState(false);
 
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const {
     data,
     error,
@@ -82,12 +82,12 @@ export const BehavioralStandards = ({
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
@@ -198,7 +198,7 @@ export const BehavioralStandards = ({
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       <Hero

@@ -11,7 +11,7 @@ import { pool } from "lib/database";
 const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     // get
-    // --------------------
+    // ------------------------------------------------------------
     case "GET": {
       // get all categories
       const [dbShiftCategoryList] = await pool.query<RowDataPacket[]>(
@@ -39,7 +39,7 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // post
-    // --------------------
+    // ------------------------------------------------------------
     case "POST": {
       // create category
       const {
@@ -70,7 +70,7 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // default
-    // --------------------
+    // ------------------------------------------------------------
     default: {
       // send error message
       return res.status(404).json({

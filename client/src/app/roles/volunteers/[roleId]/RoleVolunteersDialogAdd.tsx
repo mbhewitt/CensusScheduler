@@ -51,7 +51,7 @@ export const RoleVolunteersDialogAdd = ({
   roleVolunteerList,
 }: IRoleVolunteersDialogAddProps) => {
   // context
-  // --------------------
+  // ------------------------------------------------------------
   const {
     sessionDispatch,
     sessionState: {
@@ -60,7 +60,7 @@ export const RoleVolunteersDialogAdd = ({
   } = useContext(SessionContext);
 
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const {
     data,
     error,
@@ -74,7 +74,7 @@ export const RoleVolunteersDialogAdd = ({
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const {
     clearErrors,
     control,
@@ -88,7 +88,7 @@ export const RoleVolunteersDialogAdd = ({
   const { enqueueSnackbar } = useSnackbar();
 
   // side effects
-  // --------------------
+  // ------------------------------------------------------------
   useEffect(() => {
     if (isDialogOpen) {
       clearErrors();
@@ -97,7 +97,7 @@ export const RoleVolunteersDialogAdd = ({
   }, [clearErrors, isDialogOpen, setValue]);
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (error)
     return (
       <DialogContainer
@@ -120,7 +120,7 @@ export const RoleVolunteersDialogAdd = ({
     );
 
   // form submission
-  // --------------------
+  // ------------------------------------------------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       const body: IReqRoleVolunteerItem = {
@@ -171,7 +171,7 @@ export const RoleVolunteersDialogAdd = ({
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogClose}

@@ -16,7 +16,7 @@ import {
 const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     // get
-    // --------------------
+    // ------------------------------------------------------------
     case "GET": {
       // get all shift volunteers
       const { timeId } = req.query;
@@ -91,14 +91,14 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           time_position_id,
         }) => {
           const resShiftPositionItem: IResShiftPositionCountItem = {
-            filledSlots: 0,
-            positionName: position,
             positionDetails: position_details,
             positionId: position_type_id,
+            positionName: position,
             prerequisiteId: prerequisite_id ?? 0,
             roleRequiredId: role_id ?? 0,
+            slotsFilled: 0,
+            slotsTotal: slots,
             timePositionId: time_position_id,
-            totalSlots: slots,
           };
 
           return resShiftPositionItem;
@@ -135,7 +135,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             resShiftPositionItem.timePositionId ===
             shiftVolunteerItem.timePositionId
         );
-        if (positionFound) positionFound.filledSlots += 1;
+        if (positionFound) positionFound.slotsFilled += 1;
       });
 
       const resShiftVolunteerDetails: IResShiftVolunteerInformation = {
@@ -156,7 +156,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // post
-    // --------------------
+    // ------------------------------------------------------------
     case "POST": {
       // add volunteer to shift
       const {
@@ -211,21 +211,21 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // patch
-    // --------------------
+    // ------------------------------------------------------------
     case "PATCH": {
       // check volunteer into shift
       return shiftVolunteerUpdate(pool, req, res);
     }
 
     // delete
-    // --------------------
+    // ------------------------------------------------------------
     case "DELETE": {
       // remove volunteer from shift
       return shiftVolunteerRemove(pool, req, res);
     }
 
     // default
-    // --------------------
+    // ------------------------------------------------------------
     default: {
       // send error message
       return res.status(404).json({

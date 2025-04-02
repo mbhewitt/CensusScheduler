@@ -10,7 +10,7 @@ import { formatDateTime } from "@/utils/formatDateTime";
 
 export const DateTime = () => {
   // context
-  // --------------------
+  // ------------------------------------------------------------
   const {
     developerModeDispatch,
     developerModeState: {
@@ -19,7 +19,7 @@ export const DateTime = () => {
   } = useContext(DeveloperModeContext);
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DateTimePicker

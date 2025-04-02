@@ -11,7 +11,7 @@ import {
 const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     // get
-    // --------------------
+    // ------------------------------------------------------------
     case "GET": {
       // get all volunteer shifts
       const { shiftboardId } = req.query;
@@ -85,21 +85,21 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // patch
-    // --------------------
+    // ------------------------------------------------------------
     case "PATCH": {
       // update volunteer in shift
       return shiftVolunteerUpdate(pool, req, res);
     }
 
     // delete
-    // --------------------
+    // ------------------------------------------------------------
     case "DELETE": {
       // remove volunteer from shift
       return shiftVolunteerRemove(pool, req, res);
     }
 
     // default
-    // --------------------
+    // ------------------------------------------------------------
     default: {
       // send error message
       return res.status(404).json({

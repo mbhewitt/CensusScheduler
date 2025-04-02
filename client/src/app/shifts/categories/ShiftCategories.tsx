@@ -45,7 +45,7 @@ enum DialogList {
 
 export const ShiftCategories = () => {
   // state
-  // --------------------
+  // ------------------------------------------------------------
   const [dialogCurrent, setDialogCurrent] = useState({
     category: {
       department: { name: "" },
@@ -57,7 +57,7 @@ export const ShiftCategories = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const {
     data,
     error,
@@ -67,11 +67,11 @@ export const ShiftCategories = () => {
   } = useSWR("/api/shifts/categories", fetcherGet);
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const theme = useTheme();
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
@@ -186,7 +186,7 @@ export const ShiftCategories = () => {
   const optionListCustom = {};
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       <Hero

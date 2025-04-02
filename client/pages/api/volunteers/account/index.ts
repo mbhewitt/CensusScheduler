@@ -8,7 +8,7 @@ import { pool } from "lib/database";
 const account = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     // post
-    // --------------------
+    // ------------------------------------------------------------
     case "POST": {
       // create volunteer account
       const {
@@ -69,7 +69,7 @@ const account = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // default
-    // --------------------
+    // ------------------------------------------------------------
     default: {
       // send error message
       return res.status(404).json({

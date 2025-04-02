@@ -15,6 +15,7 @@ import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "@/components/general/DialogContainer";
 import { SnackbarText } from "@/components/general/SnackbarText";
+import { REMOVE_SHIFT_VOLUNTEER_REQ } from "@/constants";
 import { fetcherTrigger } from "@/utils/fetcher";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
 
@@ -41,18 +42,18 @@ export const VolunteerShiftsDialogRemove = ({
   volunteer: { shiftboardId },
 }: IVolunteerShiftsDialogRemoveProps) => {
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const { isMutating, trigger } = useSWRMutation(
     `/api/volunteers/shifts/${shiftboardId}`,
     fetcherTrigger
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   const handleVolunteerRemove = async () => {
     try {
       // update database
@@ -61,7 +62,7 @@ export const VolunteerShiftsDialogRemove = ({
         method: "DELETE",
       });
       // emit event
-      socket.emit("req-shift-volunteer-remove", {
+      socket.emit(REMOVE_SHIFT_VOLUNTEER_REQ, {
         shiftboardId,
         timePositionId,
       });
@@ -95,7 +96,7 @@ export const VolunteerShiftsDialogRemove = ({
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogClose}

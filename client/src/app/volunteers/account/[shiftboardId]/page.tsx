@@ -11,11 +11,11 @@ export const metadata = {
 };
 const AccountPage = async ({ params }: IAccountPageProps) => {
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   const { shiftboardId } = await params;
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <AuthGate accountTypeToCheck={ACCOUNT_TYPE_AUTHENTICATED}>
       <Account shiftboardId={Number(shiftboardId)} />

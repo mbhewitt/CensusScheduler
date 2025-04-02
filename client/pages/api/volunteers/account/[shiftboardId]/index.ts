@@ -12,7 +12,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
 
   switch (req.method) {
     // get
-    // --------------------
+    // ------------------------------------------------------------
     case "GET": {
       // get volunteer account
       const [dbRoleList] = await pool.query<RowDataPacket[]>(
@@ -66,7 +66,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // patch
-    // --------------------
+    // ------------------------------------------------------------
     case "PATCH": {
       // update volunteer account
       const {
@@ -110,7 +110,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // default
-    // --------------------
+    // ------------------------------------------------------------
     default: {
       // send error message
       return res.status(404).json({

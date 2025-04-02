@@ -34,7 +34,7 @@ export const ResetPasscodeForm = ({
   setIsPasscodeCreateVisible,
 }: IResetPasscodeFormProps) => {
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       <Stack alignItems="center" direction="row">

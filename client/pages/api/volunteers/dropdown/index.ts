@@ -11,7 +11,7 @@ import { pool } from "lib/database";
 const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     // get
-    // --------------------
+    // ------------------------------------------------------------
     case "GET": {
       const { filter } = req.query;
       let dbVolunteerList: RowDataPacket[] = [];
@@ -105,7 +105,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // default
-    // --------------------
+    // ------------------------------------------------------------
     default: {
       // send error message
       return res.status(404).json({

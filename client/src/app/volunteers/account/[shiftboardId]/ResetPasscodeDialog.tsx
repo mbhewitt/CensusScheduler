@@ -43,20 +43,20 @@ export const ResetPasscodeDialog = ({
   worldName,
 }: IResetPasscodeDialogProps) => {
   // state
-  // --------------------
+  // ------------------------------------------------------------
   const [isPasscodeCreateVisible, setIsPasscodeCreateVisible] = useState(false);
   const [isPasscodeConfirmVisible, setIsPasscodeConfirmVisible] =
     useState(false);
 
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const { isMutating, trigger } = useSWRMutation(
     `/api/volunteers/account/${shiftboardId}/passcode`,
     fetcherTrigger
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const {
     clearErrors,
     control,
@@ -71,7 +71,7 @@ export const ResetPasscodeDialog = ({
   const { enqueueSnackbar } = useSnackbar();
 
   // side effects
-  // --------------------
+  // ------------------------------------------------------------
   useEffect(() => {
     if (isDialogOpen) {
       clearErrors();
@@ -81,7 +81,7 @@ export const ResetPasscodeDialog = ({
   }, [clearErrors, isDialogOpen, setValue]);
 
   // form submission
-  // --------------------
+  // ------------------------------------------------------------
   const onSubmit: SubmitHandler<IVolunteerAccountFormValues> = async (
     formValues
   ) => {
@@ -126,7 +126,7 @@ export const ResetPasscodeDialog = ({
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogClose}

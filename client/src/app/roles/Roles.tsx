@@ -62,7 +62,7 @@ interface IRoleDisplay {
 
 export const Roles = () => {
   // state
-  // --------------------
+  // ------------------------------------------------------------
   const [dialogCurrent, setDialogCurrent] = useState({
     dialogItem: 0,
     role: {
@@ -74,7 +74,7 @@ export const Roles = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const {
     data,
     error,
@@ -85,11 +85,11 @@ export const Roles = () => {
   const { mutate } = useSWRConfig();
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
@@ -250,7 +250,7 @@ export const Roles = () => {
   const optionListCustom = { filter: false };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       <Hero

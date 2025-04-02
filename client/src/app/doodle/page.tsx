@@ -5,7 +5,7 @@ export const metadata = {
 };
 const DoodlePage = () => {
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return <Doodle />;
 };
 

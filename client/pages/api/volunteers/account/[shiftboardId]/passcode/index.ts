@@ -9,7 +9,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
 
   switch (req.method) {
     // patch
-    // --------------------
+    // ------------------------------------------------------------
     case "PATCH": {
       // update volunteer passcode
       const { passcode }: IReqPasscode = JSON.parse(req.body);
@@ -30,7 +30,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // default
-    // --------------------
+    // ------------------------------------------------------------
     default: {
       // send error message
       return res.status(404).json({
