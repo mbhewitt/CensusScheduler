@@ -41,7 +41,12 @@ import type {
   IResVolunteerDefaultItem,
   IResVolunteerShiftItem,
 } from "@/components/types/volunteers";
-import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "@/constants";
+import {
+  ADD_SHIFT_VOLUNTEER_REQ,
+  SHIFT_DURING,
+  SHIFT_FUTURE,
+  SHIFT_PAST,
+} from "@/constants";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
 import { checkIsAdmin, checkIsAuthenticated } from "@/utils/checkIsRoleExist";
@@ -554,7 +559,7 @@ export const ShiftVolunteersDialogAdd = ({
         method: "POST",
       });
       // emit event
-      socket.emit("req-shift-volunteer-add", {
+      socket.emit(ADD_SHIFT_VOLUNTEER_REQ, {
         noShow: noShowShift,
         playaName: volunteerAdd.playaName,
         positionName: shiftPositionAdd.positionName,
@@ -579,7 +584,7 @@ export const ShiftVolunteersDialogAdd = ({
           method: "POST",
         });
         // emit event
-        socket.emit("req-shift-volunteer-add", {
+        socket.emit(ADD_SHIFT_VOLUNTEER_REQ, {
           noShow: noShowTraining,
           playaName: volunteerAdd.playaName,
           positionName: trainingPositionAdd?.positionName,

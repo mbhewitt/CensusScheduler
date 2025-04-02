@@ -22,7 +22,14 @@ import useSWRMutation from "swr/mutation";
 import { ErrorPage } from "@/components/general/ErrorPage";
 import { SnackbarText } from "@/components/general/SnackbarText";
 import { IReqDoodle, IResDoodle } from "@/components/types/doodle";
-import { COLOR_BURNING_MAN_BROWN, COLOR_CENSUS_PINK } from "@/constants";
+import {
+  CLEAR_CANVAS_REQ,
+  CLEAR_CANVAS_RES,
+  COLOR_BURNING_MAN_BROWN,
+  COLOR_CENSUS_PINK,
+  DRAW_MOVE_REQ,
+  DRAW_MOVE_RES,
+} from "@/constants";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 
 const socket = io();
@@ -126,7 +133,7 @@ export const Doodle = () => {
           // update database
           await trigger({ body, method: "PATCH" });
           // emit event
-          socket.emit("req-draw-move", {
+          socket.emit(DRAW_MOVE_REQ, {
             imageUrl: canvasValue.toDataURL(),
           });
         } catch (error) {
@@ -185,7 +192,7 @@ export const Doodle = () => {
       try {
         await fetch("/api/socket");
 
-        socket.on("res-draw-move", ({ imageUrl: imageSocketUrl }) => {
+        socket.on(DRAW_MOVE_RES, ({ imageUrl: imageSocketUrl }) => {
           const canvas = canvasRef.current;
           const canvasContext = canvas?.getContext("2d");
 
@@ -198,7 +205,7 @@ export const Doodle = () => {
             };
           }
         });
-        socket.on("res-canvas-clear", clearCanvas);
+        socket.on(CLEAR_CANVAS_RES, clearCanvas);
       } catch (error) {
         if (error instanceof Error) {
           enqueueSnackbar(
@@ -301,7 +308,7 @@ export const Doodle = () => {
                         // update database
                         await trigger({ body, method: "PATCH" });
                         // emit event
-                        socket.emit("req-canvas-clear");
+                        socket.emit(CLEAR_CANVAS_REQ);
 
                         clearCanvas();
                       }

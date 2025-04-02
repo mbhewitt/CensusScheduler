@@ -5,6 +5,21 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { Server } from "socket.io";
 import type { Server as IOServer } from "socket.io";
 
+import {
+  ADD_SHIFT_VOLUNTEER_REQ,
+  ADD_SHIFT_VOLUNTEER_RES,
+  CLEAR_CANVAS_REQ,
+  CLEAR_CANVAS_RES,
+  DRAW_MOVE_REQ,
+  DRAW_MOVE_RES,
+  REMOVE_SHIFT_VOLUNTEER_REQ,
+  REMOVE_SHIFT_VOLUNTEER_RES,
+  TOGGLE_CHECK_IN_REQ,
+  TOGGLE_CHECK_IN_RES,
+  UPDATE_REVIEW_REQ,
+  UPDATE_REVIEW_RES,
+} from "@/constants";
+
 interface ISocketServer extends HTTPServer {
   io?: IOServer | undefined;
 }
@@ -21,28 +36,28 @@ const socket = (_req: NextApiRequest, res: INextApiResponseWithSocket) => {
 
     io.on("connection", (socket) => {
       // add shift volunteer
-      socket.on("req-shift-volunteer-add", (data) => {
-        socket.broadcast.emit("res-shift-volunteer-add", data);
-      });
-      // toggle check in
-      socket.on("req-check-in-toggle", (data) => {
-        socket.broadcast.emit("res-check-in-toggle", data);
-      });
-      // update shift volunteer review
-      socket.on("req-review-update", (data) => {
-        socket.broadcast.emit("res-review-update", data);
-      });
-      // remove shift volunteer
-      socket.on("req-shift-volunteer-remove", (data) => {
-        socket.broadcast.emit("res-shift-volunteer-remove", data);
-      });
-      // draw move
-      socket.on("req-draw-move", (data) => {
-        socket.broadcast.emit("res-draw-move", data);
+      socket.on(ADD_SHIFT_VOLUNTEER_REQ, (data) => {
+        socket.broadcast.emit(ADD_SHIFT_VOLUNTEER_RES, data);
       });
       // clear canvas
-      socket.on("req-canvas-clear", (data) => {
-        socket.broadcast.emit("res-canvas-clear", data);
+      socket.on(CLEAR_CANVAS_REQ, (data) => {
+        socket.broadcast.emit(CLEAR_CANVAS_RES, data);
+      });
+      // draw move
+      socket.on(DRAW_MOVE_REQ, (data) => {
+        socket.broadcast.emit(DRAW_MOVE_RES, data);
+      });
+      // remove shift volunteer
+      socket.on(REMOVE_SHIFT_VOLUNTEER_REQ, (data) => {
+        socket.broadcast.emit(REMOVE_SHIFT_VOLUNTEER_RES, data);
+      });
+      // toggle check in
+      socket.on(TOGGLE_CHECK_IN_REQ, (data) => {
+        socket.broadcast.emit(TOGGLE_CHECK_IN_RES, data);
+      });
+      // update shift volunteer review
+      socket.on(UPDATE_REVIEW_REQ, (data) => {
+        socket.broadcast.emit(UPDATE_REVIEW_RES, data);
       });
     });
 

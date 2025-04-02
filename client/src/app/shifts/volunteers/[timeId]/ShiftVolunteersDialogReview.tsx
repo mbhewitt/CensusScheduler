@@ -24,7 +24,7 @@ import useSWRMutation from "swr/mutation";
 import { DialogContainer } from "@/components/general/DialogContainer";
 import { SnackbarText } from "@/components/general/SnackbarText";
 import { IReqReviewValues } from "@/components/types";
-import { legendList, UPDATE_TYPE_REVIEW } from "@/constants";
+import { legendList, UPDATE_REVIEW_REQ, UPDATE_TYPE_REVIEW } from "@/constants";
 import { fetcherTrigger } from "@/utils/fetcher";
 
 interface IFormValues {
@@ -105,7 +105,7 @@ export const ShiftVolunteersDialogReview = ({
       // update database
       await trigger({ body, method: "PATCH" });
       // emit event
-      socket.emit("req-review-update", {
+      socket.emit(UPDATE_REVIEW_REQ, {
         notes,
         rating,
         shiftboardId,

@@ -52,9 +52,14 @@ import type {
   IResShiftVolunteerRowItem,
 } from "@/components/types/shifts";
 import {
+  ADD_SHIFT_VOLUNTEER_RES,
+  REMOVE_SHIFT_VOLUNTEER_RES,
   SHIFT_DURING,
   SHIFT_FUTURE,
   SHIFT_PAST,
+  TOGGLE_CHECK_IN_REQ,
+  TOGGLE_CHECK_IN_RES,
+  UPDATE_REVIEW_RES,
   UPDATE_TYPE_CHECK_IN,
 } from "@/constants";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
@@ -158,7 +163,7 @@ export const ShiftVolunteers = ({
         await fetch("/api/socket");
 
         socket.on(
-          "res-shift-volunteer-add",
+          ADD_SHIFT_VOLUNTEER_RES,
           ({
             isCheckedIn,
             notes,
@@ -187,31 +192,7 @@ export const ShiftVolunteers = ({
           }
         );
         socket.on(
-          "res-check-in-toggle",
-          ({
-            checked,
-            shiftboardId,
-          }: {
-            checked: boolean;
-            shiftboardId: number | string;
-          }) => {
-            if (dataShiftVolunteersItem) {
-              const dataMutate = structuredClone(dataShiftVolunteersItem);
-              const shiftboardIdNum = Number(shiftboardId);
-              const shiftVolunteerItemUpdate = dataMutate.volunteerList.find(
-                (volunteerItem: IResShiftVolunteerRowItem) =>
-                  volunteerItem.shiftboardId === shiftboardIdNum
-              );
-              if (shiftVolunteerItemUpdate) {
-                shiftVolunteerItemUpdate.isCheckedIn = checked ? "" : "Yes";
-              }
-
-              mutateShiftVolunteersItem(dataMutate);
-            }
-          }
-        );
-        socket.on(
-          "res-check-in-toggle",
+          TOGGLE_CHECK_IN_RES,
           ({
             checked,
             shiftboardId,
@@ -234,7 +215,7 @@ export const ShiftVolunteers = ({
           }
         );
         socket.on(
-          "res-review-update",
+          UPDATE_REVIEW_RES,
           ({
             notes,
             rating,
@@ -259,7 +240,7 @@ export const ShiftVolunteers = ({
             }
           }
         );
-        socket.on("res-shift-volunteer-remove", ({ shiftboardId }) => {
+        socket.on(REMOVE_SHIFT_VOLUNTEER_RES, ({ shiftboardId }) => {
           if (dataShiftVolunteersItem) {
             const dataMutate = structuredClone(dataShiftVolunteersItem);
             const volunteerListNew = dataMutate.volunteerList.filter(
@@ -316,7 +297,7 @@ export const ShiftVolunteers = ({
         body,
         method: "PATCH",
       });
-      socket.emit("req-check-in-toggle", {
+      socket.emit(TOGGLE_CHECK_IN_REQ, {
         isCheckedIn,
         shiftboardId,
         timePositionId,

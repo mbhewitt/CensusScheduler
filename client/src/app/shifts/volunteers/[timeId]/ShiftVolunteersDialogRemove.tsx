@@ -15,6 +15,7 @@ import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "@/components/general/DialogContainer";
 import { SnackbarText } from "@/components/general/SnackbarText";
+import { REMOVE_SHIFT_VOLUNTEER_REQ } from "@/constants";
 import { fetcherTrigger } from "@/utils/fetcher";
 
 interface IShiftVolunteersDialogRemoveProps {
@@ -60,7 +61,7 @@ export const ShiftVolunteersDialogRemove = ({
         method: "DELETE",
       });
       // emit event
-      socket.emit("req-shift-volunteer-remove", {
+      socket.emit(REMOVE_SHIFT_VOLUNTEER_REQ, {
         shiftboardId,
         timePositionId,
       });

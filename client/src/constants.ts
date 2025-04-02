@@ -74,3 +74,17 @@ export const ROLE_ADMIN_ID = 2;
 export const ROLE_BEHAVIORAL_STANDARDS_ID = 1000012;
 export const ROLE_CORE_CREW_ID = 13184;
 export const ROLE_SUPER_ADMIN_ID = 1;
+
+// sockets
+export const ADD_SHIFT_VOLUNTEER_REQ = "addShiftVolunteerReq";
+export const ADD_SHIFT_VOLUNTEER_RES = "addShiftVolunteerRes";
+export const CLEAR_CANVAS_REQ = "clearCanvasReq";
+export const CLEAR_CANVAS_RES = "clearCanvasRes";
+export const DRAW_MOVE_REQ = "drawMoveReq";
+export const DRAW_MOVE_RES = "drawMoveRes";
+export const REMOVE_SHIFT_VOLUNTEER_REQ = "removeShiftVolunteerReq";
+export const REMOVE_SHIFT_VOLUNTEER_RES = "removeShiftVolunteerRes";
+export const TOGGLE_CHECK_IN_REQ = "toggleCheckInReq";
+export const TOGGLE_CHECK_IN_RES = "toggleCheckInRes";
+export const UPDATE_REVIEW_REQ = "updateReviewReq";
+export const UPDATE_REVIEW_RES = "updateReviewRes";
