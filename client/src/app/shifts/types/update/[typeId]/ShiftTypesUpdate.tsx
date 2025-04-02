@@ -58,7 +58,7 @@ interface IShiftTypesUpdateProps {
 
 export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
   // state
-  // --------------------
+  // ------------------------------------------------------------
   const [dialogActive, setDialogActive] = useState({
     dialogItem: 0,
     item: {
@@ -70,7 +70,7 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const router = useRouter();
   const {
     data: dataDefaults,
@@ -92,7 +92,7 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const {
     clearErrors,
     control,
@@ -137,7 +137,7 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
   dayjs.extend(isSameOrBefore);
 
   // side effects
-  // --------------------
+  // ------------------------------------------------------------
   useEffect(() => {
     if (dataCurrent) {
       const { information, positionList, timeList } = dataCurrent;
@@ -175,7 +175,7 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
   }, [dataCurrent, reset]);
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (errorDefaults || errorCurrent) return <ErrorPage />;
   if (!dataDefaults || !dataCurrent) return <Loading />;
 
@@ -264,7 +264,7 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
   };
 
   // form submission
-  // --------------------
+  // ------------------------------------------------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       const information = processInformation(dataDefaults, formValues);
@@ -312,7 +312,7 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       <Hero

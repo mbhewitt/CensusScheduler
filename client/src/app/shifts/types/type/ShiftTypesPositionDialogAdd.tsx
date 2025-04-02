@@ -56,7 +56,7 @@ export const ShiftTypesPositionDialogAdd = ({
   setValue,
 }: IShiftTypesPositionDialogAddProps) => {
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogClose}

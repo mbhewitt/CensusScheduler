@@ -45,7 +45,7 @@ import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 
 export const ShiftTypesCreate = () => {
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const {
     data: dataDefaults,
     error: errorDefaults,
@@ -59,7 +59,7 @@ export const ShiftTypesCreate = () => {
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const {
     clearErrors,
     control,
@@ -105,7 +105,7 @@ export const ShiftTypesCreate = () => {
   dayjs.extend(isSameOrBefore);
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (errorDefaults) return <ErrorPage />;
   if (!dataDefaults) return <Loading />;
 
@@ -134,7 +134,7 @@ export const ShiftTypesCreate = () => {
   };
 
   // form submission
-  // --------------------
+  // ------------------------------------------------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       const information = processInformation(dataDefaults, formValues);
@@ -182,7 +182,7 @@ export const ShiftTypesCreate = () => {
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       <Hero

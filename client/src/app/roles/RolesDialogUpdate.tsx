@@ -30,7 +30,7 @@ export const RolesDialogUpdate = ({
   roleList,
 }: IRolesDialogUpdateProps) => {
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const { isMutating, trigger } = useSWRMutation(
     `/api/roles/${roleItem.id}`,
     fetcherTrigger
@@ -38,7 +38,7 @@ export const RolesDialogUpdate = ({
   const { mutate } = useSWRConfig();
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const {
     control,
     formState: { errors },
@@ -51,7 +51,7 @@ export const RolesDialogUpdate = ({
   const { enqueueSnackbar } = useSnackbar();
 
   // side effects
-  // --------------------
+  // ------------------------------------------------------------
   useEffect(() => {
     if (isDialogOpen) {
       setValue("name", roleItem.name);
@@ -59,7 +59,7 @@ export const RolesDialogUpdate = ({
   }, [isDialogOpen, roleItem, setValue]);
 
   // form submission
-  // --------------------
+  // ------------------------------------------------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       // update database
@@ -96,7 +96,7 @@ export const RolesDialogUpdate = ({
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogClose}

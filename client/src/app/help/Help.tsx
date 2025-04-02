@@ -20,11 +20,11 @@ import { Hero } from "@/components/layout/Hero";
 
 export const Help = () => {
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const theme = useTheme();
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       <Hero

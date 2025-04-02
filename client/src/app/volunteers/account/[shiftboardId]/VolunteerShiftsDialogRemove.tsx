@@ -41,18 +41,18 @@ export const VolunteerShiftsDialogRemove = ({
   volunteer: { shiftboardId },
 }: IVolunteerShiftsDialogRemoveProps) => {
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const { isMutating, trigger } = useSWRMutation(
     `/api/volunteers/shifts/${shiftboardId}`,
     fetcherTrigger
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   const handleVolunteerRemove = async () => {
     try {
       // update database
@@ -95,7 +95,7 @@ export const VolunteerShiftsDialogRemove = ({
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogClose}

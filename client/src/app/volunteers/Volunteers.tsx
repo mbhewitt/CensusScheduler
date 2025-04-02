@@ -47,11 +47,11 @@ const sortCompareShiftCount = (order: string) => {
 
 export const Volunteers = () => {
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const router = useRouter();
 
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const {
     data,
     error,
@@ -61,7 +61,7 @@ export const Volunteers = () => {
   } = useSWR("/api/volunteers", fetcherGet);
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
@@ -233,7 +233,7 @@ export const Volunteers = () => {
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       <Hero

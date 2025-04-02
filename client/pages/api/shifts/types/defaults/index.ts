@@ -11,7 +11,7 @@ import { pool } from "lib/database";
 const shiftTypeDefaults = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     // get
-    // --------------------
+    // ------------------------------------------------------------
     case "GET": {
       // get all types
       const [dbTypeList] = await pool.query<RowDataPacket[]>(
@@ -102,7 +102,7 @@ const shiftTypeDefaults = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // default
-    // --------------------
+    // ------------------------------------------------------------
     // send error message
     default: {
       return res.status(404).json({

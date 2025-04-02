@@ -7,7 +7,7 @@ export const metadata = {
 };
 const RolesPage = () => {
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <AuthGate accountTypeToCheck={ACCOUNT_TYPE_ADMIN}>
       <Roles />

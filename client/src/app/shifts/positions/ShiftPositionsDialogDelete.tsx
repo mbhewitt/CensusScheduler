@@ -39,7 +39,7 @@ export const ShiftPositionsDialogDelete = ({
   positionItem: { id: positionId, name: positionName },
 }: IShiftPositionsDialogDeleteProps) => {
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const {
     data,
     error,
@@ -54,11 +54,11 @@ export const ShiftPositionsDialogDelete = ({
   const { mutate } = useSWRConfig();
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (error)
     return (
       <DialogContainer
@@ -114,7 +114,7 @@ export const ShiftPositionsDialogDelete = ({
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogClose}

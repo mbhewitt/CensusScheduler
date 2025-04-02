@@ -13,11 +13,11 @@ const ShiftPositionsUpdatePage = async ({
   params,
 }: IShiftPositionsUpdatePageProps) => {
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   const { positionId } = await params;
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <AuthGate accountTypeToCheck={ACCOUNT_TYPE_SUPER_ADMIN}>
       <ShiftPositionsUpdate positionId={positionId} />

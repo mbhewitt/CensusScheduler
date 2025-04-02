@@ -1,24 +1,24 @@
 // behavioral standards
-// --------------------
+// ------------------------------------------------------------
 export interface IReqRoleBehavioralStandardsItem {
   isBehavioralStandardsSigned: boolean;
   shiftboardId: number;
 }
 
 // details
-// --------------------
+// ------------------------------------------------------------
 export interface IReqRoleItem {
   name: string;
 }
 
 // display
-// --------------------
+// ------------------------------------------------------------
 export interface IReqRoleDisplayItem {
   checked: boolean;
 }
 
 // row table
-// --------------------
+// ------------------------------------------------------------
 export interface IResRoleRowItem {
   display: boolean;
   id: number;
@@ -26,7 +26,7 @@ export interface IResRoleRowItem {
 }
 
 // volunteers
-// --------------------
+// ------------------------------------------------------------
 export interface IReqRoleVolunteerItem {
   shiftboardId: number;
 }

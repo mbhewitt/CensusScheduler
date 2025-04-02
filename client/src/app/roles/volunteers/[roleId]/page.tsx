@@ -11,11 +11,11 @@ export const metadata = {
 };
 const RoleVolunteersPage = async ({ params }: IRoleVolunteersPageProps) => {
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   const { roleId } = await params;
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <AuthGate accountTypeToCheck={ACCOUNT_TYPE_ADMIN}>
       <RoleVolunteers roleId={roleId} />

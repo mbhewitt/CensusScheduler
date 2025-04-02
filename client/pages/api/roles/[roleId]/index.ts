@@ -9,7 +9,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
 
   switch (req.method) {
     // get
-    // --------------------
+    // ------------------------------------------------------------
     case "GET": {
       // get role
       const [dbRoleList] = await pool.query<RowDataPacket[]>(
@@ -37,7 +37,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // patch
-    // --------------------
+    // ------------------------------------------------------------
     case "PATCH": {
       // update role
       const { name }: IReqRoleItem = JSON.parse(req.body);
@@ -58,7 +58,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // delete
-    // --------------------
+    // ------------------------------------------------------------
     case "DELETE": {
       // delete role
       await pool.query<RowDataPacket[]>(
@@ -75,7 +75,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // default
-    // --------------------
+    // ------------------------------------------------------------
     default: {
       // send error message
       return res.status(404).json({

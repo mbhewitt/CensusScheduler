@@ -8,7 +8,7 @@ import { pool } from "lib/database";
 const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     // post
-    // --------------------
+    // ------------------------------------------------------------
     case "POST": {
       // check email and passcode credentials
       const { passcode, shiftboardId }: IReqSignIn = JSON.parse(req.body);
@@ -69,7 +69,7 @@ const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // default
-    // --------------------
+    // ------------------------------------------------------------
     default: {
       // send error message
       return res.status(404).json({

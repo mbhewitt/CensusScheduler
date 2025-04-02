@@ -24,7 +24,7 @@ import { formatDateTime } from "@/utils/formatDateTime";
 
 export const DeveloperMode = () => {
   // context
-  // --------------------
+  // ------------------------------------------------------------
   const {
     developerModeDispatch,
     developerModeState: {
@@ -35,11 +35,11 @@ export const DeveloperMode = () => {
   } = useContext(DeveloperModeContext);
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   const onReset = () => {
     developerModeDispatch({
       type: DEVELOPER_MODE_RESET,
@@ -53,7 +53,7 @@ export const DeveloperMode = () => {
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       <Grid size={4}>

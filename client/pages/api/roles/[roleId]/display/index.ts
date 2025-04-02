@@ -9,7 +9,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
 
   switch (req.method) {
     // patch
-    // --------------------
+    // ------------------------------------------------------------
     case "PATCH": {
       // update role display
       const { checked }: IReqRoleDisplayItem = req.body;
@@ -28,7 +28,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // default
-    // --------------------
+    // ------------------------------------------------------------
     default: {
       // send error message
       return res.status(404).json({

@@ -83,7 +83,7 @@ interface IState {
 const socket = io();
 export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
   // context
-  // --------------------
+  // ------------------------------------------------------------
   const {
     developerModeState: {
       accountType,
@@ -97,7 +97,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
   } = useContext(SessionContext);
 
   // state
-  // --------------------
+  // ------------------------------------------------------------
   const [dialogCurrent, setDialogCurrent] = useState<IState>({
     dialogItem: 0,
     shift: {
@@ -118,7 +118,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const router = useRouter();
   const {
     data,
@@ -136,12 +136,12 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
 
   // side effects
-  // --------------------
+  // ------------------------------------------------------------
   useEffect(() => {
     // listen for socket events
     (async () => {
@@ -227,7 +227,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
   }, [data, enqueueSnackbar, mutate]);
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (error)
     return (
       <>
@@ -518,7 +518,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       <Stack

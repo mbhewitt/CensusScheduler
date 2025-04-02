@@ -66,7 +66,7 @@ export const DataTable = ({
   optionListCustom,
 }: ITableProps) => {
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   const optionListFinal = {
     download: false,
     elevation: 0,
@@ -82,7 +82,7 @@ export const DataTable = ({
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <ThemeProvider theme={theme}>
       <MUITable

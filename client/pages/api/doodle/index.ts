@@ -7,7 +7,7 @@ import { pool } from "lib/database";
 const doodle = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     // get
-    // --------------------
+    // ------------------------------------------------------------
     case "GET": {
       // get image URL
       const [dbImageUrlList] = await pool.query<RowDataPacket[]>(
@@ -28,7 +28,7 @@ const doodle = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // patch
-    // --------------------
+    // ------------------------------------------------------------
     case "PATCH": {
       // update image URL
       const { imageUrl }: IReqDoodle = JSON.parse(req.body);
@@ -48,7 +48,7 @@ const doodle = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // default
-    // --------------------
+    // ------------------------------------------------------------
     default: {
       // send error message
       return res.status(404).json({

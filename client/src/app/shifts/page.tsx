@@ -5,7 +5,7 @@ export const metadata = {
 };
 const ShiftsPage = () => {
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return <Shifts />;
 };
 

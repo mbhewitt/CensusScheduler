@@ -40,18 +40,18 @@ export const ShiftVolunteersDialogRemove = ({
   volunteer: { playaName, shiftboardId, worldName },
 }: IShiftVolunteersDialogRemoveProps) => {
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const { isMutating, trigger } = useSWRMutation(
     `/api/shifts/volunteers/${timeId}`,
     fetcherTrigger
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   const handleVolunteerRemove = async () => {
     try {
       // update database
@@ -95,7 +95,7 @@ export const ShiftVolunteersDialogRemove = ({
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogClose}

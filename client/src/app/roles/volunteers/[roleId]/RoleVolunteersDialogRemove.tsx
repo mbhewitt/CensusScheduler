@@ -38,7 +38,7 @@ export const RoleVolunteersDialogRemove = ({
   volunteerItem: { playaName, shiftboardId: shiftboardIdSelected, worldName },
 }: IRoleVolunteersDialogRemoveProps) => {
   // context
-  // --------------------
+  // ------------------------------------------------------------
   const {
     sessionDispatch,
     sessionState: {
@@ -47,18 +47,18 @@ export const RoleVolunteersDialogRemove = ({
   } = useContext(SessionContext);
 
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const { isMutating, trigger } = useSWRMutation(
     `/api/roles/volunteers/${roleId}`,
     fetcherTrigger
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   const handleRoleVolunteerRemove = async () => {
     try {
       const body: IReqRoleVolunteerItem = {
@@ -112,7 +112,7 @@ export const RoleVolunteersDialogRemove = ({
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogClose}

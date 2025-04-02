@@ -1,5 +1,5 @@
 // contact
-// --------------------
+// ------------------------------------------------------------
 export interface IReqContact {
   email: string;
   isReplyWanted: boolean;

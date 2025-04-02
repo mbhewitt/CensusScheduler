@@ -92,7 +92,7 @@ export const ShiftVolunteersDialogAdd = ({
   },
 }: IShiftVolunteersDialogAddProps) => {
   // context
-  // --------------------
+  // ------------------------------------------------------------
   const {
     developerModeState: {
       accountType,
@@ -107,7 +107,7 @@ export const ShiftVolunteersDialogAdd = ({
   } = useContext(SessionContext);
 
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const {
     control,
     formState: { errors },
@@ -165,11 +165,11 @@ export const ShiftVolunteersDialogAdd = ({
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
 
   // side effects
-  // --------------------
+  // ------------------------------------------------------------
   const isAuthenticated = checkIsAuthenticated(
     accountType,
     isAuthenticatedSession
@@ -258,7 +258,7 @@ export const ShiftVolunteersDialogAdd = ({
   ]);
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (
     errorShiftList ||
     errorTrainingVolunteerDetails ||
@@ -494,7 +494,7 @@ export const ShiftVolunteersDialogAdd = ({
   }
 
   // form submission
-  // --------------------
+  // ------------------------------------------------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       const volunteerAdd = ensure(
@@ -620,7 +620,7 @@ export const ShiftVolunteersDialogAdd = ({
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogClose}

@@ -11,11 +11,11 @@ export const metadata = {
 };
 const ShiftTypesUpdatePage = async ({ params }: IShiftTypesUpdatePageProps) => {
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   const { typeId } = await params;
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <AuthGate accountTypeToCheck={ACCOUNT_TYPE_SUPER_ADMIN}>
       <ShiftTypesUpdate typeId={typeId} />

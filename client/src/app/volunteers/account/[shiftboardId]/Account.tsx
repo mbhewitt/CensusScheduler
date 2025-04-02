@@ -75,7 +75,7 @@ const defaultValues: IFormValues = {
 };
 export const Account = ({ shiftboardId }: IAccountProps) => {
   // context
-  // --------------------
+  // ------------------------------------------------------------
   const {
     developerModeState: { accountType },
   } = useContext(DeveloperModeContext);
@@ -86,11 +86,11 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
   } = useContext(SessionContext);
 
   // state
-  // --------------------
+  // ------------------------------------------------------------
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const {
     data,
     error,
@@ -104,14 +104,14 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const { control, handleSubmit, reset } = useForm({
     defaultValues,
   });
   const { enqueueSnackbar } = useSnackbar();
 
   // side effects
-  // --------------------
+  // ------------------------------------------------------------
   useEffect(() => {
     if (data) {
       const {
@@ -137,7 +137,7 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
   }, [data, reset]);
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
@@ -145,7 +145,7 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
   const isAdmin = checkIsAdmin(accountType, roleListSession);
 
   // form submission
-  // --------------------
+  // ------------------------------------------------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       const body: IReqVolunteerAccount = formValues;
@@ -181,7 +181,7 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       <Hero

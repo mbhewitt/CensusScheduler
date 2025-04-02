@@ -16,7 +16,7 @@ import {
 const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     // get
-    // --------------------
+    // ------------------------------------------------------------
     case "GET": {
       // get all shift volunteers
       const { timeId } = req.query;
@@ -156,7 +156,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // post
-    // --------------------
+    // ------------------------------------------------------------
     case "POST": {
       // add volunteer to shift
       const {
@@ -211,21 +211,21 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // patch
-    // --------------------
+    // ------------------------------------------------------------
     case "PATCH": {
       // check volunteer into shift
       return shiftVolunteerUpdate(pool, req, res);
     }
 
     // delete
-    // --------------------
+    // ------------------------------------------------------------
     case "DELETE": {
       // remove volunteer from shift
       return shiftVolunteerRemove(pool, req, res);
     }
 
     // default
-    // --------------------
+    // ------------------------------------------------------------
     default: {
       // send error message
       return res.status(404).json({

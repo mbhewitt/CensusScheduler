@@ -52,7 +52,7 @@ const defaultValues: IFormValues = {
 };
 export const Contact = () => {
   // context
-  // --------------------
+  // ------------------------------------------------------------
   const {
     sessionState: {
       settings: { isAuthenticated },
@@ -61,7 +61,7 @@ export const Contact = () => {
   } = useContext(SessionContext);
 
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const {
     data,
     error,
@@ -75,7 +75,7 @@ export const Contact = () => {
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const {
     control,
     formState: { errors },
@@ -89,7 +89,7 @@ export const Contact = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   // side effects
-  // --------------------
+  // ------------------------------------------------------------
   useEffect(() => {
     const reminderParam = searchParams?.get("reminder");
 
@@ -105,12 +105,12 @@ export const Contact = () => {
   }, [isAuthenticated]);
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
   // form submission
-  // --------------------
+  // ------------------------------------------------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       const body: IReqContact = formValues;
@@ -146,7 +146,7 @@ export const Contact = () => {
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       <Hero

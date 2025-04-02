@@ -49,7 +49,7 @@ import { signOut } from "@/utils/signOut";
 
 export const Header = () => {
   // context
-  // --------------------
+  // ------------------------------------------------------------
   const {
     developerModeState: {
       accountType,
@@ -66,19 +66,19 @@ export const Header = () => {
   } = useContext(SessionContext);
 
   // state
-  // --------------------
+  // ------------------------------------------------------------
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isShiftsNavOpen, setIsShiftsNavOpen] = useState(true);
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const pathname = usePathname();
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
 
   // side effects
-  // --------------------
+  // ------------------------------------------------------------
   const isBehavioralStandardsSigned =
     checkIsBehavioralStandardsSigned(roleList);
   const isAuthenticated = checkIsAuthenticated(
@@ -107,7 +107,7 @@ export const Header = () => {
   ]);
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   const isAdmin = checkIsAdmin(accountType, roleList);
   const isSuperAdmin = checkIsSuperAdmin(accountType, roleList);
 

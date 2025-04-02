@@ -11,7 +11,7 @@ import { checkIsAuthenticated } from "@/utils/checkIsRoleExist";
 
 export const SignInAuthGate = () => {
   // context
-  // --------------------
+  // ------------------------------------------------------------
   const {
     developerModeState: { accountType },
   } = useContext(DeveloperModeContext);
@@ -23,11 +23,11 @@ export const SignInAuthGate = () => {
   } = useContext(SessionContext);
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const router = useRouter();
 
   // side effects
-  // --------------------
+  // ------------------------------------------------------------
   const isAuthenticated = checkIsAuthenticated(
     accountType,
     isAuthenticatedSession
@@ -40,6 +40,6 @@ export const SignInAuthGate = () => {
   }, [isAuthenticated, router, shiftboardId]);
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return <>{isAuthenticated ? <Loading /> : <SignIn />}</>;
 };

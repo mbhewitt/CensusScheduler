@@ -1,5 +1,5 @@
 // shifts
-// --------------------
+// ------------------------------------------------------------
 export interface IResShiftRowItem {
   category: {
     id: number;
@@ -23,7 +23,7 @@ export interface IReqShiftVolunteerItem {
 }
 
 // details
-// --------------------
+// ------------------------------------------------------------
 export interface IResShiftPositionCountItem {
   filledSlots: number;
   positionName: string;

@@ -47,24 +47,24 @@ const defaultValues: IVolunteerAccountFormValues = {
 };
 export const AccountCreate = () => {
   // context
-  // --------------------
+  // ------------------------------------------------------------
   const { sessionDispatch } = useContext(SessionContext);
 
   // state
-  // --------------------
+  // ------------------------------------------------------------
   const [isPasscodeCreateVisible, setIsPasscodeCreateVisible] = useState(false);
   const [isPasscodeConfirmVisible, setIsPasscodeConfirmVisible] =
     useState(false);
 
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const { isMutating, trigger } = useSWRMutation(
     "/api/volunteers/account",
     fetcherTrigger
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const {
     control,
     formState: { errors },
@@ -79,7 +79,7 @@ export const AccountCreate = () => {
   const theme = useTheme();
 
   // form submission
-  // --------------------
+  // ------------------------------------------------------------
   const onSubmit: SubmitHandler<IVolunteerAccountFormValues> = async (
     formValues
   ) => {
@@ -129,7 +129,7 @@ export const AccountCreate = () => {
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       <Hero

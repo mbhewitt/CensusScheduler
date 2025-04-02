@@ -17,7 +17,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
 
   switch (req.method) {
     // get
-    // --------------------
+    // ------------------------------------------------------------
     case "GET": {
       // get current information
       const [dbInformationList] = await pool.query<RowDataPacket[]>(
@@ -194,7 +194,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // patch
-    // --------------------
+    // ------------------------------------------------------------
     case "PATCH": {
       // update type
       const {
@@ -434,7 +434,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // delete
-    // --------------------
+    // ------------------------------------------------------------
     case "DELETE": {
       // delete type
       await pool.query<RowDataPacket[]>(
@@ -451,7 +451,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // default
-    // --------------------
+    // ------------------------------------------------------------
     // send error message
     default: {
       return res.status(404).json({

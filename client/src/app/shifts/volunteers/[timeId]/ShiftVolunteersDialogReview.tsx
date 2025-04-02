@@ -60,14 +60,14 @@ export const ShiftVolunteersDialogReview = ({
   volunteer: { notes, playaName, rating, shiftboardId, worldName },
 }: IShiftVolunteersDialogReviewProps) => {
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const { isMutating, trigger } = useSWRMutation(
     `/api/shifts/volunteers/${timeId}`,
     fetcherTrigger
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
   const {
     control,
@@ -80,7 +80,7 @@ export const ShiftVolunteersDialogReview = ({
   });
 
   // side effects
-  // --------------------
+  // ------------------------------------------------------------
   useEffect(() => {
     if (isDialogOpen) {
       reset({
@@ -91,7 +91,7 @@ export const ShiftVolunteersDialogReview = ({
   }, [isDialogOpen, notes, rating, reset]);
 
   // form submission
-  // --------------------
+  // ------------------------------------------------------------
   const onSubmit: SubmitHandler<IFormValues> = async ({ notes, rating }) => {
     const body: IReqReviewValues = {
       notes,
@@ -143,7 +143,7 @@ export const ShiftVolunteersDialogReview = ({
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogClose}

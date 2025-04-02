@@ -60,7 +60,7 @@ export const ShiftTypesTimeDialogAdd = ({
   timePositionListAddFields,
 }: IShiftTypesTimeDialogAddProps) => {
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogClose}

@@ -47,7 +47,7 @@ export const ShiftTypesTimeDialogRemove = ({
   typeId,
 }: IShiftTypesTimeDialogRemoveProps) => {
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const {
     data,
     error,
@@ -62,11 +62,11 @@ export const ShiftTypesTimeDialogRemove = ({
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (error)
     return (
       <DialogContainer
@@ -102,7 +102,7 @@ export const ShiftTypesTimeDialogRemove = ({
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <DialogContainer
       handleDialogClose={handleDialogClose}

@@ -11,7 +11,7 @@ import { pool } from "lib/database";
 const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     // get
-    // --------------------
+    // ------------------------------------------------------------
     case "GET": {
       // get all positions
       const [dbShiftPositionList] = await pool.query<RowDataPacket[]>(
@@ -37,7 +37,7 @@ const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // post
-    // --------------------
+    // ------------------------------------------------------------
     case "POST": {
       // create position
       const {
@@ -79,7 +79,7 @@ const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // default
-    // --------------------
+    // ------------------------------------------------------------
     default: {
       // send error message
       return res.status(404).json({

@@ -47,15 +47,15 @@ const defaultValues: IFormValues = {
 };
 export const SignIn = () => {
   // context
-  // --------------------
+  // ------------------------------------------------------------
   const { sessionDispatch } = useContext(SessionContext);
 
   // state
-  // --------------------
+  // ------------------------------------------------------------
   const [isPasscodeVisible, setIsPasscodeVisible] = useState(false);
 
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const {
     data,
     error,
@@ -69,7 +69,7 @@ export const SignIn = () => {
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const {
     control,
     formState: { errors },
@@ -83,12 +83,12 @@ export const SignIn = () => {
   const theme = useTheme();
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (error) return <ErrorPage />;
   if (!data) return <Loading />;
 
   // form submission
-  // --------------------
+  // ------------------------------------------------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
     try {
       const body: IReqSignIn = {
@@ -153,7 +153,7 @@ export const SignIn = () => {
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       <Hero

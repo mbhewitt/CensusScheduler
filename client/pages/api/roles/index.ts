@@ -8,7 +8,7 @@ import { pool } from "lib/database";
 const roles = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     // get
-    // --------------------
+    // ------------------------------------------------------------
     case "GET": {
       // get all roles
       const [dbRoleList] = await pool.query<RowDataPacket[]>(
@@ -34,7 +34,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // post
-    // --------------------
+    // ------------------------------------------------------------
     case "POST": {
       // create role
       const { name } = JSON.parse(req.body);
@@ -63,7 +63,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // default
-    // --------------------
+    // ------------------------------------------------------------
     default: {
       // send error message
       return res.status(404).json({

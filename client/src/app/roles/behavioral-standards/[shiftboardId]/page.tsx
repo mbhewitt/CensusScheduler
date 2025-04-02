@@ -11,11 +11,11 @@ const BehavioralStandardsPage = async ({
   params,
 }: IBehavioralStandardsPageProps) => {
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   const { shiftboardId } = await params;
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return <BehavioralStandards shiftboardId={shiftboardId} />;
 };
 

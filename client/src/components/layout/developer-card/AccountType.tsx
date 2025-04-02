@@ -6,7 +6,7 @@ import { DeveloperModeContext } from "@/state/developer-mode/context";
 
 export const AccountType = () => {
   // context
-  // --------------------
+  // ------------------------------------------------------------
   const {
     developerModeDispatch,
     developerModeState: {
@@ -15,7 +15,7 @@ export const AccountType = () => {
   } = useContext(DeveloperModeContext);
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <FormControl fullWidth variant="standard">
       <InputLabel id="accountAction">Account type</InputLabel>

@@ -96,7 +96,7 @@ export const ShiftVolunteers = ({
   timeId: timeIdParam,
 }: IShiftVolunteersProps) => {
   // context
-  // --------------------
+  // ------------------------------------------------------------
   const {
     developerModeState: {
       accountType,
@@ -111,7 +111,7 @@ export const ShiftVolunteers = ({
   } = useContext(SessionContext);
 
   // state
-  // --------------------
+  // ------------------------------------------------------------
   const [dialogCurrent, setDialogCurrent] = useState<IDialogCurrentState>({
     dialogItem: 0,
     shift: {
@@ -129,7 +129,7 @@ export const ShiftVolunteers = ({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const {
     data: dataShiftVolunteersItem,
     error: errorShiftVolunteersItem,
@@ -146,11 +146,11 @@ export const ShiftVolunteers = ({
   );
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
 
   // side effects
-  // --------------------
+  // ------------------------------------------------------------
   // listen for socket events
   useEffect(() => {
     (async () => {
@@ -290,7 +290,7 @@ export const ShiftVolunteers = ({
   }, [dataShiftVolunteersItem, enqueueSnackbar, mutateShiftVolunteersItem]);
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (errorShiftVolunteersItem) return <ErrorPage />;
   if (!dataShiftVolunteersItem) return <Loading />;
 
@@ -566,7 +566,7 @@ export const ShiftVolunteers = ({
   const optionListCustomVolunteers = {};
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       <Hero

@@ -28,13 +28,13 @@ import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 const socket = io();
 export const Doodle = () => {
   // state
-  // --------------------
+  // ------------------------------------------------------------
   const [isFetched, setIsFetched] = useState(false);
   const [color, setColor] = useState(COLOR_BURNING_MAN_BROWN);
   const [isPointerDown, setIsPointerDown] = useState(false);
 
   // fetching, mutation, and revalidation
-  // --------------------
+  // ------------------------------------------------------------
   const {
     data,
     error,
@@ -45,12 +45,12 @@ export const Doodle = () => {
   const { trigger } = useSWRMutation("/api/doodle", fetcherTrigger);
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
 
   // side effects
-  // --------------------
+  // ------------------------------------------------------------
   const containerRef = useRef<HTMLCanvasElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerValue = containerRef.current;
@@ -218,11 +218,11 @@ export const Doodle = () => {
   }, [enqueueSnackbar]);
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   if (error) return <ErrorPage />;
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   const colorList = [
     COLOR_BURNING_MAN_BROWN,
     COLOR_CENSUS_PINK,

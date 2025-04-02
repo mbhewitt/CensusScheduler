@@ -23,7 +23,7 @@ interface IAuthGateProps {
 
 export const AuthGate = ({ accountTypeToCheck, children }: IAuthGateProps) => {
   // context
-  // --------------------
+  // ------------------------------------------------------------
   const {
     developerModeState: { accountType },
   } = useContext(DeveloperModeContext);
@@ -35,7 +35,7 @@ export const AuthGate = ({ accountTypeToCheck, children }: IAuthGateProps) => {
   } = useContext(SessionContext);
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   let isAuthorized = false;
 
   switch (accountTypeToCheck) {
@@ -52,6 +52,6 @@ export const AuthGate = ({ accountTypeToCheck, children }: IAuthGateProps) => {
   }
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return <>{isAuthorized ? children : <Loading />}</>;
 };

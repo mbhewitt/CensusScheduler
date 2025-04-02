@@ -1,5 +1,5 @@
 // details
-// --------------------
+// ------------------------------------------------------------
 export interface IReqShiftPositionItem {
   critical: boolean;
   details: string;
@@ -30,7 +30,7 @@ export interface IResShiftPositionItem {
 }
 
 // detaults
-// --------------------
+// ------------------------------------------------------------
 export interface IResShiftPositionDefaults {
   positionList: IResShiftPositionRowItem[];
   prerequisiteList: IResShiftPositionPrerequisiteItem[];
@@ -46,14 +46,14 @@ export interface IResShiftPositionRoleItem {
 }
 
 // row table
-// --------------------
+// ------------------------------------------------------------
 export interface IResShiftPositionRowItem {
   id: number;
   name: string;
 }
 
 // types
-// --------------------
+// ------------------------------------------------------------
 export interface IResShiftPositionTypeItem {
   id: number;
   name: string;

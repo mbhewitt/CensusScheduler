@@ -8,11 +8,11 @@ interface ISnackbarTextProps {
 
 export const SnackbarText = ({ children }: ISnackbarTextProps) => {
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const theme = useTheme();
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <Typography
       sx={{

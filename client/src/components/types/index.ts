@@ -1,5 +1,5 @@
 // general
-// --------------------
+// ------------------------------------------------------------
 export interface ISwitchValues {
   shift: {
     positionName: string;

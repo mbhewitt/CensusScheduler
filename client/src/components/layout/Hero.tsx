@@ -8,11 +8,11 @@ interface IHeroProps {
 
 export const Hero = ({ imageStyles, text }: IHeroProps) => {
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const theme = useTheme();
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <Box
       sx={{

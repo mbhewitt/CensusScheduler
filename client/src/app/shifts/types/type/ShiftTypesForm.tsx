@@ -103,7 +103,7 @@ interface IShiftTypesFormProps {
 }
 
 // utilities
-// --------------------
+// ------------------------------------------------------------
 export const processInformation = (
   dataDefaults: IResShiftTypeDefaults,
   formValues: IFormValues
@@ -192,18 +192,18 @@ export const ShiftTypesForm = ({
   typeName,
 }: IShiftTypesFormProps) => {
   // state
-  // --------------------
+  // ------------------------------------------------------------
   const [dialogCurrent, setDialogCurrent] = useState({
     dialogItem: 0,
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // other hooks
-  // --------------------
+  // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
 
   // logic
-  // --------------------
+  // ------------------------------------------------------------
   const handlePositionAdd = ({
     alias,
     name,
@@ -288,7 +288,7 @@ export const ShiftTypesForm = ({
   };
 
   // render
-  // --------------------
+  // ------------------------------------------------------------
   return (
     <>
       {/* information */}

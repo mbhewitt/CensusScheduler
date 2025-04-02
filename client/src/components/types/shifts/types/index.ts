@@ -1,5 +1,5 @@
 // defaults
-// --------------------
+// ------------------------------------------------------------
 export interface IResShiftTypeDefaults {
   categoryList: IResShiftTypeCategoryItem[];
   positionList: IResShiftTypePositionItem[];
@@ -15,7 +15,7 @@ export interface IResShiftTypeItem {
 }
 
 // row table
-// --------------------
+// ------------------------------------------------------------
 export interface IResShiftTypeRowItem {
   category: { name: string };
   id: number;
@@ -23,7 +23,7 @@ export interface IResShiftTypeRowItem {
 }
 
 // shift types
-// --------------------
+// ------------------------------------------------------------
 export interface IResShiftTypeCurrent {
   information: IResShiftTypeInformation;
   positionList: IResShiftTypePositionItem[];
@@ -95,14 +95,14 @@ export interface IReqShiftTypeTimeItem {
 }
 
 // positions
-// --------------------
+// ------------------------------------------------------------
 export interface IResShiftTypeTimePositionItem {
   id: number;
   name: string;
 }
 
 // times
-// --------------------
+// ------------------------------------------------------------
 export interface IResShiftTypePositionTimeItem {
   id: number;
   name: string;
