@@ -1,4 +1,4 @@
-import { Account } from "@/app/volunteers/account/[shiftboardId]/Account";
+import { Account } from "@/app/volunteers/[shiftboardId]/account/Account";
 import { AuthGate } from "@/components/general/AuthGate";
 import { ACCOUNT_TYPE_AUTHENTICATED } from "@/constants";
 

@@ -35,7 +35,7 @@ export const SignInAuthGate = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push(`/volunteers/account/${shiftboardId}`);
+      router.push(`/volunteers/${shiftboardId}/account`);
     }
   }, [isAuthenticated, router, shiftboardId]);
 

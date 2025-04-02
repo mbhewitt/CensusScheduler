@@ -33,9 +33,9 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { DeveloperMode } from "@/app/volunteers/account/[shiftboardId]/DeveloperMode";
-import { ResetPasscodeDialog } from "@/app/volunteers/account/[shiftboardId]/ResetPasscodeDialog";
-import { VolunteerShifts } from "@/app/volunteers/account/[shiftboardId]/VolunteerShifts";
+import { DeveloperMode } from "@/app/volunteers/[shiftboardId]/account/DeveloperMode";
+import { ResetPasscodeDialog } from "@/app/volunteers/[shiftboardId]/account/ResetPasscodeDialog";
+import { VolunteerShifts } from "@/app/volunteers/[shiftboardId]/account/VolunteerShifts";
 import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
 import { ErrorPage } from "@/components/general/ErrorPage";
 import { Loading } from "@/components/general/Loading";
@@ -97,9 +97,9 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
   }: {
     data: IResVolunteerAccount;
     error: Error | undefined;
-  } = useSWR(`/api/volunteers/account/${shiftboardId}`, fetcherGet);
+  } = useSWR(`/api/volunteers/${shiftboardId}/account`, fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
-    `/api/volunteers/account/${shiftboardId}`,
+    `/api/volunteers/${shiftboardId}/account`,
     fetcherTrigger
   );
 

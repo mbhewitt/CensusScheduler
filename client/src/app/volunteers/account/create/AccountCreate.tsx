@@ -110,7 +110,7 @@ export const AccountCreate = () => {
       );
 
       // route to volunteer account page
-      router.push(`/volunteers/account/${dataVolunteerItem.shiftboardId}`);
+      router.push(`/volunteers/${dataVolunteerItem.shiftboardId}/account`);
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(

@@ -51,7 +51,7 @@ export const ResetPasscodeDialog = ({
   // fetching, mutation, and revalidation
   // ------------------------------------------------------------
   const { isMutating, trigger } = useSWRMutation(
-    `/api/volunteers/account/${shiftboardId}/passcode`,
+    `/api/volunteers/${shiftboardId}/account/passcode`,
     fetcherTrigger
   );
 

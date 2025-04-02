@@ -29,8 +29,8 @@ import { io } from "socket.io-client";
 import useSWR, { KeyedMutator } from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { VolunteerShiftsDialogRemove } from "@/app/volunteers/account/[shiftboardId]/VolunteerShiftsDialogRemove";
-import { VolunteerShiftsDialogReview } from "@/app/volunteers/account/[shiftboardId]/VolunteerShiftsDialogReview";
+import { VolunteerShiftsDialogRemove } from "@/app/volunteers/[shiftboardId]/account/VolunteerShiftsDialogRemove";
+import { VolunteerShiftsDialogReview } from "@/app/volunteers/[shiftboardId]/account/VolunteerShiftsDialogReview";
 import { DataTable } from "@/components/general/DataTable";
 import { ErrorAlert } from "@/components/general/ErrorAlert";
 import { Loading } from "@/components/general/Loading";
