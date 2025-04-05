@@ -9,6 +9,7 @@ import {
   List as ListIcon,
   QuestionAnswer as QuestionAnswerIcon,
   VerifiedUser as VerifiedUserIcon,
+  Settings as SettingsIcon,
 } from "@mui/icons-material";
 
 export const pageListDefault = [
@@ -48,6 +49,11 @@ export const pageListAdmin = [
     icon: <VerifiedUserIcon />,
     label: "Roles",
     path: "/roles",
+  },
+  {
+    icon: <SettingsIcon />,
+    label: "Settings",
+    path: "/settings",
   },
 ];
 export const pageListSuperAdmin = [

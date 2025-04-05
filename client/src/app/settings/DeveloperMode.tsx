@@ -55,80 +55,73 @@ export const DeveloperMode = () => {
   // render
   // ------------------------------------------------------------
   return (
-    <>
-      <Grid size={4}>
-        <Typography component="h3" variant="h6">
-          Developer mode
-        </Typography>
-      </Grid>
-      <Grid size={8}>
-        <Box sx={{ display: "inline-block" }}>
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={isAccountTypeEnabled}
-                  color="secondary"
-                  onChange={(event) => {
-                    if (event.target.checked) {
-                      developerModeDispatch({
-                        payload: {
-                          isEnabled: true,
-                          value: ACCOUNT_TYPE_ADMIN,
-                        },
-                        type: DEVELOPER_MODE_ACCOUNT_TYPE,
-                      });
-                    } else {
-                      developerModeDispatch({
-                        payload: {
-                          isEnabled: false,
-                          value: "",
-                        },
-                        type: DEVELOPER_MODE_ACCOUNT_TYPE,
-                      });
-                    }
-                  }}
-                />
-              }
-              label="Mock account type"
-            />
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={isDateTimeEnabled}
-                  color="secondary"
-                  onChange={(event) => {
+    <Grid container>
+      <Grid size={12}>
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={isAccountTypeEnabled}
+                color="secondary"
+                onChange={(event) => {
+                  if (event.target.checked) {
                     developerModeDispatch({
                       payload: {
-                        isEnabled: event.target.checked,
-                        value: formatDateTime(),
+                        isEnabled: true,
+                        value: ACCOUNT_TYPE_ADMIN,
                       },
-                      type: DEVELOPER_MODE_DATE_TIME,
+                      type: DEVELOPER_MODE_ACCOUNT_TYPE,
                     });
-                  }}
-                />
-              }
-              label="Mock date and time"
-            />
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={isDisableIdleEnabled}
-                  color="secondary"
-                  onChange={(event) => {
+                  } else {
                     developerModeDispatch({
                       payload: {
-                        isEnabled: event.target.checked,
+                        isEnabled: false,
+                        value: "",
                       },
-                      type: DEVELOPER_MODE_DISABLE_IDLE,
+                      type: DEVELOPER_MODE_ACCOUNT_TYPE,
                     });
-                  }}
-                />
-              }
-              label="Disable idle logout"
-            />
-          </FormGroup>
-        </Box>
+                  }
+                }}
+              />
+            }
+            label="Mock account type"
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                checked={isDateTimeEnabled}
+                color="secondary"
+                onChange={(event) => {
+                  developerModeDispatch({
+                    payload: {
+                      isEnabled: event.target.checked,
+                      value: formatDateTime(),
+                    },
+                    type: DEVELOPER_MODE_DATE_TIME,
+                  });
+                }}
+              />
+            }
+            label="Mock date and time"
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                checked={isDisableIdleEnabled}
+                color="secondary"
+                onChange={(event) => {
+                  developerModeDispatch({
+                    payload: {
+                      isEnabled: event.target.checked,
+                    },
+                    type: DEVELOPER_MODE_DISABLE_IDLE,
+                  });
+                }}
+              />
+            }
+            label="Disable idle logout"
+          />
+        </FormGroup>
       </Grid>
       <Grid
         container
@@ -147,6 +140,6 @@ export const DeveloperMode = () => {
           Reset settings
         </Button>
       </Grid>
-    </>
+    </Grid>
   );
 };
