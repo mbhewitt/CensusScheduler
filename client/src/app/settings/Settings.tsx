@@ -1,23 +1,9 @@
 "use client";
 
-import { Menu as MenuIcon } from "@mui/icons-material";
-import {
-  Box,
-  Card,
-  CardContent,
-  Container,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  Stack,
-  Typography,
-  Grid2 as Grid,
-} from "@mui/material";
+import { Box, Card, CardContent, Container, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import Image from "next/image";
-import { DeveloperMode } from "@/app/settings/DeveloperMode";
 
+import { DeveloperMode } from "@/app/settings/DeveloperMode";
 import { Hero } from "@/components/layout/Hero";
 
 export const Settings = () => {

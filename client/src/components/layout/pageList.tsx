@@ -8,8 +8,8 @@ import {
   Home as HomeIcon,
   List as ListIcon,
   QuestionAnswer as QuestionAnswerIcon,
-  VerifiedUser as VerifiedUserIcon,
   Settings as SettingsIcon,
+  VerifiedUser as VerifiedUserIcon,
 } from "@mui/icons-material";
 
 export const pageListDefault = [
