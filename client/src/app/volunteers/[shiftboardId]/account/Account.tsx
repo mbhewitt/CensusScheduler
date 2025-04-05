@@ -33,7 +33,6 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { DeveloperMode } from "@/app/volunteers/[shiftboardId]/account/DeveloperMode";
 import { PasscodeDialogUpdate } from "@/app/volunteers/[shiftboardId]/account/PasscodeDialogUpdate";
 import { VolunteerShifts } from "@/app/volunteers/[shiftboardId]/account/VolunteerShifts";
 import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
@@ -424,9 +423,12 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
                       )}
                     </List>
                   </Grid>
-                  <Grid size={12}>
-                    <Divider sx={{ my: 2 }} />
-                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+            <Card sx={{ mb: 2 }}>
+              <CardContent>
+                <Grid container>
                   <Grid size={4}>
                     <Typography component="h3" variant="h6">
                       Notes
@@ -488,12 +490,6 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
                       </Button>
                     </Stack>
                   </Grid>
-                  <Grid size={12}>
-                    <Divider sx={{ my: 2 }} />
-                  </Grid>
-
-                  {/* developer mode */}
-                  <DeveloperMode />
                 </Grid>
               </CardContent>
             </Card>
