@@ -2,8 +2,6 @@ FROM node:latest
 
 WORKDIR /client
 
-RUN apt-get update && apt-get install -y mariadb-client
-
 COPY package.json /client
 COPY yarn.lock /client
 
