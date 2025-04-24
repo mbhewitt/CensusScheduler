@@ -334,16 +334,6 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
       },
     },
     {
-      name: "Admin review",
-      options: {
-        filter: false,
-        searchable: false,
-        setCellHeaderProps: setCellHeaderPropsCenter,
-        setCellProps: setCellPropsCenter,
-        sort: false,
-      },
-    },
-    {
       name: "Actions",
       options: {
         filter: false,
@@ -354,6 +344,19 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
       },
     },
   ];
+  if (isAdmin) {
+    columnList.splice(5, 0, {
+      name: "Admin review",
+      options: {
+        filter: false,
+        searchable: false,
+        setCellHeaderProps: setCellHeaderPropsCenter,
+        setCellProps: setCellPropsCenter,
+        sort: false,
+      },
+    });
+  }
+
   const colorMapDisplay = getColorMap(data);
   const dataTable = data.map(
     ({
@@ -396,67 +399,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
           throw new Error(`Unknown check-in type: ${checkInType}`);
         }
       }
-
-      return [
-        formatDateName(startTime, dateName),
-        formatTime(startTime, endTime),
-        positionName,
-        <Chip
-          key={`${timePositionId}-chip`}
-          label={positionName}
-          sx={{ backgroundColor: colorMapDisplay[departmentName] }}
-        />,
-        <Switch
-          checked={noShow === ""}
-          disabled={!isCheckInAvailable}
-          onChange={(event) =>
-            handleCheckInToggle({
-              shift: {
-                positionName,
-                timePositionId,
-              },
-              volunteer: {
-                isCheckedIn: event.target.checked,
-                playaName,
-                shiftboardId: Number(shiftboardId),
-                worldName,
-              },
-            })
-          }
-          key={`${shiftboardId}-switch`}
-        />,
-
-        // if volunteer is admin
-        // then display volunteer shift review and volunteer menu
-        isAdmin && (
-          <IconButton
-            onClick={() => {
-              setDialogCurrent({
-                dialogItem: DialogList.Review,
-                shift: {
-                  dateName,
-                  endTime,
-                  positionName,
-                  startTime,
-                  timeId: 0,
-                  timePositionId,
-                },
-                volunteer: {
-                  noShow: "",
-                  notes,
-                  rating,
-                },
-              });
-              setIsDialogOpen(true);
-            }}
-          >
-            {rating ? (
-              <SpeakerNotesIcon color="primary" />
-            ) : (
-              <SpeakerNotesOffIcon color="disabled" />
-            )}
-          </IconButton>
-        ),
+      const actionsMenu = (
         <MoreMenu
           Icon={<MoreHorizIcon />}
           key={`${shiftboardId}-menu`}
@@ -499,7 +442,72 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
               </MenuItem>
             </MenuList>
           }
+        />
+      );
+
+      return [
+        formatDateName(startTime, dateName),
+        formatTime(startTime, endTime),
+        positionName,
+        <Chip
+          key={`${timePositionId}-chip`}
+          label={positionName}
+          sx={{ backgroundColor: colorMapDisplay[departmentName] }}
         />,
+        <Switch
+          checked={noShow === ""}
+          disabled={!isCheckInAvailable}
+          onChange={(event) =>
+            handleCheckInToggle({
+              shift: {
+                positionName,
+                timePositionId,
+              },
+              volunteer: {
+                isCheckedIn: event.target.checked,
+                playaName,
+                shiftboardId: Number(shiftboardId),
+                worldName,
+              },
+            })
+          }
+          key={`${shiftboardId}-switch`}
+        />,
+
+        // if volunteer is admin
+        // then display volunteer shift review and volunteer menu
+        isAdmin ? (
+          <IconButton
+            onClick={() => {
+              setDialogCurrent({
+                dialogItem: DialogList.Review,
+                shift: {
+                  dateName,
+                  endTime,
+                  positionName,
+                  startTime,
+                  timeId: 0,
+                  timePositionId,
+                },
+                volunteer: {
+                  noShow: "",
+                  notes,
+                  rating,
+                },
+              });
+              setIsDialogOpen(true);
+            }}
+          >
+            {rating ? (
+              <SpeakerNotesIcon color="primary" />
+            ) : (
+              <SpeakerNotesOffIcon color="disabled" />
+            )}
+          </IconButton>
+        ) : (
+          actionsMenu
+        ),
+        isAdmin && actionsMenu,
       ];
     }
   );
