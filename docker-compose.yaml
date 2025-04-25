@@ -5,6 +5,8 @@ services:
       dockerfile: Dockerfile
     container_name: census-database
     image: burning-man/census-database
+    security_opt:
+      - apparmor:unconfined
     ports:
       - "3306:3306"
     restart: always
@@ -16,6 +18,8 @@ services:
     env_file:
       - ./client/.env.production
     image: burning-man/census-app
+    security_opt:
+      - apparmor:unconfined
     ports:
       - "3000:3000"
     restart: always
