@@ -3,7 +3,7 @@ V1_TAG =$(<new_current_version.txt)
 #git checkout main
 #git pull
 V2_TAG =$(<new_current_version.txt)
-DC_found=`docker images|grep $V2_TAG|wc|awk '{print $1}'`
+DC_found=`sudo docker images|grep $V2_TAG|wc|awk '{print $1}'`
 echo "tags $V1_TAG -> $V2_TAG DC_Tag Found $DC_found"
 
 sudo docker system prune -fa
