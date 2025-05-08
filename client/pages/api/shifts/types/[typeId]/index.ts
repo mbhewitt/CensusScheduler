@@ -111,6 +111,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           pt.position,
           pt.position_type_id,
           st.end_time,
+          st.meal,
           st.notes,
           st.shift_instance,
           st.shift_times_id,
@@ -137,6 +138,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
       dbTimeList.forEach(
         ({
           end_time,
+          meal,
           notes,
           position,
           position_alias,
@@ -166,6 +168,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
             resTimeList.push({
               endTime: end_time,
               instance: shift_instance,
+              meal: meal === "" ? "None" : meal,
               notes: notes ?? "",
               positionList: [
                 {
@@ -245,47 +248,61 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
       });
 
       timeListUpdate.forEach(
-        async ({ endTime, timeId, instance, notes, startTime }) => {
+        async ({ endTime, timeId, instance, meal, notes, startTime }) => {
           await pool.query<RowDataPacket[]>(
             `UPDATE op_shift_times
             SET
               end_time=?,
+              meal=?,
               notes=?,
               update_shift_time=true,
               shift_instance=?,
               start_time=?
             WHERE shift_times_id=?`,
-            [endTime, notes, instance, startTime, timeId]
+            [
+              endTime,
+              meal === "None" ? "" : meal,
+              notes,
+              instance,
+              startTime,
+              timeId,
+            ]
           );
         }
       );
-      timeListAdd.forEach(async ({ endTime, instance, notes, startTime }) => {
-        const [dbTime] = await pool.query<RowDataPacket[]>(
-          `SELECT shift_times_id
-          FROM op_shift_times
-          WHERE end_time=?
-          AND start_time=?`,
-          [endTime, startTime]
-        );
-        const dbTimeFirst = dbTime[0];
-        dbTimeIdExist = dbTimeFirst?.shift_times_id;
-
-        if (dbTimeFirst) {
-          await pool.query<RowDataPacket[]>(
-            `UPDATE op_shift_times
-            SET
-              add_shift_time=true,
-              notes=?,
-              remove_shift_time=false,
-              shift_instance=?
-            WHERE shift_times_id=?`,
-            [notes, instance, dbTimeIdExist]
+      timeListAdd.forEach(
+        async ({ endTime, instance, meal, notes, startTime }) => {
+          const [dbTime] = await pool.query<RowDataPacket[]>(
+            `SELECT shift_times_id
+            FROM op_shift_times
+            WHERE end_time=?
+            AND start_time=?`,
+            [endTime, startTime]
           );
-        } else {
-          // insert new shift time rows
-          handleTimeListAdd({ timeList: timeListAdd, typeId: Number(typeId) });
+          const dbTimeFirst = dbTime[0];
+          dbTimeIdExist = dbTimeFirst?.shift_times_id;
+
+          if (dbTimeFirst) {
+            await pool.query<RowDataPacket[]>(
+              `UPDATE op_shift_times
+              SET
+                add_shift_time=true,
+                meal=?,
+                notes=?,
+                remove_shift_time=false,
+                shift_instance=?
+              WHERE shift_times_id=?`,
+              [meal === "None" ? "" : meal, notes, instance, dbTimeIdExist]
+            );
+          } else {
+            // insert new shift time rows
+            handleTimeListAdd({
+              timeList: timeListAdd,
+              typeId: Number(typeId),
+            });
+          }
         }
-      });
+      );
       timeListRemove.forEach(async ({ shift_times_id }) => {
         await pool.query<RowDataPacket[]>(
           `UPDATE op_shift_times

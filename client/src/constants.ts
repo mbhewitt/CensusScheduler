@@ -38,6 +38,17 @@ export const ACCOUNT_TYPE_LIST = [
   { label: "Unauthenticated", value: ACCOUNT_TYPE_UNAUTHENTICATED },
 ];
 
+// shift type form - meal options
+export const MEAL_LIST = [
+  "None",
+  "Breakfast Before",
+  "Breakfast After",
+  "Lunch Before",
+  "Lunch After",
+  "Dinner Before",
+  "Dinner After",
+];
+
 // auth gate - account type
 export const ACCOUNT_TYPE_SUPER_ADMIN = "accountTypeSuperAdmin";
 

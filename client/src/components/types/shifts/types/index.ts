@@ -52,6 +52,7 @@ export interface IResShiftTypePositionItem {
 export interface IResShiftTypeTimeItem {
   endTime: string;
   instance: string;
+  meal: string;
   notes: string;
   positionList: {
     alias: string;
@@ -88,6 +89,7 @@ export interface IReqShiftTypeTimePositionItem {
 export interface IReqShiftTypeTimeItem {
   endTime: string;
   instance: string;
+  meal: string;
   notes: string;
   positionList: IReqShiftTypeTimePositionItem[];
   startTime: string;

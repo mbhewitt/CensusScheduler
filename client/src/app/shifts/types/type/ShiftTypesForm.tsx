@@ -57,7 +57,7 @@ import type {
   IResShiftTypeCategoryItem,
   IResShiftTypeDefaults,
 } from "@/components/types/shifts/types";
-import { COLOR_BURNING_MAN_BROWN } from "@/constants";
+import { COLOR_BURNING_MAN_BROWN, MEAL_LIST } from "@/constants";
 import { ensure } from "@/utils/ensure";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
 
@@ -126,10 +126,11 @@ export const processInformation = (
 };
 export const processTimeList = (formValues: IFormValues) => {
   return formValues.timeList.map(
-    ({ endTime, instance, notes, positionList, startTime, timeId }) => {
+    ({ endTime, instance, meal, notes, positionList, startTime, timeId }) => {
       return {
         endTime: dayjs(endTime).format("YYYY-MM-DD HH:mm"),
         instance,
+        meal,
         notes,
         positionList,
         startTime: dayjs(startTime).format("YYYY-MM-DD HH:mm"),
@@ -166,6 +167,7 @@ export const defaultValues: IFormValues = {
     date: "",
     endTime: "",
     instance: "",
+    meal: "None",
     notes: "",
     positionList: [],
     startTime: "",
@@ -255,6 +257,7 @@ export const ShiftTypesForm = ({
     date,
     endTime,
     instance,
+    meal,
     notes,
     positionList,
     startTime,
@@ -266,6 +269,7 @@ export const ShiftTypesForm = ({
       date: dateNew,
       endTime: `${dateNew} ${endTimeNew}`,
       instance,
+      meal,
       notes,
       positionList,
       startTime: `${dateNew} ${startTimeNew}`,
@@ -756,6 +760,29 @@ export const ShiftTypesForm = ({
                     <Grid size={3}>
                       <Controller
                         control={control}
+                        name={`timeList.${timeIndex}.meal`}
+                        render={({ field }) => (
+                          <FormControl fullWidth required variant="standard">
+                            <InputLabel id="meal">Meal</InputLabel>
+                            <Select
+                              {...field}
+                              label="Meal *"
+                              labelId="meal"
+                              required
+                            >
+                              {MEAL_LIST.map((mealItem) => (
+                                <MenuItem key={`${mealItem}`} value={mealItem}>
+                                  {mealItem}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                        )}
+                      />
+                    </Grid>
+                    <Grid size={3}>
+                      <Controller
+                        control={control}
                         name={`timeList.${timeIndex}.instance`}
                         render={({ field }) => (
                           <TextField
@@ -768,7 +795,7 @@ export const ShiftTypesForm = ({
                         )}
                       />
                     </Grid>
-                    <Grid size={9}>
+                    <Grid size={12}>
                       <Controller
                         control={control}
                         name={`timeList.${timeIndex}.notes`}
@@ -777,6 +804,7 @@ export const ShiftTypesForm = ({
                             {...field}
                             fullWidth
                             label="Notes"
+                            multiline
                             variant="standard"
                           />
                         )}

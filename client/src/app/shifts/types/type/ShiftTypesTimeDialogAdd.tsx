@@ -5,7 +5,11 @@ import {
 import {
   Button,
   DialogActions,
+  FormControl,
   Grid2 as Grid,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
   Typography,
 } from "@mui/material";
@@ -28,6 +32,7 @@ import {
 
 import { IFormValues, ITimeAddValues } from "@/app/shifts/types/type";
 import { DialogContainer } from "@/components/general/DialogContainer";
+import { MEAL_LIST } from "@/constants";
 
 interface IShiftTypesTimeDialogAddProps {
   clearErrors: UseFormClearErrors<IFormValues>;
@@ -231,6 +236,24 @@ export const ShiftTypesTimeDialogAdd = ({
         <Grid size={3}>
           <Controller
             control={control}
+            name="timeAdd.meal"
+            render={({ field }) => (
+              <FormControl fullWidth required variant="standard">
+                <InputLabel id="meal">Meal</InputLabel>
+                <Select {...field} label="Meal *" labelId="meal">
+                  {MEAL_LIST.map((mealItem) => (
+                    <MenuItem key={mealItem} value={mealItem}>
+                      {mealItem}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
+          />
+        </Grid>
+        <Grid size={3}>
+          <Controller
+            control={control}
             name="timeAdd.instance"
             render={({ field }) => (
               <TextField
@@ -245,7 +268,8 @@ export const ShiftTypesTimeDialogAdd = ({
             )}
           />
         </Grid>
-        <Grid size={9}>
+        <Grid size={6} />
+        <Grid size={12}>
           <Controller
             control={control}
             name="timeAdd.notes"
@@ -505,6 +529,7 @@ export const ShiftTypesTimeDialogAdd = ({
                 date: getValues("timeAdd.date"),
                 endTime: getValues("timeAdd.endTime"),
                 instance: getValues("timeAdd.instance"),
+                meal: getValues("timeAdd.meal"),
                 notes: getValues("timeAdd.notes"),
                 positionList: positionListNew,
                 startTime: getValues("timeAdd.startTime"),

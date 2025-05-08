@@ -20,7 +20,7 @@ export const handleTimeListAdd = async ({
 }: IHandleTimeListAdd) => {
   // insert new shift time rows
   timeList.forEach(
-    async ({ endTime, instance, notes, positionList, startTime }) => {
+    async ({ endTime, instance, meal, notes, positionList, startTime }) => {
       const timeIdNew = generateId(
         `SELECT shift_times_id
         FROM op_shift_times`
@@ -30,14 +30,15 @@ export const handleTimeListAdd = async ({
         `INSERT INTO op_shift_times (
           add_shift_time,
           end_time,
+          meal,
           notes,
           shift_instance,
           shift_name_id,
           shift_times_id,
           start_time
         )
-        VALUES (true, ?, ?, ?, ?, ?, ?)`,
-        [endTime, notes, instance, typeId, timeIdNew, startTime]
+        VALUES (true, ?, ?, ?, ?, ?, ?, ?)`,
+        [endTime, meal, notes, instance, typeId, timeIdNew, startTime]
       );
 
       positionList.forEach(async ({ alias, positionId, sapPoints, slots }) => {
