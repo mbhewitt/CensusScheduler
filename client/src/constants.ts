@@ -41,12 +41,12 @@ export const ACCOUNT_TYPE_LIST = [
 // shift type form - meal options
 export const MEAL_LIST = [
   "None",
-  "Breakfast Before",
-  "Breakfast After",
-  "Lunch Before",
-  "Lunch After",
-  "Dinner Before",
-  "Dinner After",
+  "Breakfast before",
+  "Breakfast after",
+  "Lunch before",
+  "Lunch after",
+  "Dinner before",
+  "Dinner after",
 ];
 
 // auth gate - account type
