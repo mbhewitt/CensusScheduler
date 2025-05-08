@@ -35,6 +35,7 @@ export interface IFormValues {
     date: string;
     endTime: string;
     instance: string;
+    meal: string;
     notes: string;
     positionList: {
       alias: string;
@@ -49,6 +50,7 @@ export interface IFormValues {
     endTime: string;
     date: string;
     instance: string;
+    meal: string;
     notes: string;
     positionList: {
       alias: string;
@@ -73,6 +75,7 @@ export interface ITimeAddValues {
   date: string;
   endTime: string;
   instance: string;
+  meal: string;
   notes: string;
   positionList: {
     alias: string;
