@@ -28,7 +28,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useSnackbar } from "notistack";
-import { useContext, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import IdleTimer from "react-idle-timer";
 
 import {
@@ -68,7 +68,7 @@ export const Header = () => {
   // state
   // ------------------------------------------------------------
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isShiftsNavOpen, setIsShiftsNavOpen] = useState(true);
+  const [isCollapseNavOpen, setIsCollapseNavOpen] = useState(true);
 
   // other hooks
   // ------------------------------------------------------------
@@ -111,8 +111,8 @@ export const Header = () => {
   const isAdmin = checkIsAdmin(accountType, roleList);
   const isSuperAdmin = checkIsSuperAdmin(accountType, roleList);
 
-  const handleShiftsNavClick = () => {
-    setIsShiftsNavOpen((prev) => !prev);
+  const handleCollapseNavClick = () => {
+    setIsCollapseNavOpen((prev) => !prev);
   };
   const handleDrawerOpen = () => {
     setIsDrawerOpen(true);
@@ -215,36 +215,57 @@ export const Header = () => {
               <>
                 <Divider />
                 <List subheader={<ListSubheader>Super admin</ListSubheader>}>
-                  <ListItem disablePadding>
-                    <ListItemButton onClick={handleShiftsNavClick}>
-                      <ListItemIcon>
-                        <CalendarMonthIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="Shifts" />
-                      {isShiftsNavOpen ? (
-                        <ExpandLessIcon />
-                      ) : (
-                        <ExpandMoreIcon />
-                      )}
-                    </ListItemButton>
-                  </ListItem>
-                  <Collapse in={isShiftsNavOpen} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                      {pageListSuperAdmin.map(({ icon, label, path }) => (
-                        <ListItem disablePadding key={path}>
+                  {pageListSuperAdmin.map(({ children, icon, label, path }) => {
+                    if (children) {
+                      return (
+                        <Fragment key={label}>
+                          <ListItem disablePadding>
+                            <ListItemButton onClick={handleCollapseNavClick}>
+                              <ListItemIcon>{icon}</ListItemIcon>
+                              <ListItemText primary={label} />
+                              {isCollapseNavOpen ? (
+                                <ExpandLessIcon />
+                              ) : (
+                                <ExpandMoreIcon />
+                              )}
+                            </ListItemButton>
+                          </ListItem>
+                          <Collapse
+                            in={isCollapseNavOpen}
+                            timeout="auto"
+                            unmountOnExit
+                          >
+                            <List component="div" disablePadding>
+                              {children.map(({ icon, label, path }) => (
+                                <ListItem disablePadding key={path}>
+                                  <Link href={path} onClick={handleDrawerClose}>
+                                    <ListItemButton
+                                      selected={pathname === path}
+                                      sx={{ pl: 4 }}
+                                    >
+                                      <ListItemIcon>{icon}</ListItemIcon>
+                                      <ListItemText primary={label} />
+                                    </ListItemButton>
+                                  </Link>
+                                </ListItem>
+                              ))}
+                            </List>
+                          </Collapse>
+                        </Fragment>
+                      );
+                    } else {
+                      return (
+                        <ListItem disablePadding key={label}>
                           <Link href={path} onClick={handleDrawerClose}>
-                            <ListItemButton
-                              selected={pathname === path}
-                              sx={{ pl: 4 }}
-                            >
+                            <ListItemButton selected={pathname === path}>
                               <ListItemIcon>{icon}</ListItemIcon>
                               <ListItemText primary={label} />
                             </ListItemButton>
                           </Link>
                         </ListItem>
-                      ))}
-                    </List>
-                  </Collapse>
+                      );
+                    }
+                  })}
                 </List>
               </>
             )}

@@ -64,7 +64,7 @@ export const ShiftPositionsDialogDelete = ({
       <DialogContainer
         handleDialogClose={handleDialogClose}
         isDialogOpen={isDialogOpen}
-        text="Delete position"
+        text="Delete shift position"
       >
         <ErrorAlert />
       </DialogContainer>
@@ -74,7 +74,7 @@ export const ShiftPositionsDialogDelete = ({
       <DialogContainer
         handleDialogClose={handleDialogClose}
         isDialogOpen={isDialogOpen}
-        text="Delete position"
+        text="Delete shift position"
       >
         <Loading />
       </DialogContainer>
@@ -119,7 +119,7 @@ export const ShiftPositionsDialogDelete = ({
     <DialogContainer
       handleDialogClose={handleDialogClose}
       isDialogOpen={isDialogOpen}
-      text="Delete position"
+      text="Delete shift position"
     >
       {data && data.length > 0 ? (
         <>
@@ -172,7 +172,7 @@ export const ShiftPositionsDialogDelete = ({
           type="submit"
           variant="contained"
         >
-          Delete position
+          Delete shift position
         </Button>
       </DialogActions>
     </DialogContainer>

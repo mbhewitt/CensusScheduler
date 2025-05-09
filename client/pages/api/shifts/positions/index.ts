@@ -39,7 +39,7 @@ const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
     // post
     // ------------------------------------------------------------
     case "POST": {
-      // create position
+      // create shift position
       const {
         critical,
         details,

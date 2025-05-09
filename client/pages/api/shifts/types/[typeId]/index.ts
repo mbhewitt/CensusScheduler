@@ -199,7 +199,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
     // patch
     // ------------------------------------------------------------
     case "PATCH": {
-      // update type
+      // update shift type
       const {
         information: {
           category: { id: categoryId },

@@ -157,7 +157,7 @@ export const ShiftCategories = () => {
                 <ListItemIcon>
                   <EditIcon />
                 </ListItemIcon>
-                <ListItemText>Update category</ListItemText>
+                <ListItemText>Update shift category</ListItemText>
               </MenuItem>
               <MenuItem
                 onClick={() => {
@@ -175,7 +175,7 @@ export const ShiftCategories = () => {
                 <ListItemIcon>
                   <PlaylistRemoveIcon />
                 </ListItemIcon>
-                <ListItemText>Delete category</ListItemText>
+                <ListItemText>Delete shift category</ListItemText>
               </MenuItem>
             </MenuList>
           }
@@ -215,7 +215,7 @@ export const ShiftCategories = () => {
               type="button"
               variant="contained"
             >
-              Create category
+              Create shift category
             </Button>
           </Stack>
           <DataTable

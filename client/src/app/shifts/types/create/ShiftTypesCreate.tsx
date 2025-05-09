@@ -2,7 +2,7 @@
 
 import {
   Close as CloseIcon,
-  DateRange as DateRangeIcon,
+  EventNote as EventNoteIcon,
   EventAvailable as EventAvailableIcon,
 } from "@mui/icons-material";
 import {
@@ -202,7 +202,7 @@ export const ShiftTypesCreate = () => {
                   display: "flex",
                 }}
               >
-                <DateRangeIcon sx={{ mr: 0.5 }} />
+                <EventNoteIcon sx={{ mr: 0.5 }} />
                 Shift types
               </Typography>
             </Link>
@@ -213,7 +213,7 @@ export const ShiftTypesCreate = () => {
               }}
             >
               <EventAvailableIcon sx={{ mr: 0.5 }} />
-              Create type
+              Create shift type
             </Typography>
           </BreadcrumbsNav>
         </Box>
@@ -272,7 +272,7 @@ export const ShiftTypesCreate = () => {
                   type="submit"
                   variant="contained"
                 >
-                  Create type
+                  Create shift type
                 </Button>
               </CardActions>
             </Card>

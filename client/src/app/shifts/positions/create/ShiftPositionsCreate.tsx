@@ -160,7 +160,7 @@ export const ShiftPositionsCreate = () => {
               }}
             >
               <GroupAddIcon sx={{ mr: 0.5 }} />
-              Create position
+              Create shift position
             </Typography>
           </BreadcrumbsNav>
         </Box>
@@ -204,7 +204,7 @@ export const ShiftPositionsCreate = () => {
                   type="submit"
                   variant="contained"
                 >
-                  Create position
+                  Create shift position
                 </Button>
               </CardActions>
             </Card>

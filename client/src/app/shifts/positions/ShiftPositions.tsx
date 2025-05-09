@@ -103,7 +103,7 @@ export const ShiftPositions = () => {
                 <ListItemIcon>
                   <EditIcon />
                 </ListItemIcon>
-                <ListItemText>Update position</ListItemText>
+                <ListItemText>Update shift position</ListItemText>
               </MenuItem>
             </Link>
             <MenuItem
@@ -118,7 +118,7 @@ export const ShiftPositions = () => {
               <ListItemIcon>
                 <GroupRemoveIcon />
               </ListItemIcon>
-              <ListItemText>Delete position</ListItemText>
+              <ListItemText>Delete shift position</ListItemText>
             </MenuItem>
           </MenuList>
         }
@@ -149,7 +149,7 @@ export const ShiftPositions = () => {
               type="button"
               variant="contained"
             >
-              Create position
+              Create shift position
             </Button>
           </Stack>
           <DataTable

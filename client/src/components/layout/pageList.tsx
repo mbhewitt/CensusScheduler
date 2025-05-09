@@ -1,13 +1,14 @@
 import {
   Article as ArticleIcon,
   CalendarMonth as CalendarMonthIcon,
-  DateRange as DateRangeIcon,
+  EventNote as EventNoteIcon,
   Group as GroupIcon,
   Groups3 as Groups3Icon,
   Help as HelpIcon,
   Home as HomeIcon,
-  List as ListIcon,
+  ViewList as ViewListIcon,
   QuestionAnswer as QuestionAnswerIcon,
+  Today as TodayIcon,
   Settings as SettingsIcon,
   VerifiedUser as VerifiedUserIcon,
 } from "@mui/icons-material";
@@ -58,18 +59,30 @@ export const pageListAdmin = [
 ];
 export const pageListSuperAdmin = [
   {
-    icon: <ListIcon />,
-    label: "Categories",
-    path: "/shifts/categories",
+    icon: <TodayIcon />,
+    label: "Dates",
+    path: "/dates",
   },
   {
-    icon: <GroupIcon />,
-    label: "Positions",
-    path: "/shifts/positions",
-  },
-  {
-    icon: <DateRangeIcon />,
-    label: "Types",
-    path: "/shifts/types",
+    icon: <CalendarMonthIcon />,
+    label: "Shifts",
+    path: "",
+    children: [
+      {
+        icon: <ViewListIcon />,
+        label: "Categories",
+        path: "/shifts/categories",
+      },
+      {
+        icon: <GroupIcon />,
+        label: "Positions",
+        path: "/shifts/positions",
+      },
+      {
+        icon: <EventNoteIcon />,
+        label: "Types",
+        path: "/shifts/types",
+      },
+    ],
   },
 ];

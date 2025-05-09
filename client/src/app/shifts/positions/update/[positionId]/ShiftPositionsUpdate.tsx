@@ -2,8 +2,8 @@
 
 import {
   Close as CloseIcon,
-  DateRange as DateRangeIcon,
-  EditCalendar as EditCalendarIcon,
+  Group as GroupIcon,
+  Edit as EditIcon,
 } from "@mui/icons-material";
 import {
   Box,
@@ -195,7 +195,7 @@ export const ShiftPositionsUpdate = ({
                   display: "flex",
                 }}
               >
-                <DateRangeIcon sx={{ mr: 0.5 }} />
+                <GroupIcon sx={{ mr: 0.5 }} />
                 Shift positions
               </Typography>
             </Link>
@@ -205,8 +205,8 @@ export const ShiftPositionsUpdate = ({
                 display: "flex",
               }}
             >
-              <EditCalendarIcon sx={{ mr: 0.5 }} />
-              Update position
+              <EditIcon sx={{ mr: 0.5 }} />
+              Update shift position
             </Typography>
           </BreadcrumbsNav>
         </Box>
@@ -241,16 +241,12 @@ export const ShiftPositionsUpdate = ({
                 <Button
                   disabled={Object.keys(errors).length > 0 || isMutating}
                   startIcon={
-                    isMutating ? (
-                      <CircularProgress size="1rem" />
-                    ) : (
-                      <EditCalendarIcon />
-                    )
+                    isMutating ? <CircularProgress size="1rem" /> : <EditIcon />
                   }
                   type="submit"
                   variant="contained"
                 >
-                  Update position
+                  Update shift position
                 </Button>
               </CardActions>
             </Card>
