@@ -453,7 +453,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
     // delete
     // ------------------------------------------------------------
     case "DELETE": {
-      // delete type
+      // delete shift type
       await pool.query<RowDataPacket[]>(
         `UPDATE op_shift_name
         SET delete_shift=true

@@ -1,6 +1,6 @@
 import {
   Close as CloseIcon,
-  DashboardCustomize as DashboardCustomizeIcon,
+  PlaylistAdd as PlaylistAddIcon,
 } from "@mui/icons-material";
 import { Button, CircularProgress, DialogActions } from "@mui/material";
 import { useSnackbar } from "notistack";
@@ -129,7 +129,7 @@ export const ShiftCategoriesDialogCreate = ({
               isMutating ? (
                 <CircularProgress size="1rem" />
               ) : (
-                <DashboardCustomizeIcon />
+                <PlaylistAddIcon />
               )
             }
             type="submit"
