@@ -116,7 +116,7 @@ export const ShiftTypes = () => {
                   <ListItemIcon>
                     <EditCalendarIcon />
                   </ListItemIcon>
-                  <ListItemText>Update type</ListItemText>
+                  <ListItemText>Update shift type</ListItemText>
                 </MenuItem>
               </Link>
               <MenuItem
@@ -135,7 +135,7 @@ export const ShiftTypes = () => {
                 <ListItemIcon>
                   <EventBusyIcon />
                 </ListItemIcon>
-                <ListItemText>Delete type</ListItemText>
+                <ListItemText>Delete shift type</ListItemText>
               </MenuItem>
             </MenuList>
           }
@@ -167,7 +167,7 @@ export const ShiftTypes = () => {
               type="button"
               variant="contained"
             >
-              Create type
+              Create shift type
             </Button>
           </Stack>
           <DataTable

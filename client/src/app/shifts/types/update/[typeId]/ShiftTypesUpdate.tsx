@@ -2,7 +2,7 @@
 
 import {
   Close as CloseIcon,
-  DateRange as DateRangeIcon,
+  EventNote as EventNoteIcon,
   EditCalendar as EditCalendarIcon,
 } from "@mui/icons-material";
 import {
@@ -332,7 +332,7 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
                   display: "flex",
                 }}
               >
-                <DateRangeIcon sx={{ mr: 0.5 }} />
+                <EventNoteIcon sx={{ mr: 0.5 }} />
                 Shift types
               </Typography>
             </Link>
@@ -343,7 +343,7 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
               }}
             >
               <EditCalendarIcon sx={{ mr: 0.5 }} />
-              Update type
+              Update shift type
             </Typography>
           </BreadcrumbsNav>
         </Box>
@@ -402,7 +402,7 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
                   type="submit"
                   variant="contained"
                 >
-                  Update type
+                  Update shift type
                 </Button>
               </CardActions>
             </Card>

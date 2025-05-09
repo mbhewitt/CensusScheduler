@@ -64,7 +64,7 @@ export const ShiftCategoriesDialogDelete = ({
       <DialogContainer
         handleDialogClose={handleDialogClose}
         isDialogOpen={isDialogOpen}
-        text="Delete category"
+        text="Delete shift category"
       >
         <ErrorAlert />
       </DialogContainer>
@@ -74,7 +74,7 @@ export const ShiftCategoriesDialogDelete = ({
       <DialogContainer
         handleDialogClose={handleDialogClose}
         isDialogOpen={isDialogOpen}
-        text="Delete category"
+        text="Delete shift category"
       >
         <Loading />
       </DialogContainer>
@@ -120,7 +120,7 @@ export const ShiftCategoriesDialogDelete = ({
     <DialogContainer
       handleDialogClose={handleDialogClose}
       isDialogOpen={isDialogOpen}
-      text="Delete category"
+      text="Delete shift category"
     >
       {data && data.length > 0 ? (
         <>
@@ -185,7 +185,7 @@ export const ShiftCategoriesDialogDelete = ({
           type="submit"
           variant="contained"
         >
-          Delete category
+          Delete shift category
         </Button>
       </DialogActions>
     </DialogContainer>

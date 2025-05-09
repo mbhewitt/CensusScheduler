@@ -11,7 +11,7 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
     // patch
     // ------------------------------------------------------------
     case "PATCH": {
-      // update category
+      // update shift category
       const {
         department: { name: departmentName },
         name: categoryName,
@@ -36,7 +36,7 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
     // delete
     // ------------------------------------------------------------
     case "DELETE": {
-      // delete category
+      // delete shift category
       await pool.query<RowDataPacket[]>(
         `UPDATE op_shift_category
         SET delete_category=true

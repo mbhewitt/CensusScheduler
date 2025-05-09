@@ -70,7 +70,7 @@ const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
     // patch
     // ------------------------------------------------------------
     case "PATCH": {
-      // update position
+      // update shift position
       const {
         critical,
         details,
@@ -107,7 +107,7 @@ const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
     // delete
     // ------------------------------------------------------------
     case "DELETE": {
-      // delete position
+      // delete shift position
       await pool.query<RowDataPacket[]>(
         `UPDATE op_position_type
         SET delete_position=true

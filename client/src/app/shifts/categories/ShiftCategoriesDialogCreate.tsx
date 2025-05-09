@@ -104,7 +104,7 @@ export const ShiftCategoriesDialogCreate = ({
     <DialogContainer
       handleDialogClose={handleDialogClose}
       isDialogOpen={isDialogOpen}
-      text="Create category"
+      text="Create shift category"
     >
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
         <ShiftCategoriesDialogForm
@@ -135,7 +135,7 @@ export const ShiftCategoriesDialogCreate = ({
             type="submit"
             variant="contained"
           >
-            Create category
+            Create shift category
           </Button>
         </DialogActions>
       </form>

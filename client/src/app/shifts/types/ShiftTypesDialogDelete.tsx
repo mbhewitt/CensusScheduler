@@ -65,7 +65,7 @@ export const ShiftTypesDialogDelete = ({
       <DialogContainer
         handleDialogClose={handleDialogClose}
         isDialogOpen={isDialogOpen}
-        text="Delete type"
+        text="Delete shift type"
       >
         <ErrorAlert />
       </DialogContainer>
@@ -75,7 +75,7 @@ export const ShiftTypesDialogDelete = ({
       <DialogContainer
         handleDialogClose={handleDialogClose}
         isDialogOpen={isDialogOpen}
-        text="Delete type"
+        text="Delete shift type"
       >
         <Loading />
       </DialogContainer>
@@ -121,7 +121,7 @@ export const ShiftTypesDialogDelete = ({
     <DialogContainer
       handleDialogClose={handleDialogClose}
       isDialogOpen={isDialogOpen}
-      text="Delete type"
+      text="Delete shift type"
     >
       {data && (data.positionList.length > 0 || data.timeList.length > 0) ? (
         <>
@@ -209,7 +209,7 @@ export const ShiftTypesDialogDelete = ({
           type="submit"
           variant="contained"
         >
-          Delete type
+          Delete shift type
         </Button>
       </DialogActions>
     </DialogContainer>

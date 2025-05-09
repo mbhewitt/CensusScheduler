@@ -109,7 +109,7 @@ export const ShiftCategoriesDialogUpdate = ({
     <DialogContainer
       handleDialogClose={handleDialogClose}
       isDialogOpen={isDialogOpen}
-      text="Update category"
+      text="Update shift category"
     >
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
         <ShiftCategoriesDialogForm
@@ -136,7 +136,7 @@ export const ShiftCategoriesDialogUpdate = ({
             type="submit"
             variant="contained"
           >
-            Update category
+            Update shift category
           </Button>
         </DialogActions>
       </form>

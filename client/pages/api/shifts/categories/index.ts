@@ -41,7 +41,7 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
     // post
     // ------------------------------------------------------------
     case "POST": {
-      // create category
+      // create shift category
       const {
         department: { name: departmentName },
         name: categoryName,

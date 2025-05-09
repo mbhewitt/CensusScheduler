@@ -100,7 +100,7 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
     // post
     // ------------------------------------------------------------
     case "POST": {
-      // create type
+      // create shift type
       const {
         information: {
           category: { id },
