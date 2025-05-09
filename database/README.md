@@ -34,7 +34,7 @@
 
 - **core** -- bool if shift is part of the core mission
 - **off_playa** -- bool if the shift takes place off playa
-- **shift_category_id** -- foreign key to op_shfit_category
+- **shift_category_id** -- foreign key to op_shift_category
 - **shift_name_id** -- row id
 - **shift_details** -- description of the shift type
 - **shift_name** -- name of the shift type
