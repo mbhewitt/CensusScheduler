@@ -20,8 +20,8 @@ services:
       - apparmor:unconfined
     cap_add: ["NET_ADMIN"]
     ports:
-      - "53:53"
-      - "53:53/udp"
+      - "192.168.0.11:53:53"
+      - "192.168.0.11:53:53/udp"
     restart: always
   httpd:
     build:
