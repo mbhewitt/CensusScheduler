@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  CalendarMonth as CalendarMonthIcon,
+  Work as WorkIcon,
   Groups3 as Groups3Icon,
   ManageAccounts as ManageAccountsIcon,
   MoreHoriz as MoreHorizIcon,
@@ -567,7 +567,7 @@ export const ShiftVolunteers = ({
                   display: "flex",
                 }}
               >
-                <CalendarMonthIcon sx={{ mr: 0.5 }} />
+                <WorkIcon sx={{ mr: 0.5 }} />
                 Shifts
               </Typography>
             </Link>

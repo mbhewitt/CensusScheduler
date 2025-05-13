@@ -1,5 +1,5 @@
 import {
-  CalendarMonth as CalendarMonthIcon,
+  Work as WorkIcon,
   ExpandLess as ExpandLessIcon,
   ExpandMore as ExpandMoreIcon,
   Login as LoginIcon,
