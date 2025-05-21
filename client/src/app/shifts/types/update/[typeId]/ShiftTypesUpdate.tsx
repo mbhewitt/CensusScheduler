@@ -2,8 +2,8 @@
 
 import {
   Close as CloseIcon,
-  EventNote as EventNoteIcon,
   EditCalendar as EditCalendarIcon,
+  EventNote as EventNoteIcon,
 } from "@mui/icons-material";
 import {
   Box,

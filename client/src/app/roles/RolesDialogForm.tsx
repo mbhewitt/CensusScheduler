@@ -10,8 +10,8 @@ interface IRolesDialogFormProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<IFormValues, any>;
   errors: FieldErrors<IFormValues>;
-  roleName: string;
   roleList: IResRoleRowItem[];
+  roleName: string;
 }
 
 export const defaultValues: IFormValues = {
@@ -20,8 +20,8 @@ export const defaultValues: IFormValues = {
 export const RolesDialogForm = ({
   control,
   errors,
-  roleName,
   roleList,
+  roleName,
 }: IRolesDialogFormProps) => {
   // render
   // ------------------------------------------------------------

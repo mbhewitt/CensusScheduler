@@ -2,8 +2,8 @@
 
 import {
   Close as CloseIcon,
-  Group as GroupIcon,
   Edit as EditIcon,
+  Group as GroupIcon,
 } from "@mui/icons-material";
 import {
   Box,

@@ -6,11 +6,11 @@ import {
   Groups3 as Groups3Icon,
   Help as HelpIcon,
   Home as HomeIcon,
-  ViewList as ViewListIcon,
   QuestionAnswer as QuestionAnswerIcon,
-  Today as TodayIcon,
   Settings as SettingsIcon,
   VerifiedUser as VerifiedUserIcon,
+  ViewList as ViewListIcon,
+  Work as WorkIcon,
 } from "@mui/icons-material";
 
 export const pageListDefault = [
@@ -20,7 +20,7 @@ export const pageListDefault = [
     path: "/",
   },
   {
-    icon: <CalendarMonthIcon />,
+    icon: <WorkIcon />,
     label: "Shifts",
     path: "/shifts",
   },
@@ -58,13 +58,13 @@ export const pageListAdmin = [
   },
 ];
 export const pageListSuperAdmin = [
+  // {
+  //   icon: <CalendarMonthIcon />,
+  //   label: "Calendar",
+  //   path: "/calendar",
+  // },
   {
-    icon: <TodayIcon />,
-    label: "Dates",
-    path: "/dates",
-  },
-  {
-    icon: <CalendarMonthIcon />,
+    icon: <WorkIcon />,
     label: "Shifts",
     path: "",
     children: [

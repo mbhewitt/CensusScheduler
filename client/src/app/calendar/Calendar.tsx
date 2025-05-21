@@ -3,10 +3,10 @@
 import { Box, Container } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
+import { Dates } from "@/app/calendar/dates/Dates";
 import { Hero } from "@/components/layout/Hero";
-import { Year } from "@/app/dates/Year";
 
-export const Dates = () => {
+export const Calendar = () => {
   // other hooks
   // ------------------------------------------------------------
   const theme = useTheme();
@@ -20,16 +20,12 @@ export const Dates = () => {
           backgroundColor: theme.palette.primary.light,
           backgroundImage: `linear-gradient(${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
         }}
-        text="Dates"
+        text="Calendar"
       />
       <Container component="main">
-        {/* year */}
         <Box component="section">
-          <Year />
+          <Dates />
         </Box>
-
-        {/* date names */}
-        <Box component="section">{/* <DateNames /> */}</Box>
       </Container>
     </>
   );

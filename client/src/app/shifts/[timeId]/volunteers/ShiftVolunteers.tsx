@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  CalendarMonth as CalendarMonthIcon,
   Groups3 as Groups3Icon,
   ManageAccounts as ManageAccountsIcon,
   MoreHoriz as MoreHorizIcon,
@@ -9,6 +8,7 @@ import {
   PersonRemove as PersonRemoveIcon,
   SpeakerNotes as SpeakerNotesIcon,
   SpeakerNotesOff as SpeakerNotesOffIcon,
+  Work as WorkIcon,
 } from "@mui/icons-material";
 import {
   Box,
@@ -567,7 +567,7 @@ export const ShiftVolunteers = ({
                   display: "flex",
                 }}
               >
-                <CalendarMonthIcon sx={{ mr: 0.5 }} />
+                <WorkIcon sx={{ mr: 0.5 }} />
                 Shifts
               </Typography>
             </Link>
