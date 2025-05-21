@@ -1,5 +1,4 @@
 import {
-  Work as WorkIcon,
   ExpandLess as ExpandLessIcon,
   ExpandMore as ExpandMoreIcon,
   Login as LoginIcon,
@@ -253,18 +252,17 @@ export const Header = () => {
                           </Collapse>
                         </Fragment>
                       );
-                    } else {
-                      return (
-                        <ListItem disablePadding key={label}>
-                          <Link href={path} onClick={handleDrawerClose}>
-                            <ListItemButton selected={pathname === path}>
-                              <ListItemIcon>{icon}</ListItemIcon>
-                              <ListItemText primary={label} />
-                            </ListItemButton>
-                          </Link>
-                        </ListItem>
-                      );
                     }
+                    return (
+                      <ListItem disablePadding key={label}>
+                        <Link href={path} onClick={handleDrawerClose}>
+                          <ListItemButton selected={pathname === path}>
+                            <ListItemIcon>{icon}</ListItemIcon>
+                            <ListItemText primary={label} />
+                          </ListItemButton>
+                        </Link>
+                      </ListItem>
+                    );
                   })}
                 </List>
               </>

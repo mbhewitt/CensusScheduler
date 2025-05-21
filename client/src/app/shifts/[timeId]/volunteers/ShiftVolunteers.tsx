@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Work as WorkIcon,
   Groups3 as Groups3Icon,
   ManageAccounts as ManageAccountsIcon,
   MoreHoriz as MoreHorizIcon,
@@ -9,6 +8,7 @@ import {
   PersonRemove as PersonRemoveIcon,
   SpeakerNotes as SpeakerNotesIcon,
   SpeakerNotesOff as SpeakerNotesOffIcon,
+  Work as WorkIcon,
 } from "@mui/icons-material";
 import {
   Box,

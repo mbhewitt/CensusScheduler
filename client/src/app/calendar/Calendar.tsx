@@ -3,8 +3,8 @@
 import { Box, Container } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
+import { Dates } from "@/app/calendar/dates/Dates";
 import { Hero } from "@/components/layout/Hero";
-import { Year } from "@/app/calendar/Year";
 
 export const Calendar = () => {
   // other hooks
@@ -23,13 +23,9 @@ export const Calendar = () => {
         text="Calendar"
       />
       <Container component="main">
-        {/* year */}
         <Box component="section">
-          <Year />
+          <Dates />
         </Box>
-
-        {/* dates */}
-        <Box component="section">{/* <Dates /> */}</Box>
       </Container>
     </>
   );
