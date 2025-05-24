@@ -26,7 +26,7 @@ const shiftPositionTypes = async (
         ON stp.shift_times_id=st.shift_times_id
         AND sn.delete_shift=false
         WHERE stp.position_type_id=?
-        ORDER BY sn.shift_name`,
+        ORDER BY sn.shift_name COLLATE utf8mb4_general_ci`,
         [positionId]
       );
       const resTypeList = dbTypeList.map(({ shift_name, shift_name_id }) => {

@@ -21,7 +21,7 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
         ON sc.shift_category_id=sn.shift_category_id
         AND sn.delete_shift=false
         WHERE sn.shift_category_id=?
-        ORDER BY sn.shift_name`,
+        ORDER BY sn.shift_name COLLATE utf8mb4_general_ci`,
         [categoryId]
       );
       const resTypeList = dbTypeList.map(({ shift_name, shift_name_id }) => {

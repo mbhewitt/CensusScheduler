@@ -50,8 +50,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         AND pt.position_type_id=stp.position_type_id
         WHERE st.remove_shift_time=false
         AND st.shift_times_id=?
-        ORDER BY pt.position
-        COLLATE utf8mb4_general_ci`,
+        ORDER BY pt.position COLLATE utf8mb4_general_ci`,
         [timeId]
       );
       const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
