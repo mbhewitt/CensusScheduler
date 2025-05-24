@@ -31,7 +31,11 @@ import { SnackbarText } from "@/components/general/SnackbarText";
 import { Hero } from "@/components/layout/Hero";
 import type { IVolunteerAccountFormValues } from "@/components/types";
 import type { IResVolunteerAccount } from "@/components/types/volunteers";
-import { SESSION_SIGN_IN } from "@/constants";
+import {
+  HELPER_TEXT_EMERGENCY_CONTACT,
+  HELPER_TEXT_LOCATION,
+  SESSION_SIGN_IN,
+} from "@/constants";
 import { SessionContext } from "@/state/session/context";
 import { fetcherTrigger } from "@/utils/fetcher";
 
@@ -268,7 +272,7 @@ export const AccountCreate = () => {
                       <TextField
                         {...field}
                         fullWidth
-                        helperText="How to find you on playa and any other relevant info"
+                        helperText={HELPER_TEXT_LOCATION}
                         label="Location"
                         variant="standard"
                       />
@@ -281,7 +285,7 @@ export const AccountCreate = () => {
                       <TextField
                         {...field}
                         fullWidth
-                        helperText="How to reach your emergency contact on or off playa"
+                        helperText={HELPER_TEXT_EMERGENCY_CONTACT}
                         label="Emergency contact"
                         variant="standard"
                       />
