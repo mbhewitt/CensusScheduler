@@ -78,14 +78,13 @@ export const ShiftCategoriesDialogForm = ({
         control={control}
         name="department.name"
         render={({ field }) => (
-          <FormControl fullWidth variant="standard">
-            <InputLabel id="department">Department *</InputLabel>
+          <FormControl fullWidth required variant="standard">
+            <InputLabel id="department">Department</InputLabel>
             <Select
               {...field}
               error={Boolean(errors.department?.name)}
-              label="Department"
+              label="Department *"
               labelId="department"
-              required
             >
               {departmentListDisplay.map((departmentName) => (
                 <MenuItem key={departmentName} value={departmentName}>

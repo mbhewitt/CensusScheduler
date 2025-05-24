@@ -684,8 +684,8 @@ export const ShiftVolunteersDialogAdd = ({
               control={control}
               name="timePositionId"
               render={({ field }) => (
-                <FormControl fullWidth variant="standard">
-                  <InputLabel id="timePositionId">Position *</InputLabel>
+                <FormControl fullWidth required variant="standard">
+                  <InputLabel id="timePositionId">Position</InputLabel>
                   <Select
                     {...field}
                     error={Boolean(errors.timePositionId)}
@@ -726,7 +726,6 @@ export const ShiftVolunteersDialogAdd = ({
                         );
                       }
                     }}
-                    required
                   >
                     {positionListDisplay}
                   </Select>
@@ -749,9 +748,9 @@ export const ShiftVolunteersDialogAdd = ({
                   control={control}
                   name="trainingTimesId"
                   render={({ field }) => (
-                    <FormControl fullWidth variant="standard">
+                    <FormControl fullWidth required variant="standard">
                       <InputLabel id="trainingTimesId">
-                        Training time *
+                        Training time
                       </InputLabel>
                       <Select
                         {...field}
@@ -806,7 +805,6 @@ export const ShiftVolunteersDialogAdd = ({
                             );
                           }
                         }}
-                        required
                       >
                         {trainingListDisplay}
                       </Select>
@@ -827,9 +825,9 @@ export const ShiftVolunteersDialogAdd = ({
                   control={control}
                   name="trainingPositionId"
                   render={({ field }) => (
-                    <FormControl fullWidth variant="standard">
+                    <FormControl fullWidth required variant="standard">
                       <InputLabel id="trainingPositionId">
-                        Training position *
+                        Training position
                       </InputLabel>
                       <Select
                         {...field}
@@ -874,7 +872,6 @@ export const ShiftVolunteersDialogAdd = ({
                             );
                           }
                         }}
-                        required
                       >
                         {trainingPositionListDisplay}
                       </Select>
