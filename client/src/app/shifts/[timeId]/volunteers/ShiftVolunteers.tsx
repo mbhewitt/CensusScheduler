@@ -1,13 +1,13 @@
 "use client";
 
 import {
-  Comment as CommentIcon,
   Groups3 as Groups3Icon,
   ManageAccounts as ManageAccountsIcon,
   MoreHoriz as MoreHorizIcon,
   PersonAddAlt1 as PersonAddAlt1Icon,
   PersonRemove as PersonRemoveIcon,
-  Work as WorkIcon,
+  Reviews as ReviewsIcon,
+  WorkHistory as WorkHistoryIcon,
 } from "@mui/icons-material";
 import {
   Box,
@@ -496,9 +496,9 @@ export const ShiftVolunteers = ({
             }}
           >
             {rating ? (
-              <CommentIcon color="primary" />
+              <ReviewsIcon color="primary" />
             ) : (
-              <CommentIcon color="disabled" />
+              <ReviewsIcon color="disabled" />
             )}
           </IconButton>
         ),
@@ -575,7 +575,7 @@ export const ShiftVolunteers = ({
                   display: "flex",
                 }}
               >
-                <WorkIcon sx={{ mr: 0.5 }} />
+                <WorkHistoryIcon sx={{ mr: 0.5 }} />
                 Shifts
               </Typography>
             </Link>

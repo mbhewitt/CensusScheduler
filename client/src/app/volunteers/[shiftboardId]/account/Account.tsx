@@ -2,10 +2,10 @@
 
 import {
   AccountCircle as AccountCircleIcon,
-  AddComment as AddCommentIcon,
   Groups3 as Groups3Icon,
   LockReset as LockResetIcon,
   ManageAccounts as ManageAccountsIcon,
+  RateReview as RateReviewIcon,
   VerifiedUser as VerifiedUserIcon,
 } from "@mui/icons-material";
 import {
@@ -460,7 +460,7 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
                             isMutating ? (
                               <CircularProgress size="1rem" />
                             ) : (
-                              <AddCommentIcon />
+                              <RateReviewIcon />
                             )
                           }
                           sx={{ mt: 2 }}

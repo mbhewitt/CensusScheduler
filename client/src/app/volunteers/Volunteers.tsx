@@ -1,6 +1,6 @@
 "use client";
 
-import { Comment as CommentIcon } from "@mui/icons-material";
+import { Reviews as ReviewsIcon } from "@mui/icons-material";
 import {
   Box,
   Card,
@@ -208,9 +208,9 @@ export const Volunteers = () => {
           <Typography sx={{ color: grey[500], fontSize: "14px" }}>0</Typography>
         ),
         isNotes ? (
-          <CommentIcon color="primary" />
+          <ReviewsIcon color="primary" />
         ) : (
-          <CommentIcon color="disabled" />
+          <ReviewsIcon color="disabled" />
         ),
       ];
     }

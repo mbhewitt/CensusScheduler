@@ -1,6 +1,6 @@
 import {
-  AddComment as AddCommentIcon,
   Close as CloseIcon,
+  RateReview as RateReviewIcon,
 } from "@mui/icons-material";
 import {
   Button,
@@ -210,7 +210,7 @@ export const ShiftVolunteersDialogReview = ({
           <Button
             disabled={isMutating}
             startIcon={
-              isMutating ? <CircularProgress size="1rem" /> : <AddCommentIcon />
+              isMutating ? <CircularProgress size="1rem" /> : <RateReviewIcon />
             }
             type="submit"
             variant="contained"
