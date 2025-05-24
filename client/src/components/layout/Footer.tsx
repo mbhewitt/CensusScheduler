@@ -12,7 +12,7 @@ import { useTheme } from "@mui/material/styles";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useContext } from "react";
+import { Fragment, useContext } from "react";
 
 import {
   pageListAdmin,
@@ -150,28 +150,52 @@ export const Footer = () => {
                   Super admin
                 </Typography>
                 <List sx={{ p: 0 }}>
-                  <ListItem disablePadding>
-                    <ListItemText
-                      primary="Shifts"
-                      primaryTypographyProps={{
-                        sx: { color: theme.palette.common.white },
-                      }}
-                    />
-                  </ListItem>
-                  <List component="div" disablePadding>
-                    {pageListSuperAdmin.map(({ label, path }) => (
+                  {pageListSuperAdmin.map(({ children, label, path }) => {
+                    if (children) {
+                      return (
+                        <Fragment key={path}>
+                          <ListItem disablePadding>
+                            <ListItemText
+                              primary={label}
+                              primaryTypographyProps={{
+                                sx: { color: theme.palette.common.white },
+                              }}
+                            />
+                          </ListItem>
+                          <List disablePadding>
+                            {children.map(({ label, path }) => (
+                              <ListItem disablePadding key={path}>
+                                <Link href={path}>
+                                  <ListItemText
+                                    primary={label}
+                                    primaryTypographyProps={{
+                                      sx: {
+                                        color: theme.palette.common.white,
+                                        pl: 2,
+                                      },
+                                    }}
+                                  />
+                                </Link>
+                              </ListItem>
+                            ))}
+                          </List>
+                        </Fragment>
+                      );
+                    }
+
+                    return (
                       <ListItem disablePadding key={path}>
                         <Link href={path}>
                           <ListItemText
                             primary={label}
                             primaryTypographyProps={{
-                              sx: { color: theme.palette.common.white, pl: 2 },
+                              sx: { color: theme.palette.common.white },
                             }}
                           />
                         </Link>
                       </ListItem>
-                    ))}
-                  </List>
+                    );
+                  })}
                 </List>
               </Box>
             )}
@@ -212,7 +236,7 @@ export const Footer = () => {
               color: theme.palette.common.white,
             }}
           >
-            2025.T.00191.Prizmo
+            2025.T.00192.Prizmo
           </Typography>
         </Stack>
       </Container>

@@ -1,5 +1,5 @@
 import {
-  Article as ArticleIcon,
+  BarChart as BarChartIcon,
   // CalendarMonth as CalendarMonthIcon,
   EventNote as EventNoteIcon,
   Group as GroupIcon,
@@ -25,7 +25,7 @@ export const pageListDefault = [
     path: "/shifts",
   },
   {
-    icon: <ArticleIcon />,
+    icon: <BarChartIcon />,
     label: "Reports",
     path: "/reports",
   },
