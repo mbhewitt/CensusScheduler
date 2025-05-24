@@ -230,7 +230,8 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
       const [dbTimeList] = await pool.query<RowDataPacket[]>(
         `SELECT shift_times_id
         FROM op_shift_times
-        WHERE shift_name_id=?`,
+        WHERE shift_name_id=?
+        AND remove_shift_time=false`,
         [typeId]
       );
       const timeListUpdate = timeList.filter(({ timeId }) => {
@@ -279,7 +280,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
             AND start_time=?`,
             [endTime, startTime]
           );
-          const dbTimeFirst = dbTime[0];
+          const [dbTimeFirst] = dbTime;
           dbTimeIdExist = dbTimeFirst?.shift_times_id;
 
           if (dbTimeFirst) {
@@ -308,9 +309,10 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           `UPDATE op_shift_times
           SET
             add_shift_time=false,
-            remove_shift_time=true
+            remove_shift_time=true,
+            shift_instance=?
           WHERE shift_times_id=?`,
-          [shift_times_id]
+          ["", shift_times_id]
         );
       });
 
@@ -392,7 +394,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
             AND position_type_id=?`,
             [dbTimeIdExist || timeId, positionId]
           );
-          const dbTimePositionFirst = dbTimePosition[0];
+          const [dbTimePositionFirst] = dbTimePosition;
 
           // if time position exists already
           // then update add_time_position and remove_time_position fields

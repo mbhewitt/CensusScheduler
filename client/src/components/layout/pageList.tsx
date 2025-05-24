@@ -1,6 +1,6 @@
 import {
   Article as ArticleIcon,
-  CalendarMonth as CalendarMonthIcon,
+  // CalendarMonth as CalendarMonthIcon,
   EventNote as EventNoteIcon,
   Group as GroupIcon,
   Groups3 as Groups3Icon,

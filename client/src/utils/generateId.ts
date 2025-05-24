@@ -6,7 +6,7 @@ const randomNum = () => Math.floor(Math.random() * 1000000 + 1);
 
 const checkIsIdExists = async (query: string, id: number) => {
   const [dbIdList] = await pool.query<RowDataPacket[]>(query, [id]);
-  const dbIdFirst = dbIdList[0];
+  const [dbIdFirst] = dbIdList;
 
   return Boolean(dbIdFirst);
 };

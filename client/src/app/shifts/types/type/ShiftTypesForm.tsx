@@ -279,7 +279,7 @@ export const ShiftTypesForm = ({
     timeAppend(timeNew);
     enqueueSnackbar(
       <SnackbarText>
-        <strong>{dateNew}</strong> at{" "}
+        <strong>{formatDateName(date)}</strong> at{" "}
         <strong>
           {startTimeNew}-{endTimeNew}
         </strong>{" "}

@@ -173,7 +173,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         AND time_position_id=?`,
         [timeId, shiftboardId, timePositionId]
       );
-      const dbShiftVolunteerFirst = dbShiftVolunteerList[0];
+      const [dbShiftVolunteerFirst] = dbShiftVolunteerList;
 
       // if volunteer exists in shift already
       // then update add_shift and remove_shift fields
