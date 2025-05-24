@@ -230,7 +230,8 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
       const [dbTimeList] = await pool.query<RowDataPacket[]>(
         `SELECT shift_times_id
         FROM op_shift_times
-        WHERE shift_name_id=?`,
+        WHERE shift_name_id=?
+        AND remove_shift_time=false`,
         [typeId]
       );
       const timeListUpdate = timeList.filter(({ timeId }) => {
@@ -308,9 +309,10 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           `UPDATE op_shift_times
           SET
             add_shift_time=false,
-            remove_shift_time=true
+            remove_shift_time=true,
+            shift_instance=?
           WHERE shift_times_id=?`,
-          [shift_times_id]
+          ["", shift_times_id]
         );
       });
 
