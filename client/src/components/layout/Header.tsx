@@ -234,7 +234,7 @@ export const Header = () => {
                             timeout="auto"
                             unmountOnExit
                           >
-                            <List component="div" disablePadding>
+                            <List disablePadding>
                               {children.map(({ icon, label, path }) => (
                                 <ListItem disablePadding key={path}>
                                   <Link href={path} onClick={handleDrawerClose}>
@@ -253,6 +253,7 @@ export const Header = () => {
                         </Fragment>
                       );
                     }
+
                     return (
                       <ListItem disablePadding key={label}>
                         <Link href={path} onClick={handleDrawerClose}>
