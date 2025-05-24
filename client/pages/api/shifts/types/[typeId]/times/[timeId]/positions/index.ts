@@ -31,7 +31,7 @@ const shiftTypeTimePositions = async (
         ON sn.shift_name_id=st.shift_name_id
         AND sn.shift_name_id=?
         WHERE vs.remove_shift=false
-        ORDER BY pt.position`,
+        ORDER BY pt.position COLLATE utf8mb4_general_ci`,
         [timeId, typeId]
       );
       const resPositionList = dbPositionList.map(

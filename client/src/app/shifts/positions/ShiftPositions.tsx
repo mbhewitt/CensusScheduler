@@ -125,7 +125,13 @@ export const ShiftPositions = () => {
       />,
     ];
   });
-  const optionListCustom = { filter: false };
+  const optionListCustom = {
+    filter: false,
+    sortOrder: {
+      direction: "asc" as const,
+      name: "Name",
+    },
+  };
 
   // render
   // ------------------------------------------------------------

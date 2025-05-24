@@ -76,8 +76,8 @@ export const ShiftTypesPositionDialogAdd = ({
             control={control}
             name="positionAdd.name"
             render={({ field }) => (
-              <FormControl fullWidth variant="standard">
-                <InputLabel id="position">Position *</InputLabel>
+              <FormControl fullWidth required variant="standard">
+                <InputLabel id="position">Position</InputLabel>
                 <Select
                   {...field}
                   error={Boolean(errors.positionAdd?.name)}
@@ -115,7 +115,6 @@ export const ShiftTypesPositionDialogAdd = ({
                       setValue("positionAdd.alias", positionFound.name);
                     }
                   }}
-                  required
                 >
                   {positionListDefaults.map(({ positionId, name }) => {
                     return (

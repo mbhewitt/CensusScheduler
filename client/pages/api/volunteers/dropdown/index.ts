@@ -32,7 +32,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             JOIN op_roles AS r
             ON r.role_id=vr.role_id
             AND r.role_id=?
-            ORDER BY playa_name`,
+            ORDER BY playa_name COLLATE utf8mb4_general_ci`,
             [ROLE_CORE_CREW_ID]
           );
           break;
@@ -51,7 +51,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             ON vr.shiftboard_id=v.shiftboard_id
             LEFT JOIN op_roles AS r
             ON r.role_id=vr.role_id
-            ORDER BY playa_name`
+            ORDER BY playa_name COLLATE utf8mb4_general_ci`
           );
           break;
         }

@@ -22,7 +22,7 @@ const shiftPositionDefaults = async (
           position,
           position_type_id
         FROM op_position_type
-        ORDER BY position`
+        ORDER BY position COLLATE utf8mb4_general_ci`
       );
       const resPositionList = dbPositionList.map(
         ({ position, position_type_id }) => {
@@ -40,7 +40,7 @@ const shiftPositionDefaults = async (
           shift_category,
           shift_category_id
         FROM op_shift_category
-        ORDER BY shift_category`
+        ORDER BY shift_category COLLATE utf8mb4_general_ci`
       );
       const resPrerequisiteList = dbPrerequisiteList.map(
         ({ shift_category, shift_category_id }) => {
@@ -59,7 +59,7 @@ const shiftPositionDefaults = async (
           role_id
         FROM op_roles
         WHERE display=true
-        ORDER BY role`
+        ORDER BY role COLLATE utf8mb4_general_ci`
       );
       const resRoleList = dbRoleList.map(({ role, role_id }) => {
         const resRoleItem: IResShiftPositionRoleItem = {

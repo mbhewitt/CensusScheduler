@@ -180,7 +180,13 @@ export const RoleVolunteers = ({ roleId }: IRoleVolunteersProps) => {
       ];
     }
   );
-  const optionListCustom = { filter: false };
+  const optionListCustom = {
+    filter: false,
+    sortOrder: {
+      direction: "asc" as const,
+      name: "Playa name",
+    },
+  };
 
   // render
   // ------------------------------------------------------------

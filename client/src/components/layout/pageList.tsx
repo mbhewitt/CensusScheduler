@@ -10,7 +10,7 @@ import {
   Settings as SettingsIcon,
   VerifiedUser as VerifiedUserIcon,
   ViewList as ViewListIcon,
-  Work as WorkIcon,
+  WorkHistory as WorkHistoryIcon,
 } from "@mui/icons-material";
 
 export const pageListDefault = [
@@ -20,7 +20,7 @@ export const pageListDefault = [
     path: "/",
   },
   {
-    icon: <WorkIcon />,
+    icon: <WorkHistoryIcon />,
     label: "Shifts",
     path: "/shifts",
   },
@@ -64,7 +64,7 @@ export const pageListSuperAdmin = [
   //   path: "/calendar",
   // },
   {
-    icon: <WorkIcon />,
+    icon: <WorkHistoryIcon />,
     label: "Shifts",
     path: "",
     children: [

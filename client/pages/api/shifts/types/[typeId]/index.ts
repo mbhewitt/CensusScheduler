@@ -75,7 +75,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         ON sc.shift_category_id=pt.prerequisite_id
         WHERE st.shift_name_id=?
         AND stp.remove_time_position=false
-        ORDER BY pt.position`,
+        ORDER BY pt.position COLLATE utf8mb4_general_ci`,
         [typeId]
       );
       const resPositionList = dbPositionList.map(
@@ -128,7 +128,9 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         WHERE st.shift_name_id=?
         AND st.remove_shift_time=false
         AND stp.remove_time_position=false
-        ORDER BY st.start_time, pt.position`,
+        ORDER BY
+          st.start_time,
+          pt.position COLLATE utf8mb4_general_ci`,
         [typeId]
       );
 

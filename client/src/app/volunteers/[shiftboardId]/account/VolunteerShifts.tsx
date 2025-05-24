@@ -3,11 +3,11 @@ import {
   EventBusy as EventBusyIcon,
   Groups3 as Groups3Icon,
   MoreHoriz as MoreHorizIcon,
-  SpeakerNotes as SpeakerNotesIcon,
-  SpeakerNotesOff as SpeakerNotesOffIcon,
+  Reviews as ReviewsIcon,
 } from "@mui/icons-material";
 import {
   Button,
+  Checkbox,
   Chip,
   IconButton,
   lighten,
@@ -16,7 +16,6 @@ import {
   MenuItem,
   MenuList,
   Stack,
-  Switch,
   Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -36,7 +35,7 @@ import { ErrorAlert } from "@/components/general/ErrorAlert";
 import { Loading } from "@/components/general/Loading";
 import { MoreMenu } from "@/components/general/MoreMenu";
 import { SnackbarText } from "@/components/general/SnackbarText";
-import type { IReqSwitchValues, ISwitchValues } from "@/components/types";
+import type { ICheckboxValues, IReqCheckboxValues } from "@/components/types";
 import type { IResVolunteerShiftItem } from "@/components/types/volunteers";
 import {
   REMOVE_SHIFT_VOLUNTEER_RES,
@@ -255,9 +254,9 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
   const handleCheckInToggle = async ({
     shift: { positionName, timePositionId },
     volunteer: { isCheckedIn, playaName, shiftboardId, worldName },
-  }: ISwitchValues) => {
+  }: ICheckboxValues) => {
     try {
-      const body: IReqSwitchValues = {
+      const body: IReqCheckboxValues = {
         isCheckedIn,
         shiftboardId,
         timePositionId,
@@ -454,7 +453,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
           label={positionName}
           sx={{ backgroundColor: colorMapDisplay[departmentName] }}
         />,
-        <Switch
+        <Checkbox
           checked={noShow === ""}
           disabled={!isCheckInAvailable}
           onChange={(event) =>
@@ -471,7 +470,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
               },
             })
           }
-          key={`${shiftboardId}-switch`}
+          key={`${shiftboardId}-checkbox`}
         />,
 
         // if volunteer is admin
@@ -499,9 +498,9 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
             }}
           >
             {rating ? (
-              <SpeakerNotesIcon color="primary" />
+              <ReviewsIcon color="primary" />
             ) : (
-              <SpeakerNotesOffIcon color="disabled" />
+              <ReviewsIcon color="disabled" />
             )}
           </IconButton>
         ) : (
@@ -526,6 +525,10 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
             : theme.palette.common.white,
         },
       };
+    },
+    sortOrder: {
+      direction: "asc" as const,
+      name: "Date",
     },
   };
 

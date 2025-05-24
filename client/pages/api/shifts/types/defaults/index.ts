@@ -19,7 +19,7 @@ const shiftTypeDefaults = async (req: NextApiRequest, res: NextApiResponse) => {
           shift_name,
           shift_name_id
         FROM op_shift_name
-        ORDER BY shift_name`
+        ORDER BY shift_name COLLATE utf8mb4_general_ci`
       );
       const resTypeList = dbTypeList.map(({ shift_name, shift_name_id }) => {
         const resTypeItem: IResShiftTypeItem = {
@@ -35,7 +35,7 @@ const shiftTypeDefaults = async (req: NextApiRequest, res: NextApiResponse) => {
           shift_category,
           shift_category_id
         FROM op_shift_category
-        ORDER BY shift_category`
+        ORDER BY shift_category COLLATE utf8mb4_general_ci`
       );
       const resCategoryList: IResShiftTypeCategoryItem[] = dbCategoryList.map(
         ({ shift_category, shift_category_id }) => {
@@ -64,7 +64,7 @@ const shiftTypeDefaults = async (req: NextApiRequest, res: NextApiResponse) => {
         ON r.role_id=pt.role_id
         LEFT JOIN op_shift_category AS sc
         ON sc.shift_category_id=pt.prerequisite_id
-        ORDER BY pt.position`
+        ORDER BY pt.position COLLATE utf8mb4_general_ci`
       );
       const resPositionList: IResShiftTypePositionItem[] = dbPositionList.map(
         ({

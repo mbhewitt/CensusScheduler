@@ -6,15 +6,15 @@ import {
   MoreHoriz as MoreHorizIcon,
   PersonAddAlt1 as PersonAddAlt1Icon,
   PersonRemove as PersonRemoveIcon,
-  SpeakerNotes as SpeakerNotesIcon,
-  SpeakerNotesOff as SpeakerNotesOffIcon,
-  Work as WorkIcon,
+  Reviews as ReviewsIcon,
+  WorkHistory as WorkHistoryIcon,
 } from "@mui/icons-material";
 import {
   Box,
   Button,
   Card,
   CardContent,
+  Checkbox,
   Container,
   Divider,
   Grid2 as Grid,
@@ -24,7 +24,6 @@ import {
   MenuItem,
   MenuList,
   Stack,
-  Switch,
   Typography,
 } from "@mui/material";
 import dayjs from "dayjs";
@@ -45,7 +44,7 @@ import { Loading } from "@/components/general/Loading";
 import { MoreMenu } from "@/components/general/MoreMenu";
 import { SnackbarText } from "@/components/general/SnackbarText";
 import { Hero } from "@/components/layout/Hero";
-import type { IReqSwitchValues, ISwitchValues } from "@/components/types";
+import type { ICheckboxValues, IReqCheckboxValues } from "@/components/types";
 import type {
   IResShiftPositionCountItem,
   IResShiftVolunteerInformation,
@@ -284,8 +283,8 @@ export const ShiftVolunteers = ({
   const handleCheckInToggle = async ({
     shift: { positionName, timePositionId },
     volunteer: { isCheckedIn, playaName, shiftboardId, worldName },
-  }: ISwitchValues) => {
-    const body: IReqSwitchValues = {
+  }: ICheckboxValues) => {
+    const body: IReqCheckboxValues = {
       isCheckedIn,
       shiftboardId,
       timePositionId,
@@ -388,6 +387,10 @@ export const ShiftVolunteers = ({
     filter: false,
     pagination: false,
     search: false,
+    sortOrder: {
+      direction: "asc" as const,
+      name: "Name",
+    },
   };
 
   // prepare datatable volunteers
@@ -451,7 +454,7 @@ export const ShiftVolunteers = ({
         playaName,
         worldName,
         positionName,
-        <Switch
+        <Checkbox
           checked={isCheckedIn === ""}
           disabled={!isCheckInAvailable}
           onChange={(event) =>
@@ -468,7 +471,7 @@ export const ShiftVolunteers = ({
               },
             })
           }
-          key={`${shiftboardId}-switch`}
+          key={`${shiftboardId}-checkbox`}
         />,
         // if volunteer is admin
         // then display volunteer shift review and volunteer menu
@@ -493,9 +496,9 @@ export const ShiftVolunteers = ({
             }}
           >
             {rating ? (
-              <SpeakerNotesIcon color="primary" />
+              <ReviewsIcon color="primary" />
             ) : (
-              <SpeakerNotesOffIcon color="disabled" />
+              <ReviewsIcon color="disabled" />
             )}
           </IconButton>
         ),
@@ -544,7 +547,12 @@ export const ShiftVolunteers = ({
       ];
     }
   );
-  const optionListCustomVolunteers = {};
+  const optionListCustomVolunteers = {
+    sortOrder: {
+      direction: "asc" as const,
+      name: "Playa name",
+    },
+  };
 
   // render
   // ------------------------------------------------------------
@@ -567,7 +575,7 @@ export const ShiftVolunteers = ({
                   display: "flex",
                 }}
               >
-                <WorkIcon sx={{ mr: 0.5 }} />
+                <WorkHistoryIcon sx={{ mr: 0.5 }} />
                 Shifts
               </Typography>
             </Link>

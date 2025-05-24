@@ -358,14 +358,13 @@ export const ShiftTypesForm = ({
                   control={control}
                   name="information.category.name"
                   render={({ field }) => (
-                    <FormControl fullWidth variant="standard">
-                      <InputLabel id="category">Category *</InputLabel>
+                    <FormControl fullWidth required variant="standard">
+                      <InputLabel id="category">Category</InputLabel>
                       <Select
                         {...field}
                         error={Boolean(errors.information?.category?.name)}
-                        label="Category"
+                        label="Category *"
                         labelId="category"
-                        required
                       >
                         {dataDefaults.categoryList.map(
                           ({ id, name }: IResShiftTypeCategoryItem) => (
@@ -872,12 +871,7 @@ export const ShiftTypesForm = ({
                         render={({ field }) => (
                           <FormControl fullWidth required variant="standard">
                             <InputLabel id="meal">Meal</InputLabel>
-                            <Select
-                              {...field}
-                              label="Meal *"
-                              labelId="meal"
-                              required
-                            >
+                            <Select {...field} label="Meal *" labelId="meal">
                               {MEAL_LIST.map((mealItem) => (
                                 <MenuItem key={`${mealItem}`} value={mealItem}>
                                   {mealItem}

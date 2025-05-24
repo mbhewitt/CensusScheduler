@@ -5,7 +5,7 @@ import {
   Groups3 as Groups3Icon,
   LockReset as LockResetIcon,
   ManageAccounts as ManageAccountsIcon,
-  SpeakerNotes as SpeakerNotesIcon,
+  RateReview as RateReviewIcon,
   VerifiedUser as VerifiedUserIcon,
 } from "@mui/icons-material";
 import {
@@ -44,6 +44,10 @@ import type {
   IResVolunteerAccount,
   IResVolunteerRoleItem,
 } from "@/components/types/volunteers";
+import {
+  HELPER_TEXT_EMERGENCY_CONTACT,
+  HELPER_TEXT_LOCATION,
+} from "@/constants";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
 import { checkIsAdmin } from "@/utils/checkIsRoleExist";
@@ -329,6 +333,7 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
                         <TextField
                           {...field}
                           fullWidth
+                          helperText={HELPER_TEXT_LOCATION}
                           label="Location"
                           variant="standard"
                         />
@@ -343,6 +348,7 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
                         <TextField
                           {...field}
                           fullWidth
+                          helperText={HELPER_TEXT_EMERGENCY_CONTACT}
                           label="Emergency contact"
                           variant="standard"
                         />
@@ -454,7 +460,7 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
                             isMutating ? (
                               <CircularProgress size="1rem" />
                             ) : (
-                              <SpeakerNotesIcon />
+                              <RateReviewIcon />
                             )
                           }
                           sx={{ mt: 2 }}

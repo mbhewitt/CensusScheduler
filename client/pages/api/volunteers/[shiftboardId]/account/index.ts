@@ -24,7 +24,8 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         ON r.role_id=vr.role_id
         AND vr.remove_role=false
         AND vr.shiftboard_id=?
-        WHERE r.display=true`,
+        WHERE r.display=true
+        ORDER BY r.role COLLATE utf8mb4_general_ci`,
         [shiftboardId]
       );
       const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
@@ -41,7 +42,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         FROM op_volunteers
         WHERE delete_volunteer=false
         AND shiftboard_id=?
-        ORDER BY playa_name`,
+        ORDER BY playa_name COLLATE utf8mb4_general_ci`,
         [shiftboardId]
       );
       const resRoleList = dbRoleList.map(({ role, role_id }) => ({

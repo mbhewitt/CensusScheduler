@@ -20,7 +20,7 @@ const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
           position
         FROM op_position_type AS pt
         WHERE delete_position=false
-        ORDER BY position`
+        ORDER BY position COLLATE utf8mb4_general_ci`
       );
       const resShiftPositionList = dbShiftPositionList.map(
         ({ position_type_id, position }) => {

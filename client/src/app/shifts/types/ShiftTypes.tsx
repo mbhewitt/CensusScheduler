@@ -143,7 +143,12 @@ export const ShiftTypes = () => {
       ];
     }
   );
-  const optionListCustom = {};
+  const optionListCustom = {
+    sortOrder: {
+      direction: "asc" as const,
+      name: "Name",
+    },
+  };
 
   // render
   // ------------------------------------------------------------

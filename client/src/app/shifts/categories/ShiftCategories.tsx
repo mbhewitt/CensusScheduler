@@ -183,7 +183,12 @@ export const ShiftCategories = () => {
       ];
     }
   );
-  const optionListCustom = {};
+  const optionListCustom = {
+    sortOrder: {
+      direction: "asc" as const,
+      name: "Name",
+    },
+  };
 
   // render
   // ------------------------------------------------------------

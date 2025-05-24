@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  SpeakerNotes as SpeakerNotesIcon,
-  SpeakerNotesOff as SpeakerNotesOffIcon,
-} from "@mui/icons-material";
+import { Reviews as ReviewsIcon } from "@mui/icons-material";
 import {
   Box,
   Card,
@@ -211,9 +208,9 @@ export const Volunteers = () => {
           <Typography sx={{ color: grey[500], fontSize: "14px" }}>0</Typography>
         ),
         isNotes ? (
-          <SpeakerNotesIcon color="primary" />
+          <ReviewsIcon color="primary" />
         ) : (
-          <SpeakerNotesOffIcon color="disabled" />
+          <ReviewsIcon color="disabled" />
         ),
       ];
     }
@@ -229,6 +226,10 @@ export const Volunteers = () => {
           cursor: "pointer",
         },
       };
+    },
+    sortOrder: {
+      direction: "asc" as const,
+      name: "Playa name",
     },
   };
 

@@ -1,10 +1,10 @@
 import { RestartAlt as RestartAltIcon } from "@mui/icons-material";
 import {
   Button,
+  Checkbox,
   FormControlLabel,
   FormGroup,
   Grid2 as Grid,
-  Switch,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useContext } from "react";
@@ -54,11 +54,11 @@ export const DeveloperMode = () => {
   // ------------------------------------------------------------
   return (
     <Grid container>
-      <Grid size={12}>
+      <Grid size={6}>
         <FormGroup>
           <FormControlLabel
             control={
-              <Switch
+              <Checkbox
                 checked={isAccountTypeEnabled}
                 color="secondary"
                 onChange={(event) => {
@@ -86,7 +86,7 @@ export const DeveloperMode = () => {
           />
           <FormControlLabel
             control={
-              <Switch
+              <Checkbox
                 checked={isDateTimeEnabled}
                 color="secondary"
                 onChange={(event) => {
@@ -104,7 +104,7 @@ export const DeveloperMode = () => {
           />
           <FormControlLabel
             control={
-              <Switch
+              <Checkbox
                 checked={isDisableIdleEnabled}
                 color="secondary"
                 onChange={(event) => {

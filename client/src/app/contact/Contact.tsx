@@ -213,9 +213,9 @@ export const Contact = () => {
                     control={control}
                     name="to"
                     render={({ field }) => (
-                      <FormControl fullWidth variant="standard">
-                        <InputLabel id="to">To *</InputLabel>
-                        <Select {...field} label="To *" labelId="to" required>
+                      <FormControl fullWidth required variant="standard">
+                        <InputLabel id="to">To</InputLabel>
+                        <Select {...field} label="To *" labelId="to">
                           <MenuItem
                             key="Send me a reminder"
                             value="Send me a reminder"

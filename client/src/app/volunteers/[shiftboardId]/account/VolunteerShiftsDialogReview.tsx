@@ -1,6 +1,6 @@
 import {
   Close as CloseIcon,
-  SpeakerNotes as SpeakerNotesIcon,
+  RateReview as RateReviewIcon,
 } from "@mui/icons-material";
 import {
   Button,
@@ -209,11 +209,7 @@ export const VolunteerShiftsDialogReview = ({
           <Button
             disabled={isMutating}
             startIcon={
-              isMutating ? (
-                <CircularProgress size="1rem" />
-              ) : (
-                <SpeakerNotesIcon />
-              )
+              isMutating ? <CircularProgress size="1rem" /> : <RateReviewIcon />
             }
             type="submit"
             variant="contained"
