@@ -3,8 +3,7 @@ import {
   EventBusy as EventBusyIcon,
   Groups3 as Groups3Icon,
   MoreHoriz as MoreHorizIcon,
-  SpeakerNotes as SpeakerNotesIcon,
-  SpeakerNotesOff as SpeakerNotesOffIcon,
+  Comment as CommentIcon,
 } from "@mui/icons-material";
 import {
   Button,
@@ -499,9 +498,9 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
             }}
           >
             {rating ? (
-              <SpeakerNotesIcon color="primary" />
+              <CommentIcon color="primary" />
             ) : (
-              <SpeakerNotesOffIcon color="disabled" />
+              <CommentIcon color="disabled" />
             )}
           </IconButton>
         ) : (

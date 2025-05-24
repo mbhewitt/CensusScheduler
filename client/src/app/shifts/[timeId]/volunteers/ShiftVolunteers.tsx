@@ -6,8 +6,7 @@ import {
   MoreHoriz as MoreHorizIcon,
   PersonAddAlt1 as PersonAddAlt1Icon,
   PersonRemove as PersonRemoveIcon,
-  SpeakerNotes as SpeakerNotesIcon,
-  SpeakerNotesOff as SpeakerNotesOffIcon,
+  Comment as CommentIcon,
   Work as WorkIcon,
 } from "@mui/icons-material";
 import {
@@ -497,9 +496,9 @@ export const ShiftVolunteers = ({
             }}
           >
             {rating ? (
-              <SpeakerNotesIcon color="primary" />
+              <CommentIcon color="primary" />
             ) : (
-              <SpeakerNotesOffIcon color="disabled" />
+              <CommentIcon color="disabled" />
             )}
           </IconButton>
         ),

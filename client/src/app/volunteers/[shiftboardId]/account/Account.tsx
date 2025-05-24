@@ -5,7 +5,7 @@ import {
   Groups3 as Groups3Icon,
   LockReset as LockResetIcon,
   ManageAccounts as ManageAccountsIcon,
-  SpeakerNotes as SpeakerNotesIcon,
+  AddComment as AddCommentIcon,
   VerifiedUser as VerifiedUserIcon,
 } from "@mui/icons-material";
 import {
@@ -460,7 +460,7 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
                             isMutating ? (
                               <CircularProgress size="1rem" />
                             ) : (
-                              <SpeakerNotesIcon />
+                              <AddCommentIcon />
                             )
                           }
                           sx={{ mt: 2 }}

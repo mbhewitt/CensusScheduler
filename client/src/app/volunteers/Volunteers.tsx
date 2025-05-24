@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  SpeakerNotes as SpeakerNotesIcon,
-  SpeakerNotesOff as SpeakerNotesOffIcon,
-} from "@mui/icons-material";
+import { Comment as CommentIcon } from "@mui/icons-material";
 import {
   Box,
   Card,
@@ -211,9 +208,9 @@ export const Volunteers = () => {
           <Typography sx={{ color: grey[500], fontSize: "14px" }}>0</Typography>
         ),
         isNotes ? (
-          <SpeakerNotesIcon color="primary" />
+          <CommentIcon color="primary" />
         ) : (
-          <SpeakerNotesOffIcon color="disabled" />
+          <CommentIcon color="disabled" />
         ),
       ];
     }
