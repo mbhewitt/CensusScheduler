@@ -2,10 +2,10 @@
 
 import {
   AccountCircle as AccountCircleIcon,
+  AddComment as AddCommentIcon,
   Groups3 as Groups3Icon,
   LockReset as LockResetIcon,
   ManageAccounts as ManageAccountsIcon,
-  AddComment as AddCommentIcon,
   VerifiedUser as VerifiedUserIcon,
 } from "@mui/icons-material";
 import {
@@ -44,14 +44,14 @@ import type {
   IResVolunteerAccount,
   IResVolunteerRoleItem,
 } from "@/components/types/volunteers";
-import { DeveloperModeContext } from "@/state/developer-mode/context";
-import { SessionContext } from "@/state/session/context";
-import { checkIsAdmin } from "@/utils/checkIsRoleExist";
-import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 import {
   HELPER_TEXT_EMERGENCY_CONTACT,
   HELPER_TEXT_LOCATION,
 } from "@/constants";
+import { DeveloperModeContext } from "@/state/developer-mode/context";
+import { SessionContext } from "@/state/session/context";
+import { checkIsAdmin } from "@/utils/checkIsRoleExist";
+import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 
 interface IAccountProps {
   shiftboardId: number;

@@ -1,6 +1,6 @@
 // general
 // ------------------------------------------------------------
-export interface ISwitchValues {
+export interface ICheckboxValues {
   shift: {
     positionName: string;
     timePositionId: number;
@@ -19,7 +19,7 @@ export interface IReqReviewValues {
   timePositionId: number;
   updateType: string;
 }
-export interface IReqSwitchValues {
+export interface IReqCheckboxValues {
   isCheckedIn: boolean;
   shiftboardId: number;
   timePositionId: number;

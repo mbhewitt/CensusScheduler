@@ -10,13 +10,13 @@ import {
 import {
   Box,
   Button,
+  Checkbox,
   Container,
   ListItemIcon,
   ListItemText,
   MenuItem,
   MenuList,
   Stack,
-  Switch,
 } from "@mui/material";
 import axios from "axios";
 import Link from "next/link";
@@ -167,7 +167,7 @@ export const Roles = () => {
     ) {
       return [
         name,
-        <Switch disabled checked={display} key={`${id}-switch`} />,
+        <Checkbox disabled checked={display} key={`${id}-checkbox`} />,
         <MoreMenu
           Icon={<MoreHorizIcon />}
           key={`${id}-menu`}
@@ -190,7 +190,7 @@ export const Roles = () => {
     // else display normal row
     return [
       name,
-      <Switch
+      <Checkbox
         checked={display}
         onChange={(event) =>
           handleDisplayToggle({
@@ -199,7 +199,7 @@ export const Roles = () => {
             name,
           })
         }
-        key={`${id}-switch`}
+        key={`${id}-checkbox`}
       />,
       <MoreMenu
         Icon={<MoreHorizIcon />}
