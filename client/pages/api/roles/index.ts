@@ -18,7 +18,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
           role_id
         FROM op_roles
         WHERE delete_role=false
-        ORDER BY role`
+        ORDER BY role COLLATE utf8mb4_general_ci`
       );
       const resRoleList = dbRoleList.map(({ display, role, role_id }) => {
         const resRoleItem: IResRoleRowItem = {

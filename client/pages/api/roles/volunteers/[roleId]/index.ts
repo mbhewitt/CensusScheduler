@@ -27,7 +27,7 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         ON r.role_id=vr.role_id
         AND r.role_id=?
         WHERE vr.remove_role=false
-        ORDER BY v.playa_name`,
+        ORDER BY v.playa_name COLLATE utf8mb4_general_ci`,
         [roleId]
       );
       const resRoleVolunteerList = dbRoleVolunteerList.map(

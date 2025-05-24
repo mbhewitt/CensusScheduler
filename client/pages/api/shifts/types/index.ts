@@ -80,7 +80,7 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
         LEFT JOIN op_shift_category as sc
         ON sc.shift_category_id=sn.shift_category_id
         WHERE delete_shift=false
-        ORDER BY shift_name`
+        ORDER BY shift_name COLLATE utf8mb4_general_ci`
       );
       const resTypeList = dbTypeList.map(
         ({ shift_category, shift_name, shift_name_id }) => {

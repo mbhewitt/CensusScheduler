@@ -50,7 +50,8 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         AND pt.position_type_id=stp.position_type_id
         WHERE st.remove_shift_time=false
         AND st.shift_times_id=?
-        ORDER BY pt.position`,
+        ORDER BY pt.position
+        COLLATE utf8mb4_general_ci`,
         [timeId]
       );
       const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
@@ -76,7 +77,9 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         ON v.delete_volunteer=false
         AND v.shiftboard_id=vs.shiftboard_id
         WHERE vs.remove_shift=false
-        ORDER BY v.playa_name`,
+        ORDER BY
+          v.playa_name COLLATE utf8mb4_general_ci,
+          v.world_name COLLATE utf8mb4_general_ci`,
         [timeId]
       );
       const [resShiftPositionFirst] = dbShiftPositionList;

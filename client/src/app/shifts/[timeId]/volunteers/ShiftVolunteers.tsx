@@ -388,6 +388,10 @@ export const ShiftVolunteers = ({
     filter: false,
     pagination: false,
     search: false,
+    sortOrder: {
+      direction: "asc" as const,
+      name: "Name",
+    },
   };
 
   // prepare datatable volunteers
@@ -544,7 +548,12 @@ export const ShiftVolunteers = ({
       ];
     }
   );
-  const optionListCustomVolunteers = {};
+  const optionListCustomVolunteers = {
+    sortOrder: {
+      direction: "asc" as const,
+      name: "Playa name",
+    },
+  };
 
   // render
   // ------------------------------------------------------------

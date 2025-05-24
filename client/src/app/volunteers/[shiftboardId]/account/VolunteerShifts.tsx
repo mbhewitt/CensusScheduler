@@ -527,6 +527,10 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
         },
       };
     },
+    sortOrder: {
+      direction: "asc" as const,
+      name: "Date",
+    },
   };
 
   // render

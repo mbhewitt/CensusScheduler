@@ -284,6 +284,10 @@ export const Shifts = () => {
       };
     },
     sortFilterList: false,
+    sortOrder: {
+      direction: "asc" as const,
+      name: "Date",
+    },
   };
 
   // render

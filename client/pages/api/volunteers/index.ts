@@ -20,7 +20,9 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         FROM op_volunteers AS v
         LEFT JOIN op_volunteer_shifts AS vs
         ON vs.shiftboard_id=v.shiftboard_id
-        ORDER BY v.playa_name, v.world_name`
+        ORDER BY
+          v.playa_name COLLATE utf8mb4_general_ci,
+          v.world_name COLLATE utf8mb4_general_ci`
       );
       const resVolunteerList: IResVolunteerShiftCountItem[] = [];
 

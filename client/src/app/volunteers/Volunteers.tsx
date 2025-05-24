@@ -230,6 +230,10 @@ export const Volunteers = () => {
         },
       };
     },
+    sortOrder: {
+      direction: "asc" as const,
+      name: "Playa name",
+    },
   };
 
   // render
