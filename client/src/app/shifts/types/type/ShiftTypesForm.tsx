@@ -126,14 +126,23 @@ export const processInformation = (
 };
 export const processTimeList = (formValues: IFormValues) => {
   return formValues.timeList.map(
-    ({ endTime, instance, meal, notes, positionList, startTime, timeId }) => {
+    ({
+      date,
+      endTime,
+      instance,
+      meal,
+      notes,
+      positionList,
+      startTime,
+      timeId,
+    }) => {
       return {
-        endTime: dayjs(endTime).format("YYYY-MM-DD HH:mm"),
+        endTime: `${dayjs(date).format("YYYY-MM-DD")} ${dayjs(endTime).format("HH:mm")}`,
         instance,
         meal,
         notes,
         positionList,
-        startTime: dayjs(startTime).format("YYYY-MM-DD HH:mm"),
+        startTime: `${dayjs(date).format("YYYY-MM-DD")} ${dayjs(startTime).format("HH:mm")}`,
         timeId,
       };
     }
@@ -673,14 +682,18 @@ export const ShiftTypesForm = ({
                       <Controller
                         control={control}
                         name={`timeList.${timeIndex}.date`}
-                        render={({ field: { value } }) => (
+                        render={({ field: { onChange, value } }) => (
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker
-                              disabled
                               label="Date"
+                              onChange={(event) => {
+                                // update field
+                                onChange(event);
+                              }}
                               slotProps={{
                                 textField: {
                                   fullWidth: true,
+                                  required: true,
                                   variant: "standard",
                                 },
                               }}
@@ -694,15 +707,64 @@ export const ShiftTypesForm = ({
                       <Controller
                         control={control}
                         name={`timeList.${timeIndex}.startTime`}
-                        render={({ field: { value } }) => (
+                        render={({ field: { onChange, value } }) => (
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <TimePicker
                               ampm={false}
-                              disabled
                               label="Start time"
+                              onChange={(event) => {
+                                // update field
+                                onChange(event);
+
+                                // validate start time occurs before end time
+                                const startTimeCurrent =
+                                  dayjs(event).format("HH:mm");
+                                const endTimeCurrent = dayjs(
+                                  getValues(`timeList.${timeIndex}.endTime`)
+                                ).format("HH:mm");
+
+                                const dateCurrent =
+                                  dayjs().format("YYYY-MM-DD");
+                                const startDateTimeCurrent = `${dateCurrent} ${startTimeCurrent}`;
+                                const endDateTimeCurrent = `${dateCurrent} ${endTimeCurrent}`;
+
+                                if (event) {
+                                  if (
+                                    dayjs(startDateTimeCurrent).isSameOrAfter(
+                                      endDateTimeCurrent
+                                    )
+                                  ) {
+                                    setError(
+                                      `timeList.${timeIndex}.startTime`,
+                                      {
+                                        type: "custom",
+                                        message:
+                                          "Start time must occur before end time",
+                                      }
+                                    );
+                                  } else {
+                                    clearErrors(
+                                      `timeList.${timeIndex}.startTime`
+                                    );
+                                    clearErrors(
+                                      `timeList.${timeIndex}.endTime`
+                                    );
+                                  }
+                                }
+                              }}
                               slotProps={{
                                 textField: {
+                                  error:
+                                    errors.timeList &&
+                                    Boolean(
+                                      errors.timeList[timeIndex]?.startTime
+                                    ),
                                   fullWidth: true,
+                                  helperText:
+                                    errors.timeList &&
+                                    errors.timeList[timeIndex]?.startTime
+                                      ?.message,
+                                  required: true,
                                   variant: "standard",
                                 },
                               }}
@@ -716,15 +778,61 @@ export const ShiftTypesForm = ({
                       <Controller
                         control={control}
                         name={`timeList.${timeIndex}.endTime`}
-                        render={({ field: { value } }) => (
+                        render={({ field: { onChange, value } }) => (
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <TimePicker
                               ampm={false}
-                              disabled
                               label="End time"
+                              onChange={(event) => {
+                                // update field
+                                onChange(event);
+
+                                // validate end time occurs after start time
+                                const endTimeCurrent =
+                                  dayjs(event).format("HH:mm");
+                                const startTimeCurrent = dayjs(
+                                  getValues(`timeList.${timeIndex}.startTime`)
+                                ).format("HH:mm");
+
+                                const dateCurrent =
+                                  dayjs().format("YYYY-MM-DD");
+                                const endDateTimeCurrent = `${dateCurrent} ${endTimeCurrent}`;
+                                const startDateTimeCurrent = `${dateCurrent} ${startTimeCurrent}`;
+
+                                if (event) {
+                                  if (
+                                    dayjs(endDateTimeCurrent).isSameOrBefore(
+                                      startDateTimeCurrent
+                                    )
+                                  ) {
+                                    setError(`timeList.${timeIndex}.endTime`, {
+                                      type: "custom",
+                                      message:
+                                        "End time must occur after start time",
+                                    });
+                                  } else {
+                                    clearErrors(
+                                      `timeList.${timeIndex}.endTime`
+                                    );
+                                    clearErrors(
+                                      `timeList.${timeIndex}.startTime`
+                                    );
+                                  }
+                                }
+                              }}
                               slotProps={{
                                 textField: {
+                                  error:
+                                    errors.timeList &&
+                                    Boolean(
+                                      errors.timeList[timeIndex]?.endTime
+                                    ),
                                   fullWidth: true,
+                                  helperText:
+                                    errors.timeList &&
+                                    errors.timeList[timeIndex]?.endTime
+                                      ?.message,
+                                  required: true,
                                   variant: "standard",
                                 },
                               }}
