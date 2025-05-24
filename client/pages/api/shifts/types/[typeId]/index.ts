@@ -280,7 +280,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
             AND start_time=?`,
             [endTime, startTime]
           );
-          const dbTimeFirst = dbTime[0];
+          const [dbTimeFirst] = dbTime;
           dbTimeIdExist = dbTimeFirst?.shift_times_id;
 
           if (dbTimeFirst) {
@@ -394,7 +394,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
             AND position_type_id=?`,
             [dbTimeIdExist || timeId, positionId]
           );
-          const dbTimePositionFirst = dbTimePosition[0];
+          const [dbTimePositionFirst] = dbTimePosition;
 
           // if time position exists already
           // then update add_time_position and remove_time_position fields
