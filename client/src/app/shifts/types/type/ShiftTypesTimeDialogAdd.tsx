@@ -126,18 +126,20 @@ export const ShiftTypesTimeDialogAdd = ({
                     onChange(event);
 
                     // validate start time occurs before end time
-                    const startTimeActive = dayjs(event).format("HH:mm");
-                    const endTimeActive = dayjs(
+                    const startTimeCurrent = dayjs(event).format("HH:mm");
+                    const endTimeCurrent = dayjs(
                       getValues("timeAdd.endTime")
                     ).format("HH:mm");
 
                     const dateCurrent = dayjs().format("YYYY-MM-DD");
-                    const startTimeCurrent = `${dateCurrent} ${startTimeActive}`;
-                    const endTimeCurrent = `${dateCurrent} ${endTimeActive}`;
+                    const startDateTimeCurrent = `${dateCurrent} ${startTimeCurrent}`;
+                    const endDateTimeCurrent = `${dateCurrent} ${endTimeCurrent}`;
 
                     if (event) {
                       if (
-                        dayjs(startTimeCurrent).isSameOrAfter(endTimeCurrent)
+                        dayjs(startDateTimeCurrent).isSameOrAfter(
+                          endDateTimeCurrent
+                        )
                       ) {
                         setError("timeAdd.startTime", {
                           type: "custom",
@@ -186,18 +188,20 @@ export const ShiftTypesTimeDialogAdd = ({
                     onChange(event);
 
                     // validate end time occurs after start time
-                    const endTimeActive = dayjs(event).format("HH:mm");
-                    const startTimeActive = dayjs(
+                    const endTimeCurrent = dayjs(event).format("HH:mm");
+                    const startTimeCurrent = dayjs(
                       getValues("timeAdd.startTime")
                     ).format("HH:mm");
 
                     const dateCurrent = dayjs().format("YYYY-MM-DD");
-                    const endTimeCurrent = `${dateCurrent} ${endTimeActive}`;
-                    const startTimeCurrent = `${dateCurrent} ${startTimeActive}`;
+                    const endDateTimeCurrent = `${dateCurrent} ${endTimeCurrent}`;
+                    const startDateTimeCurrent = `${dateCurrent} ${startTimeCurrent}`;
 
                     if (event) {
                       if (
-                        dayjs(endTimeCurrent).isSameOrBefore(startTimeCurrent)
+                        dayjs(endDateTimeCurrent).isSameOrBefore(
+                          startDateTimeCurrent
+                        )
                       ) {
                         setError("timeAdd.endTime", {
                           type: "custom",
