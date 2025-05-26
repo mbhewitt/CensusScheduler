@@ -7,7 +7,6 @@ import {
 } from "@mui/icons-material";
 import {
   Button,
-  Checkbox,
   Chip,
   IconButton,
   lighten,
@@ -16,6 +15,7 @@ import {
   MenuItem,
   MenuList,
   Stack,
+  Switch,
   Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -35,7 +35,7 @@ import { ErrorAlert } from "@/components/general/ErrorAlert";
 import { Loading } from "@/components/general/Loading";
 import { MoreMenu } from "@/components/general/MoreMenu";
 import { SnackbarText } from "@/components/general/SnackbarText";
-import type { ICheckboxValues, IReqCheckboxValues } from "@/components/types";
+import type { IReqSwitchValues, ISwitchValues } from "@/components/types";
 import type { IResVolunteerShiftItem } from "@/components/types/volunteers";
 import {
   REMOVE_SHIFT_VOLUNTEER_RES,
@@ -254,9 +254,9 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
   const handleCheckInToggle = async ({
     shift: { positionName, timePositionId },
     volunteer: { isCheckedIn, playaName, shiftboardId, worldName },
-  }: ICheckboxValues) => {
+  }: ISwitchValues) => {
     try {
-      const body: IReqCheckboxValues = {
+      const body: IReqSwitchValues = {
         isCheckedIn,
         shiftboardId,
         timePositionId,
@@ -453,7 +453,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
           label={positionName}
           sx={{ backgroundColor: colorMapDisplay[departmentName] }}
         />,
-        <Checkbox
+        <Switch
           checked={noShow === ""}
           disabled={!isCheckInAvailable}
           onChange={(event) =>
@@ -470,7 +470,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
               },
             })
           }
-          key={`${shiftboardId}-checkbox`}
+          key={`${shiftboardId}-volunteer-shift`}
         />,
 
         // if volunteer is admin

@@ -14,7 +14,6 @@ import {
   Button,
   Card,
   CardContent,
-  Checkbox,
   Container,
   Divider,
   Grid2 as Grid,
@@ -24,6 +23,7 @@ import {
   MenuItem,
   MenuList,
   Stack,
+  Switch,
   Typography,
 } from "@mui/material";
 import dayjs from "dayjs";
@@ -44,7 +44,7 @@ import { Loading } from "@/components/general/Loading";
 import { MoreMenu } from "@/components/general/MoreMenu";
 import { SnackbarText } from "@/components/general/SnackbarText";
 import { Hero } from "@/components/layout/Hero";
-import type { ICheckboxValues, IReqCheckboxValues } from "@/components/types";
+import type { IReqSwitchValues, ISwitchValues } from "@/components/types";
 import type {
   IResShiftPositionCountItem,
   IResShiftVolunteerInformation,
@@ -283,8 +283,8 @@ export const ShiftVolunteers = ({
   const handleCheckInToggle = async ({
     shift: { positionName, timePositionId },
     volunteer: { isCheckedIn, playaName, shiftboardId, worldName },
-  }: ICheckboxValues) => {
-    const body: IReqCheckboxValues = {
+  }: ISwitchValues) => {
+    const body: IReqSwitchValues = {
       isCheckedIn,
       shiftboardId,
       timePositionId,
@@ -454,7 +454,7 @@ export const ShiftVolunteers = ({
         playaName,
         worldName,
         positionName,
-        <Checkbox
+        <Switch
           checked={isCheckedIn === ""}
           disabled={!isCheckInAvailable}
           onChange={(event) =>
@@ -471,7 +471,7 @@ export const ShiftVolunteers = ({
               },
             })
           }
-          key={`${shiftboardId}-checkbox`}
+          key={`${shiftboardId}-shift-volunteer`}
         />,
         // if volunteer is admin
         // then display volunteer shift review and volunteer menu
