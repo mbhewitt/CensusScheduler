@@ -1,10 +1,10 @@
 import { RestartAlt as RestartAltIcon } from "@mui/icons-material";
 import {
   Button,
-  Switch,
   FormControlLabel,
   FormGroup,
   Grid2 as Grid,
+  Switch,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useContext } from "react";

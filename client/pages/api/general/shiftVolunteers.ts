@@ -2,7 +2,7 @@ import { RowDataPacket } from "mysql2";
 import { Pool } from "mysql2/promise";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import type { IReqCheckboxValues, IReqReviewValues } from "@/components/types";
+import type { IReqReviewValues, IReqSwitchValues } from "@/components/types";
 import { UPDATE_TYPE_CHECK_IN, UPDATE_TYPE_REVIEW } from "@/constants";
 
 export const shiftVolunteerUpdate = async (
@@ -15,7 +15,7 @@ export const shiftVolunteerUpdate = async (
   switch (updateType) {
     // patch - shift volunteer check-in
     case UPDATE_TYPE_CHECK_IN: {
-      const { isCheckedIn, shiftboardId, timePositionId }: IReqCheckboxValues =
+      const { isCheckedIn, shiftboardId, timePositionId }: IReqSwitchValues =
         JSON.parse(req.body);
 
       await pool.query<RowDataPacket[]>(
