@@ -1,7 +1,4 @@
-import {
-  Close as CloseIcon,
-  MoreTime as MoreTimeIcon,
-} from "@mui/icons-material";
+import { Close as CloseIcon, Edit as EditIcon } from "@mui/icons-material";
 import { Button, DialogActions } from "@mui/material";
 import { useEffect } from "react";
 import {
@@ -18,14 +15,14 @@ import { IFormValues, ITimeAddValues } from "@/app/shifts/types/type";
 import { ShiftTypesTimeDialogForm } from "@/app/shifts/types/type/ShiftTypesTimeDialogForm";
 import { DialogContainer } from "@/components/general/DialogContainer";
 
-interface IShiftTypesTimeDialogAddProps {
+interface IShiftTypesTimeDialogUpdateProps {
   clearErrors: UseFormClearErrors<IFormValues>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<IFormValues, any>;
   errors: FieldErrors<IFormValues>;
   getValues: UseFormGetValues<IFormValues>;
   handleDialogClose: () => void;
-  handleTimeAdd: (time: ITimeAddValues) => void;
+  handleTimeUpdate: (time: ITimeAddValues) => void;
   isDialogOpen: boolean;
   setError: UseFormSetError<IFormValues>;
   setValue: UseFormSetValue<IFormValues>;
@@ -38,20 +35,20 @@ interface IShiftTypesTimeDialogAddProps {
   >[];
 }
 
-export const ShiftTypesTimeDialogAdd = ({
+export const ShiftTypesTimeDialogUpdate = ({
   clearErrors,
   control,
   errors,
   getValues,
   handleDialogClose,
-  handleTimeAdd,
+  handleTimeUpdate,
   isDialogOpen,
   setError,
   setValue,
   timeFields,
   timeItem,
   timePositionListAddFields,
-}: IShiftTypesTimeDialogAddProps) => {
+}: IShiftTypesTimeDialogUpdateProps) => {
   // side effects
   // ------------------------------------------------------------
   useEffect(() => {
@@ -66,7 +63,7 @@ export const ShiftTypesTimeDialogAdd = ({
     <DialogContainer
       handleDialogClose={handleDialogClose}
       isDialogOpen={isDialogOpen}
-      text="Add time"
+      text="Update time"
     >
       <ShiftTypesTimeDialogForm
         clearErrors={clearErrors}
@@ -113,7 +110,10 @@ export const ShiftTypesTimeDialogAdd = ({
               });
             }
             timeFields.forEach((timeFieldItem) => {
-              if (timeFieldItem.instance === getValues("timeAdd.instance")) {
+              if (
+                timeFieldItem.instance === getValues("timeAdd.instance") &&
+                timeFieldItem.timeId !== getValues("timeAdd.timeId")
+              ) {
                 setError("timeAdd.instance", {
                   type: "required",
                   message: "Instance must be unique",
@@ -121,37 +121,15 @@ export const ShiftTypesTimeDialogAdd = ({
               }
             });
             if (!errors.timeAdd) {
-              const positionListNew = getValues("timeAdd.positionList").map(
-                ({ alias, name, positionId, sapPoints, slots }) => {
-                  return {
-                    alias,
-                    name,
-                    positionId,
-                    sapPoints,
-                    slots,
-                    timePositionId: 0,
-                  };
-                }
-              );
-
-              handleTimeAdd({
-                date: getValues("timeAdd.date"),
-                endTime: getValues("timeAdd.endTime"),
-                instance: getValues("timeAdd.instance"),
-                meal: getValues("timeAdd.meal"),
-                notes: getValues("timeAdd.notes"),
-                positionList: positionListNew,
-                startTime: getValues("timeAdd.startTime"),
-                timeId: 0,
-              });
+              handleTimeUpdate(getValues("timeAdd"));
               handleDialogClose();
             }
           }}
-          startIcon={<MoreTimeIcon />}
+          startIcon={<EditIcon />}
           type="button"
           variant="contained"
         >
-          Add time
+          Update time
         </Button>
       </DialogActions>
     </DialogContainer>

@@ -1,5 +1,6 @@
 import {
   Close as CloseIcon,
+  Edit as EditIcon,
   GroupAdd as GroupAddIcon,
   MoreTime as MoreTimeIcon,
 } from "@mui/icons-material";
@@ -52,6 +53,7 @@ import {
 } from "@/app/shifts/types/type";
 import { ShiftTypesPositionDialogAdd } from "@/app/shifts/types/type/ShiftTypesPositionDialogAdd";
 import { ShiftTypesTimeDialogAdd } from "@/app/shifts/types/type/ShiftTypesTimeDialogAdd";
+import { ShiftTypesTimeDialogUpdate } from "@/app/shifts/types/type/ShiftTypesTimeDialogUpdate";
 import { SnackbarText } from "@/components/general/SnackbarText";
 import type {
   IResShiftTypeCategoryItem,
@@ -66,6 +68,7 @@ dayjs.extend(utc);
 enum DialogList {
   PositionAdd,
   TimeAdd,
+  TimeUpdate,
 }
 
 interface IShiftTypesFormProps {
@@ -180,6 +183,7 @@ export const defaultValues: IFormValues = {
     notes: "",
     positionList: [],
     startTime: "",
+    timeId: 0,
   },
   timeList: [],
 };
@@ -204,8 +208,36 @@ export const ShiftTypesForm = ({
 }: IShiftTypesFormProps) => {
   // state
   // ------------------------------------------------------------
-  const [dialogCurrent, setDialogCurrent] = useState({
+  const [dialogCurrent, setDialogCurrent] = useState<{
+    dialogItem: number;
+    positionItem: IPositionAddValues;
+    timeItem: ITimeAddValues;
+  }>({
     dialogItem: 0,
+    positionItem: {
+      alias: "",
+      critical: false,
+      details: "",
+      endTimeOffset: "",
+      lead: false,
+      name: "",
+      positionId: 0,
+      prerequisite: "",
+      role: "",
+      sapPoints: 1,
+      slots: 1,
+      startTimeOffset: "",
+    },
+    timeItem: {
+      date: "",
+      endTime: "",
+      instance: "",
+      meal: "None",
+      notes: "",
+      positionList: [],
+      startTime: "",
+      timeId: 0,
+    },
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -227,11 +259,11 @@ export const ShiftTypesForm = ({
     );
 
     if (positionFound) {
-      const timeFieldsNew = structuredClone(timeFields);
+      const timeFieldsMutate = structuredClone(timeFields);
       const timePositionListAddNew = structuredClone(timePositionListAddFields);
 
-      positionAppend(positionFound);
-      timeFieldsNew.forEach((timeFieldsItem) => {
+      positionAppend({ ...positionFound, alias: "", sapPoints: 1, slots: 1 });
+      timeFieldsMutate.forEach((timeFieldsItem) => {
         timeFieldsItem.positionList.push({
           alias,
           name,
@@ -241,7 +273,7 @@ export const ShiftTypesForm = ({
           timePositionId: 0,
         });
       });
-      timeReplace(timeFieldsNew);
+      timeReplace(timeFieldsMutate);
       timePositionListAddNew.push({
         alias: positionFound.name,
         id: "0",
@@ -249,6 +281,7 @@ export const ShiftTypesForm = ({
         positionId: positionFound.positionId,
         sapPoints: 1,
         slots: 1,
+        timePositionId: 0,
       });
       timePositionListAddReplace(timePositionListAddNew);
 
@@ -293,6 +326,30 @@ export const ShiftTypesForm = ({
           {startTimeNew}-{endTimeNew}
         </strong>{" "}
         time has been added
+      </SnackbarText>,
+      {
+        variant: "success",
+      }
+    );
+  };
+  const handleTimeUpdate = (timeItem: ITimeAddValues) => {
+    const timeFieldsMutate = structuredClone(timeFields);
+    const timeFieldsNew = timeFieldsMutate.map((timeFieldsItem) => {
+      if (timeFieldsItem.timeId === timeItem.timeId) {
+        return timeItem;
+      }
+
+      return timeFieldsItem;
+    });
+
+    timeReplace(timeFieldsNew);
+    enqueueSnackbar(
+      <SnackbarText>
+        <strong>{formatDateName(timeItem.date)}</strong> at{" "}
+        <strong>
+          {`${dayjs(timeItem.startTime).format("HH:mm")}-${dayjs(timeItem.endTime).format("HH:mm")}`}
+        </strong>{" "}
+        time has been updated
       </SnackbarText>,
       {
         variant: "success",
@@ -460,6 +517,11 @@ export const ShiftTypesForm = ({
             onClick={() => {
               setDialogCurrent({
                 dialogItem: DialogList.PositionAdd,
+                positionItem: defaultValues.positionAdd,
+                timeItem: {
+                  ...defaultValues.timeAdd,
+                  positionList: timePositionListAddFields,
+                },
               });
               setIsDialogOpen(true);
             }}
@@ -654,6 +716,11 @@ export const ShiftTypesForm = ({
             onClick={() => {
               setDialogCurrent({
                 dialogItem: DialogList.TimeAdd,
+                positionItem: defaultValues.positionAdd,
+                timeItem: {
+                  ...defaultValues.timeAdd,
+                  positionList: timePositionListAddFields,
+                },
               });
               setIsDialogOpen(true);
             }}
@@ -681,14 +748,11 @@ export const ShiftTypesForm = ({
                       <Controller
                         control={control}
                         name={`timeList.${timeIndex}.date`}
-                        render={({ field: { onChange, value } }) => (
+                        render={({ field: { value } }) => (
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker
+                              disabled
                               label="Date"
-                              onChange={(event) => {
-                                // update field
-                                onChange(event);
-                              }}
                               slotProps={{
                                 textField: {
                                   fullWidth: true,
@@ -706,63 +770,15 @@ export const ShiftTypesForm = ({
                       <Controller
                         control={control}
                         name={`timeList.${timeIndex}.startTime`}
-                        render={({ field: { onChange, value } }) => (
+                        render={({ field: { value } }) => (
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <TimePicker
                               ampm={false}
+                              disabled
                               label="Start time"
-                              onChange={(event) => {
-                                // update field
-                                onChange(event);
-
-                                // validate start time occurs before end time
-                                const startTimeCurrent =
-                                  dayjs(event).format("HH:mm");
-                                const endTimeCurrent = dayjs(
-                                  getValues(`timeList.${timeIndex}.endTime`)
-                                ).format("HH:mm");
-
-                                const dateCurrent =
-                                  dayjs().format("YYYY-MM-DD");
-                                const startDateTimeCurrent = `${dateCurrent} ${startTimeCurrent}`;
-                                const endDateTimeCurrent = `${dateCurrent} ${endTimeCurrent}`;
-
-                                if (event) {
-                                  if (
-                                    dayjs(startDateTimeCurrent).isSameOrAfter(
-                                      endDateTimeCurrent
-                                    )
-                                  ) {
-                                    setError(
-                                      `timeList.${timeIndex}.startTime`,
-                                      {
-                                        type: "custom",
-                                        message:
-                                          "Start time must occur before end time",
-                                      }
-                                    );
-                                  } else {
-                                    clearErrors(
-                                      `timeList.${timeIndex}.startTime`
-                                    );
-                                    clearErrors(
-                                      `timeList.${timeIndex}.endTime`
-                                    );
-                                  }
-                                }
-                              }}
                               slotProps={{
                                 textField: {
-                                  error:
-                                    errors.timeList &&
-                                    Boolean(
-                                      errors.timeList[timeIndex]?.startTime
-                                    ),
                                   fullWidth: true,
-                                  helperText:
-                                    errors.timeList &&
-                                    errors.timeList[timeIndex]?.startTime
-                                      ?.message,
                                   required: true,
                                   variant: "standard",
                                 },
@@ -777,60 +793,15 @@ export const ShiftTypesForm = ({
                       <Controller
                         control={control}
                         name={`timeList.${timeIndex}.endTime`}
-                        render={({ field: { onChange, value } }) => (
+                        render={({ field: { value } }) => (
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <TimePicker
                               ampm={false}
+                              disabled
                               label="End time"
-                              onChange={(event) => {
-                                // update field
-                                onChange(event);
-
-                                // validate end time occurs after start time
-                                const endTimeCurrent =
-                                  dayjs(event).format("HH:mm");
-                                const startTimeCurrent = dayjs(
-                                  getValues(`timeList.${timeIndex}.startTime`)
-                                ).format("HH:mm");
-
-                                const dateCurrent =
-                                  dayjs().format("YYYY-MM-DD");
-                                const endDateTimeCurrent = `${dateCurrent} ${endTimeCurrent}`;
-                                const startDateTimeCurrent = `${dateCurrent} ${startTimeCurrent}`;
-
-                                if (event) {
-                                  if (
-                                    dayjs(endDateTimeCurrent).isSameOrBefore(
-                                      startDateTimeCurrent
-                                    )
-                                  ) {
-                                    setError(`timeList.${timeIndex}.endTime`, {
-                                      type: "custom",
-                                      message:
-                                        "End time must occur after start time",
-                                    });
-                                  } else {
-                                    clearErrors(
-                                      `timeList.${timeIndex}.endTime`
-                                    );
-                                    clearErrors(
-                                      `timeList.${timeIndex}.startTime`
-                                    );
-                                  }
-                                }
-                              }}
                               slotProps={{
                                 textField: {
-                                  error:
-                                    errors.timeList &&
-                                    Boolean(
-                                      errors.timeList[timeIndex]?.endTime
-                                    ),
                                   fullWidth: true,
-                                  helperText:
-                                    errors.timeList &&
-                                    errors.timeList[timeIndex]?.endTime
-                                      ?.message,
                                   required: true,
                                   variant: "standard",
                                 },
@@ -849,6 +820,18 @@ export const ShiftTypesForm = ({
                       }}
                       size={3}
                     >
+                      <IconButton
+                        onClick={() => {
+                          setDialogCurrent({
+                            dialogItem: DialogList.TimeUpdate,
+                            positionItem: defaultValues.positionAdd,
+                            timeItem,
+                          });
+                          setIsDialogOpen(true);
+                        }}
+                      >
+                        <EditIcon />
+                      </IconButton>
                       <IconButton
                         onClick={() => {
                           handleTimeRemove(
@@ -871,7 +854,12 @@ export const ShiftTypesForm = ({
                         render={({ field }) => (
                           <FormControl fullWidth required variant="standard">
                             <InputLabel id="meal">Meal</InputLabel>
-                            <Select {...field} label="Meal *" labelId="meal">
+                            <Select
+                              {...field}
+                              disabled
+                              label="Meal *"
+                              labelId="meal"
+                            >
                               {MEAL_LIST.map((mealItem) => (
                                 <MenuItem key={`${mealItem}`} value={mealItem}>
                                   {mealItem}
@@ -882,13 +870,14 @@ export const ShiftTypesForm = ({
                         )}
                       />
                     </Grid>
-                    <Grid size={3}>
+                    <Grid size={6}>
                       <Controller
                         control={control}
                         name={`timeList.${timeIndex}.instance`}
                         render={({ field }) => (
                           <TextField
                             {...field}
+                            disabled
                             fullWidth
                             label="Instance"
                             required
@@ -904,6 +893,7 @@ export const ShiftTypesForm = ({
                         render={({ field }) => (
                           <TextField
                             {...field}
+                            disabled
                             fullWidth
                             label="Notes"
                             multiline
@@ -955,6 +945,7 @@ export const ShiftTypesForm = ({
                                 render={({ field }) => (
                                   <TextField
                                     {...field}
+                                    disabled
                                     fullWidth
                                     label="Alias"
                                     required
@@ -967,116 +958,34 @@ export const ShiftTypesForm = ({
                               <Controller
                                 control={control}
                                 name={`timeList.${timeIndex}.positionList.${timePositionIndex}.slots`}
-                                render={({ field: { onChange, value } }) => (
+                                render={({ field: { value } }) => (
                                   <TextField
-                                    error={
-                                      errors.timeList &&
-                                      errors.timeList[timeIndex]
-                                        ?.positionList &&
-                                      Boolean(
-                                        errors.timeList[timeIndex].positionList[
-                                          timePositionIndex
-                                        ]?.slots
-                                      )
-                                    }
+                                    disabled
                                     fullWidth
-                                    helperText={
-                                      errors.timeList &&
-                                      errors.timeList[timeIndex]
-                                        ?.positionList &&
-                                      errors.timeList[timeIndex].positionList[
-                                        timePositionIndex
-                                      ]?.slots?.message
-                                    }
                                     label="Slots"
-                                    onChange={(event) => {
-                                      // update field
-                                      onChange(event);
-
-                                      if (event.target.value) {
-                                        clearErrors(
-                                          `timeList.${timeIndex}.positionList.${timePositionIndex}.slots`
-                                        );
-                                      }
-                                    }}
-                                    onBlur={(event) => {
-                                      if (event.target.value === "") {
-                                        setError(
-                                          `timeList.${timeIndex}.positionList.${timePositionIndex}.slots`,
-                                          {
-                                            type: "required",
-                                            message: "Slots is required",
-                                          }
-                                        );
-                                      }
-                                    }}
                                     required
                                     type="number"
                                     value={value}
                                     variant="standard"
                                   />
                                 )}
-                                rules={{
-                                  required: "Total slots is required",
-                                }}
                               />
                             </Grid>
                             <Grid size={3}>
                               <Controller
                                 control={control}
                                 name={`timeList.${timeIndex}.positionList.${timePositionIndex}.sapPoints`}
-                                render={({ field: { onChange, value } }) => (
+                                render={({ field: { value } }) => (
                                   <TextField
-                                    error={
-                                      errors.timeList &&
-                                      errors.timeList[timeIndex]
-                                        ?.positionList &&
-                                      Boolean(
-                                        errors.timeList[timeIndex].positionList[
-                                          timePositionIndex
-                                        ]?.sapPoints
-                                      )
-                                    }
+                                    disabled
                                     fullWidth
-                                    helperText={
-                                      errors.timeList &&
-                                      errors.timeList[timeIndex]
-                                        ?.positionList &&
-                                      errors.timeList[timeIndex].positionList[
-                                        timePositionIndex
-                                      ]?.sapPoints?.message
-                                    }
                                     label="SAP points"
-                                    onChange={(event) => {
-                                      // update field
-                                      onChange(event);
-
-                                      if (event.target.value) {
-                                        clearErrors(
-                                          `timeList.${timeIndex}.positionList.${timePositionIndex}.sapPoints`
-                                        );
-                                      }
-                                    }}
-                                    onBlur={(event) => {
-                                      if (event.target.value === "") {
-                                        setError(
-                                          `timeList.${timeIndex}.positionList.${timePositionIndex}.sapPoints`,
-                                          {
-                                            type: "required",
-                                            message: "SAP Points is required",
-                                          }
-                                        );
-                                      }
-                                    }}
                                     required
                                     type="number"
-                                    variant="standard"
                                     value={value}
+                                    variant="standard"
                                   />
                                 )}
-                                rules={{
-                                  required: "SAP points is required",
-                                }}
                               />
                             </Grid>
                           </Grid>
@@ -1097,15 +1006,12 @@ export const ShiftTypesForm = ({
         control={control}
         errors={errors}
         getValues={getValues}
-        handleDialogClose={() => {
-          setIsDialogOpen(false);
-          setValue("positionAdd", defaultValues.positionAdd);
-          clearErrors("positionAdd");
-        }}
+        handleDialogClose={() => setIsDialogOpen(false)}
         isDialogOpen={
           dialogCurrent.dialogItem === DialogList.PositionAdd && isDialogOpen
         }
         handlePositionAdd={handlePositionAdd}
+        positionItem={dialogCurrent.positionItem}
         positionListDefaults={dataDefaults.positionList}
         setError={setError}
         setValue={setValue}
@@ -1117,17 +1023,32 @@ export const ShiftTypesForm = ({
         clearErrors={clearErrors}
         errors={errors}
         getValues={getValues}
-        handleDialogClose={() => {
-          setIsDialogOpen(false);
-          setValue("timeAdd", defaultValues.timeAdd);
-          setValue("timeAdd.positionList", timePositionListAddFields);
-          clearErrors("timeAdd");
-        }}
+        handleDialogClose={() => setIsDialogOpen(false)}
         handleTimeAdd={handleTimeAdd}
         isDialogOpen={
           dialogCurrent.dialogItem === DialogList.TimeAdd && isDialogOpen
         }
         setError={setError}
+        setValue={setValue}
+        timeItem={dialogCurrent.timeItem}
+        timeFields={timeFields}
+        timePositionListAddFields={timePositionListAddFields}
+      />
+
+      {/* time dialog update */}
+      <ShiftTypesTimeDialogUpdate
+        control={control}
+        clearErrors={clearErrors}
+        errors={errors}
+        getValues={getValues}
+        handleDialogClose={() => setIsDialogOpen(false)}
+        handleTimeUpdate={handleTimeUpdate}
+        isDialogOpen={
+          dialogCurrent.dialogItem === DialogList.TimeUpdate && isDialogOpen
+        }
+        setError={setError}
+        setValue={setValue}
+        timeItem={dialogCurrent.timeItem}
         timeFields={timeFields}
         timePositionListAddFields={timePositionListAddFields}
       />

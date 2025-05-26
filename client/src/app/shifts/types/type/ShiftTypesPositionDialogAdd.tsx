@@ -18,6 +18,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useEffect } from "react";
 import {
   Control,
   Controller,
@@ -39,6 +40,7 @@ interface IShiftTypesPositionDialogAddProps {
   handleDialogClose: () => void;
   handlePositionAdd: (position: IPositionAddValues) => void;
   isDialogOpen: boolean;
+  positionItem: IPositionAddValues;
   positionListDefaults: IResShiftTypePositionItem[];
   setError: UseFormSetError<IFormValues>;
   setValue: UseFormSetValue<IFormValues>;
@@ -51,10 +53,19 @@ export const ShiftTypesPositionDialogAdd = ({
   handleDialogClose,
   handlePositionAdd,
   isDialogOpen,
+  positionItem,
   positionListDefaults,
   setError,
   setValue,
 }: IShiftTypesPositionDialogAddProps) => {
+  // side effects
+  // ------------------------------------------------------------
+  useEffect(() => {
+    if (isDialogOpen) {
+      setValue("positionAdd", positionItem);
+    }
+  }, [isDialogOpen, positionItem, setValue]);
+
   // render
   // ------------------------------------------------------------
   return (
@@ -347,11 +358,8 @@ export const ShiftTypesPositionDialogAdd = ({
               });
 
               handlePositionAdd({
-                alias: getValues("positionAdd.alias"),
-                name: getValues("positionAdd.name"),
+                ...getValues("positionAdd"),
                 positionId: Number(positionFound?.positionId),
-                sapPoints: Number(getValues("positionAdd.sapPoints")),
-                slots: Number(getValues("positionAdd.slots")),
               });
               handleDialogClose();
             }
