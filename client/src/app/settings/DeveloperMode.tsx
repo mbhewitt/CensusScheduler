@@ -1,7 +1,7 @@
 import { RestartAlt as RestartAltIcon } from "@mui/icons-material";
 import {
   Button,
-  Checkbox,
+  Switch,
   FormControlLabel,
   FormGroup,
   Grid2 as Grid,
@@ -58,7 +58,7 @@ export const DeveloperMode = () => {
         <FormGroup>
           <FormControlLabel
             control={
-              <Checkbox
+              <Switch
                 checked={isAccountTypeEnabled}
                 color="secondary"
                 onChange={(event) => {
@@ -86,7 +86,7 @@ export const DeveloperMode = () => {
           />
           <FormControlLabel
             control={
-              <Checkbox
+              <Switch
                 checked={isDateTimeEnabled}
                 color="secondary"
                 onChange={(event) => {
@@ -104,7 +104,7 @@ export const DeveloperMode = () => {
           />
           <FormControlLabel
             control={
-              <Checkbox
+              <Switch
                 checked={isDisableIdleEnabled}
                 color="secondary"
                 onChange={(event) => {
