@@ -1,9 +1,9 @@
 import {
+  Chat as ChatIcon,
   EventAvailable as EventAvailableIcon,
   EventBusy as EventBusyIcon,
   Groups3 as Groups3Icon,
   MoreHoriz as MoreHorizIcon,
-  Reviews as ReviewsIcon,
 } from "@mui/icons-material";
 import {
   Button,
@@ -498,9 +498,9 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
             }}
           >
             {rating ? (
-              <ReviewsIcon color="primary" />
+              <ChatIcon color="primary" />
             ) : (
-              <ReviewsIcon color="disabled" />
+              <ChatIcon color="disabled" />
             )}
           </IconButton>
         ) : (

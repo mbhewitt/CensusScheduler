@@ -1,12 +1,12 @@
 "use client";
 
 import {
+  Chat as ChatIcon,
   Groups3 as Groups3Icon,
   ManageAccounts as ManageAccountsIcon,
   MoreHoriz as MoreHorizIcon,
   PersonAddAlt1 as PersonAddAlt1Icon,
   PersonRemove as PersonRemoveIcon,
-  Reviews as ReviewsIcon,
   WorkHistory as WorkHistoryIcon,
 } from "@mui/icons-material";
 import {
@@ -496,9 +496,9 @@ export const ShiftVolunteers = ({
             }}
           >
             {rating ? (
-              <ReviewsIcon color="primary" />
+              <ChatIcon color="primary" />
             ) : (
-              <ReviewsIcon color="disabled" />
+              <ChatIcon color="disabled" />
             )}
           </IconButton>
         ),
