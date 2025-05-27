@@ -161,12 +161,8 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     // ------------------------------------------------------------
     case "POST": {
       // add volunteer to shift
-      const {
-        id: timeId,
-        noShow,
-        shiftboardId,
-        timePositionId,
-      }: IReqShiftVolunteerItem = JSON.parse(req.body);
+      const { noShow, shiftboardId, timePositionId }: IReqShiftVolunteerItem =
+        JSON.parse(req.body);
       const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT *
         FROM op_volunteer_shifts
