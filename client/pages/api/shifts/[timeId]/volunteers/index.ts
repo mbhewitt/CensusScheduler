@@ -170,10 +170,9 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT *
         FROM op_volunteer_shifts
-        WHERE shift_times_id=?
-        AND shiftboard_id=?
+        WHERE shiftboard_id=?
         AND time_position_id=?`,
-        [timeId, shiftboardId, timePositionId]
+        [shiftboardId, timePositionId]
       );
       const [dbShiftVolunteerFirst] = dbShiftVolunteerList;
 
@@ -186,10 +185,9 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             noshow=?,
             add_shift=true,
             remove_shift=false
-          WHERE shift_times_id=?
-          AND shiftboard_id=?
+          WHERE shiftboard_id=?
           AND time_position_id=?`,
-          [noShow, timeId, shiftboardId, timePositionId]
+          [noShow, shiftboardId, timePositionId]
         );
         // else insert them into the table
       } else {
@@ -197,12 +195,11 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           `INSERT INTO op_volunteer_shifts (
             add_shift,
             noshow,
-            shift_times_id,
             shiftboard_id,
             time_position_id
           )
-          VALUES (true, ?, ?, ?, ?)`,
-          [noShow, timeId, shiftboardId, timePositionId]
+          VALUES (true, ?, ?, ?)`,
+          [noShow, shiftboardId, timePositionId]
         );
       }
 
