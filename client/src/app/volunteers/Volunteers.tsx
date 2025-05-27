@@ -1,6 +1,6 @@
 "use client";
 
-import { Reviews as ReviewsIcon } from "@mui/icons-material";
+import { Chat as ChatIcon } from "@mui/icons-material";
 import {
   Box,
   Card,
@@ -207,11 +207,7 @@ export const Volunteers = () => {
         ) : (
           <Typography sx={{ color: grey[500], fontSize: "14px" }}>0</Typography>
         ),
-        isNotes ? (
-          <ReviewsIcon color="primary" />
-        ) : (
-          <ReviewsIcon color="disabled" />
-        ),
+        isNotes ? <ChatIcon color="primary" /> : <ChatIcon color="disabled" />,
       ];
     }
   );
