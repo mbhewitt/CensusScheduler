@@ -1,8 +1,8 @@
 "use client";
 
+import Error from "next/error";
 import { useContext } from "react";
 
-import { Loading } from "@/components/general/Loading";
 import {
   ACCOUNT_TYPE_ADMIN,
   ACCOUNT_TYPE_AUTHENTICATED,
@@ -53,5 +53,5 @@ export const AuthGate = ({ accountTypeToCheck, children }: IAuthGateProps) => {
 
   // render
   // ------------------------------------------------------------
-  return <>{isAuthorized ? children : <Loading />}</>;
+  return <>{isAuthorized ? children : <Error statusCode={404} />}</>;
 };
