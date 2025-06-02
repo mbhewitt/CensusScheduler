@@ -23,6 +23,13 @@ const rockwellFont = localFont({
 });
 const theme = createTheme({
   components: {
+    MuiAlert: {
+      styleOverrides: {
+        root: {
+          alignItems: "center",
+        },
+      },
+    },
     MuiBreadcrumbs: {
       styleOverrides: {
         root: {

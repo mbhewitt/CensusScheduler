@@ -3,6 +3,7 @@ import {
   PersonAddAlt1 as PersonAddAlt1Icon,
 } from "@mui/icons-material";
 import {
+  Alert,
   Autocomplete,
   Button,
   CircularProgress,
@@ -303,8 +304,30 @@ export const ShiftVolunteersDialogAdd = ({
   // evaluate check-in type and available shifts and positions
   let volunteerListDisplay: IVolunteerOption[] = [];
   let positionListDisplay: JSX.Element[] = [];
-  const trainingList = dataTrainingList.filter(
-    ({ category: { id: categoryId } }) => categoryId === prerequisiteIdWatch
+  const trainingListFiltered = dataTrainingList.filter(
+    ({ category: { id: categoryId }, startTime: startTimeTraining }) =>
+      // include trainings that match the prerequisite ID
+      categoryId === prerequisiteIdWatch &&
+      // include trainings with start times that are before the current shift start time
+      dayjs(startTimeTraining).isBefore(dayjs(startTime))
+  );
+  let trainingPositionItemFound: IResVolunteerShiftItem | undefined;
+  // find training shift that already exists in volunteer shifts
+  const trainingItemFound = trainingListFiltered.find(
+    ({ id: timeIdTraining }) => {
+      // find training position that already exists in volunteer shifts
+      const dataVolunteerShiftItem = dataVolunteerShiftList.find(
+        ({ shift: { timeId: timeIdShift } }) => timeIdShift === timeIdTraining
+      );
+
+      if (dataVolunteerShiftItem) {
+        trainingPositionItemFound = dataVolunteerShiftItem;
+
+        return true;
+      }
+
+      return false;
+    }
   );
   let trainingListDisplay: JSX.Element[] = [];
   let trainingPositionListDisplay: JSX.Element[] = [];
@@ -362,9 +385,10 @@ export const ShiftVolunteersDialogAdd = ({
       );
 
       // display training list
-      trainingListDisplay = trainingList.map(
+      trainingListDisplay = trainingListFiltered.map(
         ({
           endTime,
+          dateName,
           id: timeIdTraining,
           slotsFilled,
           slotsTotal,
@@ -382,7 +406,7 @@ export const ShiftVolunteersDialogAdd = ({
               key={`${timeIdTraining}-training`}
               value={timeIdTraining}
             >
-              {`${formatDateName(startTime)}, ${formatTime(
+              {`${formatDateName(startTime, dateName)}, ${formatTime(
                 startTime,
                 endTime
               )}, ${type}: ${slotsFilled} / ${slotsTotal}`}
@@ -448,10 +472,11 @@ export const ShiftVolunteersDialogAdd = ({
       );
 
       // display training list
-      trainingListDisplay = trainingList.map(
+      trainingListDisplay = trainingListFiltered.map(
         ({
           endTime,
-          id,
+          dateName,
+          id: timeIdTraining,
           slotsFilled,
           slotsTotal,
           startTime,
@@ -465,10 +490,10 @@ export const ShiftVolunteersDialogAdd = ({
           return (
             <MenuItem
               disabled={!isShiftPositionAvailable}
-              key={`${id}-training`}
-              value={id}
+              key={`${timeIdTraining}-training`}
+              value={timeIdTraining}
             >
-              {`${formatDateName(startTime)}, ${formatTime(
+              {`${formatDateName(startTime, dateName)}, ${formatTime(
                 startTime,
                 endTime
               )}, ${type}: ${slotsFilled} / ${slotsTotal}`}
@@ -628,6 +653,188 @@ export const ShiftVolunteersDialogAdd = ({
 
   // render
   // ------------------------------------------------------------
+  let trainingDisplay: React.ReactNode;
+
+  if (trainingItemFound) {
+    trainingDisplay = (
+      <Alert severity="info">
+        This shift requires training, and you have already signed up for the
+        following:
+        <br />
+        <strong>{trainingItemFound.type}</strong> as{" "}
+        <strong>{trainingPositionItemFound?.shift.positionName}</strong> on{" "}
+        <strong>
+          {formatDateName(
+            trainingItemFound.startTime,
+            trainingItemFound.dateName
+          )}
+        </strong>{" "}
+        at{" "}
+        <strong>
+          {formatTime(trainingItemFound.startTime, trainingItemFound.endTime)}
+        </strong>
+      </Alert>
+    );
+  } else if (
+    timePositionIdShiftWatch !== "" &&
+    prerequisiteIdWatch !== 0 &&
+    trainingListFiltered.length === 0
+  ) {
+    trainingDisplay = (
+      <Alert severity="warning">
+        This shift requires training. However, there are no available trainings
+        between now and the shift start time. If you have not enrolled in a
+        training <strong>this</strong> year, please speak with a lead before
+        signing up for this shift.
+      </Alert>
+    );
+  } else if (trainingListFiltered.length > 0) {
+    trainingDisplay = (
+      <>
+        <Grid size={6}>
+          <Controller
+            control={control}
+            name="timeIdTraining"
+            render={({ field }) => (
+              <FormControl fullWidth required variant="standard">
+                <InputLabel id="timeIdTraining">Training time</InputLabel>
+                <Select
+                  {...field}
+                  error={Boolean(errors.timeIdTraining)}
+                  label="Training time *"
+                  labelId="timeIdTraining"
+                  onChange={(event) => {
+                    const timeIdTrainingSelected = event.target.value;
+                    const trainingItemFound = ensure(
+                      dataTrainingList.find(
+                        (dataTrainingItem: IResShiftRowItem) =>
+                          dataTrainingItem.id === timeIdTrainingSelected
+                      )
+                    );
+                    const isVolunteerTrainingAvailable =
+                      dataVolunteerShiftList.every(
+                        (dataVolunteerShiftList) =>
+                          !dayjs(trainingItemFound.startTime).isBetween(
+                            dayjs(dataVolunteerShiftList.shift.startTime),
+                            dayjs(dataVolunteerShiftList.shift.endTime),
+                            null,
+                            "[]"
+                          )
+                      );
+
+                    // update field
+                    field.onChange(timeIdTrainingSelected);
+
+                    // if volunteer shift causes time conflict
+                    // then display warning notification
+                    if (!isVolunteerTrainingAvailable) {
+                      enqueueSnackbar(
+                        <SnackbarText>
+                          Adding{" "}
+                          <strong>{`${formatDateName(
+                            trainingItemFound.startTime,
+                            trainingItemFound.dateName
+                          )}, ${formatTime(
+                            trainingItemFound.startTime,
+                            trainingItemFound.endTime
+                          )}, ${trainingItemFound.type}`}</strong>{" "}
+                          shift will cause a time conflict for{" "}
+                          <strong>
+                            {volunteerSelected?.playaName} &quot;
+                            {volunteerSelected?.worldName}
+                            &quot;
+                          </strong>
+                        </SnackbarText>,
+                        {
+                          variant: "warning",
+                        }
+                      );
+                    }
+                  }}
+                >
+                  {trainingListDisplay}
+                </Select>
+                {errors.timeIdTraining && (
+                  <FormHelperText error>
+                    {errors.timeIdTraining.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
+            )}
+            rules={{
+              required: "Training time is required",
+            }}
+          />
+        </Grid>
+        <Grid size={6}>
+          <Controller
+            control={control}
+            name="timePositionIdTraining"
+            render={({ field }) => (
+              <FormControl fullWidth required variant="standard">
+                <InputLabel id="timePositionIdTraining">
+                  Training position
+                </InputLabel>
+                <Select
+                  {...field}
+                  disabled={!timeIdTrainingWatch}
+                  error={Boolean(errors.timePositionIdTraining)}
+                  label="Training position *"
+                  labelId="timePositionIdTraining"
+                  onChange={(event) => {
+                    const trainingPositionSelected = event.target.value;
+                    const trainingPositionFound =
+                      dataTrainingVolunteerDetails.positionList.find(
+                        (trainingPositionItem) =>
+                          trainingPositionItem.timePositionId ===
+                          trainingPositionSelected
+                      );
+
+                    // update field
+                    field.onChange(trainingPositionSelected);
+
+                    // if there are less than or equal to zero slots available
+                    // then display warning notification
+                    if (
+                      trainingPositionFound &&
+                      trainingPositionFound.slotsFilled >=
+                        trainingPositionFound.slotsTotal
+                    ) {
+                      enqueueSnackbar(
+                        <SnackbarText>
+                          There are{" "}
+                          <strong>
+                            {trainingPositionFound.slotsTotal -
+                              trainingPositionFound.slotsFilled}
+                          </strong>{" "}
+                          openings available for{" "}
+                          <strong>{trainingPositionFound.positionName}</strong>
+                        </SnackbarText>,
+                        {
+                          variant: "warning",
+                        }
+                      );
+                    }
+                  }}
+                >
+                  {trainingPositionListDisplay}
+                </Select>
+                {errors.timePositionIdTraining && (
+                  <FormHelperText error>
+                    {errors.timePositionIdTraining.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
+            )}
+            rules={{
+              required: "Training position is required",
+            }}
+          />
+        </Grid>
+      </>
+    );
+  }
+
   return (
     <DialogContainer
       handleDialogClose={handleDialogClose}
@@ -743,152 +950,11 @@ export const ShiftVolunteersDialogAdd = ({
               }}
             />
           </Grid>
-          {trainingListDisplay.length > 0 && (
-            <>
-              <Grid size={6}>
-                <Controller
-                  control={control}
-                  name="timeIdTraining"
-                  render={({ field }) => (
-                    <FormControl fullWidth required variant="standard">
-                      <InputLabel id="timeIdTraining">Training time</InputLabel>
-                      <Select
-                        {...field}
-                        error={Boolean(errors.timeIdTraining)}
-                        label="Training time *"
-                        labelId="timeIdTraining"
-                        onChange={(event) => {
-                          const timeIdTrainingSelected = event.target.value;
-                          const trainingItemFound = ensure(
-                            dataTrainingList.find(
-                              (dataTrainingItem: IResShiftRowItem) =>
-                                dataTrainingItem.id === timeIdTrainingSelected
-                            )
-                          );
-                          const isVolunteerTrainingAvailable =
-                            dataVolunteerShiftList.every(
-                              (dataVolunteerShiftList) =>
-                                !dayjs(trainingItemFound.startTime).isBetween(
-                                  dayjs(dataVolunteerShiftList.shift.startTime),
-                                  dayjs(dataVolunteerShiftList.shift.endTime),
-                                  null,
-                                  "[]"
-                                )
-                            );
 
-                          // update field
-                          field.onChange(timeIdTrainingSelected);
+          {/* training */}
+          {trainingDisplay}
 
-                          // if volunteer shift causes time conflict
-                          // then display warning notification
-                          if (!isVolunteerTrainingAvailable) {
-                            enqueueSnackbar(
-                              <SnackbarText>
-                                Adding{" "}
-                                <strong>{`${formatDateName(
-                                  trainingItemFound.startTime,
-                                  trainingItemFound.dateName
-                                )}, ${formatTime(
-                                  trainingItemFound.startTime,
-                                  trainingItemFound.endTime
-                                )}, ${trainingItemFound.type}`}</strong>{" "}
-                                shift will cause a time conflict for{" "}
-                                <strong>
-                                  {volunteerSelected?.playaName} &quot;
-                                  {volunteerSelected?.worldName}
-                                  &quot;
-                                </strong>
-                              </SnackbarText>,
-                              {
-                                variant: "warning",
-                              }
-                            );
-                          }
-                        }}
-                      >
-                        {trainingListDisplay}
-                      </Select>
-                      {errors.timeIdTraining && (
-                        <FormHelperText error>
-                          {errors.timeIdTraining.message}
-                        </FormHelperText>
-                      )}
-                    </FormControl>
-                  )}
-                  rules={{
-                    required: "Training time is required",
-                  }}
-                />
-              </Grid>
-              <Grid size={6}>
-                <Controller
-                  control={control}
-                  name="timePositionIdTraining"
-                  render={({ field }) => (
-                    <FormControl fullWidth required variant="standard">
-                      <InputLabel id="timePositionIdTraining">
-                        Training position
-                      </InputLabel>
-                      <Select
-                        {...field}
-                        disabled={!timeIdTrainingWatch}
-                        error={Boolean(errors.timePositionIdTraining)}
-                        label="Training position *"
-                        labelId="timePositionIdTraining"
-                        onChange={(event) => {
-                          const trainingPositionSelected = event.target.value;
-                          const trainingPositionFound =
-                            dataTrainingVolunteerDetails.positionList.find(
-                              (trainingPositionItem) =>
-                                trainingPositionItem.timePositionId ===
-                                trainingPositionSelected
-                            );
-
-                          // update field
-                          field.onChange(trainingPositionSelected);
-
-                          // if there are less than or equal to zero slots available
-                          // then display warning notification
-                          if (
-                            trainingPositionFound &&
-                            trainingPositionFound.slotsFilled >=
-                              trainingPositionFound.slotsTotal
-                          ) {
-                            enqueueSnackbar(
-                              <SnackbarText>
-                                There are{" "}
-                                <strong>
-                                  {trainingPositionFound.slotsTotal -
-                                    trainingPositionFound.slotsFilled}
-                                </strong>{" "}
-                                openings available for{" "}
-                                <strong>
-                                  {trainingPositionFound.positionName}
-                                </strong>
-                              </SnackbarText>,
-                              {
-                                variant: "warning",
-                              }
-                            );
-                          }
-                        }}
-                      >
-                        {trainingPositionListDisplay}
-                      </Select>
-                      {errors.timePositionIdTraining && (
-                        <FormHelperText error>
-                          {errors.timePositionIdTraining.message}
-                        </FormHelperText>
-                      )}
-                    </FormControl>
-                  )}
-                  rules={{
-                    required: "Training position is required",
-                  }}
-                />
-              </Grid>
-            </>
-          )}
+          {/* position details */}
           {timePositionIdShiftWatch && (
             <Grid size={12}>
               <Typography gutterBottom>Position Details:</Typography>
