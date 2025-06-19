@@ -108,15 +108,14 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
     mode: "onBlur",
   });
   const {
-    append: positionAppend,
     fields: positionFields,
     remove: positionRemove,
+    replace: positionReplace,
   } = useFieldArray({
     control,
     name: "positionList",
   });
   const {
-    append: timeAppend,
     fields: timeFields,
     remove: timeRemove,
     replace: timeReplace,
@@ -357,11 +356,10 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
               getValues={getValues}
               handlePositionRemove={handlePositionRemove}
               handleTimeRemove={handleTimeRemove}
-              positionAppend={positionAppend}
               positionFields={positionFields}
+              positionReplace={positionReplace}
               setError={setError}
               setValue={setValue}
-              timeAppend={timeAppend}
               timeFields={timeFields}
               timePositionListAddFields={timePositionListAddFields}
               timePositionListAddReplace={timePositionListAddReplace}
