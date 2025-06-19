@@ -57,6 +57,21 @@ export const Shifts = () => {
       name: columnNameDate,
       options: {
         sortThirdClickReset: true,
+        sortCompare: (order: string) => {
+          return (
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            shift1: { [key: string]: any },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            shift2: { [key: string]: any }
+          ) => {
+            const dateTime1 = shift1.rowData[1];
+            const dateTime2 = shift2.rowData[1];
+
+            return dayjs(dateTime1).isAfter(dayjs(dateTime2)) && order === "asc"
+              ? 1
+              : -1;
+          };
+        },
       },
     },
     {
@@ -82,10 +97,10 @@ export const Shifts = () => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             shift2: { [key: string]: any }
           ) => {
-            const value1 = shift1.data.props.label;
-            const value2 = shift2.data.props.label;
+            const type1 = shift1.data.props.label;
+            const type2 = shift2.data.props.label;
 
-            return value1 > value2 && order === "asc" ? 1 : -1;
+            return type1 > type2 && order === "asc" ? 1 : -1;
           };
         },
       },

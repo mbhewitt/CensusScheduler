@@ -36,7 +36,6 @@ import {
   Controller,
   FieldArrayWithId,
   FieldErrors,
-  UseFieldArrayAppend,
   UseFieldArrayRemove,
   UseFieldArrayReplace,
   UseFormClearErrors,
@@ -84,11 +83,10 @@ interface IShiftTypesFormProps {
     positionId: number
   ) => void;
   handleTimeRemove: (index: number, name: string, timeId: number) => void;
-  positionAppend: UseFieldArrayAppend<IFormValues, "positionList">;
   positionFields: FieldArrayWithId<IFormValues, "positionList", "id">[];
+  positionReplace: UseFieldArrayReplace<IFormValues, "positionList">;
   setError: UseFormSetError<IFormValues>;
   setValue: UseFormSetValue<IFormValues>;
-  timeAppend: UseFieldArrayAppend<IFormValues, "timeList">;
   timeFields: FieldArrayWithId<IFormValues, "timeList", "id">[];
   timePositionListAddFields: FieldArrayWithId<
     IFormValues,
@@ -195,11 +193,10 @@ export const ShiftTypesForm = ({
   getValues,
   handlePositionRemove,
   handleTimeRemove,
-  positionAppend,
   positionFields,
+  positionReplace,
   setError,
   setValue,
-  timeAppend,
   timeFields,
   timePositionListAddFields,
   timePositionListAddReplace,
@@ -259,10 +256,22 @@ export const ShiftTypesForm = ({
     );
 
     if (positionFound) {
+      const positionFieldsMutate = structuredClone(positionFields);
       const timeFieldsMutate = structuredClone(timeFields);
       const timePositionListAddNew = structuredClone(timePositionListAddFields);
 
-      positionAppend({ ...positionFound, alias: "", sapPoints: 1, slots: 1 });
+      positionFieldsMutate.push({
+        ...positionFound,
+        alias: "",
+        id: "",
+        sapPoints: 1,
+        slots: 1,
+      });
+      positionFieldsMutate.sort((positionField1, positionField2) =>
+        positionField1.name.localeCompare(positionField2.name)
+      );
+      positionReplace(positionFieldsMutate);
+
       timeFieldsMutate.forEach((timeFieldsItem) => {
         timeFieldsItem.positionList.push({
           alias,
@@ -304,12 +313,13 @@ export const ShiftTypesForm = ({
     positionList,
     startTime,
   }: ITimeAddValues) => {
-    const dateNew = dayjs(date).format("MM/DD/YYYY");
+    const dateNew = dayjs(date).format("YYYY-MM-DD");
     const endTimeNew = dayjs(endTime).format("HH:mm");
     const startTimeNew = dayjs(startTime).format("HH:mm");
     const timeNew = {
       date: dateNew,
       endTime: `${dateNew} ${endTimeNew}`,
+      id: "",
       instance,
       meal,
       notes,
@@ -317,8 +327,13 @@ export const ShiftTypesForm = ({
       startTime: `${dateNew} ${startTimeNew}`,
       timeId: 0,
     };
+    const timeFieldsMutate = structuredClone(timeFields);
 
-    timeAppend(timeNew);
+    timeFieldsMutate.push(timeNew);
+    timeFieldsMutate.sort((timeField1, timeField2) =>
+      dayjs(timeField1.startTime).isBefore(dayjs(timeField2.startTime)) ? -1 : 1
+    );
+    timeReplace(timeFieldsMutate);
     enqueueSnackbar(
       <SnackbarText>
         <strong>{formatDateName(date)}</strong> at{" "}

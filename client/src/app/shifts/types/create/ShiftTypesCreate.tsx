@@ -74,7 +74,6 @@ export const ShiftTypesCreate = () => {
     mode: "onBlur",
   });
   const {
-    append: timeAppend,
     fields: timeFields,
     remove: timeRemove,
     replace: timeReplace,
@@ -91,9 +90,9 @@ export const ShiftTypesCreate = () => {
     name: "timeAdd.positionList",
   });
   const {
-    append: positionAppend,
     fields: positionFields,
     remove: positionRemove,
+    replace: positionReplace,
   } = useFieldArray({
     control,
     name: "positionList",
@@ -227,11 +226,10 @@ export const ShiftTypesCreate = () => {
               getValues={getValues}
               handlePositionRemove={handlePositionRemove}
               handleTimeRemove={handleTimeRemove}
-              positionAppend={positionAppend}
               positionFields={positionFields}
+              positionReplace={positionReplace}
               setError={setError}
               setValue={setValue}
-              timeAppend={timeAppend}
               timeFields={timeFields}
               timePositionListAddReplace={timePositionListAddReplace}
               timePositionListAddFields={timePositionListAddFields}
