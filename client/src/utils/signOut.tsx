@@ -6,6 +6,7 @@ import { SnackbarText } from "@/components/general/SnackbarText";
 import { DEVELOPER_MODE_RESET, SESSION_SIGN_OUT } from "@/constants";
 import { IDeveloperModeAction } from "@/state/developer-mode/reducer";
 import { ISessionAction } from "@/state/session/reducer";
+import { resetFilterList } from "@/utils/resetFilterList";
 
 export const signOut = (
   developerModeDispatch: Dispatch<IDeveloperModeAction>,
@@ -26,16 +27,8 @@ export const signOut = (
     sessionDispatch({
       type: SESSION_SIGN_OUT,
     });
-    const filterListStateStorage = JSON.parse(
-      sessionStorage.getItem("filterListState") ?? "[]"
-    );
 
-    if (filterListStateStorage.length > 0) {
-      sessionStorage.setItem(
-        "filterListState",
-        JSON.stringify(filterListStateStorage.map(() => []))
-      );
-    }
+    resetFilterList();
 
     enqueueSnackbar(
       <SnackbarText>
