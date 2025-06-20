@@ -105,6 +105,7 @@ export const BehavioralStandards = ({
         method: "POST",
       });
       setIsDeclinedLoading(false);
+
       enqueueSnackbar(
         <SnackbarText>
           <strong>

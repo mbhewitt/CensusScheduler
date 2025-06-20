@@ -35,6 +35,7 @@ import { SESSION_SIGN_IN } from "@/constants";
 import { SessionContext } from "@/state/session/context";
 import { ensure } from "@/utils/ensure";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
+import { resetFilterList } from "@/utils/resetFilterList";
 
 interface IFormValues {
   volunteer: null | IVolunteerOption;
@@ -121,6 +122,8 @@ export const SignIn = () => {
           payload: dataVolunteerItem,
           type: SESSION_SIGN_IN,
         });
+
+        resetFilterList();
 
         enqueueSnackbar(
           <SnackbarText>

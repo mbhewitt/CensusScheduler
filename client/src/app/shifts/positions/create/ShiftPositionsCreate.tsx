@@ -99,6 +99,7 @@ export const ShiftPositionsCreate = () => {
         body,
         method: "POST",
       });
+
       enqueueSnackbar(
         <SnackbarText>
           <strong>

@@ -86,6 +86,7 @@ export const ShiftTypesPositionDialogRemove = ({
 
   const handlePositionRemove = async () => {
     handlePositionExistRemove(positionItem.index, positionItem.id);
+
     enqueueSnackbar(
       <SnackbarText>
         <strong>{positionItem.name}</strong> position has been removed
