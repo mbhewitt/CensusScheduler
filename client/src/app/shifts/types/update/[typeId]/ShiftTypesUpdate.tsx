@@ -216,6 +216,7 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
       setIsDialogOpen(true);
     } else {
       handlePositionExistRemove(index, positionId);
+
       enqueueSnackbar(
         <SnackbarText>
           <strong>{name}</strong> position has been removed
@@ -251,6 +252,7 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
       setIsDialogOpen(true);
     } else {
       handleTimeExistRemove(index, timeId);
+
       enqueueSnackbar(
         <SnackbarText>
           <strong>{name}</strong> time has been removed

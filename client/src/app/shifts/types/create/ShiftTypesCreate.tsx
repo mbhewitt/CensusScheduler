@@ -111,6 +111,7 @@ export const ShiftTypesCreate = () => {
   const handlePositionRemove = (index: number, name: string) => {
     positionRemove(index);
     timePositionListAddRemove(index);
+
     enqueueSnackbar(
       <SnackbarText>
         <strong>{name}</strong> position has been removed

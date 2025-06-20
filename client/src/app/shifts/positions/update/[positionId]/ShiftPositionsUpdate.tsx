@@ -145,6 +145,7 @@ export const ShiftPositionsUpdate = ({
         body,
         method: "PATCH",
       });
+
       enqueueSnackbar(
         <SnackbarText>
           <strong>

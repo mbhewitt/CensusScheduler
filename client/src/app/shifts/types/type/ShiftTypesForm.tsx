@@ -334,6 +334,7 @@ export const ShiftTypesForm = ({
       dayjs(timeField1.startTime).isBefore(dayjs(timeField2.startTime)) ? -1 : 1
     );
     timeReplace(timeFieldsMutate);
+
     enqueueSnackbar(
       <SnackbarText>
         <strong>{formatDateName(date)}</strong> at{" "}
@@ -358,6 +359,7 @@ export const ShiftTypesForm = ({
     });
 
     timeReplace(timeFieldsNew);
+
     enqueueSnackbar(
       <SnackbarText>
         <strong>{formatDateName(timeItem.date)}</strong> at{" "}

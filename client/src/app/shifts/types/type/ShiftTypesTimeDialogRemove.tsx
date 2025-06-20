@@ -90,6 +90,7 @@ export const ShiftTypesTimeDialogRemove = ({
 
   const handleTimeRemove = async () => {
     handleTimeExistRemove(timeItem.index, timeItem.id);
+
     enqueueSnackbar(
       <SnackbarText>
         <strong>{timeItem.name}</strong> time has been removed

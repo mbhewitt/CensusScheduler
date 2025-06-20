@@ -301,6 +301,7 @@ export const ShiftVolunteers = ({
         shiftboardId,
         timePositionId,
       });
+
       enqueueSnackbar(
         <SnackbarText>
           <strong>

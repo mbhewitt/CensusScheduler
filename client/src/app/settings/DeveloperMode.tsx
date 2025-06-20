@@ -42,6 +42,7 @@ export const DeveloperMode = () => {
     developerModeDispatch({
       type: DEVELOPER_MODE_RESET,
     });
+
     enqueueSnackbar(
       <SnackbarText>Developer mode settings have been reset</SnackbarText>,
       {
