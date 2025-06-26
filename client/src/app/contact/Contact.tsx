@@ -93,10 +93,10 @@ export const Contact = () => {
   useEffect(() => {
     const reminderParam = searchParams?.get("reminder");
 
-    if (reminderParam && isAuthenticated) {
+    if (isAuthenticated) {
       reset({
         ...defaultValues,
-        email: email ?? "",
+        email,
         name: `${playaName} "${worldName}"`,
         to: reminderParam ? "Send me a reminder" : "Volunteer Coordinator",
       });
