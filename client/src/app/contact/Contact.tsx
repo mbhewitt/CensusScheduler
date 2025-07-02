@@ -86,13 +86,12 @@ export const Contact = () => {
     mode: "onBlur",
   });
   const searchParams = useSearchParams();
+  const reminderParam = searchParams?.get("reminder");
   const { enqueueSnackbar } = useSnackbar();
 
   // side effects
   // ------------------------------------------------------------
   useEffect(() => {
-    const reminderParam = searchParams?.get("reminder");
-
     if (isAuthenticated) {
       reset({
         ...defaultValues,
@@ -118,7 +117,16 @@ export const Contact = () => {
       // update database
       await trigger({ body, method: "POST" });
 
-      reset(defaultValues);
+      if (isAuthenticated) {
+        reset({
+          ...defaultValues,
+          email,
+          name: `${playaName} "${worldName}"`,
+          to: reminderParam ? "Send me a reminder" : "Volunteer Coordinator",
+        });
+      } else {
+        reset(defaultValues);
+      }
       enqueueSnackbar(
         <SnackbarText>
           Message from <strong>{formValues.name}</strong> at{" "}
