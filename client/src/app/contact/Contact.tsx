@@ -2,6 +2,7 @@
 
 import { Send as SendIcon } from "@mui/icons-material";
 import {
+  Box,
   Button,
   Card,
   CardActions,
@@ -17,6 +18,7 @@ import {
   MenuItem,
   Select,
   TextField,
+  Typography,
 } from "@mui/material";
 import { useSearchParams } from "next/navigation";
 import { useSnackbar } from "notistack";
@@ -165,162 +167,167 @@ export const Contact = () => {
         text="Contact"
       />
       <Container component="main">
-        <Card>
-          <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-            <CardContent>
-              <Grid container spacing={2}>
-                <Grid size={6}>
-                  <Controller
-                    control={control}
-                    name="name"
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        error={Boolean(errors.name)}
-                        fullWidth
-                        helperText={errors.name?.message}
-                        label="Name"
-                        required
-                        variant="standard"
-                      />
-                    )}
-                    rules={{
-                      required: "Name is required",
-                      validate: (value) => {
-                        return Boolean(value.trim()) || "Name is required";
-                      },
-                    }}
-                  />
-                </Grid>
-                <Grid size={6}>
-                  <Controller
-                    control={control}
-                    name="email"
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        error={Boolean(errors.email)}
-                        fullWidth
-                        helperText={errors.email?.message}
-                        label="Email"
-                        required
-                        type="email"
-                        variant="standard"
-                      />
-                    )}
-                    rules={{
-                      required: "Email is required",
-                      validate: (value) => {
-                        return Boolean(value.trim()) || "Email is required";
-                      },
-                    }}
-                  />
-                </Grid>
-                <Grid size={6}>
-                  <Controller
-                    control={control}
-                    name="to"
-                    render={({ field }) => (
-                      <FormControl fullWidth required variant="standard">
-                        <InputLabel id="to">To</InputLabel>
-                        <Select {...field} label="To *" labelId="to">
-                          <MenuItem
-                            key="Send me a reminder"
-                            value="Send me a reminder"
-                            sx={{ pl: 4 }}
-                          >
-                            Send me a reminder
-                          </MenuItem>
-                          <ListSubheader>General roles</ListSubheader>
-                          {GENERAL_ROLE_LIST.map((generalRoleItem) => (
+        <Box component="section">
+          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
+            Post-burn contact form
+          </Typography>
+          <Card>
+            <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+              <CardContent>
+                <Grid container spacing={2}>
+                  <Grid size={6}>
+                    <Controller
+                      control={control}
+                      name="name"
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          error={Boolean(errors.name)}
+                          fullWidth
+                          helperText={errors.name?.message}
+                          label="Name"
+                          required
+                          variant="standard"
+                        />
+                      )}
+                      rules={{
+                        required: "Name is required",
+                        validate: (value) => {
+                          return Boolean(value.trim()) || "Name is required";
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid size={6}>
+                    <Controller
+                      control={control}
+                      name="email"
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          error={Boolean(errors.email)}
+                          fullWidth
+                          helperText={errors.email?.message}
+                          label="Email"
+                          required
+                          type="email"
+                          variant="standard"
+                        />
+                      )}
+                      rules={{
+                        required: "Email is required",
+                        validate: (value) => {
+                          return Boolean(value.trim()) || "Email is required";
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid size={6}>
+                    <Controller
+                      control={control}
+                      name="to"
+                      render={({ field }) => (
+                        <FormControl fullWidth required variant="standard">
+                          <InputLabel id="to">To</InputLabel>
+                          <Select {...field} label="To *" labelId="to">
                             <MenuItem
-                              key={`${generalRoleItem}`}
-                              value={generalRoleItem}
+                              key="Send me a reminder"
+                              value="Send me a reminder"
                               sx={{ pl: 4 }}
                             >
-                              {generalRoleItem}
+                              Send me a reminder
                             </MenuItem>
-                          ))}
-                          <ListSubheader>Core volunteers</ListSubheader>
-                          {data.map(({ playaName, worldName }) => (
-                            <MenuItem
-                              key={`${playaName}-${worldName}`}
-                              value={`${playaName} "${worldName}"`}
-                              sx={{ pl: 4 }}
-                            >
-                              {`${playaName} "${worldName}"`}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    )}
-                  />
+                            <ListSubheader>General roles</ListSubheader>
+                            {GENERAL_ROLE_LIST.map((generalRoleItem) => (
+                              <MenuItem
+                                key={`${generalRoleItem}`}
+                                value={generalRoleItem}
+                                sx={{ pl: 4 }}
+                              >
+                                {generalRoleItem}
+                              </MenuItem>
+                            ))}
+                            <ListSubheader>Core volunteers</ListSubheader>
+                            {data.map(({ playaName, worldName }) => (
+                              <MenuItem
+                                key={`${playaName}-${worldName}`}
+                                value={`${playaName} "${worldName}"`}
+                                sx={{ pl: 4 }}
+                              >
+                                {`${playaName} "${worldName}"`}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      )}
+                    />
+                  </Grid>
+                  <Grid size={6}>
+                    <Controller
+                      control={control}
+                      name="isReplyWanted"
+                      render={({ field: { value, ...field } }) => (
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              {...field}
+                              checked={value}
+                              color="secondary"
+                            />
+                          }
+                          label="Reply wanted after Burning Man"
+                        />
+                      )}
+                    />
+                  </Grid>
+                  <Grid size={12}>
+                    <Controller
+                      control={control}
+                      name="message"
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          error={Boolean(errors.message)}
+                          fullWidth
+                          helperText={errors.message?.message}
+                          label="Message"
+                          multiline
+                          required
+                          variant="standard"
+                        />
+                      )}
+                      rules={{
+                        required: "Message is required",
+                        validate: (value) => {
+                          return Boolean(value.trim()) || "Message is required";
+                        },
+                      }}
+                    />
+                  </Grid>
                 </Grid>
-                <Grid size={6}>
-                  <Controller
-                    control={control}
-                    name="isReplyWanted"
-                    render={({ field: { value, ...field } }) => (
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            {...field}
-                            checked={value}
-                            color="secondary"
-                          />
-                        }
-                        label="Reply wanted after Burning Man"
-                      />
-                    )}
-                  />
-                </Grid>
-                <Grid size={12}>
-                  <Controller
-                    control={control}
-                    name="message"
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        error={Boolean(errors.message)}
-                        fullWidth
-                        helperText={errors.message?.message}
-                        label="Message"
-                        multiline
-                        required
-                        variant="standard"
-                      />
-                    )}
-                    rules={{
-                      required: "Message is required",
-                      validate: (value) => {
-                        return Boolean(value.trim()) || "Message is required";
-                      },
-                    }}
-                  />
-                </Grid>
-              </Grid>
-            </CardContent>
-            <CardActions
-              sx={{
-                justifyContent: "flex-end",
-                pb: 2,
-                pr: 2,
-                pt: 0,
-              }}
-            >
-              <Button
-                disabled={isMutating}
-                startIcon={
-                  isMutating ? <CircularProgress size="1rem" /> : <SendIcon />
-                }
-                type="submit"
-                variant="contained"
+              </CardContent>
+              <CardActions
+                sx={{
+                  justifyContent: "flex-end",
+                  pb: 2,
+                  pr: 2,
+                  pt: 0,
+                }}
               >
-                Send message
-              </Button>
-            </CardActions>
-          </form>
-        </Card>
+                <Button
+                  disabled={isMutating}
+                  startIcon={
+                    isMutating ? <CircularProgress size="1rem" /> : <SendIcon />
+                  }
+                  type="submit"
+                  variant="contained"
+                >
+                  Send message
+                </Button>
+              </CardActions>
+            </form>
+          </Card>
+        </Box>
       </Container>
     </>
   );
