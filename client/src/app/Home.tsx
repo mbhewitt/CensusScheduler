@@ -3,6 +3,7 @@
 import { Box, Card, CardContent, Container, Typography } from "@mui/material";
 import Link from "next/link";
 
+import { reportList } from "@/app/reports/Reports";
 import { Hero } from "@/components/layout/Hero";
 
 export const Home = () => {
@@ -71,8 +72,8 @@ export const Home = () => {
                 To learn more, please visit our portal in the Burning Man
                 Journal and the Census Results Archive for reports on past
                 years&apos; Census data. The most recent report,{" "}
-                <a href="/reports/2023/index.html" target="_blank">
-                  Black Rock City Census 2023 Population Report
+                <a href={reportList[0].url} target="_blank">
+                  {reportList[0].text}
                 </a>
                 , is located under the{" "}
                 <Link href={{ pathname: "/reports" }}>Reports</Link> tab in the
