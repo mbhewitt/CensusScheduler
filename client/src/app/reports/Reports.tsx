@@ -14,25 +14,24 @@ import Link from "next/link";
 
 import { Hero } from "@/components/layout/Hero";
 
+export const reportList = [
+  {
+    id: "2024",
+    text: "Black Rock City Census 2024 Population Report",
+    url: "/reports/2024/index.html",
+  },
+  {
+    id: "2023",
+    text: "Black Rock City Census 2023 Population Report",
+    url: "/reports/2023/index.html",
+  },
+  {
+    id: "2022",
+    text: "Black Rock City Census: 2013-2022 Population Analysis",
+    url: "/reports/2013-2022/index.html",
+  },
+];
 export const Reports = () => {
-  const reportList = [
-    {
-      id: "2024",
-      text: "Black Rock City Census 2024 Population Report",
-      url: "/reports/2024/index.html",
-    },
-    {
-      id: "2023",
-      text: "Black Rock City Census 2023 Population Report",
-      url: "/reports/2023/index.html",
-    },
-    {
-      id: "2022",
-      text: "Black Rock City Census: 2013-2022 Population Analysis",
-      url: "/reports/2013-2022/index.html",
-    },
-  ];
-
   // render
   // ------------------------------------------------------------
   return (
