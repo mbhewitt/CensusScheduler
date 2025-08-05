@@ -11,11 +11,14 @@ services:
       - "3306:3306"
     restart: always
   dnsmasq:
-    build:
-      context: dnsmasq
-      dockerfile: Dockerfile
+#    build:
+#      context: dnsmasq
+#      dockerfile: Dockerfile
+    image: jpillora/dnsmasq
     container_name: census-dnsmasq
-    image: burning-man/census-dnsmasq
+#    image: burning-man/census-dnsmasq
+    volumes: 
+      - ./dnsmasq/dnsmasq.conf:/etc/dnsmasq.conf
     security_opt:
       - apparmor:unconfined
     cap_add: ["NET_ADMIN"]
