@@ -191,19 +191,6 @@ const theme = createTheme({
         }),
       },
     },
-    MuiRating: {
-      styleOverrides: {
-        root: {
-          "& .MuiRating-iconFilled": {
-            color: COLOR_CENSUS_PINK,
-          },
-          "& .MuiSvgIcon-root": {
-            height: "2em",
-            width: "2em",
-          },
-        },
-      },
-    },
     MuiTypography: {
       styleOverrides: {
         root: ({ theme }) => ({
