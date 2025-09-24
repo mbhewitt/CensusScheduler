@@ -7,7 +7,7 @@ import {
   CardContent,
   Chip,
   Container,
-  Grid2 as Grid,
+  Grid,
   Typography,
 } from "@mui/material";
 import { green, grey, red } from "@mui/material/colors";

@@ -28,7 +28,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useSnackbar } from "notistack";
 import { Fragment, useContext, useEffect, useState } from "react";
-import IdleTimer from "react-idle-timer";
+import { useIdleTimer } from "react-idle-timer";
 
 import {
   pageListAdmin,
@@ -76,14 +76,31 @@ export const Header = () => {
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
 
-  // side effects
-  // ------------------------------------------------------------
-  const isBehavioralStandardsSigned =
-    checkIsBehavioralStandardsSigned(roleList);
   const isAuthenticated = checkIsAuthenticated(
     accountType,
     isAuthenticatedSession
   );
+  const handleSignOut = () => {
+    signOut(
+      developerModeDispatch,
+      enqueueSnackbar,
+      isAuthenticated,
+      playaName,
+      router,
+      sessionDispatch,
+      worldName
+    );
+  };
+
+  useIdleTimer({
+    onIdle: handleSignOut,
+    timeout: isDisableIdleEnabled ? undefined : IDLE_MINUTES * 60 * 1000,
+  });
+
+  // side effects
+  // ------------------------------------------------------------
+  const isBehavioralStandardsSigned =
+    checkIsBehavioralStandardsSigned(roleList);
 
   // if volunteer is signed in,
   // did not sign behavioral standards agreement,
@@ -118,17 +135,6 @@ export const Header = () => {
   };
   const handleDrawerClose = () => {
     setIsDrawerOpen(false);
-  };
-  const handleSignOut = () => {
-    signOut(
-      developerModeDispatch,
-      enqueueSnackbar,
-      isAuthenticated,
-      playaName,
-      router,
-      sessionDispatch,
-      worldName
-    );
   };
 
   return (
@@ -331,12 +337,6 @@ export const Header = () => {
           </Box>
         </Box>
       </Drawer>
-
-      {/* idle timer */}
-      <IdleTimer
-        onIdle={handleSignOut}
-        timeout={isDisableIdleEnabled ? undefined : IDLE_MINUTES * 60 * 1000}
-      />
     </>
   );
 };

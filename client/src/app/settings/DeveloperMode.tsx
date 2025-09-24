@@ -3,7 +3,7 @@ import {
   Button,
   FormControlLabel,
   FormGroup,
-  Grid2 as Grid,
+  Grid,
   Switch,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
