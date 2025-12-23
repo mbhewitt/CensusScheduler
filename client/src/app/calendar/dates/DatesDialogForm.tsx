@@ -1,4 +1,4 @@
-import { Grid2 as Grid, TextField } from "@mui/material";
+import { Grid, TextField } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";

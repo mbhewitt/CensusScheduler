@@ -16,7 +16,7 @@ import {
   CardContent,
   Container,
   Divider,
-  Grid2 as Grid,
+  Grid,
   IconButton,
   ListItemIcon,
   ListItemText,

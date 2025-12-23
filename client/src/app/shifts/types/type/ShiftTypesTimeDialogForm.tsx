@@ -1,6 +1,6 @@
 import {
   FormControl,
-  Grid2 as Grid,
+  Grid,
   InputLabel,
   MenuItem,
   Select,
@@ -74,7 +74,11 @@ export const ShiftTypesTimeDialogForm = ({
                     error: Boolean(errors.timeAdd?.date),
                     fullWidth: true,
                     helperText: errors.timeAdd?.date?.message,
-                    onBlur: (event) => {
+                    onBlur: (
+                      event: React.FocusEvent<
+                        HTMLInputElement | HTMLTextAreaElement
+                      >
+                    ) => {
                       if (event.target.value === "MM/DD/YYYY") {
                         setError("timeAdd.date", {
                           type: "required",
@@ -136,7 +140,11 @@ export const ShiftTypesTimeDialogForm = ({
                     error: Boolean(errors.timeAdd?.startTime),
                     fullWidth: true,
                     helperText: errors.timeAdd?.startTime?.message,
-                    onBlur: (event) => {
+                    onBlur: (
+                      event: React.FocusEvent<
+                        HTMLInputElement | HTMLTextAreaElement
+                      >
+                    ) => {
                       if (event.target.value === "hh:mm") {
                         setError("timeAdd.startTime", {
                           type: "required",
@@ -198,7 +206,11 @@ export const ShiftTypesTimeDialogForm = ({
                     error: Boolean(errors.timeAdd?.endTime),
                     fullWidth: true,
                     helperText: errors.timeAdd?.endTime?.message,
-                    onBlur: (event) => {
+                    onBlur: (
+                      event: React.FocusEvent<
+                        HTMLInputElement | HTMLTextAreaElement
+                      >
+                    ) => {
                       if (event.target.value === "hh:mm") {
                         setError("timeAdd.endTime", {
                           type: "required",

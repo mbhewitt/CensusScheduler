@@ -51,10 +51,6 @@
           },
           {
             "group": "internal",
-            "pattern": "pages/**"
-          },
-          {
-            "group": "internal",
             "pattern": "src/**"
           }
         ],

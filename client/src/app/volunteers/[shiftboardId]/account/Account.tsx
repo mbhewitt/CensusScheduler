@@ -16,7 +16,7 @@ import {
   CardContent,
   CircularProgress,
   Container,
-  Grid2 as Grid,
+  Grid,
   List,
   ListItem,
   ListItemIcon,
