@@ -28,13 +28,13 @@
     "react-dom": "^19.2.3",
     "react-hook-form": "^7.63.0",
     "react-idle-timer": "5.7.2",
-    "socket.io": "^4.6.0",
-    "socket.io-client": "^4.6.0",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3",
     "swr": "^2.3.6",
     "use-immer": "^0.11.0"
   },
   "devDependencies": {
-    "@types/mui-datatables": "^4.3.12",
+    "@types/mui-datatables": "^4.3.13",
     "@types/node": "^24.5.2",
     "@types/react": "^19.1.13",
     "@types/react-color": "^3.0.13",
