@@ -10,7 +10,7 @@ import {
 } from "@/components/types/shifts/types";
 import { generateId } from "@/utils/generateId";
 import { pool } from "lib/database";
-import { handleTimeListAdd } from "pages/api/shifts/types";
+import { handleTimeListAdd } from "@/pages/api/shifts/types";
 
 const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
   const { typeId } = req.query;

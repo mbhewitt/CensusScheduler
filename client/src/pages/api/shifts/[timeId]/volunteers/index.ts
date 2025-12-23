@@ -11,7 +11,7 @@ import { pool } from "lib/database";
 import {
   shiftVolunteerRemove,
   shiftVolunteerUpdate,
-} from "pages/api/general/shiftVolunteers";
+} from "@/pages/api/general/shiftVolunteers";
 
 const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
