@@ -15,10 +15,11 @@ const dates = async (req: NextApiRequest, res: NextApiResponse) => {
       const { date, name }: IReqDateItem = JSON.parse(req.body);
 
       await pool.query<RowDataPacket[]>(
-        `UPDATE op_roles
+        `UPDATE op_dates
         SET
           date=?,
-          datename=?
+          datename=?,
+          update_date=true
         WHERE date_id=?`,
         [date, name, dateId]
       );

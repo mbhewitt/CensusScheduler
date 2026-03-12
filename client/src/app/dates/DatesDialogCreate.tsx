@@ -17,7 +17,7 @@ import { DialogContainer } from "@/components/general/DialogContainer";
 import { SnackbarText } from "@/components/general/SnackbarText";
 import { IReqDateItem, IResDateRowItem } from "@/components/types/dates";
 import { fetcherTrigger } from "@/utils/fetcher";
-import { formatDateYear } from "@/utils/formatDateTime";
+import { formatDateDB } from "@/utils/formatDateTime";
 
 interface IDatesDialogCreateProps {
   handleDialogClose: () => void;
@@ -62,10 +62,9 @@ export const DatesDialogCreate = ({
   // form submission
   // ------------------------------------------------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
-    console.log("formValues: ", formValues);
     try {
       const body: IReqDateItem = {
-        date: formatDateYear(formValues.date),
+        date: formatDateDB(formValues.date),
         name: formValues.name,
       };
 

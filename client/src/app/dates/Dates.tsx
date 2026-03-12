@@ -23,8 +23,8 @@ import useSWR from "swr";
 import { Hero } from "@/components/layout/Hero";
 
 import { DatesDialogCreate } from "@/app/dates/DatesDialogCreate";
-// import { DatesDialogDelete } from "@/app/calendar/dates/DatesDialogDelete";
-// import { DatesDialogUpdate } from "@/app/calendar/dates/DatesDialogUpdate";
+// import { DatesDialogDelete } from "@/app/dates/DatesDialogDelete";
+import { DatesDialogUpdate } from "@/app/dates/DatesDialogUpdate";
 import { DataTable } from "@/components/general/DataTable";
 import { ErrorPage } from "@/components/general/ErrorPage";
 import { Loading } from "@/components/general/Loading";
@@ -208,14 +208,14 @@ export const Dates = () => {
       /> */}
 
           {/* update dialog */}
-          {/* <DatesDialogUpdate
-        handleDialogClose={() => setIsDialogOpen(false)}
-        isDialogOpen={
-          dialogCurrent.dialogItem === DialogList.Update && isDialogOpen
-        }
-        dateItem={dialogCurrent.dateItem}
-        dateList={data}
-      /> */}
+          <DatesDialogUpdate
+            handleDialogClose={() => setIsDialogOpen(false)}
+            isDialogOpen={
+              dialogCurrent.dialogItem === DialogList.Update && isDialogOpen
+            }
+            dateItem={dialogCurrent.dateItem}
+            dateList={data}
+          />
         </Box>
       </Container>
     </>

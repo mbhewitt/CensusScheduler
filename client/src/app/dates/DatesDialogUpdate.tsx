@@ -13,8 +13,9 @@ import {
 } from "@/app/dates/DatesDialogForm";
 import { DialogContainer } from "@/components/general/DialogContainer";
 import { SnackbarText } from "@/components/general/SnackbarText";
-import { IResDateRowItem } from "@/components/types/dates";
+import { IReqDateItem, IResDateRowItem } from "@/components/types/dates";
 import { fetcherTrigger } from "@/utils/fetcher";
+import { formatDateDB } from "@/utils/formatDateTime";
 
 interface IDatesDialogUpdateProps {
   handleDialogClose: () => void;
@@ -62,10 +63,15 @@ export const DatesDialogUpdate = ({
   // form submission
   // ------------------------------------------------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
+    const body: IReqDateItem = {
+      date: formatDateDB(formValues.date),
+      name: formValues.name,
+    };
+
     try {
       // update database
       await trigger({
-        body: formValues,
+        body: body,
         method: "PATCH",
       });
       mutate("/api/dates");
