@@ -10,10 +10,10 @@ import {
   DatesDialogForm,
   defaultValues,
   IFormValues,
-} from "@/app/calendar/dates/DatesDialogForm";
+} from "@/app/dates/DatesDialogForm";
 import { DialogContainer } from "@/components/general/DialogContainer";
 import { SnackbarText } from "@/components/general/SnackbarText";
-import { IResDateRowItem } from "@/components/types/calendar/dates";
+import { IResDateRowItem } from "@/components/types/dates";
 import { fetcherTrigger } from "@/utils/fetcher";
 
 interface IDatesDialogUpdateProps {
