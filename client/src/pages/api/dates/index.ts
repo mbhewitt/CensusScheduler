@@ -16,7 +16,8 @@ const calendar = async (req: NextApiRequest, res: NextApiResponse) => {
           date_id,
           date,
           datename
-        FROM op_dates`
+        FROM op_dates
+        WHERE delete_date=false`
       );
 
       const resDateList = dbDateList.map(({ date_id, date, datename }) => {
