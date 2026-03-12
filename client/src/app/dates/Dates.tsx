@@ -7,6 +7,8 @@ import {
   MoreHoriz as MoreHorizIcon,
 } from "@mui/icons-material";
 import {
+  Box,
+  Container,
   Button,
   ListItemIcon,
   ListItemText,
@@ -14,23 +16,26 @@ import {
   MenuList,
   Stack,
   Typography,
+  useTheme,
 } from "@mui/material";
 import { useState } from "react";
 import useSWR from "swr";
+import { Hero } from "@/components/layout/Hero";
 
-import { DatesDialogCreate } from "@/app/calendar/dates/DatesDialogCreate";
+import { DatesDialogCreate } from "@/app/dates/DatesDialogCreate";
 // import { DatesDialogDelete } from "@/app/calendar/dates/DatesDialogDelete";
 // import { DatesDialogUpdate } from "@/app/calendar/dates/DatesDialogUpdate";
 import { DataTable } from "@/components/general/DataTable";
 import { ErrorPage } from "@/components/general/ErrorPage";
 import { Loading } from "@/components/general/Loading";
 import { MoreMenu } from "@/components/general/MoreMenu";
-import { IResDateRowItem } from "@/components/types/calendar/dates";
+import { IResDateRowItem } from "@/components/types/dates";
 import { fetcherGet } from "@/utils/fetcher";
 import {
   setCellHeaderPropsCenter,
   setCellPropsCenter,
 } from "@/utils/setCellPropsCenter";
+import { formatDateDay, formatDateYear } from "@/utils/formatDateTime";
 
 enum DialogList {
   Create,
@@ -54,7 +59,11 @@ export const Dates = () => {
   // fetching, mutation, and revalidation
   // ------------------------------------------------------------
   const { data, error }: { data: IResDateRowItem[]; error: Error | undefined } =
-    useSWR("/api/calendar/dates", fetcherGet);
+    useSWR("/api/dates", fetcherGet);
+
+  // other hooks
+  // ------------------------------------------------------------
+  const theme = useTheme();
 
   // logic
   // ------------------------------------------------------------
@@ -65,6 +74,12 @@ export const Dates = () => {
   const columnList = [
     {
       name: "Date",
+      options: {
+        sortThirdClickReset: true,
+      },
+    },
+    {
+      name: "Day",
       options: {
         sortThirdClickReset: true,
       },
@@ -86,7 +101,8 @@ export const Dates = () => {
   ];
   const dataTable = data.map(({ date, id, name }) => {
     return [
-      date,
+      formatDateYear(date),
+      formatDateDay(date),
       name,
       <MoreMenu
         Icon={<MoreHorizIcon />}
@@ -126,57 +142,64 @@ export const Dates = () => {
       />,
     ];
   });
-  const optionListCustom = { filter: false };
+  const optionListCustom = {
+    filter: false,
+    sortOrder: {
+      direction: "asc" as const,
+      name: "Date",
+    },
+  };
 
   // render
   // ------------------------------------------------------------
   return (
     <>
-      <Stack
-        alignItems="flex-end"
-        direction="row"
-        justifyContent="space-between"
-        sx={{ mb: 2 }}
-      >
-        <Typography component="h2" variant="h4">
-          Dates
-        </Typography>
-        <Button
-          onClick={() => {
-            setDialogCurrent({
-              dialogItem: DialogList.Create,
-              dateItem: {
-                date: "",
-                id: 0,
-                name: "",
-              },
-            });
-            setIsDialogOpen(true);
-          }}
-          startIcon={<EventAvailableIcon />}
-          type="button"
-          variant="contained"
-        >
-          Create date
-        </Button>
-      </Stack>
-      <DataTable
-        columnList={columnList}
-        dataTable={dataTable}
-        optionListCustom={optionListCustom}
+      <Hero
+        imageStyles={{
+          backgroundColor: theme.palette.primary.light,
+          backgroundImage: `linear-gradient(${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+        }}
+        text="Dates"
       />
+      <Container component="main">
+        <Box component="section">
+          <Stack direction="row" justifyContent="flex-end" sx={{ mb: 2 }}>
+            <Button
+              onClick={() => {
+                setDialogCurrent({
+                  dialogItem: DialogList.Create,
+                  dateItem: {
+                    date: "",
+                    id: 0,
+                    name: "",
+                  },
+                });
+                setIsDialogOpen(true);
+              }}
+              startIcon={<EventAvailableIcon />}
+              type="button"
+              variant="contained"
+            >
+              Create date
+            </Button>
+          </Stack>
+          <DataTable
+            columnList={columnList}
+            dataTable={dataTable}
+            optionListCustom={optionListCustom}
+          />
 
-      {/* create dialog */}
-      <DatesDialogCreate
-        handleDialogClose={() => setIsDialogOpen(false)}
-        isDialogOpen={
-          dialogCurrent.dialogItem === DialogList.Create && isDialogOpen
-        }
-        dateList={data}
-      />
+          {/* create dialog */}
+          <DatesDialogCreate
+            handleDialogClose={() => setIsDialogOpen(false)}
+            isDialogOpen={
+              dialogCurrent.dialogItem === DialogList.Create && isDialogOpen
+            }
+            dateList={data}
+          />
 
-      {/* delete dialog */}
-      {/* <DatesDialogDelete
+          {/* delete dialog */}
+          {/* <DatesDialogDelete
         handleDialogClose={() => setIsDialogOpen(false)}
         isDialogOpen={
           dialogCurrent.dialogItem === DialogList.Delete && isDialogOpen
@@ -184,8 +207,8 @@ export const Dates = () => {
         dateItem={dialogCurrent.dateItem}
       /> */}
 
-      {/* update dialog */}
-      {/* <DatesDialogUpdate
+          {/* update dialog */}
+          {/* <DatesDialogUpdate
         handleDialogClose={() => setIsDialogOpen(false)}
         isDialogOpen={
           dialogCurrent.dialogItem === DialogList.Update && isDialogOpen
@@ -193,6 +216,8 @@ export const Dates = () => {
         dateItem={dialogCurrent.dateItem}
         dateList={data}
       /> */}
+        </Box>
+      </Container>
     </>
   );
 };

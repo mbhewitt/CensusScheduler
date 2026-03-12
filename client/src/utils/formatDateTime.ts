@@ -1,8 +1,14 @@
 import dayjs, { Dayjs } from "dayjs";
 
 // format for start date time, date name, and time display
-const formatDate = (startDateTime: string) => {
+export const formatDate = (startDateTime: string) => {
   return dayjs(startDateTime).format("MMM DD");
+};
+export const formatDateYear = (startDateTime: string) => {
+  return dayjs(startDateTime).format("YYYY-MM-DD");
+};
+export const formatDateDay = (startDateTime: string) => {
+  return dayjs(startDateTime).format("dddd");
 };
 export const formatDateName = (startDateTime: string, dateName?: string) => {
   return dateName

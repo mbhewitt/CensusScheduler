@@ -4,7 +4,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { Control, Controller, FieldErrors } from "react-hook-form";
 
-import { IResDateRowItem } from "@/components/types/calendar/dates";
+import { IResDateRowItem } from "@/components/types/dates";
 
 export interface IFormValues {
   date: string;

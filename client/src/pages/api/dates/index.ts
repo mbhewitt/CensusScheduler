@@ -1,7 +1,7 @@
 import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
-import { IResDateRowItem } from "@/components/types/calendar/dates";
+import { IResDateRowItem } from "@/components/types/dates";
 import { generateId } from "@/utils/generateId";
 import { pool } from "lib/database";
 
@@ -45,11 +45,13 @@ const calendar = async (req: NextApiRequest, res: NextApiResponse) => {
 
       await pool.query(
         `INSERT INTO op_dates (
+          create_date,
+          delete_date,
           date_id,
           date,
           datename
         )
-        VALUES (?, ?, ?)`,
+        VALUES (true, false, ?, ?, ?)`,
         [dateIdNew, date, name]
       );
 

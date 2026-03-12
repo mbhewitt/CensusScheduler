@@ -12,14 +12,12 @@ import {
   DatesDialogForm,
   defaultValues,
   IFormValues,
-} from "@/app/calendar/dates/DatesDialogForm";
+} from "@/app/dates/DatesDialogForm";
 import { DialogContainer } from "@/components/general/DialogContainer";
 import { SnackbarText } from "@/components/general/SnackbarText";
-import {
-  // IReqDateItem,
-  IResDateRowItem,
-} from "@/components/types/calendar/dates";
+import { IReqDateItem, IResDateRowItem } from "@/components/types/dates";
 import { fetcherTrigger } from "@/utils/fetcher";
+import { formatDateYear } from "@/utils/formatDateTime";
 
 interface IDatesDialogCreateProps {
   handleDialogClose: () => void;
@@ -35,7 +33,7 @@ export const DatesDialogCreate = ({
   // fetching, mutation, and revalidation
   // ------------------------------------------------------------
   // const { isMutating, trigger } = useSWRMutation(
-  const { isMutating } = useSWRMutation("/api/calendar/dates", fetcherTrigger);
+  const { isMutating, trigger } = useSWRMutation("/api/dates", fetcherTrigger);
 
   // other hooks
   // ------------------------------------------------------------
@@ -64,14 +62,18 @@ export const DatesDialogCreate = ({
   // form submission
   // ------------------------------------------------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
+    console.log("formValues: ", formValues);
     try {
-      // const body: IReqDateItem = formValues;
+      const body: IReqDateItem = {
+        date: formatDateYear(formValues.date),
+        name: formValues.name,
+      };
 
-      // // update database
-      // await trigger({
-      //   body,
-      //   method: "POST",
-      // });
+      // update database
+      await trigger({
+        body,
+        method: "POST",
+      });
 
       enqueueSnackbar(
         <SnackbarText>
@@ -136,7 +138,7 @@ export const DatesDialogCreate = ({
             type="submit"
             variant="contained"
           >
-            Create role
+            Create date
           </Button>
         </DialogActions>
       </form>

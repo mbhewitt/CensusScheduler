@@ -1,6 +1,6 @@
 import {
   BarChart as BarChartIcon,
-  // CalendarMonth as CalendarMonthIcon,
+  CalendarMonth as CalendarMonthIcon,
   EventNote as EventNoteIcon,
   Group as GroupIcon,
   Groups3 as Groups3Icon,
@@ -58,11 +58,11 @@ export const pageListAdmin = [
   },
 ];
 export const pageListSuperAdmin = [
-  // {
-  //   icon: <CalendarMonthIcon />,
-  //   label: "Calendar",
-  //   path: "/calendar",
-  // },
+  {
+    icon: <CalendarMonthIcon />,
+    label: "Dates",
+    path: "/dates",
+  },
   {
     icon: <WorkHistoryIcon />,
     label: "Shifts",

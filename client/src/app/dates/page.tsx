@@ -1,18 +1,18 @@
-import { Calendar } from "@/app/calendar/Calendar";
+import { Dates } from "@/app/dates/Dates";
 import { AuthGate } from "@/components/general/AuthGate";
 import { ACCOUNT_TYPE_SUPER_ADMIN } from "@/constants";
 
 export const metadata = {
-  title: "Census | Calendar",
+  title: "Census | Dates",
 };
-const CalendarPage = () => {
+const DatesPage = () => {
   // render
   // ------------------------------------------------------------
   return (
     <AuthGate accountTypeToCheck={ACCOUNT_TYPE_SUPER_ADMIN}>
-      <Calendar />
+      <Dates />
     </AuthGate>
   );
 };
 
-export default CalendarPage;
+export default DatesPage;
