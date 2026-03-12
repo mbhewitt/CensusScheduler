@@ -1,6 +1,6 @@
 import {
   Close as CloseIcon,
-  RemoveModerator as RemoveModeratorIcon,
+  EventBusy as EventBusyIcon,
 } from "@mui/icons-material";
 import {
   Button,
@@ -20,22 +20,20 @@ import { DialogContainer } from "@/components/general/DialogContainer";
 import { ErrorAlert } from "@/components/general/ErrorAlert";
 import { Loading } from "@/components/general/Loading";
 import { SnackbarText } from "@/components/general/SnackbarText";
-import type {
-  IResRoleRowItem,
-  IResRoleVolunteerItem,
-} from "@/components/types/roles";
+import type { IResDateRowItem } from "@/components/types/dates";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
+import { formatDateYear } from "@/utils/formatDateTime";
 
 interface IDatesDialogDeleteProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
-  roleItem: IResRoleRowItem;
+  dateItem: IResDateRowItem;
 }
 
 export const DatesDialogDelete = ({
   handleDialogClose,
   isDialogOpen,
-  roleItem: { id, name },
+  dateItem: { date, id, name },
 }: IDatesDialogDeleteProps) => {
   // fetching, mutation, and revalidation
   // ------------------------------------------------------------
@@ -43,11 +41,11 @@ export const DatesDialogDelete = ({
     data,
     error,
   }: {
-    data: IResRoleVolunteerItem[];
+    data: IResDateRowItem[];
     error: Error | undefined;
-  } = useSWR(`/api/roles/volunteers/${id}`, fetcherGet);
+  } = useSWR(`/api/dates/${id}/shift-times`, fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
-    `/api/roles/${id}`,
+    `/api/dates/${id}`,
     fetcherTrigger
   );
   const { mutate } = useSWRConfig();
@@ -63,7 +61,7 @@ export const DatesDialogDelete = ({
       <DialogContainer
         handleDialogClose={handleDialogClose}
         isDialogOpen={isDialogOpen}
-        text="Delete role"
+        text="Delete date"
       >
         <ErrorAlert />
       </DialogContainer>
@@ -73,23 +71,26 @@ export const DatesDialogDelete = ({
       <DialogContainer
         handleDialogClose={handleDialogClose}
         isDialogOpen={isDialogOpen}
-        text="Delete role"
+        text="Delete date"
       >
         <Loading />
       </DialogContainer>
     );
 
-  const handleRoleDelete = async () => {
+  const handleDateDelete = async () => {
     try {
       // update database
       await trigger({
         method: "DELETE",
       });
-      mutate("/api/roles");
+      mutate("/api/dates");
 
       enqueueSnackbar(
         <SnackbarText>
-          <strong>{name}</strong> role has been deleted
+          <strong>
+            {formatDateYear(date)} - {name}
+          </strong>{" "}
+          date has been deleted
         </SnackbarText>,
         {
           variant: "success",
@@ -119,25 +120,28 @@ export const DatesDialogDelete = ({
     <DialogContainer
       handleDialogClose={handleDialogClose}
       isDialogOpen={isDialogOpen}
-      text="Delete role"
+      text="Delete date"
     >
       {data && data.length > 0 ? (
         <>
           <DialogContentText>
             <Typography component="span">
-              To delete <strong>{name}</strong>, this role must be removed from
-              the following volunteers:
+              To delete{" "}
+              <strong>
+                {formatDateYear(date)} - {name}
+              </strong>
+              , this date must be removed from the following shift types:
             </Typography>
           </DialogContentText>
           <List sx={{ pl: 2, listStyleType: "disc" }}>
-            {data.map(({ playaName, shiftboardId, worldName }) => {
+            {data.map(({ id: shiftTimeId, name: shiftTimeName }) => {
               return (
                 <ListItem
                   disablePadding
-                  key={shiftboardId}
+                  key={shiftTimeId}
                   sx={{ display: "list-item", pl: 0 }}
                 >
-                  <ListItemText primary={`${playaName} "${worldName}"`} />
+                  <ListItemText primary={shiftTimeName} />
                 </ListItem>
               );
             })}
@@ -146,7 +150,11 @@ export const DatesDialogDelete = ({
       ) : (
         <DialogContentText>
           <Typography component="span">
-            Are you sure you want to delete <strong>{name}</strong> role?
+            Are you sure you want to delete{" "}
+            <strong>
+              {formatDateYear(date)} - {name}
+            </strong>{" "}
+            date?
           </Typography>
         </DialogContentText>
       )}
@@ -162,18 +170,14 @@ export const DatesDialogDelete = ({
         </Button>
         <Button
           disabled={isMutating || (data && data.length > 0)}
-          onClick={handleRoleDelete}
+          onClick={handleDateDelete}
           startIcon={
-            isMutating ? (
-              <CircularProgress size="1rem" />
-            ) : (
-              <RemoveModeratorIcon />
-            )
+            isMutating ? <CircularProgress size="1rem" /> : <EventBusyIcon />
           }
           type="submit"
           variant="contained"
         >
-          Delete role
+          Delete date
         </Button>
       </DialogActions>
     </DialogContainer>

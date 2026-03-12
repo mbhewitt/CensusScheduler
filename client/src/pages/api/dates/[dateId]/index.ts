@@ -35,7 +35,8 @@ const dates = async (req: NextApiRequest, res: NextApiResponse) => {
     case "DELETE": {
       // delete date
       await pool.query<RowDataPacket[]>(
-        `DELETE FROM op_dates
+        `UPDATE op_dates
+        SET delete_date=true
         WHERE date_id=?`,
         [dateId]
       );

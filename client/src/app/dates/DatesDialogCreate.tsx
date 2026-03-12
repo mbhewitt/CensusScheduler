@@ -15,7 +15,7 @@ import {
 } from "@/app/dates/DatesDialogForm";
 import { DialogContainer } from "@/components/general/DialogContainer";
 import { SnackbarText } from "@/components/general/SnackbarText";
-import { IReqDateItem, IResDateRowItem } from "@/components/types/dates";
+import type { IReqDateItem, IResDateRowItem } from "@/components/types/dates";
 import { fetcherTrigger } from "@/utils/fetcher";
 import { formatDateDB } from "@/utils/formatDateTime";
 
