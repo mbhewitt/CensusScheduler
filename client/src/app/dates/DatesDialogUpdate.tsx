@@ -1,4 +1,7 @@
-import { Close as CloseIcon, Edit as EditIcon } from "@mui/icons-material";
+import {
+  Close as CloseIcon,
+  EditCalendar as EditCalendarIcon,
+} from "@mui/icons-material";
 import { Button, CircularProgress, DialogActions } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useEffect } from "react";
@@ -13,7 +16,7 @@ import {
 } from "@/app/dates/DatesDialogForm";
 import { DialogContainer } from "@/components/general/DialogContainer";
 import { SnackbarText } from "@/components/general/SnackbarText";
-import { IReqDateItem, IResDateRowItem } from "@/components/types/dates";
+import type { IReqDateItem, IResDateRowItem } from "@/components/types/dates";
 import { fetcherTrigger } from "@/utils/fetcher";
 import { formatDateDB } from "@/utils/formatDateTime";
 
@@ -130,7 +133,11 @@ export const DatesDialogUpdate = ({
           <Button
             disabled={Object.keys(errors).length > 0 || isMutating}
             startIcon={
-              isMutating ? <CircularProgress size="1rem" /> : <EditIcon />
+              isMutating ? (
+                <CircularProgress size="1rem" />
+              ) : (
+                <EditCalendarIcon />
+              )
             }
             type="submit"
             variant="contained"

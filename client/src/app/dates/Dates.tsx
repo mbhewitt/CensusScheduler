@@ -23,7 +23,7 @@ import useSWR from "swr";
 import { Hero } from "@/components/layout/Hero";
 
 import { DatesDialogCreate } from "@/app/dates/DatesDialogCreate";
-// import { DatesDialogDelete } from "@/app/dates/DatesDialogDelete";
+import { DatesDialogDelete } from "@/app/dates/DatesDialogDelete";
 import { DatesDialogUpdate } from "@/app/dates/DatesDialogUpdate";
 import { DataTable } from "@/components/general/DataTable";
 import { ErrorPage } from "@/components/general/ErrorPage";
@@ -199,13 +199,13 @@ export const Dates = () => {
           />
 
           {/* delete dialog */}
-          {/* <DatesDialogDelete
-        handleDialogClose={() => setIsDialogOpen(false)}
-        isDialogOpen={
-          dialogCurrent.dialogItem === DialogList.Delete && isDialogOpen
-        }
-        dateItem={dialogCurrent.dateItem}
-      /> */}
+          <DatesDialogDelete
+            handleDialogClose={() => setIsDialogOpen(false)}
+            isDialogOpen={
+              dialogCurrent.dialogItem === DialogList.Delete && isDialogOpen
+            }
+            dateItem={dialogCurrent.dateItem}
+          />
 
           {/* update dialog */}
           <DatesDialogUpdate
