@@ -23,8 +23,8 @@ import Link from "next/link";
 import { useContext, useState } from "react";
 import useSWR from "swr";
 
-import { RoleVolunteersDialogAdd } from "@/app/roles/volunteers/[roleId]/RoleVolunteersDialogAdd";
-import { RoleVolunteersDialogRemove } from "@/app/roles/volunteers/[roleId]/RoleVolunteersDialogRemove";
+import { RoleVolunteersDialogAdd } from "@/app/roles/[roleId]/volunteers/RoleVolunteersDialogAdd";
+import { RoleVolunteersDialogRemove } from "@/app/roles/[roleId]/volunteers/RoleVolunteersDialogRemove";
 import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
 import { DataTable } from "@/components/general/DataTable";
 import { ErrorPage } from "@/components/general/ErrorPage";
@@ -96,7 +96,7 @@ export const RoleVolunteers = ({ roleId }: IRoleVolunteersProps) => {
   }: {
     data: IResRoleVolunteerItem[];
     error: Error | undefined;
-  } = useSWR(`/api/roles/volunteers/${roleId}`, fetcherGet);
+  } = useSWR(`/api/roles/${roleId}/volunteers`, fetcherGet);
 
   // logic
   // ------------------------------------------------------------
