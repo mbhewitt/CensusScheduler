@@ -45,7 +45,7 @@ export const RolesDialogDelete = ({
   }: {
     data: IResRoleVolunteerItem[];
     error: Error | undefined;
-  } = useSWR(`/api/roles/volunteers/${id}`, fetcherGet);
+  } = useSWR(`/api/roles/${id}/volunteers`, fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     `/api/roles/${id}`,
     fetcherTrigger

@@ -49,7 +49,7 @@ export const RoleVolunteersDialogRemove = ({
   // fetching, mutation, and revalidation
   // ------------------------------------------------------------
   const { isMutating, trigger } = useSWRMutation(
-    `/api/roles/volunteers/${roleId}`,
+    `/api/roles/${roleId}/volunteers`,
     fetcherTrigger
   );
 

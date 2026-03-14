@@ -1,4 +1,4 @@
-import { RoleVolunteers } from "@/app/roles/volunteers/[roleId]/RoleVolunteers";
+import { RoleVolunteers } from "@/app/roles/[roleId]/volunteers/RoleVolunteers";
 import { AuthGate } from "@/components/general/AuthGate";
 import { ACCOUNT_TYPE_ADMIN } from "@/constants";
 
