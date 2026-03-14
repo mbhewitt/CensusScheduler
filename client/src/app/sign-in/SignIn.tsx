@@ -29,7 +29,7 @@ import { Loading } from "@/components/general/Loading";
 import { SnackbarText } from "@/components/general/SnackbarText";
 import { Hero } from "@/components/layout/Hero";
 import type { IVolunteerOption } from "@/components/types";
-import { IReqSignIn } from "@/components/types/sign-in";
+import type { IReqSignIn } from "@/components/types/sign-in";
 import type { IResVolunteerDefaultItem } from "@/components/types/volunteers";
 import { SESSION_SIGN_IN } from "@/constants";
 import { SessionContext } from "@/state/session/context";

@@ -23,7 +23,7 @@ import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "@/components/general/DialogContainer";
 import { SnackbarText } from "@/components/general/SnackbarText";
-import { IReqReviewValues } from "@/components/types";
+import type { IReqReviewValues } from "@/components/types";
 import { legendList, UPDATE_REVIEW_REQ, UPDATE_TYPE_REVIEW } from "@/constants";
 import { fetcherTrigger } from "@/utils/fetcher";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";

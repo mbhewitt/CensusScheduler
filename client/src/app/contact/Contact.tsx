@@ -31,7 +31,7 @@ import { ErrorPage } from "@/components/general/ErrorPage";
 import { Loading } from "@/components/general/Loading";
 import { SnackbarText } from "@/components/general/SnackbarText";
 import { Hero } from "@/components/layout/Hero";
-import { IReqContact } from "@/components/types/contact";
+import type { IReqContact } from "@/components/types/contact";
 import type { IResVolunteerDefaultItem } from "@/components/types/volunteers";
 import { GENERAL_ROLE_LIST } from "@/constants";
 import { SessionContext } from "@/state/session/context";

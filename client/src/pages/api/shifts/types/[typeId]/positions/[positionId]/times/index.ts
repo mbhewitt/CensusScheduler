@@ -1,7 +1,7 @@
 import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { IResShiftTypePositionTimeItem } from "@/components/types/shifts/types";
+import type { IResShiftTypePositionTimeItem } from "@/components/types/shifts/types";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
 import { pool } from "lib/database";
 

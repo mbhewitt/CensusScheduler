@@ -1,7 +1,7 @@
 import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
-import { IResDateRowItem } from "@/components/types/dates";
+import type { IResDateRowItem } from "@/components/types/dates";
 import { generateId } from "@/utils/generateId";
 import { pool } from "lib/database";
 

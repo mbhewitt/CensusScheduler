@@ -33,7 +33,7 @@ import { ErrorPage } from "@/components/general/ErrorPage";
 import { Loading } from "@/components/general/Loading";
 import { SnackbarText } from "@/components/general/SnackbarText";
 import { Hero } from "@/components/layout/Hero";
-import { IReqShiftPositionItem } from "@/components/types/shifts/positions";
+import type { IReqShiftPositionItem } from "@/components/types/shifts/positions";
 import type { IResShiftPositionDefaults } from "@/components/types/shifts/positions";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 
