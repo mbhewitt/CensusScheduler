@@ -1,7 +1,7 @@
 import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { IReqSignIn } from "@/components/types/sign-in";
+import type { IReqSignIn } from "@/components/types/sign-in";
 import type { IResVolunteerAccount } from "@/components/types/volunteers";
 import { pool } from "lib/database";
 

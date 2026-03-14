@@ -1,7 +1,7 @@
 import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { IResShiftTypeTimePositionItem } from "@/components/types/shifts/types";
+import type { IResShiftTypeTimePositionItem } from "@/components/types/shifts/types";
 import { pool } from "lib/database";
 
 const shiftTypeTimePositions = async (

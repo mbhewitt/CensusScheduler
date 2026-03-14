@@ -21,7 +21,7 @@ import useSWRMutation from "swr/mutation";
 
 import { ErrorPage } from "@/components/general/ErrorPage";
 import { SnackbarText } from "@/components/general/SnackbarText";
-import { IReqDoodle, IResDoodle } from "@/components/types/doodle";
+import type { IReqDoodle, IResDoodle } from "@/components/types/doodle";
 import {
   CLEAR_CANVAS_REQ,
   CLEAR_CANVAS_RES,

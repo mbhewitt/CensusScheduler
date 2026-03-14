@@ -1,7 +1,7 @@
 import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
-import { IReqDateItem } from "@/components/types/dates";
+import type { IReqDateItem } from "@/components/types/dates";
 import { pool } from "lib/database";
 
 const dates = async (req: NextApiRequest, res: NextApiResponse) => {

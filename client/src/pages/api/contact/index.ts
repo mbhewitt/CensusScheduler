@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
-import { IReqContact } from "@/components/types/contact";
+import type { IReqContact } from "@/components/types/contact";
 import { pool } from "lib/database";
 
 const contact = async (req: NextApiRequest, res: NextApiResponse) => {

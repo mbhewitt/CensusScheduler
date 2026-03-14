@@ -29,7 +29,7 @@ import { DataTable } from "@/components/general/DataTable";
 import { ErrorPage } from "@/components/general/ErrorPage";
 import { Loading } from "@/components/general/Loading";
 import { MoreMenu } from "@/components/general/MoreMenu";
-import { IResDateRowItem } from "@/components/types/dates";
+import type { IResDateRowItem } from "@/components/types/dates";
 import { fetcherGet } from "@/utils/fetcher";
 import {
   setCellHeaderPropsCenter,
