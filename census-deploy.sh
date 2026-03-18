@@ -119,6 +119,11 @@ refresh_database() {
     db_pass=$(get_db_password)
     sudo docker exec -i "$db_container" mysql -uroot -p"$db_pass" census < "$sql_file"
 
+
+    # Blank PII - test server should not contain real names, emails, phones
+    log "DB refresh: blanking PII..."
+    sudo docker exec -i "$db_container" mysql -uroot -p"$db_pass" census < "$CENSUS_DIR/blank_pii.sql"
+    log "DB refresh: PII blanked."
     date +%Y-%m-%d > "$DB_REFRESH_MARKER"
     log "DB refresh: complete."
 }
