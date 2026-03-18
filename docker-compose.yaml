@@ -5,10 +5,12 @@ services:
       dockerfile: Dockerfile
     container_name: census-database
     image: burning-man/census-database
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     security_opt:
       - apparmor:unconfined
-    ports:
-      - "3306:3306"
+    expose:
+      - "3306"
     restart: always
   census:
     build:
@@ -17,7 +19,8 @@ services:
     container_name: census-app
     env_file:
       - ./client/.env.production
-    image: burning-man/census-app
+    environment:
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD}
     security_opt:
       - apparmor:unconfined
     ports:
