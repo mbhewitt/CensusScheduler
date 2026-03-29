@@ -16,20 +16,29 @@ LOCKFILE="/tmp/census-deploy.lock"
 DB_REFRESH_MARKER="/tmp/census-db-last-refresh"
 DB_PASSWORD_FILE="$CENSUS_DIR/.env"
 LOG_PREFIX="[census-deploy]"
+LOCK_MAX_AGE_SECONDS=1800  # Kill stuck deploys after 30 minutes
 
 log() {
     echo "$LOG_PREFIX $(date '+%Y-%m-%d %H:%M:%S') $*"
 }
 
-# Prevent concurrent runs
+# Prevent concurrent runs (with age-based failsafe for hung processes)
 if [ -f "$LOCKFILE" ]; then
     LOCK_PID=$(cat "$LOCKFILE" 2>/dev/null || true)
     if [ -n "$LOCK_PID" ] && kill -0 "$LOCK_PID" 2>/dev/null; then
-        log "Another instance is running (PID $LOCK_PID). Exiting."
-        exit 0
+        LOCK_AGE=$(( $(date +%s) - $(stat -c %Y "$LOCKFILE") ))
+        if [ "$LOCK_AGE" -gt "$LOCK_MAX_AGE_SECONDS" ]; then
+            log "Lock held by PID $LOCK_PID for ${LOCK_AGE}s (>${LOCK_MAX_AGE_SECONDS}s). Killing hung deploy."
+            kill -9 "$LOCK_PID" 2>/dev/null || true
+            rm -f "$LOCKFILE"
+        else
+            log "Another instance is running (PID $LOCK_PID, age ${LOCK_AGE}s). Exiting."
+            exit 0
+        fi
+    else
+        log "Stale lock file found. Removing."
+        rm -f "$LOCKFILE"
     fi
-    log "Stale lock file found. Removing."
-    rm -f "$LOCKFILE"
 fi
 echo $$ > "$LOCKFILE"
 trap 'rm -f "$LOCKFILE"' EXIT
@@ -129,16 +138,26 @@ refresh_database() {
 }
 
 # Rebuild and restart Docker services
+# Build FIRST, then stop old containers — keeps the site up during builds.
+# If the build fails/times out, old containers keep running.
 rebuild_docker() {
     log "Docker: rebuilding and restarting..."
     cd "$CENSUS_DIR"
 
-    generate_db_password
-
-    sudo docker compose --file docker-compose.yaml down
+    # Prune old build cache to prevent disk bloat on this small droplet
+    sudo docker buildx prune -af 2>/dev/null || true
     sudo docker system prune -f
-    sudo docker compose --file docker-compose.yaml build
-    sudo docker compose --file docker-compose.yaml up -d
+
+    # Build new images while old containers are still serving traffic
+    if ! timeout --kill-after=30 600 sudo docker compose --file docker-compose.yaml build; then
+        log "Docker: BUILD FAILED or timed out. Old containers left running."
+        return 1
+    fi
+
+    # Build succeeded — now swap: stop old, generate new DB password, start new
+    generate_db_password
+    sudo docker compose --file docker-compose.yaml down
+    timeout --kill-after=10 120 sudo docker compose --file docker-compose.yaml up -d
 
     log "Docker: rebuild complete."
 }
