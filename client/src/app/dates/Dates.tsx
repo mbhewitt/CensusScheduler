@@ -36,6 +36,7 @@ import {
   setCellPropsCenter,
 } from "@/utils/setCellPropsCenter";
 import { formatDateDay, formatDateYear } from "@/utils/formatDateTime";
+import dayjs from "dayjs";
 
 enum DialogList {
   Create,
@@ -76,6 +77,23 @@ export const Dates = () => {
       name: "Date",
       options: {
         sortThirdClickReset: true,
+        sortCompare: (order: string) => {
+          return (
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            shift1: { [key: string]: any },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            shift2: { [key: string]: any }
+          ) => {
+            const dateTime1 = shift1.rowData[0];
+            console.log("shift1: ", shift1);
+            const dateTime2 = shift2.rowData[0];
+            console.log("shift2: ", shift2);
+
+            return dayjs(dateTime1).isAfter(dayjs(dateTime2)) && order === "asc"
+              ? 1
+              : -1;
+          };
+        },
       },
     },
     {
