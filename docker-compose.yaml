@@ -11,6 +11,8 @@ services:
       - apparmor:unconfined
     expose:
       - "3306"
+    volumes:
+      - census-db-data:/var/lib/mysql
     restart: always
   census:
     build:
@@ -26,3 +28,6 @@ services:
     ports:
       - "3000:3000"
     restart: always
+
+volumes:
+  census-db-data:

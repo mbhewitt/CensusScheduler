@@ -123,9 +123,21 @@ refresh_database() {
         return 1
     fi
 
-    # Load the SQL file - this wipes and reloads the op_* tables
+    # Wait for MySQL to be ready (important after fresh container start)
     local db_pass
     db_pass=$(get_db_password)
+    local retries=0
+    while ! sudo docker exec "$db_container" mysqladmin ping -uroot -p"$db_pass" --silent 2>/dev/null; do
+        retries=$((retries + 1))
+        if [ "$retries" -ge 30 ]; then
+            log "DB refresh: MySQL not ready after 30 attempts. Skipping."
+            return 1
+        fi
+        log "DB refresh: waiting for MySQL to be ready... ($retries/30)"
+        sleep 2
+    done
+
+    # Load the SQL file - this wipes and reloads the op_* tables
     sudo docker exec -i "$db_container" mysql -uroot -p"$db_pass" census < "$sql_file"
 
 
@@ -135,6 +147,13 @@ refresh_database() {
     log "DB refresh: PII blanked."
     date +%Y-%m-%d > "$DB_REFRESH_MARKER"
     log "DB refresh: complete."
+}
+
+# Ensure DB password exists (generated once, persists with the volume)
+ensure_db_password() {
+    if [ ! -f "$DB_PASSWORD_FILE" ]; then
+        generate_db_password
+    fi
 }
 
 # Rebuild and restart Docker services
@@ -154,8 +173,9 @@ rebuild_docker() {
         return 1
     fi
 
-    # Build succeeded — now swap: stop old, generate new DB password, start new
-    generate_db_password
+    # Build succeeded — now swap: stop old, start new
+    # Password persists with the DB volume — only generate if missing
+    ensure_db_password
     sudo docker compose --file docker-compose.yaml down
     timeout --kill-after=10 120 sudo docker compose --file docker-compose.yaml up -d
 
@@ -179,9 +199,10 @@ fi
 if [ "$SCHEDULER_UPDATED" = true ]; then
     log "Code changes detected. Rebuilding Docker..."
     rebuild_docker
-fi
-
-if [ "$SCHEDULER_UPDATED" = true ] || [ "$ONPLAYA_UPDATED" = true ]; then
+    # Always refresh DB after a rebuild — the container may have reinitialized
+    log "DB refresh: forced after container rebuild."
+    refresh_database
+elif [ "$ONPLAYA_UPDATED" = true ]; then
     if ! db_refreshed_today; then
         refresh_database
     else
