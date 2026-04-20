@@ -1,27 +1,23 @@
 import dayjs, { Dayjs } from "dayjs";
 
 // format for start date time, date name, and time display
-export const formatDateDB = (startDateTime: string) => {
-  return dayjs(startDateTime).format("YYYY-MM-DD");
+export const formatDateDB = (date: string) => {
+  return dayjs(date).format("YYYY-MM-DD");
 };
-export const formatDate = (startDateTime: string) => {
-  return dayjs(startDateTime).format("MMM DD");
+export const formatDate = (date: string) => {
+  return dayjs(date).format("MMM DD");
 };
-export const formatDateYear = (startDateTime: string) => {
-  return dayjs(startDateTime).format("YYYY, MMM DD");
+export const formatDateYear = (date: string) => {
+  return dayjs(date).format("YYYY, MMM DD");
 };
-export const formatDateDay = (startDateTime: string) => {
-  return dayjs(startDateTime).format("dddd");
+export const formatDateDay = (date: string) => {
+  return dayjs(date).format("dddd");
 };
-export const formatDateName = (startDateTime: string, dateName?: string) => {
-  return dateName
-    ? `${formatDate(startDateTime)} - ${dateName}`
-    : formatDate(startDateTime);
+export const formatDateName = (date: string, dateName?: string) => {
+  return dateName ? `${formatDate(date)} - ${dateName}` : formatDate(date);
 };
-export const formatTime = (dateTimeStart: string, dateTimeEnd: string) => {
-  return `${dayjs(dateTimeStart).format("HH:mm")} - ${dayjs(dateTimeEnd).format(
-    "HH:mm"
-  )}`;
+export const formatTime = (startTime: string, endTime: string) => {
+  return `${startTime} - ${endTime}`;
 };
 export const formatDateTime = (dateTime?: Dayjs | null | string) => {
   return dateTime

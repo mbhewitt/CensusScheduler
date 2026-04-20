@@ -69,6 +69,7 @@ interface IShiftVolunteersDialogAddProps {
   shiftVolunteersItem: {
     positionList: IResShiftPositionCountItem[];
     shift: {
+      date: string;
       dateName: string;
       endTime: string;
       startTime: string;
@@ -92,7 +93,7 @@ export const ShiftVolunteersDialogAdd = ({
   isDialogOpen,
   shiftVolunteersItem: {
     positionList,
-    shift: { dateName, endTime, startTime, typeName },
+    shift: { date, dateName, endTime, startTime, typeName },
     timeId: timeIdShift,
     volunteerList,
   },
@@ -234,7 +235,7 @@ export const ShiftVolunteersDialogAdd = ({
         enqueueSnackbar(
           <SnackbarText>
             Adding{" "}
-            <strong>{`${formatDateName(startTime, dateName)}, ${formatTime(
+            <strong>{`${formatDateName(date, dateName)}, ${formatTime(
               startTime,
               endTime
             )}, ${typeName}`}</strong>{" "}
@@ -387,8 +388,9 @@ export const ShiftVolunteersDialogAdd = ({
       // display training list
       trainingListDisplay = trainingListFiltered.map(
         ({
-          endTime,
+          date,
           dateName,
+          endTime,
           id: timeIdTraining,
           slotsFilled,
           slotsTotal,
@@ -406,7 +408,7 @@ export const ShiftVolunteersDialogAdd = ({
               key={`${timeIdTraining}-training`}
               value={timeIdTraining}
             >
-              {`${formatDateName(startTime, dateName)}, ${formatTime(
+              {`${formatDateName(date, dateName)}, ${formatTime(
                 startTime,
                 endTime
               )}, ${type}: ${slotsFilled} / ${slotsTotal}`}
@@ -474,8 +476,9 @@ export const ShiftVolunteersDialogAdd = ({
       // display training list
       trainingListDisplay = trainingListFiltered.map(
         ({
-          endTime,
+          date,
           dateName,
+          endTime,
           id: timeIdTraining,
           slotsFilled,
           slotsTotal,
@@ -493,7 +496,7 @@ export const ShiftVolunteersDialogAdd = ({
               key={`${timeIdTraining}-training`}
               value={timeIdTraining}
             >
-              {`${formatDateName(startTime, dateName)}, ${formatTime(
+              {`${formatDateName(date, dateName)}, ${formatTime(
                 startTime,
                 endTime
               )}, ${type}: ${slotsFilled} / ${slotsTotal}`}

@@ -69,6 +69,7 @@ interface IVolunteerShiftsProps {
 interface IState {
   dialogItem: number;
   shift: {
+    date: string;
     dateName: string;
     endTime: string;
     positionName: string;
@@ -104,6 +105,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
   const [dialogCurrent, setDialogCurrent] = useState<IState>({
     dialogItem: 0,
     shift: {
+      date: "",
       dateName: "",
       endTime: "",
       positionName: "",
@@ -361,8 +363,9 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
     ({
       department: { name: departmentName },
       shift: {
-        endTime,
+        date,
         dateName,
+        endTime,
         positionName,
         startTime,
         timeId,
@@ -418,6 +421,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
                   setDialogCurrent({
                     dialogItem: DialogList.Remove,
                     shift: {
+                      date,
                       dateName,
                       endTime,
                       positionName,
@@ -445,7 +449,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
       );
 
       return [
-        formatDateName(startTime, dateName),
+        formatDateName(date, dateName),
         formatTime(startTime, endTime),
         positionName,
         <Chip
@@ -481,6 +485,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
               setDialogCurrent({
                 dialogItem: DialogList.Review,
                 shift: {
+                  date,
                   dateName,
                   endTime,
                   positionName,

@@ -22,6 +22,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       const { timeId } = req.query;
       const [dbShiftPositionList] = await pool.query<RowDataPacket[]>(
         `SELECT
+          d.date,
           d.datename,
           pt.position_details,
           pt.position,
@@ -29,16 +30,16 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           pt.role_id,
           sn.shift_details,
           sn.shift_name,
-          st.end_time,
+          st.end_time_text,
           st.meal,
           st.notes,
-          st.start_time,
+          st.start_time_text,
           stp.position_type_id,
           stp.slots,
           stp.time_position_id
         FROM op_shift_times AS st
         LEFT JOIN op_dates AS d
-        ON d.date=LEFT(st.start_time, 10)
+        ON d.date_id=st.start_date_id
         JOIN op_shift_name AS sn
         ON sn.delete_shift=false
         AND sn.shift_name_id=st.shift_name_id
@@ -49,6 +50,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         ON pt.delete_position=false
         AND pt.position_type_id=stp.position_type_id
         WHERE st.remove_shift_time=false
+        AND st.canceled=false
         AND st.shift_times_id=?
         ORDER BY pt.position COLLATE utf8mb4_general_ci`,
         [timeId]
@@ -143,12 +145,13 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       const resShiftVolunteerDetails: IResShiftVolunteerInformation = {
         positionList: resShiftPositionList,
         shift: {
+          date: resShiftPositionFirst.date,
           dateName: resShiftPositionFirst.datename ?? "",
           details: resShiftPositionFirst.shift_details,
-          endTime: resShiftPositionFirst.end_time,
+          endTime: resShiftPositionFirst.end_time_text,
           meal: resShiftPositionFirst.meal,
           notes: resShiftPositionFirst.notes,
-          startTime: resShiftPositionFirst.start_time,
+          startTime: resShiftPositionFirst.start_time_text,
           typeName: resShiftPositionFirst.shift_name,
         },
         volunteerList: resShiftVolunteerList,

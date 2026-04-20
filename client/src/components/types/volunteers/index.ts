@@ -54,8 +54,9 @@ export interface IResVolunteerShiftItem {
     name: string;
   };
   shift: {
-    endTime: string;
+    date: string;
     dateName: string;
+    endTime: string;
     positionName: string;
     startTime: string;
     timeId: number;

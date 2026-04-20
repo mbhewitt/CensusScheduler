@@ -197,11 +197,9 @@ export const Shifts = () => {
       const dateFilterList: string[] = [];
       const typeFilterList: string[] = [];
 
-      data.forEach(({ dateName, startTime, type }) => {
+      data.forEach(({ date, dateName, type }) => {
         dateFilterList.push(
-          dateName
-            ? formatDateName(startTime, dateName)
-            : formatDateName(startTime)
+          dateName ? formatDateName(date, dateName) : formatDateName(date)
         );
         typeFilterList.push(type);
       });
@@ -244,6 +242,7 @@ export const Shifts = () => {
   const colorMapDisplay = getColorMap(data);
   const dataTable = data.map(
     ({
+      date,
       dateName,
       department: { name: departmentName },
       endTime,
@@ -256,7 +255,7 @@ export const Shifts = () => {
       return [
         id, // hide for row click
         startTime, // hide for filter dialog
-        formatDateName(startTime, dateName),
+        formatDateName(date, dateName),
         formatTime(startTime, endTime),
         type, // hide for filter dialog
         <Chip

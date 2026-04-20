@@ -36,6 +36,7 @@ interface IVolunteerShiftsDialogReviewProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
   shift: {
+    date: string;
     dateName: string;
     endTime: string;
     positionName: string;
@@ -58,7 +59,7 @@ const defaultValues: IFormValues = {
 export const VolunteerShiftsDialogReview = ({
   handleDialogClose,
   isDialogOpen,
-  shift: { dateName, endTime, positionName, startTime, timePositionId },
+  shift: { date, dateName, endTime, positionName, startTime, timePositionId },
   volunteer: { notes, rating, shiftboardId },
 }: IVolunteerShiftsDialogReviewProps) => {
   // fetching, mutation, and revalidation
@@ -117,7 +118,7 @@ export const VolunteerShiftsDialogReview = ({
       enqueueSnackbar(
         <SnackbarText>
           <strong>Review</strong> for{" "}
-          <strong>{formatDateName(startTime, dateName)}</strong> at{" "}
+          <strong>{formatDateName(date, dateName)}</strong> at{" "}
           <strong>{formatTime(startTime, endTime)}</strong> has been updated
         </SnackbarText>,
         {
@@ -152,7 +153,7 @@ export const VolunteerShiftsDialogReview = ({
     >
       <DialogContentText sx={{ mb: 1 }}>
         <Typography component="span">
-          <strong>{formatDateName(startTime, dateName)}</strong> at{" "}
+          <strong>{formatDateName(date, dateName)}</strong> at{" "}
           <strong>{formatTime(startTime, endTime)}</strong> for{" "}
           <strong>{positionName}</strong>
         </Typography>

@@ -17,13 +17,14 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
       if (filter === "trainings") {
         [dbShiftList] = await pool.query<RowDataPacket[]>(
           `SELECT
+            d.date,
             d.datename,
             sc.department,
             sc.shift_category_id,
             sn.shift_name,
-            st.end_time,
+            st.end_time_text,
             st.shift_times_id,
-            st.start_time,
+            st.start_time_text,
             stp.slots,
             stp.time_position_id,
             vs.remove_shift,
@@ -37,7 +38,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
           ON sc.delete_category=false
           AND sc.shift_category_id=sn.shift_category_id
           LEFT JOIN op_dates AS d
-          ON d.date=LEFT(st.start_time, 10)
+          ON d.date_id=st.start_date_id
           JOIN op_shift_time_position AS stp
           ON stp.remove_time_position=false
           AND stp.shift_times_id=st.shift_times_id
@@ -45,20 +46,22 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
           ON vs.remove_shift=false
           AND vs.time_position_id=stp.time_position_id
           WHERE st.remove_shift_time=false
+          AND st.canceled=false
           AND sc.department="Training"
-          ORDER BY st.start_time, shift_times_id`
+          ORDER BY d.date, st.start_time_text`
         );
       } else {
         // get all shifts
         [dbShiftList] = await pool.query<RowDataPacket[]>(
           `SELECT
+            d.date,
             d.datename,
             sc.department,
             sc.shift_category_id,
             sn.shift_name,
-            st.end_time,
+            st.end_time_text,
             st.shift_times_id,
-            st.start_time,
+            st.start_time_text,
             stp.slots,
             stp.time_position_id,
             vs.shiftboard_id
@@ -71,7 +74,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
           ON sc.delete_category=false
           AND sc.shift_category_id=sn.shift_category_id
           LEFT JOIN op_dates AS d
-          ON d.date=LEFT(st.start_time, 10)
+          ON d.date_id=st.start_date_id
           JOIN op_shift_time_position AS stp
           ON stp.remove_time_position=false
           AND stp.shift_times_id=st.shift_times_id
@@ -79,7 +82,8 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
           ON vs.remove_shift=false
           AND vs.time_position_id=stp.time_position_id
           WHERE st.remove_shift_time=false
-          ORDER BY st.start_time, shift_times_id`
+          AND st.canceled=false
+          ORDER BY d.date, st.start_time_text`
         );
       }
       const resShiftList = getShiftList(dbShiftList);
