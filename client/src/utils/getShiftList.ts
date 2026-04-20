@@ -8,14 +8,15 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
 
   dbShiftList.forEach(
     ({
+      date,
       datename,
       department,
-      end_time,
+      end_time_text,
       shift_category_id,
       shift_name,
       shift_times_id,
       shiftboard_id,
-      start_time,
+      start_time_text,
       slots,
       time_position_id,
     }: RowDataPacket) => {
@@ -28,13 +29,14 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
 
         const dbShiftItemNew: IResShiftRowItem = {
           category: { id: shift_category_id },
+          date: date,
           dateName: datename ?? "",
           department: { name: department ?? "" },
-          endTime: end_time,
+          endTime: end_time_text,
           id: shift_times_id,
           slotsFilled: shiftboard_id ? 1 : 0,
           slotsTotal: slots,
-          startTime: start_time,
+          startTime: start_time_text,
           type: shift_name,
         };
 

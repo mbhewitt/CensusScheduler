@@ -4,6 +4,7 @@ export interface IResShiftRowItem {
   category: {
     id: number;
   };
+  date: string;
   dateName: string;
   department: {
     name: string;
@@ -47,6 +48,7 @@ export interface IResShiftVolunteerRowItem {
 export interface IResShiftVolunteerInformation {
   positionList: IResShiftPositionCountItem[];
   shift: {
+    date: string;
     dateName: string;
     details: string;
     endTime: string;

@@ -23,6 +23,7 @@ interface IVolunteerShiftsDialogRemoveProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
   shift: {
+    date: string;
     dateName: string;
     endTime: string;
     positionName: string;
@@ -38,7 +39,7 @@ const socket = io();
 export const VolunteerShiftsDialogRemove = ({
   handleDialogClose,
   isDialogOpen,
-  shift: { dateName, endTime, positionName, startTime, timePositionId },
+  shift: { date, dateName, endTime, positionName, startTime, timePositionId },
   volunteer: { shiftboardId },
 }: IVolunteerShiftsDialogRemoveProps) => {
   // fetching, mutation, and revalidation
@@ -69,7 +70,7 @@ export const VolunteerShiftsDialogRemove = ({
 
       enqueueSnackbar(
         <SnackbarText>
-          <strong>{formatDateName(startTime, dateName)}</strong> at{" "}
+          <strong>{formatDateName(date, dateName)}</strong> at{" "}
           <strong>{formatTime(startTime, endTime)}</strong> for{" "}
           <strong>{positionName}</strong> has been removed
         </SnackbarText>,
@@ -106,7 +107,7 @@ export const VolunteerShiftsDialogRemove = ({
       <DialogContentText>
         <Typography component="span">
           Are you sure you want to remove{" "}
-          <strong>{formatDateName(startTime, dateName)}</strong> at{" "}
+          <strong>{formatDateName(date, dateName)}</strong> at{" "}
           <strong>{formatTime(startTime, endTime)}</strong> for{" "}
           <strong>{positionName}</strong>?
         </Typography>

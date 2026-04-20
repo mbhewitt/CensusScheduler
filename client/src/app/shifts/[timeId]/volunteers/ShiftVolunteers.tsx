@@ -144,6 +144,7 @@ export const ShiftVolunteers = ({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mutate: KeyedMutator<any>;
   } = useSWR(`/api/shifts/${timeIdParam}/volunteers`, fetcherGet);
+  console.log("dataShiftVolunteersItem: ", dataShiftVolunteersItem);
   const { trigger } = useSWRMutation(
     `/api/shifts/${timeIdParam}/volunteers`,
     fetcherTrigger
@@ -595,7 +596,7 @@ export const ShiftVolunteers = ({
           <Box>
             <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
               {formatDateName(
-                dataShiftVolunteersItem.shift.startTime,
+                dataShiftVolunteersItem.shift.date,
                 dataShiftVolunteersItem.shift.dateName
               )}
               <br />

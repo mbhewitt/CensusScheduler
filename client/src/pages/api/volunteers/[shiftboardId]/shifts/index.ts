@@ -17,11 +17,12 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
       const { shiftboardId } = req.query;
       const [dbVolunteerShiftList] = await pool.query<RowDataPacket[]>(
         `SELECT
+          d.date,
           d.datename,
           pt.position,
           sc.department,
-          st.end_time,
-          st.start_time,
+          st.end_time_text,
+          st.start_time_text,
           stp.shift_times_id,
           vs.noshow,
           vs.notes,
@@ -39,23 +40,24 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
         LEFT JOIN op_shift_category AS sc
         ON sc.shift_category_id=sn.shift_category_id
         LEFT JOIN op_dates AS d
-        ON d.date=LEFT(st.start_time, 10)
+        ON d.date_id=st.start_date_id
         WHERE vs.remove_shift=false
         AND vs.shiftboard_id=?
-        ORDER BY st.start_time`,
+        ORDER BY date, st.start_time_text`,
         [shiftboardId]
       );
       const resVolunteerShiftList = dbVolunteerShiftList.map(
         ({
+          date,
           datename,
           department,
-          end_time,
+          end_time_text,
           noshow,
           notes,
           position,
           rating,
           shift_times_id,
-          start_time,
+          start_time_text,
           time_position_id,
         }) => {
           const resVolunterShiftItem: IResVolunteerShiftItem = {
@@ -63,10 +65,11 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
               name: department ?? "",
             },
             shift: {
-              endTime: end_time,
+              date: date,
               dateName: datename ?? "",
+              endTime: end_time_text,
               positionName: position,
-              startTime: start_time,
+              startTime: start_time_text,
               timeId: shift_times_id,
               timePositionId: time_position_id,
             },
