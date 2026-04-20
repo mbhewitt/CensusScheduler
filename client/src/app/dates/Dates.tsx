@@ -15,7 +15,6 @@ import {
   MenuItem,
   MenuList,
   Stack,
-  Typography,
   useTheme,
 } from "@mui/material";
 import { useState } from "react";
@@ -85,9 +84,7 @@ export const Dates = () => {
             shift2: { [key: string]: any }
           ) => {
             const dateTime1 = shift1.rowData[0];
-            console.log("shift1: ", shift1);
             const dateTime2 = shift2.rowData[0];
-            console.log("shift2: ", shift2);
 
             return dayjs(dateTime1).isAfter(dayjs(dateTime2)) && order === "asc"
               ? 1

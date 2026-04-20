@@ -15,20 +15,22 @@ const calendar = async (req: NextApiRequest, res: NextApiResponse) => {
       const [dbDateShiftTimeList] = await pool.query<RowDataPacket[]>(
         `SELECT
           sn.shift_name,
+          st.shift_name_id,
           st.shift_times_id
         FROM op_shift_times AS st
         JOIN op_shift_name AS sn
         ON sn.shift_name_id=st.shift_name_id
-        WHERE st.start_date_id=?
-        OR st.end_date_id=?`,
+        WHERE (st.start_date_id=? OR st.end_date_id=?)
+        AND st.remove_shift_time=false`,
         [dateId, dateId]
       );
 
       const resDateShiftTimeList = dbDateShiftTimeList.map(
-        ({ shift_name, shift_times_id }) => {
+        ({ shift_name, shift_name_id, shift_times_id }) => {
           const resDateShiftTimeItem: IResDateShiftTimeRowItem = {
-            id: shift_times_id,
             name: shift_name,
+            timeId: shift_times_id,
+            typeId: shift_name_id,
           };
 
           return resDateShiftTimeItem;

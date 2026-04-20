@@ -21,3 +21,9 @@ export interface IResDateRowItem {
   id: number;
   name: string;
 }
+
+export interface IResDateDeleteRowItem {
+  name: string;
+  timeId: number;
+  typeId: number;
+}
