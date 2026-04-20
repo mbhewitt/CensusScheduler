@@ -314,7 +314,8 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
             remove_shift_time=true,
             shift_instance=?
           WHERE shift_times_id=?`,
-          ["", shift_times_id]
+          // use shift times ID for shift instance because shift instance must be unique
+          [shift_times_id, shift_times_id]
         );
       });
 

@@ -20,9 +20,13 @@ import { DialogContainer } from "@/components/general/DialogContainer";
 import { ErrorAlert } from "@/components/general/ErrorAlert";
 import { Loading } from "@/components/general/Loading";
 import { SnackbarText } from "@/components/general/SnackbarText";
-import type { IResDateRowItem } from "@/components/types/dates";
+import type {
+  IResDateRowItem,
+  IResDateDeleteRowItem,
+} from "@/components/types/dates";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 import { formatDateYear } from "@/utils/formatDateTime";
+import Link from "next/link";
 
 interface IDatesDialogDeleteProps {
   handleDialogClose: () => void;
@@ -41,7 +45,7 @@ export const DatesDialogDelete = ({
     data,
     error,
   }: {
-    data: IResDateRowItem[];
+    data: IResDateDeleteRowItem[];
     error: Error | undefined;
   } = useSWR(`/api/dates/${id}/shift-times`, fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
@@ -134,17 +138,25 @@ export const DatesDialogDelete = ({
             </Typography>
           </DialogContentText>
           <List sx={{ pl: 2, listStyleType: "disc" }}>
-            {data.map(({ id: shiftTimeId, name: shiftTimeName }) => {
-              return (
-                <ListItem
-                  disablePadding
-                  key={shiftTimeId}
-                  sx={{ display: "list-item", pl: 0 }}
-                >
-                  <ListItemText primary={shiftTimeName} />
-                </ListItem>
-              );
-            })}
+            {data.map(
+              ({
+                name: shiftTimeName,
+                timeId: shiftTimeId,
+                typeId: shiftTypeId,
+              }) => {
+                return (
+                  <ListItem
+                    disablePadding
+                    key={shiftTimeId}
+                    sx={{ display: "list-item", pl: 0 }}
+                  >
+                    <Link href={`/shifts/types/update/${shiftTypeId}`}>
+                      <ListItemText primary={shiftTimeName} />
+                    </Link>
+                  </ListItem>
+                );
+              }
+            )}
           </List>
         </>
       ) : (
