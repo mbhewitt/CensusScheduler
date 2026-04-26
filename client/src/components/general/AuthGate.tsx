@@ -1,6 +1,7 @@
 "use client";
 
-import { useContext } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useContext, useEffect } from "react";
 
 import { Loading } from "@/components/general/Loading";
 import {
@@ -34,6 +35,11 @@ export const AuthGate = ({ accountTypeToCheck, children }: IAuthGateProps) => {
     },
   } = useContext(SessionContext);
 
+  // other hooks
+  // ------------------------------------------------------------
+  const pathname = usePathname();
+  const router = useRouter();
+
   // logic
   // ------------------------------------------------------------
   let isAuthorized = false;
@@ -50,6 +56,19 @@ export const AuthGate = ({ accountTypeToCheck, children }: IAuthGateProps) => {
       break;
     default:
   }
+
+  // redirect unauthenticated users to sign-in with a return URL
+  // ------------------------------------------------------------
+  useEffect(() => {
+    if (!isAuthorized) {
+      if (pathname) {
+        const returnTo = encodeURIComponent(pathname);
+        router.replace(`/sign-in?returnTo=${returnTo}`);
+      } else {
+        router.replace("/sign-in");
+      }
+    }
+  }, [isAuthorized, pathname, router]);
 
   // render
   // ------------------------------------------------------------
