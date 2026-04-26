@@ -102,11 +102,13 @@ const ROLE_DISPLAY_NAMES: Record<string, string> = {
 };
 
 // format ISO date string to readable format like "Aug 17"
+// Use UTC to avoid timezone offset shifting the displayed day
 const formatDateDisplay = (isoDate: string): string => {
   const d = new Date(isoDate);
   return d.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
+    timeZone: "UTC",
   });
 };
 
@@ -330,10 +332,14 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   const handleRoleToggle = useCallback(
     async (roleId: number, roleName: string, hasRole: boolean) => {
       try {
-        await fetch(`/api/roles/${roleId}/volunteers`, {
+        const res = await fetch(`/api/roles/${roleId}/volunteers`, {
           method: hasRole ? "DELETE" : "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ shiftboardId }),
         });
+        if (!res.ok) {
+          throw new Error(`Failed to ${hasRole ? "remove" : "add"} role`);
+        }
         mutateAccount();
         mutate();
         enqueueSnackbar(
@@ -344,14 +350,14 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
           { variant: "success" }
         );
       } catch (error) {
-        if (error instanceof Error) {
-          enqueueSnackbar(
-            <SnackbarText>
-              <strong>{error.message}</strong>
-            </SnackbarText>,
-            { persist: true, variant: "error" }
-          );
-        }
+        enqueueSnackbar(
+          <SnackbarText>
+            <strong>
+              {error instanceof Error ? error.message : "An error occurred"}
+            </strong>
+          </SnackbarText>,
+          { persist: true, variant: "error" }
+        );
       }
     },
     [shiftboardId, mutate, mutateAccount, enqueueSnackbar]
@@ -650,11 +656,12 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   // Role-based thresholds (Counter Culture, Census Lab, Census Ticket)
   for (const rt of roleThresholds) {
     const pct = Math.min(100, Math.round((rt.currentCsp / rt.requiredCsp) * 100));
+    const displayRole = ROLE_DISPLAY_NAMES[rt.role] ?? rt.role;
     checklistItems.push({
       id: `role-${rt.role}`,
       label: rt.fulfilled
-        ? `${rt.role} \u2014 Requirements met`
-        : `Meet shift requirements for ${rt.role}`,
+        ? `${displayRole} \u2014 Requirements met`
+        : `Meet shift requirements for ${displayRole}`,
       done: rt.fulfilled,
       content: (
         <Box>
@@ -771,6 +778,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                 Desired / Expected Arrival Date
               </Typography>
               <Select
+                aria-label="Desired / Expected Arrival Date"
                 displayEmpty
                 onChange={(e) =>
                   handleArrivalDateChange(e.target.value)
@@ -812,6 +820,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                   different department, or would you like Census to provide this?
                 </Typography>
                 <Select
+                  aria-label="Early entry source"
                   onChange={(e) =>
                     handleOtherSapToggle(e.target.value === "other")
                   }
