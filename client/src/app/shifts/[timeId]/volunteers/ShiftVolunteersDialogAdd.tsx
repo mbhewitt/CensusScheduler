@@ -304,7 +304,7 @@ export const ShiftVolunteersDialogAdd = ({
 
   // evaluate check-in type and available shifts and positions
   let volunteerListDisplay: IVolunteerOption[] = [];
-  let positionListDisplay: JSX.Element[] = [];
+  let positionListDisplay: React.JSX.Element[] = [];
   const trainingListFiltered = dataTrainingList.filter(
     ({ category: { id: categoryId }, startTime: startTimeTraining }) =>
       // include trainings that match the prerequisite ID
@@ -330,8 +330,8 @@ export const ShiftVolunteersDialogAdd = ({
       return false;
     }
   );
-  let trainingListDisplay: JSX.Element[] = [];
-  let trainingPositionListDisplay: JSX.Element[] = [];
+  let trainingListDisplay: React.JSX.Element[] = [];
+  let trainingPositionListDisplay: React.JSX.Element[] = [];
   let noShowShift: string;
 
   switch (checkInType) {
