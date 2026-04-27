@@ -883,7 +883,6 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
             ) : (
               incompleteItems.map((item) => (
                 <Accordion
-                  defaultExpanded
                   key={item.id}
                   sx={{
                     "&:before": { display: "none" },
