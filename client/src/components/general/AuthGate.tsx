@@ -3,6 +3,8 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useContext, useEffect } from "react";
 
+import { Container, Typography } from "@mui/material";
+
 import { Loading } from "@/components/general/Loading";
 import {
   ACCOUNT_TYPE_ADMIN,
@@ -57,10 +59,15 @@ export const AuthGate = ({ accountTypeToCheck, children }: IAuthGateProps) => {
     default:
   }
 
-  // redirect unauthenticated users to sign-in with a return URL
+  // determine if user has any session at all
+  // ------------------------------------------------------------
+  const hasSession = isAuthenticatedSession;
+
+  // redirect users without a session to sign-in with a return URL
+  // users with a session but insufficient role see a fallback instead
   // ------------------------------------------------------------
   useEffect(() => {
-    if (!isAuthorized) {
+    if (!isAuthorized && !hasSession) {
       if (pathname) {
         const returnTo = encodeURIComponent(pathname);
         router.replace(`/sign-in?returnTo=${returnTo}`);
@@ -68,9 +75,29 @@ export const AuthGate = ({ accountTypeToCheck, children }: IAuthGateProps) => {
         router.replace("/sign-in");
       }
     }
-  }, [isAuthorized, pathname, router]);
+  }, [isAuthorized, hasSession, pathname, router]);
 
   // render
   // ------------------------------------------------------------
-  return <>{isAuthorized ? children : <Loading />}</>;
+  if (isAuthorized) {
+    return <>{children}</>;
+  }
+
+  if (hasSession) {
+    return (
+      <Container
+        component="main"
+        sx={{
+          alignItems: "center",
+          display: "flex",
+          justifyContent: "center",
+          mt: 4,
+        }}
+      >
+        <Typography>You don&apos;t have permission to view this page.</Typography>
+      </Container>
+    );
+  }
+
+  return <Loading />;
 };
