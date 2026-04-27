@@ -17,7 +17,13 @@ export const formatDateName = (date: string, dateName?: string) => {
   return dateName ? `${formatDate(date)} - ${dateName}` : formatDate(date);
 };
 export const formatTime = (startTime: string, endTime: string) => {
-  return `${startTime} - ${endTime}`;
+  // Accepts either "HH:mm" or "YYYY-MM-DD HH:mm" -- if a date is present, strip it.
+  const toTime = (t: string) => {
+    if (!t) return t;
+    const parsed = dayjs(t);
+    return parsed.isValid() ? parsed.format("HH:mm") : t;
+  };
+  return `${toTime(startTime)} - ${toTime(endTime)}`;
 };
 export const formatDateTime = (dateTime?: Dayjs | null | string) => {
   return dateTime
