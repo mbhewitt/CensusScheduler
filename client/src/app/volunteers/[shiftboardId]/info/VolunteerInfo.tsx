@@ -702,7 +702,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
           backgroundImage: "url(/banners/banner-volunteers.jpg)",
           backgroundSize: "cover",
         }}
-        text={`${volunteer.playaName} "${volunteer.worldName}"`}
+        text="Volunteer Information"
       />
       <Container maxWidth="md">
         {/* breadcrumbs */}
