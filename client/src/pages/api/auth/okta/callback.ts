@@ -125,6 +125,13 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(404).json({ statusCode: 404, message: "Not found" });
   }
 
+  if (process.env.NEXT_PUBLIC_OKTA_ENABLED !== "true") {
+    return res.status(403).json({
+      statusCode: 403,
+      message: "Okta sign-in is not enabled for this deployment",
+    });
+  }
+
   const { code, state, error, error_description } = req.query;
 
   // Okta returned an error
