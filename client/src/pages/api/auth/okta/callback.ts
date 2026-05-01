@@ -20,6 +20,8 @@ interface OktaUserInfo {
   family_name?: string;
   preferred_username?: string;
   nickname?: string;
+  // BM custom claim returned by the standard `profile` scope
+  playaname?: string;
 }
 
 // helper: exchange authorization code for tokens
@@ -177,7 +179,11 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
     const userInfo = await fetchUserInfo(tokens.access_token);
     const oktaId = userInfo.sub;
     const email = userInfo.email;
-    const playaName = userInfo.nickname || userInfo.given_name || userInfo.name || email;
+    const playaName =
+      userInfo.playaname ||
+      userInfo.preferred_username ||
+      userInfo.given_name ||
+      "";
     const worldName = userInfo.name || `${userInfo.given_name || ""} ${userInfo.family_name || ""}`.trim() || email;
 
     if (!email) {
