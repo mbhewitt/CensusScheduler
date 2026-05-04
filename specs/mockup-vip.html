@@ -427,13 +427,20 @@
   .pbar-text { font-size: 13px; color: var(--gray); white-space: nowrap; }
 
   .completed-divider { border-top: 1px solid var(--border); margin-top: 4px; }
+  /* v5: full-weight row with green check icon, matching the live code's
+     treatment of the "view completed items" toggle. Replaces v4's quieter
+     gray-text variant. */
   .completed-toggle {
-    display: flex; align-items: center; gap: 8px; padding: 10px 24px;
-    cursor: pointer; user-select: none; color: var(--gray); font-size: 13px;
+    display: flex; align-items: center; gap: 14px; padding: 18px 24px;
+    cursor: pointer; user-select: none; color: var(--brown); font-size: 16px;
+    font-weight: 500;
     transition: background 0.1s;
   }
   .completed-toggle:hover { background: rgba(0,0,0,0.02); }
-  .completed-toggle .expand-icon { font-size: 18px; transition: transform 0.2s; }
+  .completed-toggle .check-icon {
+    color: var(--green); font-size: 22px; flex-shrink: 0;
+  }
+  .completed-toggle .expand-icon { font-size: 22px; transition: transform 0.2s; margin-left: auto; color: var(--gray); }
   .completed-toggle .expand-icon.open { transform: rotate(180deg); }
   .completed-body { display: none; }
   .completed-body.open { display: block; }
@@ -695,14 +702,6 @@
   </div>
 </div>
 
-<!-- ═══════════ READ-ONLY BANNER (v5) ═══════════ -->
-<div id="readonly-banner" class="readonly-banner hidden">
-  <span class="material-icons">info_outline</span>
-  <span>
-    Census has moved on playa, and we can&rsquo;t wait to see you. If you need to make any changes to your account or schedule, come see us at the Census Lab and use one of our Census tablets along with <a href="#" target="_blank">your insecure playa passcode</a> to log in to your account.
-  </span>
-</div>
-
 <!-- ═══════════ SAP BANNER ═══════════ -->
 <div id="sap-banner" class="sap-banner hidden">
   <span class="material-icons">description</span>
@@ -767,9 +766,30 @@
   </div>
 </div>
 
+<!-- ═══════════ READ-ONLY BANNER (v5) — repositioned per Mew, sits directly
+     under the "Volunteer Information" hero rather than above the AppBar. -->
+<div id="readonly-banner" class="readonly-banner hidden">
+  <span class="material-icons">info_outline</span>
+  <span>
+    Census has moved on playa, and we can&rsquo;t wait to see you. If you need to make any changes to your account or schedule, come see us at the Census Lab and use one of our Census tablets along with <a href="#" target="_blank">your insecure playa passcode</a> to log in to your account.
+  </span>
+</div>
+
 <!-- ═══════════ PAGE ═══════════ -->
 <div class="page-bg">
 <div class="page-container">
+
+  <!-- Welcome card (v5 — added per Mew, matches the live code's friendly greeting) -->
+  <div class="card">
+    <div class="card-body" style="padding: 20px 24px;">
+      <div style="font-size: 22px; font-weight: 500; color: var(--brown); margin-bottom: 6px;">
+        Welcome, Sparkle Pony!
+      </div>
+      <div style="font-size: 14px; color: #555; line-height: 1.5;">
+        This is your Volunteer Information page. Use the checklist below to make sure you&rsquo;re ready for the event &mdash; we&rsquo;ll show you exactly what&rsquo;s left to do based on your role and shifts.
+      </div>
+    </div>
+  </div>
 
   <!-- Profile (PII Reduction: no phone, no emergency contact)
        v5: playa name + world name + email all read-only.
@@ -856,8 +876,9 @@
     <div id="cl-incomplete"></div>
     <div id="cl-completed-section" class="completed-divider hidden">
       <div class="completed-toggle" onclick="toggleCompleted()">
+        <span class="material-icons check-icon">check_circle</span>
+        <span id="compl-label">View completed items</span>
         <span class="material-icons expand-icon" id="compl-icon">expand_more</span>
-        <span>...view more completed checklist items</span>
       </div>
       <div id="cl-completed-body" class="completed-body"></div>
     </div>
@@ -1122,7 +1143,12 @@ function scrollOnPlaya(){
 }
 
 function mkItem(id,done,label,detail,opts={}){
-  const ex=expanded[id];
+  // v5: incomplete items default expanded so volunteers see what's needed
+  // without clicking. Completed items always start collapsed inside the
+  // "view more completed items" toggle. Per Mew (2026-05-04), with Chipper's
+  // earlier preference for a less-overwhelming list satisfied by the
+  // collapse-on-completion behavior.
+  const ex = (id in expanded) ? expanded[id] : !done;
   const b=done?boxChecked():boxUnchecked();
   const doneClass=done?' done':'';
   let oc=`tog('${id}')`;
@@ -1321,6 +1347,9 @@ function renderCL(){
   document.getElementById('cl-completed-body').innerHTML=comp.join('');
   document.getElementById('cl-completed-body').classList.toggle('open',complOpen);
   document.getElementById('compl-icon').classList.toggle('open',complOpen);
+  // v5: include count of completed items in the toggle label
+  document.getElementById('compl-label').textContent =
+    hasC ? `View ${comp.length} completed item${comp.length===1?'':'s'}` : 'View completed items';
 }
 
 function onBurner(cb){
