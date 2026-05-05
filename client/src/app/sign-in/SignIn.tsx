@@ -88,7 +88,8 @@ export const SignIn = () => {
   const theme = useTheme();
 
   const oauthError = searchParams?.get("error");
-  const isOAuthConfigured = Boolean(process.env.NEXT_PUBLIC_OKTA_ENABLED);
+  const isOAuthConfigured = process.env.NEXT_PUBLIC_OKTA_ENABLED === "true";
+  const isPinEnabled = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
 
   // logic
   // ------------------------------------------------------------
@@ -185,6 +186,14 @@ export const SignIn = () => {
               Sign in failed: {decodeURIComponent(oauthError).replace(/_/g, " ")}
             </Alert>
           )}
+          {!isOAuthConfigured && !isPinEnabled && (
+            <CardContent>
+              <Alert severity="warning">
+                Sign-in is not configured for this deployment. Please contact
+                an administrator.
+              </Alert>
+            </CardContent>
+          )}
           {isOAuthConfigured && (
             <CardContent>
               <Button
@@ -196,13 +205,16 @@ export const SignIn = () => {
               >
                 Sign in with Burning Man
               </Button>
-              <Divider sx={{ mt: 2 }}>
-                <Typography color="text.secondary" variant="body2">
-                  or use passcode
-                </Typography>
-              </Divider>
+              {isPinEnabled && (
+                <Divider sx={{ mt: 2 }}>
+                  <Typography color="text.secondary" variant="body2">
+                    or use passcode
+                  </Typography>
+                </Divider>
+              )}
             </CardContent>
           )}
+          {isPinEnabled && (
           <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
             <CardContent>
               <Stack spacing={2}>
@@ -302,6 +314,7 @@ export const SignIn = () => {
               </Button>
             </CardActions>
           </form>
+          )}
         </Card>
       </Container>
     </>
