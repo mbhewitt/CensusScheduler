@@ -391,6 +391,22 @@
   /* ═══════════════════════════════════════════
      CHECKLIST
      ═══════════════════════════════════════════ */
+  /* Checklist legend (proposed) — small color-key row above the checklist */
+  .checklist-legend {
+    display: flex;
+    gap: 24px;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--border);
+    background: #fafafa;
+    font-size: 13px;
+    color: var(--gray);
+  }
+  .checklist-legend .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
   .csp-summary-bar {
     padding: 10px 24px; font-size: 14px; color: var(--gray);
     background: var(--gray-light); border-bottom: 1px solid var(--border);
@@ -858,7 +874,7 @@
       </div>
 
       <div class="form-field" style="margin-top:16px;">
-        <label>Where will you be camping?</label>
+        <label>Tell us about where you will be camping</label>
         <textarea id="camping-location" placeholder="e.g., Counter Culture Camp at 7:30 & G" oninput="render()"></textarea>
         <div class="helper-text">How to find you on playa and any other relevant info</div>
       </div>
@@ -869,6 +885,13 @@
   <div class="card" id="checklist-card">
     <div class="card-header">
       <span class="material-icons">checklist</span> Census Volunteer Pre-playa Checklist
+    </div>
+    <!-- Color/status legend (proposed by Woodie + Chipper, 2026-04-27 — not
+         yet explicitly approved by Mew). Helps first-time volunteers parse the
+         visual indicators on the checklist below. -->
+    <div class="checklist-legend">
+      <span class="legend-item"><span class="vbox"><span class="vbox-unchecked"></span></span> Action needed</span>
+      <span class="legend-item"><span class="vbox"><span class="vbox-checked"></span></span> Completed</span>
     </div>
     <div id="csp-bar" class="csp-summary-bar hidden">
       Your current total: <strong id="csp-val">0</strong> Census Shift Points (CSP) scheduled
