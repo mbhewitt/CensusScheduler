@@ -144,7 +144,6 @@ export const ShiftVolunteers = ({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mutate: KeyedMutator<any>;
   } = useSWR(`/api/shifts/${timeIdParam}/volunteers`, fetcherGet);
-  console.log("dataShiftVolunteersItem: ", dataShiftVolunteersItem);
   const { trigger } = useSWRMutation(
     `/api/shifts/${timeIdParam}/volunteers`,
     fetcherTrigger
