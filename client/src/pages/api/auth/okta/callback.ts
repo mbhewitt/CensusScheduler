@@ -24,42 +24,50 @@ interface OktaUserInfo {
   playaname?: string;
 }
 
-// fetch with retries on transient network failures. Node's default fetch
-// timeout is 10s and a small fraction of POSTs to login.burningman.org
-// fail with `fetch failed` (TLS handshake or connection-pool staleness on
-// Cloudflare) -- a single retry is enough to recover but we do up to 3
-// attempts with a small backoff.
+// fetch with retries that ride through transient outages without the user
+// seeing them. Observed behavior in prod: occasional ~60s windows where
+// POSTs to login.burningman.org (Cloudflare) fail with `fetch failed`,
+// while other endpoints stay reachable. Most likely a stale pooled
+// connection or CDN-side hiccup that recovers when we reconnect.
+//
+// 5 attempts, fail-fast 8s timeout per attempt, exponential backoff
+// (250ms, 750ms, 2.5s, 6s) with light jitter -- worst-case total wait
+// ~50s. Anything longer than that we want to surface to the user.
 async function fetchWithRetry(
   url: string,
   init: RequestInit,
   label: string
 ): Promise<Response> {
-  const maxAttempts = 3;
+  const maxAttempts = 5;
+  const perAttemptTimeoutMs = 8_000;
+  const backoffsMs = [250, 750, 2_500, 6_000]; // length === maxAttempts - 1
   let lastErr: unknown;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       return await fetch(url, {
         ...init,
-        signal: AbortSignal.timeout(20_000),
+        signal: AbortSignal.timeout(perAttemptTimeoutMs),
       });
     } catch (err) {
       lastErr = err;
+      const causeStr =
+        err instanceof Error && err.cause
+          ? `${(err.cause as { code?: string }).code ?? ""}: ${(err.cause as { message?: string }).message ?? ""}`
+          : "";
       console.warn(
         `${label} attempt ${attempt}/${maxAttempts} failed:`,
         err instanceof Error ? err.message : err,
-        err instanceof Error && err.cause
-          ? `| cause: ${(err.cause as { code?: string; message?: string }).code ?? ""} ${(err.cause as { message?: string }).message ?? ""}`
-          : ""
+        causeStr ? `| cause: ${causeStr}` : ""
       );
       if (attempt === maxAttempts) break;
-      // small backoff: 200ms, 800ms
-      await new Promise((resolve) =>
-        setTimeout(resolve, attempt * attempt * 200)
-      );
+      const backoff = backoffsMs[attempt - 1];
+      // jitter +/- 20% so concurrent retries don't synchronize on a CDN
+      const jittered = backoff * (0.8 + Math.random() * 0.4);
+      await new Promise((resolve) => setTimeout(resolve, jittered));
     }
   }
   // Surface err.cause if present -- without it Node's fetch errors just say
-  // "fetch failed" which is useless.
+  // "fetch failed" which is useless for diagnosing.
   const top = lastErr instanceof Error ? lastErr.message : String(lastErr);
   const cause =
     lastErr instanceof Error && lastErr.cause
@@ -69,7 +77,9 @@ async function fetchWithRetry(
             : ""
         })`
       : "";
-  throw new Error(`${label} failed: ${top}${cause}`);
+  throw new Error(
+    `${label} failed after ${maxAttempts} attempts: ${top}${cause}`
+  );
 }
 
 // helper: exchange authorization code for tokens
