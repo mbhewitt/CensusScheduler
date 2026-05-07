@@ -24,6 +24,31 @@ interface OktaUserInfo {
   playaname?: string;
 }
 
+// fetch with a longer timeout and one retry on transient network failures.
+// Node's default fetch timeout is 10s; we've seen prod hit it on cold/IPv6
+// connect paths to login.burningman.org, breaking sign-in for users who did
+// nothing wrong.
+async function fetchWithRetry(
+  url: string,
+  init: RequestInit,
+  label: string
+): Promise<Response> {
+  let lastErr: unknown;
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      return await fetch(url, {
+        ...init,
+        signal: AbortSignal.timeout(20_000),
+      });
+    } catch (err) {
+      lastErr = err;
+      if (attempt === 2) break;
+    }
+  }
+  const msg = lastErr instanceof Error ? lastErr.message : String(lastErr);
+  throw new Error(`${label} failed: ${msg}`);
+}
+
 // helper: exchange authorization code for tokens
 async function exchangeCode(
   code: string,
@@ -44,11 +69,15 @@ async function exchangeCode(
     code_verifier: codeVerifier,
   });
 
-  const resp = await fetch(tokenUrl, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: body.toString(),
-  });
+  const resp = await fetchWithRetry(
+    tokenUrl,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: body.toString(),
+    },
+    "Token exchange"
+  );
 
   if (!resp.ok) {
     const text = await resp.text();
@@ -63,9 +92,11 @@ async function fetchUserInfo(
   accessToken: string
 ): Promise<OktaUserInfo> {
   const issuer = process.env.OKTA_ISSUER!;
-  const resp = await fetch(`${issuer}/v1/userinfo`, {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
+  const resp = await fetchWithRetry(
+    `${issuer}/v1/userinfo`,
+    { headers: { Authorization: `Bearer ${accessToken}` } },
+    "UserInfo"
+  );
 
   if (!resp.ok) {
     const text = await resp.text();
@@ -159,7 +190,15 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
     const parsed = JSON.parse(decodeURIComponent(oauthCookie));
     storedState = parsed.state;
     codeVerifier = parsed.codeVerifier;
-  } catch {
+  } catch (err) {
+    // Log the raw cookie value (truncated) so we can diagnose the
+    // intermittent "[object Object]" SyntaxError seen in prod.
+    console.error(
+      "OAuth state cookie parse failed:",
+      err,
+      "raw cookie:",
+      oauthCookie.slice(0, 80)
+    );
     return res.redirect("/sign-in?error=invalid_state");
   }
 
@@ -268,7 +307,14 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
     );
   } catch (err) {
     console.error("OAuth callback error:", err);
-    return res.redirect("/sign-in?error=callback_failed");
+    // Surface a short error string in the redirect so the user/admin can
+    // see what failed without having to grep server logs. Truncate hard
+    // to keep the URL short and to avoid leaking long server traces.
+    const detail = err instanceof Error ? err.message : String(err);
+    const safeDetail = detail.replace(/[\r\n]+/g, " ").slice(0, 160);
+    return res.redirect(
+      `/sign-in?error=${encodeURIComponent(`callback_failed: ${safeDetail}`)}`
+    );
   }
 };
 
