@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import type { IResVolunteerShiftItem } from "@/components/types/volunteers";
 import { pool } from "lib/database";
+import { withAuth } from "@/lib/withAuth";
 import {
   shiftVolunteerRemove,
   shiftVolunteerUpdate,
@@ -117,4 +118,4 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default volunteerShifts;
+export default withAuth(volunteerShifts);

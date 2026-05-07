@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import type { IReqToggleProfileUpdated } from "@/components/types/volunteer-info";
 import { pool } from "lib/database";
+import { withAuth } from "@/lib/withAuth";
 
 const ROLE_BURNER_PROFILE_UPDATED_ID = 2000010;
 
@@ -66,4 +67,4 @@ const profileUpdated = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default profileUpdated;
+export default withAuth(profileUpdated);

@@ -21,6 +21,14 @@ export const signOut = (
   worldName: string
 ) => {
   if (isAuthenticated) {
+    // Clear the server-side session cookie. Fire-and-forget — even if the
+    // request fails (offline, etc.) we still proceed with the client-side
+    // teardown so the user feels signed out.
+    fetch("/api/auth/sign-out", {
+      method: "POST",
+      credentials: "same-origin",
+    }).catch(() => {});
+
     developerModeDispatch({
       type: DEVELOPER_MODE_RESET,
     });

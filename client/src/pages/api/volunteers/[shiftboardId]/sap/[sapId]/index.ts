@@ -5,6 +5,7 @@ import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
+import { withAuth } from "@/lib/withAuth";
 
 const SAP_FILES_DIR = process.env.SAP_FILES_DIR ?? "/data/census/saps/";
 
@@ -62,4 +63,4 @@ const sapDownload = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default sapDownload;
+export default withAuth(sapDownload);

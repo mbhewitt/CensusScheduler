@@ -1,6 +1,7 @@
 import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import { buildSessionCookie } from "@/lib/session";
 import { generateId } from "@/utils/generateId";
 import { pool } from "lib/database";
 
@@ -297,6 +298,10 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
     if (!account) {
       return res.redirect("/sign-in?error=account_error");
     }
+
+    // hotfix 2026-05-06: set the server-side session cookie so the
+    // middleware (and API guards) recognize this user as authenticated.
+    res.setHeader("Set-Cookie", buildSessionCookie(shiftboardId));
 
     // encode account data for client-side session hydration
     const accountData = encodeURIComponent(JSON.stringify(account));

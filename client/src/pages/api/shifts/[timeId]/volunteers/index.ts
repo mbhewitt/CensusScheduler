@@ -7,6 +7,7 @@ import type {
   IResShiftVolunteerInformation,
   IResShiftVolunteerRowItem,
 } from "@/components/types/shifts";
+import { withAuth } from "@/lib/withAuth";
 import { pool } from "lib/database";
 import {
   shiftVolunteerRemove,
@@ -236,4 +237,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default shiftVolunteers;
+// Hotfix 2026-05-06: this endpoint exposes volunteer playa + world names
+// per shift. Wrapped in withAuth so unauth requests get 401 and forged
+// cookies are rejected by HMAC verification.
+export default withAuth(shiftVolunteers);
