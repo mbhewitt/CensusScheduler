@@ -24,17 +24,19 @@ interface OktaUserInfo {
   playaname?: string;
 }
 
-// fetch with a longer timeout and one retry on transient network failures.
-// Node's default fetch timeout is 10s; we've seen prod hit it on cold/IPv6
-// connect paths to login.burningman.org, breaking sign-in for users who did
-// nothing wrong.
+// fetch with retries on transient network failures. Node's default fetch
+// timeout is 10s and a small fraction of POSTs to login.burningman.org
+// fail with `fetch failed` (TLS handshake or connection-pool staleness on
+// Cloudflare) -- a single retry is enough to recover but we do up to 3
+// attempts with a small backoff.
 async function fetchWithRetry(
   url: string,
   init: RequestInit,
   label: string
 ): Promise<Response> {
+  const maxAttempts = 3;
   let lastErr: unknown;
-  for (let attempt = 1; attempt <= 2; attempt++) {
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       return await fetch(url, {
         ...init,
@@ -42,11 +44,32 @@ async function fetchWithRetry(
       });
     } catch (err) {
       lastErr = err;
-      if (attempt === 2) break;
+      console.warn(
+        `${label} attempt ${attempt}/${maxAttempts} failed:`,
+        err instanceof Error ? err.message : err,
+        err instanceof Error && err.cause
+          ? `| cause: ${(err.cause as { code?: string; message?: string }).code ?? ""} ${(err.cause as { message?: string }).message ?? ""}`
+          : ""
+      );
+      if (attempt === maxAttempts) break;
+      // small backoff: 200ms, 800ms
+      await new Promise((resolve) =>
+        setTimeout(resolve, attempt * attempt * 200)
+      );
     }
   }
-  const msg = lastErr instanceof Error ? lastErr.message : String(lastErr);
-  throw new Error(`${label} failed: ${msg}`);
+  // Surface err.cause if present -- without it Node's fetch errors just say
+  // "fetch failed" which is useless.
+  const top = lastErr instanceof Error ? lastErr.message : String(lastErr);
+  const cause =
+    lastErr instanceof Error && lastErr.cause
+      ? ` (${(lastErr.cause as { code?: string; message?: string }).code ?? ""}${
+          (lastErr.cause as { message?: string }).message
+            ? `: ${(lastErr.cause as { message: string }).message}`
+            : ""
+        })`
+      : "";
+  throw new Error(`${label} failed: ${top}${cause}`);
 }
 
 // helper: exchange authorization code for tokens
