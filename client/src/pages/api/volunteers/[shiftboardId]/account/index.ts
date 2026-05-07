@@ -50,6 +50,12 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         name: role,
       }));
       const [dbVolunteerFirst] = dbVolunteerList;
+      if (!dbVolunteerFirst) {
+        return res.status(404).json({
+          statusCode: 404,
+          message: "Volunteer not found",
+        });
+      }
       const resVolunteerItem: IResVolunteerAccount = {
         email: dbVolunteerFirst.email ?? "",
         emergencyContact: dbVolunteerFirst.emergency_contact ?? "",
