@@ -1,12 +1,12 @@
 "use client";
 
 import {
-  CheckCircle as CheckCircleIcon,
+  CheckBox as CheckBoxIcon,
+  CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon,
   Download as DownloadIcon,
   ExpandMore as ExpandMoreIcon,
   LockReset as LockResetIcon,
   OpenInNew as OpenInNewIcon,
-  RadioButtonUnchecked as RadioButtonUncheckedIcon,
   RateReview as RateReviewIcon,
   VerifiedUser as VerifiedUserIcon,
 } from "@mui/icons-material";
@@ -496,20 +496,9 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
       content: (
         <Box>
           <Typography sx={{ mb: 1 }}>
-            Complete all required training courses on the Census Hive community
-            page.
+            Complete each required training course on Census Hive. Click a
+            course name below to open it.
           </Typography>
-          <Button
-            component="a"
-            href="https://hive.burningman.org/spaces/14264554"
-            rel="noopener noreferrer"
-            startIcon={<OpenInNewIcon />}
-            sx={{ mb: 2 }}
-            target="_blank"
-            variant="text"
-          >
-            Go to Census Training on Hive
-          </Button>
           {trainings.map((t) => (
             <Stack
               alignItems="center"
@@ -519,14 +508,31 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
               sx={{ py: 0.5 }}
             >
               {t.completed ? (
-                <CheckCircleIcon color="success" fontSize="small" />
+                <CheckBoxIcon color="success" fontSize="small" />
               ) : (
-                <RadioButtonUncheckedIcon
-                  sx={{ color: theme.palette.error.main }}
+                <CheckBoxOutlineBlankIcon
+                  sx={{ color: theme.palette.secondary.main }}
                   fontSize="small"
                 />
               )}
-              <Typography variant="body2">{t.trainingName}</Typography>
+              {t.completed || !t.url ? (
+                <Typography variant="body2">{t.trainingName}</Typography>
+              ) : (
+                <Typography
+                  component="a"
+                  href={t.url}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  variant="body2"
+                  sx={{
+                    color: theme.palette.secondary.main,
+                    fontWeight: 500,
+                    textDecoration: "underline",
+                  }}
+                >
+                  {t.trainingName}
+                </Typography>
+              )}
               <Typography
                 color="text.secondary"
                 variant="body2"
@@ -595,10 +601,10 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
           <Stack spacing={0.5}>
             <Stack alignItems="center" direction="row" spacing={1}>
               {sapStatus.cspFulfilled ? (
-                <CheckCircleIcon color="success" fontSize="small" />
+                <CheckBoxIcon color="success" fontSize="small" />
               ) : (
-                <RadioButtonUncheckedIcon
-                  sx={{ color: theme.palette.error.main }}
+                <CheckBoxOutlineBlankIcon
+                  sx={{ color: theme.palette.secondary.main }}
                   fontSize="small"
                 />
               )}
@@ -617,10 +623,10 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                 spacing={1}
               >
                 {day.fulfilled ? (
-                  <CheckCircleIcon color="success" fontSize="small" />
+                  <CheckBoxIcon color="success" fontSize="small" />
                 ) : (
-                  <RadioButtonUncheckedIcon
-                    sx={{ color: theme.palette.error.main }}
+                  <CheckBoxOutlineBlankIcon
+                    sx={{ color: theme.palette.secondary.main }}
                     fontSize="small"
                   />
                 )}
@@ -841,7 +847,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
             {/* camping location */}
             <Box>
               <Typography sx={{ mb: 0.5 }} variant="subtitle2">
-                Where will you be camping?
+                Tell us about where you will be camping
               </Typography>
               <TextField
                 defaultValue={volunteer.location}
@@ -866,6 +872,33 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
               Census Volunteer Pre-playa Checklist
             </Typography>
 
+            {/* color/status legend */}
+            <Stack
+              direction="row"
+              spacing={3}
+              sx={{
+                mb: 2,
+                py: 1,
+                px: 2,
+                bgcolor: "rgba(0,0,0,0.02)",
+                borderRadius: 1,
+                fontSize: "0.875rem",
+                color: "text.secondary",
+              }}
+            >
+              <Stack alignItems="center" direction="row" spacing={0.5}>
+                <CheckBoxOutlineBlankIcon
+                  sx={{ color: theme.palette.secondary.main }}
+                  fontSize="small"
+                />
+                <Typography variant="caption">Action needed</Typography>
+              </Stack>
+              <Stack alignItems="center" direction="row" spacing={0.5}>
+                <CheckBoxIcon color="success" fontSize="small" />
+                <Typography variant="caption">Completed</Typography>
+              </Stack>
+            </Stack>
+
             {/* CSP bar */}
             {showCspBar && (
               <Alert severity="info" sx={{ mb: 2 }}>
@@ -884,6 +917,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
               incompleteItems.map((item) => (
                 <Accordion
                   key={item.id}
+                  defaultExpanded
                   sx={{
                     "&:before": { display: "none" },
                     boxShadow: "none",
@@ -893,8 +927,8 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                 >
                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Stack alignItems="center" direction="row" spacing={1}>
-                      <RadioButtonUncheckedIcon
-                        sx={{ color: theme.palette.error.main }}
+                      <CheckBoxOutlineBlankIcon
+                        sx={{ color: theme.palette.secondary.main }}
                         fontSize="small"
                       />
                       <Typography>{item.label}</Typography>
@@ -920,7 +954,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                 >
                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Stack alignItems="center" direction="row" spacing={1}>
-                      <CheckCircleIcon color="success" fontSize="small" />
+                      <CheckBoxIcon color="success" fontSize="small" />
                       <Typography>
                         View {completedItems.length} completed item
                         {completedItems.length > 1 ? "s" : ""}
@@ -943,7 +977,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                             direction="row"
                             spacing={1}
                           >
-                            <CheckCircleIcon color="success" fontSize="small" />
+                            <CheckBoxIcon color="success" fontSize="small" />
                             <Typography>{item.label}</Typography>
                           </Stack>
                         </AccordionSummary>
