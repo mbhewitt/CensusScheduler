@@ -6,6 +6,13 @@ import type { IResVolunteerAccount } from "@/components/types/volunteers";
 import { pool } from "lib/database";
 
 const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
+  if (process.env.NEXT_PUBLIC_PIN_ENABLED === "false") {
+    return res.status(403).json({
+      statusCode: 403,
+      message: "Passcode sign-in is not enabled for this deployment",
+    });
+  }
+
   switch (req.method) {
     // post
     // ------------------------------------------------------------

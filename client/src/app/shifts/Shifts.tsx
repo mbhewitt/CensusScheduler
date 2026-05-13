@@ -254,7 +254,7 @@ export const Shifts = () => {
     }) => {
       return [
         id, // hide for row click
-        startTime, // hide for filter dialog
+        date, // hide for filter dialog (Present/Future vs Past)
         formatDateName(date, dateName),
         formatTime(startTime, endTime),
         type, // hide for filter dialog

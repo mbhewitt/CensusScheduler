@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 #
 # Census Scheduler auto-deploy script
-# Polls CensusScheduler and OnPlayaData repos for main branch updates.
+# Polls CensusScheduler (deploy/test-bundle branch) and OnPlayaData (main) for updates.
 # On change: rebuilds Docker, refreshes DB (max once/day).
 #
 # Usage: Run via cron or systemd timer.
@@ -64,9 +64,11 @@ get_db_password() {
 # Calculate the event year (3 months ahead, matching get_year.sh)
 YEAR=$(date -d "3 month" +%Y)
 
-# Pull a repo and return 0 if there were new commits
+# Pull a repo and return 0 if there were new commits.
+# Optional second arg = branch to track (default "main").
 pull_repo() {
     local repo_dir="$1"
+    local branch="${2:-main}"
     local repo_name="$(basename "$repo_dir")"
 
     if [ ! -d "$repo_dir/.git" ]; then
@@ -75,19 +77,31 @@ pull_repo() {
     fi
 
     cd "$repo_dir"
-    git fetch origin main 2>/dev/null
+    git fetch origin "$branch" 2>/dev/null
 
     LOCAL=$(git rev-parse HEAD)
-    REMOTE=$(git rev-parse origin/main)
+    REMOTE=$(git rev-parse "origin/$branch")
+
+    # If tracking a non-main branch, warn when origin/main has commits the
+    # tracked branch doesn't — heads-up that a manual merge is needed to keep
+    # the deploy current with main.
+    if [ "$branch" != "main" ]; then
+        git fetch origin main 2>/dev/null || true
+        local main_ahead
+        main_ahead=$(git rev-list --count "$REMOTE..origin/main" 2>/dev/null || echo 0)
+        if [ "$main_ahead" -gt 0 ]; then
+            log "$repo_name: NOTE — origin/main has $main_ahead commit(s) not in $branch. Manual merge required to pick them up."
+        fi
+    fi
 
     if [ "$LOCAL" = "$REMOTE" ]; then
-        log "$repo_name: up to date ($LOCAL)"
+        log "$repo_name: up to date on $branch ($LOCAL)"
         return 1
     fi
 
-    log "$repo_name: new commits detected ($LOCAL -> $REMOTE)"
-    git checkout main 2>/dev/null
-    git pull origin main
+    log "$repo_name: new commits on $branch ($LOCAL -> $REMOTE)"
+    git checkout "$branch" 2>/dev/null
+    git pull origin "$branch"
     return 0
 }
 
@@ -188,7 +202,7 @@ log "=== Starting deploy check ==="
 SCHEDULER_UPDATED=false
 ONPLAYA_UPDATED=false
 
-if pull_repo "$CENSUS_DIR"; then
+if pull_repo "$CENSUS_DIR" "deploy/test-bundle"; then
     SCHEDULER_UPDATED=true
 fi
 
