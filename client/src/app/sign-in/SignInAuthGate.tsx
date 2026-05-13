@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useContext, useEffect } from "react";
 
 import { SignIn } from "@/app/sign-in/SignIn";
@@ -25,6 +25,7 @@ export const SignInAuthGate = () => {
   // other hooks
   // ------------------------------------------------------------
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   // side effects
   // ------------------------------------------------------------
@@ -35,9 +36,14 @@ export const SignInAuthGate = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push(`/volunteers/${shiftboardId}/account`);
+      const returnTo = searchParams?.get("returnTo");
+      if (returnTo && returnTo.startsWith("/")) {
+        router.push(returnTo);
+      } else {
+        router.push(`/volunteers/${shiftboardId}/account`);
+      }
     }
-  }, [isAuthenticated, router, shiftboardId]);
+  }, [isAuthenticated, router, searchParams, shiftboardId]);
 
   // render
   // ------------------------------------------------------------
