@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import type { IReqToggleOtherSap } from "@/components/types/volunteer-info";
 import { pool } from "lib/database";
+import { withAuth } from "@/lib/withAuth";
 
 const ROLE_OTHER_SAP_ID = 2000007;
 
@@ -69,4 +70,4 @@ const otherSap = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default otherSap;
+export default withAuth(otherSap);

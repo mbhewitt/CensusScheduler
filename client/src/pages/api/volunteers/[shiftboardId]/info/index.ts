@@ -6,6 +6,7 @@ import type {
   IResVolunteerInfo,
 } from "@/components/types/volunteer-info";
 import { pool } from "lib/database";
+import { withAuth } from "@/lib/withAuth";
 
 // SAP day-by-day requirements keyed by arrival datename.
 // Each entry is either a single datename string, or an array meaning "any of these."
@@ -387,4 +388,4 @@ const volunteerInfo = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default volunteerInfo;
+export default withAuth(volunteerInfo);

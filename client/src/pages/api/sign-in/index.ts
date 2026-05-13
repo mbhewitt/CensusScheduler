@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import type { IReqSignIn } from "@/components/types/sign-in";
 import type { IResVolunteerAccount } from "@/components/types/volunteers";
+import { buildSessionCookie } from "@/lib/session";
 import { pool } from "lib/database";
 
 const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -71,6 +72,10 @@ const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
         shiftboardId: volunteerFirst.shiftboard_id,
         worldName: volunteerFirst.world_name,
       };
+
+      // hotfix 2026-05-06: set the server-side session cookie so the
+      // middleware (and API guards) recognize this user as authenticated.
+      res.setHeader("Set-Cookie", buildSessionCookie(resAccount.shiftboardId));
 
       return res.status(200).json(resAccount);
     }
