@@ -50,6 +50,7 @@ export interface IResShiftTypePositionItem {
   wapPoints?: string;
 }
 export interface IResShiftTypeTimeItem {
+  date: string;
   endTime: string;
   instance: string;
   meal: string;

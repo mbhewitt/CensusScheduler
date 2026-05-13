@@ -108,19 +108,22 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
       // get current times and time positions
       const [dbTimeList] = await pool.query<RowDataPacket[]>(
         `SELECT
+          d.date,
           pt.position,
           pt.position_type_id,
-          st.end_time,
+          st.end_time_text,
           st.meal,
           st.notes,
           st.shift_instance,
           st.shift_times_id,
-          st.start_time,
+          st.start_time_text,
           stp.position_alias,
           stp.sap_points,
           stp.slots,
           stp.time_position_id
         FROM op_shift_times AS st
+        LEFT JOIN op_dates AS d
+        ON d.date_id=st.start_date_id
         LEFT JOIN op_shift_time_position AS stp
         ON stp.shift_times_id=st.shift_times_id
         LEFT JOIN op_position_type AS pt
@@ -129,7 +132,8 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         AND st.remove_shift_time=false
         AND stp.remove_time_position=false
         ORDER BY
-          st.start_time,
+          d.date,
+          st.start_time_text,
           pt.position COLLATE utf8mb4_general_ci`,
         [typeId]
       );
@@ -139,7 +143,8 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
 
       dbTimeList.forEach(
         ({
-          end_time,
+          date,
+          end_time_text,
           meal,
           notes,
           position,
@@ -149,7 +154,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           shift_instance,
           shift_times_id,
           slots,
-          start_time,
+          start_time_text,
           time_position_id,
         }) => {
           if (resTimeMap[shift_times_id]) {
@@ -168,7 +173,8 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           } else {
             resTimeMap[shift_times_id] = true;
             resTimeList.push({
-              endTime: end_time,
+              date: date,
+              endTime: end_time_text,
               instance: shift_instance,
               meal: meal === "" ? "None" : meal,
               notes: notes ?? "",
@@ -182,7 +188,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
                   timePositionId: time_position_id,
                 },
               ],
-              startTime: start_time,
+              startTime: start_time_text,
               timeId: shift_times_id,
             });
           }
