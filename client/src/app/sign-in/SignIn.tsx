@@ -5,6 +5,7 @@ import {
   VisibilityOff as VisibilityOffIcon,
 } from "@mui/icons-material";
 import {
+  Alert,
   Autocomplete,
   Button,
   Card,
@@ -12,12 +13,14 @@ import {
   CardContent,
   CircularProgress,
   Container,
+  Divider,
   IconButton,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSnackbar } from "notistack";
 import { useContext, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
@@ -81,7 +84,11 @@ export const SignIn = () => {
   });
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const theme = useTheme();
+
+  const oauthError = searchParams?.get("error");
+  const isOAuthConfigured = Boolean(process.env.NEXT_PUBLIC_OKTA_ENABLED);
 
   // logic
   // ------------------------------------------------------------
@@ -173,6 +180,29 @@ export const SignIn = () => {
             width: theme.spacing(50),
           }}
         >
+          {oauthError && (
+            <Alert severity="error" sx={{ m: 2, mb: 0 }}>
+              Sign in failed: {decodeURIComponent(oauthError).replace(/_/g, " ")}
+            </Alert>
+          )}
+          {isOAuthConfigured && (
+            <CardContent>
+              <Button
+                fullWidth
+                href="/api/auth/okta"
+                size="large"
+                startIcon={<LoginIcon />}
+                variant="contained"
+              >
+                Sign in with Burning Man
+              </Button>
+              <Divider sx={{ mt: 2 }}>
+                <Typography color="text.secondary" variant="body2">
+                  or use passcode
+                </Typography>
+              </Divider>
+            </CardContent>
+          )}
           <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
             <CardContent>
               <Stack spacing={2}>
