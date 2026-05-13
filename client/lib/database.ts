@@ -4,6 +4,12 @@ import mysql from "mysql2";
 // transport. Local docker DB on test/playa boxes leaves it unset.
 const sslOption = process.env.MYSQL_SSL ? { ssl: "Amazon RDS" } : {};
 
+// dateStrings: return DATE/DATETIME columns as "YYYY-MM-DD" strings instead of
+// JS Date objects pinned to UTC midnight. Without this, a DATE value like
+// 2026-08-25 arrives as 2026-08-25T00:00:00Z and dayjs renders it in the
+// browser's local zone — west-of-UTC browsers see Aug 24, and re-saving writes
+// the shifted day back to the DB.
+
 // Pool wedge avoidance — observed on prod 2026-05-13 and 2026-05-17:
 // after a few days the pool starts returning ETIMEDOUT on every query
 // even though a fresh mysql.createConnection() to the same host works.
@@ -30,6 +36,7 @@ export const pool = mysql
   .createPool({
     connectionLimit: 10,
     database: process.env.MYSQL_DATABASE,
+    dateStrings: true,
     enableKeepAlive: true,
     host: process.env.MYSQL_HOST,
     idleTimeout: 60_000,
