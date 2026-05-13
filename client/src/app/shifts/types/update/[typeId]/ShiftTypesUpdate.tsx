@@ -47,6 +47,7 @@ import {
   IResShiftTypeTimeItem,
 } from "@/components/types/shifts/types";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
+import { formatDateDB, formatDateTime } from "@/utils/formatDateTime";
 
 enum DialogList {
   PositionRemove,
@@ -143,9 +144,9 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
       const timeListNew: IResShiftTypeTimeItem[] = timeList.map((timeItem) => {
         return {
           ...timeItem,
-          endTime: timeItem.endTime,
-          date: timeItem.startTime.split(" ")[0],
-          startTime: timeItem.startTime,
+          endTime: `${formatDateDB(timeItem.date)} ${timeItem.endTime}`,
+          date: timeItem.date,
+          startTime: `${formatDateDB(timeItem.date)} ${timeItem.startTime}`,
         };
       });
       const timePositionListAddNew = positionList.map(
