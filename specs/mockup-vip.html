@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="en" style="background-image: linear-gradient(#f7f2eb 0%, #bc9958 100%); min-height: 100vh;">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIP Mockup v5 — Census Scheduler</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+  :root {
+    --brown: #2f2f2f;
+    --pink: #ea008b;
+    --pink-light: #fce4f0;
+    --pink-bg: rgba(234,0,139,0.08);
+    --green: #2e7d32;
+    --green-light: #e8f5e9;
+    --orange: #e65100;
+    --orange-light: #fff3e0;
+    --blue: #1565c0;
+    --blue-light: #e3f2fd;
+    --gray: #757575;
+    --gray-light: #f5f5f5;
+    --border: #e0e0e0;
+    --white: #fff;
+    --drawer-width: 240px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Roboto', sans-serif;
+    background: transparent;
+    color: var(--brown);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* CSS checkboxes */
+  .vbox {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+  .vbox-unchecked {
+    width: 20px;
+    height: 20px;
+    border: 2.5px solid var(--pink);
+    border-radius: 3px;
+    display: inline-block;
+  }
+  .vbox-checked {
+    width: 20px;
+    height: 20px;
+    background: var(--green);
+    border-radius: 3px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 1;
+  }
+  .vbox-checked::after {
+    content: '✓';
+    font-size: 15px;
+  }
+
+  /* ═══════════════════════════════════════════
+     CONTROL PANEL (Mockup-only)
+     ═══════════════════════════════════════════ */
+  #control-panel {
+    background: #1a1a2e;
+    color: #eceff1;
+    padding: 14px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 2000;
+    border-bottom: 3px solid var(--pink);
+    font-size: 13px;
+  }
+  #control-panel h2 {
+    color: var(--pink);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .cp-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 6px;
+    align-items: center;
+  }
+  .cp-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .cp-group label { font-size: 12px; color: #b0bec5; white-space: nowrap; }
+  .cp-group select, .cp-group input[type="number"] {
+    background: #2a2a4a;
+    color: #eceff1;
+    border: 1px solid #444;
+    border-radius: 3px;
+    padding: 2px 6px;
+    font-size: 12px;
+  }
+  .cp-group input[type="checkbox"] { accent-color: var(--pink); }
+  .cp-divider { width: 1px; height: 22px; background: #444; }
+  .cp-label { font-size: 10px; color: var(--pink); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; }
+
+  /* ═══════════════════════════════════════════
+     APP BAR (matches CensusScheduler)
+     ═══════════════════════════════════════════ */
+  .app-bar {
+    background: var(--brown);
+    color: var(--white);
+    height: 64px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    position: sticky;
+    top: 0;
+    z-index: 1100;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  .app-bar .menu-btn {
+    background: none;
+    border: none;
+    color: var(--white);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+  }
+  .app-bar .menu-btn:hover { background: rgba(255,255,255,0.1); }
+  .app-bar .spacer { flex: 1; }
+  .app-bar .sign-in-link {
+    color: var(--pink);
+    text-decoration: none;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* ═══════════════════════════════════════════
+     SIDEBAR DRAWER
+     ═══════════════════════════════════════════ */
+  .drawer-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1200;
+  }
+  .drawer-overlay.open { display: block; }
+  .drawer {
+    position: fixed;
+    top: 0;
+    left: -260px;
+    width: var(--drawer-width);
+    height: 100vh;
+    background: var(--white);
+    z-index: 1300;
+    transition: left 0.25s ease;
+    overflow-y: auto;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+  }
+  .drawer.open { left: 0; }
+  .drawer-header {
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .drawer hr { border: none; border-top: 1px solid var(--border); margin: 0; }
+  .drawer .nav-section { padding: 8px 0; }
+  .drawer .nav-section-title {
+    font-size: 12px; font-weight: 500; color: var(--gray);
+    padding: 8px 16px 4px; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .drawer .nav-item {
+    display: flex; align-items: center; gap: 12px; padding: 10px 16px;
+    color: var(--brown); text-decoration: none; font-size: 14px;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .drawer .nav-item:hover { background: var(--gray-light); }
+  .drawer .nav-item.active { background: var(--pink-bg); color: var(--pink); }
+  .drawer .nav-item .material-icons { font-size: 20px; color: var(--gray); }
+  .drawer .nav-item.active .material-icons { color: var(--pink); }
+  .drawer .nav-user { padding: 12px 16px; border-top: 1px solid var(--border); margin-top: auto; }
+  .drawer .nav-user-name { font-size: 14px; font-weight: 500; color: var(--brown); }
+  .drawer .nav-user-world { font-size: 12px; color: var(--gray); }
+
+  /* ═══════════════════════════════════════════
+     HERO BANNER
+     ═══════════════════════════════════════════ */
+  .hero {
+    height: 240px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #2f2f2f 50%, #4a3f35 100%);
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+  }
+  .hero-overlay {
+    width: 100%;
+    background: rgba(47,47,47,0.6);
+    padding: 8px 0;
+  }
+  .hero-text {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px;
+    color: var(--white);
+    font-size: 36px;
+    font-weight: 300;
+    font-family: 'Georgia', serif;
+  }
+
+  /* ═══════════════════════════════════════════
+     PAGE CONTENT
+     ═══════════════════════════════════════════ */
+  .page-bg {
+    flex: 1;
+    padding-bottom: 40px;
+  }
+  .page-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+
+  /* ═══════════════════════════════════════════
+     SAP READY BANNER (top of page)
+     ═══════════════════════════════════════════ */
+  .sap-banner {
+    background: linear-gradient(90deg, #0d47a1, #1565c0);
+    color: var(--white);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+  }
+  .sap-banner .material-icons { font-size: 24px; }
+  .sap-banner .spacer { flex: 1; }
+  .sap-banner .btn-banner-download {
+    background: var(--white);
+    color: #0d47a1;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .sap-banner .btn-banner-download:hover { background: #e3f2fd; }
+  .sap-banner .btn-dismiss {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    border-radius: 50%;
+  }
+  .sap-banner .btn-dismiss:hover { color: var(--white); background: rgba(255,255,255,0.1); }
+
+  /* Read-only mode banner (v5) — shown when off-playa server is in read-only
+     mode during the event because on-playa server is the source of truth. */
+  .readonly-banner {
+    background: #fff3e0;
+    color: var(--brown);
+    padding: 14px 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    border-bottom: 3px solid var(--orange);
+  }
+  .readonly-banner.hidden { display: none; }
+  .readonly-banner .material-icons { font-size: 22px; color: var(--orange); flex-shrink: 0; margin-top: 1px; }
+  .readonly-banner a { color: var(--pink); font-weight: 500; text-decoration: underline; }
+
+  /* ═══════════════════════════════════════════
+     MUI-STYLE CARDS
+     ═══════════════════════════════════════════ */
+  .card {
+    background: var(--white);
+    border-radius: 4px;
+    box-shadow: 0 2px 1px -1px rgba(0,0,0,0.1), 0 1px 1px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.06);
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 16px 24px 12px;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--brown);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-header .material-icons { color: var(--pink); font-size: 24px; }
+  .card-body { padding: 0 24px 20px; }
+
+  /* ═══════════════════════════════════════════
+     FORM CONTROLS
+     ═══════════════════════════════════════════ */
+  .form-field { margin-bottom: 20px; }
+  .form-field:last-child { margin-bottom: 0; }
+  .form-field label {
+    display: block; font-size: 12px; color: var(--gray);
+    margin-bottom: 6px; font-weight: 400;
+  }
+  .form-field select, .form-field input[type="text"], .form-field textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 16px;
+    font-family: 'Roboto', sans-serif;
+    color: var(--brown);
+    background: var(--white);
+    transition: border-color 0.2s;
+  }
+  .form-field select:focus, .form-field input:focus, .form-field textarea:focus {
+    outline: none;
+    border-color: var(--pink);
+    box-shadow: 0 0 0 1px var(--pink);
+  }
+  .form-field textarea { min-height: 60px; resize: vertical; }
+  .form-field .helper-text { font-size: 12px; color: var(--gray); margin-top: 4px; }
+  .form-field.highlight select,
+  .form-field.highlight input,
+  .form-field.highlight textarea {
+    border-color: var(--pink);
+    box-shadow: 0 0 0 2px var(--pink-light);
+    animation: pulse-field 1.5s ease-out;
+  }
+  @keyframes pulse-field {
+    0% { box-shadow: 0 0 0 4px rgba(234,0,139,0.25); }
+    100% { box-shadow: 0 0 0 2px var(--pink-light); }
+  }
+  .auto-save {
+    font-size: 11px; color: var(--green); margin-top: 3px;
+    opacity: 0; transition: opacity 0.3s; height: 16px;
+  }
+  .auto-save.show { opacity: 1; }
+  .field-disabled {
+    background: var(--gray-light) !important;
+    color: var(--gray) !important;
+    cursor: not-allowed;
+  }
+  .conditional-block {
+    margin-top: 12px; padding: 14px 16px;
+    background: var(--blue-light); border-radius: 4px;
+    border-left: 3px solid var(--blue);
+    font-size: 14px; line-height: 1.6; color: #333;
+  }
+
+  /* ═══════════════════════════════════════════
+     PROFILE SECTION
+     ═══════════════════════════════════════════ */
+  .profile-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  }
+  .profile-grid .full-width { grid-column: 1 / -1; }
+  .profile-actions {
+    display: flex; justify-content: flex-end; gap: 8px;
+    margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);
+  }
+  .btn-save {
+    background: var(--pink); color: var(--white); border: none;
+    padding: 8px 24px; border-radius: 4px; font-size: 14px;
+    font-weight: 500; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .btn-save:hover { background: #c40076; }
+
+  /* ═══════════════════════════════════════════
+     CHECKLIST
+     ═══════════════════════════════════════════ */
+  /* Checklist legend (proposed) — small color-key row above the checklist */
+  .checklist-legend {
+    display: flex;
+    gap: 24px;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--border);
+    background: #fafafa;
+    font-size: 13px;
+    color: var(--gray);
+  }
+  .checklist-legend .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .csp-summary-bar {
+    padding: 10px 24px; font-size: 14px; color: var(--gray);
+    background: var(--gray-light); border-bottom: 1px solid var(--border);
+  }
+  .csp-summary-bar strong { color: var(--brown); }
+
+  .cl-item { border-bottom: 1px solid #f0f0f0; }
+  .cl-item:last-child { border-bottom: none; }
+  .cl-item-header {
+    display: flex; align-items: center; gap: 12px; padding: 14px 24px;
+    cursor: pointer; user-select: none; transition: background 0.1s;
+  }
+  .cl-item-header:hover { background: rgba(0,0,0,0.02); }
+  .cl-item-header .cl-label { flex: 1; font-size: 15px; color: var(--brown); }
+  .cl-item-header.done .cl-label { color: var(--gray); }
+  .cl-item-header .expand-icon {
+    color: #bbb; font-size: 20px; transition: transform 0.2s;
+  }
+  .cl-item-header .expand-icon.open { transform: rotate(180deg); }
+  .cl-detail { display: none; padding: 0 24px 16px 60px; font-size: 14px; color: #555; line-height: 1.6; }
+  .cl-detail.open { display: block; }
+  .cl-detail a { color: var(--pink); text-decoration: none; }
+  .cl-detail a:hover { text-decoration: underline; }
+
+  .cl-sub { display: flex; align-items: center; gap: 10px; padding: 5px 0; }
+  .cl-sub .sub-label { flex: 1; font-size: 14px; }
+  .cl-sub .sub-status { font-size: 13px; color: var(--gray); font-style: italic; }
+
+  .progress-row { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+  .pbar { flex: 1; height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden; max-width: 220px; }
+  .pbar-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+  .pbar-fill.met { background: var(--green); }
+  .pbar-fill.partial { background: var(--orange); }
+  .pbar-text { font-size: 13px; color: var(--gray); white-space: nowrap; }
+
+  .completed-divider { border-top: 1px solid var(--border); margin-top: 4px; }
+  /* v5: full-weight row with green check icon, matching the live code's
+     treatment of the "view completed items" toggle. Replaces v4's quieter
+     gray-text variant. */
+  .completed-toggle {
+    display: flex; align-items: center; gap: 14px; padding: 18px 24px;
+    cursor: pointer; user-select: none; color: var(--brown); font-size: 16px;
+    font-weight: 500;
+    transition: background 0.1s;
+  }
+  .completed-toggle:hover { background: rgba(0,0,0,0.02); }
+  .completed-toggle .check-icon {
+    color: var(--green); font-size: 22px; flex-shrink: 0;
+  }
+  .completed-toggle .expand-icon { font-size: 22px; transition: transform 0.2s; margin-left: auto; color: var(--gray); }
+  .completed-toggle .expand-icon.open { transform: rotate(180deg); }
+  .completed-body { display: none; }
+  .completed-body.open { display: block; }
+
+  .expanded-cb {
+    display: flex; align-items: center; gap: 10px; margin-top: 12px;
+    padding: 10px 14px; background: var(--gray-light); border-radius: 4px;
+  }
+  .expanded-cb input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--pink); cursor: pointer; }
+  .expanded-cb label { font-size: 14px; cursor: pointer; }
+
+  .sap-dl-area {
+    margin-top: 10px; padding: 14px 16px;
+    background: var(--blue-light); border-radius: 4px; border-left: 3px solid var(--blue);
+  }
+  .sap-dl-area p { margin-bottom: 10px; font-size: 14px; color: #0d47a1; }
+  .btn-dl {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--pink); color: var(--white); padding: 10px 20px;
+    border-radius: 4px; text-decoration: none; font-weight: 500;
+    font-size: 14px; cursor: pointer; border: none;
+  }
+  .btn-dl:hover { background: #c40076; }
+
+  /* ═══════════════════════════════════════════
+     PASSCODE SECTION
+     ═══════════════════════════════════════════ */
+  .passcode-display {
+    display: flex; align-items: center; gap: 16px; margin-top: 8px;
+  }
+  .passcode-digits {
+    font-size: 32px; font-weight: 300; letter-spacing: 8px;
+    color: var(--brown); font-family: monospace;
+  }
+  .passcode-warning {
+    margin-top: 12px; padding: 10px 14px; background: #fff3e0;
+    border-left: 3px solid var(--orange); border-radius: 4px;
+    font-size: 13px; color: #e65100; line-height: 1.5;
+  }
+  .btn-reveal {
+    background: var(--brown); color: var(--white); border: none;
+    padding: 10px 20px; border-radius: 4px; font-size: 14px;
+    font-weight: 500; cursor: pointer; display: inline-flex;
+    align-items: center; gap: 6px;
+  }
+  .btn-reveal:hover { background: #444; }
+  .btn-update-passcode {
+    background: none; border: 1px solid var(--border); color: var(--brown);
+    padding: 8px 16px; border-radius: 4px; font-size: 13px;
+    cursor: pointer; margin-left: 12px;
+  }
+  .btn-update-passcode:hover { background: var(--gray-light); }
+
+  /* Card highlight animation */
+  .card-highlight {
+    animation: card-glow 2s ease-out;
+  }
+  @keyframes card-glow {
+    0% { box-shadow: 0 0 0 4px rgba(234,0,139,0.4); }
+    100% { box-shadow: 0 2px 1px -1px rgba(0,0,0,0.1), 0 1px 1px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.06); }
+  }
+
+  /* ═══════════════════════════════════════════
+     SHIFT TABLE
+     ═══════════════════════════════════════════ */
+  .shift-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .shift-table th {
+    text-align: left; padding: 12px 16px; font-weight: 500;
+    font-size: 13px; color: var(--brown); border-bottom: 1px solid var(--border);
+    background: var(--white);
+  }
+  .shift-table td {
+    padding: 12px 16px; border-bottom: 1px solid #f5f5f5; vertical-align: middle;
+  }
+  .shift-table tr:hover td { background: rgba(0,0,0,0.02); }
+  .dept-chip {
+    display: inline-block; padding: 2px 10px; border-radius: 16px;
+    font-size: 12px; font-weight: 500;
+  }
+  .csp-badge {
+    display: inline-block; background: var(--pink-light); color: var(--pink);
+    font-weight: 500; padding: 2px 10px; border-radius: 12px; font-size: 13px;
+  }
+  .switch-track {
+    display: inline-block; width: 36px; height: 20px; border-radius: 10px;
+    background: #ccc; position: relative; cursor: pointer; transition: background 0.2s;
+  }
+  .switch-track.on { background: var(--pink); }
+  .switch-thumb {
+    width: 16px; height: 16px; border-radius: 50%; background: var(--white);
+    position: absolute; top: 2px; left: 2px; transition: left 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .switch-track.on .switch-thumb { left: 18px; }
+  .shift-total { padding: 12px 16px; font-size: 14px; font-weight: 500; text-align: right; }
+  .shift-total.under { color: var(--orange); }
+  .shift-total.met { color: var(--green); }
+  .more-btn {
+    background: none; border: none; color: var(--gray); cursor: pointer;
+    padding: 4px; border-radius: 50%; display: flex;
+  }
+  .more-btn:hover { background: var(--gray-light); }
+
+  /* ═══════════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════════ */
+  .app-footer {
+    background: var(--brown); color: var(--white);
+    padding: 32px 24px 20px; margin-top: auto;
+  }
+  .footer-inner {
+    max-width: 900px; margin: 0 auto; display: flex; gap: 48px;
+  }
+  .footer-col h3 { font-size: 14px; font-weight: 500; margin-bottom: 12px; color: var(--white); }
+  .footer-col a {
+    display: block; color: rgba(255,255,255,0.7); text-decoration: none;
+    font-size: 13px; padding: 3px 0;
+  }
+  .footer-col a:hover { color: var(--pink); }
+  .footer-divider {
+    border: none; border-top: 1px solid rgba(255,255,255,0.15);
+    margin: 20px auto 12px; max-width: 900px;
+  }
+  .footer-logo { max-width: 900px; margin: 0 auto; text-align: center; padding-top: 8px; }
+  .footer-logo-text {
+    font-size: 18px; font-family: 'Georgia', serif;
+    color: rgba(255,255,255,0.5); letter-spacing: 2px;
+  }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ CONTROL PANEL ═══════════ -->
+<div id="control-panel">
+  <h2>&#x1f39b;&#xfe0f; Mockup Control Panel (v5)</h2>
+  <div class="cp-row">
+    <span class="cp-label">Env:</span>
+    <div class="cp-group">
+      <select id="cp-environment" onchange="render()">
+        <option value="offplaya">Off-playa</option>
+        <option value="onplaya">On-playa</option>
+      </select>
+    </div>
+    <div class="cp-divider"></div>
+    <div class="cp-group">
+      <input type="checkbox" id="cp-readonly" onchange="render()">
+      <label for="cp-readonly">Read-only mode</label>
+    </div>
+    <div class="cp-divider"></div>
+    <span class="cp-label">SAP:</span>
+    <div class="cp-group">
+      <input type="checkbox" id="cp-sap-issued" onchange="render()">
+      <label for="cp-sap-issued">SAP Issued</label>
+    </div>
+    <div class="cp-divider"></div>
+    <div class="cp-group">
+      <input type="checkbox" id="cp-staff" onchange="render()">
+      <label for="cp-staff">Staff</label>
+    </div>
+    <div class="cp-divider"></div>
+    <span class="cp-label">Roles:</span>
+    <div class="cp-group">
+      <input type="checkbox" id="cp-counter-culture" onchange="render()">
+      <label for="cp-counter-culture">CounterCulture</label>
+    </div>
+    <div class="cp-group">
+      <input type="checkbox" id="cp-census-lab" onchange="render()">
+      <label for="cp-census-lab">CensusLab</label>
+    </div>
+    <div class="cp-group">
+      <input type="checkbox" id="cp-census-ticket" onchange="render()">
+      <label for="cp-census-ticket">CensusTicket</label>
+    </div>
+    <div class="cp-divider"></div>
+    <div class="cp-group">
+      <input type="checkbox" id="cp-behavioral" onchange="render()">
+      <label for="cp-behavioral">Behavioral Signed</label>
+    </div>
+    <div class="cp-divider"></div>
+    <div class="cp-group">
+      <input type="checkbox" id="cp-lead" onchange="render()">
+      <label for="cp-lead">Shift Lead</label>
+    </div>
+  </div>
+  <div class="cp-row">
+    <span class="cp-label">CSP:</span>
+    <div class="cp-group">
+      <label for="cp-total-csp">Total</label>
+      <input type="number" id="cp-total-csp" value="8" min="0" max="30" style="width:50px" onchange="render()">
+    </div>
+    <div class="cp-divider"></div>
+    <span class="cp-label">Role Type:</span>
+    <div class="cp-group">
+      <select id="cp-role-type" onchange="render()">
+        <option value="datacollection">Data Collection</option>
+        <option value="setup">Setup/Support Only</option>
+      </select>
+    </div>
+    <div class="cp-divider"></div>
+    <span class="cp-label">Days:</span>
+    <div class="cp-group"><input type="checkbox" id="cp-day-premon" checked onchange="render()"><label>Mon</label></div>
+    <div class="cp-group"><input type="checkbox" id="cp-day-pretue" onchange="render()"><label>Tue</label></div>
+    <div class="cp-group"><input type="checkbox" id="cp-day-prewed" checked onchange="render()"><label>Wed</label></div>
+    <div class="cp-group"><input type="checkbox" id="cp-day-prethur" checked onchange="render()"><label>Thu</label></div>
+    <div class="cp-group"><input type="checkbox" id="cp-day-prefri" onchange="render()"><label>Fri</label></div>
+    <div class="cp-group"><input type="checkbox" id="cp-day-presat" onchange="render()"><label>Sat</label></div>
+    <div class="cp-group"><input type="checkbox" id="cp-day-opensun" checked onchange="render()"><label>Sun</label></div>
+  </div>
+  <div class="cp-row">
+    <span class="cp-label">Training:</span>
+    <div class="cp-group">
+      <input type="checkbox" id="cp-basics-done" onchange="render()">
+      <label for="cp-basics-done">Basics done</label>
+    </div>
+    <div class="cp-group">
+      <input type="checkbox" id="cp-sampling-req" checked onchange="render()">
+      <label for="cp-sampling-req">Sampling req</label>
+    </div>
+    <div class="cp-group">
+      <input type="checkbox" id="cp-sampling-done" onchange="render()">
+      <label for="cp-sampling-done">done</label>
+    </div>
+    <div class="cp-group">
+      <input type="checkbox" id="cp-outreach-req" onchange="render()">
+      <label for="cp-outreach-req">OutReach req</label>
+    </div>
+    <div class="cp-group">
+      <input type="checkbox" id="cp-outreach-done" onchange="render()">
+      <label for="cp-outreach-done">done</label>
+    </div>
+    <div class="cp-group">
+      <input type="checkbox" id="cp-dataentry-req" checked onchange="render()">
+      <label for="cp-dataentry-req">DataEntry req</label>
+    </div>
+    <div class="cp-group">
+      <input type="checkbox" id="cp-dataentry-done" onchange="render()">
+      <label for="cp-dataentry-done">done</label>
+    </div>
+    <div class="cp-group">
+      <input type="checkbox" id="cp-databeast-req" onchange="render()">
+      <label for="cp-databeast-req">DataBeast req</label>
+    </div>
+    <div class="cp-group">
+      <input type="checkbox" id="cp-databeast-done" onchange="render()">
+      <label for="cp-databeast-done">done</label>
+    </div>
+    <div class="cp-divider"></div>
+    <span class="cp-label">Self-report:</span>
+    <div class="cp-group">
+      <input type="checkbox" id="cp-burnerprofile" onchange="render()">
+      <label for="cp-burnerprofile">BurnerProfile</label>
+    </div>
+    <div class="cp-group">
+      <input type="checkbox" id="cp-passcode" onchange="render()">
+      <label for="cp-passcode">Passcode</label>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ SAP BANNER ═══════════ -->
+<div id="sap-banner" class="sap-banner hidden">
+  <span class="material-icons">description</span>
+  <span>Your SAP has been issued and emailed to you. You can also download it here:</span>
+  <span class="spacer"></span>
+  <button class="btn-banner-download" onclick="alert('Mock download!')">
+    <span class="material-icons" style="font-size:16px;">download</span> Download SAP PDF
+  </button>
+  <button class="btn-dismiss" onclick="dismissBanner()">
+    <span class="material-icons" style="font-size:20px;">close</span>
+  </button>
+</div>
+
+<!-- ═══════════ APP BAR ═══════════ -->
+<div class="app-bar">
+  <button class="menu-btn" onclick="toggleDrawer()">
+    <span class="material-icons">menu</span>
+  </button>
+  <span style="font-family:Georgia,serif; font-size:20px; margin-left:12px; color:var(--white); letter-spacing:1px;">CENSUS</span>
+  <span class="spacer"></span>
+  <a href="#" class="sign-in-link">
+    <span class="material-icons" style="font-size:18px;">account_circle</span> Sparkle Pony
+  </a>
+</div>
+
+<!-- ═══════════ DRAWER ═══════════ -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="toggleDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span style="font-family:Georgia,serif; font-size:22px; color:var(--brown); letter-spacing:2px;">CENSUS</span>
+  </div>
+  <hr>
+  <div class="nav-section">
+    <a class="nav-item" href="#"><span class="material-icons">home</span> Home</a>
+    <a class="nav-item" href="#"><span class="material-icons">event</span> Shifts</a>
+    <a class="nav-item" href="#"><span class="material-icons">assessment</span> Reports</a>
+    <a class="nav-item" href="#"><span class="material-icons">help_outline</span> Help</a>
+    <a class="nav-item" href="#"><span class="material-icons">mail_outline</span> Contact</a>
+  </div>
+  <hr>
+  <div class="nav-section">
+    <div class="nav-section-title">Admin</div>
+    <a class="nav-item" href="#"><span class="material-icons">people</span> Volunteers</a>
+    <a class="nav-item" href="#"><span class="material-icons">admin_panel_settings</span> Roles</a>
+    <a class="nav-item" href="#"><span class="material-icons">settings</span> Settings</a>
+  </div>
+  <hr>
+  <div class="nav-section" style="margin-top: auto;">
+    <div class="nav-user">
+      <div class="nav-user-name">Sparkle Pony</div>
+      <div class="nav-user-world">Jane Doe</div>
+    </div>
+    <a class="nav-item active" href="#"><span class="material-icons">person</span> Account</a>
+    <a class="nav-item" href="#"><span class="material-icons">logout</span> Sign out</a>
+  </div>
+</div>
+
+<!-- ═══════════ HERO ═══════════ -->
+<div class="hero">
+  <div class="hero-overlay">
+    <div class="hero-text">Volunteer Information</div>
+  </div>
+</div>
+
+<!-- ═══════════ READ-ONLY BANNER (v5) — repositioned per Mew, sits directly
+     under the "Volunteer Information" hero rather than above the AppBar. -->
+<div id="readonly-banner" class="readonly-banner hidden">
+  <span class="material-icons">info_outline</span>
+  <span>
+    Census has moved on playa, and we can&rsquo;t wait to see you. If you need to make any changes to your account or schedule, come see us at the Census Lab and use one of our Census tablets along with <a href="#" target="_blank">your insecure playa passcode</a> to log in to your account.
+  </span>
+</div>
+
+<!-- ═══════════ PAGE ═══════════ -->
+<div class="page-bg">
+<div class="page-container">
+
+  <!-- Welcome card (v5 — added per Mew, matches the live code's friendly greeting) -->
+  <div class="card">
+    <div class="card-body" style="padding: 20px 24px;">
+      <div style="font-size: 22px; font-weight: 500; color: var(--brown); margin-bottom: 6px;">
+        Welcome, Sparkle Pony!
+      </div>
+      <div style="font-size: 14px; color: #555; line-height: 1.5;">
+        This is your Volunteer Information page. Use the checklist below to make sure you&rsquo;re ready for the event &mdash; we&rsquo;ll show you exactly what&rsquo;s left to do based on your role and shifts.
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile (PII Reduction: no phone, no emergency contact)
+       v5: playa name + world name + email all read-only.
+       Source of truth is the Burner Profile (synced via Okta). -->
+  <div class="card">
+    <div class="card-header">
+      <span class="material-icons">account_circle</span> Profile
+    </div>
+    <div class="card-body">
+      <div class="profile-grid">
+        <div class="form-field">
+          <label>Playa / preferred name</label>
+          <input type="text" value="Sparkle Pony" class="field-disabled" disabled>
+        </div>
+        <div class="form-field">
+          <label>World name</label>
+          <input type="text" value="Jane Doe" class="field-disabled" disabled>
+        </div>
+        <div class="form-field full-width">
+          <label>Email</label>
+          <input type="text" value="sparklepony@burnermail.com" class="field-disabled" disabled>
+        </div>
+      </div>
+      <div style="font-size:14px; color:#555; margin-top:4px;">
+        To update your name or email, edit your <a href="https://profiles.burningman.org/my-profile" target="_blank" style="color:var(--pink);font-weight:500;">Burner Profile</a>. Changes sync the next time you sign in.
+      </div>
+    </div>
+  </div>
+
+  <!-- On-Playa Information -->
+  <div class="card" id="onplaya-card">
+    <div class="card-header">
+      <span class="material-icons">place</span> On-Playa Information and Early Entry / SAP
+    </div>
+    <div class="card-body">
+      <div class="form-field" id="arrival-field">
+        <label>Desired / Expected Arrival Date</label>
+        <select id="arrival-date" onchange="onArrivalChange()">
+          <option value="">— Select —</option>
+          <option value="PreSun">PreSun — Sunday, Aug 16</option>
+          <option value="PreMon">PreMon — Monday, Aug 17</option>
+          <option value="PreTue">PreTue — Tuesday, Aug 18</option>
+          <option value="PreWed">PreWed — Wednesday, Aug 19</option>
+          <option value="PreThur">PreThur — Thursday, Aug 20</option>
+          <option value="PreFri">PreFri — Friday, Aug 21</option>
+          <option value="PreSat">PreSat — Saturday, Aug 22</option>
+          <option value="OpenSun">OpenSun — Sunday, Aug 23 (Opening)</option>
+          <option value="PostOpen">After Opening</option>
+        </select>
+        <div class="auto-save" id="save-arrival">&#10003; Saved</div>
+      </div>
+
+      <div id="early-entry-field" class="hidden">
+        <div class="conditional-block">
+          <div class="form-field" style="margin-bottom:0;">
+            <label>Early Entry</label>
+            <div style="margin-bottom:8px; font-size:14px; color:#555;">
+              The arrival date you selected is prior to the gate opening at the event. Do you already have a pass for early entry through a different department, or would you like Census to provide this?
+            </div>
+            <select id="early-entry" onchange="render()">
+              <option value="census" selected>I would like Census to provide early entry</option>
+              <option value="other">I already have early entry through another department</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-field" style="margin-top:16px;">
+        <label>Tell us about where you will be camping</label>
+        <textarea id="camping-location" placeholder="e.g., Counter Culture Camp at 7:30 & G" oninput="render()"></textarea>
+        <div class="helper-text">How to find you on playa and any other relevant info</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checklist -->
+  <div class="card" id="checklist-card">
+    <div class="card-header">
+      <span class="material-icons">checklist</span> Census Volunteer Pre-playa Checklist
+    </div>
+    <!-- Color/status legend (proposed by Woodie + Chipper, 2026-04-27 — not
+         yet explicitly approved by Mew). Helps first-time volunteers parse the
+         visual indicators on the checklist below. -->
+    <div class="checklist-legend">
+      <span class="legend-item"><span class="vbox"><span class="vbox-unchecked"></span></span> Action needed</span>
+      <span class="legend-item"><span class="vbox"><span class="vbox-checked"></span></span> Completed</span>
+    </div>
+    <div id="csp-bar" class="csp-summary-bar hidden">
+      Your current total: <strong id="csp-val">0</strong> Census Shift Points (CSP) scheduled
+    </div>
+    <div id="cl-incomplete"></div>
+    <div id="cl-completed-section" class="completed-divider hidden">
+      <div class="completed-toggle" onclick="toggleCompleted()">
+        <span class="material-icons check-icon">check_circle</span>
+        <span id="compl-label">View completed items</span>
+        <span class="material-icons expand-icon" id="compl-icon">expand_more</span>
+      </div>
+      <div id="cl-completed-body" class="completed-body"></div>
+    </div>
+  </div>
+
+  <!-- Shifts -->
+  <div class="card">
+    <div class="card-header">
+      <span class="material-icons">groups_3</span> My Shifts
+    </div>
+    <div id="shift-body" style="padding:0;"></div>
+  </div>
+
+  <!-- Passcode (at the very bottom) -->
+  <div class="card" id="passcode-card">
+    <div class="card-header">
+      <span class="material-icons">lock</span> Your Passcode
+    </div>
+    <div class="card-body">
+      <div style="font-size:14px; color:#555; margin-bottom:12px;">
+        You will need this 4-digit passcode to access your account on playa using the Census tablet computers.
+        Please take a screenshot or write it down before you arrive.
+      </div>
+      <div id="passcode-hidden">
+        <button class="btn-reveal" onclick="revealPasscode()">
+          <span class="material-icons" style="font-size:18px;">visibility</span> Reveal passcode
+        </button>
+      </div>
+      <div id="passcode-revealed" class="hidden">
+        <div class="passcode-display">
+          <span class="passcode-digits">4 7 2 9</span>
+          <button class="btn-update-passcode" onclick="alert('Mock: Update passcode dialog would open')">Update passcode</button>
+        </div>
+        <div class="passcode-warning">
+          <strong>Warning:</strong> Do not choose a passcode you use anywhere else &mdash; this is a simple 4-digit code for shared tablets on playa.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<div class="app-footer">
+  <div class="footer-inner">
+    <div class="footer-col">
+      <h3>Quick links</h3>
+      <a href="#">Home</a>
+      <a href="#">Shifts</a>
+      <a href="#">Reports</a>
+    </div>
+    <div class="footer-col">
+      <h3>&nbsp;</h3>
+      <a href="#">Help</a>
+      <a href="#">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h3>Admin</h3>
+      <a href="#">Volunteers</a>
+      <a href="#">Roles</a>
+      <a href="#">Settings</a>
+    </div>
+  </div>
+  <hr class="footer-divider">
+  <div class="footer-logo">
+    <div class="footer-logo-text">CENSUS</div>
+  </div>
+</div>
+
+<script>
+const SHIFTS = [
+  { day:"PreMon", date:"Aug 17", start:"8:00 AM", end:"12:00 PM", pos:"Greeter", dept:"Sampling", color:"#bbdefb", csp:2, checkedIn:false },
+  { day:"PreWed", date:"Aug 19", start:"1:00 PM", end:"5:00 PM", pos:"Data Entry", dept:"Data", color:"#c8e6c9", csp:2, checkedIn:true },
+  { day:"PreThur", date:"Aug 20", start:"9:00 AM", end:"1:00 PM", pos:"Census Taker", dept:"Sampling", color:"#bbdefb", csp:3, checkedIn:false },
+  { day:"OpenSun", date:"Aug 23", start:"10:00 AM", end:"2:00 PM", pos:"Team Lead", dept:"Operations", color:"#ffe0b2", csp:4, checkedIn:false },
+];
+
+const DAY_REQS = {
+  PreSun:["PreMon","PreTue","PreWed","PreThur",["PreFri","PreSat","OpenSun"]],
+  PreMon:["PreTue","PreWed","PreThur",["PreFri","PreSat","OpenSun"]],
+  PreTue:["PreWed","PreThur",["PreFri","PreSat","OpenSun"]],
+  PreWed:["PreThur","PreFri",["PreSat","OpenSun"]],
+  PreThur:["PreFri",["PreSat","OpenSun"]],
+  PreFri:[["PreSat","OpenSun"]],
+  PreSat:["OpenSun"],
+};
+const PRE_OPEN = ["PreSun","PreMon","PreTue","PreWed","PreThur","PreFri","PreSat"];
+
+let expanded = {};
+let complOpen = false;
+let burnerJust = false;
+let passcodeJust = false;
+let bannerDismissed = false;
+
+// Checkbox HTML helpers
+function boxUnchecked() { return '<span class="vbox"><span class="vbox-unchecked"></span></span>'; }
+function boxChecked() { return '<span class="vbox"><span class="vbox-checked"></span></span>'; }
+function box(done) { return done ? boxChecked() : boxUnchecked(); }
+
+function tog(id){ expanded[id]=!expanded[id]; renderCL(); }
+function toggleCompleted(){ complOpen=!complOpen; renderCL(); }
+function toggleDrawer(){
+  document.getElementById('drawer').classList.toggle('open');
+  document.getElementById('drawer-overlay').classList.toggle('open');
+}
+function dismissBanner(){
+  bannerDismissed = true;
+  document.getElementById('sap-banner').classList.add('hidden');
+}
+function revealPasscode(){
+  document.getElementById('passcode-hidden').classList.add('hidden');
+  document.getElementById('passcode-revealed').classList.remove('hidden');
+}
+
+// URL persistence
+function saveToURL(){
+  const p = new URLSearchParams();
+  p.set('env', document.getElementById('cp-environment').value);
+  p.set('readonly', document.getElementById('cp-readonly').checked ? '1' : '0');
+  p.set('sap', document.getElementById('cp-sap-issued').checked ? '1' : '0');
+  p.set('staff', document.getElementById('cp-staff').checked ? '1' : '0');
+  p.set('counterculture', document.getElementById('cp-counter-culture').checked ? '1' : '0');
+  p.set('censuslab', document.getElementById('cp-census-lab').checked ? '1' : '0');
+  p.set('censusticket', document.getElementById('cp-census-ticket').checked ? '1' : '0');
+  p.set('csp', document.getElementById('cp-total-csp').value);
+  p.set('roletype', document.getElementById('cp-role-type').value);
+  p.set('lead', document.getElementById('cp-lead').checked ? '1' : '0');
+  p.set('behavioral', document.getElementById('cp-behavioral').checked ? '1' : '0');
+  p.set('basics', document.getElementById('cp-basics-done').checked ? '1' : '0');
+  p.set('samplingreq', document.getElementById('cp-sampling-req').checked ? '1' : '0');
+  p.set('samplingdone', document.getElementById('cp-sampling-done').checked ? '1' : '0');
+  p.set('outreachreq', document.getElementById('cp-outreach-req').checked ? '1' : '0');
+  p.set('outreachdone', document.getElementById('cp-outreach-done').checked ? '1' : '0');
+  p.set('dataentryreq', document.getElementById('cp-dataentry-req').checked ? '1' : '0');
+  p.set('dataentrydone', document.getElementById('cp-dataentry-done').checked ? '1' : '0');
+  p.set('databeastreq', document.getElementById('cp-databeast-req').checked ? '1' : '0');
+  p.set('databeastdone', document.getElementById('cp-databeast-done').checked ? '1' : '0');
+  p.set('burnerprofile', document.getElementById('cp-burnerprofile').checked ? '1' : '0');
+  p.set('passcode', document.getElementById('cp-passcode').checked ? '1' : '0');
+  // Days
+  ['premon','pretue','prewed','prethur','prefri','presat','opensun'].forEach(d => {
+    p.set(d, document.getElementById('cp-day-'+d).checked ? '1' : '0');
+  });
+  // Arrival
+  const arr = document.getElementById('arrival-date').value;
+  if(arr) p.set('arrival', arr);
+  history.replaceState(null, '', '?' + p.toString());
+}
+
+function loadFromURL(){
+  const p = new URLSearchParams(window.location.search);
+  if(!p.toString()) return;
+  function cb(id, key){ const v=p.get(key); if(v!==null) document.getElementById(id).checked = v==='1'; }
+  function sel(id, key){ const v=p.get(key); if(v!==null) document.getElementById(id).value = v; }
+  sel('cp-environment','env');
+  cb('cp-sap-issued','sap');
+  cb('cp-staff','staff');
+  cb('cp-counter-culture','counterculture');
+  cb('cp-census-lab','censuslab');
+  cb('cp-census-ticket','censusticket');
+  if(p.get('csp')!==null) document.getElementById('cp-total-csp').value = p.get('csp');
+  sel('cp-role-type','roletype');
+  cb('cp-lead','lead');
+  cb('cp-behavioral','behavioral');
+  cb('cp-basics-done','basics');
+  cb('cp-sampling-req','samplingreq');
+  cb('cp-sampling-done','samplingdone');
+  cb('cp-outreach-req','outreachreq');
+  cb('cp-outreach-done','outreachdone');
+  cb('cp-dataentry-req','dataentryreq');
+  cb('cp-dataentry-done','dataentrydone');
+  cb('cp-databeast-req','databeastreq');
+  cb('cp-databeast-done','databeastdone');
+  cb('cp-burnerprofile','burnerprofile');
+  cb('cp-passcode','passcode');
+  cb('cp-readonly','readonly');
+  ['premon','pretue','prewed','prethur','prefri','presat','opensun'].forEach(d => {
+    cb('cp-day-'+d, d);
+  });
+  if(p.get('arrival')) {
+    document.getElementById('arrival-date').value = p.get('arrival');
+    onArrivalChange();
+  }
+}
+
+function getS(){
+  const arr = document.getElementById('arrival-date').value;
+  const env = document.getElementById('cp-environment').value;
+  const roleType = document.getElementById('cp-role-type').value;
+  return {
+    env: env,
+    onPlaya: env === 'onplaya',
+    readOnly: document.getElementById('cp-readonly').checked,
+    sapIssued: document.getElementById('cp-sap-issued').checked,
+    isStaff: document.getElementById('cp-staff').checked,
+    cc: document.getElementById('cp-counter-culture').checked,
+    cl: document.getElementById('cp-census-lab').checked,
+    ct: document.getElementById('cp-census-ticket').checked,
+    csp: parseInt(document.getElementById('cp-total-csp').value)||0,
+    bs: document.getElementById('cp-behavioral').checked,
+    isLead: document.getElementById('cp-lead').checked,
+    roleType: roleType,
+    isSetupOnly: roleType === 'setup',
+    // Training
+    basicsDone: document.getElementById('cp-basics-done').checked,
+    samplingReq: document.getElementById('cp-sampling-req').checked,
+    samplingDone: document.getElementById('cp-sampling-done').checked,
+    outreachReq: document.getElementById('cp-outreach-req').checked,
+    outreachDone: document.getElementById('cp-outreach-done').checked,
+    dataentryReq: document.getElementById('cp-dataentry-req').checked,
+    dataentryDone: document.getElementById('cp-dataentry-done').checked,
+    databeastReq: document.getElementById('cp-databeast-req').checked,
+    databeastDone: document.getElementById('cp-databeast-done').checked,
+    // Self-report
+    burner: document.getElementById('cp-burnerprofile').checked,
+    passcode: document.getElementById('cp-passcode').checked,
+    arr: arr,
+    preOpen: PRE_OPEN.includes(arr),
+    otherEntry: document.getElementById('early-entry').value==='other',
+    campFilled: document.getElementById('camping-location').value.trim().length>0,
+    arrFilled: arr!=='',
+    dc:{
+      PreMon:document.getElementById('cp-day-premon').checked,
+      PreTue:document.getElementById('cp-day-pretue').checked,
+      PreWed:document.getElementById('cp-day-prewed').checked,
+      PreThur:document.getElementById('cp-day-prethur').checked,
+      PreFri:document.getElementById('cp-day-prefri').checked,
+      PreSat:document.getElementById('cp-day-presat').checked,
+      OpenSun:document.getElementById('cp-day-opensun').checked,
+    }
+  };
+}
+
+function onArrivalChange(){
+  const a=document.getElementById('arrival-date').value;
+  document.getElementById('early-entry-field').classList.toggle('hidden',!PRE_OPEN.includes(a));
+  flash('save-arrival');
+  render();
+}
+
+function scrollToPasscode(){
+  const card = document.getElementById('passcode-card');
+  card.scrollIntoView({behavior:'smooth',block:'start'});
+  setTimeout(()=>{
+    card.classList.add('card-highlight');
+    setTimeout(()=>card.classList.remove('card-highlight'),2500);
+    // Also reveal it
+    document.getElementById('passcode-hidden').classList.add('hidden');
+    document.getElementById('passcode-revealed').classList.remove('hidden');
+  },400);
+}
+
+function scrollOnPlaya(){
+  document.getElementById('onplaya-card').scrollIntoView({behavior:'smooth',block:'start'});
+  setTimeout(()=>{
+    document.querySelectorAll('#onplaya-card .form-field').forEach(f=>{
+      f.classList.add('highlight');
+      setTimeout(()=>f.classList.remove('highlight'),2000);
+    });
+  },400);
+}
+
+function mkItem(id,done,label,detail,opts={}){
+  // v5: incomplete items default expanded so volunteers see what's needed
+  // without clicking. Completed items always start collapsed inside the
+  // "view more completed items" toggle. Per Mew (2026-05-04), with Chipper's
+  // earlier preference for a less-overwhelming list satisfied by the
+  // collapse-on-completion behavior.
+  const ex = (id in expanded) ? expanded[id] : !done;
+  const b=done?boxChecked():boxUnchecked();
+  const doneClass=done?' done':'';
+  let oc=`tog('${id}')`;
+  if(opts.scroll) oc=`scrollOnPlaya();tog('${id}')`;
+  if(opts.scrollPasscode) oc=`scrollToPasscode();tog('${id}')`;
+  return `<div class="cl-item"><div class="cl-item-header${doneClass}" onclick="${oc}">${b}<span class="cl-label">${label}</span><span class="material-icons expand-icon${ex?' open':''}">expand_more</span></div><div class="cl-detail${ex?' open':''}">${detail}</div></div>`;
+}
+
+function renderCL(){
+  const s=getS();
+  const inc=[], comp=[];
+  const showCsp=(s.preOpen&&!s.otherEntry&&!s.isStaff)||s.cc||s.cl||s.ct;
+  document.getElementById('csp-bar').classList.toggle('hidden',!showCsp);
+  document.getElementById('csp-val').textContent=s.csp;
+
+  // Read-only mode banner (v5) — shown when off-playa server is read-only
+  // because on-playa is the source of truth. Independent of SAP banner.
+  document.getElementById('readonly-banner').classList.toggle('hidden', !s.readOnly);
+
+  // SAP Issued Banner
+  if(s.sapIssued && !bannerDismissed){
+    document.getElementById('sap-banner').classList.remove('hidden');
+  } else {
+    document.getElementById('sap-banner').classList.add('hidden');
+  }
+
+  // SAP Issued checklist item
+  if(s.sapIssued){
+    const d=`<div class="sap-dl-area"><p>Your SAP has been issued and emailed to you. You can also download it here:</p><button class="btn-dl" onclick="alert('Mock download!')"><span class="material-icons" style="font-size:18px;">download</span> Download SAP PDF</button></div>`;
+    expanded['sap-issued']=true;
+    inc.unshift(mkItem('sap-issued',true,'Your Setup Access Pass (SAP) is ready',d));
+  }
+
+  // Plans
+  const plansDone=s.arrFilled&&s.campFilled;
+  const plansD=`<div style="margin-bottom:8px;">Update your arrival date, early entry status, and camping location in the <strong>On-Playa Information</strong> section above.</div>`;
+  const plansI=mkItem('plans',plansDone,plansDone?'On-playa plans provided':'Tell us your plans for this year\'s event',plansD,{scroll:true});
+  (plansDone?comp:inc).push(plansI);
+
+  // Behavioral Standards
+  const bsD=`<div style="margin-bottom:8px;">All volunteers must review and agree to the Census Behavioral Standards before participating.</div><a href="#" style="color:var(--pink);font-weight:500;"><span class="material-icons" style="font-size:16px;vertical-align:middle;">description</span> Review and sign the Behavioral Standards Agreement</a>`;
+  const bsI=mkItem('bs',s.bs,s.bs?'Behavioral Standards Agreement — Signed':'Review and sign the Behavioral Standards Agreement',bsD);
+  (s.bs?comp:inc).push(bsI);
+
+  // Training (only for Data Collection role type)
+  // v5: per-course individual links (replaces the single Hive community link from v4).
+  if(!s.isSetupOnly){
+    const trainings = [
+      {name:'Census Basics', done: s.basicsDone, always: true,
+        url: 'https://hive.burningman.org/posts/census-course-basics-start-here-course-overview-84578159'},
+    ];
+    if(s.samplingReq) trainings.push({name:'Random Sampling', done: s.samplingDone,
+      url: 'https://hive.burningman.org/posts/census-course-random-sampling-start-here-random-sampling-course-overview'});
+    if(s.outreachReq) trainings.push({name:'OutReach', done: s.outreachDone,
+      url: 'https://hive.burningman.org/posts/census-course-outreach-course-overview-start-here-84578181'});
+    if(s.dataentryReq) trainings.push({name:'DataEntry Wiz', done: s.dataentryDone,
+      url: 'https://drive.google.com/file/d/1rhB75gEhYQ7gctzHZEHG7xLrRWiejyth/view?usp=drivesdk'});
+    if(s.databeastReq) trainings.push({name:'DataBeast Driver', done: s.databeastDone,
+      url: 'https://hive.burningman.org/posts/census-course-databeast-drive-start-here-databeast-driver-course-overview'});
+
+    const allTrainDone = trainings.every(t=>t.done);
+    let td = `<div style="margin-bottom:12px;">Complete each required training course on Census Hive. Click a course name below to open it.</div>`;
+    for(const t of trainings){
+      const labelHtml = t.done
+        ? `<span class="sub-label">${t.name}</span>`
+        : `<span class="sub-label"><a href="${t.url}" target="_blank" onclick="event.stopPropagation();" style="color:var(--pink);font-weight:500;">${t.name}</a></span>`;
+      td+=`<div class="cl-sub">${box(t.done)}${labelHtml}<span class="sub-status">${t.done?'Completed':'Not yet completed'}</span></div>`;
+    }
+    const trI=mkItem('tr',allTrainDone,allTrainDone?'Required training courses completed':'Complete required training courses',td);
+    (allTrainDone?comp:inc).push(trI);
+  }
+
+  // Lead Training
+  if(s.isLead){
+    let ld = `<div style="margin-bottom:12px;">As a shift lead, please review the following training materials. Check each item once you have reviewed it.</div>`;
+
+    // Self-report sub-items by lead type
+    const leadGuides = [
+      {name:'Airport Sampling Shift Lead Guide', url:'https://drive.google.com/'},
+      {name:'Gate Sampling Shift Lead Guide', url:'https://drive.google.com/'},
+      {name:'Data Entry Shift Lead Guide', url:'https://drive.google.com/'},
+      {name:'Outreach Shift Lead Guide', url:'https://drive.google.com/'},
+      {name:'Census Lab Tablet Guide', url:'https://drive.google.com/'},
+    ];
+    ld += `<div style="font-weight:500;margin-bottom:6px;margin-top:8px;">Shift Lead Guides:</div>`;
+    for(const g of leadGuides){
+      const cbId = 'lead-'+g.name.replace(/[^a-z]/gi,'').toLowerCase();
+      ld += `<div class="expanded-cb" style="margin-top:4px;"><input type="checkbox" id="${cbId}"><label for="${cbId}"><a href="${g.url}" target="_blank" onclick="event.stopPropagation();">${g.name}</a></label></div>`;
+    }
+
+    ld += `<div style="font-weight:500;margin-bottom:6px;margin-top:16px;">Required for all leads:</div>`;
+    const universalItems = [
+      {name:'ART of Radio (PDF)', url:'http://tinyurl.com/ArtOfRadio'},
+      {name:'Radio Training Video (7 min)', url:'http://vimeo.com/101945669'},
+      {name:'Conflict Resolution & De-escalation', url:'https://hive.burningman.org/spaces/3990631/'},
+    ];
+    for(const u of universalItems){
+      const cbId = 'lead-'+u.name.replace(/[^a-z]/gi,'').toLowerCase();
+      ld += `<div class="expanded-cb" style="margin-top:4px;"><input type="checkbox" id="${cbId}"><label for="${cbId}"><a href="${u.url}" target="_blank" onclick="event.stopPropagation();">${u.name}</a></label></div>`;
+    }
+
+    inc.push(mkItem('lead',false,'Review shift lead training materials',ld));
+  }
+
+  // Burner Profile
+  const bpDone=s.burner;
+  const bpD=`<div style="margin-bottom:8px;">Please visit your <a href="https://profiles.burningman.org/participate/my-profile/" target="_blank">Burner Profile</a> and make sure your information is current. Update any fields that have changed since last year, then check the box below to confirm.</div><div class="expanded-cb"><input type="checkbox" id="bp-real" ${bpDone?'checked':''} onchange="onBurner(this)"><label for="bp-real">I have reviewed and updated my Burner Profile</label></div>`;
+  const bpI=mkItem('bp',bpDone,bpDone?'Burner Profile — Updated':'Review and update your Burner Profile',bpD);
+  (bpDone&&!burnerJust?comp:inc).push(bpI);
+
+  // Passcode (LAST checklist item, after Burner Profile)
+  const pcDone=s.passcode;
+  const pcD=`<div style="margin-bottom:8px;">Your 4-digit passcode gives you access to your Census account on playa using the tablet computers. Scroll down to the Passcode section to view and record it.</div><div class="expanded-cb"><input type="checkbox" id="pc-real" ${pcDone?'checked':''} onchange="onPasscode(this)"><label for="pc-real">I have recorded my passcode for use on playa</label></div>`;
+  const pcI=mkItem('pc',pcDone,pcDone?'Passcode recorded for on-playa access':'Record your passcode for on-playa access',pcD,{scrollPasscode:true});
+  (pcDone&&!passcodeJust?comp:inc).push(pcI);
+
+  // SAP Requirements
+  if(s.preOpen&&!s.otherEntry&&!s.isStaff){
+    // On-playa logic
+    if(s.onPlaya && s.sapIssued){
+      // On-playa + SAP issued but fell below requirements
+      const reqs=DAY_REQS[s.arr]||[];
+      const cspOk=s.csp>=12;
+      let allDays=true;
+      for(const r of reqs){if(Array.isArray(r)){if(!r.some(d=>s.dc[d]))allDays=false;}else{if(!s.dc[r])allDays=false;}}
+      const sapDone=cspOk&&allDays;
+
+      if(!sapDone){
+        // Fell below requirements on playa with SAP issued
+        let sd=`<div style="margin-bottom:12px;padding:12px;background:#fff3e0;border-left:3px solid var(--orange);border-radius:4px;"><strong>Important:</strong> Your shift schedule has changed and you may no longer meet the original SAP requirements. Please sign up for additional shifts to maintain your commitment.</div>`;
+        sd+=`<div class="cl-sub">${box(cspOk)}<span class="sub-label">At least 12 Census Shift Points</span><span class="sub-status">${s.csp} / 12 CSP</span></div>`;
+        for(const r of reqs){
+          if(Array.isArray(r)){
+            const ok=r.some(d=>s.dc[d]);
+            const lbl=r.join(', ').replace(/, ([^,]+)$/,', or $1');
+            sd+=`<div class="cl-sub">${box(ok)}<span class="sub-label">Shift on ${lbl}</span><span class="sub-status">${ok?'Fulfilled':'Still needed'}</span></div>`;
+          } else {
+            sd+=`<div class="cl-sub">${box(s.dc[r])}<span class="sub-label">Shift on ${r}</span><span class="sub-status">${s.dc[r]?'Fulfilled':'Still needed'}</span></div>`;
+          }
+        }
+        inc.push(mkItem('sap',false,'Sign up for additional shifts to meet your commitment',sd));
+      }
+      // If requirements met on-playa: don't mention SAP at all
+    } else if(!s.onPlaya) {
+      // Off-playa: normal SAP section
+      const reqs=DAY_REQS[s.arr]||[];
+      const cspOk=s.csp>=12;
+      let allDays=true;
+      for(const r of reqs){if(Array.isArray(r)){if(!r.some(d=>s.dc[d]))allDays=false;}else{if(!s.dc[r])allDays=false;}}
+      const sapDone=cspOk&&allDays;
+      let sd=`<div style="margin-bottom:12px;">Earn a Census SAP for early entry to the event. Volunteers must sign up for shifts worth at least 12 census shift points (CSP). The number of shift points for each shift is shown on the Shifts page. You will also need one Census shift per day beginning the day after your planned arrival.</div>`;
+      sd+=`<div class="cl-sub">${box(cspOk)}<span class="sub-label">Sign up for at least 12 Census Shift Points</span><span class="sub-status">${s.csp} / 12 CSP</span></div>`;
+      for(const r of reqs){
+        if(Array.isArray(r)){
+          const ok=r.some(d=>s.dc[d]);
+          const lbl=r.join(', ').replace(/, ([^,]+)$/,', or $1');
+          sd+=`<div class="cl-sub">${box(ok)}<span class="sub-label">Shift on ${lbl}</span><span class="sub-status">${ok?'Fulfilled':'Still needed'}</span></div>`;
+        } else {
+          sd+=`<div class="cl-sub">${box(s.dc[r])}<span class="sub-label">Shift on ${r}</span><span class="sub-status">${s.dc[r]?'Fulfilled':'Still needed'}</span></div>`;
+        }
+      }
+      const sapI=mkItem('sap',sapDone,sapDone?'SAP shift requirements met':'Sign up for pre-event shifts to earn a Census SAP for early entry',sd);
+      (sapDone?comp:inc).push(sapI);
+    }
+  }
+
+  // Staff message
+  if(s.isStaff){
+    const staffD=`<div style="margin-bottom:8px;">As Census staff, your early entry is handled separately. Work your butt off and have a great burn!</div>`;
+    comp.push(mkItem('staff',true,'Staff — Early entry confirmed',staffD));
+  }
+
+  // Census Lab
+  if(s.cl){
+    const ok=s.csp>=16;const p=Math.min(100,Math.round(s.csp/16*100));
+    const d=`<div style="margin-bottom:8px;">To camp at Census Lab, sign up for shifts worth at least 16 CSP.</div><div class="progress-row"><div class="pbar"><div class="pbar-fill ${ok?'met':'partial'}" style="width:${p}%"></div></div><span class="pbar-text">${ok?'Requirement fulfilled':s.csp+' / 16 CSP'}</span></div>`;
+    (ok?comp:inc).push(mkItem('cl',ok,ok?'Census Lab Camp — Requirements met':'Meet shift requirements to camp at Census Lab',d));
+  }
+  // Counter Culture
+  if(s.cc){
+    const ok=s.csp>=10;const p=Math.min(100,Math.round(s.csp/10*100));
+    const d=`<div style="margin-bottom:8px;">To camp at Counter Culture, sign up for shifts worth at least 10 CSP.</div><div class="progress-row"><div class="pbar"><div class="pbar-fill ${ok?'met':'partial'}" style="width:${p}%"></div></div><span class="pbar-text">${ok?'Requirement fulfilled':s.csp+' / 10 CSP'}</span></div>`;
+    (ok?comp:inc).push(mkItem('cc',ok,ok?'Counter Culture Camp — Requirements met':'Meet shift requirements to camp at Counter Culture',d));
+  }
+  // Census Ticket
+  if(s.ct){
+    const ok=s.csp>=10;const p=Math.min(100,Math.round(s.csp/10*100));
+    const d=`<div style="margin-bottom:8px;">To receive a ticket through Census, sign up for shifts worth at least 10 CSP.</div><div class="progress-row"><div class="pbar"><div class="pbar-fill ${ok?'met':'partial'}" style="width:${p}%"></div></div><span class="pbar-text">${ok?'Requirement fulfilled':s.csp+' / 10 CSP'}</span></div>`;
+    (ok?comp:inc).push(mkItem('ct',ok,ok?'Census Ticket — Requirements met':'Meet shift requirements to receive a Census ticket',d));
+  }
+
+  // Render
+  document.getElementById('cl-incomplete').innerHTML=inc.length?inc.join(''):'<div style="padding:24px;text-align:center;color:var(--green);font-size:15px;"><span class="material-icons" style="vertical-align:middle;margin-right:6px;">celebration</span> All items complete!</div>';
+  const hasC=comp.length>0;
+  document.getElementById('cl-completed-section').classList.toggle('hidden',!hasC);
+  document.getElementById('cl-completed-body').innerHTML=comp.join('');
+  document.getElementById('cl-completed-body').classList.toggle('open',complOpen);
+  document.getElementById('compl-icon').classList.toggle('open',complOpen);
+  // v5: include count of completed items in the toggle label
+  document.getElementById('compl-label').textContent =
+    hasC ? `View ${comp.length} completed item${comp.length===1?'':'s'}` : 'View completed items';
+}
+
+function onBurner(cb){
+  document.getElementById('cp-burnerprofile').checked = cb.checked;
+  if(cb.checked) burnerJust=true;
+  render();
+}
+function onPasscode(cb){
+  document.getElementById('cp-passcode').checked = cb.checked;
+  if(cb.checked) passcodeJust=true;
+  render();
+}
+
+function renderShifts(){
+  const s=getS();
+  const body=document.getElementById('shift-body');
+  const active=SHIFTS.filter(sh=>s.dc[sh.day]);
+  if(!active.length){
+    body.innerHTML='<div style="padding:20px;color:var(--gray);font-style:italic;">No shifts signed up yet. Visit the <a href="#" style="color:var(--pink);">Shifts page</a> to sign up.</div>';
+    return;
+  }
+  let h='<table class="shift-table"><thead><tr><th>Date</th><th>Time</th><th>Position</th><th>CSP</th><th style="text-align:center;">Check in</th><th></th></tr></thead><tbody>';
+  for(const sh of active){
+    h+=`<tr><td><div style="font-weight:500;">${sh.day}</div><div style="font-size:12px;color:var(--gray);">${sh.date}</div></td><td>${sh.start} – ${sh.end}</td><td><span class="dept-chip" style="background:${sh.color};color:#333;">${sh.pos}</span></td><td><span class="csp-badge">${sh.csp}</span></td><td style="text-align:center;"><div class="switch-track${sh.checkedIn?' on':''}" onclick="this.classList.toggle('on')"><div class="switch-thumb"></div></div></td><td><button class="more-btn"><span class="material-icons">more_horiz</span></button></td></tr>`;
+  }
+  h+='</tbody></table>';
+  h+=`<div class="shift-total ${s.csp>=12?'met':'under'}">Total CSP: ${s.csp}${s.csp<12?' / 12 required for SAP':' ✓'}</div>`;
+  body.innerHTML=h;
+}
+
+function render(){
+  renderCL();
+  renderShifts();
+  saveToURL();
+}
+function flash(id){ const e=document.getElementById(id); if(!e)return; e.classList.add('show'); setTimeout(()=>e.classList.remove('show'),1500); }
+
+// Init
+loadFromURL();
+render();
+</script>
+</body>
+</html>
