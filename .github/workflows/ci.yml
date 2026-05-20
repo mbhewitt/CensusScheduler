@@ -1,0 +1,114 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - deploy/test-bundle
+
+# Cancel any in-flight run for the same ref when a new commit lands.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    name: Playwright (chromium)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: ci-root-password
+          MYSQL_DATABASE: census
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -pci-root-password"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      # App pool config — what the running Next.js dev server reads.
+      MYSQL_HOST: 127.0.0.1
+      MYSQL_DATABASE: census
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ci-root-password
+      # e2e helpers' direct DB writes
+      TEST_MYSQL_HOST: 127.0.0.1
+      TEST_MYSQL_DATABASE: census
+      TEST_MYSQL_USER: root
+      TEST_MYSQL_PASSWORD: ci-root-password
+      # Okta config — dummy issuer; tests assert /api/auth/okta builds the
+      # right 302 against whatever issuer is configured, no real network call.
+      NEXT_PUBLIC_OKTA_ENABLED: "true"
+      NEXT_PUBLIC_PIN_ENABLED: "true"
+      OKTA_CLIENT_ID: ci-test-client-id
+      OKTA_CLIENT_SECRET: ci-test-client-secret
+      OKTA_ISSUER: https://test-okta.example.com/oauth2/default
+      OKTA_REDIRECT_URI: http://localhost:3000/api/auth/okta/callback
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+          cache-dependency-path: client/yarn.lock
+
+      - name: Activate yarn 1.22.22 via corepack
+        run: |
+          corepack enable
+          corepack prepare yarn@1.22.22 --activate
+
+      - name: Wait for MySQL to be ready
+        run: |
+          for i in {1..30}; do
+            if mysqladmin ping -h 127.0.0.1 -P 3306 -uroot -pci-root-password --silent; then
+              echo "MySQL is up"
+              exit 0
+            fi
+            echo "Waiting for MySQL... ($i/30)"
+            sleep 2
+          done
+          echo "MySQL did not become ready in time" >&2
+          exit 1
+
+      - name: Load schema
+        run: |
+          mysql -h 127.0.0.1 -P 3306 -uroot -pci-root-password census \
+            < database/scheduler_schema.sql
+
+      - name: Install client dependencies
+        working-directory: client
+        run: yarn install --frozen-lockfile
+
+      # NOTE: lint is intentionally omitted. The `yarn lint` script invokes
+      # `next lint`, which Next.js 16 removed. Repairing the lint pipeline is
+      # out of scope for this PR — see issue #294 follow-ups.
+
+      - name: Install Playwright browsers (chromium)
+        working-directory: client
+        run: npx playwright install --with-deps chromium
+
+      # First CI gate: just the sign-in regression spec (issue #294).
+      # Expanding to the full suite is a follow-up — some specs depend on
+      # data shapes we haven't validated against a fresh schema-only seed.
+      - name: Run sign-in regression spec
+        working-directory: client
+        run: npx playwright test --config=e2e/playwright.config.ts e2e/tests/19-okta-signin-regression.spec.ts
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: client/playwright-report/
+          retention-days: 7
