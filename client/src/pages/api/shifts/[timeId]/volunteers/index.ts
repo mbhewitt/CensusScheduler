@@ -7,6 +7,7 @@ import type {
   IResShiftVolunteerInformation,
   IResShiftVolunteerRowItem,
 } from "@/components/types/shifts";
+import { withAuth } from "@/lib/withAuth";
 import { pool } from "lib/database";
 import {
   shiftVolunteerRemove,
@@ -30,9 +31,11 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           pt.role_id,
           sn.shift_details,
           sn.shift_name,
+          st.end_time,
           st.end_time_text,
           st.meal,
           st.notes,
+          st.start_time,
           st.start_time_text,
           stp.position_type_id,
           stp.slots,
@@ -148,10 +151,10 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           date: resShiftPositionFirst.date,
           dateName: resShiftPositionFirst.datename ?? "",
           details: resShiftPositionFirst.shift_details,
-          endTime: resShiftPositionFirst.end_time_text,
+          endTime: resShiftPositionFirst.end_time ?? resShiftPositionFirst.end_time_text,
           meal: resShiftPositionFirst.meal,
           notes: resShiftPositionFirst.notes,
-          startTime: resShiftPositionFirst.start_time_text,
+          startTime: resShiftPositionFirst.start_time ?? resShiftPositionFirst.start_time_text,
           typeName: resShiftPositionFirst.shift_name,
         },
         volunteerList: resShiftVolunteerList,
@@ -234,4 +237,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default shiftVolunteers;
+// Hotfix 2026-05-06: this endpoint exposes volunteer playa + world names
+// per shift. Wrapped in withAuth so unauth requests get 401 and forged
+// cookies are rejected by HMAC verification.
+export default withAuth(shiftVolunteers);

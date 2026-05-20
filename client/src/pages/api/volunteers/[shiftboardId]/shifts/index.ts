@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import type { IResVolunteerShiftItem } from "@/components/types/volunteers";
 import { pool } from "lib/database";
+import { withAuth } from "@/lib/withAuth";
 import {
   shiftVolunteerRemove,
   shiftVolunteerUpdate,
@@ -21,7 +22,9 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
           d.datename,
           pt.position,
           sc.department,
+          st.end_time,
           st.end_time_text,
+          st.start_time,
           st.start_time_text,
           stp.shift_times_id,
           vs.noshow,
@@ -51,12 +54,14 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
           date,
           datename,
           department,
+          end_time,
           end_time_text,
           noshow,
           notes,
           position,
           rating,
           shift_times_id,
+          start_time,
           start_time_text,
           time_position_id,
         }) => {
@@ -67,9 +72,9 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
             shift: {
               date: date,
               dateName: datename ?? "",
-              endTime: end_time_text,
+              endTime: end_time ?? end_time_text,
               positionName: position,
-              startTime: start_time_text,
+              startTime: start_time ?? start_time_text,
               timeId: shift_times_id,
               timePositionId: time_position_id,
             },
@@ -113,4 +118,4 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default volunteerShifts;
+export default withAuth(volunteerShifts);

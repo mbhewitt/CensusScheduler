@@ -6,6 +6,7 @@ import type {
   IResVolunteerAccount,
 } from "@/components/types/volunteers";
 import { pool } from "lib/database";
+import { withAuth } from "@/lib/withAuth";
 
 const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   const { shiftboardId } = req.query;
@@ -50,6 +51,12 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         name: role,
       }));
       const [dbVolunteerFirst] = dbVolunteerList;
+      if (!dbVolunteerFirst) {
+        return res.status(404).json({
+          statusCode: 404,
+          message: "Volunteer not found",
+        });
+      }
       const resVolunteerItem: IResVolunteerAccount = {
         email: dbVolunteerFirst.email ?? "",
         emergencyContact: dbVolunteerFirst.emergency_contact ?? "",
@@ -122,4 +129,4 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default volunteers;
+export default withAuth(volunteers);

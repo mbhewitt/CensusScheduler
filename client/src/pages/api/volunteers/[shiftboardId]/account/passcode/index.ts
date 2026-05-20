@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import type { IReqPasscode } from "@/components/types/volunteers";
 import { pool } from "lib/database";
+import { withAuth } from "@/lib/withAuth";
 
 const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   const { shiftboardId } = req.query;
@@ -41,4 +42,4 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default volunteers;
+export default withAuth(volunteers);
