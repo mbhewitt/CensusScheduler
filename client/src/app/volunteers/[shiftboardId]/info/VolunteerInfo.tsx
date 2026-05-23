@@ -702,10 +702,13 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   // ------------------------------------------------------------
   return (
     <>
-      {/* hero */}
+      {/* hero — reuse the account-page banner since the info page is now
+          the canonical volunteer page (per @mbhewitt 2026-05-23). The
+          previous `banner-volunteers.jpg` reference didn't resolve to a
+          file in public/banners. */}
       <Hero
         imageStyles={{
-          backgroundImage: "url(/banners/banner-volunteers.jpg)",
+          backgroundImage: "url(/banners/man-at-night.jpg)",
           backgroundSize: "cover",
         }}
         text="Volunteer Information"
