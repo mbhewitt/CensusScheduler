@@ -1,27 +1,19 @@
 "use client";
 
-import {
-  Check as CheckIcon,
-  OpenInNew as OpenInNewIcon,
-} from "@mui/icons-material";
+import { OpenInNew as OpenInNewIcon } from "@mui/icons-material";
 import {
   Box,
-  Button,
   Card,
-  CardActions,
   CardContent,
-  CircularProgress,
   Container,
   Link as MuiLink,
-  List,
-  ListItem,
-  ListItemText,
+  Stack,
   Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import NextLink from "next/link";
 import { useSnackbar } from "notistack";
-import { useContext } from "react";
+import { useContext, useEffect, useRef } from "react";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
@@ -65,7 +57,7 @@ export const TrainingConfirmation = ({ code }: ITrainingConfirmationProps) => {
     error: Error | undefined;
     mutate: (opts?: unknown) => void;
   } = useSWR(swrKey, fetcherGet);
-  const { isMutating, trigger } = useSWRMutation(
+  const { trigger } = useSWRMutation(
     `/api/training/confirmation/${code}`,
     fetcherTrigger
   );
@@ -74,6 +66,60 @@ export const TrainingConfirmation = ({ code }: ITrainingConfirmationProps) => {
   // ------------------------------------------------------------
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
+
+  // Auto-confirm on visit — per @mbhewitt 2026-05-23, visiting the page IS
+  // the confirmation, no separate button click. Guarded by a ref so a
+  // React-strict-mode double-mount doesn't double-fire (the POST is
+  // idempotent on the server side either way, but no need to round-trip
+  // twice). Only fires when the GET has loaded and reports
+  // alreadyConfirmed:false.
+  const autoFiredRef = useRef(false);
+  useEffect(() => {
+    if (!data) return;
+    if ((data as unknown as { statusCode?: number }).statusCode) return;
+    if (data.alreadyConfirmed) return;
+    if (autoFiredRef.current) return;
+    autoFiredRef.current = true;
+
+    (async () => {
+      try {
+        const body: IReqTrainingConfirm = { shiftboardId };
+        await trigger({ method: "POST", body });
+        sessionDispatch({
+          type: SESSION_ROLE_ITEM_ADD,
+          payload: {
+            id: data.training.roleId,
+            name: data.training.roleName,
+          },
+        });
+        enqueueSnackbar(
+          <SnackbarText>
+            <strong>{data.training.name}</strong> training confirmed
+          </SnackbarText>,
+          { variant: "success" }
+        );
+        mutate();
+      } catch (e) {
+        // Re-allow a retry on next interaction if it errored
+        autoFiredRef.current = false;
+        if (e instanceof Error) {
+          enqueueSnackbar(
+            <SnackbarText>
+              <strong>{e.message}</strong>
+            </SnackbarText>,
+            { persist: true, variant: "error" }
+          );
+        }
+      }
+    })();
+  }, [
+    data,
+    shiftboardId,
+    trigger,
+    sessionDispatch,
+    enqueueSnackbar,
+    mutate,
+  ]);
 
   // logic
   // ------------------------------------------------------------
@@ -88,39 +134,7 @@ export const TrainingConfirmation = ({ code }: ITrainingConfirmationProps) => {
     return <ErrorPage />;
   }
 
-  const handleConfirm = async () => {
-    try {
-      const body: IReqTrainingConfirm = { shiftboardId };
-      await trigger({ method: "POST", body });
-      // update client-side role list so the rest of the app knows
-      sessionDispatch({
-        type: SESSION_ROLE_ITEM_ADD,
-        payload: {
-          id: data.training.roleId,
-          name: data.training.roleName,
-        },
-      });
-      enqueueSnackbar(
-        <SnackbarText>
-          <strong>{data.training.name}</strong> training confirmed
-        </SnackbarText>,
-        { variant: "success" }
-      );
-      // refetch so alreadyConfirmed flips and shifts list is fresh
-      mutate();
-    } catch (e) {
-      if (e instanceof Error) {
-        enqueueSnackbar(
-          <SnackbarText>
-            <strong>{e.message}</strong>
-          </SnackbarText>,
-          { persist: true, variant: "error" }
-        );
-      }
-    }
-  };
-
-  const { training, volunteer, alreadyConfirmed, availableShifts } = data;
+  const { training, volunteer, alreadyConfirmed } = data;
 
   // render
   // ------------------------------------------------------------
@@ -140,7 +154,7 @@ export const TrainingConfirmation = ({ code }: ITrainingConfirmationProps) => {
               <Typography component="h2" sx={{ mb: 1 }} variant="h5">
                 {alreadyConfirmed
                   ? `Thank you, ${volunteer.playaName}, for confirming completion of ${training.name}!`
-                  : `Hi ${volunteer.playaName}! Confirm your completion of ${training.name} to unlock shifts that require this training.`}
+                  : `Confirming your completion of ${training.name}…`}
               </Typography>
               {alreadyConfirmed && (
                 <Typography sx={{ mb: 1 }}>
@@ -165,62 +179,20 @@ export const TrainingConfirmation = ({ code }: ITrainingConfirmationProps) => {
                 </Typography>
               )}
             </CardContent>
-            {!alreadyConfirmed && (
-              <CardActions
-                sx={{
-                  justifyContent: "flex-end",
-                  pb: 2,
-                  pt: 0,
-                  pr: 2,
-                }}
-              >
-                <Button
-                  disabled={isMutating}
-                  onClick={handleConfirm}
-                  startIcon={
-                    isMutating ? (
-                      <CircularProgress size="1rem" />
-                    ) : (
-                      <CheckIcon />
-                    )
-                  }
-                  type="button"
-                  variant="contained"
-                >
-                  Confirm
-                </Button>
-              </CardActions>
-            )}
           </Card>
         </Box>
         <Box component="section">
-          <Typography component="h2" sx={{ mb: 2 }} variant="h6">
-            {alreadyConfirmed
-              ? `Sign up for shifts that need ${training.name}:`
-              : `Available shifts requiring ${training.name}:`}
-          </Typography>
-          {availableShifts.length === 0 ? (
-            <Typography>
-              There are no open shifts requiring {training.name} at this time.
-            </Typography>
-          ) : (
-            <Card>
-              <List>
-                {availableShifts.map((shift) => (
-                  <ListItem
-                    key={`${shift.shiftTimesId}-${shift.positionId}`}
-                    component={NextLink}
-                    href={`/shifts/${shift.shiftTimesId}/volunteers`}
-                  >
-                    <ListItemText
-                      primary={`${shift.shiftName} — ${shift.position}`}
-                      secondary={`${shift.dateName || shift.startTime} · ${shift.department}`}
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            </Card>
-          )}
+          <Stack direction="row" spacing={2}>
+            <MuiLink component={NextLink} href="/shifts">
+              Browse shifts
+            </MuiLink>
+            <MuiLink
+              component={NextLink}
+              href={`/volunteers/${shiftboardId}/info`}
+            >
+              Your volunteer page
+            </MuiLink>
+          </Stack>
         </Box>
       </Container>
     </>
