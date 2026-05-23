@@ -157,10 +157,17 @@ export const TrainingConfirmation = ({ code }: ITrainingConfirmationProps) => {
                   : `Confirming your completion of ${training.name}…`}
               </Typography>
               {alreadyConfirmed && (
-                <Typography sx={{ mb: 1 }}>
-                  Your <strong>{training.roleName}</strong> role has been added
-                  to your account.
-                </Typography>
+                <Stack direction="row" spacing={2} sx={{ mt: 1, mb: 1 }}>
+                  <MuiLink component={NextLink} href="/shifts">
+                    Browse shifts
+                  </MuiLink>
+                  <MuiLink
+                    component={NextLink}
+                    href={`/volunteers/${shiftboardId}/info`}
+                  >
+                    Your volunteer checklist
+                  </MuiLink>
+                </Stack>
               )}
               {training.url && (
                 <Typography sx={{ mt: 2 }}>
@@ -180,19 +187,6 @@ export const TrainingConfirmation = ({ code }: ITrainingConfirmationProps) => {
               )}
             </CardContent>
           </Card>
-        </Box>
-        <Box component="section">
-          <Stack direction="row" spacing={2}>
-            <MuiLink component={NextLink} href="/shifts">
-              Browse shifts
-            </MuiLink>
-            <MuiLink
-              component={NextLink}
-              href={`/volunteers/${shiftboardId}/info`}
-            >
-              Your volunteer page
-            </MuiLink>
-          </Stack>
         </Box>
       </Container>
     </>
