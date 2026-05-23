@@ -301,6 +301,53 @@ CREATE TABLE `op_volunteers` (
   KEY `passcode` (`passcode`,`shiftboard_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `op_trainings`
+-- (See specs/training-confirmation-endpoint.md.)
+--
+
+DROP TABLE IF EXISTS `op_trainings`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `op_trainings` (
+  `training_id` bigint NOT NULL AUTO_INCREMENT,
+  `training_name` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `role_id` bigint DEFAULT NULL,
+  `code` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `url` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `create_training` tinyint(1) DEFAULT '0',
+  `update_training` tinyint(1) DEFAULT '0',
+  `delete_training` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`training_id`),
+  UNIQUE KEY `training_name` (`training_name`),
+  UNIQUE KEY `code` (`code`),
+  KEY `fk_training_role` (`role_id`),
+  CONSTRAINT `fk_training_role` FOREIGN KEY (`role_id`) REFERENCES `op_roles` (`role_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `op_position_trainings`
+--
+
+DROP TABLE IF EXISTS `op_position_trainings`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `op_position_trainings` (
+  `position_training_id` bigint NOT NULL AUTO_INCREMENT,
+  `position_type_id` bigint DEFAULT NULL,
+  `training_id` bigint DEFAULT NULL,
+  `create_position_training` tinyint(1) DEFAULT '0',
+  `update_position_training` tinyint(1) DEFAULT '0',
+  `delete_position_training` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`position_training_id`),
+  UNIQUE KEY `uk_position_training` (`position_type_id`,`training_id`),
+  KEY `fk_pt_training` (`training_id`),
+  CONSTRAINT `fk_pt_position` FOREIGN KEY (`position_type_id`) REFERENCES `op_position_type` (`position_type_id`),
+  CONSTRAINT `fk_pt_training` FOREIGN KEY (`training_id`) REFERENCES `op_trainings` (`training_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -314,4 +361,24 @@ CREATE TABLE `op_volunteers` (
 insert ignore into op_volunteers (shiftboard_id,playa_name,world_name,passcode) values (1, "Admin","Admin","123456");
 insert ignore into op_roles (role_id,role,display,role_src) values (1,"SuperAdmin",1,"tablet"),(2,"Admin",1,"tablet");
 insert ignore into op_volunteer_roles (shiftboard_id,role_id) values (1,1),(1,2);
+
+-- Training completion roles (op_roles.display=0 keeps them off the admin
+-- roles list; they still appear on the volunteer's role list). See
+-- specs/training-confirmation-endpoint.md. Position-training links are
+-- not seeded here because they reference specific position_type_ids that
+-- don't exist in a fresh DB — apply those via the admin UI / a separate
+-- data migration once the position types are loaded.
+insert ignore into op_roles (role_id,role,display,create_role,delete_role,role_src) values
+  (2000001, 'TrainingCensusBasicsComplete',   0, 1, 0, 'tablet'),
+  (2000002, 'TrainingRandomSamplingComplete', 0, 1, 0, 'tablet'),
+  (2000003, 'TrainingOutReachComplete',       0, 1, 0, 'tablet'),
+  (2000004, 'TrainingDataEntryWizComplete',   0, 1, 0, 'tablet'),
+  (2000005, 'TrainingDataBeastDriverComplete',0, 1, 0, 'tablet');
+
+insert ignore into op_trainings (training_name, role_id, code, url, create_training) values
+  ('Census Basics',     2000001, 'XQDDG', 'https://hive.burningman.org/posts/census-course-basics-start-here-course-overview-84578159', 1),
+  ('Random Sampling',   2000002, 'AH73H', 'https://hive.burningman.org/posts/census-course-random-sampling-start-here-random-sampling-course-overview', 1),
+  ('OutReach',          2000003, 'XQ9VD', 'https://hive.burningman.org/posts/census-course-outreach-course-overview-start-here-84578181', 1),
+  ('DataEntry Wiz',     2000004, 'TMBSW', 'https://drive.google.com/file/d/1rhB75gEhYQ7gctzHZEHG7xLrRWiejyth/view?usp=drivesdk', 1),
+  ('DataBeast Driver',  2000005, 'PZBWG', 'https://hive.burningman.org/posts/census-course-databeast-drive-start-here-databeast-driver-course-overview', 1);
 insert ignore into op_doodles (id,image_url) values (1,"");
