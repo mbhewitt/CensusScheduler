@@ -26,19 +26,33 @@ export const handleTimeListAdd = async ({
         FROM op_shift_times`
       );
 
+      // start_date_id / end_date_id are FK lookups into op_dates by the
+      // calendar date portion of start_time / end_time. Every downstream
+      // query (/api/shifts, /api/shifts/types/[typeId], /api/shifts/[timeId]/
+      // volunteers, etc.) JOINs op_dates via these FKs to get the date label,
+      // so a row without them shows up as an orphan with NULL date/datename.
+      // Missing date matches resolve to NULL — same as the old behavior.
       await pool.query(
         `INSERT INTO op_shift_times (
           add_shift_time,
+          end_date_id,
           end_time,
           meal,
           notes,
           shift_instance,
           shift_name_id,
           shift_times_id,
+          start_date_id,
           start_time
         )
-        VALUES (true, ?, ?, ?, ?, ?, ?, ?)`,
-        [endTime, meal, notes, instance, typeId, timeIdNew, startTime]
+        VALUES (
+          true,
+          (SELECT date_id FROM op_dates WHERE date = DATE(?) AND delete_date = false LIMIT 1),
+          ?, ?, ?, ?, ?, ?,
+          (SELECT date_id FROM op_dates WHERE date = DATE(?) AND delete_date = false LIMIT 1),
+          ?
+        )`,
+        [endTime, endTime, meal, notes, instance, typeId, timeIdNew, startTime, startTime]
       );
 
       positionList.forEach(async ({ alias, positionId, sapPoints, slots }) => {

@@ -258,21 +258,28 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
 
       timeListUpdate.forEach(
         async ({ endTime, timeId, instance, meal, notes, startTime }) => {
+          // Refresh start_date_id / end_date_id alongside the start_time /
+          // end_time change — a date edit must update the FK or downstream
+          // joins keep pointing at the old date row. See [[fix-handleTimeListAdd]].
           await pool.query<RowDataPacket[]>(
             `UPDATE op_shift_times
             SET
+              end_date_id=(SELECT date_id FROM op_dates WHERE date = DATE(?) AND delete_date = false LIMIT 1),
               end_time=?,
               meal=?,
               notes=?,
               update_shift_time=true,
               shift_instance=?,
+              start_date_id=(SELECT date_id FROM op_dates WHERE date = DATE(?) AND delete_date = false LIMIT 1),
               start_time=?
             WHERE shift_times_id=?`,
             [
               endTime,
+              endTime,
               meal === "None" ? "" : meal,
               notes,
               instance,
+              startTime,
               startTime,
               timeId,
             ]
