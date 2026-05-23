@@ -59,6 +59,30 @@ test.describe("Sign-in regression net", () => {
     expect(body.length).toBeGreaterThan(0);
   });
 
+  test("/sign-in forwards returnTo into the Okta button href", async ({
+    page,
+  }) => {
+    // Regression for the 2026-05-23 bug where the Okta button hard-coded
+    // /api/auth/okta and dropped the middleware-supplied returnTo, so
+    // clicking a Hive training link landed users on /info instead of the
+    // training-confirmation page.
+    test.setTimeout(60_000);
+
+    const target = "/training/confirmation/XQDDG";
+    await page.goto(`/sign-in?returnTo=${encodeURIComponent(target)}`, {
+      waitUntil: "networkidle",
+      timeout: 45_000,
+    });
+
+    const oktaButton = page.getByRole("link", {
+      name: /Sign in with Burning Man/i,
+    });
+    await expect(oktaButton).toBeVisible({ timeout: 15_000 });
+
+    const href = await oktaButton.getAttribute("href");
+    expect(href).toBe(`/api/auth/okta?returnTo=${encodeURIComponent(target)}`);
+  });
+
   test("/api/auth/okta returns a well-formed 302 to an authorize endpoint", async () => {
     // own request context with redirect-following disabled so we can inspect
     // the 302 itself

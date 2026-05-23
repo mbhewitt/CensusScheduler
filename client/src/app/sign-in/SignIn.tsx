@@ -91,6 +91,16 @@ export const SignIn = () => {
   const isOAuthConfigured = process.env.NEXT_PUBLIC_OKTA_ENABLED === "true";
   const isPinEnabled = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
 
+  // Forward returnTo through the Okta init so the callback can land the user
+  // back where they started (e.g. /training/confirmation/[code] after clicking
+  // a Hive course link). Without this the okta-init URL has no returnTo,
+  // /api/auth/okta/callback falls back to /volunteers/{id}/info, and the
+  // user loses their place in the training-confirmation flow.
+  const returnToParam = searchParams?.get("returnTo");
+  const oktaHref = returnToParam
+    ? `/api/auth/okta?returnTo=${encodeURIComponent(returnToParam)}`
+    : "/api/auth/okta";
+
   // logic
   // ------------------------------------------------------------
   if (error) return <ErrorPage />;
@@ -198,7 +208,7 @@ export const SignIn = () => {
             <CardContent>
               <Button
                 fullWidth
-                href="/api/auth/okta"
+                href={oktaHref}
                 size="large"
                 startIcon={<LoginIcon />}
                 variant="contained"
