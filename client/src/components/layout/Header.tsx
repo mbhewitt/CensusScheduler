@@ -288,12 +288,12 @@ export const Header = () => {
               >
                 <ListItem disablePadding>
                   <Link
-                    href={`/volunteers/${shiftboardId}/account`}
+                    href={`/volunteers/${shiftboardId}/info`}
                     onClick={handleDrawerClose}
                   >
                     <ListItemButton
                       selected={
-                        pathname === `/volunteers/${shiftboardId}/account`
+                        pathname === `/volunteers/${shiftboardId}/info`
                       }
                     >
                       <ListItemIcon>

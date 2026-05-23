@@ -142,7 +142,7 @@ export const RoleVolunteers = ({ roleId }: IRoleVolunteersProps) => {
           key={`${shiftboardId}-menu`}
           MenuList={
             <MenuList>
-              <Link href={`/volunteers/${shiftboardId}/account`}>
+              <Link href={`/volunteers/${shiftboardId}/info`}>
                 <MenuItem>
                   <ListItemIcon>
                     <ManageAccountsIcon />

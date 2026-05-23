@@ -58,7 +58,7 @@ export const AuthComplete = () => {
       const redirectPath =
         returnTo && returnTo.startsWith("/")
           ? returnTo
-          : `/volunteers/${account.shiftboardId}/account`;
+          : `/volunteers/${account.shiftboardId}/info`;
       router.replace(redirectPath);
     } catch {
       router.replace("/sign-in?error=invalid_data");

@@ -40,7 +40,7 @@ export const SignInAuthGate = () => {
       if (returnTo && returnTo.startsWith("/")) {
         router.push(returnTo);
       } else {
-        router.push(`/volunteers/${shiftboardId}/account`);
+        router.push(`/volunteers/${shiftboardId}/info`);
       }
     }
   }, [isAuthenticated, router, searchParams, shiftboardId]);
