@@ -17,6 +17,13 @@ const SESSION_COOKIE_NAME = "census-session";
 // This is a stopgap. The proper fix is per-route role-based authorization
 // (issue #237). For now: block the obvious enumeration paths.
 
+// On-playa deployments (passcode UI enabled) leave /shifts open so a
+// walk-up volunteer with no session can see what's available without
+// signing in. Off-playa (Okta-only, PIN_ENABLED=false) keeps it gated.
+// NEXT_PUBLIC_* is inlined at build time, so this is a static decision
+// per deployment.
+const isOnPlaya = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
+
 const ALLOWLIST = [
   // Sign-in surface (must be reachable while unauthenticated)
   "/sign-in",
@@ -46,6 +53,9 @@ const ALLOWLIST = [
   "/general",
   "/help/",
   "/reports/",
+
+  // On-playa only: walk-up shifts view
+  ...(isOnPlaya ? ["/shifts", "/api/shifts"] : []),
 ];
 
 const PUBLIC_PATHS = new Set(["/"]);
