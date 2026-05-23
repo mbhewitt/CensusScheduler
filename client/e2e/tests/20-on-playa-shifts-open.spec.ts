@@ -25,4 +25,26 @@ test.describe("On-playa: /shifts is reachable without a session", () => {
     const body = await res.json();
     expect(Array.isArray(body)).toBe(true);
   });
+
+  test("GET /api/shifts returns no duplicate shift_times_ids", async ({
+    request: req,
+  }) => {
+    // Regression for the 2026-05-23 dedupe bug in getShiftList: the
+    // previous linear "is the last pushed item the same?" check broke
+    // when two shifts shared (date, start_time_text) and the SQL ORDER BY
+    // interleaved their position rows. Re-check that each shift appears
+    // exactly once in the response.
+    const res = await req.get("/api/shifts");
+    expect(res.status()).toBe(200);
+    const body = await res.json();
+
+    const ids = body.map((s: { id: number }) => s.id);
+    const seen = new Set<number>();
+    const dupes: number[] = [];
+    for (const id of ids) {
+      if (seen.has(id)) dupes.push(id);
+      seen.add(id);
+    }
+    expect(dupes).toEqual([]);
+  });
 });
