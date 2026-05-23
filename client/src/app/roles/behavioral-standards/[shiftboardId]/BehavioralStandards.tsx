@@ -179,8 +179,8 @@ export const BehavioralStandards = ({
         }
       );
 
-      // route to volunteer account page
-      router.push(`/volunteers/${shiftboardId}/account`);
+      // route to volunteer info page (replaces the old account page)
+      router.push(`/volunteers/${shiftboardId}/info`);
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(

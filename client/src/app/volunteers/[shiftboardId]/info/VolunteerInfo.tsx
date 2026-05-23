@@ -715,10 +715,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
         <Box sx={{ mb: 3 }}>
           <BreadcrumbsNav>
             <Link href="/volunteers">Volunteers</Link>
-            <Link href={`/volunteers/${shiftboardId}/account`}>
-              {volunteer.playaName}
-            </Link>
-            <Typography>Info</Typography>
+            <Typography>{volunteer.playaName}</Typography>
           </BreadcrumbsNav>
         </Box>
 

@@ -213,7 +213,7 @@ export const Volunteers = () => {
   );
   const optionListCustom = {
     onRowClick: (row: string[]) => {
-      router.push(`/volunteers/${row[0]}/account`);
+      router.push(`/volunteers/${row[0]}/info`);
     },
     rowHover: true,
     setRowProps: () => {

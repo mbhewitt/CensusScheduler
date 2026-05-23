@@ -338,7 +338,7 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // encode account data for client-side session hydration
     const accountData = encodeURIComponent(JSON.stringify(account));
-    const redirectPath = returnTo && returnTo.startsWith("/") ? returnTo : `/volunteers/${shiftboardId}/account`;
+    const redirectPath = returnTo && returnTo.startsWith("/") ? returnTo : `/volunteers/${shiftboardId}/info`;
 
     return res.redirect(
       `/auth/complete?data=${accountData}&returnTo=${encodeURIComponent(redirectPath)}`

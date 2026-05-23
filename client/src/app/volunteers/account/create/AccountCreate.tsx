@@ -113,8 +113,8 @@ export const AccountCreate = () => {
         }
       );
 
-      // route to volunteer account page
-      router.push(`/volunteers/${dataVolunteerItem.shiftboardId}/account`);
+      // route to volunteer info page (replaces the old account page)
+      router.push(`/volunteers/${dataVolunteerItem.shiftboardId}/info`);
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(

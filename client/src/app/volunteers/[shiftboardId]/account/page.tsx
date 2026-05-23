@@ -1,26 +1,16 @@
-import { Account } from "@/app/volunteers/[shiftboardId]/account/Account";
-import { AuthGate } from "@/components/general/AuthGate";
-import { ACCOUNT_TYPE_AUTHENTICATED } from "@/constants";
+import { redirect } from "next/navigation";
+
+// /volunteers/[id]/account is the legacy URL — the canonical page is now
+// /volunteers/[id]/info (the VIP page). Server-side redirect preserves
+// bookmarks and external links. Per @mbhewitt 2026-05-23.
 
 interface IAccountPageProps {
   params: Promise<{ shiftboardId: string }>;
 }
 
-export const metadata = {
-  title: "Census | Account",
-};
 const AccountPage = async ({ params }: IAccountPageProps) => {
-  // logic
-  // ------------------------------------------------------------
   const { shiftboardId } = await params;
-
-  // render
-  // ------------------------------------------------------------
-  return (
-    <AuthGate accountTypeToCheck={ACCOUNT_TYPE_AUTHENTICATED}>
-      <Account shiftboardId={Number(shiftboardId)} />
-    </AuthGate>
-  );
+  redirect(`/volunteers/${shiftboardId}/info`);
 };
 
 export default AccountPage;
