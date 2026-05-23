@@ -48,6 +48,11 @@ export default defineConfig({
       OKTA_REDIRECT_URI:
         process.env.OKTA_REDIRECT_URI ??
         "http://localhost:3000/api/auth/okta/callback",
+      // SESSION_SECRET is the HMAC key for the census-session cookie. Tests
+      // that need an authenticated session import e2e/helpers/session.ts,
+      // which signs a cookie with this same value.
+      SESSION_SECRET:
+        process.env.SESSION_SECRET ?? "e2e-test-session-secret-not-for-prod",
     },
   },
 });

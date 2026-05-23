@@ -1,4 +1,6 @@
 import { TrainingConfirmation } from "@/app/training/confirmation/[code]/TrainingConfirmation";
+import { AuthGate } from "@/components/general/AuthGate";
+import { ACCOUNT_TYPE_AUTHENTICATED } from "@/constants";
 
 interface ITrainingConfirmationPageProps {
   params: Promise<{ code: string }>;
@@ -10,13 +12,13 @@ export const metadata = {
 const TrainingConfirmationPage = async ({
   params,
 }: ITrainingConfirmationPageProps) => {
-  // logic
-  // ------------------------------------------------------------
   const { code } = await params;
 
-  // render
-  // ------------------------------------------------------------
-  return <TrainingConfirmation code={Number(code)} />;
+  return (
+    <AuthGate accountTypeToCheck={ACCOUNT_TYPE_AUTHENTICATED}>
+      <TrainingConfirmation code={code} />
+    </AuthGate>
+  );
 };
 
 export default TrainingConfirmationPage;
