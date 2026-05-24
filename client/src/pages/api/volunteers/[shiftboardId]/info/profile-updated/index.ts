@@ -15,9 +15,25 @@ const profileUpdated = async (req: NextApiRequest, res: NextApiResponse) => {
     // ------------------------------------------------------------
     case "POST": {
       const { updated }: IReqToggleProfileUpdated = JSON.parse(req.body);
-      const [addRole, removeRole] = [updated === true, updated === false];
 
-      // check if role row exists
+      // GET (info/index.ts) computes burnerProfileUpdated from row
+      // existence: `roleIdSet.has(ROLE_BURNER_PROFILE_UPDATED_ID)`.
+      // So to actually uncheck the box we must DELETE the row;
+      // flipping add_role/remove_role keeps it visible. (Issue #332)
+      if (updated === false) {
+        await pool.query<RowDataPacket[]>(
+          `DELETE FROM op_volunteer_roles
+          WHERE role_id=?
+          AND shiftboard_id=?`,
+          [ROLE_BURNER_PROFILE_UPDATED_ID, shiftboardId]
+        );
+        return res.status(200).json({
+          statusCode: 200,
+          message: "Deleted",
+        });
+      }
+
+      // updated === true: ensure the row exists with add_role=true.
       const [dbVolunteerRoleList] = await pool.query<RowDataPacket[]>(
         `SELECT shiftboard_id
         FROM op_volunteer_roles
@@ -28,16 +44,14 @@ const profileUpdated = async (req: NextApiRequest, res: NextApiResponse) => {
       const [dbVolunteerRoleFirst] = dbVolunteerRoleList;
 
       if (dbVolunteerRoleFirst) {
-        // update existing row
         await pool.query<RowDataPacket[]>(
           `UPDATE op_volunteer_roles
           SET add_role=?, remove_role=?
           WHERE role_id=?
           AND shiftboard_id=?`,
-          [addRole, removeRole, ROLE_BURNER_PROFILE_UPDATED_ID, shiftboardId]
+          [true, false, ROLE_BURNER_PROFILE_UPDATED_ID, shiftboardId]
         );
       } else {
-        // insert new row
         await pool.query<RowDataPacket[]>(
           `INSERT INTO op_volunteer_roles (
             add_role,
@@ -46,7 +60,7 @@ const profileUpdated = async (req: NextApiRequest, res: NextApiResponse) => {
             shiftboard_id
           )
           VALUES (?, ?, ?, ?)`,
-          [addRole, removeRole, ROLE_BURNER_PROFILE_UPDATED_ID, shiftboardId]
+          [true, false, ROLE_BURNER_PROFILE_UPDATED_ID, shiftboardId]
         );
       }
 
