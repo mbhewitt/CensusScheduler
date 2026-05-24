@@ -125,6 +125,16 @@ services:
       - ./client/.env.production
     security_opt:
       - apparmor:unconfined
+    sysctls:
+      # Tighten kernel TCP keep-alive retry math so dead pool
+      # connections surface in ~30s instead of Linux's default ~11min
+      # (defaults: tcp_keepalive_intvl=75, tcp_keepalive_probes=9 →
+      # 75 × 9 = 675s after the first probe before the kernel
+      # declares dead). Pairs with the mysql2 keepAliveInitialDelay
+      # in client/lib/database.ts. Both are net-namespaced sysctls so
+      # docker allows them without privileged mode.
+      net.ipv4.tcp_keepalive_intvl: "10"
+      net.ipv4.tcp_keepalive_probes: "3"
     ports:
       - "127.0.0.1:3000:3000"   # bound to loopback; nginx is the public face
     restart: always
