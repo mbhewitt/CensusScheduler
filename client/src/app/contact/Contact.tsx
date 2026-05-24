@@ -169,7 +169,7 @@ export const Contact = () => {
       <Container component="main">
         <Box component="section">
           <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
-            Post-burn contact form
+            Off-playa contact form
           </Typography>
           <Card>
             <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
