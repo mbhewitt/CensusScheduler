@@ -484,7 +484,11 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
         </Typography>
         <Link
           href={`/roles/behavioral-standards/${shiftboardId}`}
-          style={{ color: theme.palette.primary.main, fontWeight: 500 }}
+          style={{
+            color: theme.palette.primary.main,
+            fontWeight: 500,
+            textDecoration: "underline",
+          }}
         >
           Review and sign the Behavioral Standards Agreement
         </Link>
