@@ -194,7 +194,19 @@ export const Header = () => {
           <Box>
             {/* general nav */}
             <List>
-              {pageListDefault.map(({ icon, label, path }) => (
+              {pageListDefault
+                .filter(({ path }) => {
+                  // Off-playa /shifts requires auth (middleware redirects
+                  // to sign-in). Hide the menu entry for unauthenticated
+                  // users so it doesn't appear to "go nowhere". On-playa
+                  // walk-up flow keeps it visible — /shifts is in the
+                  // on-playa allowlist there.
+                  if (path === "/shifts" && !isAuthenticated && !isOnPlaya) {
+                    return false;
+                  }
+                  return true;
+                })
+                .map(({ icon, label, path }) => (
                 <ListItem disablePadding key={path}>
                   <Link href={path} onClick={handleDrawerClose}>
                     <ListItemButton selected={pathname === path}>
