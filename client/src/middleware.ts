@@ -38,9 +38,14 @@ const ALLOWLIST = [
   "/help",
   "/reports",
 
-  // Account creation (lets new volunteers self-register)
+  // Account creation (lets new volunteers self-register).
+  // The page is at /volunteers/account/create but it POSTs to
+  // /api/volunteers/account (no /create suffix — the handler file is
+  // client/src/pages/api/volunteers/account/index.ts). Without the
+  // bare /api/volunteers/account entry the self-signup POST gets 401
+  // from this middleware before reaching the handler.
   "/volunteers/account/create",
-  "/api/volunteers/account/create",
+  "/api/volunteers/account",
 
   // Volunteer dropdown for sign-in autocomplete — needed for on-playa
   // passcode UI. Off-playa Okta-only mode will gate this via PR #275.
