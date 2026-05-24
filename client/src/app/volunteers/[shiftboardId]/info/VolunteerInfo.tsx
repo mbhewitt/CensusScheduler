@@ -332,9 +332,17 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   const handleRoleToggle = useCallback(
     async (roleId: number, roleName: string, hasRole: boolean) => {
       try {
+        // NOTE: deliberately NOT setting Content-Type: application/json.
+        // The /api/roles/[id]/volunteers handler does JSON.parse(req.body),
+        // which only works when Next.js leaves req.body as a raw string. If
+        // we set Content-Type: application/json, the pages-router middleware
+        // auto-parses the body into an object and JSON.parse(<object>)
+        // stringifies it via toString() → "[object Object]" → SyntaxError →
+        // 500 → user sees "Failed to add role" snackbar. Every other endpoint
+        // is called through fetcherTrigger, which also omits the header for
+        // the same reason. (See PR #319.)
         const res = await fetch(`/api/roles/${roleId}/volunteers`, {
           method: hasRole ? "DELETE" : "POST",
-          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ shiftboardId }),
         });
         if (!res.ok) {
