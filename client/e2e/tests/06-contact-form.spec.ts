@@ -39,7 +39,7 @@ test.describe("Contact Form", () => {
     await page.goto("/contact");
 
     await expect(
-      page.getByText("Post-burn contact form")
+      page.getByText("Off-playa contact form")
     ).toBeVisible({ timeout: 10_000 });
   });
 
