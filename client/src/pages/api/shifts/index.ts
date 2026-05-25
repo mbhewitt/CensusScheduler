@@ -27,6 +27,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
             st.shift_times_id,
             st.start_time,
             st.start_time_text,
+            stp.sap_points,
             stp.slots,
             stp.time_position_id,
             vs.remove_shift,
@@ -66,6 +67,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
             st.shift_times_id,
             st.start_time,
             st.start_time_text,
+            stp.sap_points,
             stp.slots,
             stp.time_position_id,
             vs.shiftboard_id

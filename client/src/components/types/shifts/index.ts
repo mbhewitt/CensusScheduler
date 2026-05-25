@@ -4,6 +4,10 @@ export interface IResShiftRowItem {
   category: {
     id: number;
   };
+  // Min / max sap_points across the shift's positions. Equal when every
+  // position pays the same; different otherwise (UI renders a range).
+  cspMin: number;
+  cspMax: number;
   date: string;
   dateName: string;
   department: {
@@ -26,6 +30,9 @@ export interface IReqShiftVolunteerItem {
 // details
 // ------------------------------------------------------------
 export interface IResShiftPositionCountItem {
+  // sap_points for the position; surfaced in the positions table on
+  // /shifts/[timeId]/volunteers and used wherever CSP per position is shown.
+  csp: number;
   positionDetails: string;
   positionId: number;
   positionName: string;

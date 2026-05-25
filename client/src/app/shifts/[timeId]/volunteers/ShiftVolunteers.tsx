@@ -378,10 +378,22 @@ export const ShiftVolunteers = ({
         sort: false,
       },
     },
+    {
+      name: "CSP",
+      options: {
+        filter: false,
+        sort: false,
+      },
+    },
   ];
   const dataTablePositions = dataShiftVolunteersItem.positionList.map(
-    ({ positionName, slotsFilled, slotsTotal }: IResShiftPositionCountItem) => {
-      return [positionName, `${slotsFilled} / ${slotsTotal}`];
+    ({
+      csp,
+      positionName,
+      slotsFilled,
+      slotsTotal,
+    }: IResShiftPositionCountItem) => {
+      return [positionName, `${slotsFilled} / ${slotsTotal}`, csp];
     }
   );
   const optionListCustomPositions = {

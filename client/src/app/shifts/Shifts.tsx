@@ -125,6 +125,13 @@ export const Shifts = () => {
         sort: false,
       },
     },
+    {
+      name: "CSP",
+      options: {
+        filter: false,
+        sort: false,
+      },
+    },
   ]);
 
   // fetching, mutation, and revalidation
@@ -242,6 +249,8 @@ export const Shifts = () => {
   const colorMapDisplay = getColorMap(data);
   const dataTable = data.map(
     ({
+      cspMax,
+      cspMin,
       date,
       dateName,
       department: { name: departmentName },
@@ -252,6 +261,8 @@ export const Shifts = () => {
       startTime,
       type,
     }) => {
+      const cspDisplay =
+        cspMin === cspMax ? `${cspMin}` : `${cspMin}-${cspMax}`;
       return [
         id, // hide for row click
         date, // hide for filter dialog (Present/Future vs Past)
@@ -264,6 +275,7 @@ export const Shifts = () => {
           sx={{ backgroundColor: colorMapDisplay[departmentName] }}
         />,
         `${slotsFilled} / ${slotsTotal}`,
+        cspDisplay,
       ];
     }
   );
