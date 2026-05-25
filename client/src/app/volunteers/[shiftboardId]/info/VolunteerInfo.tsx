@@ -527,7 +527,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                   fontSize="small"
                 />
               )}
-              {t.completed || !t.url ? (
+              {!t.url ? (
                 <Typography variant="body2">{t.trainingName}</Typography>
               ) : (
                 <Typography
