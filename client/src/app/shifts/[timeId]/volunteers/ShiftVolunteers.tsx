@@ -29,7 +29,7 @@ import {
 import dayjs from "dayjs";
 import Link from "next/link";
 import { useSnackbar } from "notistack";
-import { useContext, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import useSWR, { KeyedMutator } from "swr";
 import useSWRMutation from "swr/mutation";
@@ -619,36 +619,47 @@ export const ShiftVolunteers = ({
               {dataShiftVolunteersItem.shift.typeName}
             </Typography>
           </Box>
-          <Card sx={{ mb: 2 }}>
-            <CardContent>
-              <Grid container>
-                <Grid size={2}>
-                  <Typography component="h3" variant="h6">
-                    Details
-                  </Typography>
-                </Grid>
-                <Grid size={10}>{dataShiftVolunteersItem.shift.details}</Grid>
-                <Grid size={12}>
-                  <Divider sx={{ my: 2 }} />
-                </Grid>
-                <Grid size={2}>
-                  <Typography component="h3" variant="h6">
-                    Meal
-                  </Typography>
-                </Grid>
-                <Grid size={10}>{dataShiftVolunteersItem.shift.meal}</Grid>
-                <Grid size={12}>
-                  <Divider sx={{ my: 2 }} />
-                </Grid>
-                <Grid size={2}>
-                  <Typography component="h3" variant="h6">
-                    Notes
-                  </Typography>
-                </Grid>
-                <Grid size={10}>{dataShiftVolunteersItem.shift.notes}</Grid>
-              </Grid>
-            </CardContent>
-          </Card>
+          {/*
+           * Suppress any row whose right-column value is empty so we
+           * don't render a lonely "Meal" or "Notes" label with nothing
+           * after it (closes #234). Especially relevant for "Meal" —
+           * Chipper: don't rub it in that a shift earns no meal. If
+           * none of the three has content the whole Card collapses.
+           */}
+          {(() => {
+            const detailRows = [
+              {
+                label: "Details",
+                value: dataShiftVolunteersItem.shift.details,
+              },
+              { label: "Meal", value: dataShiftVolunteersItem.shift.meal },
+              { label: "Notes", value: dataShiftVolunteersItem.shift.notes },
+            ].filter((row) => row.value && String(row.value).trim() !== "");
+            if (detailRows.length === 0) return null;
+            return (
+              <Card sx={{ mb: 2 }}>
+                <CardContent>
+                  <Grid container>
+                    {detailRows.map((row, index) => (
+                      <Fragment key={row.label}>
+                        {index > 0 && (
+                          <Grid size={12}>
+                            <Divider sx={{ my: 2 }} />
+                          </Grid>
+                        )}
+                        <Grid size={2}>
+                          <Typography component="h3" variant="h6">
+                            {row.label}
+                          </Typography>
+                        </Grid>
+                        <Grid size={10}>{row.value}</Grid>
+                      </Fragment>
+                    ))}
+                  </Grid>
+                </CardContent>
+              </Card>
+            );
+          })()}
         </Box>
         <Box component="section">
           <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
