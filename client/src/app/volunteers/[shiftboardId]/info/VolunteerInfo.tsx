@@ -44,6 +44,7 @@ import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
 import { PasscodeDialogUpdate } from "@/app/volunteers/[shiftboardId]/account/PasscodeDialogUpdate";
+import { PasscodeReveal } from "@/app/volunteers/[shiftboardId]/account/PasscodeReveal";
 import { VolunteerShifts } from "@/app/volunteers/[shiftboardId]/account/VolunteerShifts";
 import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
 import { ErrorPage } from "@/components/general/ErrorPage";
@@ -138,9 +139,18 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   } = useContext(DeveloperModeContext);
   const {
     sessionState: {
-      user: { roleList: roleListSession },
+      user: {
+        roleList: roleListSession,
+        shiftboardId: shiftboardIdSession,
+      },
     },
   } = useContext(SessionContext);
+
+  // Self-view = the viewer is the same volunteer whose /info page they
+  // opened. Used to gate the passcode-reveal button so admins can't see
+  // other volunteers' passcodes (they can still RESET via the Update
+  // dialog, just can't read existing values). Per Mew 2026-05-25.
+  const isSelfView = shiftboardIdSession === shiftboardId;
 
   // refs
   // ------------------------------------------------------------
@@ -1044,7 +1054,16 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                   </Typography>
                 </Grid>
                 <Grid size={8}>
-                  <Stack direction="row" justifyContent="flex-end">
+                  <Stack
+                    direction="row"
+                    justifyContent="flex-end"
+                    spacing={1}
+                  >
+                    {/* Reveal is self-only — admins can reset (below) but not
+                        see existing values. */}
+                    {isSelfView && (
+                      <PasscodeReveal shiftboardId={shiftboardId} />
+                    )}
                     <Button
                       onClick={() => setIsPasscodeDialogOpen(true)}
                       startIcon={<LockResetIcon />}
