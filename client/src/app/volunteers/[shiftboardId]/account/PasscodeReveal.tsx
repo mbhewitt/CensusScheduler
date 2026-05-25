@@ -22,9 +22,9 @@ interface IPasscodeRevealProps {
 const LOGO_SRC = "/general/logo-census.png";
 const PINK = "#EA008B";
 const MASK_X = 305;
-const MASK_Y = 460;
+const MASK_Y = 435;
 const MASK_W = 520;
-const MASK_H = 130;
+const MASK_H = 175;
 const DIGIT_FONT_PX = 180;
 
 export const PasscodeReveal = ({ shiftboardId }: IPasscodeRevealProps) => {
