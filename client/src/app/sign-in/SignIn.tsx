@@ -30,7 +30,6 @@ import useSWRMutation from "swr/mutation";
 import { ErrorPage } from "@/components/general/ErrorPage";
 import { Loading } from "@/components/general/Loading";
 import { SnackbarText } from "@/components/general/SnackbarText";
-import { Hero } from "@/components/layout/Hero";
 import type { IVolunteerOption } from "@/components/types";
 import type { IReqSignIn } from "@/components/types/sign-in";
 import type { IResVolunteerDefaultItem } from "@/components/types/volunteers";
@@ -177,14 +176,7 @@ export const SignIn = () => {
   // ------------------------------------------------------------
   return (
     <>
-      <Hero
-        imageStyles={{
-          backgroundImage: "url(/banners/desk-group.jpg)",
-          backgroundSize: "cover",
-        }}
-        text="Sign in"
-      />
-      <Container component="main">
+      <Container component="main" sx={{ pt: 3 }}>
         <Card
           sx={{
             margin: "auto",
@@ -213,7 +205,7 @@ export const SignIn = () => {
                 startIcon={<LoginIcon />}
                 variant="contained"
               >
-                Sign in with Burning Man
+                Sign in to Census
               </Button>
               {isPinEnabled && (
                 <Divider sx={{ mt: 2 }}>

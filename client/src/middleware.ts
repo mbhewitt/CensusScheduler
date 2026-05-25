@@ -63,7 +63,10 @@ const ALLOWLIST = [
   ...(isOnPlaya ? ["/shifts", "/api/shifts"] : []),
 ];
 
-const PUBLIC_PATHS = new Set(["/"]);
+// Closes #306: unauthenticated visitors hit /sign-in directly instead of
+// landing on the marketing Home page and hunting for the sign-in link.
+// Signed-in users still get /sign-in's auto-redirect → home.
+const PUBLIC_PATHS = new Set<string>();
 
 function isAllowlisted(pathname: string): boolean {
   if (PUBLIC_PATHS.has(pathname)) return true;
