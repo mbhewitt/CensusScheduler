@@ -1052,6 +1052,10 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                   <Typography component="h3" variant="h6">
                     Passcode
                   </Typography>
+                  <Typography color="text.secondary" variant="body2">
+                    This passcode is for signing in on tablets on-playa
+                    only.
+                  </Typography>
                 </Grid>
                 <Grid size={8}>
                   <Stack

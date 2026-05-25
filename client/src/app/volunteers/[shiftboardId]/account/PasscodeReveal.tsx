@@ -15,15 +15,17 @@ interface IPasscodeRevealProps {
 // 2026-05-25: replace the "CENSUS" wordmark with the 4-digit passcode so
 // it reads as a delight artifact rather than a plain text reveal.
 //
-// Coordinates below are tuned to logo-census.png (1019×1015 native). The
-// pink wash matches the brand pink (#EA008B) so the rectangle blends
-// into the badge background.
+// Coordinates below are tuned to logo-census.png (1019×1015 native).
+// Mew 2026-05-25 iteration: leave the "C" of CENSUS visible (the badge
+// reads as "C[4-digit code]"), so the mask starts after the "C" rather
+// than at the start of the wordmark.
 const LOGO_SRC = "/general/logo-census.png";
 const PINK = "#EA008B";
-const MASK_X = 195;
+const MASK_X = 305;
 const MASK_Y = 460;
-const MASK_W = 630;
+const MASK_W = 520;
 const MASK_H = 130;
+const DIGIT_FONT_PX = 180;
 
 export const PasscodeReveal = ({ shiftboardId }: IPasscodeRevealProps) => {
   const [passcode, setPasscode] = useState<null | string>(null);
@@ -72,7 +74,7 @@ export const PasscodeReveal = ({ shiftboardId }: IPasscodeRevealProps) => {
       // Stamp the 4 digits in the same vertical band, chunky sans-serif
       // matching the logo's wordmark weight.
       ctx.fillStyle = "#000";
-      ctx.font = "bold 160px Arial Black, Impact, sans-serif";
+      ctx.font = `bold ${DIGIT_FONT_PX}px Arial Black, Impact, sans-serif`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       const digits = (passcode || "----").split("");
@@ -115,9 +117,6 @@ export const PasscodeReveal = ({ shiftboardId }: IPasscodeRevealProps) => {
           maxWidth: "100%",
         }}
       />
-      <Typography color="text.secondary" variant="caption">
-        This passcode is for signing in on tablets on-playa only.
-      </Typography>
       <Button
         onClick={handleHide}
         startIcon={<VisibilityOffIcon />}
