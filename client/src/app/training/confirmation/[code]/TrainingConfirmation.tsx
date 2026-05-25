@@ -153,8 +153,8 @@ export const TrainingConfirmation = ({ code }: ITrainingConfirmationProps) => {
             <CardContent>
               <Typography component="h2" sx={{ mb: 1 }} variant="h5">
                 {alreadyConfirmed
-                  ? `Thank you, ${volunteer.playaName}, for confirming completion of ${training.name}!`
-                  : `Confirming your completion of ${training.name}…`}
+                  ? `Thank you, ${volunteer.playaName}, for confirming completion of ${training.name} training!`
+                  : `Confirming your completion of ${training.name} training…`}
               </Typography>
               {alreadyConfirmed && (
                 <Typography sx={{ mb: 1 }}>
