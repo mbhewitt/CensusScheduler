@@ -7,7 +7,7 @@ interface IVolunteerInfoPageProps {
 }
 
 export const metadata = {
-  title: "Census | Volunteer Info",
+  title: "Census | Account",
 };
 const VolunteerInfoPage = async ({ params }: IVolunteerInfoPageProps) => {
   // logic
