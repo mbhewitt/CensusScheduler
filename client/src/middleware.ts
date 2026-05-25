@@ -63,10 +63,12 @@ const ALLOWLIST = [
   ...(isOnPlaya ? ["/shifts", "/api/shifts"] : []),
 ];
 
-// Closes #306: unauthenticated visitors hit /sign-in directly instead of
-// landing on the marketing Home page and hunting for the sign-in link.
-// Signed-in users still get /sign-in's auto-redirect → home.
-const PUBLIC_PATHS = new Set<string>();
+// Home is public again as of 2026-05-25 — the page now hosts the
+// login affordance inline (Okta button off-playa, "Sign in with
+// passcode" link on-playa for the PIN form), so there's no longer a
+// reason to redirect unauth visitors away from it. Reverts the
+// PUBLIC_PATHS purge that came in with PR #337 / closed-#306.
+const PUBLIC_PATHS = new Set(["/"]);
 
 function isAllowlisted(pathname: string): boolean {
   if (PUBLIC_PATHS.has(pathname)) return true;

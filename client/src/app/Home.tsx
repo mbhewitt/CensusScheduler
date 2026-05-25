@@ -1,12 +1,47 @@
 "use client";
 
-import { Box, Card, CardContent, Container, Typography } from "@mui/material";
+import {
+  Login as LoginIcon,
+  ManageAccounts as ManageAccountsIcon,
+} from "@mui/icons-material";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Container,
+  Stack,
+  Typography,
+} from "@mui/material";
 import Link from "next/link";
+import { useContext } from "react";
 
 import { reportList } from "@/app/reports/Reports";
 import { Hero } from "@/components/layout/Hero";
+import { SessionContext } from "@/state/session/context";
+import { checkIsAuthenticated } from "@/utils/checkIsRoleExist";
+import { DeveloperModeContext } from "@/state/developer-mode/context";
 
 export const Home = () => {
+  // context
+  // ------------------------------------------------------------
+  const {
+    developerModeState: { accountType },
+  } = useContext(DeveloperModeContext);
+  const {
+    sessionState: {
+      settings: { isAuthenticated: isAuthenticatedSession },
+      user: { playaName, shiftboardId, worldName },
+    },
+  } = useContext(SessionContext);
+
+  const isAuthenticated = checkIsAuthenticated(
+    accountType,
+    isAuthenticatedSession
+  );
+  const isOAuthConfigured = process.env.NEXT_PUBLIC_OKTA_ENABLED === "true";
+  const isPinEnabled = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
+
   // render
   // ------------------------------------------------------------
   return (
@@ -23,6 +58,50 @@ export const Home = () => {
           <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
             Welcome!
           </Typography>
+
+          {/*
+           * Login affordance sits between the Welcome header and the body
+           * copy (per Chipper + Mew, 2026-05-25). Auth state drives the
+           * content:
+           *   - authenticated → "View your account" link to /info
+           *   - unauth + Okta enabled (off-playa) → Okta SSO button
+           *   - unauth + PIN enabled (on-playa) → link to /sign-in for
+           *     the passcode form (volunteer dropdown stays off Home)
+           */}
+          <Stack alignItems="center" sx={{ mb: 3 }}>
+            {isAuthenticated ? (
+              <Button
+                component={Link}
+                href={`/volunteers/${shiftboardId}/info`}
+                size="large"
+                startIcon={<ManageAccountsIcon />}
+                variant="contained"
+              >
+                Welcome, {playaName} &quot;{worldName}&quot; — view your account
+              </Button>
+            ) : isOAuthConfigured ? (
+              <Button
+                component="a"
+                href="/api/auth/okta"
+                size="large"
+                startIcon={<LoginIcon />}
+                variant="contained"
+              >
+                Sign in to Census
+              </Button>
+            ) : isPinEnabled ? (
+              <Button
+                component={Link}
+                href="/sign-in"
+                size="large"
+                startIcon={<LoginIcon />}
+                variant="contained"
+              >
+                Sign in with passcode
+              </Button>
+            ) : null}
+          </Stack>
+
           <Card>
             <CardContent>
               <Typography>
