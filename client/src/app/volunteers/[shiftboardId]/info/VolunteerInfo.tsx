@@ -575,9 +575,11 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
             target="_blank"
           >
             Burner Profile
-          </a>{" "}
-          and make sure your information is current. Update any fields that have
-          changed since last year, then check the box below to confirm.
+          </a>
+          . Once logged in, click <strong>SETTINGS</strong> in the top right,
+          then <strong>My Profile</strong> to edit your information. Update any
+          fields that have changed since last year, then check the box below to
+          confirm.
         </Typography>
         <FormControlLabel
           control={
