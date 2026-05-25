@@ -146,7 +146,7 @@ export const TrainingConfirmation = ({ code }: ITrainingConfirmationProps) => {
         text="Training confirmation"
       />
       <Container component="main">
-        <Box component="section" sx={{ mb: 3 }}>
+        <Box component="section">
           <Card>
             <CardContent>
               <Typography component="h2" sx={{ mb: 1 }} variant="h5">
@@ -155,50 +155,48 @@ export const TrainingConfirmation = ({ code }: ITrainingConfirmationProps) => {
                   : `Confirming your completion of ${training.name} training…`}
               </Typography>
               {alreadyConfirmed && (
-                <Typography>
-                  We have marked this training as complete on{" "}
-                  <MuiLink
-                    component={NextLink}
-                    href={`/volunteers/${shiftboardId}/info`}
-                  >
-                    your volunteer account
-                  </MuiLink>
-                  .
-                </Typography>
+                <>
+                  <Typography sx={{ mb: 3 }}>
+                    We have marked this training as complete on{" "}
+                    <MuiLink
+                      component={NextLink}
+                      href={`/volunteers/${shiftboardId}/info`}
+                    >
+                      your volunteer account
+                    </MuiLink>
+                    .
+                  </Typography>
+                  <Typography component="h3" sx={{ mb: 1 }} variant="h6">
+                    What&rsquo;s next?
+                  </Typography>
+                  <Typography sx={{ mb: 1 }}>
+                    View your existing shifts on your{" "}
+                    <MuiLink
+                      component={NextLink}
+                      href={`/volunteers/${shiftboardId}/info`}
+                    >
+                      Account page
+                    </MuiLink>
+                    .
+                  </Typography>
+                  <Typography sx={{ mb: 2 }}>
+                    View available shifts on the{" "}
+                    <MuiLink component={NextLink} href="/shifts">
+                      Shifts page
+                    </MuiLink>
+                    .
+                  </Typography>
+                  <Typography color="text.secondary" variant="body2">
+                    Note: To review this training material later, use the
+                    links from the completed checklist item on your account.
+                    From there, you can return to the course on Hive or
+                    view/print a PDF copy of the course.
+                  </Typography>
+                </>
               )}
             </CardContent>
           </Card>
         </Box>
-        {alreadyConfirmed && (
-          <Box component="section">
-            <Typography component="h2" sx={{ mb: 1 }} variant="h5">
-              What&rsquo;s next?
-            </Typography>
-            <Typography sx={{ mb: 1 }}>
-              View your existing shifts on your{" "}
-              <MuiLink
-                component={NextLink}
-                href={`/volunteers/${shiftboardId}/info`}
-              >
-                Account page
-              </MuiLink>
-              .
-            </Typography>
-            <Typography sx={{ mb: 2 }}>
-              View available shifts on the{" "}
-              <MuiLink component={NextLink} href="/shifts">
-                Shifts page
-              </MuiLink>
-              .
-            </Typography>
-            <Typography color="text.secondary" variant="body2">
-              Note: To review this training material later, use the links
-              from the completed checklist item on your account. From there,
-              you can return to the course on Hive or view/print a PDF copy
-              of the course.
-            </Typography>
-          </Box>
-        )}
       </Container>
     </>
   );
