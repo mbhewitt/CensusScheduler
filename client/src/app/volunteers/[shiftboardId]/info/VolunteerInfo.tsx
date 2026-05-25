@@ -723,8 +723,12 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   const completedItems = checklistItems.filter((item) => item.done);
 
   // show CSP bar when relevant
+  // Staff are CSP-exempt across the whole checklist (per Mew 2026-05-25),
+  // so the global gauge should not appear at all for them — even if they
+  // happen to have a role threshold attached.
   const showCspBar =
-    (isPreOpen && !hasOtherSap && !isStaff) || roleThresholds.length > 0;
+    !isStaff &&
+    ((isPreOpen && !hasOtherSap) || roleThresholds.length > 0);
 
   // render
   // ------------------------------------------------------------
