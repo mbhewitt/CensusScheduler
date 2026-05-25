@@ -656,25 +656,41 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     });
   }
 
+  // Staff are exempt from CSP tracking \u2014 same copy is reused below for
+  // role-threshold (camp / ticket) items so a Staff volunteer never sees a
+  // CSP gauge anywhere in the checklist (per Mew 2026-05-25).
+  const staffNoCspCopy = (
+    <Typography>
+      As Census Staff we know you will work your butt off, so we don&rsquo;t
+      track CSP.
+    </Typography>
+  );
+
   // Staff bypass
   if (isStaff) {
     checklistItems.push({
       id: "staff",
       label: "Staff \u2014 Early entry confirmed",
       done: true,
-      content: (
-        <Typography>
-          As Census staff, your early entry is handled separately. Work your butt
-          off and have a great burn!
-        </Typography>
-      ),
+      content: staffNoCspCopy,
     });
   }
 
-  // Role-based thresholds (Counter Culture, Census Lab, Census Ticket)
+  // Role-based thresholds (Counter Culture, Census Lab, Census Ticket).
+  // Staff short-circuit: emit a "Requirements met" item with the no-CSP
+  // copy, regardless of actual currentCsp/requiredCsp.
   for (const rt of roleThresholds) {
-    const pct = Math.min(100, Math.round((rt.currentCsp / rt.requiredCsp) * 100));
     const displayRole = ROLE_DISPLAY_NAMES[rt.role] ?? rt.role;
+    if (isStaff) {
+      checklistItems.push({
+        id: `role-${rt.role}`,
+        label: `${displayRole} \u2014 Requirements met`,
+        done: true,
+        content: staffNoCspCopy,
+      });
+      continue;
+    }
+    const pct = Math.min(100, Math.round((rt.currentCsp / rt.requiredCsp) * 100));
     checklistItems.push({
       id: `role-${rt.role}`,
       label: rt.fulfilled
