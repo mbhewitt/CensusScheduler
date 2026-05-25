@@ -723,7 +723,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
           backgroundImage: "url(/banners/man-at-night.jpg)",
           backgroundSize: "cover",
         }}
-        text="Volunteer Information"
+        text="Account"
       />
       <Container maxWidth="md">
         {/* breadcrumbs */}
@@ -741,8 +741,8 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
               Welcome, {volunteer.playaName}!
             </Typography>
             <Typography color="text.secondary" sx={{ mb: 2 }}>
-              Review your volunteer information and complete the checklist items
-              below to get ready for the event.
+              Review your account and complete the checklist items below to
+              get ready for the event.
             </Typography>
             <Stack direction="row" spacing={3}>
               <Box>
