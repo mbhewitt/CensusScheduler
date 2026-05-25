@@ -79,6 +79,13 @@ export const Shifts = () => {
       options: { filter: false, sortThirdClickReset: true },
     },
     {
+      name: "CSP",
+      options: {
+        filter: false,
+        sort: false,
+      },
+    },
+    {
       name: columnNameTypeHidden, // hide for filter dialog
       label: "Type",
       options: {
@@ -108,6 +115,31 @@ export const Shifts = () => {
     {
       name: "Filled / Total",
       options: {
+        // Underlying value stays "<filled> / <total>" so the filter logic
+        // below and the existing Date-row alternation (which sorts by
+        // string) keep working. customBodyRender just transforms the cell
+        // *display*: highlight the filled count in pink + bold when the
+        // shift still has open slots (Mew, 2026-05-25).
+        customBodyRender: (value: string) => {
+          const [filledStr, totalStr] = value.split(" / ");
+          const filled = Number(filledStr);
+          const total = Number(totalStr);
+          const isOpen = filled < total;
+          if (!isOpen) return value;
+          return (
+            <span>
+              <span
+                style={{
+                  color: theme.palette.secondary.main,
+                  fontWeight: 700,
+                }}
+              >
+                {filledStr}
+              </span>
+              {` / ${totalStr}`}
+            </span>
+          );
+        },
         filterOptions: {
           logic: (value: string, filterValue: string[]) => {
             const [filled, total] = value
@@ -122,13 +154,6 @@ export const Shifts = () => {
           },
           names: ["Full", "Open"],
         },
-        sort: false,
-      },
-    },
-    {
-      name: "CSP",
-      options: {
-        filter: false,
         sort: false,
       },
     },
@@ -268,6 +293,7 @@ export const Shifts = () => {
         date, // hide for filter dialog (Present/Future vs Past)
         formatDateName(date, dateName),
         formatTime(startTime, endTime),
+        cspDisplay,
         type, // hide for filter dialog
         <Chip
           key={`${id}-chip`}
@@ -275,7 +301,6 @@ export const Shifts = () => {
           sx={{ backgroundColor: colorMapDisplay[departmentName] }}
         />,
         `${slotsFilled} / ${slotsTotal}`,
-        cspDisplay,
       ];
     }
   );
