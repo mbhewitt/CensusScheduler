@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import { buildSessionCookie } from "@/lib/session";
 import { generateId } from "@/utils/generateId";
+import { generatePasscode } from "@/utils/generatePasscode";
 import { pool } from "lib/database";
 
 interface OktaTokenResponse {
@@ -316,12 +317,16 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
         FROM op_volunteers
         WHERE shiftboard_id=?
       `);
+      // Auto-generate a 4-digit passcode so the volunteer can sign in
+      // on-playa via the tablet PIN UI without an admin having to set
+      // one for them. The volunteer can see and update it from /info.
+      const passcode = generatePasscode();
 
       await pool.query<RowDataPacket[]>(
         `INSERT INTO op_volunteers (
-          shiftboard_id, playa_name, world_name, email, okta_id, create_volunteer
-        ) VALUES (?, ?, ?, ?, ?, true)`,
-        [newId, playaName, worldName, email, oktaId]
+          shiftboard_id, playa_name, world_name, email, okta_id, passcode, create_volunteer
+        ) VALUES (?, ?, ?, ?, ?, ?, true)`,
+        [newId, playaName, worldName, email, oktaId, passcode]
       );
       shiftboardId = newId;
     }
