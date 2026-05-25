@@ -24,6 +24,7 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
       department,
       end_time,
       end_time_text,
+      sap_points,
       shift_category_id,
       shift_name,
       shift_times_id,
@@ -38,6 +39,8 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
     if (!shift) {
       shift = {
         category: { id: shift_category_id },
+        cspMin: Number.POSITIVE_INFINITY,
+        cspMax: Number.NEGATIVE_INFINITY,
         date,
         dateName: datename ?? "",
         department: { name: department ?? "" },
@@ -51,10 +54,15 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
       shiftMap.set(shift_times_id, shift);
     }
 
-    // slotsTotal: each distinct position contributes its `slots` value once
+    // slotsTotal + cspMin/Max: each distinct position contributes its `slots`
+    // and `sap_points` once. (LEFT JOIN op_volunteer_shifts multiplies rows
+    // per position when several volunteers are assigned.)
     if (!timePositionSeen.has(time_position_id)) {
       timePositionSeen.add(time_position_id);
       shift.slotsTotal += slots;
+      const csp = Number(sap_points ?? 0);
+      if (csp < shift.cspMin) shift.cspMin = csp;
+      if (csp > shift.cspMax) shift.cspMax = csp;
     }
 
     // slotsFilled: each row with a non-null shiftboard_id is one assignment
@@ -62,6 +70,13 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
       shift.slotsFilled += 1;
     }
   });
+
+  // Normalize: a shift with no positions never updated the CSP sentinels.
+  // Collapse to 0 so the UI doesn't render Infinity / -Infinity.
+  for (const shift of shiftMap.values()) {
+    if (!Number.isFinite(shift.cspMin)) shift.cspMin = 0;
+    if (!Number.isFinite(shift.cspMax)) shift.cspMax = 0;
+  }
 
   // Map iteration preserves insertion order, so the output keeps the order
   // the first row of each shift appeared in (date + start_time_text from

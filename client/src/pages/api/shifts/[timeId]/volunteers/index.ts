@@ -38,6 +38,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           st.start_time,
           st.start_time_text,
           stp.position_type_id,
+          stp.sap_points,
           stp.slots,
           stp.time_position_id
         FROM op_shift_times AS st
@@ -94,10 +95,12 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           position,
           prerequisite_id,
           role_id,
+          sap_points,
           slots,
           time_position_id,
         }) => {
           const resShiftPositionItem: IResShiftPositionCountItem = {
+            csp: Number(sap_points ?? 0),
             positionDetails: position_details,
             positionId: position_type_id,
             positionName: position,
