@@ -154,6 +154,16 @@ export const SignIn = () => {
             variant: "success",
           }
         );
+
+        // Land them somewhere useful: a returnTo if present (e.g. they
+        // came from a training-confirmation link), otherwise their
+        // account page. Matches the Okta callback default in
+        // pages/api/auth/okta/callback.ts. Per Mew 2026-05-25.
+        const returnTo =
+          returnToParam && returnToParam.startsWith("/")
+            ? returnToParam
+            : `/volunteers/${dataVolunteerItem.shiftboardId}/info`;
+        router.push(returnTo);
       }
     } catch (error) {
       if (error instanceof Error) {
