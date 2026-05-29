@@ -4,6 +4,84 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import type { IReqReviewValues, IReqSwitchValues } from "@/components/types";
 import { UPDATE_TYPE_CHECK_IN, UPDATE_TYPE_REVIEW } from "@/constants";
+import { enqueueEmail } from "lib/mail";
+
+// #313 — when a volunteer (self) or admin removes someone from a
+// position with `critical=1`, notify the VC list so they can move on
+// refilling. Pairs with the warning dialog from #308: the volunteer
+// has already acknowledged the gap before this code runs.
+const VC_LIST_EMAIL = "censusvolunteercoordinators@burningman.org";
+const APP_BASE_URL =
+  process.env.APP_BASE_URL ?? "https://volunteers.census.burningman.org";
+
+interface CriticalDropContext extends RowDataPacket {
+  critical: number;
+  position: string;
+  datename: string | null;
+  date: string;
+  start_time_text: string | null;
+  shift_times_id: number;
+  playa_name: string | null;
+  world_name: string | null;
+}
+
+async function notifyCriticalDrop(
+  pool: Pool,
+  shiftboardId: number,
+  timePositionId: number
+): Promise<void> {
+  const [rows] = await pool.query<CriticalDropContext[]>(
+    `SELECT
+       pt.critical,
+       pt.position,
+       d.datename,
+       d.date,
+       st.start_time_text,
+       st.shift_times_id,
+       v.playa_name,
+       v.world_name
+     FROM op_volunteer_shifts vs
+     JOIN op_shift_time_position stp
+       ON stp.time_position_id = vs.time_position_id
+     JOIN op_position_type pt
+       ON pt.position_type_id = stp.position_type_id
+     JOIN op_shift_times st
+       ON st.shift_times_id = stp.shift_times_id
+     LEFT JOIN op_dates d
+       ON d.date_id = st.start_date_id
+     LEFT JOIN op_volunteers v
+       ON v.shiftboard_id = vs.shiftboard_id
+     WHERE vs.shiftboard_id = ?
+       AND vs.time_position_id = ?
+     LIMIT 1`,
+    [shiftboardId, timePositionId]
+  );
+  const ctx = rows[0];
+  if (!ctx || !ctx.critical) return;
+
+  const dayLabel = ctx.datename ? `${ctx.datename} ${ctx.date}` : ctx.date;
+  const timeLabel = ctx.start_time_text ? ` at ${ctx.start_time_text}` : "";
+  const volunteerLabel = ctx.playa_name
+    ? `${ctx.playa_name}${ctx.world_name ? ` "${ctx.world_name}"` : ""}`
+    : (ctx.world_name ?? `shiftboard_id ${shiftboardId}`);
+
+  await enqueueEmail({
+    to: VC_LIST_EMAIL,
+    subject: `[Census] CRITICAL OPENING: ${ctx.position} on ${dayLabel}`,
+    bodyText: [
+      "A volunteer just dropped a critical position. The slot is now open.",
+      "",
+      `Position: ${ctx.position}`,
+      `Shift: ${dayLabel}${timeLabel}`,
+      `Dropped by: ${volunteerLabel}`,
+      "",
+      `Manage this shift's volunteers: ${APP_BASE_URL}/shifts/${ctx.shift_times_id}/volunteers`,
+      "",
+      "Note: the volunteer was shown a warning before this drop completed, so they're aware they left a critical gap.",
+    ].join("\n"),
+    category: "critical-drop",
+  });
+}
 
 export const shiftVolunteerUpdate = async (
   pool: Pool,
@@ -82,6 +160,18 @@ export const shiftVolunteerRemove = async (
     AND time_position_id=?`,
     [shiftboardId, timePositionId]
   );
+
+  // Best-effort #313 notification. Wrapped so an enqueue failure
+  // doesn't bubble up and 500 the remove request — the DB write
+  // is the canonical action; the VC ping is a courtesy on top.
+  try {
+    await notifyCriticalDrop(pool, shiftboardId, timePositionId);
+  } catch (err) {
+    console.error(
+      `[critical-drop] notifyCriticalDrop failed for shiftboard_id=${shiftboardId} time_position_id=${timePositionId}:`,
+      err
+    );
+  }
 
   return res.status(200).json({
     statusCode: 200,
