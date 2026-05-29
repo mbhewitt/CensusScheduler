@@ -57,6 +57,13 @@ export interface MailConfig {
   smtpHost: string;
   smtpPort: number;
   dryRun: boolean;
+  // When set: SMTP envelope + To header are rewritten to this single
+  // address; Cc is dropped; the body is prepended with a banner showing
+  // what the real recipients would have been. The queue row is NOT
+  // modified — `op_email_queue.to` / `cc` still record the intended
+  // recipients so routing logic stays observable. Unsetting the env
+  // (and recreating the container) flips traffic back to live.
+  overrideTo: string | null;
   workerDisabled: boolean;
   ratePerMinute: number;
   ratePerDay: number;
