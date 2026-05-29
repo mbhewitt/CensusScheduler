@@ -103,7 +103,6 @@ export const Contact = () => {
           ...defaultValues,
           email,
           name: `${playaName} "${worldName}"`,
-          to: reminderParam ? "Send me a reminder" : "Volunteer Coordinator",
         });
       } else {
         reset(defaultValues);
