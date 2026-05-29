@@ -74,29 +74,48 @@ function buildIcs(args: {
   date: string;
   startTime: string;
   endTime: string;
+  method: "REQUEST" | "CANCEL";
+  // Calendar clients match CANCEL to a prior REQUEST by UID and
+  // require a SEQUENCE strictly greater than the original to apply
+  // the update. We don't track per-event sequence, so for REQUEST
+  // we use 0 and for CANCEL we use 1 — fine in practice because
+  // we don't re-issue REQUEST after a CANCEL.
+  sequence?: number;
 }): string {
   const escape = (s: string) =>
     s.replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\\;");
+  const status = args.method === "CANCEL" ? "CANCELLED" : "CONFIRMED";
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
     "PRODID:-//Census Scheduler//Census Shift//EN",
-    "METHOD:REQUEST",
+    `METHOD:${args.method}`,
     "CALSCALE:GREGORIAN",
     "BEGIN:VEVENT",
     `UID:${args.uid}`,
+    `SEQUENCE:${args.sequence ?? (args.method === "CANCEL" ? 1 : 0)}`,
     `DTSTAMP:${nowUtcStamp()}`,
     `DTSTART;TZID=${CALENDAR_TZID}:${args.date}T${args.startTime}`,
     `DTEND;TZID=${CALENDAR_TZID}:${args.date}T${args.endTime}`,
     `SUMMARY:${escape(args.summary)}`,
     `DESCRIPTION:${escape(args.description)}`,
     "LOCATION:Black Rock City",
-    "STATUS:CONFIRMED",
+    `STATUS:${status}`,
     "TRANSP:OPAQUE",
     "END:VEVENT",
     "END:VCALENDAR",
   ];
   return lines.map(foldIcsLine).join("\r\n");
+}
+
+// Stable UID per (volunteer, time_position). Used by both REQUEST
+// (initial assignment) and CANCEL (removal) so calendar clients
+// match the cancellation to the prior event and update in place.
+function shiftIcsUid(
+  shiftboardId: number,
+  timePositionId: number | string
+): string {
+  return `census-shift-${timePositionId}-${shiftboardId}@volunteers.census.burningman.org`;
 }
 
 export async function notifyAssignment(
@@ -188,12 +207,13 @@ export async function notifyAssignment(
   const icsContent =
     icsDate && icsStart && icsEnd
       ? buildIcs({
-          uid: `census-shift-${timePositionId}-${shiftboardId}@volunteers.census.burningman.org`,
+          uid: shiftIcsUid(shiftboardId, timePositionId),
           summary: `Census: ${ctx.position}`,
           description: bodyText,
           date: icsDate,
           startTime: icsStart,
           endTime: icsEnd,
+          method: "REQUEST",
         })
       : null;
 
@@ -208,5 +228,117 @@ export async function notifyAssignment(
         }
       : undefined,
     category: "assignment",
+  });
+}
+
+// Sends a removal email + a CANCEL .ics with the same UID as the
+// original assignment, so the volunteer's calendar matches the
+// cancellation to the prior event and drops it cleanly. Called from
+// shiftVolunteerRemove — pair with #313 (which notifies the VC list
+// when the position is critical).
+export async function notifyRemoval(
+  pool: Pool,
+  shiftboardId: number,
+  timePositionId: number | string
+): Promise<void> {
+  const [rows] = await pool.query<AssignmentContext[]>(
+    `SELECT
+       pt.position,
+       pt.critical,
+       sn.shift_name,
+       sc.department,
+       d.datename,
+       d.date,
+       st.start_time,
+       st.start_time_text,
+       st.end_time,
+       st.end_time_text,
+       v.email,
+       v.playa_name,
+       v.world_name
+     FROM op_volunteer_shifts vs
+     JOIN op_shift_time_position stp
+       ON stp.time_position_id = vs.time_position_id
+     JOIN op_position_type pt
+       ON pt.position_type_id = stp.position_type_id
+     JOIN op_shift_times st
+       ON st.shift_times_id = stp.shift_times_id
+     JOIN op_shift_name sn
+       ON sn.shift_name_id = st.shift_name_id
+     LEFT JOIN op_shift_category sc
+       ON sc.shift_category_id = sn.shift_category_id
+     LEFT JOIN op_dates d
+       ON d.date_id = st.start_date_id
+     LEFT JOIN op_volunteers v
+       ON v.shiftboard_id = vs.shiftboard_id
+     WHERE vs.shiftboard_id = ?
+       AND vs.time_position_id = ?
+     LIMIT 1`,
+    [shiftboardId, timePositionId]
+  );
+  const ctx = rows[0];
+  if (!ctx) return;
+  if (!ctx.email) {
+    console.warn(
+      `[assign-notify] cancel skip: shiftboard_id=${shiftboardId} time_position_id=${timePositionId} — no email on file`
+    );
+    return;
+  }
+
+  const dayLabel = ctx.datename ? `${ctx.datename} ${ctx.date}` : ctx.date;
+  const greeting = ctx.playa_name
+    ? `Hi ${ctx.playa_name},`
+    : ctx.world_name
+      ? `Hi ${ctx.world_name},`
+      : "Hi,";
+  const startStr = ctx.start_time_text ?? ctx.start_time ?? "";
+  const endStr = ctx.end_time_text ?? ctx.end_time ?? "";
+  const timeLine =
+    startStr || endStr
+      ? `Time: ${startStr}${endStr ? ` – ${endStr}` : ""}`
+      : null;
+
+  const bodyText = [
+    greeting,
+    "",
+    "You've been removed from the following Census shift:",
+    "",
+    `  Position: ${ctx.position}`,
+    `  Day: ${dayLabel}`,
+    ...(timeLine ? [`  ${timeLine}`] : []),
+    `  Category: ${ctx.department ?? ctx.shift_name}`,
+    "",
+    "A calendar cancellation is attached — your calendar should drop the event automatically.",
+    "",
+    `If this was a mistake, you can re-add yourself: ${APP_BASE_URL}/volunteers/${shiftboardId}/info`,
+  ].join("\n");
+
+  const icsDate = dateToIcs(ctx.date);
+  const icsStart = timeToIcs(ctx.start_time);
+  const icsEnd = timeToIcs(ctx.end_time);
+  const icsContent =
+    icsDate && icsStart && icsEnd
+      ? buildIcs({
+          uid: shiftIcsUid(shiftboardId, timePositionId),
+          summary: `Census: ${ctx.position}`,
+          description: bodyText,
+          date: icsDate,
+          startTime: icsStart,
+          endTime: icsEnd,
+          method: "CANCEL",
+        })
+      : null;
+
+  await enqueueEmail({
+    to: ctx.email,
+    subject: `Census: removed from ${ctx.position} on ${dayLabel}`,
+    bodyText,
+    ics: icsContent
+      ? {
+          filename: `census-${ctx.position.replace(/\s+/g, "-").toLowerCase()}-cancel.ics`,
+          content: Buffer.from(icsContent, "utf8"),
+        }
+      : undefined,
+    category: "removal",
   });
 }

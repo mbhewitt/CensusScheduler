@@ -5,6 +5,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import type { IReqReviewValues, IReqSwitchValues } from "@/components/types";
 import { UPDATE_TYPE_CHECK_IN, UPDATE_TYPE_REVIEW } from "@/constants";
 import { enqueueEmail } from "lib/mail";
+import { notifyRemoval } from "@/components/api/assignmentNotify";
 
 // #313 — when a volunteer (self) or admin removes someone from a
 // position with `critical=1`, notify the VC list so they can move on
@@ -161,14 +162,28 @@ export const shiftVolunteerRemove = async (
     [shiftboardId, timePositionId]
   );
 
-  // Best-effort #313 notification. Wrapped so an enqueue failure
-  // doesn't bubble up and 500 the remove request — the DB write
-  // is the canonical action; the VC ping is a courtesy on top.
+  // Best-effort notifications. Wrapped so an enqueue failure doesn't
+  // bubble up and 500 the remove request — the DB write is the
+  // canonical action; the emails are courtesy on top.
+  //
+  // Two distinct sends from the same trigger:
+  //   - notifyCriticalDrop: to the VC list (only when the position
+  //     is marked critical) so coordinators can move on refilling (#313)
+  //   - notifyRemoval: to the removed volunteer with a CANCEL .ics
+  //     that drops the event from their calendar (per Mew 2026-05-29)
   try {
     await notifyCriticalDrop(pool, shiftboardId, timePositionId);
   } catch (err) {
     console.error(
       `[critical-drop] notifyCriticalDrop failed for shiftboard_id=${shiftboardId} time_position_id=${timePositionId}:`,
+      err
+    );
+  }
+  try {
+    await notifyRemoval(pool, shiftboardId, timePositionId);
+  } catch (err) {
+    console.error(
+      `[removal-notify] notifyRemoval failed for shiftboard_id=${shiftboardId} time_position_id=${timePositionId}:`,
       err
     );
   }
