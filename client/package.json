@@ -9,7 +9,8 @@
     "lint": "next lint --fix",
     "test:e2e": "npx playwright test --config=e2e/playwright.config.ts",
     "test:e2e:ui": "npx playwright test --config=e2e/playwright.config.ts --ui",
-    "test:e2e:headed": "npx playwright test --config=e2e/playwright.config.ts --headed"
+    "test:e2e:headed": "npx playwright test --config=e2e/playwright.config.ts --headed",
+    "test:unit": "node --import tsx --test tests/unit/*.test.ts"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
@@ -25,6 +26,7 @@
     "mui-datatables": "^4.2.2",
     "mysql2": "^3.15.1",
     "next": "^16.1.1",
+    "nodemailer": "^8.0.10",
     "notistack": "^3.0.2",
     "react": "^19.2.3",
     "react-color": "^2.19.3",
@@ -40,6 +42,7 @@
     "@playwright/test": "^1.58.2",
     "@types/mui-datatables": "^4.3.13",
     "@types/node": "^24.5.2",
+    "@types/nodemailer": "^8.0.0",
     "@types/react": "^19.1.13",
     "@types/react-color": "^3.0.13",
     "@types/react-dom": "^19.1.9",
@@ -54,6 +57,7 @@
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-react": "^7.37.5",
     "prettier": "^3.6.2",
+    "tsx": "^4.22.3",
     "typescript": "^5.9.2"
   }
 }
