@@ -19,7 +19,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useSearchParams } from "next/navigation";
 import { useSnackbar } from "notistack";
 import { useContext, useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
@@ -75,8 +74,6 @@ export const Contact = () => {
     defaultValues,
     mode: "onBlur",
   });
-  const searchParams = useSearchParams();
-  const reminderParam = searchParams?.get("reminder");
   const { enqueueSnackbar } = useSnackbar();
 
   // side effects
@@ -87,7 +84,6 @@ export const Contact = () => {
         ...defaultValues,
         email,
         name: `${playaName} "${worldName}"`,
-        to: reminderParam ? "Send me a reminder" : "Volunteer Coordinator",
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -213,12 +209,6 @@ export const Contact = () => {
                         <FormControl fullWidth required variant="standard">
                           <InputLabel id="to">To</InputLabel>
                           <Select {...field} label="To *" labelId="to">
-                            <MenuItem
-                              key="Send me a reminder"
-                              value="Send me a reminder"
-                            >
-                              Send me a reminder
-                            </MenuItem>
                             {CONTACT_RECIPIENT_LABELS.map((label) => (
                               <MenuItem key={label} value={label}>
                                 {label}
