@@ -9,6 +9,7 @@ import type {
 } from "@/components/types/shifts";
 import { withAuth } from "@/lib/withAuth";
 import { pool } from "lib/database";
+import { notifyAssignment } from "@/components/api/assignmentNotify";
 import {
   shiftVolunteerRemove,
   shiftVolunteerUpdate,
@@ -205,6 +206,18 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           )
           VALUES (true, ?, ?, ?)`,
           [noShow, shiftboardId, timePositionId]
+        );
+      }
+
+      // #309: notify the assigned volunteer with the shift details
+      // and an .ics calendar attachment. Best-effort — a notify
+      // failure doesn't fail the assignment itself.
+      try {
+        await notifyAssignment(pool, shiftboardId, timePositionId);
+      } catch (err) {
+        console.error(
+          `[assign-notify] notifyAssignment failed for shiftboard_id=${shiftboardId} time_position_id=${timePositionId}:`,
+          err
         );
       }
 
