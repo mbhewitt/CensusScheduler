@@ -4,17 +4,18 @@ export const HELPER_TEXT_EMERGENCY_CONTACT =
 export const HELPER_TEXT_LOCATION =
   "How to find you on playa and any other relevant info";
 
-// contact page form
-export const GENERAL_ROLE_LIST = [
-  "Census Lab Coordinator",
-  "Census Manager",
-  "Construction Lead",
-  "Data Analyst/Science",
-  "Sampling Coordinator",
-  "Scheduling Coordinator",
-  "Technology",
-  "Volunteer Coordinator",
-].sort();
+// contact page form — label → email recipients. The label is what
+// the user sees in the To dropdown and what we store in op_messages.to;
+// the email string (comma-separated, RFC-style) is what the email
+// actually goes to. Keep this list short — every entry is an inbox
+// that gets pinged for every routed message.
+export const CONTACT_RECIPIENTS: Record<string, string> = {
+  "Volunteer Coordinator": "censusvolunteercoordinators@burningman.org",
+  "Census Manager": "ann.norton@burningman.org, random@burningman.org",
+  Data: "aaronshev@gmail.com",
+  Technology: "mu@burningman.org, chipper@burningman.org, rqreyes@gmail.com",
+};
+export const CONTACT_RECIPIENT_LABELS = Object.keys(CONTACT_RECIPIENTS).sort();
 
 // review dialog - radio options
 export const legendList = [
