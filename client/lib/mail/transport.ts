@@ -3,6 +3,35 @@ import nodemailer from "nodemailer";
 import { classifyError } from "./classify";
 import type { EmailRow, MailConfig, SendResult, Transport } from "./types";
 
+// When MAIL_OVERRIDE_TO is set, prefix the body so the test recipient
+// can see at a glance what the real headers would have been.
+function applyOverride(
+  row: EmailRow,
+  override: string
+): {
+  to: string;
+  cc: string | null;
+  bodyText: string;
+  bodyHtml: string | null;
+} {
+  const banner = [
+    "*** MAIL_OVERRIDE_TO is active — this would have gone to:",
+    `***   To: ${row.to}`,
+    ...(row.cc ? [`***   Cc: ${row.cc}`] : []),
+    `***   Reply-To: ${row.replyTo}`,
+    "*** Delivered to the override address instead.",
+    "",
+  ].join("\n");
+  return {
+    to: override,
+    cc: null,
+    bodyText: banner + row.bodyText,
+    bodyHtml: row.bodyHtml
+      ? `<pre style="background:#fff4cc;border:1px solid #d4a017;padding:8px;color:#5b3a00;">${banner.replace(/\n/g, "<br>")}</pre>${row.bodyHtml}`
+      : null,
+  };
+}
+
 export function createSmtpTransport(config: MailConfig): Transport {
   const transporter = nodemailer.createTransport({
     host: config.smtpHost,
@@ -17,14 +46,22 @@ export function createSmtpTransport(config: MailConfig): Transport {
   return {
     async send(row: EmailRow): Promise<SendResult> {
       try {
+        const headers = config.overrideTo
+          ? applyOverride(row, config.overrideTo)
+          : {
+              to: row.to,
+              cc: row.cc,
+              bodyText: row.bodyText,
+              bodyHtml: row.bodyHtml,
+            };
         await transporter.sendMail({
           from: row.from,
-          to: row.to,
-          cc: row.cc ?? undefined,
+          to: headers.to,
+          cc: headers.cc ?? undefined,
           replyTo: row.replyTo,
           subject: row.subject,
-          text: row.bodyText,
-          html: row.bodyHtml ?? undefined,
+          text: headers.bodyText,
+          html: headers.bodyHtml ?? undefined,
           attachments: row.ics
             ? [
                 {

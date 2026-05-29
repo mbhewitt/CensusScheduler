@@ -16,6 +16,7 @@ const baseConfig: MailConfig = {
   smtpHost: "127.0.0.1",
   smtpPort: 25,
   dryRun: false,
+  overrideTo: null,
   workerDisabled: false,
   ratePerMinute: 1,
   ratePerDay: 100,

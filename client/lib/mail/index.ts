@@ -16,6 +16,7 @@ function readConfig(): MailConfig {
     smtpHost: process.env.SMTP_HOST ?? "127.0.0.1",
     smtpPort: Number.isFinite(port) ? port : 25,
     dryRun: process.env.MAIL_DRY_RUN === "1",
+    overrideTo: process.env.MAIL_OVERRIDE_TO?.trim() || null,
     workerDisabled: process.env.MAIL_WORKER_DISABLED === "1",
     ratePerMinute: parseIntEnv("MAIL_RATE_PER_MINUTE", 1),
     ratePerDay: parseIntEnv("MAIL_RATE_PER_DAY", 100),
@@ -56,6 +57,6 @@ export function bootstrapMailWorker(): void {
   const store = createMysqlStore(pool);
   startWorker(store, cfg, transport);
   console.warn(
-    `[mail:worker] started — tickMs=${cfg.workerTickMs} ratePerMinute=${cfg.ratePerMinute} ratePerDay=${cfg.ratePerDay} dryRun=${cfg.dryRun} smtp=${cfg.smtpHost}:${cfg.smtpPort}`
+    `[mail:worker] started — tickMs=${cfg.workerTickMs} ratePerMinute=${cfg.ratePerMinute} ratePerDay=${cfg.ratePerDay} dryRun=${cfg.dryRun} smtp=${cfg.smtpHost}:${cfg.smtpPort}${cfg.overrideTo ? ` overrideTo=${cfg.overrideTo}` : ""}`
   );
 }
