@@ -35,6 +35,11 @@ const ALLOWLIST = [
 
   // Public information pages (per Mew, 2026-05-06)
   "/contact",
+  // /api/contact accepts the form POST. Must be unauthenticated so
+  // walk-up visitors with no session can actually send a message —
+  // the /contact page was already allowlisted but its API was not,
+  // so the form silently 401'd for everyone signed-out (#312).
+  "/api/contact",
   "/help",
   "/reports",
 
