@@ -12,7 +12,7 @@ export const HELPER_TEXT_LOCATION =
 export const CONTACT_RECIPIENTS: Record<string, string> = {
   "Volunteer Coordinator": "censusvolunteercoordinators@burningman.org",
   "Census Manager": "ann.norton@burningman.org, random@burningman.org",
-  Data: "aaronshev@gmail.com",
+  Data: "aaron.shev@burningman.org",
   Technology: "mu@burningman.org, chipper@burningman.org, rqreyes@gmail.com",
 };
 export const CONTACT_RECIPIENT_LABELS = Object.keys(CONTACT_RECIPIENTS).sort();
