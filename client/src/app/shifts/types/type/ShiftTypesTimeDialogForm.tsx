@@ -1,5 +1,7 @@
 import {
+  Checkbox,
   FormControl,
+  FormControlLabel,
   Grid,
   InputLabel,
   MenuItem,
@@ -34,6 +36,10 @@ interface IShiftTypesTimeDialogFormProps {
   errors: FieldErrors<IFormValues>;
   getValues: UseFormGetValues<IFormValues>;
   setError: UseFormSetError<IFormValues>;
+  // When true (Update dialog only), the "Cancel this shift" checkbox
+  // renders at the bottom of the form. The Add dialog leaves it off
+  // — a brand-new time should never start in the canceled state.
+  showCanceledCheckbox?: boolean;
   timePositionListAddFields: FieldArrayWithId<
     IFormValues,
     "timeAdd.positionList",
@@ -47,6 +53,7 @@ export const ShiftTypesTimeDialogForm = ({
   errors,
   getValues,
   setError,
+  showCanceledCheckbox = false,
   timePositionListAddFields,
 }: IShiftTypesTimeDialogFormProps) => {
   // render
@@ -274,6 +281,22 @@ export const ShiftTypesTimeDialogForm = ({
           )}
         />
       </Grid>
+      {showCanceledCheckbox && (
+        <Grid size={12}>
+          <Controller
+            control={control}
+            name="timeAdd.canceled"
+            render={({ field: { value, ...field } }) => (
+              <FormControlLabel
+                control={
+                  <Checkbox {...field} checked={Boolean(value)} color="secondary" />
+                }
+                label="Cancel this shift (notifies all assigned volunteers)"
+              />
+            )}
+          />
+        </Grid>
+      )}
       {timePositionListAddFields && (
         <Grid size={12}>
           <Typography component="h3" variant="h6">

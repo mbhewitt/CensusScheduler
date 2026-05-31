@@ -71,6 +71,7 @@ export const ShiftTypesTimeDialogUpdate = ({
         errors={errors}
         getValues={getValues}
         setError={setError}
+        showCanceledCheckbox
         timePositionListAddFields={timePositionListAddFields}
       />
       <DialogActions>

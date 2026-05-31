@@ -50,6 +50,7 @@ export interface IResShiftTypePositionItem {
   wapPoints?: string;
 }
 export interface IResShiftTypeTimeItem {
+  canceled: boolean;
   date: string;
   endTime: string;
   instance: string;
@@ -88,6 +89,7 @@ export interface IReqShiftTypeTimePositionItem {
   timePositionId: number;
 }
 export interface IReqShiftTypeTimeItem {
+  canceled: boolean;
   endTime: string;
   instance: string;
   meal: string;
