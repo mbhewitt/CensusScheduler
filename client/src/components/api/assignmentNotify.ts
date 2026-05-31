@@ -74,12 +74,17 @@ function buildIcs(args: {
   date: string;
   startTime: string;
   endTime: string;
-  method: "REQUEST" | "CANCEL";
-  // Calendar clients match CANCEL to a prior REQUEST by UID and
+  // PUBLISH = "I'm publishing an event I think you want on your
+  // calendar; no RSVP expected." That matches our case better than
+  // REQUEST (which implies organizer/attendee with Accept/Decline
+  // exchange — we have neither, and our From domain is send-only).
+  // CANCEL is used by the removal path to drop the original.
+  method: "PUBLISH" | "CANCEL";
+  // Calendar clients match CANCEL to a prior PUBLISH by UID and
   // require a SEQUENCE strictly greater than the original to apply
-  // the update. We don't track per-event sequence, so for REQUEST
+  // the update. We don't track per-event sequence, so for PUBLISH
   // we use 0 and for CANCEL we use 1 — fine in practice because
-  // we don't re-issue REQUEST after a CANCEL.
+  // we don't re-issue PUBLISH after a CANCEL.
   sequence?: number;
 }): string {
   const escape = (s: string) =>
@@ -213,7 +218,7 @@ export async function notifyAssignment(
           date: icsDate,
           startTime: icsStart,
           endTime: icsEnd,
-          method: "REQUEST",
+          method: "PUBLISH",
         })
       : null;
 
