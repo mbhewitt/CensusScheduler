@@ -148,7 +148,8 @@ function buildIcs(args: {
     `DTEND;TZID=${CALENDAR_TZID}:${args.date}T${args.endTime}`,
     `SUMMARY:${escape(args.summary)}`,
     `DESCRIPTION:${escape(args.description)}`,
-    "LOCATION:Black Rock City",
+    // Commas need RFC 5545 \, escape inside LOCATION text values.
+    "LOCATION:Census Lab\\, 6:30 & A\\, Black Rock City",
     `STATUS:${status}`,
     "TRANSP:OPAQUE",
     "END:VEVENT",
@@ -217,6 +218,12 @@ function renderShiftBody(
   if (notBlank(ctx.meal)) {
     lines.push("", `Meal: ${ctx.meal.trim()}`);
   }
+  // Same for every shift — per Mew 2026-05-31. Appears in the email
+  // body and (via DESCRIPTION mirroring the body) in the .ics too.
+  lines.push(
+    "",
+    "Location: All Census shifts start and end at Census Lab at 6:30 & A."
+  );
   return lines.join("\n");
 }
 
