@@ -1,6 +1,7 @@
 // shifts
 // ------------------------------------------------------------
 export interface IResShiftRowItem {
+  canceled: boolean;
   category: {
     id: number;
   };
@@ -55,6 +56,7 @@ export interface IResShiftVolunteerRowItem {
 export interface IResShiftVolunteerInformation {
   positionList: IResShiftPositionCountItem[];
   shift: {
+    canceled: boolean;
     date: string;
     dateName: string;
     details: string;

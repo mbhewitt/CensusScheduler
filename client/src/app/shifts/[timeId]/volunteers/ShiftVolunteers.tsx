@@ -10,6 +10,7 @@ import {
   WorkHistory as WorkHistoryIcon,
 } from "@mui/icons-material";
 import {
+  Alert,
   Box,
   Button,
   Card,
@@ -337,6 +338,7 @@ export const ShiftVolunteers = ({
     endTime: dayjs(dataShiftVolunteersItem.shift.endTime),
     startTime: dayjs(dataShiftVolunteersItem.shift.startTime),
   });
+  const isShiftCanceled = Boolean(dataShiftVolunteersItem.shift.canceled);
   let isVolunteerAddAvailable = false;
   let isCheckInAvailable = false;
 
@@ -364,6 +366,16 @@ export const ShiftVolunteers = ({
     default: {
       throw new Error(`Unknown check-in type: ${checkInType}`);
     }
+  }
+  // Canceled shifts: no one (including admins) can add volunteers
+  // via this page — they have to flip the canceled flag back off
+  // in the Update Time dialog first. Self-removes (the DataTable's
+  // row-level remove buttons) are intentionally still available so
+  // already-assigned volunteers can drop themselves, which fires
+  // the cancellation .ics if they hadn't already gotten one.
+  if (isShiftCanceled) {
+    isVolunteerAddAvailable = false;
+    isCheckInAvailable = false;
   }
 
   // prepare datatable positions
@@ -604,8 +616,28 @@ export const ShiftVolunteers = ({
           </BreadcrumbsNav>
         </Box>
         <Box component="section">
+          {isShiftCanceled && (
+            <Alert
+              severity="error"
+              sx={{ mb: 2, "& .MuiAlert-message": { fontWeight: 700 } }}
+            >
+              CANCELED — this shift has been canceled. New assignments are
+              disabled. Volunteers already on the shift can still remove
+              themselves.
+            </Alert>
+          )}
           <Box>
-            <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
+            <Typography
+              component="h2"
+              variant="h4"
+              sx={{
+                mb: 2,
+                ...(isShiftCanceled && {
+                  color: "text.disabled",
+                  textDecoration: "line-through",
+                }),
+              }}
+            >
               {formatDateName(
                 dataShiftVolunteersItem.shift.date,
                 dataShiftVolunteersItem.shift.dateName

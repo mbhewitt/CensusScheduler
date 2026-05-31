@@ -54,7 +54,9 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
           ORDER BY d.date, st.start_time_text`
         );
       } else {
-        // get all shifts
+        // get all shifts (including canceled — UI strikes them through
+        // and prevents adds; volunteers still need to see them so they
+        // know they were canceled and can self-remove)
         [dbShiftList] = await pool.query<RowDataPacket[]>(
           `SELECT
             d.date,
@@ -62,6 +64,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
             sc.department,
             sc.shift_category_id,
             sn.shift_name,
+            st.canceled,
             st.end_time,
             st.end_time_text,
             st.shift_times_id,
@@ -88,7 +91,6 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
           ON vs.remove_shift=false
           AND vs.time_position_id=stp.time_position_id
           WHERE st.remove_shift_time=false
-          AND st.canceled=false
           ORDER BY d.date, st.start_time_text`
         );
       }

@@ -19,6 +19,7 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
 
   dbShiftList.forEach((row: RowDataPacket) => {
     const {
+      canceled,
       date,
       datename,
       department,
@@ -38,6 +39,7 @@ export const getShiftList = (dbShiftList: RowDataPacket[]) => {
     let shift = shiftMap.get(shift_times_id);
     if (!shift) {
       shift = {
+        canceled: Boolean(canceled),
         category: { id: shift_category_id },
         cspMin: Number.POSITIVE_INFINITY,
         cspMax: Number.NEGATIVE_INFINITY,
