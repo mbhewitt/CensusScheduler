@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Chip, Container, lighten } from "@mui/material";
+import { Box, Chip, Container, lighten, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
@@ -274,6 +274,7 @@ export const Shifts = () => {
   const colorMapDisplay = getColorMap(data);
   const dataTable = data.map(
     ({
+      canceled,
       cspMax,
       cspMin,
       date,
@@ -288,6 +289,32 @@ export const Shifts = () => {
     }) => {
       const cspDisplay =
         cspMin === cspMax ? `${cspMin}` : `${cspMin}-${cspMax}`;
+      const typeCell = canceled ? (
+        <Box
+          key={`${id}-type`}
+          sx={{ alignItems: "center", display: "flex", gap: 1 }}
+        >
+          <Chip
+            label={type}
+            sx={{
+              backgroundColor: colorMapDisplay[departmentName],
+              textDecoration: "line-through",
+            }}
+          />
+          <Typography
+            component="span"
+            sx={{ color: "error.main", fontWeight: 700 }}
+          >
+            CANCELED
+          </Typography>
+        </Box>
+      ) : (
+        <Chip
+          key={`${id}-chip`}
+          label={type}
+          sx={{ backgroundColor: colorMapDisplay[departmentName] }}
+        />
+      );
       return [
         id, // hide for row click
         date, // hide for filter dialog (Present/Future vs Past)
@@ -295,11 +322,7 @@ export const Shifts = () => {
         formatTime(startTime, endTime),
         cspDisplay,
         type, // hide for filter dialog
-        <Chip
-          key={`${id}-chip`}
-          label={type}
-          sx={{ backgroundColor: colorMapDisplay[departmentName] }}
-        />,
+        typeCell,
         `${slotsFilled} / ${slotsTotal}`,
       ];
     }

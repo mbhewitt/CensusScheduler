@@ -26,6 +26,10 @@ const shiftVolunteers = async (
     case "GET": {
       // get all shift volunteers
       const { timeId } = req.query;
+      // Include canceled shifts in the detail response — the page
+      // shows them with a banner and disables Add, but volunteers
+      // still need to reach the page so they can self-remove and
+      // admins can flip the canceled state back via Update Time.
       const [dbShiftPositionList] = await pool.query<RowDataPacket[]>(
         `SELECT
           d.date,
@@ -36,6 +40,7 @@ const shiftVolunteers = async (
           pt.role_id,
           sn.shift_details,
           sn.shift_name,
+          st.canceled,
           st.end_time,
           st.end_time_text,
           st.meal,
@@ -59,7 +64,6 @@ const shiftVolunteers = async (
         ON pt.delete_position=false
         AND pt.position_type_id=stp.position_type_id
         WHERE st.remove_shift_time=false
-        AND st.canceled=false
         AND st.shift_times_id=?
         ORDER BY pt.position COLLATE utf8mb4_general_ci`,
         [timeId]
@@ -156,6 +160,7 @@ const shiftVolunteers = async (
       const resShiftVolunteerDetails: IResShiftVolunteerInformation = {
         positionList: resShiftPositionList,
         shift: {
+          canceled: Boolean(resShiftPositionFirst.canceled),
           date: resShiftPositionFirst.date,
           dateName: resShiftPositionFirst.datename ?? "",
           details: resShiftPositionFirst.shift_details,
@@ -177,6 +182,27 @@ const shiftVolunteers = async (
       // add volunteer to shift
       const { noShow, shiftboardId, timePositionId }: IReqShiftVolunteerItem =
         JSON.parse(req.body);
+
+      // Block adds on canceled shifts. Server-side enforcement —
+      // the UI hides the Add button but a stale tab / forged request
+      // would still reach this handler. Self-removes (DELETE) are
+      // intentionally NOT blocked: an already-assigned volunteer
+      // can still drop themselves and trigger the cancellation .ics.
+      const [dbShiftCanceledCheck] = await pool.query<RowDataPacket[]>(
+        `SELECT st.canceled
+         FROM op_shift_time_position stp
+         JOIN op_shift_times st ON st.shift_times_id = stp.shift_times_id
+         WHERE stp.time_position_id = ?
+         LIMIT 1`,
+        [timePositionId]
+      );
+      if (dbShiftCanceledCheck[0]?.canceled) {
+        return res.status(409).json({
+          statusCode: 409,
+          message: "Shift is canceled; cannot add volunteers.",
+        });
+      }
+
       const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT *
         FROM op_volunteer_shifts

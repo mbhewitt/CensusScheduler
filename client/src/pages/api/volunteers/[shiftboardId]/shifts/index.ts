@@ -26,6 +26,7 @@ const volunteerShifts = async (
           d.datename,
           pt.position,
           sc.department,
+          st.canceled,
           st.end_time,
           st.end_time_text,
           st.start_time,
@@ -55,6 +56,7 @@ const volunteerShifts = async (
       );
       const resVolunteerShiftList = dbVolunteerShiftList.map(
         ({
+          canceled,
           date,
           datename,
           department,
@@ -74,6 +76,7 @@ const volunteerShifts = async (
               name: department ?? "",
             },
             shift: {
+              canceled: Boolean(canceled),
               date: date,
               dateName: datename ?? "",
               endTime: end_time ?? end_time_text,

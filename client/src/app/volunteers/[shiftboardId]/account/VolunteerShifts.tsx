@@ -6,6 +6,7 @@ import {
   MoreHoriz as MoreHorizIcon,
 } from "@mui/icons-material";
 import {
+  Box,
   Button,
   Chip,
   IconButton,
@@ -363,6 +364,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
     ({
       department: { name: departmentName },
       shift: {
+        canceled,
         date,
         dateName,
         endTime,
@@ -448,15 +450,38 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
         />
       );
 
-      return [
-        formatDateName(date, dateName),
-        formatTime(startTime, endTime),
-        positionName,
+      const positionCell = canceled ? (
+        <Box
+          key={`${timePositionId}-position`}
+          sx={{ alignItems: "center", display: "flex", gap: 1 }}
+        >
+          <Chip
+            label={positionName}
+            sx={{
+              backgroundColor: colorMapDisplay[departmentName],
+              textDecoration: "line-through",
+            }}
+          />
+          <Typography
+            component="span"
+            sx={{ color: "error.main", fontWeight: 700 }}
+          >
+            CANCELED
+          </Typography>
+        </Box>
+      ) : (
         <Chip
           key={`${timePositionId}-chip`}
           label={positionName}
           sx={{ backgroundColor: colorMapDisplay[departmentName] }}
-        />,
+        />
+      );
+
+      return [
+        formatDateName(date, dateName),
+        formatTime(startTime, endTime),
+        positionName,
+        positionCell,
         <Switch
           checked={noShow === ""}
           disabled={!isCheckInAvailable}
