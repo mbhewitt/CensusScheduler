@@ -7,16 +7,30 @@ import { enqueueEmail } from "lib/mail";
 // email them with the details + an .ics so the event lands in their
 // calendar. UID is deterministic so re-assigns update rather than
 // duplicate. Best-effort: a failure here doesn't fail the POST.
+//
+// Body shape approved by Mew 2026-05-31 — see the per-shift sample
+// rendered in the chat: shift_name + position headline, day/time,
+// Census Shift Points, critical callout when applicable, then the
+// rich-text sections (shift_details, position_details, shift notes,
+// meal) — each section is dropped if its column is empty.
+//
+// Actor attribution: if the action was performed by someone other
+// than the volunteer themselves, the opener calls that out so the
+// volunteer knows who scheduled / unscheduled them.
 
 const APP_BASE_URL =
   process.env.APP_BASE_URL ?? "https://volunteers.census.burningman.org";
 const CALENDAR_TZID = "America/Los_Angeles";
 
-interface AssignmentContext extends RowDataPacket {
+interface ShiftContext extends RowDataPacket {
   position: string;
+  position_details: string | null;
   critical: number;
   shift_name: string;
-  department: string | null;
+  shift_details: string | null;
+  shift_notes: string | null;
+  meal: string | null;
+  sap_points: number | null;
   datename: string | null;
   date: string;
   start_time: string | null;
@@ -28,6 +42,43 @@ interface AssignmentContext extends RowDataPacket {
   world_name: string | null;
 }
 
+const SHIFT_CONTEXT_QUERY = `
+  SELECT
+    pt.position,
+    pt.position_details,
+    pt.critical,
+    sn.shift_name,
+    sn.shift_details,
+    st.notes AS shift_notes,
+    st.meal,
+    stp.sap_points,
+    d.datename,
+    d.date,
+    st.start_time,
+    st.start_time_text,
+    st.end_time,
+    st.end_time_text,
+    v.email,
+    v.playa_name,
+    v.world_name
+  FROM op_volunteer_shifts vs
+  JOIN op_shift_time_position stp
+    ON stp.time_position_id = vs.time_position_id
+  JOIN op_position_type pt
+    ON pt.position_type_id = stp.position_type_id
+  JOIN op_shift_times st
+    ON st.shift_times_id = stp.shift_times_id
+  JOIN op_shift_name sn
+    ON sn.shift_name_id = st.shift_name_id
+  LEFT JOIN op_dates d
+    ON d.date_id = st.start_date_id
+  LEFT JOIN op_volunteers v
+    ON v.shiftboard_id = vs.shiftboard_id
+  WHERE vs.shiftboard_id = ?
+    AND vs.time_position_id = ?
+  LIMIT 1
+`;
+
 // HHMMSS string from "HH:MM:SS" or "HH:MM"; null if not parseable.
 // We intentionally don't import a TZ lib — the values stored in the DB
 // are already wall-clock America/Los_Angeles per the dump convention.
@@ -38,7 +89,6 @@ function timeToIcs(t: string | null): string | null {
   return `${m[1]}${m[2]}${m[3] ?? "00"}`;
 }
 
-// YYYY-MM-DD → YYYYMMDD
 function dateToIcs(d: string | null): string | null {
   if (!d) return null;
   return d.replace(/-/g, "");
@@ -53,9 +103,6 @@ function nowUtcStamp(): string {
   );
 }
 
-// Long-line fold per RFC 5545 (lines must be ≤75 octets; continuation
-// lines begin with a single space). Conservatively folds on character
-// boundaries — adequate for the ASCII-ish content we emit.
 function foldIcsLine(line: string): string {
   if (line.length <= 75) return line;
   const parts: string[] = [];
@@ -74,17 +121,7 @@ function buildIcs(args: {
   date: string;
   startTime: string;
   endTime: string;
-  // PUBLISH = "I'm publishing an event I think you want on your
-  // calendar; no RSVP expected." That matches our case better than
-  // REQUEST (which implies organizer/attendee with Accept/Decline
-  // exchange — we have neither, and our From domain is send-only).
-  // CANCEL is used by the removal path to drop the original.
   method: "PUBLISH" | "CANCEL";
-  // Calendar clients match CANCEL to a prior PUBLISH by UID and
-  // require a SEQUENCE strictly greater than the original to apply
-  // the update. We don't track per-event sequence, so for PUBLISH
-  // we use 0 and for CANCEL we use 1 — fine in practice because
-  // we don't re-issue PUBLISH after a CANCEL.
   sequence?: number;
 }): string {
   const escape = (s: string) =>
@@ -113,9 +150,6 @@ function buildIcs(args: {
   return lines.map(foldIcsLine).join("\r\n");
 }
 
-// Stable UID per (volunteer, time_position). Used by both REQUEST
-// (initial assignment) and CANCEL (removal) so calendar clients
-// match the cancellation to the prior event and update in place.
 function shiftIcsUid(
   shiftboardId: number,
   timePositionId: number | string
@@ -123,46 +157,85 @@ function shiftIcsUid(
   return `census-shift-${timePositionId}-${shiftboardId}@volunteers.census.burningman.org`;
 }
 
+async function lookupActorDisplayName(
+  pool: Pool,
+  actorShiftboardId: number | null
+): Promise<string | null> {
+  if (!actorShiftboardId) return null;
+  const [rows] = await pool.query<RowDataPacket[]>(
+    `SELECT playa_name, world_name FROM op_volunteers WHERE shiftboard_id = ? LIMIT 1`,
+    [actorShiftboardId]
+  );
+  const r = rows[0];
+  if (!r) return null;
+  const name: string | null =
+    (typeof r.playa_name === "string" && r.playa_name.trim()) ||
+    (typeof r.world_name === "string" && r.world_name.trim()) ||
+    null;
+  return name;
+}
+
+function notBlank(s: string | null | undefined): s is string {
+  return typeof s === "string" && s.trim().length > 0;
+}
+
+// Renders the shared "what's the shift" body section used by both
+// assignment and removal emails. Empty source columns are dropped
+// entirely rather than rendering as bare labels.
+function renderShiftBody(
+  ctx: ShiftContext,
+  dayLabel: string,
+  timeLabel: string | null
+): string {
+  const lines: string[] = [];
+  lines.push(`  📌 ${ctx.shift_name}: ${ctx.position}`);
+  lines.push(`  ${dayLabel}${timeLabel ? ` • ${timeLabel}` : ""}`);
+  if (ctx.sap_points != null) {
+    lines.push(`  Census Shift Points: ${ctx.sap_points}`);
+  }
+  if (ctx.critical) {
+    lines.push(
+      `  **This is a critical position** — many other volunteers depend on you being there.`
+    );
+  }
+  if (notBlank(ctx.shift_details)) {
+    lines.push("", "About this shift type:", `  ${ctx.shift_details.trim()}`);
+  }
+  if (notBlank(ctx.position_details)) {
+    lines.push("", "About this position:", `  ${ctx.position_details.trim()}`);
+  }
+  if (notBlank(ctx.shift_notes)) {
+    lines.push("", "Shift notes:", `  ${ctx.shift_notes.trim()}`);
+  }
+  if (notBlank(ctx.meal)) {
+    lines.push("", `Meal: ${ctx.meal.trim()}`);
+  }
+  return lines.join("\n");
+}
+
+function greetingFor(ctx: ShiftContext): string {
+  if (notBlank(ctx.playa_name)) return `Hi ${ctx.playa_name.trim()},`;
+  if (notBlank(ctx.world_name)) return `Hi ${ctx.world_name.trim()},`;
+  return "Hi,";
+}
+
+function timeLabelFor(ctx: ShiftContext): string | null {
+  const start = ctx.start_time_text ?? ctx.start_time ?? "";
+  const end = ctx.end_time_text ?? ctx.end_time ?? "";
+  if (!start && !end) return null;
+  return `${start}${end ? ` – ${end}` : ""}`;
+}
+
 export async function notifyAssignment(
   pool: Pool,
   shiftboardId: number,
-  timePositionId: number | string
+  timePositionId: number | string,
+  actorShiftboardId: number | null = null
 ): Promise<void> {
-  const [rows] = await pool.query<AssignmentContext[]>(
-    `SELECT
-       pt.position,
-       pt.critical,
-       sn.shift_name,
-       sc.department,
-       d.datename,
-       d.date,
-       st.start_time,
-       st.start_time_text,
-       st.end_time,
-       st.end_time_text,
-       v.email,
-       v.playa_name,
-       v.world_name
-     FROM op_volunteer_shifts vs
-     JOIN op_shift_time_position stp
-       ON stp.time_position_id = vs.time_position_id
-     JOIN op_position_type pt
-       ON pt.position_type_id = stp.position_type_id
-     JOIN op_shift_times st
-       ON st.shift_times_id = stp.shift_times_id
-     JOIN op_shift_name sn
-       ON sn.shift_name_id = st.shift_name_id
-     LEFT JOIN op_shift_category sc
-       ON sc.shift_category_id = sn.shift_category_id
-     LEFT JOIN op_dates d
-       ON d.date_id = st.start_date_id
-     LEFT JOIN op_volunteers v
-       ON v.shiftboard_id = vs.shiftboard_id
-     WHERE vs.shiftboard_id = ?
-       AND vs.time_position_id = ?
-     LIMIT 1`,
-    [shiftboardId, timePositionId]
-  );
+  const [rows] = await pool.query<ShiftContext[]>(SHIFT_CONTEXT_QUERY, [
+    shiftboardId,
+    timePositionId,
+  ]);
   const ctx = rows[0];
   if (!ctx) return;
   if (!ctx.email) {
@@ -173,39 +246,29 @@ export async function notifyAssignment(
   }
 
   const dayLabel = ctx.datename ? `${ctx.datename} ${ctx.date}` : ctx.date;
-  const greeting = ctx.playa_name
-    ? `Hi ${ctx.playa_name},`
-    : ctx.world_name
-      ? `Hi ${ctx.world_name},`
-      : "Hi,";
-  const startStr = ctx.start_time_text ?? ctx.start_time ?? "";
-  const endStr = ctx.end_time_text ?? ctx.end_time ?? "";
-  const timeLine =
-    startStr || endStr
-      ? `Time: ${startStr}${endStr ? ` – ${endStr}` : ""}`
-      : null;
-  const criticalCallout = ctx.critical
-    ? "**This is a critical position** — many other volunteers depend on you being there. If you can't make it, please update your shifts in the app and let a volunteer coordinator know."
-    : null;
+  const timeLabel = timeLabelFor(ctx);
+  const isSelfAction =
+    actorShiftboardId == null || actorShiftboardId === shiftboardId;
+  const actorName = isSelfAction
+    ? null
+    : await lookupActorDisplayName(pool, actorShiftboardId);
+
+  const opener = isSelfAction
+    ? "You're assigned to the following Census shift:"
+    : `You were assigned to the following Census shift by ${actorName ?? "an administrator"}:`;
 
   const bodyText = [
-    greeting,
+    greetingFor(ctx),
     "",
-    "You've been assigned to the following Census shift:",
+    opener,
     "",
-    `  Position: ${ctx.position}`,
-    `  Day: ${dayLabel}`,
-    ...(timeLine ? [`  ${timeLine}`] : []),
-    `  Category: ${ctx.department ?? ctx.shift_name}`,
-    ...(criticalCallout ? ["", criticalCallout] : []),
+    renderShiftBody(ctx, dayLabel, timeLabel),
     "",
     "A calendar invite is attached.",
     "",
-    `View or change your shifts: ${APP_BASE_URL}/volunteers/${shiftboardId}/info`,
+    `Manage your shifts: ${APP_BASE_URL}/volunteers/${shiftboardId}/info`,
   ].join("\n");
 
-  // .ics is best-effort — skip the attachment if we can't get clean
-  // times. Calendar-event-less email still has the textual details.
   const icsDate = dateToIcs(ctx.date);
   const icsStart = timeToIcs(ctx.start_time);
   const icsEnd = timeToIcs(ctx.end_time);
@@ -236,51 +299,30 @@ export async function notifyAssignment(
   });
 }
 
+// Three distinct removal contexts (see Mew 2026-05-31):
+//   - self            — the volunteer themselves dropped the shift
+//   - by-other        — an admin / coordinator removed them
+//   - shift-canceled  — the whole shift was canceled (Update Time
+//                       dialog flips canceled=1); the volunteer didn't
+//                       lose just their slot, the slot stopped existing
+export type RemovalCause =
+  | { kind: "self" }
+  | { kind: "by-other"; actorShiftboardId: number | null }
+  | { kind: "shift-canceled" };
+
 // Sends a removal email + a CANCEL .ics with the same UID as the
 // original assignment, so the volunteer's calendar matches the
-// cancellation to the prior event and drops it cleanly. Called from
-// shiftVolunteerRemove — pair with #313 (which notifies the VC list
-// when the position is critical).
+// cancellation to the prior event and drops it cleanly.
 export async function notifyRemoval(
   pool: Pool,
   shiftboardId: number,
-  timePositionId: number | string
+  timePositionId: number | string,
+  cause: RemovalCause
 ): Promise<void> {
-  const [rows] = await pool.query<AssignmentContext[]>(
-    `SELECT
-       pt.position,
-       pt.critical,
-       sn.shift_name,
-       sc.department,
-       d.datename,
-       d.date,
-       st.start_time,
-       st.start_time_text,
-       st.end_time,
-       st.end_time_text,
-       v.email,
-       v.playa_name,
-       v.world_name
-     FROM op_volunteer_shifts vs
-     JOIN op_shift_time_position stp
-       ON stp.time_position_id = vs.time_position_id
-     JOIN op_position_type pt
-       ON pt.position_type_id = stp.position_type_id
-     JOIN op_shift_times st
-       ON st.shift_times_id = stp.shift_times_id
-     JOIN op_shift_name sn
-       ON sn.shift_name_id = st.shift_name_id
-     LEFT JOIN op_shift_category sc
-       ON sc.shift_category_id = sn.shift_category_id
-     LEFT JOIN op_dates d
-       ON d.date_id = st.start_date_id
-     LEFT JOIN op_volunteers v
-       ON v.shiftboard_id = vs.shiftboard_id
-     WHERE vs.shiftboard_id = ?
-       AND vs.time_position_id = ?
-     LIMIT 1`,
-    [shiftboardId, timePositionId]
-  );
+  const [rows] = await pool.query<ShiftContext[]>(SHIFT_CONTEXT_QUERY, [
+    shiftboardId,
+    timePositionId,
+  ]);
   const ctx = rows[0];
   if (!ctx) return;
   if (!ctx.email) {
@@ -291,31 +333,47 @@ export async function notifyRemoval(
   }
 
   const dayLabel = ctx.datename ? `${ctx.datename} ${ctx.date}` : ctx.date;
-  const greeting = ctx.playa_name
-    ? `Hi ${ctx.playa_name},`
-    : ctx.world_name
-      ? `Hi ${ctx.world_name},`
-      : "Hi,";
-  const startStr = ctx.start_time_text ?? ctx.start_time ?? "";
-  const endStr = ctx.end_time_text ?? ctx.end_time ?? "";
-  const timeLine =
-    startStr || endStr
-      ? `Time: ${startStr}${endStr ? ` – ${endStr}` : ""}`
-      : null;
+  const timeLabel = timeLabelFor(ctx);
+
+  let opener: string;
+  let subject: string;
+  let calendarLine: string;
+  if (cause.kind === "self") {
+    opener = "You've removed yourself from the following Census shift:";
+    subject = `Census: you dropped ${ctx.position} on ${dayLabel}`;
+    calendarLine =
+      "A calendar cancellation is attached — your calendar should drop the event automatically.";
+  } else if (cause.kind === "shift-canceled") {
+    opener = "The following Census shift has been canceled:";
+    subject = `Census: ${ctx.shift_name} on ${dayLabel} canceled`;
+    calendarLine =
+      "A calendar cancellation is attached — your calendar should drop the event automatically.";
+  } else {
+    const actorName = await lookupActorDisplayName(
+      pool,
+      cause.actorShiftboardId
+    );
+    opener = `You were removed from the following Census shift by ${actorName ?? "an administrator"}:`;
+    subject = `Census: removed from ${ctx.position} on ${dayLabel}`;
+    calendarLine =
+      "A calendar cancellation is attached — your calendar should drop the event automatically.";
+  }
+
+  const closingLine =
+    cause.kind === "shift-canceled"
+      ? `Manage your shifts: ${APP_BASE_URL}/volunteers/${shiftboardId}/info`
+      : `If this was a mistake, you can re-add yourself: ${APP_BASE_URL}/volunteers/${shiftboardId}/info`;
 
   const bodyText = [
-    greeting,
+    greetingFor(ctx),
     "",
-    "You've been removed from the following Census shift:",
+    opener,
     "",
-    `  Position: ${ctx.position}`,
-    `  Day: ${dayLabel}`,
-    ...(timeLine ? [`  ${timeLine}`] : []),
-    `  Category: ${ctx.department ?? ctx.shift_name}`,
+    renderShiftBody(ctx, dayLabel, timeLabel),
     "",
-    "A calendar cancellation is attached — your calendar should drop the event automatically.",
+    calendarLine,
     "",
-    `If this was a mistake, you can re-add yourself: ${APP_BASE_URL}/volunteers/${shiftboardId}/info`,
+    closingLine,
   ].join("\n");
 
   const icsDate = dateToIcs(ctx.date);
@@ -336,7 +394,7 @@ export async function notifyRemoval(
 
   await enqueueEmail({
     to: ctx.email,
-    subject: `Census: removed from ${ctx.position} on ${dayLabel}`,
+    subject,
     bodyText,
     ics: icsContent
       ? {
@@ -344,6 +402,7 @@ export async function notifyRemoval(
           content: Buffer.from(icsContent, "utf8"),
         }
       : undefined,
-    category: "removal",
+    category:
+      cause.kind === "shift-canceled" ? "shift-canceled" : "removal",
   });
 }
