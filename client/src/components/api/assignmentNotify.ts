@@ -79,12 +79,19 @@ const SHIFT_CONTEXT_QUERY = `
   LIMIT 1
 `;
 
-// HHMMSS string from "HH:MM:SS" or "HH:MM"; null if not parseable.
-// We intentionally don't import a TZ lib — the values stored in the DB
-// are already wall-clock America/Los_Angeles per the dump convention.
+// HHMMSS string extracted from `op_shift_times.start_time` / `end_time`.
+// Those columns are varchar(32) and in practice hold either a bare
+// `HH:MM` (`start_time_text`-shaped) or a full datetime like
+// `2026-08-28 11:00`. The unanchored regex grabs the first HH:MM[:SS]
+// it finds, which is the time component in either form. Returns null
+// only when there's no time substring at all.
+//
+// We intentionally don't import a TZ lib — the values stored in the
+// DB are already wall-clock America/Los_Angeles per the dump
+// convention, and we emit them with TZID=America/Los_Angeles.
 function timeToIcs(t: string | null): string | null {
   if (!t) return null;
-  const m = t.match(/^(\d{2}):(\d{2})(?::(\d{2}))?$/);
+  const m = t.match(/(\d{2}):(\d{2})(?::(\d{2}))?/);
   if (!m) return null;
   return `${m[1]}${m[2]}${m[3] ?? "00"}`;
 }
