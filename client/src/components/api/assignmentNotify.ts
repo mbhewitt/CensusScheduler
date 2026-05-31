@@ -413,3 +413,79 @@ export async function notifyRemoval(
       cause.kind === "shift-canceled" ? "shift-canceled" : "removal",
   });
 }
+
+// Fires when a whole shift's `canceled` flag flips 1→0 (the user
+// unchecked the Cancel checkbox in the Update Time dialog and saved).
+// Sends every still-assigned volunteer a "your shift is back on"
+// email + a PUBLISH .ics with SEQUENCE bumped above the prior
+// CANCEL's SEQUENCE so calendar clients re-add the event in place.
+// Per Mew 2026-05-31.
+//
+// SEQUENCE note: buildIcs defaults are PUBLISH=0 / CANCEL=1. We
+// pass `sequence: 2` here so the restoration overrides the most
+// recent CANCEL. Repeated cancel→restore cycles would need
+// further bumps; out of scope until/unless that becomes a real
+// workflow (in practice an un-cancel is the end of the story).
+export async function notifyRestoration(
+  pool: Pool,
+  shiftboardId: number,
+  timePositionId: number | string
+): Promise<void> {
+  const [rows] = await pool.query<ShiftContext[]>(SHIFT_CONTEXT_QUERY, [
+    shiftboardId,
+    timePositionId,
+  ]);
+  const ctx = rows[0];
+  if (!ctx) return;
+  if (!ctx.email) {
+    console.warn(
+      `[restore-notify] skip: shiftboard_id=${shiftboardId} time_position_id=${timePositionId} — no email on file`
+    );
+    return;
+  }
+
+  const dayLabel = ctx.datename ? `${ctx.datename} ${ctx.date}` : ctx.date;
+  const timeLabel = timeLabelFor(ctx);
+
+  const bodyText = [
+    greetingFor(ctx),
+    "",
+    "Good news — a Census shift you were on has been un-canceled. Your assignment is back on:",
+    "",
+    renderShiftBody(ctx, dayLabel, timeLabel),
+    "",
+    "A calendar invite is attached — your calendar should pick the event back up automatically.",
+    "",
+    `Manage your shifts: ${APP_BASE_URL}/`,
+  ].join("\n");
+
+  const icsDate = dateToIcs(ctx.date);
+  const icsStart = timeToIcs(ctx.start_time);
+  const icsEnd = timeToIcs(ctx.end_time);
+  const icsContent =
+    icsDate && icsStart && icsEnd
+      ? buildIcs({
+          uid: shiftIcsUid(shiftboardId, timePositionId),
+          summary: `Census: ${ctx.position}`,
+          description: bodyText,
+          date: icsDate,
+          startTime: icsStart,
+          endTime: icsEnd,
+          method: "PUBLISH",
+          sequence: 2,
+        })
+      : null;
+
+  await enqueueEmail({
+    to: ctx.email,
+    subject: `Census: ${ctx.shift_name} on ${dayLabel} is back on`,
+    bodyText,
+    ics: icsContent
+      ? {
+          filename: `census-${ctx.position.replace(/\s+/g, "-").toLowerCase()}-restored.ics`,
+          content: Buffer.from(icsContent, "utf8"),
+        }
+      : undefined,
+    category: "shift-restored",
+  });
+}

@@ -10,7 +10,10 @@ import {
 } from "@/components/types/shifts/types";
 import { generateId } from "@/utils/generateId";
 import { pool } from "lib/database";
-import { notifyRemoval } from "@/components/api/assignmentNotify";
+import {
+  notifyRemoval,
+  notifyRestoration,
+} from "@/components/api/assignmentNotify";
 import { handleTimeListAdd } from "@/pages/api/shifts/types";
 
 const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -314,13 +317,15 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         )
       );
 
-      // For each shift_times_id that just flipped 0→1, fetch every
-      // currently-assigned volunteer position and enqueue a
-      // shift-canceled email per (volunteer, time_position). Best-effort:
-      // an enqueue failure is logged and the route still 201s.
+      // For each shift_times_id that flipped 0→1 (newly canceled) or
+      // 1→0 (un-canceled), fan out the appropriate email per still-
+      // assigned volunteer. Best-effort: enqueue failures log and the
+      // route still 201s.
       for (const t of timeListUpdate) {
-        if (!t.canceled) continue;
-        if (wasCanceledMap.get(t.timeId)) continue;
+        const wasCanceled = wasCanceledMap.get(t.timeId) ?? false;
+        const isCanceled = Boolean(t.canceled);
+        if (wasCanceled === isCanceled) continue;
+        const tag = isCanceled ? "shift-canceled" : "shift-restored";
         try {
           const [rows] = await pool.query<RowDataPacket[]>(
             `SELECT DISTINCT vs.shiftboard_id, vs.time_position_id
@@ -333,22 +338,30 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           );
           for (const v of rows) {
             try {
-              await notifyRemoval(
-                pool,
-                v.shiftboard_id,
-                v.time_position_id,
-                { kind: "shift-canceled" }
-              );
+              if (isCanceled) {
+                await notifyRemoval(
+                  pool,
+                  v.shiftboard_id,
+                  v.time_position_id,
+                  { kind: "shift-canceled" }
+                );
+              } else {
+                await notifyRestoration(
+                  pool,
+                  v.shiftboard_id,
+                  v.time_position_id
+                );
+              }
             } catch (err) {
               console.error(
-                `[shift-canceled-notify] enqueue failed for shiftboard_id=${v.shiftboard_id} time_position_id=${v.time_position_id}:`,
+                `[${tag}-notify] enqueue failed for shiftboard_id=${v.shiftboard_id} time_position_id=${v.time_position_id}:`,
                 err
               );
             }
           }
         } catch (err) {
           console.error(
-            `[shift-canceled-notify] fan-out failed for shift_times_id=${t.timeId}:`,
+            `[${tag}-notify] fan-out failed for shift_times_id=${t.timeId}:`,
             err
           );
         }
