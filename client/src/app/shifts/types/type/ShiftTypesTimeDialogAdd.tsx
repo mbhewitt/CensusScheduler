@@ -135,6 +135,7 @@ export const ShiftTypesTimeDialogAdd = ({
               );
 
               handleTimeAdd({
+                canceled: false,
                 date: getValues("timeAdd.date"),
                 endTime: getValues("timeAdd.endTime"),
                 instance: getValues("timeAdd.instance"),

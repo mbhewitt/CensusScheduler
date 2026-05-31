@@ -13,6 +13,7 @@ export interface IPositionAddValues {
   startTimeOffset: string;
 }
 export interface ITimeAddValues {
+  canceled: boolean;
   date: string;
   endTime: string;
   instance: string;
