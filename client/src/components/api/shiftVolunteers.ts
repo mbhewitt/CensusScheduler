@@ -5,7 +5,10 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import type { IReqReviewValues, IReqSwitchValues } from "@/components/types";
 import { UPDATE_TYPE_CHECK_IN, UPDATE_TYPE_REVIEW } from "@/constants";
 import { enqueueEmail } from "lib/mail";
-import { notifyRemoval } from "@/components/api/assignmentNotify";
+import {
+  notifyRemoval,
+  type RemovalCause,
+} from "@/components/api/assignmentNotify";
 
 // #313 — when a volunteer (self) or admin removes someone from a
 // position with `critical=1`, notify the VC list so they can move on
@@ -148,7 +151,8 @@ export const shiftVolunteerUpdate = async (
 export const shiftVolunteerRemove = async (
   pool: Pool,
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
+  session: { shiftboardId: number }
 ) => {
   const { shiftboardId, timePositionId } = JSON.parse(req.body);
 
@@ -171,6 +175,11 @@ export const shiftVolunteerRemove = async (
   //     is marked critical) so coordinators can move on refilling (#313)
   //   - notifyRemoval: to the removed volunteer with a CANCEL .ics
   //     that drops the event from their calendar (per Mew 2026-05-29)
+  //
+  // RemovalCause distinguishes self-drop from admin-remove so the
+  // body copy reflects who initiated. The shift-canceled variant is
+  // not reachable from this handler — it fires only when the whole
+  // shift's `canceled` flag flips, which is its own endpoint.
   try {
     await notifyCriticalDrop(pool, shiftboardId, timePositionId);
   } catch (err) {
@@ -180,7 +189,11 @@ export const shiftVolunteerRemove = async (
     );
   }
   try {
-    await notifyRemoval(pool, shiftboardId, timePositionId);
+    const cause: RemovalCause =
+      session.shiftboardId === shiftboardId
+        ? { kind: "self" }
+        : { kind: "by-other", actorShiftboardId: session.shiftboardId };
+    await notifyRemoval(pool, shiftboardId, timePositionId, cause);
   } catch (err) {
     console.error(
       `[removal-notify] notifyRemoval failed for shiftboard_id=${shiftboardId} time_position_id=${timePositionId}:`,

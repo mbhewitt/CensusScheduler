@@ -15,7 +15,11 @@ import {
   shiftVolunteerUpdate,
 } from "@/components/api/shiftVolunteers";
 
-const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
+const shiftVolunteers = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  session: { shiftboardId: number }
+) => {
   switch (req.method) {
     // get
     // ------------------------------------------------------------
@@ -213,7 +217,12 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       // and an .ics calendar attachment. Best-effort — a notify
       // failure doesn't fail the assignment itself.
       try {
-        await notifyAssignment(pool, shiftboardId, timePositionId);
+        await notifyAssignment(
+          pool,
+          shiftboardId,
+          timePositionId,
+          session.shiftboardId
+        );
       } catch (err) {
         console.error(
           `[assign-notify] notifyAssignment failed for shiftboard_id=${shiftboardId} time_position_id=${timePositionId}:`,
@@ -238,7 +247,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     // ------------------------------------------------------------
     case "DELETE": {
       // remove volunteer from shift
-      return shiftVolunteerRemove(pool, req, res);
+      return shiftVolunteerRemove(pool, req, res, session);
     }
 
     // default

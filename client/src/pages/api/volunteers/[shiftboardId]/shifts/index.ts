@@ -9,7 +9,11 @@ import {
   shiftVolunteerUpdate,
 } from "@/components/api/shiftVolunteers";
 
-const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
+const volunteerShifts = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  session: { shiftboardId: number }
+) => {
   switch (req.method) {
     // get
     // ------------------------------------------------------------
@@ -103,7 +107,7 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
     // ------------------------------------------------------------
     case "DELETE": {
       // remove volunteer from shift
-      return shiftVolunteerRemove(pool, req, res);
+      return shiftVolunteerRemove(pool, req, res, session);
     }
 
     // default
