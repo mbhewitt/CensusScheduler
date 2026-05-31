@@ -273,7 +273,7 @@ export async function notifyAssignment(
     "",
     "A calendar invite is attached.",
     "",
-    `Manage your shifts: ${APP_BASE_URL}/volunteers/${shiftboardId}/info`,
+    `Manage your shifts: ${APP_BASE_URL}/`,
   ].join("\n");
 
   const icsDate = dateToIcs(ctx.date);
@@ -368,8 +368,8 @@ export async function notifyRemoval(
 
   const closingLine =
     cause.kind === "shift-canceled"
-      ? `Manage your shifts: ${APP_BASE_URL}/volunteers/${shiftboardId}/info`
-      : `If this was a mistake, you can re-add yourself: ${APP_BASE_URL}/volunteers/${shiftboardId}/info`;
+      ? `Manage your shifts: ${APP_BASE_URL}/`
+      : `If this was a mistake, you can re-add yourself: ${APP_BASE_URL}/`;
 
   const bodyText = [
     greetingFor(ctx),
