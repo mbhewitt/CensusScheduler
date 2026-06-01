@@ -91,6 +91,7 @@ export const COLOR_CENSUS_PINK = "#ea008b";
 export const ROLE_ADMIN_ID = 2;
 export const ROLE_BEHAVIORAL_STANDARDS_ID = 1000012;
 export const ROLE_CORE_CREW_ID = 13184;
+export const ROLE_EMAIL_UNSUBSCRIBED_ID = 2000020;
 export const ROLE_SUPER_ADMIN_ID = 1;
 
 // sockets

@@ -9,6 +9,12 @@ export interface EnqueueArgs {
   bodyHtml?: string;
   ics?: { filename: string; content: Buffer };
   category: string;
+  // When set, enqueueEmail checks op_volunteer_roles for the
+  // EmailUnsubscribed role and skips the send if found. Also enables the
+  // unsubscribe footer so the recipient can opt back in. Omit for system
+  // mail (e.g. critical-drop notifications to the VC list, contact-form
+  // sends) where opt-out doesn't apply.
+  recipientShiftboardId?: number;
 }
 
 export interface EmailRow {
