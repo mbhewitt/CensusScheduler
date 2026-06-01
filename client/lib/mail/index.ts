@@ -1,6 +1,9 @@
 import { pool } from "../database";
 
-import { enqueueEmail as enqueueEmailRaw } from "./queue";
+import {
+  enqueueEmail as enqueueEmailRaw,
+  supersedeQueuedByDedupeKey as supersedeQueuedByDedupeKeyRaw,
+} from "./queue";
 import { createMysqlStore } from "./store";
 import { selectTransport } from "./transport";
 import type { EnqueueArgs, MailConfig } from "./types";
@@ -43,6 +46,17 @@ export async function enqueueEmail(
   args: EnqueueArgs
 ): Promise<{ id: number; skipped?: boolean }> {
   return enqueueEmailRaw(pool, config(), args);
+}
+
+// Mark queued rows with this (dedupe_key, to) as superseded without
+// sending. Returns affected row count. Callers use this to collapse
+// add+remove pairs that resolved before the add actually shipped —
+// see queue.ts for the contract and #391 for the design.
+export async function supersedeQueuedByDedupeKey(
+  dedupeKey: string,
+  to: string
+): Promise<number> {
+  return supersedeQueuedByDedupeKeyRaw(pool, dedupeKey, to);
 }
 
 // Idempotent: instrumentation.ts calls this on cold start. Safe to call

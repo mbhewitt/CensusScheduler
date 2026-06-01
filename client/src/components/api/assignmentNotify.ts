@@ -1,7 +1,15 @@
 import type { Pool } from "mysql2/promise";
 import type { RowDataPacket } from "mysql2";
 
-import { enqueueEmail } from "lib/mail";
+import { enqueueEmail, supersedeQueuedByDedupeKey } from "lib/mail";
+
+// Pair-key shared by the assignment + removal enqueues for one
+// volunteer × position assignment. When a removal arrives, the queue
+// uses this to find any still-queued assignment for the same key and
+// collapse the pair (mark them sent without actually sending) — see
+// #391.
+const assignmentDedupeKey = (shiftboardId: number, timePositionId: number) =>
+  `assign:${shiftboardId}:${timePositionId}`;
 
 // #309 — when a volunteer is assigned to a shift (admin or self),
 // email them with the details + an .ics so the event lands in their
@@ -311,6 +319,7 @@ export async function notifyAssignment(
         }
       : undefined,
     category: "assignment",
+    dedupeKey: assignmentDedupeKey(shiftboardId, timePositionId),
   });
 }
 
@@ -407,6 +416,20 @@ export async function notifyRemoval(
         })
       : null;
 
+  // Collapse with the paired assignment if it's still queued (#391).
+  // When the assignment never actually shipped, neither the calendar
+  // nor any inbox knows about it — so the removal email is noise.
+  // If the assignment already drained, supersedeQueuedByDedupeKey
+  // returns 0 and we fall through to enqueue the removal normally.
+  const dedupeKey = assignmentDedupeKey(shiftboardId, Number(timePositionId));
+  const superseded = await supersedeQueuedByDedupeKey(dedupeKey, ctx.email);
+  if (superseded > 0) {
+    console.warn(
+      `[assign-notify] collapsed pair: shiftboard_id=${shiftboardId} time_position_id=${timePositionId} (${superseded} row(s) superseded)`
+    );
+    return;
+  }
+
   await enqueueEmail({
     to: ctx.email,
     recipientShiftboardId: shiftboardId,
@@ -420,6 +443,7 @@ export async function notifyRemoval(
       : undefined,
     category:
       cause.kind === "shift-canceled" ? "shift-canceled" : "removal",
+    dedupeKey,
   });
 }
 
