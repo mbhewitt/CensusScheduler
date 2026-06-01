@@ -289,11 +289,11 @@ export const BehavioralStandards = ({
                 Burning Man email addresses to enable communication in the
                 off-season. The Census Management group alias
                 census@burningman.org can always be used to bring issues to the
-                attention of BRC Census leadership. (As of Jan 2024, the members
-                of this group alias are Sonder-Census Manager, Captain
-                Mew-Scheduling Coordinator, and JOBI-Communications
-                Coordination. They are also reachable at sonder@burningman.org,
-                mu@burningman.org, and jobi@burningman.org) If direct
+                attention of BRC Census leadership. (As of Jun 2026, the members
+                of this group alias are Random-Census Manager, Rescue-Asst.
+                Manager, Captain Mew-Scheduling Coordinator. They are also
+                reachable at random@burningman.org, ann.norton@burningman.org,
+                and mu@burningman.org) If direct
                 communication with another member of BRC Census leadership is
                 preferred, the group alias can be used to request contact
                 information.
