@@ -31,6 +31,12 @@ const ALLOWLIST = [
   "/api/auth/okta",
   "/api/auth/okta/callback",
   "/api/auth/sign-out",
+  // /api/auth/session is the cookie-validity probe used by
+  // useSessionValidation to keep client SessionContext in sync with
+  // the actual cookie. Must reach the handler (which returns 401 on
+  // missing/bad cookie) — middleware can't 401 first or the client
+  // can't distinguish stale state from genuinely-no-cookie.
+  "/api/auth/session",
   "/auth/complete",
 
   // Public information pages (per Mew, 2026-05-06)
