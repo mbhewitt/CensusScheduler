@@ -186,6 +186,10 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     `/api/volunteers/${shiftboardId}/info/profile-updated`,
     fetcherTrigger
   );
+  const { trigger: triggerEmailPreference } = useSWRMutation(
+    `/api/volunteers/${shiftboardId}/info/email-preference`,
+    fetcherTrigger
+  );
 
   // account data (for admin sections: roles, notes, security)
   const {
@@ -281,6 +285,34 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
       }
     },
     [triggerOtherSap, mutate, enqueueSnackbar]
+  );
+
+  const handleEmailUnsubscribedToggle = useCallback(
+    async (unsubscribed: boolean) => {
+      try {
+        await triggerEmailPreference({
+          body: { unsubscribed },
+          method: "POST",
+        });
+        mutate();
+        enqueueSnackbar(
+          <SnackbarText>
+            Email preference <strong>updated</strong>
+          </SnackbarText>,
+          { variant: "success" }
+        );
+      } catch (error) {
+        if (error instanceof Error) {
+          enqueueSnackbar(
+            <SnackbarText>
+              <strong>{error.message}</strong>
+            </SnackbarText>,
+            { persist: true, variant: "error" }
+          );
+        }
+      }
+    },
+    [triggerEmailPreference, mutate, enqueueSnackbar]
   );
 
   const handleLocationChange = useCallback(
@@ -416,6 +448,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     behavioralStandardsSigned,
     burnerProfileUpdated,
     dates,
+    emailUnsubscribed,
     roles,
     roleThresholds,
     sapStatus,
@@ -1079,6 +1112,44 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                   </Stack>
                 </Grid>
               </Grid>
+            </CardContent>
+          </Card>
+        </Box>
+
+        {/* settings — available to all users (email-footer #settings anchor) */}
+        <Box component="section" id="settings" sx={{ mt: 3 }}>
+          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
+            Settings
+          </Typography>
+          <Card>
+            <CardContent>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={!emailUnsubscribed}
+                    onChange={(e) =>
+                      handleEmailUnsubscribedToggle(!e.target.checked)
+                    }
+                  />
+                }
+                label={
+                  <Box>
+                    <Typography component="span" variant="body1">
+                      Receive emails from Census
+                    </Typography>
+                    <Typography
+                      color="text.secondary"
+                      component="div"
+                      variant="body2"
+                    >
+                      Uncheck to stop receiving automated emails (shift
+                      assignments, cancellations, calendar invites). You can
+                      re-subscribe here at any time.
+                    </Typography>
+                  </Box>
+                }
+                sx={{ alignItems: "flex-start", m: 0 }}
+              />
             </CardContent>
           </Card>
         </Box>

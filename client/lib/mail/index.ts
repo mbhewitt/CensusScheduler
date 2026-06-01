@@ -39,7 +39,9 @@ function config(): MailConfig {
   return runtimeConfig;
 }
 
-export async function enqueueEmail(args: EnqueueArgs): Promise<{ id: number }> {
+export async function enqueueEmail(
+  args: EnqueueArgs
+): Promise<{ id: number; skipped?: boolean }> {
   return enqueueEmailRaw(pool, config(), args);
 }
 

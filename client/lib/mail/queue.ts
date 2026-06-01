@@ -4,19 +4,73 @@ import type { ResultSetHeader, RowDataPacket } from "mysql2";
 import { nextAttemptDelaySeconds } from "./backoff";
 import type { EmailRow, EnqueueArgs, MailConfig } from "./types";
 
+// Kept local to the mail layer so queue.ts has no dep on src/constants.ts
+// (which is React-side). Must stay in sync with
+// ROLE_EMAIL_UNSUBSCRIBED_ID in client/src/constants.ts and the seed in
+// migrations/003_email_unsubscribed_role.sql.
+const ROLE_EMAIL_UNSUBSCRIBED_ID = 2000020;
+
+const APP_BASE_URL =
+  process.env.APP_BASE_URL ?? "https://volunteers.census.burningman.org";
+
 function joinAddrs(v: string | string[] | undefined): string | null {
   if (v === undefined) return null;
   if (Array.isArray(v)) return v.join(", ");
   return v;
 }
 
+async function isUnsubscribed(
+  pool: Pool,
+  shiftboardId: number
+): Promise<boolean> {
+  const [rows] = await pool.query<RowDataPacket[]>(
+    `SELECT 1
+       FROM op_volunteer_roles
+      WHERE shiftboard_id = ?
+        AND role_id = ?
+        AND add_role = true
+        AND remove_role = false
+      LIMIT 1`,
+    [shiftboardId, ROLE_EMAIL_UNSUBSCRIBED_ID]
+  );
+  return rows.length > 0;
+}
+
+function appendUnsubscribeFooter(
+  bodyText: string,
+  bodyHtml: string | undefined,
+  unsubscribeUrl: string
+): { bodyText: string; bodyHtml: string | undefined } {
+  const text = `${bodyText}\n\n— — —\nDon't want these emails? Click here to unsubscribe:\n${unsubscribeUrl}\n`;
+  const html =
+    bodyHtml === undefined
+      ? undefined
+      : `${bodyHtml}\n<hr>\n<p style="color:#666;font-size:12px;">Don't want these emails? <a href="${unsubscribeUrl}">Click here to unsubscribe</a>.</p>`;
+  return { bodyText: text, bodyHtml: html };
+}
+
 export async function enqueueEmail(
   pool: Pool,
   config: MailConfig,
   args: EnqueueArgs
-): Promise<{ id: number }> {
+): Promise<{ id: number; skipped?: boolean }> {
   const to = joinAddrs(args.to);
   if (!to) throw new Error("enqueueEmail: `to` is required");
+
+  let bodyText = args.bodyText;
+  let bodyHtml = args.bodyHtml;
+
+  if (args.recipientShiftboardId != null) {
+    if (await isUnsubscribed(pool, args.recipientShiftboardId)) {
+      return { id: 0, skipped: true };
+    }
+    const unsubUrl = `${APP_BASE_URL}/unsubscribe`;
+    ({ bodyText, bodyHtml } = appendUnsubscribeFooter(
+      bodyText,
+      bodyHtml,
+      unsubUrl
+    ));
+  }
 
   const [result] = await pool.execute<ResultSetHeader>(
     `INSERT INTO op_email_queue
@@ -29,8 +83,8 @@ export async function enqueueEmail(
       args.replyTo ?? config.defaultReplyTo,
       config.from,
       args.subject,
-      args.bodyText,
-      args.bodyHtml ?? null,
+      bodyText,
+      bodyHtml ?? null,
       args.ics?.content ?? null,
       args.ics?.filename ?? null,
       args.category,

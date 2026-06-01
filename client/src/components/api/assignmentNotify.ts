@@ -301,6 +301,7 @@ export async function notifyAssignment(
 
   await enqueueEmail({
     to: ctx.email,
+    recipientShiftboardId: shiftboardId,
     subject: `Census: assigned to ${ctx.position} on ${dayLabel}`,
     bodyText,
     ics: icsContent
@@ -408,6 +409,7 @@ export async function notifyRemoval(
 
   await enqueueEmail({
     to: ctx.email,
+    recipientShiftboardId: shiftboardId,
     subject,
     bodyText,
     ics: icsContent
@@ -485,6 +487,7 @@ export async function notifyRestoration(
 
   await enqueueEmail({
     to: ctx.email,
+    recipientShiftboardId: shiftboardId,
     subject: `Census: ${ctx.shift_name} on ${dayLabel} is back on`,
     bodyText,
     ics: icsContent
