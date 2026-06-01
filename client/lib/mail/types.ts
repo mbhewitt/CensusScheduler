@@ -15,6 +15,13 @@ export interface EnqueueArgs {
   // mail (e.g. critical-drop notifications to the VC list, contact-form
   // sends) where opt-out doesn't apply.
   recipientShiftboardId?: number;
+  // Optional collapse key — paired enqueues (e.g. assignment + removal
+  // for the same volunteer × shift) can share a key. When the second
+  // enqueue arrives, callers can supersedeQueuedByDedupeKey first to
+  // wipe out the still-queued first email — keeps the inbox quiet for
+  // adds that the volunteer reversed before anything actually sent.
+  // See #391.
+  dedupeKey?: string;
 }
 
 export interface EmailRow {

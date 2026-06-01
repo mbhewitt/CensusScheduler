@@ -75,8 +75,8 @@ export async function enqueueEmail(
   const [result] = await pool.execute<ResultSetHeader>(
     `INSERT INTO op_email_queue
       (\`to\`, cc, reply_to, \`from\`, subject, body_text, body_html,
-       ics_attachment, ics_filename, category)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       ics_attachment, ics_filename, category, dedupe_key)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       to,
       joinAddrs(args.cc),
@@ -88,9 +88,42 @@ export async function enqueueEmail(
       args.ics?.content ?? null,
       args.ics?.filename ?? null,
       args.category,
+      args.dedupeKey ?? null,
     ]
   );
   return { id: result.insertId };
+}
+
+// Mark every still-queued row with this dedupe_key + recipient as
+// "sent" without actually sending. Returns the count of rows
+// superseded. Per Mew (#391): a volunteer adds-then-removes themselves
+// from a shift before the assignment email has actually shipped — both
+// the queued add (and the upcoming remove) are noise. The caller's
+// pattern is:
+//
+//   const superseded = await supersedeQueuedByDedupeKey(pool, key, to);
+//   if (superseded > 0) return;                  // collapsed pair
+//   await enqueueEmail({ ..., dedupeKey: key }); // ship removal
+//
+// Matching on (dedupe_key, `to`) so producers from different recipients
+// can't accidentally collide if they happen to pick the same key
+// scheme.
+export async function supersedeQueuedByDedupeKey(
+  pool: Pool,
+  dedupeKey: string,
+  to: string
+): Promise<number> {
+  const [result] = await pool.execute<ResultSetHeader>(
+    `UPDATE op_email_queue
+        SET state='sent',
+            sent_at=NOW(),
+            last_error='superseded by paired enqueue'
+      WHERE dedupe_key = ?
+        AND \`to\` = ?
+        AND state = 'queued'`,
+    [dedupeKey, to]
+  );
+  return result.affectedRows;
 }
 
 interface QueueRowPacket extends RowDataPacket {
