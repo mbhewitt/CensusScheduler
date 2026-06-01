@@ -21,7 +21,7 @@ export const handleTimeListAdd = async ({
   // insert new shift time rows
   timeList.forEach(
     async ({ endTime, instance, meal, notes, positionList, startTime }) => {
-      const timeIdNew = generateId(
+      const timeIdNew = await generateId(
         `SELECT shift_times_id
         FROM op_shift_times`
       );
@@ -56,7 +56,7 @@ export const handleTimeListAdd = async ({
       );
 
       positionList.forEach(async ({ alias, positionId, sapPoints, slots }) => {
-        const timePositionIdNew = generateId(
+        const timePositionIdNew = await generateId(
           `SELECT time_position_id
           FROM op_shift_time_position`
         );
@@ -125,7 +125,7 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
         },
         timeList,
       }: IReqShiftTypeItem = JSON.parse(req.body);
-      const typeIdNew = generateId(
+      const typeIdNew = await generateId(
         `SELECT shift_name_id
         FROM op_shift_name`
       );
