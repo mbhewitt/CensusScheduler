@@ -303,7 +303,22 @@ const volunteerInfo = async (req: NextApiRequest, res: NextApiResponse) => {
       const behavioralStandardsSigned = roleIdSet.has(
         ROLE_BEHAVIORAL_STANDARDS_ID
       );
-      const emailUnsubscribed = roleIdSet.has(ROLE_EMAIL_UNSUBSCRIBED_ID);
+      // Strict (add_role=true AND remove_role=false) so the checkbox state
+       // matches the queue's send-time filter in client/lib/mail/queue.ts
+      // exactly. The bulk role-list query above is intentionally looser to
+       // keep parity with the rest of this endpoint (other-sap, profile-updated,
+       // behavioral-standards, etc.).
+      const [dbUnsubRow] = await pool.query<RowDataPacket[]>(
+        `SELECT 1
+        FROM op_volunteer_roles
+        WHERE shiftboard_id=?
+          AND role_id=?
+          AND add_role=true
+          AND remove_role=false
+        LIMIT 1`,
+        [shiftboardId, ROLE_EMAIL_UNSUBSCRIBED_ID]
+      );
+      const emailUnsubscribed = dbUnsubRow.length > 0;
 
       // build response
       const resVolunteerInfo: IResVolunteerInfo = {
