@@ -9,7 +9,11 @@ import {
   shiftVolunteerUpdate,
 } from "@/components/api/shiftVolunteers";
 
-const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
+const volunteerShifts = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  session: { shiftboardId: number }
+) => {
   switch (req.method) {
     // get
     // ------------------------------------------------------------
@@ -22,6 +26,7 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
           d.datename,
           pt.position,
           sc.department,
+          st.canceled,
           st.end_time,
           st.end_time_text,
           st.start_time,
@@ -51,6 +56,7 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
       );
       const resVolunteerShiftList = dbVolunteerShiftList.map(
         ({
+          canceled,
           date,
           datename,
           department,
@@ -70,6 +76,7 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
               name: department ?? "",
             },
             shift: {
+              canceled: Boolean(canceled),
               date: date,
               dateName: datename ?? "",
               endTime: end_time ?? end_time_text,
@@ -103,7 +110,7 @@ const volunteerShifts = async (req: NextApiRequest, res: NextApiResponse) => {
     // ------------------------------------------------------------
     case "DELETE": {
       // remove volunteer from shift
-      return shiftVolunteerRemove(pool, req, res);
+      return shiftVolunteerRemove(pool, req, res, session);
     }
 
     // default

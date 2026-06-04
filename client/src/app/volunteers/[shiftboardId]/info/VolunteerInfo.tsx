@@ -44,6 +44,7 @@ import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
 import { PasscodeDialogUpdate } from "@/app/volunteers/[shiftboardId]/account/PasscodeDialogUpdate";
+import { PasscodeReveal } from "@/app/volunteers/[shiftboardId]/account/PasscodeReveal";
 import { VolunteerShifts } from "@/app/volunteers/[shiftboardId]/account/VolunteerShifts";
 import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
 import { ErrorPage } from "@/components/general/ErrorPage";
@@ -138,9 +139,18 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   } = useContext(DeveloperModeContext);
   const {
     sessionState: {
-      user: { roleList: roleListSession },
+      user: {
+        roleList: roleListSession,
+        shiftboardId: shiftboardIdSession,
+      },
     },
   } = useContext(SessionContext);
+
+  // Self-view = the viewer is the same volunteer whose /info page they
+  // opened. Used to gate the passcode-reveal button so admins can't see
+  // other volunteers' passcodes (they can still RESET via the Update
+  // dialog, just can't read existing values). Per Mew 2026-05-25.
+  const isSelfView = shiftboardIdSession === shiftboardId;
 
   // refs
   // ------------------------------------------------------------
@@ -174,6 +184,10 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   );
   const { trigger: triggerProfileUpdated } = useSWRMutation(
     `/api/volunteers/${shiftboardId}/info/profile-updated`,
+    fetcherTrigger
+  );
+  const { trigger: triggerEmailPreference } = useSWRMutation(
+    `/api/volunteers/${shiftboardId}/info/email-preference`,
     fetcherTrigger
   );
 
@@ -273,6 +287,34 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     [triggerOtherSap, mutate, enqueueSnackbar]
   );
 
+  const handleEmailUnsubscribedToggle = useCallback(
+    async (unsubscribed: boolean) => {
+      try {
+        await triggerEmailPreference({
+          body: { unsubscribed },
+          method: "POST",
+        });
+        mutate();
+        enqueueSnackbar(
+          <SnackbarText>
+            Email preference <strong>updated</strong>
+          </SnackbarText>,
+          { variant: "success" }
+        );
+      } catch (error) {
+        if (error instanceof Error) {
+          enqueueSnackbar(
+            <SnackbarText>
+              <strong>{error.message}</strong>
+            </SnackbarText>,
+            { persist: true, variant: "error" }
+          );
+        }
+      }
+    },
+    [triggerEmailPreference, mutate, enqueueSnackbar]
+  );
+
   const handleLocationChange = useCallback(
     async (location: string) => {
       try {
@@ -332,9 +374,17 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   const handleRoleToggle = useCallback(
     async (roleId: number, roleName: string, hasRole: boolean) => {
       try {
+        // NOTE: deliberately NOT setting Content-Type: application/json.
+        // The /api/roles/[id]/volunteers handler does JSON.parse(req.body),
+        // which only works when Next.js leaves req.body as a raw string. If
+        // we set Content-Type: application/json, the pages-router middleware
+        // auto-parses the body into an object and JSON.parse(<object>)
+        // stringifies it via toString() → "[object Object]" → SyntaxError →
+        // 500 → user sees "Failed to add role" snackbar. Every other endpoint
+        // is called through fetcherTrigger, which also omits the header for
+        // the same reason. (See PR #319.)
         const res = await fetch(`/api/roles/${roleId}/volunteers`, {
           method: hasRole ? "DELETE" : "POST",
-          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ shiftboardId }),
         });
         if (!res.ok) {
@@ -398,6 +448,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     behavioralStandardsSigned,
     burnerProfileUpdated,
     dates,
+    emailUnsubscribed,
     roles,
     roleThresholds,
     sapStatus,
@@ -476,7 +527,11 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
         </Typography>
         <Link
           href={`/roles/behavioral-standards/${shiftboardId}`}
-          style={{ color: theme.palette.primary.main, fontWeight: 500 }}
+          style={{
+            color: theme.palette.primary.main,
+            fontWeight: 500,
+            textDecoration: "underline",
+          }}
         >
           Review and sign the Behavioral Standards Agreement
         </Link>
@@ -515,7 +570,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                   fontSize="small"
                 />
               )}
-              {t.completed || !t.url ? (
+              {!t.url ? (
                 <Typography variant="body2">{t.trainingName}</Typography>
               ) : (
                 <Typography
@@ -563,9 +618,11 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
             target="_blank"
           >
             Burner Profile
-          </a>{" "}
-          and make sure your information is current. Update any fields that have
-          changed since last year, then check the box below to confirm.
+          </a>
+          . Once logged in, click <strong>SETTINGS</strong> in the top right,
+          then <strong>My Profile</strong> to edit your information. Update any
+          fields that have changed since last year, then check the box below to
+          confirm.
         </Typography>
         <FormControlLabel
           control={
@@ -644,25 +701,41 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     });
   }
 
+  // Staff are exempt from CSP tracking \u2014 same copy is reused below for
+  // role-threshold (camp / ticket) items so a Staff volunteer never sees a
+  // CSP gauge anywhere in the checklist (per Mew 2026-05-25).
+  const staffNoCspCopy = (
+    <Typography>
+      As PEERS Staff we know you will work your butt off, so we don&rsquo;t
+      track CSP.
+    </Typography>
+  );
+
   // Staff bypass
   if (isStaff) {
     checklistItems.push({
       id: "staff",
       label: "Staff \u2014 Early entry confirmed",
       done: true,
-      content: (
-        <Typography>
-          As PEERS staff, your early entry is handled separately. Work your butt
-          off and have a great burn!
-        </Typography>
-      ),
+      content: staffNoCspCopy,
     });
   }
 
-  // Role-based thresholds (Counter Culture, PEERS Lab, PEERS Ticket)
+  // Role-based thresholds (Counter Culture, PEERS Lab, PEERS Ticket).
+  // Staff short-circuit: emit a "Requirements met" item with the no-CSP
+  // copy, regardless of actual currentCsp/requiredCsp.
   for (const rt of roleThresholds) {
-    const pct = Math.min(100, Math.round((rt.currentCsp / rt.requiredCsp) * 100));
     const displayRole = ROLE_DISPLAY_NAMES[rt.role] ?? rt.role;
+    if (isStaff) {
+      checklistItems.push({
+        id: `role-${rt.role}`,
+        label: `${displayRole} \u2014 Requirements met`,
+        done: true,
+        content: staffNoCspCopy,
+      });
+      continue;
+    }
+    const pct = Math.min(100, Math.round((rt.currentCsp / rt.requiredCsp) * 100));
     checklistItems.push({
       id: `role-${rt.role}`,
       label: rt.fulfilled
@@ -695,8 +768,12 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   const completedItems = checklistItems.filter((item) => item.done);
 
   // show CSP bar when relevant
+  // Staff are CSP-exempt across the whole checklist (per Mew 2026-05-25),
+  // so the global gauge should not appear at all for them — even if they
+  // happen to have a role threshold attached.
   const showCspBar =
-    (isPreOpen && !hasOtherSap && !isStaff) || roleThresholds.length > 0;
+    !isStaff &&
+    ((isPreOpen && !hasOtherSap) || roleThresholds.length > 0);
 
   // render
   // ------------------------------------------------------------
@@ -711,7 +788,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
           backgroundImage: "url(/banners/man-at-night.jpg)",
           backgroundSize: "cover",
         }}
-        text="Volunteer Information"
+        text="Account"
       />
       <Container maxWidth="md">
         {/* breadcrumbs */}
@@ -729,8 +806,8 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
               Welcome, {volunteer.playaName}!
             </Typography>
             <Typography color="text.secondary" sx={{ mb: 2 }}>
-              Review your volunteer information and complete the checklist items
-              below to get ready for the event.
+              Review your account and complete the checklist items below to
+              get ready for the event.
             </Typography>
             <Stack direction="row" spacing={3}>
               <Box>
@@ -1008,9 +1085,22 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                   <Typography component="h3" variant="h6">
                     Passcode
                   </Typography>
+                  <Typography color="text.secondary" variant="body2">
+                    This passcode is for signing in on tablets on-playa
+                    only.
+                  </Typography>
                 </Grid>
                 <Grid size={8}>
-                  <Stack direction="row" justifyContent="flex-end">
+                  <Stack
+                    direction="row"
+                    justifyContent="flex-end"
+                    spacing={1}
+                  >
+                    {/* Reveal is self-only — admins can reset (below) but not
+                        see existing values. */}
+                    {isSelfView && (
+                      <PasscodeReveal shiftboardId={shiftboardId} />
+                    )}
                     <Button
                       onClick={() => setIsPasscodeDialogOpen(true)}
                       startIcon={<LockResetIcon />}
@@ -1022,6 +1112,44 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                   </Stack>
                 </Grid>
               </Grid>
+            </CardContent>
+          </Card>
+        </Box>
+
+        {/* settings — available to all users (email-footer #settings anchor) */}
+        <Box component="section" id="settings" sx={{ mt: 3 }}>
+          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
+            Settings
+          </Typography>
+          <Card>
+            <CardContent>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={!emailUnsubscribed}
+                    onChange={(e) =>
+                      handleEmailUnsubscribedToggle(!e.target.checked)
+                    }
+                  />
+                }
+                label={
+                  <Box>
+                    <Typography component="span" variant="body1">
+                      Receive emails from PEERS
+                    </Typography>
+                    <Typography
+                      color="text.secondary"
+                      component="div"
+                      variant="body2"
+                    >
+                      Uncheck to stop receiving automated emails (shift
+                      assignments, cancellations, calendar invites). You can
+                      re-subscribe here at any time.
+                    </Typography>
+                  </Box>
+                }
+                sx={{ alignItems: "flex-start", m: 0 }}
+              />
             </CardContent>
           </Card>
         </Box>

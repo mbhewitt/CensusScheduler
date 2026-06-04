@@ -9,18 +9,27 @@ import type {
 } from "@/components/types/shifts";
 import { withAuth } from "@/lib/withAuth";
 import { pool } from "lib/database";
+import { notifyAssignment } from "@/components/api/assignmentNotify";
 import {
   shiftVolunteerRemove,
   shiftVolunteerUpdate,
 } from "@/components/api/shiftVolunteers";
 
-const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
+const shiftVolunteers = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  session: { shiftboardId: number }
+) => {
   switch (req.method) {
     // get
     // ------------------------------------------------------------
     case "GET": {
       // get all shift volunteers
       const { timeId } = req.query;
+      // Include canceled shifts in the detail response — the page
+      // shows them with a banner and disables Add, but volunteers
+      // still need to reach the page so they can self-remove and
+      // admins can flip the canceled state back via Update Time.
       const [dbShiftPositionList] = await pool.query<RowDataPacket[]>(
         `SELECT
           d.date,
@@ -31,6 +40,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           pt.role_id,
           sn.shift_details,
           sn.shift_name,
+          st.canceled,
           st.end_time,
           st.end_time_text,
           st.meal,
@@ -38,6 +48,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           st.start_time,
           st.start_time_text,
           stp.position_type_id,
+          stp.sap_points,
           stp.slots,
           stp.time_position_id
         FROM op_shift_times AS st
@@ -53,7 +64,6 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         ON pt.delete_position=false
         AND pt.position_type_id=stp.position_type_id
         WHERE st.remove_shift_time=false
-        AND st.canceled=false
         AND st.shift_times_id=?
         ORDER BY pt.position COLLATE utf8mb4_general_ci`,
         [timeId]
@@ -94,10 +104,12 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
           position,
           prerequisite_id,
           role_id,
+          sap_points,
           slots,
           time_position_id,
         }) => {
           const resShiftPositionItem: IResShiftPositionCountItem = {
+            csp: Number(sap_points ?? 0),
             positionDetails: position_details,
             positionId: position_type_id,
             positionName: position,
@@ -148,6 +160,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       const resShiftVolunteerDetails: IResShiftVolunteerInformation = {
         positionList: resShiftPositionList,
         shift: {
+          canceled: Boolean(resShiftPositionFirst.canceled),
           date: resShiftPositionFirst.date,
           dateName: resShiftPositionFirst.datename ?? "",
           details: resShiftPositionFirst.shift_details,
@@ -169,6 +182,27 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
       // add volunteer to shift
       const { noShow, shiftboardId, timePositionId }: IReqShiftVolunteerItem =
         JSON.parse(req.body);
+
+      // Block adds on canceled shifts. Server-side enforcement —
+      // the UI hides the Add button but a stale tab / forged request
+      // would still reach this handler. Self-removes (DELETE) are
+      // intentionally NOT blocked: an already-assigned volunteer
+      // can still drop themselves and trigger the cancellation .ics.
+      const [dbShiftCanceledCheck] = await pool.query<RowDataPacket[]>(
+        `SELECT st.canceled
+         FROM op_shift_time_position stp
+         JOIN op_shift_times st ON st.shift_times_id = stp.shift_times_id
+         WHERE stp.time_position_id = ?
+         LIMIT 1`,
+        [timePositionId]
+      );
+      if (dbShiftCanceledCheck[0]?.canceled) {
+        return res.status(409).json({
+          statusCode: 409,
+          message: "Shift is canceled; cannot add volunteers.",
+        });
+      }
+
       const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT *
         FROM op_volunteer_shifts
@@ -205,6 +239,23 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
         );
       }
 
+      // #309: notify the assigned volunteer with the shift details
+      // and an .ics calendar attachment. Best-effort — a notify
+      // failure doesn't fail the assignment itself.
+      try {
+        await notifyAssignment(
+          pool,
+          shiftboardId,
+          timePositionId,
+          session.shiftboardId
+        );
+      } catch (err) {
+        console.error(
+          `[assign-notify] notifyAssignment failed for shiftboard_id=${shiftboardId} time_position_id=${timePositionId}:`,
+          err
+        );
+      }
+
       return res.status(201).json({
         statusCode: 201,
         message: "Created",
@@ -222,7 +273,7 @@ const shiftVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     // ------------------------------------------------------------
     case "DELETE": {
       // remove volunteer from shift
-      return shiftVolunteerRemove(pool, req, res);
+      return shiftVolunteerRemove(pool, req, res, session);
     }
 
     // default

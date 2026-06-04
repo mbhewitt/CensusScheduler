@@ -102,12 +102,19 @@ export const Header = () => {
   const isBehavioralStandardsSigned =
     checkIsBehavioralStandardsSigned(roleList);
 
-  // if volunteer is signed in,
-  // did not sign behavioral standards agreement,
-  // and is not on behavioral standards agreement page
-  // then load behavioral standards agreement page
+  // On-playa only: force-redirect signed-in volunteers who haven't yet
+  // signed the behavioral standards agreement to the BS page before
+  // they can use the rest of the app. Off-playa deployments (Okta-only,
+  // NEXT_PUBLIC_PIN_ENABLED=false) leave them on whatever page they
+  // landed on — the BS page is still accessible via /info if they want
+  // to sign it. Per @mbhewitt 2026-05-24: on-playa walk-ups still need
+  // the gate; off-playa it's friction we don't want.
+  // NEXT_PUBLIC_* inlines at build time so this is a static decision.
+  const isOnPlaya = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
+
   useEffect(() => {
     if (
+      isOnPlaya &&
       isAuthenticated &&
       !isBehavioralStandardsSigned &&
       !pathname?.includes("behavioral-standards")
@@ -115,6 +122,7 @@ export const Header = () => {
       router.push(`/roles/behavioral-standards/${shiftboardId}`);
     }
   }, [
+    isOnPlaya,
     isAuthenticated,
     isBehavioralStandardsSigned,
     pathname,
@@ -186,7 +194,19 @@ export const Header = () => {
           <Box>
             {/* general nav */}
             <List>
-              {pageListDefault.map(({ icon, label, path }) => (
+              {pageListDefault
+                .filter(({ path }) => {
+                  // Off-playa /shifts requires auth (middleware redirects
+                  // to sign-in). Hide the menu entry for unauthenticated
+                  // users so it doesn't appear to "go nowhere". On-playa
+                  // walk-up flow keeps it visible — /shifts is in the
+                  // on-playa allowlist there.
+                  if (path === "/shifts" && !isAuthenticated && !isOnPlaya) {
+                    return false;
+                  }
+                  return true;
+                })
+                .map(({ icon, label, path }) => (
                 <ListItem disablePadding key={path}>
                   <Link href={path} onClick={handleDrawerClose}>
                     <ListItemButton selected={pathname === path}>

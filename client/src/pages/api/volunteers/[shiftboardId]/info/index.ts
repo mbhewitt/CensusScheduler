@@ -36,6 +36,7 @@ const ROLE_STAFF_ID = 2000006;
 const ROLE_OTHER_SAP_ID = 2000007;
 const ROLE_BURNER_PROFILE_UPDATED_ID = 2000010;
 const ROLE_BEHAVIORAL_STANDARDS_ID = 1000012;
+const ROLE_EMAIL_UNSUBSCRIBED_ID = 2000020;
 
 // Datenames that are before or on opening (eligible for SAP)
 const PRE_OPEN_DATENAMES = [
@@ -302,6 +303,22 @@ const volunteerInfo = async (req: NextApiRequest, res: NextApiResponse) => {
       const behavioralStandardsSigned = roleIdSet.has(
         ROLE_BEHAVIORAL_STANDARDS_ID
       );
+      // Strict (add_role=true AND remove_role=false) so the checkbox state
+       // matches the queue's send-time filter in client/lib/mail/queue.ts
+      // exactly. The bulk role-list query above is intentionally looser to
+       // keep parity with the rest of this endpoint (other-sap, profile-updated,
+       // behavioral-standards, etc.).
+      const [dbUnsubRow] = await pool.query<RowDataPacket[]>(
+        `SELECT 1
+        FROM op_volunteer_roles
+        WHERE shiftboard_id=?
+          AND role_id=?
+          AND add_role=true
+          AND remove_role=false
+        LIMIT 1`,
+        [shiftboardId, ROLE_EMAIL_UNSUBSCRIBED_ID]
+      );
+      const emailUnsubscribed = dbUnsubRow.length > 0;
 
       // build response
       const resVolunteerInfo: IResVolunteerInfo = {
@@ -341,6 +358,7 @@ const volunteerInfo = async (req: NextApiRequest, res: NextApiResponse) => {
         })),
         burnerProfileUpdated,
         behavioralStandardsSigned,
+        emailUnsubscribed,
       };
 
       return res.status(200).json(resVolunteerInfo);

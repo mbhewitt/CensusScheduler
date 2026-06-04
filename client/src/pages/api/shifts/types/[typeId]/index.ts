@@ -10,6 +10,10 @@ import {
 } from "@/components/types/shifts/types";
 import { generateId } from "@/utils/generateId";
 import { pool } from "lib/database";
+import {
+  notifyRemoval,
+  notifyRestoration,
+} from "@/components/api/assignmentNotify";
 import { handleTimeListAdd } from "@/pages/api/shifts/types";
 
 const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -111,6 +115,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           d.date,
           pt.position,
           pt.position_type_id,
+          st.canceled,
           st.end_time_text,
           st.meal,
           st.notes,
@@ -143,6 +148,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
 
       dbTimeList.forEach(
         ({
+          canceled,
           date,
           end_time_text,
           meal,
@@ -173,6 +179,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           } else {
             resTimeMap[shift_times_id] = true;
             resTimeList.push({
+              canceled: Boolean(canceled),
               date: date,
               endTime: end_time_text,
               instance: shift_instance,
@@ -256,36 +263,109 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         return !timeList.some(({ timeId }) => timeId === shift_times_id);
       });
 
-      timeListUpdate.forEach(
-        async ({ endTime, timeId, instance, meal, notes, startTime }) => {
-          // Refresh start_date_id / end_date_id alongside the start_time /
-          // end_time change — a date edit must update the FK or downstream
-          // joins keep pointing at the old date row. See [[fix-handleTimeListAdd]].
-          await pool.query<RowDataPacket[]>(
-            `UPDATE op_shift_times
-            SET
-              end_date_id=(SELECT date_id FROM op_dates WHERE date = DATE(?) AND delete_date = false LIMIT 1),
-              end_time=?,
-              meal=?,
-              notes=?,
-              update_shift_time=true,
-              shift_instance=?,
-              start_date_id=(SELECT date_id FROM op_dates WHERE date = DATE(?) AND delete_date = false LIMIT 1),
-              start_time=?
-            WHERE shift_times_id=?`,
-            [
-              endTime,
-              endTime,
-              meal === "None" ? "" : meal,
-              notes,
-              instance,
-              startTime,
-              startTime,
-              timeId,
-            ]
+      // Capture the prior `canceled` state for every row we're about to
+      // touch so we can detect the 0→1 transition and notify the
+      // assigned volunteers exactly once per cancellation. Done before
+      // the UPDATEs fire.
+      const wasCanceledMap = new Map<number, boolean>();
+      if (timeListUpdate.length > 0) {
+        const [priorStates] = await pool.query<RowDataPacket[]>(
+          `SELECT shift_times_id, canceled FROM op_shift_times
+           WHERE shift_times_id IN (?)`,
+          [timeListUpdate.map(({ timeId }) => timeId)]
+        );
+        for (const row of priorStates) {
+          wasCanceledMap.set(row.shift_times_id, Boolean(row.canceled));
+        }
+      }
+
+      // Await the UPDATEs so transition detection / notify happens
+      // after the writes land (the previous forEach(async) pattern
+      // raced the route's response).
+      await Promise.all(
+        timeListUpdate.map(
+          async ({ canceled, endTime, timeId, instance, meal, notes, startTime }) => {
+            // Refresh start_date_id / end_date_id alongside the start_time /
+            // end_time change — a date edit must update the FK or downstream
+            // joins keep pointing at the old date row. See [[fix-handleTimeListAdd]].
+            await pool.query<RowDataPacket[]>(
+              `UPDATE op_shift_times
+              SET
+                canceled=?,
+                end_date_id=(SELECT date_id FROM op_dates WHERE date = DATE(?) AND delete_date = false LIMIT 1),
+                end_time=?,
+                meal=?,
+                notes=?,
+                update_shift_time=true,
+                shift_instance=?,
+                start_date_id=(SELECT date_id FROM op_dates WHERE date = DATE(?) AND delete_date = false LIMIT 1),
+                start_time=?
+              WHERE shift_times_id=?`,
+              [
+                Boolean(canceled),
+                endTime,
+                endTime,
+                meal === "None" ? "" : meal,
+                notes,
+                instance,
+                startTime,
+                startTime,
+                timeId,
+              ]
+            );
+          }
+        )
+      );
+
+      // For each shift_times_id that flipped 0→1 (newly canceled) or
+      // 1→0 (un-canceled), fan out the appropriate email per still-
+      // assigned volunteer. Best-effort: enqueue failures log and the
+      // route still 201s.
+      for (const t of timeListUpdate) {
+        const wasCanceled = wasCanceledMap.get(t.timeId) ?? false;
+        const isCanceled = Boolean(t.canceled);
+        if (wasCanceled === isCanceled) continue;
+        const tag = isCanceled ? "shift-canceled" : "shift-restored";
+        try {
+          const [rows] = await pool.query<RowDataPacket[]>(
+            `SELECT DISTINCT vs.shiftboard_id, vs.time_position_id
+             FROM op_volunteer_shifts vs
+             JOIN op_shift_time_position stp
+               ON stp.time_position_id = vs.time_position_id
+             WHERE stp.shift_times_id = ?
+               AND vs.remove_shift = false`,
+            [t.timeId]
+          );
+          for (const v of rows) {
+            try {
+              if (isCanceled) {
+                await notifyRemoval(
+                  pool,
+                  v.shiftboard_id,
+                  v.time_position_id,
+                  { kind: "shift-canceled" }
+                );
+              } else {
+                await notifyRestoration(
+                  pool,
+                  v.shiftboard_id,
+                  v.time_position_id
+                );
+              }
+            } catch (err) {
+              console.error(
+                `[${tag}-notify] enqueue failed for shiftboard_id=${v.shiftboard_id} time_position_id=${v.time_position_id}:`,
+                err
+              );
+            }
+          }
+        } catch (err) {
+          console.error(
+            `[${tag}-notify] fan-out failed for shift_times_id=${t.timeId}:`,
+            err
           );
         }
-      );
+      }
       timeListAdd.forEach(
         async ({ endTime, instance, meal, notes, startTime }) => {
           const [dbTime] = await pool.query<RowDataPacket[]>(

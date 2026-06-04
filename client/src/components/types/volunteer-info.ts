@@ -12,6 +12,9 @@ export interface IReqToggleOtherSap {
 export interface IReqToggleProfileUpdated {
   updated: boolean;
 }
+export interface IReqToggleEmailUnsubscribed {
+  unsubscribed: boolean;
+}
 
 // response
 export interface IResVolunteerInfo {
@@ -74,4 +77,5 @@ export interface IResVolunteerInfo {
   }[];
   burnerProfileUpdated: boolean;
   behavioralStandardsSigned: boolean;
+  emailUnsubscribed: boolean;
 }

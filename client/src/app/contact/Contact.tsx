@@ -14,28 +14,22 @@ import {
   FormControlLabel,
   Grid,
   InputLabel,
-  ListSubheader,
   MenuItem,
   Select,
   TextField,
   Typography,
 } from "@mui/material";
-import { useSearchParams } from "next/navigation";
 import { useSnackbar } from "notistack";
 import { useContext, useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { ErrorPage } from "@/components/general/ErrorPage";
-import { Loading } from "@/components/general/Loading";
 import { SnackbarText } from "@/components/general/SnackbarText";
 import { Hero } from "@/components/layout/Hero";
 import type { IReqContact } from "@/components/types/contact";
-import type { IResVolunteerDefaultItem } from "@/components/types/volunteers";
-import { GENERAL_ROLE_LIST } from "@/constants";
+import { CONTACT_RECIPIENT_LABELS } from "@/constants";
 import { SessionContext } from "@/state/session/context";
-import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
+import { fetcherTrigger } from "@/utils/fetcher";
 
 interface IFormValues {
   email: string;
@@ -47,7 +41,7 @@ interface IFormValues {
 
 const defaultValues: IFormValues = {
   email: "",
-  isReplyWanted: false,
+  isReplyWanted: true,
   message: "",
   name: "",
   to: "Volunteer Coordinator",
@@ -64,13 +58,6 @@ export const Contact = () => {
 
   // fetching, mutation, and revalidation
   // ------------------------------------------------------------
-  const {
-    data,
-    error,
-  }: {
-    data: IResVolunteerDefaultItem[];
-    error: Error | undefined;
-  } = useSWR("/api/volunteers/dropdown?filter=core", fetcherGet);
   const { isMutating, trigger } = useSWRMutation(
     "/api/contact",
     fetcherTrigger
@@ -87,8 +74,6 @@ export const Contact = () => {
     defaultValues,
     mode: "onBlur",
   });
-  const searchParams = useSearchParams();
-  const reminderParam = searchParams?.get("reminder");
   const { enqueueSnackbar } = useSnackbar();
 
   // side effects
@@ -99,16 +84,10 @@ export const Contact = () => {
         ...defaultValues,
         email,
         name: `${playaName} "${worldName}"`,
-        to: reminderParam ? "Send me a reminder" : "Volunteer Coordinator",
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
-
-  // logic
-  // ------------------------------------------------------------
-  if (error) return <ErrorPage />;
-  if (!data) return <Loading />;
 
   // form submission
   // ------------------------------------------------------------
@@ -124,7 +103,6 @@ export const Contact = () => {
           ...defaultValues,
           email,
           name: `${playaName} "${worldName}"`,
-          to: reminderParam ? "Send me a reminder" : "Volunteer Coordinator",
         });
       } else {
         reset(defaultValues);
@@ -169,7 +147,7 @@ export const Contact = () => {
       <Container component="main">
         <Box component="section">
           <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
-            Post-burn contact form
+            Off-playa contact form
           </Typography>
           <Card>
             <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
@@ -230,31 +208,9 @@ export const Contact = () => {
                         <FormControl fullWidth required variant="standard">
                           <InputLabel id="to">To</InputLabel>
                           <Select {...field} label="To *" labelId="to">
-                            <MenuItem
-                              key="Send me a reminder"
-                              value="Send me a reminder"
-                              sx={{ pl: 4 }}
-                            >
-                              Send me a reminder
-                            </MenuItem>
-                            <ListSubheader>General roles</ListSubheader>
-                            {GENERAL_ROLE_LIST.map((generalRoleItem) => (
-                              <MenuItem
-                                key={`${generalRoleItem}`}
-                                value={generalRoleItem}
-                                sx={{ pl: 4 }}
-                              >
-                                {generalRoleItem}
-                              </MenuItem>
-                            ))}
-                            <ListSubheader>Core volunteers</ListSubheader>
-                            {data.map(({ playaName, worldName }) => (
-                              <MenuItem
-                                key={`${playaName}-${worldName}`}
-                                value={`${playaName} "${worldName}"`}
-                                sx={{ pl: 4 }}
-                              >
-                                {`${playaName} "${worldName}"`}
+                            {CONTACT_RECIPIENT_LABELS.map((label) => (
+                              <MenuItem key={label} value={label}>
+                                {label}
                               </MenuItem>
                             ))}
                           </Select>

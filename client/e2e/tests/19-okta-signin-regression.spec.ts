@@ -40,7 +40,7 @@ test.describe("Sign-in regression net", () => {
     await page.goto("/sign-in", { waitUntil: "networkidle", timeout: 45_000 });
 
     const oktaButton = page.getByRole("link", {
-      name: /Sign in with Burning Man/i,
+      name: /Sign in to Census/i,
     });
     await expect(oktaButton).toBeVisible({ timeout: 15_000 });
 
@@ -75,7 +75,7 @@ test.describe("Sign-in regression net", () => {
     });
 
     const oktaButton = page.getByRole("link", {
-      name: /Sign in with Burning Man/i,
+      name: /Sign in to Census/i,
     });
     await expect(oktaButton).toBeVisible({ timeout: 15_000 });
 

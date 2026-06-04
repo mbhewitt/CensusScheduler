@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import { buildSessionCookie } from "@/lib/session";
 import { generateId } from "@/utils/generateId";
+import { generatePasscode } from "@/utils/generatePasscode";
 import { pool } from "lib/database";
 
 interface OktaTokenResponse {
@@ -290,7 +291,7 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
       );
     }
 
-    // 2. check by email
+    // 2. check by email on op_volunteers
     if (!shiftboardId) {
       const [byEmail] = await pool.query<RowDataPacket[]>(
         "SELECT shiftboard_id FROM op_volunteers WHERE email=?",
@@ -309,19 +310,83 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
 
-    // 3. create new volunteer
+    // 3. check by email in sb_pinfo (Shiftboard email history, SCD2).
+    //    This catches the case where the BM volunteer record exists with
+    //    a canonical shiftboard_id but the row has never been imported
+    //    into op_volunteers yet (or never been linked to Okta). The lookup
+    //    matches any historical email -- it preferes the current row
+    //    (valid_to IS NULL) but falls back to the most recently valid
+    //    historical row if the user's Okta email is an older one.
+    //
+    //    Wrapped in try/catch so deployments that don't have sb_pinfo yet
+    //    (e.g. on-playa boxes) fall through to the create-new branch.
+    if (!shiftboardId) {
+      try {
+        const [bySbPinfo] = await pool.query<RowDataPacket[]>(
+          `SELECT shiftboard_id FROM sb_pinfo
+           WHERE email=?
+           ORDER BY (valid_to IS NULL) DESC, valid_from DESC
+           LIMIT 1`,
+          [email]
+        );
+        if (bySbPinfo.length > 0) {
+          const canonicalId = bySbPinfo[0].shiftboard_id;
+
+          // Does op_volunteers already have this canonical id (e.g. from
+          // a prior DB seed) but with no Okta link yet? Link and sync.
+          const [existingByCanonical] = await pool.query<RowDataPacket[]>(
+            "SELECT shiftboard_id FROM op_volunteers WHERE shiftboard_id=?",
+            [canonicalId]
+          );
+          if (existingByCanonical.length > 0) {
+            shiftboardId = canonicalId;
+            await pool.query(
+              `UPDATE op_volunteers
+              SET okta_id=?, playa_name=?, world_name=?, email=?
+              WHERE shiftboard_id=?`,
+              [oktaId, playaName, worldName, email, shiftboardId]
+            );
+          } else {
+            // Canonical id known from Shiftboard history but no row exists
+            // here yet -- create one using the canonical id (NOT a random
+            // generateId) so we stay consistent with the rest of the
+            // PEERS ecosystem.
+            await pool.query<RowDataPacket[]>(
+              `INSERT INTO op_volunteers (
+                shiftboard_id, playa_name, world_name, email, okta_id, create_volunteer
+              ) VALUES (?, ?, ?, ?, ?, true)`,
+              [canonicalId, playaName, worldName, email, oktaId]
+            );
+            shiftboardId = canonicalId;
+          }
+        }
+      } catch (sbErr) {
+        // sb_pinfo missing or query failed -- not fatal, fall through to
+        // creating a new volunteer with a generated id below.
+        console.warn(
+          "sb_pinfo lookup skipped:",
+          sbErr instanceof Error ? sbErr.message : sbErr
+        );
+      }
+    }
+
+    // 4. create new volunteer with a generated id
     if (!shiftboardId) {
       const newId = generateId(`
         SELECT shiftboard_id
         FROM op_volunteers
         WHERE shiftboard_id=?
       `);
+      // Auto-generate a 4-digit passcode so the volunteer can sign in
+      // on-playa via the tablet PIN UI without an admin having to set
+      // one for them. The volunteer can see and update it from /info.
+      const passcode = generatePasscode();
 
       await pool.query<RowDataPacket[]>(
         `INSERT INTO op_volunteers (
-          shiftboard_id, playa_name, world_name, email, okta_id, create_volunteer
-        ) VALUES (?, ?, ?, ?, ?, true)`,
-        [newId, playaName, worldName, email, oktaId]
+          shiftboard_id, playa_name, world_name, email, okta_id, passcode, create_volunteer
+        ) VALUES (?, ?, ?, ?, ?, ?, true)`,
+        [newId, playaName, worldName, email, oktaId, passcode]
       );
       shiftboardId = newId;
     }

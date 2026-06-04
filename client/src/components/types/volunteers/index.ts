@@ -54,6 +54,7 @@ export interface IResVolunteerShiftItem {
     name: string;
   };
   shift: {
+    canceled: boolean;
     date: string;
     dateName: string;
     endTime: string;

@@ -31,16 +31,32 @@ const ALLOWLIST = [
   "/api/auth/okta",
   "/api/auth/okta/callback",
   "/api/auth/sign-out",
+  // /api/auth/session is the cookie-validity probe used by
+  // useSessionValidation to keep client SessionContext in sync with
+  // the actual cookie. Must reach the handler (which returns 401 on
+  // missing/bad cookie) — middleware can't 401 first or the client
+  // can't distinguish stale state from genuinely-no-cookie.
+  "/api/auth/session",
   "/auth/complete",
 
   // Public information pages (per Mew, 2026-05-06)
   "/contact",
+  // /api/contact accepts the form POST. Must be unauthenticated so
+  // walk-up visitors with no session can actually send a message —
+  // the /contact page was already allowlisted but its API was not,
+  // so the form silently 401'd for everyone signed-out (#312).
+  "/api/contact",
   "/help",
   "/reports",
 
-  // Account creation (lets new volunteers self-register)
+  // Account creation (lets new volunteers self-register).
+  // The page is at /volunteers/account/create but it POSTs to
+  // /api/volunteers/account (no /create suffix — the handler file is
+  // client/src/pages/api/volunteers/account/index.ts). Without the
+  // bare /api/volunteers/account entry the self-signup POST gets 401
+  // from this middleware before reaching the handler.
   "/volunteers/account/create",
-  "/api/volunteers/account/create",
+  "/api/volunteers/account",
 
   // Volunteer dropdown for sign-in autocomplete — needed for on-playa
   // passcode UI. Off-playa Okta-only mode will gate this via PR #275.
@@ -58,6 +74,11 @@ const ALLOWLIST = [
   ...(isOnPlaya ? ["/shifts", "/api/shifts"] : []),
 ];
 
+// Home is public again as of 2026-05-25 — the page now hosts the
+// login affordance inline (Okta button off-playa, "Sign in with
+// passcode" link on-playa for the PIN form), so there's no longer a
+// reason to redirect unauth visitors away from it. Reverts the
+// PUBLIC_PATHS purge that came in with PR #337 / closed-#306.
 const PUBLIC_PATHS = new Set(["/"]);
 
 function isAllowlisted(pathname: string): boolean {

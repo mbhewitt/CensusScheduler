@@ -289,11 +289,11 @@ export const BehavioralStandards = ({
                 Burning Man email addresses to enable communication in the
                 off-season. The PEERS Management group alias
                 peers@burningman.org can always be used to bring issues to the
-                attention of BRC PEERS leadership. (As of Jan 2024, the members
-                of this group alias are Sonder-PEERS Manager, Captain
-                Mew-Scheduling Coordinator, and JOBI-Communications
-                Coordination. They are also reachable at sonder@burningman.org,
-                mu@burningman.org, and jobi@burningman.org) If direct
+                attention of BRC PEERS leadership. (As of Jun 2026, the members
+                of this group alias are Random-PEERS Manager, Rescue-Asst.
+                Manager, Captain Mew-Scheduling Coordinator. They are also
+                reachable at random@burningman.org, ann.norton@burningman.org,
+                and mu@burningman.org) If direct
                 communication with another member of BRC PEERS leadership is
                 preferred, the group alias can be used to request contact
                 information.
