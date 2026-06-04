@@ -3,7 +3,7 @@ import { AuthGate } from "@/components/general/AuthGate";
 import { ACCOUNT_TYPE_SUPER_ADMIN } from "@/constants";
 
 export const metadata = {
-  title: "Census | Create shift position",
+  title: "PEERS | Create shift position",
 };
 const ShiftPositionsCreatePage = () => {
   // render

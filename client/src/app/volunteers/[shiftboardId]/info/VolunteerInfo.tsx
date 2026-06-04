@@ -90,11 +90,11 @@ const ARRIVAL_DATENAMES = [
 // human-readable display names for internal role identifiers
 const ROLE_DISPLAY_NAMES: Record<string, string> = {
   CounterCultureCamp: "Camping with Counter Culture",
-  CensusLabCamp: "Camping with Census Lab",
-  CensusTicket: "Census Ticket",
+  CensusLabCamp: "Camping with PEERS Lab",
+  CensusTicket: "PEERS Ticket",
   BurnerProfileUpdated: "Burner Profile Updated",
   OtherSAP: "Other SAP",
-  TrainingCensusBasicsComplete: "Training: Census Basics",
+  TrainingCensusBasicsComplete: "Training: PEERS Basics",
   TrainingRandomSamplingComplete: "Training: Random Sampling",
   TrainingOutReachComplete: "Training: OutReach",
   TrainingDataEntryWizComplete: "Training: Data Entry Wiz",
@@ -471,7 +471,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     content: (
       <Box>
         <Typography sx={{ mb: 1 }}>
-          All volunteers must review and agree to the Census Behavioral Standards
+          All volunteers must review and agree to the PEERS Behavioral Standards
           before participating.
         </Typography>
         <Link
@@ -496,7 +496,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
       content: (
         <Box>
           <Typography sx={{ mb: 1 }}>
-            Complete each required training course on Census Hive. Click a
+            Complete each required training course on PEERS Hive. Click a
             course name below to open it.
           </Typography>
           {trainings.map((t) => (
@@ -588,14 +588,14 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
       id: "sap-requirements",
       label: sapDone
         ? "SAP shift requirements met"
-        : "Sign up for pre-event shifts to earn a Census SAP for early entry",
+        : "Sign up for pre-event shifts to earn a PEERS SAP for early entry",
       done: sapDone,
       content: (
         <Box>
           <Typography sx={{ mb: 2 }}>
-            Earn a Census SAP for early entry to the event. Volunteers must sign
-            up for shifts worth at least 12 Census Shift Points (CSP). You will
-            also need one Census shift per day beginning the day after your
+            Earn a PEERS SAP for early entry to the event. Volunteers must sign
+            up for shifts worth at least 12 PEERS Shift Points (CSP). You will
+            also need one PEERS shift per day beginning the day after your
             planned arrival.
           </Typography>
           <Stack spacing={0.5}>
@@ -609,7 +609,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                 />
               )}
               <Typography variant="body2">
-                Sign up for at least 12 Census Shift Points
+                Sign up for at least 12 PEERS Shift Points
               </Typography>
               <Typography color="text.secondary" variant="body2">
                 {sapStatus.totalCsp} / 12 CSP
@@ -652,14 +652,14 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
       done: true,
       content: (
         <Typography>
-          As Census staff, your early entry is handled separately. Work your butt
+          As PEERS staff, your early entry is handled separately. Work your butt
           off and have a great burn!
         </Typography>
       ),
     });
   }
 
-  // Role-based thresholds (Counter Culture, Census Lab, Census Ticket)
+  // Role-based thresholds (Counter Culture, PEERS Lab, PEERS Ticket)
   for (const rt of roleThresholds) {
     const pct = Math.min(100, Math.round((rt.currentCsp / rt.requiredCsp) * 100));
     const displayRole = ROLE_DISPLAY_NAMES[rt.role] ?? rt.role;
@@ -772,7 +772,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
               On-Playa Information and Early Entry / SAP
             </Typography>
             <Typography color="text.secondary" sx={{ mb: 2 }} variant="body2">
-              As a Census volunteer, you may be eligible for early entry to the
+              As a PEERS volunteer, you may be eligible for early entry to the
               event. Select your earliest available arrival date below, and
               we&apos;ll show you what&apos;s needed to qualify for a Setup Access
               Pass (SAP).
@@ -823,7 +823,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                 <Typography color="text.secondary" sx={{ mb: 1 }} variant="body2">
                   The arrival date you selected is prior to the gate opening at the
                   event. Do you already have a pass for early entry through a
-                  different department, or would you like Census to provide this?
+                  different department, or would you like PEERS to provide this?
                 </Typography>
                 <Select
                   aria-label="Early entry source"
@@ -835,7 +835,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                   value={hasOtherSap ? "other" : "census"}
                 >
                   <MenuItem value="census">
-                    I would like Census to provide early entry
+                    I would like PEERS to provide early entry
                   </MenuItem>
                   <MenuItem value="other">
                     I already have early entry through another department
@@ -869,7 +869,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
         <Card sx={{ mb: 3 }}>
           <CardContent>
             <Typography component="h2" sx={{ mb: 1 }} variant="h5">
-              Census Volunteer Pre-playa Checklist
+              PEERS Volunteer Pre-playa Checklist
             </Typography>
 
             {/* color/status legend */}
@@ -903,7 +903,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
             {showCspBar && (
               <Alert severity="info" sx={{ mb: 2 }}>
                 Your current total:{" "}
-                <strong>{sapStatus.totalCsp}</strong> Census Shift Points (CSP)
+                <strong>{sapStatus.totalCsp}</strong> PEERS Shift Points (CSP)
                 scheduled
               </Alert>
             )}

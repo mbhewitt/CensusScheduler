@@ -7,7 +7,7 @@ interface IRoleVolunteersPageProps {
 }
 
 export const metadata = {
-  title: "Census | Role volunteers",
+  title: "PEERS | Role volunteers",
 };
 const RoleVolunteersPage = async ({ params }: IRoleVolunteersPageProps) => {
   // logic

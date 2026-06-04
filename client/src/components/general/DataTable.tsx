@@ -6,7 +6,7 @@ import MUITable, {
   Responsive,
 } from "mui-datatables";
 
-import { COLOR_CENSUS_PINK } from "@/constants";
+import { COLOR_PEERS_GOLD } from "@/constants";
 
 interface ITableProps {
   columnList: MUIDataTableColumn[];
@@ -56,7 +56,7 @@ const theme = createTheme({
   },
   palette: {
     primary: {
-      main: COLOR_CENSUS_PINK,
+      main: COLOR_PEERS_GOLD,
     },
   },
 });

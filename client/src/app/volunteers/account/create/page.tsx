@@ -1,7 +1,7 @@
 import { AccountCreate } from "@/app/volunteers/account/create/AccountCreate";
 
 export const metadata = {
-  title: "Census | Create account",
+  title: "PEERS | Create account",
 };
 const AccountCreatePage = () => {
   // render

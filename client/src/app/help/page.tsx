@@ -1,7 +1,7 @@
 import { Help } from "@/app/help/Help";
 
 export const metadata = {
-  title: "Census | Help",
+  title: "PEERS | Help",
 };
 const HelpPage = () => {
   // render

@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { Contact } from "@/app/contact/Contact";
 
 export const metadata = {
-  title: "Census | Contact",
+  title: "PEERS | Contact",
 };
 const ContactPage = () => {
   // render

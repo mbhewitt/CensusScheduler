@@ -208,12 +208,12 @@ export const Footer = () => {
             }}
           >
             <Image
-              alt="census logo"
+              alt="PEERS logo"
               height={120}
               onClick={() => {
                 router.push("/doodle");
               }}
-              src="/general/logo-census.png"
+              src="/general/logo-peers.png"
               width={120}
             />
           </Box>
@@ -229,7 +229,7 @@ export const Footer = () => {
               color: theme.palette.common.white,
             }}
           >
-            &copy; {new Date().getFullYear()} BRC Census
+            &copy; {new Date().getFullYear()} BRC PEERS
           </Typography>
           <Typography
             sx={{

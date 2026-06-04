@@ -3,7 +3,7 @@ import { AuthGate } from "@/components/general/AuthGate";
 import { ACCOUNT_TYPE_ADMIN } from "@/constants";
 
 export const metadata = {
-  title: "Census | Admin settings",
+  title: "PEERS | Admin settings",
 };
 const SettingsPage = () => {
   // render

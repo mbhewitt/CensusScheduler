@@ -16,7 +16,7 @@ import {
 import { Control, Controller, FieldErrors } from "react-hook-form";
 
 import type { IResShiftPositionDefaults } from "@/components/types/shifts/positions";
-import { COLOR_BURNING_MAN_BROWN } from "@/constants";
+import { COLOR_PEERS_CHARCOAL } from "@/constants";
 import { ensure } from "@/utils/ensure";
 
 export interface IFormValues {
@@ -267,7 +267,7 @@ export const ShiftPositionsForm = ({
           </CardContent>
         </Card>
       </Box>
-      <Divider sx={{ borderColor: COLOR_BURNING_MAN_BROWN, mb: 3 }} />
+      <Divider sx={{ borderColor: COLOR_PEERS_CHARCOAL, mb: 3 }} />
     </>
   );
 };

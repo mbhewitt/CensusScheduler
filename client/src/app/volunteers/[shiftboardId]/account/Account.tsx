@@ -230,7 +230,7 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
                 <Typography>
                   World name, email, and phone number fields are displayed for
                   reference only. You can update your playa name below for this
-                  Census season, but it won&apos;t affect your Burner profile or
+                  PEERS season, but it won&apos;t affect your Burner profile or
                   carry over to future seasons.
                 </Typography>
                 <Typography>

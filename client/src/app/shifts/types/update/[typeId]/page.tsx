@@ -7,7 +7,7 @@ interface IShiftTypesUpdatePageProps {
 }
 
 export const metadata = {
-  title: "Census | Update shift type",
+  title: "PEERS | Update shift type",
 };
 const ShiftTypesUpdatePage = async ({ params }: IShiftTypesUpdatePageProps) => {
   // logic

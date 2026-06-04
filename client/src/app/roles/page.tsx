@@ -3,7 +3,7 @@ import { AuthGate } from "@/components/general/AuthGate";
 import { ACCOUNT_TYPE_ADMIN } from "@/constants";
 
 export const metadata = {
-  title: "Census | Roles",
+  title: "PEERS | Roles",
 };
 const RolesPage = () => {
   // render

@@ -13,7 +13,7 @@ import { SnackbarProvider } from "notistack";
 
 import SnackbarButtonClose from "@/components/general/SnackbarButtonClose";
 import { Layout } from "@/components/layout/Layout";
-import { COLOR_BURNING_MAN_BROWN, COLOR_CENSUS_PINK } from "@/constants";
+import { COLOR_PEERS_CHARCOAL, COLOR_PEERS_GOLD } from "@/constants";
 import { DeveloperModeProvider } from "@/state/developer-mode/context";
 import { SessionProvider } from "@/state/session/context";
 
@@ -35,7 +35,7 @@ const theme = createTheme({
         root: {
           "li:last-child": {
             p: {
-              color: COLOR_CENSUS_PINK,
+              color: COLOR_PEERS_GOLD,
             },
           },
         },
@@ -73,7 +73,7 @@ const theme = createTheme({
           },
           // reports start
           a: {
-            span: { color: COLOR_CENSUS_PINK, textDecoration: "underline" },
+            span: { color: COLOR_PEERS_GOLD, textDecoration: "underline" },
           },
           // reports end
         }),
@@ -112,7 +112,7 @@ const theme = createTheme({
         },
         p: {
           a: {
-            color: COLOR_CENSUS_PINK,
+            color: COLOR_PEERS_GOLD,
             textDecoration: "underline",
           },
         },
@@ -133,10 +133,10 @@ const theme = createTheme({
             display: "inline-block",
             li: {
               a: {
-                color: COLOR_CENSUS_PINK,
+                color: COLOR_PEERS_GOLD,
                 textDecoration: "underline",
                 span: {
-                  color: COLOR_CENSUS_PINK,
+                  color: COLOR_PEERS_GOLD,
                 },
               },
             },
@@ -174,10 +174,10 @@ const theme = createTheme({
         root: {
           "&.Mui-selected": {
             ".MuiListItemIcon-root": {
-              color: COLOR_CENSUS_PINK,
+              color: COLOR_PEERS_GOLD,
             },
             ".MuiTypography-root": {
-              color: COLOR_CENSUS_PINK,
+              color: COLOR_PEERS_GOLD,
             },
           },
         },
@@ -201,10 +201,10 @@ const theme = createTheme({
   },
   palette: {
     primary: {
-      main: COLOR_BURNING_MAN_BROWN,
+      main: COLOR_PEERS_CHARCOAL,
     },
     secondary: {
-      main: COLOR_CENSUS_PINK,
+      main: COLOR_PEERS_GOLD,
     },
   },
   typography: {

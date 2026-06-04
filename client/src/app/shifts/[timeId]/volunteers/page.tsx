@@ -5,7 +5,7 @@ interface IShiftVolunteersPageProps {
 }
 
 export const metadata = {
-  title: "Census | Shift volunteers",
+  title: "PEERS | Shift volunteers",
 };
 const ShiftVolunteersPage = async ({ params }: IShiftVolunteersPageProps) => {
   // logic

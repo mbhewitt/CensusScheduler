@@ -5,7 +5,7 @@ interface IBehavioralStandardsPageProps {
 }
 
 export const metadata = {
-  title: "Census | Behavioral Standards",
+  title: "PEERS | Behavioral Standards",
 };
 const BehavioralStandardsPage = async ({
   params,

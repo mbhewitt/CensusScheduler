@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { SignInAuthGate } from "@/app/sign-in/SignInAuthGate";
 
 export const metadata = {
-  title: "Census | Sign in",
+  title: "PEERS | Sign in",
 };
 const SignInPage = () => {
   // render

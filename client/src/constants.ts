@@ -6,8 +6,8 @@ export const HELPER_TEXT_LOCATION =
 
 // contact page form
 export const GENERAL_ROLE_LIST = [
-  "Census Lab Coordinator",
-  "Census Manager",
+  "PEERS Lab Coordinator",
+  "PEERS Manager",
   "Construction Lead",
   "Data Analyst/Science",
   "Sampling Coordinator",
@@ -82,9 +82,10 @@ export const UPDATE_TYPE_REVIEW = "updateTypeReview";
 // idle time
 export const IDLE_MINUTES = 5;
 
-// palette
-export const COLOR_BURNING_MAN_BROWN = "#2f2f2f";
-export const COLOR_CENSUS_PINK = "#ea008b";
+// palette (PEERS badge — sampled from official logo)
+export const COLOR_PEERS_CHARCOAL = "#202020";
+export const COLOR_PEERS_GOLD = "#b09040";
+export const COLOR_PEERS_CREAM = "#f0e0d0";
 
 // roles
 export const ROLE_ADMIN_ID = 2;

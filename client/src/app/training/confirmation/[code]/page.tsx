@@ -7,7 +7,7 @@ interface ITrainingConfirmationPageProps {
 }
 
 export const metadata = {
-  title: "Census | Training confirmation",
+  title: "PEERS | Training confirmation",
 };
 const TrainingConfirmationPage = async ({
   params,

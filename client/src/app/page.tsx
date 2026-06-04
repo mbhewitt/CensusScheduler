@@ -1,7 +1,7 @@
 import { Home } from "@/app/Home";
 
 export const metadata = {
-  title: "Census | Home",
+  title: "PEERS | Home",
 };
 const HomePage = () => {
   // render

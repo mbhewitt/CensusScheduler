@@ -1,7 +1,7 @@
 import { Doodle } from "@/app/doodle/Doodle";
 
 export const metadata = {
-  title: "Census | Doodle",
+  title: "PEERS | Doodle",
 };
 const DoodlePage = () => {
   // render

@@ -156,7 +156,7 @@ export const Help = () => {
                 There will be extra name badges for new volunteers. These will
                 be kept with the other volunteer badges in the Data Entry Office
                 (If you cannot find the badges, locate a shift lead/member of
-                Census leadership - please see the Who&apos;s Who in the lounge
+                PEERS leadership - please see the Who&apos;s Who in the lounge
                 if you don&apos;t know who to look for).
               </Typography>
               <Typography>
@@ -243,9 +243,9 @@ export const Help = () => {
             <CardContent>
               <Typography>
                 If a BRC participant would like an email reminder to fill out
-                their Census form, asks a question you do not know the answer
+                their PEERS form, asks a question you do not know the answer
                 to, would like to provide anonymous feedback, or would like to
-                contact a specific volunteer coordinator or Census lead, you can
+                contact a specific volunteer coordinator or PEERS lead, you can
                 select the hamburger pop-out menu in the top left-hand corner of
                 the screen (looks like three horizontal lines) and select
                 &quot;Contact.&quot; From there, the participant can select the
@@ -285,19 +285,19 @@ export const Help = () => {
                   </Typography>
                   <Typography paragraph>
                     If for some reason the interface isn&apos;t working, there
-                    will be an “Unanswered Questions” book at the Census Lab for
+                    will be an “Unanswered Questions” book at the PEERS Lab for
                     participants to write down their contact information and
                     question. In this case, please ask them to write clearly!
                   </Typography>
                   <Typography>
                     If you still have questions about using the tablet, please
-                    consult the Census Lab Tablet Guide. Access a digital copy
+                    consult the PEERS Lab Tablet Guide. Access a digital copy
                     of the tablet guide in the file folder on this tablet. A
-                    printed copy is also available in the Census Lab binder,
+                    printed copy is also available in the PEERS Lab binder,
                     which is located in the Data Entry Office. You can also ask
                     a shift lead or volunteer coordinator to help or look for
                     one of the volunteers shown on the &quot;Who&apos;s Who
-                    board&quot;, which can be found in the Census Lounge area.
+                    board&quot;, which can be found in the PEERS Lounge area.
                   </Typography>
                 </Box>
                 <Stack

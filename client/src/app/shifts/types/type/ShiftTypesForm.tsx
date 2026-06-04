@@ -58,7 +58,7 @@ import type {
   IResShiftTypeCategoryItem,
   IResShiftTypeDefaults,
 } from "@/components/types/shifts/types";
-import { COLOR_BURNING_MAN_BROWN, MEAL_LIST } from "@/constants";
+import { COLOR_PEERS_CHARCOAL, MEAL_LIST } from "@/constants";
 import { ensure } from "@/utils/ensure";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
 
@@ -1016,7 +1016,7 @@ export const ShiftTypesForm = ({
           );
         })}
       </Box>
-      <Divider sx={{ borderColor: COLOR_BURNING_MAN_BROWN, mb: 3 }} />
+      <Divider sx={{ borderColor: COLOR_PEERS_CHARCOAL, mb: 3 }} />
 
       {/* position dialog add */}
       <ShiftTypesPositionDialogAdd

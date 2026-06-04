@@ -220,7 +220,7 @@ export const BehavioralStandards = ({
                   sx={{ mr: 1 }}
                 />
                 <Typography>
-                  All members of the BRC Census volunteer team are asked to
+                  All members of the BRC PEERS volunteer team are asked to
                   review and digitally sign this document.
                 </Typography>
               </Stack>
@@ -237,7 +237,7 @@ export const BehavioralStandards = ({
                 Burning Man&apos;s culture honors and promotes freedom of
                 expression, unless and until that expression harms others. Black
                 Rock City is also a place where people test boundaries and
-                explore their limits. All members of the BRC Census team are
+                explore their limits. All members of the BRC PEERS team are
                 expected to navigate these inherent contradictions while doing
                 their best to be respectful and thoughtful of the people who may
                 be impacted by their actions.
@@ -245,20 +245,20 @@ export const BehavioralStandards = ({
               <Typography>
                 This document describes several different settings and
                 situations, and provides general guidelines for expectations of
-                behavior of all members of the BRC Census team. The first
+                behavior of all members of the BRC PEERS team. The first
                 section outlines general guidelines that are applicable to any
                 setting and any time. The second addresses specific situations
                 which might arise in Black Rock City, and the third addresses
                 expectations specific to volunteers when they are actively
-                representing the BRC Census team. The fourth section discusses
-                situations that may occur between members of the BRC Census
+                representing the BRC PEERS team. The fourth section discusses
+                situations that may occur between members of the BRC PEERS
                 team.
               </Typography>
               <Typography>
                 Additional information is provided about potential outcomes if a
                 report of concerning behavior is received, and about available
-                resources for communicating with members of BRC Census
-                leadership. It is required for each member of the BRC Census
+                resources for communicating with members of BRC PEERS
+                leadership. It is required for each member of the BRC PEERS
                 Team to agree to the terms and sign this document prior to their
                 first volunteer shift. Concerns or questions that need to be
                 resolved prior to signing should be sent to
@@ -274,8 +274,8 @@ export const BehavioralStandards = ({
           <Card>
             <CardContent>
               <Typography>
-                Members of BRC Census leadership are committed to being
-                available to any member of the BRC Census team who wishes to
+                Members of BRC PEERS leadership are committed to being
+                available to any member of the BRC PEERS team who wishes to
                 share feedback, thoughts, concerns, requests for assistance, or
                 any other communication. As Black Rock City staff, these
                 individuals have access to a wide range of resources available
@@ -284,34 +284,34 @@ export const BehavioralStandards = ({
                 them of issues which could require these resources.
               </Typography>
               <Typography>
-                Volunteer Coordinators, members of BRC Census management, and
+                Volunteer Coordinators, members of BRC PEERS management, and
                 other key volunteers maintain (and regularly check) their
                 Burning Man email addresses to enable communication in the
-                off-season. The Census Management group alias
-                census@burningman.org can always be used to bring issues to the
-                attention of BRC Census leadership. (As of Jan 2024, the members
-                of this group alias are Sonder-Census Manager, Captain
+                off-season. The PEERS Management group alias
+                peers@burningman.org can always be used to bring issues to the
+                attention of BRC PEERS leadership. (As of Jan 2024, the members
+                of this group alias are Sonder-PEERS Manager, Captain
                 Mew-Scheduling Coordinator, and JOBI-Communications
                 Coordination. They are also reachable at sonder@burningman.org,
                 mu@burningman.org, and jobi@burningman.org) If direct
-                communication with another member of BRC Census leadership is
+                communication with another member of BRC PEERS leadership is
                 preferred, the group alias can be used to request contact
                 information.
               </Typography>
               <Typography>
-                On-playa, members of BRC Census leadership can be found at the
-                Census Lab or reached via radio on the Census channel while
+                On-playa, members of BRC PEERS leadership can be found at the
+                PEERS Lab or reached via radio on the PEERS channel while
                 shifts are active. Additional on-playa resources are made
                 available by other teams, including peer mediators, private
-                locations for conversations outside of Census Lab, etc.
+                locations for conversations outside of PEERS Lab, etc.
               </Typography>
               <Typography>
-                If a situation ever arises in which a member of the BRC Census
+                If a situation ever arises in which a member of the BRC PEERS
                 team feels uncomfortable bringing an issue to the members of BRC
-                Census leadership at large, they may ask to discuss the
+                PEERS leadership at large, they may ask to discuss the
                 situation privately with the member of leadership with whom they
                 feel most comfortable. That individual will be able to provide
-                resources outside of BRC Census, such as the People and Ops team
+                resources outside of BRC PEERS, such as the People and Ops team
                 within Burning Man Project, so that an appropriate resolution
                 can be found.
               </Typography>
@@ -329,7 +329,7 @@ export const BehavioralStandards = ({
                 feel safe, and a right to be treated as equals by the people
                 around them. They have a right to communicate their needs and
                 desires, and a right to be heard. It is the fervent hope of the
-                members of BRC Census leadership that no member of our team
+                members of BRC PEERS leadership that no member of our team
                 disagrees with these sentiments.
               </Typography>
               <Typography>
@@ -355,7 +355,7 @@ export const BehavioralStandards = ({
                 Black Rock City is a setting that invites experimentation.
                 Participants are encouraged to push their own boundaries and
                 explore possibilities that would be impossible anywhere else.
-                This is part of why people (including members of the BRC Census
+                This is part of why people (including members of the BRC PEERS
                 team!) expend so much effort to go to Black Rock City. However,
                 it is important to remember that when we explore limits and
                 boundaries, we often infringe on others in ways both foreseeable
@@ -365,13 +365,13 @@ export const BehavioralStandards = ({
                 Pranks or jokes can cause more harm than expected or intended.
                 Art can inspire strong and sudden emotions or feelings of
                 offense or discomfort, sometimes intended by the artists and
-                sometimes not. In these situations, members of the BRC Census
+                sometimes not. In these situations, members of the BRC PEERS
                 team are expected to do their best to speak up for their own
                 needs while also keeping the needs of others in mind.
               </Typography>
               <Typography>
                 While exploring Black Rock City, it is our hope that all members
-                of the BRC Census team will endeavor to behave with honesty,
+                of the BRC PEERS team will endeavor to behave with honesty,
                 integrity, and empathy. It is hoped that our team members will
                 create art, invent pranks, and speak out when something feels
                 especially right or especially wrong. It is also our hope that
@@ -385,28 +385,28 @@ export const BehavioralStandards = ({
         </Box>
         <Box component="section">
           <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
-            Expectations When in a Census Lab Coat
+            Expectations When in a PEERS Lab Coat
           </Typography>
           <Card>
             <CardContent>
               <Typography>
                 In addition to the general expectations and the expectations in
                 Black Rock City, there is an additional level of responsibility
-                taken on by all BRC Census volunteers any time they are actively
-                representing their team (e.g., wearing a BRC Census lab coat,
-                BRC Census hoodie, etc.) When a person has a negative
-                interaction with someone wearing Census regalia, there are risks
+                taken on by all BRC PEERS volunteers any time they are actively
+                representing their team (e.g., wearing a BRC PEERS lab coat,
+                BRC PEERS hoodie, etc.) When a person has a negative
+                interaction with someone wearing PEERS regalia, there are risks
                 of long-lasting impacts for the entire team.
               </Typography>
               <Typography>
-                Members of the BRC Census team regularly ask Black Rock City
+                Members of the BRC PEERS team regularly ask Black Rock City
                 residents (including members of other Burning Man staff and
                 volunteer departments) to participate in or enable our research,
                 or to conduct outreach on our behalf. That data is critical to
                 our team&apos;s overall reason for existing, and one of the best
                 ways to encourage participation is by generating positive
-                associations with the BRC Census team and its members. Whenever
-                possible, BRC Census team members should keep this in mind and
+                associations with the BRC PEERS team and its members. Whenever
+                possible, BRC PEERS team members should keep this in mind and
                 behave in a way that will make the people around them want to
                 help us with our core mission.
               </Typography>
@@ -415,21 +415,21 @@ export const BehavioralStandards = ({
                 degree of conflict is unavoidable. Participants who are eager to
                 get to their camps may be frustrated at the delay on Gate Road,
                 and members of other staff departments may not understand the
-                need for them to modify their processes to allow BRC Census to
+                need for them to modify their processes to allow BRC PEERS to
                 operate smoothly. Well-meaning individuals may have thoughts on
-                how BRC Census could improve processes, and may express
+                how BRC PEERS could improve processes, and may express
                 displeasure if those suggestions are not immediately adopted.
               </Typography>
               <Typography>
-                In these situations, members of the BRC Census team are expected
+                In these situations, members of the BRC PEERS team are expected
                 to remain polite and respectful at all times. They are also
                 encouraged (when applicable) to remain firm about their
                 intention to follow existing procedures according to the
                 training and instruction they have received. In most cases, a
-                Shift Lead or some other member of BRC Census leadership should
+                Shift Lead or some other member of BRC PEERS leadership should
                 be notified immediately so that they can take part in the
                 conversation and take any appropriate action. Even if it is
-                unnecessary or impossible to bring members of BRC Census
+                unnecessary or impossible to bring members of BRC PEERS
                 leadership into the situation as it occurs, notification after
                 the fact is critical so that any needed follow-up can occur.
               </Typography>
@@ -443,29 +443,29 @@ export const BehavioralStandards = ({
           <Card>
             <CardContent>
               <Typography>
-                Members of the BRC Census team are asked to help with a task
+                Members of the BRC PEERS team are asked to help with a task
                 that is nearly impossible: conducting careful, methodical,
                 reliable science in the middle of a harsh environment during an
                 unpredictable event. This is inherently stressful. The work also
                 attracts people from a wide variety of backgrounds, interests,
                 personalities, cultures, etc. It is important that all members
-                of the BRC Census team approach each other with respect, keeping
+                of the BRC PEERS team approach each other with respect, keeping
                 in mind all of the expectations listed in earlier sections of
                 this document.
               </Typography>
               <Typography>
-                If a conflict between members of the BRC Census team occurs, it
+                If a conflict between members of the BRC PEERS team occurs, it
                 is expected that each team member will remain polite and
                 respectful. If the conflict could lead to an interruption in
                 responsibilities, it is vitally important that team members
                 request assistance from a Shift Lead or some other member of BRC
-                Census leadership. (Even if no interruption of responsibilities
+                PEERS leadership. (Even if no interruption of responsibilities
                 is likely, this step is highly encouraged!)
               </Typography>
               <Typography>
                 In some cases, the environment or situation may preclude
                 immediate resolution to an issue between team members. In some
-                cases BRC Census team members may be asked to hold off on
+                cases BRC PEERS team members may be asked to hold off on
                 further discussion or action until a safer and more appropriate
                 setting can be arranged and all participants have had time for
                 any necessary self-care. In these cases, team members may be
@@ -474,8 +474,8 @@ export const BehavioralStandards = ({
               </Typography>
               <Typography>
                 Even if it is unnecessary or impossible to bring members of BRC
-                Census leadership into the situation as it occurs, notification
-                after the fact is critical. The members of BRC Census leadership
+                PEERS leadership into the situation as it occurs, notification
+                after the fact is critical. The members of BRC PEERS leadership
                 cannot address issues if they are not aware of them, and
                 patterns of behavior cannot be identified unless each individual
                 behavior is reported to the appropriate members of the team.
@@ -490,10 +490,10 @@ export const BehavioralStandards = ({
           <Card>
             <CardContent>
               <Typography>
-                If members of BRC Census leadership receive reports of behavior
+                If members of BRC PEERS leadership receive reports of behavior
                 that violates any of the standards listed above, they may reach
                 out to the parties involved in an attempt to learn more about
-                the situation. Members of BRC Census leadership will, at all
+                the situation. Members of BRC PEERS leadership will, at all
                 times, do their best to be fair and to let all parties be heard.
                 This process may include requests for mediated conversations
                 between individuals and/or assistance from other departments
@@ -504,10 +504,10 @@ export const BehavioralStandards = ({
               </Typography>
               <Typography>
                 At the conclusion of these discussions and inquiries, verbal or
-                written warnings may be administered to one or more BRC Census
+                written warnings may be administered to one or more BRC PEERS
                 volunteers. In some situations, failure to abide by these
                 standards will result in a volunteer&apos;s removal from the BRC
-                Census team, with or without prior warning. It is also possible
+                PEERS team, with or without prior warning. It is also possible
                 that no additional action will be taken.
               </Typography>
             </CardContent>

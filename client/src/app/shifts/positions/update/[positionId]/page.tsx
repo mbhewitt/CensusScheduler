@@ -7,7 +7,7 @@ interface IShiftPositionsUpdatePageProps {
 }
 
 export const metadata = {
-  title: "Census | Update shift position",
+  title: "PEERS | Update shift position",
 };
 const ShiftPositionsUpdatePage = async ({
   params,

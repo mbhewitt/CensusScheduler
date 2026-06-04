@@ -3,7 +3,6 @@
 import { Box, Card, CardContent, Container, Typography } from "@mui/material";
 import Link from "next/link";
 
-import { reportList } from "@/app/reports/Reports";
 import { Hero } from "@/components/layout/Hero";
 
 export const Home = () => {
@@ -26,38 +25,32 @@ export const Home = () => {
           <Card>
             <CardContent>
               <Typography>
-                BRC Census is a collaborative research project started in 2002
-                with the goal of learning more about the participants who make
-                up Black Rock City. We conduct a random sample of Burners
-                entering the event, then collect online survey responses after
-                the Burn. We combine these two data sources to get more
-                statistically accurate data about the people who attend Burning
-                Man each year.
+                <strong>PEERS</strong> — Placement&apos;s Exploration &amp;
+                Engagement Research Squad — is a Placement volunteer team that
+                celebrates theme camps and gathers neighborhood-level
+                observations across Black Rock City. The name is deliberate:
+                &quot;peer&quot; means &quot;of equal standing.&quot; Squaddies
+                aren&apos;t inspectors — they&apos;re fellow citizens spending a
+                few shifts spreading joy and listening to camp leads.
               </Typography>
               <Typography>
-                Data from the BRC Census helps Burning Man Project represent the
-                Burner community in conversations with local, state, and federal
-                agencies and elected officials. It is also used to understand
-                the impact we have on the environment. In alignment with Burning
-                Man Project&apos;s Environmental Sustainability Roadmap, we want
-                to reduce our carbon footprint and make the event more
-                sustainable. In the last few years, Black Rock City Census has
-                offered a way to track the year-to-year impact of concerns
-                related to this issue by collecting data about transportation
-                and the use of Burner Express bus service.
+                Volunteers (known as <em>Squaddies</em>) visit every theme camp
+                in pairs during 3-hour shifts, Monday through Friday, between
+                8am and 10pm. Each visit has three jobs:{" "}
+                <strong>celebrate</strong> the camp and the people who built it,
+                <strong> listen</strong> to how their placement experience went,
+                and <strong>observe</strong> the neighborhood — including a few
+                photos. Tablet surveys keep the questions consistent; training
+                is provided.
               </Typography>
               <Typography>
-                Just as important is what BRC Census can learn from YOU and the
-                gift of your data! This is your chance to have your presence in
-                Black Rock City counted and to learn about our community. The
-                Census is one of the primary ways Burning Man Project tracks
-                changes in population, behavior, and attitudes of event
-                participants, giving us all the ability to understand just a bit
-                more about the city many of us call home. The more we understand
-                the makeup of Black Rock City and the diverse Burning Man
-                experiences it offers, the better equipped we are to meet the
-                needs of the community and help Burning Man culture continue to
-                flourish.
+                What PEERS hears feeds straight back into Placement&apos;s camp
+                files, helping the team assemble better neighborhoods year after
+                year. Anything urgent gets escalated on-playa to Rangers, Camp
+                Support, or Placement leadership. Anyone can volunteer — new
+                Burners, veterans, camp organizers. We&apos;re looking for
+                friendly, respectful, curious people who are willing to
+                collaborate, stay objective, and have a good time doing it.
               </Typography>
             </CardContent>
           </Card>
@@ -69,22 +62,24 @@ export const Home = () => {
           <Card>
             <CardContent>
               <Typography>
-                To learn more, please visit our portal in the Burning Man
-                Journal and the Census Results Archive for reports on past
-                years&apos; Census data. The most recent report,{" "}
-                <a href={reportList[0].url} target="_blank">
-                  {reportList[0].text}
+                To read more about the PEERS program — what we do, who we are,
+                and how to get involved — visit the{" "}
+                <a
+                  href="https://burningman.org/black-rock-city/camps/placement-process/camp-resource-guide/peers/"
+                  target="_blank"
+                >
+                  PEERS page on burningman.org
                 </a>
-                , is located under the{" "}
-                <Link href={{ pathname: "/reports" }}>Reports</Link> tab in the
-                menu of this tablet.
+                . Past Census Population Reports are still linked under the{" "}
+                <Link href={{ pathname: "/reports" }}>Reports</Link> tab for
+                background reading.
               </Typography>
               <Typography>
-                If you have a question, comment, concern, or if you would like a
-                reminder about filling out the Census online survey after the
-                event, please fill out the{" "}
-                <Link href={{ pathname: "/contact" }}>Contact</Link> form
-                located in the tablet menu.
+                Questions, comments, or want to volunteer? Reach the team at{" "}
+                <a href="mailto:peers@burningman.org">peers@burningman.org</a>{" "}
+                or use the{" "}
+                <Link href={{ pathname: "/contact" }}>Contact</Link> form in
+                the tablet menu.
               </Typography>
             </CardContent>
           </Card>

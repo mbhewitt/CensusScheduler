@@ -1,7 +1,7 @@
 import { Reports } from "@/app/reports/Reports";
 
 export const metadata = {
-  title: "Census | Reports",
+  title: "PEERS | Reports",
 };
 const ReportsPage = () => {
   // render

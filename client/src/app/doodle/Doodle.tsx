@@ -25,8 +25,8 @@ import type { IReqDoodle, IResDoodle } from "@/components/types/doodle";
 import {
   CLEAR_CANVAS_REQ,
   CLEAR_CANVAS_RES,
-  COLOR_BURNING_MAN_BROWN,
-  COLOR_CENSUS_PINK,
+  COLOR_PEERS_CHARCOAL,
+  COLOR_PEERS_GOLD,
   DRAW_MOVE_REQ,
   DRAW_MOVE_RES,
 } from "@/constants";
@@ -37,7 +37,7 @@ export const Doodle = () => {
   // state
   // ------------------------------------------------------------
   const [isFetched, setIsFetched] = useState(false);
-  const [color, setColor] = useState(COLOR_BURNING_MAN_BROWN);
+  const [color, setColor] = useState(COLOR_PEERS_CHARCOAL);
   const [isPointerDown, setIsPointerDown] = useState(false);
 
   // fetching, mutation, and revalidation
@@ -231,8 +231,8 @@ export const Doodle = () => {
   // render
   // ------------------------------------------------------------
   const colorList = [
-    COLOR_BURNING_MAN_BROWN,
-    COLOR_CENSUS_PINK,
+    COLOR_PEERS_CHARCOAL,
+    COLOR_PEERS_GOLD,
     "#f44336",
     "#e91e63",
     "#9c27b0",
