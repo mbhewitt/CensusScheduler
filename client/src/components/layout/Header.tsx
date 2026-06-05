@@ -102,19 +102,30 @@ export const Header = () => {
   const isBehavioralStandardsSigned =
     checkIsBehavioralStandardsSigned(roleList);
 
-  // On-playa only: force-redirect signed-in volunteers who haven't yet
-  // signed the behavioral standards agreement to the BS page before
-  // they can use the rest of the app. Off-playa deployments (Okta-only,
-  // NEXT_PUBLIC_PIN_ENABLED=false) leave them on whatever page they
-  // landed on — the BS page is still accessible via /info if they want
-  // to sign it. Per @mbhewitt 2026-05-24: on-playa walk-ups still need
-  // the gate; off-playa it's friction we don't want.
+  // Force-redirect signed-in volunteers who haven't yet signed the
+  // behavioral standards agreement to the BS page before they can use
+  // the rest of the app. Historically this was keyed off
+  // NEXT_PUBLIC_PIN_ENABLED ("on-playa" = passcode UI enabled), but
+  // deployments that run PIN + Okta together (e.g. the PEERS test
+  // server) need the gate off without losing passcode sign-in — so
+  // NEXT_PUBLIC_BS_GATE_ENABLED now overrides when set explicitly:
+  //   "true"  → gate on, "false" → gate off,
+  //   unset   → legacy behavior (gate on iff PIN enabled).
+  // Per @mbhewitt 2026-05-24: on-playa walk-ups still need the gate;
+  // off-playa it's friction we don't want. When the gate is off the BS
+  // page is still reachable via /info if they want to sign it.
   // NEXT_PUBLIC_* inlines at build time so this is a static decision.
+  // isOnPlaya still drives the walk-up /shifts nav visibility below —
+  // only the BS gate is decoupled from it.
   const isOnPlaya = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
+  const isBehavioralStandardsGateEnabled =
+    process.env.NEXT_PUBLIC_BS_GATE_ENABLED != null
+      ? process.env.NEXT_PUBLIC_BS_GATE_ENABLED === "true"
+      : process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
 
   useEffect(() => {
     if (
-      isOnPlaya &&
+      isBehavioralStandardsGateEnabled &&
       isAuthenticated &&
       !isBehavioralStandardsSigned &&
       !pathname?.includes("behavioral-standards")
@@ -122,7 +133,7 @@ export const Header = () => {
       router.push(`/roles/behavioral-standards/${shiftboardId}`);
     }
   }, [
-    isOnPlaya,
+    isBehavioralStandardsGateEnabled,
     isAuthenticated,
     isBehavioralStandardsSigned,
     pathname,
