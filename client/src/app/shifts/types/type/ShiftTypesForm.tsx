@@ -266,8 +266,6 @@ export const ShiftTypesForm = ({
     dateNameMap[dayjs(date).format("YYYY-MM-DD")] = name;
   });
 
-  // logic
-  // ------------------------------------------------------------
   const handlePositionAdd = ({
     alias,
     name,
