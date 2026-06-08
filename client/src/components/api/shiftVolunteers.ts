@@ -6,14 +6,16 @@ import type { IReqReviewValues, IReqSwitchValues } from "@/components/types";
 import { UPDATE_TYPE_CHECK_IN, UPDATE_TYPE_REVIEW } from "@/constants";
 import { enqueueEmail } from "lib/mail";
 import {
+  lookupActorDisplayName,
   notifyRemoval,
   type RemovalCause,
 } from "@/components/api/assignmentNotify";
 
 // #313 — when a volunteer (self) or admin removes someone from a
 // position with `critical=1`, notify the VC list so they can move on
-// refilling. Pairs with the warning dialog from #308: the volunteer
-// has already acknowledged the gap before this code runs.
+// refilling. The warning dialog from #308 (which would make the
+// volunteer acknowledge the gap before a self-drop) is not built yet,
+// so the email no longer claims a warning was shown (#402).
 const VC_LIST_EMAIL = "censusvolunteercoordinators@burningman.org";
 const APP_BASE_URL =
   process.env.APP_BASE_URL ?? "https://volunteers.census.burningman.org";
@@ -32,7 +34,8 @@ interface CriticalDropContext extends RowDataPacket {
 async function notifyCriticalDrop(
   pool: Pool,
   shiftboardId: number,
-  timePositionId: number
+  timePositionId: number,
+  actorShiftboardId: number | null
 ): Promise<void> {
   const [rows] = await pool.query<CriticalDropContext[]>(
     `SELECT
@@ -65,23 +68,36 @@ async function notifyCriticalDrop(
 
   const dayLabel = ctx.datename ? `${ctx.datename} ${ctx.date}` : ctx.date;
   const timeLabel = ctx.start_time_text ? ` at ${ctx.start_time_text}` : "";
+  // The volunteer whose slot is now open — vs.shiftboard_id is the removed
+  // person, NOT whoever performed the removal.
   const volunteerLabel = ctx.playa_name
     ? `${ctx.playa_name}${ctx.world_name ? ` "${ctx.world_name}"` : ""}`
     : (ctx.world_name ?? `shiftboard_id ${shiftboardId}`);
+
+  // Distinguish a self-drop from an admin/coordinator removal so the CVC
+  // list can tell who is no longer covering the shift AND who took the
+  // action. Per Mew (2026-06-08): name the volunteer, not just the actor.
+  const isSelfDrop =
+    actorShiftboardId == null || actorShiftboardId === shiftboardId;
+  const actorName = isSelfDrop
+    ? null
+    : await lookupActorDisplayName(pool, actorShiftboardId);
+  const removedByLabel = isSelfDrop
+    ? "themselves (self-drop)"
+    : (actorName ?? "an administrator");
 
   await enqueueEmail({
     to: VC_LIST_EMAIL,
     subject: `[Census] CRITICAL OPENING: ${ctx.position} on ${dayLabel}`,
     bodyText: [
-      "A volunteer just dropped a critical position. The slot is now open.",
+      "A critical position is now open and needs to be refilled.",
       "",
       `Position: ${ctx.position}`,
       `Shift: ${dayLabel}${timeLabel}`,
-      `Dropped by: ${volunteerLabel}`,
+      `Volunteer: ${volunteerLabel}`,
+      `Removed by: ${removedByLabel}`,
       "",
       `Manage this shift's volunteers: ${APP_BASE_URL}/shifts/${ctx.shift_times_id}/volunteers`,
-      "",
-      "Note: the volunteer was shown a warning before this drop completed, so they're aware they left a critical gap.",
     ].join("\n"),
     category: "critical-drop",
   });
@@ -181,7 +197,12 @@ export const shiftVolunteerRemove = async (
   // not reachable from this handler — it fires only when the whole
   // shift's `canceled` flag flips, which is its own endpoint.
   try {
-    await notifyCriticalDrop(pool, shiftboardId, timePositionId);
+    await notifyCriticalDrop(
+      pool,
+      shiftboardId,
+      timePositionId,
+      session.shiftboardId
+    );
   } catch (err) {
     console.error(
       `[critical-drop] notifyCriticalDrop failed for shiftboard_id=${shiftboardId} time_position_id=${timePositionId}:`,
