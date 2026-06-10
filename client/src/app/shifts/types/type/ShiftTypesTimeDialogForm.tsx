@@ -2,6 +2,7 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
+  FormHelperText,
   Grid,
   InputLabel,
   MenuItem,
@@ -9,11 +10,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import {
-  DatePicker,
-  LocalizationProvider,
-  TimePicker,
-} from "@mui/x-date-pickers";
+import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import {
@@ -25,9 +22,13 @@ import {
   UseFormGetValues,
   UseFormSetError,
 } from "react-hook-form";
+import useSWR from "swr";
 
 import { IFormValues } from "@/app/shifts/types/type";
+import { IResDateRowItem } from "@/components/types/dates";
 import { MEAL_LIST } from "@/constants";
+import { fetcherGet } from "@/utils/fetcher";
+import { formatDateName } from "@/utils/formatDateTime";
 
 interface IShiftTypesTimeDialogFormProps {
   clearErrors: UseFormClearErrors<IFormValues>;
@@ -56,6 +57,26 @@ export const ShiftTypesTimeDialogForm = ({
   showCanceledCheckbox = false,
   timePositionListAddFields,
 }: IShiftTypesTimeDialogFormProps) => {
+  // fetcher
+  // ------------------------------------------------------------
+  // event days from the Dates table — the day field is a dropdown of these
+  // instead of a free date picker, so a shift time can only land on a date
+  // that exists in op_dates (anything else orphans the date FKs)
+  const { data: dateList }: { data: IResDateRowItem[] | undefined } = useSWR(
+    "/api/dates",
+    fetcherGet
+  );
+
+  // logic
+  // ------------------------------------------------------------
+  const dateListDisplay = (dateList ?? [])
+    .map(({ date, id, name }) => ({
+      date: dayjs(date).format("YYYY-MM-DD"),
+      id,
+      name,
+    }))
+    .sort((a, b) => a.date.localeCompare(b.date));
+
   // render
   // ------------------------------------------------------------
   return (
@@ -64,43 +85,49 @@ export const ShiftTypesTimeDialogForm = ({
         <Controller
           control={control}
           name="timeAdd.date"
-          render={({ field: { onChange, value } }) => (
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                label="Date"
-                onChange={(event) => {
-                  // update field
-                  onChange(event);
+          render={({ field: { onChange, value } }) => {
+            const valueDisplay = value ? dayjs(value).format("YYYY-MM-DD") : "";
+            const isValueListed = dateListDisplay.some(
+              ({ date }) => date === valueDisplay
+            );
 
-                  if (event) {
+            return (
+              <FormControl
+                error={Boolean(errors.timeAdd?.date)}
+                fullWidth
+                required
+                variant="standard"
+              >
+                <InputLabel id="timeAddDate">Day</InputLabel>
+                <Select
+                  label="Day *"
+                  labelId="timeAddDate"
+                  onChange={(event) => {
+                    // update field
+                    onChange(event.target.value);
                     clearErrors("timeAdd.date");
-                  }
-                }}
-                slotProps={{
-                  textField: {
-                    error: Boolean(errors.timeAdd?.date),
-                    fullWidth: true,
-                    helperText: errors.timeAdd?.date?.message,
-                    onBlur: (
-                      event: React.FocusEvent<
-                        HTMLInputElement | HTMLTextAreaElement
-                      >
-                    ) => {
-                      if (event.target.value === "MM/DD/YYYY") {
-                        setError("timeAdd.date", {
-                          type: "required",
-                          message: "Date is required",
-                        });
-                      }
-                    },
-                    required: true,
-                    variant: "standard",
-                  },
-                }}
-                value={dayjs(value)}
-              />
-            </LocalizationProvider>
-          )}
+                  }}
+                  value={valueDisplay}
+                >
+                  {/* keep a stored date visible even if its op_dates row
+                      has since been removed from the Dates table */}
+                  {!isValueListed && valueDisplay !== "" && (
+                    <MenuItem key={valueDisplay} value={valueDisplay}>
+                      {formatDateName(valueDisplay)}
+                    </MenuItem>
+                  )}
+                  {dateListDisplay.map(({ date, id, name }) => (
+                    <MenuItem key={id} value={date}>
+                      {formatDateName(date, name)}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {errors.timeAdd?.date && (
+                  <FormHelperText>{errors.timeAdd.date.message}</FormHelperText>
+                )}
+              </FormControl>
+            );
+          }}
         />
       </Grid>
       <Grid size={3}>

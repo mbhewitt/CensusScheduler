@@ -91,7 +91,7 @@ export const ShiftTypesTimeDialogAdd = ({
             if (getValues("timeAdd.date") === "") {
               setError("timeAdd.date", {
                 type: "required",
-                message: "Date is required",
+                message: "Day is required",
               });
             }
             if (getValues("timeAdd.startTime") === "") {

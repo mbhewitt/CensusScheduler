@@ -288,26 +288,33 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
             // Refresh start_date_id / end_date_id alongside the start_time /
             // end_time change — a date edit must update the FK or downstream
             // joins keep pointing at the old date row. See [[fix-handleTimeListAdd]].
+            // start_time_text / end_time_text ("HH:mm") must be written too:
+            // the Shift Types form GET reads ONLY the _text columns, so
+            // skipping them leaves the form's time fields blank/red (#395).
             await pool.query<RowDataPacket[]>(
               `UPDATE op_shift_times
               SET
                 canceled=?,
                 end_date_id=(SELECT date_id FROM op_dates WHERE date = DATE(?) AND delete_date = false LIMIT 1),
                 end_time=?,
+                end_time_text=DATE_FORMAT(?, '%H:%i'),
                 meal=?,
                 notes=?,
                 update_shift_time=true,
                 shift_instance=?,
                 start_date_id=(SELECT date_id FROM op_dates WHERE date = DATE(?) AND delete_date = false LIMIT 1),
-                start_time=?
+                start_time=?,
+                start_time_text=DATE_FORMAT(?, '%H:%i')
               WHERE shift_times_id=?`,
               [
                 Boolean(canceled),
                 endTime,
                 endTime,
+                endTime,
                 meal === "None" ? "" : meal,
                 notes,
                 instance,
+                startTime,
                 startTime,
                 startTime,
                 timeId,

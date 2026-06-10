@@ -32,27 +32,45 @@ export const handleTimeListAdd = async ({
       // volunteers, etc.) JOINs op_dates via these FKs to get the date label,
       // so a row without them shows up as an orphan with NULL date/datename.
       // Missing date matches resolve to NULL — same as the old behavior.
+      //
+      // start_time_text / end_time_text hold the bare "HH:mm" — the Shift
+      // Types form GET reads ONLY these (not start_time/end_time), so a row
+      // without them renders as blank/red time fields in the form (#395).
       await pool.query(
         `INSERT INTO op_shift_times (
           add_shift_time,
           end_date_id,
           end_time,
+          end_time_text,
           meal,
           notes,
           shift_instance,
           shift_name_id,
           shift_times_id,
           start_date_id,
-          start_time
+          start_time,
+          start_time_text
         )
         VALUES (
           true,
           (SELECT date_id FROM op_dates WHERE date = DATE(?) AND delete_date = false LIMIT 1),
-          ?, ?, ?, ?, ?, ?,
+          ?, DATE_FORMAT(?, '%H:%i'), ?, ?, ?, ?, ?,
           (SELECT date_id FROM op_dates WHERE date = DATE(?) AND delete_date = false LIMIT 1),
-          ?
+          ?, DATE_FORMAT(?, '%H:%i')
         )`,
-        [endTime, endTime, meal, notes, instance, typeId, timeIdNew, startTime, startTime]
+        [
+          endTime,
+          endTime,
+          endTime,
+          meal,
+          notes,
+          instance,
+          typeId,
+          timeIdNew,
+          startTime,
+          startTime,
+          startTime,
+        ]
       );
 
       positionList.forEach(async ({ alias, positionId, sapPoints, slots }) => {

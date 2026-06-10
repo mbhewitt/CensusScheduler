@@ -24,7 +24,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { DatePicker, TimePicker } from "@mui/x-date-pickers";
+import { TimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
@@ -44,6 +44,7 @@ import {
   UseFormSetValue,
   UseFormWatch,
 } from "react-hook-form";
+import useSWR from "swr";
 
 import {
   IFormValues,
@@ -54,12 +55,14 @@ import { ShiftTypesPositionDialogAdd } from "@/app/shifts/types/type/ShiftTypesP
 import { ShiftTypesTimeDialogAdd } from "@/app/shifts/types/type/ShiftTypesTimeDialogAdd";
 import { ShiftTypesTimeDialogUpdate } from "@/app/shifts/types/type/ShiftTypesTimeDialogUpdate";
 import { SnackbarText } from "@/components/general/SnackbarText";
+import { IResDateRowItem } from "@/components/types/dates";
 import type {
   IResShiftTypeCategoryItem,
   IResShiftTypeDefaults,
 } from "@/components/types/shifts/types";
 import { COLOR_BURNING_MAN_BROWN, MEAL_LIST } from "@/constants";
 import { ensure } from "@/utils/ensure";
+import { fetcherGet } from "@/utils/fetcher";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
 
 dayjs.extend(utc);
@@ -242,12 +245,27 @@ export const ShiftTypesForm = ({
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
+  // fetcher
+  // ------------------------------------------------------------
+  // event days from the Dates table — used to label saved time rows with
+  // the day name (e.g. "Aug 30 - OpenSun"); the time dialog offers these
+  // same days as a dropdown
+  const { data: dateList }: { data: IResDateRowItem[] | undefined } = useSWR(
+    "/api/dates",
+    fetcherGet
+  );
+
   // other hooks
   // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
 
   // logic
   // ------------------------------------------------------------
+  const dateNameMap: { [date: string]: string } = {};
+  (dateList ?? []).forEach(({ date, name }) => {
+    dateNameMap[dayjs(date).format("YYYY-MM-DD")] = name;
+  });
+
   const handlePositionAdd = ({
     alias,
     name,
@@ -771,20 +789,23 @@ export const ShiftTypesForm = ({
                         control={control}
                         name={`timeList.${timeIndex}.date`}
                         render={({ field: { value } }) => (
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker
-                              disabled
-                              label="Date"
-                              slotProps={{
-                                textField: {
-                                  fullWidth: true,
-                                  required: true,
-                                  variant: "standard",
-                                },
-                              }}
-                              value={dayjs(value)}
-                            />
-                          </LocalizationProvider>
+                          <TextField
+                            disabled
+                            fullWidth
+                            label="Day"
+                            required
+                            value={
+                              value
+                                ? formatDateName(
+                                    value,
+                                    dateNameMap[
+                                      dayjs(value).format("YYYY-MM-DD")
+                                    ]
+                                  )
+                                : ""
+                            }
+                            variant="standard"
+                          />
                         )}
                       />
                     </Grid>
