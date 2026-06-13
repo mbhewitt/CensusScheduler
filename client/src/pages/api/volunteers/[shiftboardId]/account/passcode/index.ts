@@ -4,6 +4,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import type { IReqPasscode } from "@/components/types/volunteers";
 import { pool } from "lib/database";
 import { withAuth } from "@/lib/withAuth";
+import { isOwnerOrAdmin } from "@/lib/authz";
 
 const volunteers = async (
   req: NextApiRequest,
@@ -16,9 +17,9 @@ const volunteers = async (
     // get
     // ------------------------------------------------------------
     // Self-only reveal. An admin can SET someone else's passcode (PATCH
-    // below — not gated; see #350 for the broader tightening), but
-    // nobody — including admins — can READ an existing one through this
-    // endpoint. Per Mew 2026-05-25.
+    // below — now owner-or-admin gated, #350), but nobody — including
+    // admins — can READ an existing one through this endpoint.
+    // Per Mew 2026-05-25.
     case "GET": {
       const requestId = Number(shiftboardId);
       if (!session || session.shiftboardId !== requestId) {
@@ -49,6 +50,12 @@ const volunteers = async (
     // patch
     // ------------------------------------------------------------
     case "PATCH": {
+      // Owner-or-admin gate (#350): a volunteer may set their own passcode;
+      // admins may reset anyone's.
+      if (!(await isOwnerOrAdmin(session, Number(shiftboardId)))) {
+        return res.status(403).json({ statusCode: 403, message: "Forbidden" });
+      }
+
       // update volunteer passcode
       const { passcode }: IReqPasscode = JSON.parse(req.body);
 

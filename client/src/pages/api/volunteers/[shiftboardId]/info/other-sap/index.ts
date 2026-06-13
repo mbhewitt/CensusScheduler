@@ -4,11 +4,20 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import type { IReqToggleOtherSap } from "@/components/types/volunteer-info";
 import { pool } from "lib/database";
 import { withAuth } from "@/lib/withAuth";
+import { isOwnerOrAdmin } from "@/lib/authz";
 
 const ROLE_OTHER_SAP_ID = 2000007;
 
-const otherSap = async (req: NextApiRequest, res: NextApiResponse) => {
+const otherSap = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  session: { shiftboardId: number }
+) => {
   const { shiftboardId } = req.query;
+
+  if (!(await isOwnerOrAdmin(session, Number(shiftboardId)))) {
+    return res.status(403).json({ statusCode: 403, message: "Forbidden" });
+  }
 
   switch (req.method) {
     // post

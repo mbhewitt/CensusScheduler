@@ -7,9 +7,18 @@ import type {
 } from "@/components/types/volunteers";
 import { pool } from "lib/database";
 import { withAuth } from "@/lib/withAuth";
+import { isOwnerOrAdmin } from "@/lib/authz";
 
-const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
+const volunteers = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  session: { shiftboardId: number }
+) => {
   const { shiftboardId } = req.query;
+
+  if (!(await isOwnerOrAdmin(session, Number(shiftboardId)))) {
+    return res.status(403).json({ statusCode: 403, message: "Forbidden" });
+  }
 
   switch (req.method) {
     // get

@@ -3,8 +3,21 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import type { IResVolunteerShiftCountItem } from "@/components/types/volunteers";
 import { pool } from "lib/database";
+import { withAuth } from "@/lib/withAuth";
+import { isAdmin } from "@/lib/authz";
 
-const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
+const volunteers = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  session: { shiftboardId: number }
+) => {
+  // Admin-only: the full volunteer roster is admin data. This endpoint had
+  // NO auth at all — any caller (even unauthenticated) could dump every
+  // volunteer's name/id. Now requires a logged-in admin.
+  if (!(await isAdmin(session.shiftboardId))) {
+    return res.status(403).json({ statusCode: 403, message: "Forbidden" });
+  }
+
   switch (req.method) {
     // get
     // ------------------------------------------------------------
@@ -93,4 +106,4 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default volunteers;
+export default withAuth(volunteers);
