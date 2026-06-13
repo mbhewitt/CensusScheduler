@@ -7,6 +7,7 @@ import type {
 } from "@/components/types/volunteer-info";
 import { pool } from "lib/database";
 import { withAuth } from "@/lib/withAuth";
+import { isOwnerOrAdmin } from "@/lib/authz";
 
 // SAP day-by-day requirements keyed by arrival datename.
 // Each entry is either a single datename string, or an array meaning "any of these."
@@ -52,8 +53,18 @@ const PRE_OPEN_DATENAMES = [
   "PreSat",
 ];
 
-const volunteerInfo = async (req: NextApiRequest, res: NextApiResponse) => {
+const volunteerInfo = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  session: { shiftboardId: number }
+) => {
   const { shiftboardId } = req.query;
+
+  // Owner-or-admin gate (#410): being logged in isn't enough — a volunteer may
+  // only read their own record; admins may read anyone's.
+  if (!(await isOwnerOrAdmin(session, Number(shiftboardId)))) {
+    return res.status(403).json({ statusCode: 403, message: "Forbidden" });
+  }
 
   switch (req.method) {
     // get

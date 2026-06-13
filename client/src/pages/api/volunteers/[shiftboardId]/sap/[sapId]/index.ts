@@ -6,11 +6,20 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import { pool } from "lib/database";
 import { withAuth } from "@/lib/withAuth";
+import { isOwnerOrAdmin } from "@/lib/authz";
 
 const SAP_FILES_DIR = process.env.SAP_FILES_DIR ?? "/data/census/saps/";
 
-const sapDownload = async (req: NextApiRequest, res: NextApiResponse) => {
+const sapDownload = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  session: { shiftboardId: number }
+) => {
   const { shiftboardId, sapId } = req.query;
+
+  if (!(await isOwnerOrAdmin(session, Number(shiftboardId)))) {
+    return res.status(403).json({ statusCode: 403, message: "Forbidden" });
+  }
 
   switch (req.method) {
     // get
