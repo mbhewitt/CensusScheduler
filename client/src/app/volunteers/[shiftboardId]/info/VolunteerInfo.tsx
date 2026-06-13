@@ -794,7 +794,10 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
         {/* breadcrumbs */}
         <Box sx={{ mb: 3 }}>
           <BreadcrumbsNav>
-            <Link href="/volunteers">Volunteers</Link>
+            {/* Volunteers list is admin-only — don't show the link to
+                non-admins (they'd hit "no permission"). MUI Breadcrumbs
+                drops the falsy child, so no stray separator. */}
+            {isAdmin && <Link href="/volunteers">Volunteers</Link>}
             <Typography>{volunteer.playaName}</Typography>
           </BreadcrumbsNav>
         </Box>
