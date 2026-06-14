@@ -28,6 +28,7 @@ import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "@/components/general/DialogContainer";
 import { ErrorAlert } from "@/components/general/ErrorAlert";
+import { FormattedText } from "@/components/general/FormattedText";
 import { Loading } from "@/components/general/Loading";
 import { SnackbarText } from "@/components/general/SnackbarText";
 import type { IVolunteerOption, TCheckInTypes } from "@/components/types";
@@ -961,10 +962,15 @@ export const ShiftVolunteersDialogAdd = ({
           {timePositionIdShiftWatch && (
             <Grid size={12}>
               <Typography gutterBottom>Position Details:</Typography>
-              {positionList.find(
-                (shiftPositionItem) =>
-                  shiftPositionItem.timePositionId === timePositionIdShiftWatch
-              )?.positionDetails ?? "Not available."}
+              <FormattedText
+                text={
+                  positionList.find(
+                    (shiftPositionItem) =>
+                      shiftPositionItem.timePositionId ===
+                      timePositionIdShiftWatch
+                  )?.positionDetails ?? "Not available."
+                }
+              />
             </Grid>
           )}
         </Grid>
