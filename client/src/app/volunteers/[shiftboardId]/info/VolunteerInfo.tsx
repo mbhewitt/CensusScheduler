@@ -797,8 +797,10 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
         text="Account"
       />
       <Container maxWidth="lg">
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 12, md: isOnPlaya ? 12 : 8 }}>
+        {/* Header (breadcrumbs + welcome + on-playa/SAP) spans full width.
+            The two-column split with the "get more involved" sidebar
+            begins lower, at the checklist, so the sidebar aligns with the
+            checklist row rather than the page header. */}
         {/* breadcrumbs */}
         <Box sx={{ mb: 3 }}>
           <BreadcrumbsNav>
@@ -953,6 +955,10 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
           </CardContent>
         </Card>
 
+        {/* main content (checklist and everything below) shares a row with
+            the get-involved sidebar, so the sidebar starts at the checklist */}
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, md: isOnPlaya ? 12 : 8 }}>
         {/* checklist */}
         <Card sx={{ mb: 3 }}>
           <CardContent>
