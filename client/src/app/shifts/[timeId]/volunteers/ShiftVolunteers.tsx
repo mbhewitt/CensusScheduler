@@ -35,7 +35,6 @@ import { io } from "socket.io-client";
 import useSWR, { KeyedMutator } from "swr";
 import useSWRMutation from "swr/mutation";
 
-import { FormattedText } from "@/components/general/FormattedText";
 import { ShiftVolunteersDialogAdd } from "@/app/shifts/[timeId]/volunteers/ShiftVolunteersDialogAdd";
 import { ShiftVolunteersDialogRemove } from "@/app/shifts/[timeId]/volunteers/ShiftVolunteersDialogRemove";
 import { ShiftVolunteersDialogReview } from "@/app/shifts/[timeId]/volunteers/ShiftVolunteersDialogReview";
@@ -685,9 +684,7 @@ export const ShiftVolunteers = ({
                             {row.label}
                           </Typography>
                         </Grid>
-                        <Grid size={10}>
-                          <FormattedText text={String(row.value)} />
-                        </Grid>
+                        <Grid size={10}>{row.value}</Grid>
                       </Fragment>
                     ))}
                   </Grid>
