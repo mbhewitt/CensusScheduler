@@ -72,6 +72,7 @@ interface IShiftVolunteersDialogAddProps {
     shift: {
       date: string;
       dateName: string;
+      details: string;
       endTime: string;
       startTime: string;
       typeName: string;
@@ -94,7 +95,7 @@ export const ShiftVolunteersDialogAdd = ({
   isDialogOpen,
   shiftVolunteersItem: {
     positionList,
-    shift: { date, dateName, endTime, startTime, typeName },
+    shift: { date, dateName, details, endTime, startTime, typeName },
     timeId: timeIdShift,
     volunteerList,
   },
@@ -958,21 +959,26 @@ export const ShiftVolunteersDialogAdd = ({
           {/* training */}
           {trainingDisplay}
 
-          {/* position details */}
-          {timePositionIdShiftWatch && (
-            <Grid size={12}>
-              <Typography gutterBottom>Position Details:</Typography>
-              <FormattedText
-                text={
-                  positionList.find(
-                    (shiftPositionItem) =>
-                      shiftPositionItem.timePositionId ===
-                      timePositionIdShiftWatch
-                  )?.positionDetails ?? "Not available."
-                }
-              />
-            </Grid>
-          )}
+          {/* position details — when a position has no description of its own,
+              fall back to the shift description so the sign-up pop-up never
+              shows a blank/"Not available." field (per Chipper 2026-06-15) */}
+          {timePositionIdShiftWatch &&
+            (() => {
+              const positionDetails = positionList.find(
+                (shiftPositionItem) =>
+                  shiftPositionItem.timePositionId === timePositionIdShiftWatch
+              )?.positionDetails;
+              const detailsText =
+                positionDetails && positionDetails.trim()
+                  ? positionDetails
+                  : details || "Not available.";
+              return (
+                <Grid size={12}>
+                  <Typography gutterBottom>Position Details:</Typography>
+                  <FormattedText text={detailsText} />
+                </Grid>
+              );
+            })()}
         </Grid>
         <DialogActions>
           <Button
