@@ -4,6 +4,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import type { IResVolunteerShiftItem } from "@/components/types/volunteers";
 import { pool } from "lib/database";
 import { withAuth } from "@/lib/withAuth";
+import { isOwnerOrAdmin } from "@/lib/authz";
 import {
   shiftVolunteerRemove,
   shiftVolunteerUpdate,
@@ -14,12 +15,17 @@ const volunteerShifts = async (
   res: NextApiResponse,
   session: { shiftboardId: number }
 ) => {
+  const { shiftboardId } = req.query;
+
+  if (!(await isOwnerOrAdmin(session, Number(shiftboardId)))) {
+    return res.status(403).json({ statusCode: 403, message: "Forbidden" });
+  }
+
   switch (req.method) {
     // get
     // ------------------------------------------------------------
     case "GET": {
       // get all volunteer shifts
-      const { shiftboardId } = req.query;
       const [dbVolunteerShiftList] = await pool.query<RowDataPacket[]>(
         `SELECT
           d.date,

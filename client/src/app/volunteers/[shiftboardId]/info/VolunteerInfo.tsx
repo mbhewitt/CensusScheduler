@@ -46,6 +46,7 @@ import useSWRMutation from "swr/mutation";
 import { PasscodeDialogUpdate } from "@/app/volunteers/[shiftboardId]/account/PasscodeDialogUpdate";
 import { PasscodeReveal } from "@/app/volunteers/[shiftboardId]/account/PasscodeReveal";
 import { VolunteerShifts } from "@/app/volunteers/[shiftboardId]/account/VolunteerShifts";
+import { GetInvolved } from "@/app/volunteers/[shiftboardId]/info/GetInvolved";
 import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
 import { ErrorPage } from "@/components/general/ErrorPage";
 import { Loading } from "@/components/general/Loading";
@@ -151,6 +152,11 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   // other volunteers' passcodes (they can still RESET via the Update
   // dialog, just can't read existing values). Per Mew 2026-05-25.
   const isSelfView = shiftboardIdSession === shiftboardId;
+
+  // Off-playa only: the "Get more involved" sidebar links don't work on the
+  // offline on-playa tablets, and volunteers aren't signed into those
+  // accounts there (#335).
+  const isOnPlaya = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
 
   // refs
   // ------------------------------------------------------------
@@ -790,11 +796,18 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
         }}
         text="Account"
       />
-      <Container maxWidth="md">
+      <Container maxWidth="lg">
+        {/* Header (breadcrumbs + welcome + on-playa/SAP) spans full width.
+            The two-column split with the "get more involved" sidebar
+            begins lower, at the checklist, so the sidebar aligns with the
+            checklist row rather than the page header. */}
         {/* breadcrumbs */}
         <Box sx={{ mb: 3 }}>
           <BreadcrumbsNav>
-            <Link href="/volunteers">Volunteers</Link>
+            {/* Volunteers list is admin-only — don't show the link to
+                non-admins (they'd hit "no permission"). MUI Breadcrumbs
+                drops the falsy child, so no stray separator. */}
+            {isAdmin && <Link href="/volunteers">Volunteers</Link>}
             <Typography>{volunteer.playaName}</Typography>
           </BreadcrumbsNav>
         </Box>
@@ -942,6 +955,10 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
           </CardContent>
         </Card>
 
+        {/* main content (checklist and everything below) shares a row with
+            the get-involved sidebar, so the sidebar starts at the checklist */}
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, md: isOnPlaya ? 12 : 8 }}>
         {/* checklist */}
         <Card sx={{ mb: 3 }}>
           <CardContent>
@@ -1323,6 +1340,13 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
             </Card>
           </Box>
         )}
+          </Grid>
+          {!isOnPlaya && (
+            <Grid size={{ xs: 12, md: 4 }}>
+              <GetInvolved />
+            </Grid>
+          )}
+        </Grid>
       </Container>
 
       {/* passcode update dialog */}

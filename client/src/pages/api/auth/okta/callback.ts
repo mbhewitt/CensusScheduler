@@ -350,12 +350,15 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
             // Canonical id known from Shiftboard history but no row exists
             // here yet -- create one using the canonical id (NOT a random
             // generateId) so we stay consistent with the rest of the
-            // PEERS ecosystem.
+            // PEERS ecosystem. Treat them like any other new volunteer
+            // (auto-generate a passcode) -- we just already know their
+            // shiftboard_id. Per Mew 2026-06-10.
+            const passcode = generatePasscode();
             await pool.query<RowDataPacket[]>(
               `INSERT INTO op_volunteers (
-                shiftboard_id, playa_name, world_name, email, okta_id, create_volunteer
-              ) VALUES (?, ?, ?, ?, ?, true)`,
-              [canonicalId, playaName, worldName, email, oktaId]
+                shiftboard_id, playa_name, world_name, email, okta_id, passcode, create_volunteer
+              ) VALUES (?, ?, ?, ?, ?, ?, true)`,
+              [canonicalId, playaName, worldName, email, oktaId, passcode]
             );
             shiftboardId = canonicalId;
           }

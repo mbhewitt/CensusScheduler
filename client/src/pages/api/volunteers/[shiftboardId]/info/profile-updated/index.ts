@@ -4,11 +4,20 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import type { IReqToggleProfileUpdated } from "@/components/types/volunteer-info";
 import { pool } from "lib/database";
 import { withAuth } from "@/lib/withAuth";
+import { isOwnerOrAdmin } from "@/lib/authz";
 
 const ROLE_BURNER_PROFILE_UPDATED_ID = 2000010;
 
-const profileUpdated = async (req: NextApiRequest, res: NextApiResponse) => {
+const profileUpdated = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  session: { shiftboardId: number }
+) => {
   const { shiftboardId } = req.query;
+
+  if (!(await isOwnerOrAdmin(session, Number(shiftboardId)))) {
+    return res.status(403).json({ statusCode: 403, message: "Forbidden" });
+  }
 
   switch (req.method) {
     // post

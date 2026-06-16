@@ -165,7 +165,7 @@ function shiftIcsUid(
   return `peers-shift-${timePositionId}-${shiftboardId}@volunteers.census.burningman.org`;
 }
 
-async function lookupActorDisplayName(
+export async function lookupActorDisplayName(
   pool: Pool,
   actorShiftboardId: number | null
 ): Promise<string | null> {
