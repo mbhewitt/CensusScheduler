@@ -38,6 +38,8 @@ const shiftVolunteers = async (
           pt.position,
           pt.prerequisite_id,
           pt.role_id,
+          pt.max_per_volunteer,
+          pt.min_scheduled_csp,
           sn.shift_details,
           sn.shift_name,
           st.canceled,
@@ -99,6 +101,8 @@ const shiftVolunteers = async (
       const [resShiftPositionFirst] = dbShiftPositionList;
       const resShiftPositionList = dbShiftPositionList.map(
         ({
+          max_per_volunteer,
+          min_scheduled_csp,
           position_details,
           position_type_id,
           position,
@@ -110,6 +114,10 @@ const shiftVolunteers = async (
         }) => {
           const resShiftPositionItem: IResShiftPositionCountItem = {
             csp: Number(sap_points ?? 0),
+            maxPerVolunteer:
+              max_per_volunteer == null ? null : Number(max_per_volunteer),
+            minScheduledCsp:
+              min_scheduled_csp == null ? null : Number(min_scheduled_csp),
             positionDetails: position_details,
             positionId: position_type_id,
             positionName: position,

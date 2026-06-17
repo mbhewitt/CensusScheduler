@@ -34,6 +34,12 @@ export interface IResShiftPositionCountItem {
   // sap_points for the position; surfaced in the positions table on
   // /shifts/[timeId]/volunteers and used wherever CSP per position is shown.
   csp: number;
+  // Config-driven signup-rule knobs (migration 006). null = no rule.
+  // maxPerVolunteer: most signups one volunteer should hold for this position
+  // across all shifts; minScheduledCsp: CSP they must already have scheduled to
+  // take it. The signup dialog warns (allow-proceed) when over/under.
+  maxPerVolunteer: number | null;
+  minScheduledCsp: number | null;
   positionDetails: string;
   positionId: number;
   positionName: string;

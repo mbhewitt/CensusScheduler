@@ -130,6 +130,7 @@ export const ShiftVolunteersDialogAdd = ({
 
   const volunteerWatch = watch("volunteer");
   const timeIdTrainingWatch = watch("timeIdTraining");
+  const timePositionIdShiftWatch = watch("timePositionIdShift");
   const {
     data: dataVolunteerList,
     error: errorVolunteerList,
@@ -266,6 +267,74 @@ export const ShiftVolunteersDialogAdd = ({
     volunteerSelected,
   ]);
 
+  // Config-driven signup-rule warnings (#436 art tour / #429 stewardship).
+  // When a position carrying a rule is selected, warn (allow-proceed) if the
+  // candidate would exceed max_per_volunteer for that position, or falls short
+  // of min_scheduled_csp. Mirrors the time-conflict warning above —
+  // informational only, never blocks; admins see it too but are never gated.
+  useEffect(() => {
+    if (!dataVolunteerShiftList || !timePositionIdShiftWatch) return;
+    const selectedPosition = positionList.find(
+      (positionItem) =>
+        positionItem.timePositionId === timePositionIdShiftWatch
+    );
+    if (!selectedPosition) return;
+    const { maxPerVolunteer, minScheduledCsp, positionId, positionName } =
+      selectedPosition;
+    const volunteerLabel = `${volunteerSelected?.playaName} "${volunteerSelected?.worldName}"`;
+
+    // candidate's current active (non-canceled) signups
+    const activeShifts = dataVolunteerShiftList.filter(
+      ({ shift }) => !shift.canceled
+    );
+
+    // max_per_volunteer: count existing holdings of this position, excluding
+    // the slot being added so a re-add isn't double-counted.
+    if (maxPerVolunteer != null) {
+      const heldCount = activeShifts.filter(
+        ({ shift }) =>
+          shift.positionId === positionId &&
+          shift.timePositionId !== timePositionIdShiftWatch
+      ).length;
+      if (heldCount >= maxPerVolunteer) {
+        enqueueSnackbar(
+          <SnackbarText>
+            <strong>{volunteerLabel}</strong> already has {heldCount}{" "}
+            <strong>{positionName}</strong>{" "}
+            {heldCount === 1 ? "signup" : "signups"} — volunteers are asked to
+            take at most {maxPerVolunteer}.
+          </SnackbarText>,
+          { variant: "warning" }
+        );
+      }
+    }
+
+    // min_scheduled_csp: total scheduled CSP must meet the threshold.
+    if (minScheduledCsp != null) {
+      const scheduledCsp = activeShifts.reduce(
+        (sum, { shift }) => sum + (shift.csp ?? 0),
+        0
+      );
+      if (scheduledCsp < minScheduledCsp) {
+        enqueueSnackbar(
+          <SnackbarText>
+            <strong>{positionName}</strong> is for active volunteers —{" "}
+            <strong>{volunteerLabel}</strong> has {scheduledCsp} CSP scheduled
+            but needs at least {minScheduledCsp}. Sign up for a work shift
+            first.
+          </SnackbarText>,
+          { variant: "warning" }
+        );
+      }
+    }
+  }, [
+    dataVolunteerShiftList,
+    enqueueSnackbar,
+    positionList,
+    timePositionIdShiftWatch,
+    volunteerSelected,
+  ]);
+
   // logic
   // ------------------------------------------------------------
   if (
@@ -297,7 +366,6 @@ export const ShiftVolunteersDialogAdd = ({
   }
 
   const isAdmin = checkIsAdmin(accountType, roleList);
-  const timePositionIdShiftWatch = watch("timePositionIdShift");
   const prerequisiteIdWatch = positionList.find(
     (shiftPositionItem) =>
       shiftPositionItem.timePositionId === timePositionIdShiftWatch
