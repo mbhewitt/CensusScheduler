@@ -589,33 +589,35 @@ export const ShiftVolunteers = ({
           backgroundImage: "url(/banners/databeast-volunteers-waving.jpg)",
           backgroundSize: "cover",
         }}
-        text="Shift volunteers"
+        text="Shift Detail"
       />
       <Container component="main">
-        <Box component="section">
-          <BreadcrumbsNav>
-            <Link href="/shifts">
+        {isAdmin && (
+          <Box component="section">
+            <BreadcrumbsNav>
+              <Link href="/shifts">
+                <Typography
+                  sx={{
+                    alignItems: "center",
+                    display: "flex",
+                  }}
+                >
+                  <WorkHistoryIcon sx={{ mr: 0.5 }} />
+                  Shifts
+                </Typography>
+              </Link>
               <Typography
                 sx={{
                   alignItems: "center",
                   display: "flex",
                 }}
               >
-                <WorkHistoryIcon sx={{ mr: 0.5 }} />
-                Shifts
+                <Groups3Icon sx={{ mr: 0.5 }} />
+                Shift Detail
               </Typography>
-            </Link>
-            <Typography
-              sx={{
-                alignItems: "center",
-                display: "flex",
-              }}
-            >
-              <Groups3Icon sx={{ mr: 0.5 }} />
-              Shift volunteers
-            </Typography>
-          </BreadcrumbsNav>
-        </Box>
+            </BreadcrumbsNav>
+          </Box>
+        )}
         <Box component="section">
           {isShiftCanceled && (
             <Alert

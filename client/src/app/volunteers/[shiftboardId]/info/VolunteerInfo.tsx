@@ -770,6 +770,34 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     });
   }
 
+  // Fallback nudge (#430, option B): if nothing else is actionable, point the
+  // volunteer at the shifts page so the checklist is never empty.
+  if (!checklistItems.some((item) => !item.done)) {
+    checklistItems.push({
+      id: "sign-up-for-shifts",
+      label: "Sign up for shifts",
+      done: false,
+      content: (
+        <Box>
+          <Typography sx={{ mb: 1 }}>
+            You’re all set! Browse open shifts and sign up for more ways to
+            help out.
+          </Typography>
+          <Link
+            href="/shifts"
+            style={{
+              color: theme.palette.primary.main,
+              fontWeight: 500,
+              textDecoration: "underline",
+            }}
+          >
+            Browse and sign up for shifts
+          </Link>
+        </Box>
+      ),
+    });
+  }
+
   const incompleteItems = checklistItems.filter((item) => !item.done);
   const completedItems = checklistItems.filter((item) => item.done);
 
