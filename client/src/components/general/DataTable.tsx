@@ -77,6 +77,13 @@ export const DataTable = ({
     rowHover: false,
     rowsPerPage: 100,
     selectableRows: undefined,
+    // "Reset" clears every active filter (incl. the default ones), so label it
+    // for what it actually does (#143). mui-datatables deep-merges textLabels.
+    textLabels: {
+      filter: {
+        reset: "Remove all filters",
+      },
+    },
     viewColumns: false,
     ...optionListCustom,
   };

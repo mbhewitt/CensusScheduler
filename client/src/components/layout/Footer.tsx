@@ -21,7 +21,11 @@ import {
 } from "@/components/layout/pageList";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
-import { checkIsAdmin, checkIsSuperAdmin } from "@/utils/checkIsRoleExist";
+import {
+  checkIsAdmin,
+  checkIsAuthenticated,
+  checkIsSuperAdmin,
+} from "@/utils/checkIsRoleExist";
 
 export const Footer = () => {
   // context
@@ -31,6 +35,7 @@ export const Footer = () => {
   } = useContext(DeveloperModeContext);
   const {
     sessionState: {
+      settings: { isAuthenticated: isAuthenticatedSession },
       user: { roleList },
     },
   } = useContext(SessionContext);
@@ -44,14 +49,28 @@ export const Footer = () => {
   // ------------------------------------------------------------
   const isAdmin = checkIsAdmin(accountType, roleList);
   const isSuperAdmin = checkIsSuperAdmin(accountType, roleList);
+  const isAuthenticated = checkIsAuthenticated(
+    accountType,
+    isAuthenticatedSession
+  );
+  // NEXT_PUBLIC_* inlines at build time so this is a static decision.
+  const isOnPlaya = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
 
   // render
   // ------------------------------------------------------------
-  const pageListHalfCount = Math.ceil(pageListDefault.length / 2);
-  const pageListHalfFirst = pageListDefault.slice(0, pageListHalfCount);
-  const pageListHalfSecond = pageListDefault.slice(
+  // Shifts requires login off-playa, so hide it from the footer for
+  // logged-out users — mirrors the drawer filter in Header.tsx (#413).
+  const pageListDefaultVisible = pageListDefault.filter(({ path }) => {
+    if (path === "/shifts" && !isAuthenticated && !isOnPlaya) {
+      return false;
+    }
+    return true;
+  });
+  const pageListHalfCount = Math.ceil(pageListDefaultVisible.length / 2);
+  const pageListHalfFirst = pageListDefaultVisible.slice(0, pageListHalfCount);
+  const pageListHalfSecond = pageListDefaultVisible.slice(
     pageListHalfCount,
-    pageListDefault.length
+    pageListDefaultVisible.length
   );
 
   return (
