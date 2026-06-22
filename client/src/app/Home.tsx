@@ -16,7 +16,6 @@ import {
 import Link from "next/link";
 import { useContext } from "react";
 
-import { reportList } from "@/app/reports/Reports";
 import { Hero } from "@/components/layout/Hero";
 import { SessionContext } from "@/state/session/context";
 import { checkIsAuthenticated } from "@/utils/checkIsRoleExist";
@@ -105,16 +104,16 @@ export const Home = () => {
           <Card>
             <CardContent>
               <Typography>
-                BRC Census is a collaborative research project started in 2002
-                with the goal of learning more about the participants who make
-                up Black Rock City. We conduct a random sample of Burners
-                entering the event, then collect online survey responses after
-                the Burn. We combine these two data sources to get more
-                statistically accurate data about the people who attend Burning
-                Man each year.
+                Black Rock City (BRC) Census is a collaborative research project
+                started in 2002 with the goal of learning more about the
+                participants who make up Black Rock City. We conduct a random
+                sample of Burners entering the event, then collect online survey
+                responses after the Burn. We combine these two data sources to
+                get more statistically accurate data about the people who attend
+                Burning Man each year.
               </Typography>
               <Typography>
-                Data from the BRC Census helps Burning Man Project represent the
+                Data from BRC Census help Burning Man Project represent the
                 Burner community in conversations with local, state, and federal
                 agencies and elected officials. It is also used to understand
                 the impact we have on the environment. In alignment with Burning
@@ -150,20 +149,44 @@ export const Home = () => {
               <Typography>
                 To learn more, please visit our portal in the Burning Man
                 Journal and the Census Results Archive for reports on past
-                years&apos; Census data. The most recent report,{" "}
-                <a href={reportList[0].url} target="_blank">
-                  {reportList[0].text}
-                </a>
-                , is located under the{" "}
-                <Link href={{ pathname: "/reports" }}>Reports</Link> tab in the
-                menu of this tablet.
+                years&apos; Census data. The most recent{" "}
+                <a
+                  href="https://blackrockcitycensus.org/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Black Rock City Census Population Report
+                </a>{" "}
+                is available for your perusal at any time.
               </Typography>
               <Typography>
                 If you have a question, comment, concern, or if you would like a
                 reminder about filling out the Census online survey after the
                 event, please fill out the{" "}
                 <Link href={{ pathname: "/contact" }}>Contact</Link> form
-                located in the tablet menu.
+                located in the tablet menu or email{" "}
+                <a href="mailto:censusvolunteercoordinators@burningman.org">
+                  censusvolunteercoordinators@burningman.org
+                </a>
+                . The{" "}
+                <a
+                  href="https://hive.burningman.org/spaces/14264554/content"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Census Portal on Burning Man Hive
+                </a>{" "}
+                is a great place to learn about our efforts and conduct any
+                training you may require. Finally, you&apos;re more than welcome
+                to meet and chat with the team on our{" "}
+                <a
+                  href="https://discord.gg/jcWuyYDGcn"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Census Discord server
+                </a>
+                !
               </Typography>
             </CardContent>
           </Card>
