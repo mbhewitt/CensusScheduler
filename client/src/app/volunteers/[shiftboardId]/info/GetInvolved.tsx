@@ -21,7 +21,7 @@ const ITEMS: IGetInvolvedItem[] = [
     title: "Join the Census Discord",
     description: "Connect with the Census community year-round.",
     linkLabel: "Join Discord",
-    href: "https://discord.gg/FqDcF89Ktp",
+    href: "https://discord.gg/BAzSsh4P9g",
   },
   {
     title: "Sign up as a DataNerd",
