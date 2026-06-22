@@ -605,7 +605,20 @@ export const ShiftVolunteersDialogAdd = ({
     // not happen. Admins are exempt (they still get the orange warnings on
     // selection and can override). Client-side gate, consistent with the
     // existing full-shift/slot gating; server unchanged.
-    if (!isAdmin && dataVolunteerShiftList) {
+    if (!isAdmin) {
+      // Fail closed: if the volunteer's current shifts haven't loaded yet we
+      // can't verify the rules, so don't let the signup through unchecked.
+      if (!dataVolunteerShiftList) {
+        enqueueSnackbar(
+          <SnackbarText>
+            <strong>
+              Still checking your current shifts — please try again in a moment.
+            </strong>
+          </SnackbarText>,
+          { variant: "error" }
+        );
+        return;
+      }
       const activeShifts = dataVolunteerShiftList.filter(
         ({ shift }) => !shift.canceled
       );
