@@ -33,6 +33,10 @@ const volunteers = async (
         FROM op_volunteers AS v
         LEFT JOIN op_volunteer_shifts AS vs
         ON vs.shiftboard_id=v.shiftboard_id
+        -- exclude removed shifts so dropped signups don't inflate the
+        -- Attended/Absent/Remaining counts (kept in the ON clause to
+        -- preserve the LEFT JOIN for volunteers with no shifts).
+        AND vs.remove_shift=false
         ORDER BY
           v.playa_name COLLATE utf8mb4_general_ci,
           v.world_name COLLATE utf8mb4_general_ci`
