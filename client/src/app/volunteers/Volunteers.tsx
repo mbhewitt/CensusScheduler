@@ -1,15 +1,7 @@
 "use client";
 
 import { Chat as ChatIcon } from "@mui/icons-material";
-import {
-  Box,
-  Card,
-  CardContent,
-  Chip,
-  Container,
-  Grid,
-  Typography,
-} from "@mui/material";
+import { Box, Chip, Container, Typography } from "@mui/material";
 import { green, grey, red } from "@mui/material/colors";
 import { FilterType } from "mui-datatables";
 import { useRouter } from "next/navigation";
@@ -83,7 +75,7 @@ export const Volunteers = () => {
       },
     },
     {
-      name: "Att.",
+      name: "Attended",
       options: {
         filter: false,
         setCellHeaderProps: setCellHeaderPropsCenter,
@@ -93,7 +85,7 @@ export const Volunteers = () => {
       },
     },
     {
-      name: "Abs.",
+      name: "Absent",
       options: {
         customFilterListOptions: {
           render: (value: string) => `Absent: ${value}`,
@@ -117,7 +109,7 @@ export const Volunteers = () => {
       },
     },
     {
-      name: "Rem.",
+      name: "Remaining",
       options: {
         customFilterListOptions: {
           render: (value: string) => `Remaining: ${value}`,
@@ -247,41 +239,6 @@ export const Volunteers = () => {
             dataTable={dataTable}
             optionListCustom={optionListCustom}
           />
-        </Box>
-        <Box component="section">
-          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
-            Legend
-          </Typography>
-          <Card sx={{ mb: 2 }}>
-            <CardContent>
-              <Grid container>
-                <Grid size={2}>
-                  <Typography component="p" variant="h6">
-                    Att.
-                  </Typography>
-                </Grid>
-                <Grid alignItems="center" container size={10}>
-                  <Typography component="p">Attended</Typography>
-                </Grid>
-                <Grid size={2}>
-                  <Typography component="p" variant="h6">
-                    Abs.
-                  </Typography>
-                </Grid>
-                <Grid alignItems="center" container size={10}>
-                  <Typography component="p">Absent</Typography>
-                </Grid>
-                <Grid size={2}>
-                  <Typography component="p" variant="h6">
-                    Rem.
-                  </Typography>
-                </Grid>
-                <Grid alignItems="center" container size={10}>
-                  <Typography component="p">Remaining</Typography>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
         </Box>
       </Container>
     </>
