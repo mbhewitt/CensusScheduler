@@ -55,9 +55,14 @@ export interface IResVolunteerShiftItem {
   };
   shift: {
     canceled: boolean;
+    // csp = sap_points for this signup; positionId = op_position_type id.
+    // Used by the add dialog to total a volunteer's scheduled CSP and count
+    // how many of a given position they hold (signup-rule warnings, #436/#429).
+    csp: number;
     date: string;
     dateName: string;
     endTime: string;
+    positionId: number;
     positionName: string;
     startTime: string;
     timeId: number;

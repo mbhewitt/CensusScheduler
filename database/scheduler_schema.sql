@@ -81,6 +81,8 @@ DROP TABLE IF EXISTS `op_position_type`;
 CREATE TABLE `op_position_type` (
   `position` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `role_id` bigint DEFAULT NULL,
+  `max_per_volunteer` int DEFAULT NULL,
+  `min_scheduled_csp` int DEFAULT NULL,
   `lead` tinyint(1) DEFAULT NULL,
   `critical` tinyint(1) DEFAULT NULL,
   `prerequisite_id` bigint DEFAULT NULL,

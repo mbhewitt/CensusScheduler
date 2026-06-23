@@ -458,6 +458,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     roles,
     roleThresholds,
     sapStatus,
+    shifts,
     trainings,
     volunteer,
   } = data;
@@ -765,6 +766,43 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                 : `${rt.currentCsp} / ${rt.requiredCsp} CSP`}
             </Typography>
           </Stack>
+        </Box>
+      ),
+    });
+  }
+
+  // Census Lab campers are expected to take a Census Lab Steward shift (#429).
+  // Only shown to volunteers carrying the CensusLabCamp role; complete once
+  // they hold an active Census Lab Steward shift. ("Camp Steward" is the
+  // front-facing wording per Chipper; the underlying position is Census Lab
+  // Steward.)
+  if (roles.includes("CensusLabCamp")) {
+    const hasLabStewardShift = shifts.some(
+      (shiftItem) => shiftItem.position === "Census Lab Steward"
+    );
+    checklistItems.push({
+      id: "camp-steward-shift",
+      label: hasLabStewardShift
+        ? "Camp Steward shift — done"
+        : "Sign up for one or two Camp Steward shifts",
+      done: hasLabStewardShift,
+      content: (
+        <Box>
+          <Typography sx={{ mb: 1 }}>
+            As a Census Lab camper, please sign up for one or two{" "}
+            <strong>Census Lab Steward</strong> shifts (your Camp Steward
+            shifts) to help keep the Lab running during the event.
+          </Typography>
+          <Link
+            href="/shifts"
+            style={{
+              color: theme.palette.primary.main,
+              fontWeight: 500,
+              textDecoration: "underline",
+            }}
+          >
+            Browse and sign up for shifts
+          </Link>
         </Box>
       ),
     });
