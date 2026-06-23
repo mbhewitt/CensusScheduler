@@ -50,7 +50,7 @@ const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
         role: { id: roleId },
         startTimeOffset,
       }: IReqShiftPositionItem = JSON.parse(req.body);
-      const positionIdNew = generateId(
+      const positionIdNew = await generateId(
         `SELECT position_type_id
         FROM op_position_type
         WHERE position_type_id=?`

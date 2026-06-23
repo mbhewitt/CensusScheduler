@@ -38,7 +38,7 @@ const calendar = async (req: NextApiRequest, res: NextApiResponse) => {
     case "POST": {
       // create date
       const { date, name } = JSON.parse(req.body);
-      const dateIdNew = generateId(
+      const dateIdNew = await generateId(
         `SELECT date_id
         FROM op_dates
         WHERE date_id=?`
