@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Census — Checklist + Inline Shift Grid (mockup)</title>
+<style>
+  :root{
+    --pink:#EA008B; --brown:#2f2f2f; --beige:#f7f2eb; --tan:#bc9958;
+    --good:#2e7d32; --needed:#c62828; --line:#e3ddd2; --muted:#6b6b6b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',system-ui,Arial,sans-serif;background:var(--beige);color:var(--brown);}
+  .topbar{background:var(--brown);color:#fff;padding:12px 20px;font-weight:700;letter-spacing:1px;display:flex;align-items:center;gap:10px}
+  .topbar .dot{width:12px;height:12px;border-radius:50%;background:var(--pink)}
+  .wrap{max-width:880px;margin:0 auto;padding:20px}
+  .note{background:#fff8e6;border:1px solid #ead9a6;border-radius:8px;padding:10px 14px;font-size:13px;color:#6b5a2b;margin-bottom:16px}
+  .persona{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+  .persona button{border:1px solid var(--tan);background:#fff;color:var(--brown);padding:7px 12px;border-radius:20px;cursor:pointer;font-size:13px}
+  .persona button.active{background:var(--pink);color:#fff;border-color:var(--pink)}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:14px;overflow:hidden}
+  .card h2{margin:0;padding:16px 18px;font-size:18px}
+  .welcome p{margin:0 0 6px;color:var(--muted)}
+  .welcome .name{font-size:22px;font-weight:700;color:var(--brown)}
+  /* checklist */
+  .ck-head{font-size:20px;margin:24px 4px 10px;font-weight:700}
+  .item{border:1px solid var(--line);border-radius:12px;background:#fff;margin-bottom:12px}
+  .item.done{opacity:.75}
+  .item-row{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer}
+  .check{width:22px;height:22px;border-radius:5px;border:2px solid var(--tan);display:flex;align-items:center;justify-content:center;font-size:14px;flex:0 0 auto}
+  .check.done{background:var(--good);border-color:var(--good);color:#fff}
+  .item-label{font-weight:600;flex:1}
+  .item.done .item-label{text-decoration:line-through;color:var(--muted);font-weight:500}
+  .chev{color:var(--muted);transition:transform .2s}
+  .item.open .chev{transform:rotate(90deg)}
+  .body{display:none;padding:0 16px 16px;border-top:1px solid var(--line)}
+  .item.open .body{display:block}
+  .body p{color:var(--muted);font-size:14px;margin:12px 0}
+  /* sub requirements */
+  .sub{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:14px}
+  .sub .check{width:18px;height:18px;font-size:11px}
+  .sub .status{margin-left:auto;color:var(--muted);font-size:13px}
+  .bar{height:8px;background:#eee;border-radius:5px;flex:1;overflow:hidden;max-width:160px}
+  .bar > span{display:block;height:100%;background:var(--pink)}
+  /* day chips */
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+  .chip{padding:5px 11px;border-radius:16px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid transparent}
+  .chip.covered{background:#e7f4e8;color:var(--good);border-color:#bfe0c2}
+  .chip.needed{background:#fde8e8;color:var(--needed);border-color:#f3bcbc}
+  .chip.active{outline:2px solid var(--pink)}
+  /* inline grid */
+  .grid-wrap{border:1px solid var(--line);border-radius:10px;margin-top:10px;overflow:hidden}
+  .grid-title{background:var(--beige);padding:8px 12px;font-size:13px;font-weight:700}
+  .grid-title small{font-weight:400;color:var(--muted)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:9px 12px;border-top:1px solid var(--line)}
+  th{background:#faf7f1;color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+  td.action{text-align:right;width:1%;white-space:nowrap}
+  .take{background:var(--pink);color:#fff;border:none;border-radius:7px;padding:7px 12px;font-size:13px;font-weight:600;cursor:pointer}
+  .take:hover{filter:brightness(.93)}
+  tr.added td{background:#f3fbf4}
+  .added-tag{color:var(--good);font-weight:700;font-size:13px}
+  .expand-link{display:inline-block;margin-top:8px;color:var(--pink);font-size:13px;cursor:pointer;font-weight:600}
+  .link{color:var(--pink);text-decoration:none;font-weight:600}
+  .hidden{display:none}
+  .legend{font-size:12px;color:var(--muted);margin:2px 4px 14px}
+</style>
+</head>
+<body>
+  <div class="topbar"><span class="dot"></span> BLACK ROCK CITY CENSUS — Volunteer Account (mockup)</div>
+  <div class="wrap">
+    <div class="note">📐 <b>Mockup for discussion</b> — sample data, not live. Click checklist items to expand (accordion: opening one closes the others), click a red day-chip to scope its grid, and click <b>Take this shift</b> to see the inline add.</div>
+
+    <div class="persona">
+      <span style="align-self:center;font-size:13px;color:var(--muted)">View as:</span>
+      <button class="active" onclick="setPersona('sap',this)">SAP seeker (arrives PreWed)</button>
+      <button onclick="setPersona('labcamp',this)">Census Lab camper</button>
+      <button onclick="setPersona('none',this)">No requirements</button>
+    </div>
+
+    <div class="card welcome"><h2 style="border:0">
+      <span class="name">Welcome, Sparkle!</span>
+      <p style="margin-top:6px">Review your account and complete the checklist below to get ready for the event.</p>
+    </h2></div>
+
+    <div class="ck-head">Census Volunteer Pre-playa Checklist</div>
+    <div class="legend">Incomplete items show first; completed ones collapse to the bottom.</div>
+    <div id="checklist"></div>
+  </div>
+
+<script>
+// ---- sample shift data (filtered server-side in real life: role-eligible, not full, no conflict, scoped to the gap day) ----
+const SHIFTS = {
+  PreThu: [
+    {time:'09:00–13:00', pos:'Setup Crew', type:'Setup', train:'—', csp:4},
+    {time:'14:00–18:00', pos:'Setup Crew', type:'Setup', train:'—', csp:4},
+    {time:'08:00–14:00', pos:'Artist',     type:'On Playa Art', train:'—', csp:4},
+  ],
+  PreFri: [
+    {time:'09:00–13:00', pos:'Setup Crew', type:'Setup', train:'—', csp:4},
+    {time:'11:30–15:30', pos:'Gate Sampler', type:'Gate Sampling', train:'RS', csp:4},
+  ],
+  steward: [
+    {time:'09:00–11:00', pos:'Census Lab Steward', type:'Lab Camp Stewardship', train:'—', csp:2, day:'Mon'},
+    {time:'09:00–11:00', pos:'Census Lab Steward', type:'Lab Camp Stewardship', train:'—', csp:2, day:'Wed'},
+    {time:'09:00–11:00', pos:'Census Lab Steward', type:'Lab Camp Stewardship', train:'—', csp:2, day:'Fri'},
+  ],
+};
+
+function gridHTML(key, scopeLabel){
+  const rows = SHIFTS[key].map((s,i)=>`
+    <tr id="${key}-${i}">
+      <td>${s.day ? s.day+', ' : ''}${s.time}</td>
+      <td>${s.pos}</td>
+      <td>${s.type}</td>
+      <td>${s.train}</td>
+      <td>${s.csp} CSP</td>
+      <td class="action"><button class="take" onclick="take('${key}',${i})">Take this shift →</button></td>
+    </tr>`).join('');
+  return `<div class="grid-wrap">
+    <div class="grid-title">Shifts you can take ${scopeLabel} <small>· eligible for you · not full · no conflicts</small></div>
+    <table>
+      <thead><tr><th>Date / Time</th><th>Position</th><th>Type</th><th>Training</th><th>Points</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>`;
+}
+
+function take(key,i){
+  const tr=document.getElementById(key+'-'+i);
+  tr.classList.add('added');
+  tr.querySelector('.action').innerHTML='<span class="added-tag">✓ Added</span>';
+}
+
+// ---- personas ----
+const PERSONAS={
+ sap:[
+   {id:'plans',label:'On-playa plans provided',done:true,body:'<p>Arrival: <b>PreWed</b> · Camping: <b>Census Lab</b> · Early entry: requested.</p>'},
+   {id:'sap',done:false,label:'Sign up for pre-event shifts to earn a Census SAP for early entry',
+     body:`<p>Earn a Census SAP for early entry. You need at least <b>12 CSP</b> and one Census shift each day from the day after you arrive until the gate opens.</p>
+       <div class="sub"><span class="check">·</span> Sign up for at least 12 Census Shift Points <span class="status"><span class="bar"><span style="width:67%"></span></span> 8 / 12 CSP</span></div>
+       <p style="margin-bottom:4px"><b>Daily coverage</b> (you arrive PreWed) — tap a red day to see shifts for it:</p>
+       <div class="chips">
+         <span class="chip needed active" onclick="scopeDay('PreThu',this)">PreThu — needed</span>
+         <span class="chip needed" onclick="scopeDay('PreFri',this)">PreFri — needed</span>
+         <span class="chip covered">PreSat / OpenSun — covered ✓</span>
+       </div>
+       <div id="dayGrid">${gridHTML('PreThu','on <b>PreThu</b>')}</div>`},
+   {id:'bstd',label:'Behavioral Standards Agreement — Signed',done:true,body:'<p>Signed on Jun 2. ✓</p>'},
+   {id:'profile',label:'Burner Profile — Updated',done:true,body:'<p>Confirmed up to date. ✓</p>'},
+ ],
+ labcamp:[
+   {id:'plans',label:'On-playa plans provided',done:true,body:'<p>Camping: <b>Census Lab</b>.</p>'},
+   {id:'labcamp',done:false,label:'Meet shift requirements for Census Lab Camp',
+     body:`<p>As a Census Lab camper you have two requirements:</p>
+       <div class="sub"><span class="check">·</span> Sign up for shifts worth at least 16 CSP <span class="status"><span class="bar"><span style="width:50%"></span></span> 8 / 16 CSP</span></div>
+       <div class="sub"><span class="check">·</span> Sign up for at least one <b>Camp Steward</b> shift <span class="status" style="color:var(--needed)">Still needed</span></div>
+       <span class="expand-link" onclick="this.nextElementSibling.classList.toggle('hidden')">▾ Find a Camp Steward shift</span>
+       <div>${gridHTML('steward','for <b>Camp Steward</b>')}</div>`},
+   {id:'bstd',label:'Behavioral Standards Agreement — Signed',done:true,body:'<p>Signed. ✓</p>'},
+   {id:'profile',label:'Burner Profile — Updated',done:true,body:'<p>Confirmed. ✓</p>'},
+ ],
+ none:[
+   {id:'signup',done:false,label:'Sign up for shifts',
+     body:`<p>You don't have any specific requirements to meet — but Census runs on volunteers! Browse what's available and grab a shift that looks fun.</p>
+       <a class="link" href="#">Go to the Shifts page →</a>`},
+   {id:'bstd',label:'Behavioral Standards Agreement — Signed',done:true,body:'<p>Signed. ✓</p>'},
+   {id:'profile',label:'Burner Profile — Updated',done:true,body:'<p>Confirmed. ✓</p>'},
+ ],
+};
+
+function render(items){
+  const inc=items.filter(i=>!i.done), don=items.filter(i=>i.done);
+  const html=[...inc,...don].map((it,idx)=>`
+    <div class="item ${it.done?'done':''} ${idx===0&&!it.done?'open':''}" id="ck-${it.id}">
+      <div class="item-row" onclick="toggle('${it.id}')">
+        <span class="check ${it.done?'done':''}">${it.done?'✓':''}</span>
+        <span class="item-label">${it.label}</span>
+        <span class="chev">▶</span>
+      </div>
+      <div class="body">${it.body}</div>
+    </div>`).join('');
+  document.getElementById('checklist').innerHTML=html;
+}
+function toggle(id){
+  const el=document.getElementById('ck-'+id);
+  const wasOpen=el.classList.contains('open');
+  document.querySelectorAll('.item').forEach(i=>i.classList.remove('open')); // accordion
+  if(!wasOpen) el.classList.add('open');
+}
+function scopeDay(day,chip){
+  document.querySelectorAll('#ck-sap .chip').forEach(c=>c.classList.remove('active'));
+  chip.classList.add('active');
+  document.getElementById('dayGrid').innerHTML=gridHTML(day,'on <b>'+day+'</b>');
+}
+function setPersona(p,btn){
+  document.querySelectorAll('.persona button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  render(PERSONAS[p]);
+}
+render(PERSONAS.sap);
+</script>
+</body>
+</html>
