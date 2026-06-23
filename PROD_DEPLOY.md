@@ -59,7 +59,7 @@ sudo -u census bash -c '
   cd /home/census
   git clone https://github.com/mbhewitt/CensusScheduler.git
   cd CensusScheduler
-  git checkout main          # or the latest deploy bundle, e.g. deploy/test-bundle
+  git checkout main          # prod tracks main (the old deploy/test-bundle branch is retired)
 '
 ```
 
@@ -279,7 +279,7 @@ Okta app's whitelist — talk to the BM Okta admin.
 
 | What | How |
 |---|---|
-| Pull a new code release | `cd /home/census/CensusScheduler && git fetch && git checkout <ref>`, then `docker compose --file docker-compose-prod.yaml build && docker compose --file docker-compose-prod.yaml up -d` |
+| Pull a new code release | Prod tracks `main`. `cd /home/census/CensusScheduler && git fetch origin && git pull --ff-only origin main` (or `git checkout <ref>` for a non-main release), then `docker compose --file docker-compose-prod.yaml build && docker compose --file docker-compose-prod.yaml up -d`. `.env.production` and `docker-compose-prod.yaml` are untracked on the box, so a pull leaves them intact. |
 | Tail app logs | `sudo docker logs -f census-app` |
 | Container restart only (env change) | `sudo -u census docker compose --file docker-compose-prod.yaml up -d --force-recreate` |
 | Rotate Okta secret | edit `client/.env.production`, restart the container |
