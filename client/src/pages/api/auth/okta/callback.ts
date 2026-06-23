@@ -394,6 +394,34 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
       shiftboardId = newId;
     }
 
+    // Roles-on-login: grant any camp/staff roles the roster (migration 007)
+    // lists for this email that the volunteer doesn't already hold. ADDITIVE
+    // only — never removes a role. This is how camp-roster folks who've never
+    // logged into the app get their role the moment they first sign in (they
+    // can't have op_volunteer_roles rows before their account exists, FK). Same
+    // spirit as the sampler-role recommendation in census-python, but keyed to
+    // a manual roster instead of shift history. Wrapped so a roster miss or a
+    // deployment without the table never blocks login.
+    try {
+      const [rosterRows] = await pool.query<RowDataPacket[]>(
+        "SELECT role_id FROM op_role_grant_roster WHERE LOWER(email)=LOWER(?)",
+        [email]
+      );
+      for (const { role_id } of rosterRows) {
+        await pool.query(
+          `INSERT INTO op_volunteer_roles (shiftboard_id, role_id, add_role, remove_role)
+           VALUES (?, ?, true, false)
+           ON DUPLICATE KEY UPDATE add_role=true, remove_role=false`,
+          [shiftboardId, role_id]
+        );
+      }
+    } catch (rosterErr) {
+      console.warn(
+        "roster role grant skipped:",
+        rosterErr instanceof Error ? rosterErr.message : rosterErr
+      );
+    }
+
     // build the account response (same shape as passcode sign-in)
     const account = await buildAccountResponse(shiftboardId);
     if (!account) {
