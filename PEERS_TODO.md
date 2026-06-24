@@ -38,7 +38,7 @@ Legend: ☐ = todo · ✅ = done · ❓ = needs a PEERS decision · 📄 = provi
 - [ ] **CSP** ("SAP points" scoring): keep/rebrand/remove. Label "SAP points" in shift-position dialogs; `requiredCsp=12` in `info/index.ts:256`; role thresholds via `op_roles.census_shift_points`.
 - [ ] **Training-first** (per Mew 2026-06-23): **use the existing role gate — no new mechanism.** Volunteer earns a "training completed" role via a training-confirmation hive link, and that role is set as the position's required Role (`op_position_type.role_id`) → can't sign up until trained (same pattern as Lead/Squaddie). Setup is **data only** (create training role + hive link + set the position's role). ⚠️ Note: the position-role gate is currently **UI-side only** (`ShiftVolunteersDialogAdd.tsx`); the signup API doesn't enforce it server-side — only harden there if strict enforcement is wanted.
 - [ ] `ROLE_DISPLAY_NAMES` — `VolunteerInfo.tsx:93-104` — training/role labels (some still Census-flavored).
-- [ ] Training curriculum/URLs — `op_trainings` (the 5 seed Census trainings + Hive URLs). Define PEERS trainings.
+- [ ] Training curriculum/URLs — `op_trainings` (5 seed Census trainings) carry Census course links: Hive posts for Census Basics/Random Sampling/OutReach/DataBeast (`database/scheduler_schema.sql:379-383`, and live in prod/test DBs) **and a Census Google-Drive doc for "DataEntry Wiz"** (`scheduler_schema.sql:382`). Replace with PEERS courses or remove. (Lead/Squaddie hive URLs tracked in §7.)
 - [ ] Event datenames — `ARRIVAL_DATENAMES`/`PRE_OPEN_DATENAMES` (`VolunteerInfo.tsx:71-90,122-133`) + `DAY_REQS` (`info/index.ts:15-33`) — only matters if SAP kept.
 
 ## 6. Physical playa address  📄
@@ -51,6 +51,12 @@ Legend: ☐ = todo · ✅ = done · ❓ = needs a PEERS decision · 📄 = provi
 - [ ] Confirm final role names: `PEERS Lead` / `PEERS Squaddie` / `PEERS Coordinator` (team set these via admin UI — confirm they're final).
 - [ ] Repo destination for `peers-main` (currently pushed to `mbhewitt/CensusScheduler`; new `PeersScheduler` repo eventually?).
 - [ ] Backup strategy: add git-versioned snapshots like census? (currently 4-hourly disk dumps + RDS daily snapshots; no git repo chosen.)
+
+## 8. Ops / infra files (found in reviewer pass 2026-06-24)  📄
+- [ ] `httpd/public-html/index.html:5,7,13` — on-playa fallback redirect hardcodes `http://census.org:3000` (meta refresh + JS + link). Point at the PEERS app or remove. (Not used by the prod EC2/nginx stack, but ships in the repo / on-playa boxes.)
+- [ ] `Tablet_setup.md:15` — tablet Google account `brccensus.labhost@gmail.com` (Census-branded). Confirm/replace for PEERS tablets.
+- [ ] `Tablet_setup.md:19` — "click on census logo" instruction → PEERS logo.
+- [x] `database/scheduler_schema.sql:4` — `-- Database: census` dump-header comment: cosmetic metadata, leave as-is.
 
 ## Go-live flip (do together when ready)
 - [ ] Lift `MAIL_OVERRIDE_TO` (currently routes all mail to Mew's gmail).
