@@ -19,25 +19,29 @@ interface IGetInvolvedItem {
 const ITEMS: IGetInvolvedItem[] = [
   {
     title: "Join the Census Discord",
-    description: "Connect with the Census community year-round.",
+    description:
+      "Connect with the Census community to see what we’re up to all year long.",
     linkLabel: "Join Discord",
     href: "https://discord.gg/BAzSsh4P9g",
   },
   {
     title: "Sign up as a DataNerd",
-    description: "Help analyze and visualize Census data.",
+    description:
+      "Want to get nerdy with us to crunch some data? Sign up for our Data Nerds Google Group to be a part of our data analysis efforts. No experience necessary to join.",
     linkLabel: "Learn more",
     href: "https://groups.google.com/a/burningman.org/g/censusdatanerds",
   },
   {
     title: "Volunteer year-round",
-    description: "Stay involved with Census beyond the event.",
+    description:
+      "If you’d like to learn more about what we do and take part in the discussions that guide Census and propel us forward on our mission, you’re very welcome to join our year-round Google Groups mailing list.",
     linkLabel: "Learn more",
     href: "https://groups.google.com/a/burningman.org/g/censusyearround",
   },
   {
     title: "Explore Census Hive",
-    description: "Browse training resources, guides, and more.",
+    description:
+      "The Census Hive page is a great place to dive into the BRC Census pool. Volunteer training is conducted on Hive, and there’s tonnes to learn about our various volunteer opportunities while you’re there. Log in using your Burner Profile ID and password.",
     linkLabel: "Visit Census Hive",
     href: "https://hive.burningman.org/spaces/14264554",
   },
