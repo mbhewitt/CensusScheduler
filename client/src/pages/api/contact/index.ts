@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import type { ResultSetHeader } from "mysql2";
 
 import type { IReqContact } from "@/components/types/contact";
-import { CONTACT_RECIPIENTS } from "@/constants";
+import { CONTACT_RECIPIENT } from "@/constants";
 import { enqueueEmail } from "lib/mail";
 import { pool } from "lib/database";
 
@@ -11,12 +11,10 @@ import { pool } from "lib/database";
 // the canonical "we got your message" — an enqueue failure logs but
 // does not fail the form submission.
 //
-// The "to" field arriving from the form is a recipient *label*
-// (e.g. "Volunteer Coordinator"), not an email address. We store the
-// label in op_messages.to (human-readable history) and map it through
-// CONTACT_RECIPIENTS to get the actual address list for the SMTP send.
-// "Send me a reminder" is a self-reminder marker with no SMTP target —
-// we skip the enqueue and just keep the op_messages row.
+// The Contact Us form routes to a single PEERS inbox. The "To" field is
+// prepopulated and read-only on the client, so it always carries
+// CONTACT_RECIPIENT; we store that in op_messages.to (history) and send
+// the email to CONTACT_RECIPIENT regardless of the posted value.
 const buildSubject = (name: string, wantsReply: boolean): string =>
   `[PEERS contact] from ${name || "Anonymous"} (${wantsReply ? "reply wanted" : "no reply needed"})`;
 
@@ -54,29 +52,21 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
       // NOT fail the form submission — the row write above is the
       // canonical record. Headers per the domain-admin contract:
       // From locked to census@burningmail.burningman.org (default in
-      // enqueueEmail), Reply-To = volunteer's email, Cc = VC list.
-      const recipientEmails = CONTACT_RECIPIENTS[to];
-      if (!recipientEmails) {
-        // "Send me a reminder" or an unknown label — no SMTP target.
-        console.warn(
-          `[contact] no email target for to=${JSON.stringify(to)} (op_messages.id=${result.insertId}); skipping enqueue`
+      // enqueueEmail), Reply-To = volunteer's email. No Cc — the form
+      // only ever emails the single PEERS inbox.
+      try {
+        await enqueueEmail({
+          to: CONTACT_RECIPIENT,
+          replyTo: email,
+          subject: buildSubject(name, isReplyWanted),
+          bodyText: buildBody(body, result.insertId),
+          category: "contact-form",
+        });
+      } catch (err) {
+        console.error(
+          `[contact] enqueueEmail failed for op_messages.id=${result.insertId}:`,
+          err
         );
-      } else {
-        try {
-          await enqueueEmail({
-            to: recipientEmails,
-            cc: "censusvc@burningman.org",
-            replyTo: email,
-            subject: buildSubject(name, isReplyWanted),
-            bodyText: buildBody(body, result.insertId),
-            category: "contact-form",
-          });
-        } catch (err) {
-          console.error(
-            `[contact] enqueueEmail failed for op_messages.id=${result.insertId}:`,
-            err
-          );
-        }
       }
 
       return res.status(201).json({

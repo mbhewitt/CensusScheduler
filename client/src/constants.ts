@@ -4,20 +4,11 @@ export const HELPER_TEXT_EMERGENCY_CONTACT =
 export const HELPER_TEXT_LOCATION =
   "How to find you on playa and any other relevant info";
 
-// contact page form — label → email recipients. The label is what
-// the user sees in the To dropdown and what we store in op_messages.to;
-// the email string (comma-separated, RFC-style) is what the email
-// actually goes to. Keep this list short — every entry is an inbox
-// that gets pinged for every routed message.
-// FIXME(peers): these recipient inboxes are still Census-team addresses;
-// swap to PEERS contacts once we have them.
-export const CONTACT_RECIPIENTS: Record<string, string> = {
-  "Volunteer Coordinator": "censusvolunteercoordinators@burningman.org",
-  "PEERS Manager": "ann.norton@burningman.org, random@burningman.org",
-  Data: "aaron.shev@burningman.org",
-  Technology: "mu@burningman.org, chipper@burningman.org, rqreyes@gmail.com",
-};
-export const CONTACT_RECIPIENT_LABELS = Object.keys(CONTACT_RECIPIENTS).sort();
+// contact page form — the Contact Us form routes to a single PEERS
+// inbox. The "To" field is prepopulated with this address and is
+// read-only for the user, so this is both what we display, what we
+// store in op_messages.to, and where the email is sent.
+export const CONTACT_RECIPIENT = "peers@burningman.org";
 
 // review dialog - radio options
 export const legendList = [

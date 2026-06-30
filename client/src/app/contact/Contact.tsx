@@ -10,12 +10,8 @@ import {
   Checkbox,
   CircularProgress,
   Container,
-  FormControl,
   FormControlLabel,
   Grid,
-  InputLabel,
-  MenuItem,
-  Select,
   TextField,
   Typography,
 } from "@mui/material";
@@ -27,7 +23,7 @@ import useSWRMutation from "swr/mutation";
 import { SnackbarText } from "@/components/general/SnackbarText";
 import { Hero } from "@/components/layout/Hero";
 import type { IReqContact } from "@/components/types/contact";
-import { CONTACT_RECIPIENT_LABELS } from "@/constants";
+import { CONTACT_RECIPIENT } from "@/constants";
 import { SessionContext } from "@/state/session/context";
 import { fetcherTrigger } from "@/utils/fetcher";
 
@@ -44,7 +40,7 @@ const defaultValues: IFormValues = {
   isReplyWanted: true,
   message: "",
   name: "",
-  to: "Volunteer Coordinator",
+  to: CONTACT_RECIPIENT,
 };
 export const Contact = () => {
   // context
@@ -205,16 +201,13 @@ export const Contact = () => {
                       control={control}
                       name="to"
                       render={({ field }) => (
-                        <FormControl fullWidth required variant="standard">
-                          <InputLabel id="to">To</InputLabel>
-                          <Select {...field} label="To *" labelId="to">
-                            {CONTACT_RECIPIENT_LABELS.map((label) => (
-                              <MenuItem key={label} value={label}>
-                                {label}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
+                        <TextField
+                          {...field}
+                          fullWidth
+                          InputProps={{ readOnly: true }}
+                          label="To"
+                          variant="standard"
+                        />
                       )}
                     />
                   </Grid>

@@ -51,9 +51,8 @@ test.describe("Contact Form", () => {
     await page.getByLabel("Name").fill("E2E Test Sender");
     await page.getByLabel("Email").fill("e2e-sender@test.local");
 
-    // MUI Select: click the combobox trigger to open the dropdown
-    await page.getByRole("combobox", { name: /^To/i }).click();
-    await page.getByRole("option", { name: "Send me a reminder" }).click();
+    // "To" is a read-only field prepopulated with the single PEERS inbox
+    await expect(page.getByLabel("To")).toHaveValue("peers@burningman.org");
 
     await page.getByLabel("Message").fill("This is an automated E2E test message.");
 
@@ -93,10 +92,6 @@ test.describe("Contact Form", () => {
 
     await page.getByLabel("Name").fill("E2E Test Sender");
     await page.getByLabel("Email").fill("e2e-reply@test.local");
-
-    // MUI Select: click the combobox trigger to open the dropdown
-    await page.getByRole("combobox", { name: /^To/i }).click();
-    await page.getByRole("option", { name: "Send me a reminder" }).click();
 
     // Check the reply checkbox
     const replyCheckbox = page.getByLabel(/Reply wanted/i);
