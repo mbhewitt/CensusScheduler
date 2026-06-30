@@ -59,8 +59,8 @@ Legend: ☐ = todo · ✅ = done · ❓ = needs a PEERS decision · 📄 = provi
 - [x] `database/scheduler_schema.sql:4` — `-- Database: census` dump-header comment: cosmetic metadata, leave as-is.
 
 ## Go-live flip (do together when ready)
-- [ ] Lift `MAIL_OVERRIDE_TO` (currently routes all mail to Mew's gmail).
-- [ ] Set `MAIL_FROM` + real `CONTACT_RECIPIENTS`/reply-to.
+- [ ] Lift `MAIL_OVERRIDE_TO` (currently routes all mail to papabear@burningman.org).
+- [x] Contact form From (`peers@burningmail.burningman.org`) + recipient (`peers@burningman.org`) set. *(General `MAIL_DEFAULT_REPLY_TO` default still §1.)*
 - [ ] Confirm playa address, reports, images, BS roster all finalized first.
 
 ---
@@ -73,3 +73,4 @@ Legend: ☐ = todo · ✅ = done · ❓ = needs a PEERS decision · 📄 = provi
 - [x] Prod deployed (`volunteers.peers.burningman.org`): EC2, DNS, TLS, Okta, RDS, backups
 - [x] Email pipeline verified working (exim → AWS SES); test message delivered
 - [x] Upstream merge: 10 census-main commits incl. the `/api/volunteers/[id]/*` security gate
+- [x] **Contact form finalized (2026-06-30):** single recipient `peers@burningman.org` via read-only prepopulated "To" field, no Cc, "reply wanted" checkbox + text removed, From `peers@burningmail.burningman.org`. Live on prod; real test email verified delivered to the Salesforce Service Cloud go-live inbox. (commits `6444bbc`/`87ce309`/`802673e`)
