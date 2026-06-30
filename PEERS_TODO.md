@@ -9,9 +9,9 @@ Legend: ☐ = todo · ✅ = done · ❓ = needs a PEERS decision · 📄 = provi
 ---
 
 ## 1. Return / contact email addresses  📄
-- [ ] `CONTACT_RECIPIENTS` — `client/src/constants.ts:14-19` — 4 categories still Census addrs (`censusvolunteercoordinators@`, `ann.norton@`, `random@`, `aaron.shev@`, `mu@`, `chipper@`, `rqreyes@gmail.com`). Provide PEERS recipients per category.
+- [x] `CONTACT_RECIPIENTS` → replaced with single `CONTACT_RECIPIENT = "peers@burningman.org"` (`client/src/constants.ts`). Contact "To" field is now prepopulated + read-only; form routes only to `peers@burningman.org`. (commit `6444bbc`, deployed to prod 2026-06-30)
 - [ ] `VC_LIST_EMAIL` — `client/src/components/api/shiftVolunteers.ts:19` — `censusvolunteercoordinators@burningman.org` (critical-drop alerts).
-- [ ] Contact-form CC — `client/src/pages/api/contact/index.ts:68` — `censusvc@burningman.org`.
+- [x] Contact-form CC — removed (`client/src/pages/api/contact/index.ts`). Contact form now sends with no Cc. (commit `6444bbc`)
 - [ ] `MAIL_FROM` — default `census@burningmail.burningman.org` (`client/lib/mail/index.ts:12`). Set the env var to a PEERS sender (SES relays as `burningmail.burningman.org`).
 - [ ] `MAIL_DEFAULT_REPLY_TO` — default `... <censusvc@burningman.org>` (`client/lib/mail/index.ts:13-15`).
 - [ ] Calendar UID domain — `client/src/components/api/assignmentNotify.ts:165` — `@volunteers.census.burningman.org` (keep stable; pick PEERS domain).
