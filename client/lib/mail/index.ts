@@ -9,7 +9,7 @@ import { startWorker } from "./worker";
 function readConfig(): MailConfig {
   const port = parseInt(process.env.SMTP_PORT ?? "25", 10);
   return {
-    from: process.env.MAIL_FROM ?? "census@burningmail.burningman.org",
+    from: process.env.MAIL_FROM ?? "peers@burningman.org",
     defaultReplyTo:
       process.env.MAIL_DEFAULT_REPLY_TO ??
       "PEERS Volunteer Coordinators <censusvc@burningman.org>",

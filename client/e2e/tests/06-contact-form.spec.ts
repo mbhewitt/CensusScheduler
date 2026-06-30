@@ -86,26 +86,4 @@ test.describe("Contact Form", () => {
 
     await expect(page).toHaveURL(/\/contact/);
   });
-
-  test("should allow checking wants reply checkbox", async ({ page }) => {
-    await page.goto("/contact");
-
-    await page.getByLabel("Name").fill("E2E Test Sender");
-    await page.getByLabel("Email").fill("e2e-reply@test.local");
-
-    // Check the reply checkbox
-    const replyCheckbox = page.getByLabel(/Reply wanted/i);
-    if (await replyCheckbox.isVisible()) {
-      await replyCheckbox.check();
-      await expect(replyCheckbox).toBeChecked();
-    }
-
-    await page.getByLabel("Message").fill("E2E test with reply wanted.");
-
-    await page.getByRole("button", { name: "Send message" }).click();
-
-    await expect(
-      page.getByText(/has been recorded/i)
-    ).toBeVisible({ timeout: 5_000 });
-  });
 });

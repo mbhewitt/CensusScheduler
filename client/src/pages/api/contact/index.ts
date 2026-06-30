@@ -15,17 +15,16 @@ import { pool } from "lib/database";
 // prepopulated and read-only on the client, so it always carries
 // CONTACT_RECIPIENT; we store that in op_messages.to (history) and send
 // the email to CONTACT_RECIPIENT regardless of the posted value.
-const buildSubject = (name: string, wantsReply: boolean): string =>
-  `[PEERS contact] from ${name || "Anonymous"} (${wantsReply ? "reply wanted" : "no reply needed"})`;
+const buildSubject = (name: string): string =>
+  `[PEERS contact] from ${name || "Anonymous"}`;
 
 const buildBody = (
-  { email, isReplyWanted, message, name, to }: IReqContact,
+  { email, message, name, to }: IReqContact,
   messageId: number
 ): string =>
   [
     `From: ${name || "Anonymous"} <${email}>`,
     `Routed to category: ${to}`,
-    `Wants reply: ${isReplyWanted ? "yes" : "no"}`,
     "",
     "--- Message ---",
     message,
@@ -40,12 +39,13 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
     case "POST": {
       // store message
       const body: IReqContact = JSON.parse(req.body);
-      const { email, isReplyWanted, message, name, to } = body;
+      const { email, message, name, to } = body;
 
       const [result] = await pool.query<ResultSetHeader>(
-        // must use backticks for "to" keyword
+        // must use backticks for "to" keyword. wants_reply is retained as
+        // a column but the form no longer collects it — always false.
         "INSERT INTO op_messages (email, message, name, `to`, wants_reply) VALUES (?, ?, ?, ?, ?)",
-        [email, message, name, to, isReplyWanted]
+        [email, message, name, to, false]
       );
 
       // Best-effort send. Per #312 acceptance: enqueue failure does
@@ -58,7 +58,7 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
         await enqueueEmail({
           to: CONTACT_RECIPIENT,
           replyTo: email,
-          subject: buildSubject(name, isReplyWanted),
+          subject: buildSubject(name),
           bodyText: buildBody(body, result.insertId),
           category: "contact-form",
         });

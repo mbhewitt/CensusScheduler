@@ -7,10 +7,8 @@ import {
   Card,
   CardActions,
   CardContent,
-  Checkbox,
   CircularProgress,
   Container,
-  FormControlLabel,
   Grid,
   TextField,
   Typography,
@@ -29,7 +27,6 @@ import { fetcherTrigger } from "@/utils/fetcher";
 
 interface IFormValues {
   email: string;
-  isReplyWanted: boolean;
   message: string;
   name: string;
   to: string;
@@ -37,7 +34,6 @@ interface IFormValues {
 
 const defaultValues: IFormValues = {
   email: "",
-  isReplyWanted: true,
   message: "",
   name: "",
   to: CONTACT_RECIPIENT,
@@ -207,24 +203,6 @@ export const Contact = () => {
                           InputProps={{ readOnly: true }}
                           label="To"
                           variant="standard"
-                        />
-                      )}
-                    />
-                  </Grid>
-                  <Grid size={6}>
-                    <Controller
-                      control={control}
-                      name="isReplyWanted"
-                      render={({ field: { value, ...field } }) => (
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              {...field}
-                              checked={value}
-                              color="secondary"
-                            />
-                          }
-                          label="Reply wanted after Burning Man"
                         />
                       )}
                     />
