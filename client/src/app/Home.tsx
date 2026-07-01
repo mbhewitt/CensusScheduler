@@ -145,14 +145,12 @@ export const Home = () => {
                 To read more about the PEERS program — what we do, who we are,
                 and how to get involved — visit the{" "}
                 <a
-                  href="https://burningman.org/black-rock-city/camps/placement-process/camp-resource-guide/peers/"
+                  href="https://burningman.org/black-rock-city/camps/placement-process/peers/"
                   target="_blank"
                 >
                   PEERS page on burningman.org
                 </a>
-                . Past PEERS Population Reports are still linked under the{" "}
-                <Link href={{ pathname: "/reports" }}>Reports</Link> tab for
-                background reading.
+                .
               </Typography>
               <Typography>
                 Questions, comments, or want to volunteer? Reach the team at{" "}
