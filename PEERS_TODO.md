@@ -16,7 +16,7 @@ Legend: ☐ = todo · ✅ = done · ❓ = needs a PEERS decision · 📄 = provi
 - [ ] `MAIL_DEFAULT_REPLY_TO` — default `... <censusvc@burningman.org>` (`client/lib/mail/index.ts:13-15`).
 - [ ] Calendar UID domain — `client/src/components/api/assignmentNotify.ts:165` — `@volunteers.census.burningman.org` (keep stable; pick PEERS domain).
 - [ ] BS-doc emails — `BehavioralStandards.tsx:265,291,295-296` (see §4).
-- [ ] Home page `mailto:` — `client/src/app/Home.tsx:158` — `peers@burningman.org` (confirm it's right).
+- [x] Home page `mailto:` — `client/src/app/Home.tsx` — confirmed `peers@burningman.org` (in source + live). (2026-07-01)
 - [x] `APP_BASE_URL` — set correctly in prod `.env.production` (`https://volunteers.peers.burningman.org`). *(Code fallbacks in queue.ts/assignmentNotify.ts/shiftVolunteers.ts still say census — harmless since env overrides; optional cleanup.)*
 
 ## 2. Reports listing  📄
