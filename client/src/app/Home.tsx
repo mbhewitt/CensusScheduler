@@ -108,28 +108,29 @@ export const Home = () => {
                 Engagement Research Squad — is a Placement volunteer team that
                 celebrates theme camps and gathers neighborhood-level
                 observations across Black Rock City. The name is deliberate:
-                &quot;peer&quot; means &quot;of equal standing.&quot; Squaddies
-                aren&apos;t inspectors — they&apos;re fellow citizens spending a
-                few shifts spreading joy and listening to camp leads.
+                &quot;peer&quot; means &quot;of equal standing&quot; or &quot;at
+                the same level.&quot; Squaddies aren&apos;t inspectors —
+                they&apos;re fellow citizens spending a few shifts spreading joy
+                and listening to camp leads.
               </Typography>
               <Typography>
                 Volunteers (known as <em>Squaddies</em>) visit every theme camp
                 in pairs during 3-hour shifts, Monday through Friday, between
-                8am and 10pm. Each visit has three jobs:{" "}
-                <strong>celebrate</strong> the camp and the people who built it,
-                <strong> listen</strong> to how their placement experience went,
-                and <strong>observe</strong> the neighborhood — including a few
-                photos. Tablet surveys keep the questions consistent; training
-                is provided.
+                8:30am and 10:30pm. Their role is first and foremost to{" "}
+                <strong>CELEBRATE</strong> the theme camps and their hard work in
+                bringing their vision to life! Squaddies ask a few questions
+                about their placement experience and neighborhood then{" "}
+                <strong>LISTEN</strong> to their responses. Finally, they{" "}
+                <strong>OBSERVE</strong> their camp and take a few photos.
               </Typography>
               <Typography>
-                What PEERS hears feeds straight back into Placement&apos;s camp
-                files, helping the team assemble better neighborhoods year after
-                year. Anything urgent gets escalated on-playa to Rangers, Camp
-                Support, or Placement leadership. Anyone can volunteer — new
-                Burners, veterans, camp organizers. We&apos;re looking for
-                friendly, respectful, curious people who are willing to
-                collaborate, stay objective, and have a good time doing it.
+                The data collected is held with the camp&apos;s record and helps
+                the Placers better visualize the neighborhoods they assembled so
+                they can continue to improve their craft. Anything urgent gets
+                escalated on-playa to Rangers or Placement leadership. Anyone can
+                volunteer — new Burners, veterans, camp organizers. We&apos;re
+                looking for friendly, respectful, curious people who are willing
+                to collaborate, stay objective, and have a good time doing it.
               </Typography>
             </CardContent>
           </Card>
