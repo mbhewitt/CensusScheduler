@@ -109,14 +109,14 @@ export const Home = () => {
                 celebrates theme camps and gathers neighborhood-level
                 observations across Black Rock City. The name is deliberate:
                 &quot;peer&quot; means &quot;of equal standing&quot; or &quot;at
-                the same level.&quot; Squaddies aren&apos;t inspectors —
-                they&apos;re fellow citizens spending a few shifts spreading joy
-                and listening to camp leads.
+                the same level.&quot; Volunteers (known as <em>Squaddies</em>)
+                aren&apos;t inspectors — they&apos;re fellow citizens spending a
+                few shifts spreading joy and listening to camp leads.
               </Typography>
               <Typography>
-                Volunteers (known as <em>Squaddies</em>) visit every theme camp
-                in pairs during 3-hour shifts, Monday through Friday, between
-                8:30am and 10:30pm. Their role is first and foremost to{" "}
+                Squaddies visit every theme camp in pairs during 3-hour shifts,
+                Monday through Friday, between 8:30am and 10:30pm. Their role is
+                first and foremost to{" "}
                 <strong>CELEBRATE</strong> the theme camps and their hard work in
                 bringing their vision to life! Squaddies ask a few questions
                 about their placement experience and neighborhood then{" "}
