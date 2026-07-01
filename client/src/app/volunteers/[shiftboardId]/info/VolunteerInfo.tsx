@@ -546,68 +546,6 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     ),
   });
 
-  // Training
-  if (trainings.length > 0) {
-    const allTrainingDone = trainings.every((t) => t.completed);
-    checklistItems.push({
-      id: "training",
-      label: allTrainingDone
-        ? "Required training courses completed"
-        : "Complete required training courses",
-      done: allTrainingDone,
-      content: (
-        <Box>
-          <Typography sx={{ mb: 1 }}>
-            Complete each required training course on Census Hive. Click a
-            course name below to open it.
-          </Typography>
-          {trainings.map((t) => (
-            <Stack
-              alignItems="center"
-              direction="row"
-              key={t.trainingId}
-              spacing={1}
-              sx={{ py: 0.5 }}
-            >
-              {t.completed ? (
-                <CheckBoxIcon color="success" fontSize="small" />
-              ) : (
-                <CheckBoxOutlineBlankIcon
-                  sx={{ color: theme.palette.secondary.main }}
-                  fontSize="small"
-                />
-              )}
-              {!t.url ? (
-                <Typography variant="body2">{t.trainingName}</Typography>
-              ) : (
-                <Typography
-                  component="a"
-                  href={t.url}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  variant="body2"
-                  sx={{
-                    color: theme.palette.secondary.main,
-                    fontWeight: 500,
-                    textDecoration: "underline",
-                  }}
-                >
-                  {t.trainingName}
-                </Typography>
-              )}
-              <Typography
-                color="text.secondary"
-                variant="body2"
-              >
-                {t.completed ? "Completed" : "Not yet completed"}
-              </Typography>
-            </Stack>
-          ))}
-        </Box>
-      ),
-    });
-  }
-
   // Burner Profile
   checklistItems.push({
     id: "burner-profile",
@@ -808,33 +746,99 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     });
   }
 
-  // Fallback nudge (#430, option B): if nothing else is actionable, point the
-  // volunteer at the shifts page so the checklist is never empty.
-  if (!checklistItems.some((item) => !item.done)) {
+  // Training (moved to the bottom per Chipper 2026-07-01 — it was
+  // showing prominently and often empty for new volunteers before
+  // they had signed up for any shifts).
+  if (trainings.length > 0) {
+    const allTrainingDone = trainings.every((t) => t.completed);
     checklistItems.push({
-      id: "sign-up-for-shifts",
-      label: "Sign up for shifts",
-      done: false,
+      id: "training",
+      label: allTrainingDone
+        ? "Required training courses completed"
+        : "Complete required training courses",
+      done: allTrainingDone,
       content: (
         <Box>
           <Typography sx={{ mb: 1 }}>
-            You’re all set! Browse open shifts and sign up for more ways to
-            help out.
+            Complete each required training course on Census Hive. Click a
+            course name below to open it.
           </Typography>
-          <Link
-            href="/shifts"
-            style={{
-              color: theme.palette.primary.main,
-              fontWeight: 500,
-              textDecoration: "underline",
-            }}
-          >
-            Browse and sign up for shifts
-          </Link>
+          {trainings.map((t) => (
+            <Stack
+              alignItems="center"
+              direction="row"
+              key={t.trainingId}
+              spacing={1}
+              sx={{ py: 0.5 }}
+            >
+              {t.completed ? (
+                <CheckBoxIcon color="success" fontSize="small" />
+              ) : (
+                <CheckBoxOutlineBlankIcon
+                  sx={{ color: theme.palette.secondary.main }}
+                  fontSize="small"
+                />
+              )}
+              {!t.url ? (
+                <Typography variant="body2">{t.trainingName}</Typography>
+              ) : (
+                <Typography
+                  component="a"
+                  href={t.url}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  variant="body2"
+                  sx={{
+                    color: theme.palette.secondary.main,
+                    fontWeight: 500,
+                    textDecoration: "underline",
+                  }}
+                >
+                  {t.trainingName}
+                </Typography>
+              )}
+              <Typography
+                color="text.secondary"
+                variant="body2"
+              >
+                {t.completed ? "Completed" : "Not yet completed"}
+              </Typography>
+            </Stack>
+          ))}
         </Box>
       ),
     });
   }
+
+  // Permanent CTA (per Chipper 2026-07-01): always present, always the FIRST
+  // item, and intentionally never checks off — a standing prompt to view/add
+  // shifts no matter the volunteer's role, dates, or how many shifts they
+  // already hold. unshift() so it leads the list. Supersedes the old #430
+  // "all set" fallback nudge — since this item is always incomplete, the
+  // checklist is guaranteed non-empty on its own.
+  checklistItems.unshift({
+    id: "view-add-census-shifts",
+    label: "View/Add Census shifts",
+    done: false,
+    content: (
+      <Box>
+        <Typography sx={{ mb: 1 }}>
+          Browse open Census shifts and sign up any time — you can always add
+          more or adjust your schedule.
+        </Typography>
+        <Link
+          href="/shifts"
+          style={{
+            color: theme.palette.primary.main,
+            fontWeight: 500,
+            textDecoration: "underline",
+          }}
+        >
+          Browse and sign up for shifts
+        </Link>
+      </Box>
+    ),
+  });
 
   const incompleteItems = checklistItems.filter((item) => !item.done);
   const completedItems = checklistItems.filter((item) => item.done);
