@@ -3,40 +3,37 @@ import { Box, Card, CardContent, Link, Stack, Typography } from "@mui/material";
 
 // "Optional: Get more involved with PEERS" sidebar on the account/info page.
 // Off-playa only (gated by the parent) — the links don't work on the offline
-// on-playa tablets, and volunteers aren't signed into Discord/Google/Hive
-// there anyway (#335). Plain link-cards, not checklist items: these are
-// optional, open-ended ways to stay connected, not tasks with a done state.
-// The Discord invite is a per-page invite that tracks joins on the Discord
-// side, so no in-app tracking is needed.
+// on-playa tablets, and volunteers aren't signed in there anyway (#335).
+// Plain link-cards, not checklist items: these are optional, open-ended ways
+// to explore PEERS and camp resources, not tasks with a done state.
+
+interface IGetInvolvedLink {
+  label: string;
+  href: string;
+}
 
 interface IGetInvolvedItem {
   title: string;
   description: string;
-  linkLabel: string;
-  href: string;
+  links: IGetInvolvedLink[];
 }
 
-// FIXME(peers): these are PEERS-rebranded placeholders. The hrefs point to "#"
-// until Mew supplies the real PEERS community links (Discord invite, year-round
-// volunteer group, Hive space). Do not ship the Census URLs to PEERS users.
+// TODO(peers): "Take Fun with Fulcrum" link is pending a URL from the PEERS
+// team (papabear, 2026-07-01) — add it to the links array below once supplied.
 const ITEMS: IGetInvolvedItem[] = [
   {
-    title: "Join the PEERS Discord",
-    description: "Connect with the PEERS community year-round.",
-    linkLabel: "Join Discord",
-    href: "#",
-  },
-  {
-    title: "Volunteer year-round",
-    description: "Stay involved with PEERS beyond the event.",
-    linkLabel: "Learn more",
-    href: "#",
-  },
-  {
-    title: "Explore PEERS resources",
+    title: "Explore PEERS & camp resources",
     description: "Browse training resources, guides, and more.",
-    linkLabel: "Visit PEERS Hive",
-    href: "#",
+    links: [
+      {
+        label: "Camp Resource Guide",
+        href: "https://burningman.org/black-rock-city/camps/placement-process/camp-resource-guide/",
+      },
+      {
+        label: "The Placement Process",
+        href: "https://burningman.org/black-rock-city/camps/placement-process/",
+      },
+    ],
   },
 ];
 
@@ -57,7 +54,7 @@ export const GetInvolved = () => {
 
         <Stack spacing={2}>
           {ITEMS.map((item) => (
-            <Box key={item.href}>
+            <Box key={item.title}>
               <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
                 {item.title}
               </Typography>
@@ -68,15 +65,24 @@ export const GetInvolved = () => {
               >
                 {item.description}
               </Typography>
-              <Link
-                href={item.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={{ alignItems: "center", display: "inline-flex", gap: 0.5 }}
-              >
-                {item.linkLabel}
-                <OpenInNewIcon fontSize="inherit" />
-              </Link>
+              <Stack spacing={0.5}>
+                {item.links.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{
+                      alignItems: "center",
+                      display: "inline-flex",
+                      gap: 0.5,
+                    }}
+                  >
+                    {link.label}
+                    <OpenInNewIcon fontSize="inherit" />
+                  </Link>
+                ))}
+              </Stack>
             </Box>
           ))}
         </Stack>

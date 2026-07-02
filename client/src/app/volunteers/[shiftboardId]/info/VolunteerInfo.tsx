@@ -29,8 +29,6 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  MenuItem,
-  Select,
   Stack,
   TextField,
   Typography,
@@ -67,28 +65,6 @@ import { SessionContext } from "@/state/session/context";
 import { checkIsAdmin } from "@/utils/checkIsRoleExist";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 
-// valid arrival datenames in display order
-const ARRIVAL_DATENAMES = [
-  "EarlyThur",
-  "EarlyFri",
-  "EarlyMan",
-  "PreSun",
-  "PreMon",
-  "PreTue",
-  "PreWed",
-  "PreThur",
-  "PreFri",
-  "PreSat",
-  "OpenSun",
-  "Mon",
-  "Tue",
-  "Wed",
-  "Thur",
-  "Fri",
-  "BurnSat",
-  "TempleSun",
-];
-
 // human-readable display names for internal role identifiers
 const ROLE_DISPLAY_NAMES: Record<string, string> = {
   CounterCultureCamp: "Camping with Counter Culture",
@@ -101,17 +77,6 @@ const ROLE_DISPLAY_NAMES: Record<string, string> = {
   TrainingOutReachComplete: "Training: OutReach",
   TrainingDataEntryWizComplete: "Training: Data Entry Wiz",
   TrainingDataBeastDriverComplete: "Training: Data Beast Driver",
-};
-
-// format ISO date string to readable format like "Aug 17"
-// Use UTC to avoid timezone offset shifting the displayed day
-const formatDateDisplay = (isoDate: string): string => {
-  const d = new Date(isoDate);
-  return d.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    timeZone: "UTC",
-  });
 };
 
 interface IVolunteerInfoProps {
@@ -160,7 +125,6 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
 
   // refs
   // ------------------------------------------------------------
-  const onPlayaRef = useRef<HTMLDivElement>(null);
   const passcodeRef = useRef<HTMLDivElement>(null);
 
   // state
@@ -180,14 +144,6 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mutate: any;
   } = useSWR(`/api/volunteers/${shiftboardId}/info`, fetcherGet);
-  const { trigger: triggerInfo } = useSWRMutation(
-    `/api/volunteers/${shiftboardId}/info`,
-    fetcherTrigger
-  );
-  const { trigger: triggerOtherSap } = useSWRMutation(
-    `/api/volunteers/${shiftboardId}/info/other-sap`,
-    fetcherTrigger
-  );
   const { trigger: triggerProfileUpdated } = useSWRMutation(
     `/api/volunteers/${shiftboardId}/info/profile-updated`,
     fetcherTrigger
@@ -237,62 +193,6 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
 
   // handlers
   // ------------------------------------------------------------
-  const handleArrivalDateChange = useCallback(
-    async (dateId: number | string) => {
-      try {
-        await triggerInfo({
-          body: { arrivalDateId: dateId === "" ? null : Number(dateId) },
-          method: "PATCH",
-        });
-        mutate();
-        enqueueSnackbar(
-          <SnackbarText>
-            Arrival date <strong>updated</strong>
-          </SnackbarText>,
-          { variant: "success" }
-        );
-      } catch (error) {
-        if (error instanceof Error) {
-          enqueueSnackbar(
-            <SnackbarText>
-              <strong>{error.message}</strong>
-            </SnackbarText>,
-            { persist: true, variant: "error" }
-          );
-        }
-      }
-    },
-    [triggerInfo, mutate, enqueueSnackbar]
-  );
-
-  const handleOtherSapToggle = useCallback(
-    async (hasOtherSap: boolean) => {
-      try {
-        await triggerOtherSap({
-          body: { hasOtherSap },
-          method: "POST",
-        });
-        mutate();
-        enqueueSnackbar(
-          <SnackbarText>
-            Early entry status <strong>updated</strong>
-          </SnackbarText>,
-          { variant: "success" }
-        );
-      } catch (error) {
-        if (error instanceof Error) {
-          enqueueSnackbar(
-            <SnackbarText>
-              <strong>{error.message}</strong>
-            </SnackbarText>,
-            { persist: true, variant: "error" }
-          );
-        }
-      }
-    },
-    [triggerOtherSap, mutate, enqueueSnackbar]
-  );
-
   const handleEmailUnsubscribedToggle = useCallback(
     async (unsubscribed: boolean) => {
       try {
@@ -319,33 +219,6 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
       }
     },
     [triggerEmailPreference, mutate, enqueueSnackbar]
-  );
-
-  const handleLocationChange = useCallback(
-    async (location: string) => {
-      try {
-        await triggerInfo({
-          body: { location },
-          method: "PATCH",
-        });
-        enqueueSnackbar(
-          <SnackbarText>
-            Camping location <strong>updated</strong>
-          </SnackbarText>,
-          { variant: "success" }
-        );
-      } catch (error) {
-        if (error instanceof Error) {
-          enqueueSnackbar(
-            <SnackbarText>
-              <strong>{error.message}</strong>
-            </SnackbarText>,
-            { persist: true, variant: "error" }
-          );
-        }
-      }
-    },
-    [triggerInfo, enqueueSnackbar]
   );
 
   const handleProfileUpdatedToggle = useCallback(
@@ -453,7 +326,6 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     arrivalDate,
     behavioralStandardsSigned,
     burnerProfileUpdated,
-    dates,
     emailUnsubscribed,
     roles,
     roleThresholds,
@@ -500,23 +372,6 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
       ),
     });
   }
-
-  // On-playa plans
-  const plansDone =
-    arrivalDate !== null && (volunteer.location ?? "").trim().length > 0;
-  checklistItems.push({
-    id: "plans",
-    label: plansDone
-      ? "On-playa plans provided"
-      : "Tell us your plans for this year\u2019s event",
-    done: plansDone,
-    content: (
-      <Typography>
-        Update your arrival date, early entry status, and camping location in the{" "}
-        <strong>On-Playa Information and Early Entry / SAP</strong> section above.
-      </Typography>
-    ),
-  });
 
   // Behavioral Standards
   checklistItems.push({
@@ -852,106 +707,6 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                 Visit your Burner Profile
               </a>
             </Typography>
-          </CardContent>
-        </Card>
-
-        {/* on-playa information and early entry / SAP */}
-        <Card ref={onPlayaRef} sx={{ mb: 3 }}>
-          <CardContent>
-            <Typography component="h2" sx={{ mb: 1 }} variant="h5">
-              On-Playa Information and Early Entry / SAP
-            </Typography>
-            <Typography color="text.secondary" sx={{ mb: 2 }} variant="body2">
-              As a PEERS volunteer, you may be eligible for early entry to the
-              event. Select your earliest available arrival date below, and
-              we&apos;ll show you what&apos;s needed to qualify for a Setup Access
-              Pass (SAP).
-            </Typography>
-
-            {/* arrival date */}
-            <Box sx={{ mb: 2 }}>
-              <Typography sx={{ mb: 0.5 }} variant="subtitle2">
-                Desired / Expected Arrival Date
-              </Typography>
-              <Select
-                aria-label="Desired / Expected Arrival Date"
-                displayEmpty
-                onChange={(e) =>
-                  handleArrivalDateChange(e.target.value)
-                }
-                size="small"
-                sx={{ minWidth: 300 }}
-                value={arrivalDate?.dateId ?? ""}
-              >
-                <MenuItem value="">
-                  <em>&mdash; Select &mdash;</em>
-                </MenuItem>
-                {dates
-                  .filter((d) => ARRIVAL_DATENAMES.includes(d.datename))
-                  .map((d) => (
-                    <MenuItem key={d.dateId} value={d.dateId}>
-                      {d.datename} &mdash; {formatDateDisplay(d.date)}
-                    </MenuItem>
-                  ))}
-              </Select>
-            </Box>
-
-            {/* early entry question (only for pre-open dates) */}
-            {isPreOpen && (
-              <Box
-                sx={{
-                  backgroundColor: theme.palette.action.hover,
-                  borderLeft: `3px solid ${theme.palette.primary.main}`,
-                  borderRadius: 1,
-                  mb: 2,
-                  p: 2,
-                }}
-              >
-                <Typography sx={{ mb: 1 }} variant="subtitle2">
-                  Early Entry
-                </Typography>
-                <Typography color="text.secondary" sx={{ mb: 1 }} variant="body2">
-                  The arrival date you selected is prior to the gate opening at the
-                  event. Do you already have a pass for early entry through a
-                  different department, or would you like PEERS to provide this?
-                </Typography>
-                <Select
-                  aria-label="Early entry source"
-                  onChange={(e) =>
-                    handleOtherSapToggle(e.target.value === "other")
-                  }
-                  size="small"
-                  sx={{ minWidth: 300 }}
-                  value={hasOtherSap ? "other" : "census"}
-                >
-                  <MenuItem value="census">
-                    I would like PEERS to provide early entry
-                  </MenuItem>
-                  <MenuItem value="other">
-                    I already have early entry through another department
-                  </MenuItem>
-                </Select>
-              </Box>
-            )}
-
-            {/* camping location */}
-            <Box>
-              <Typography sx={{ mb: 0.5 }} variant="subtitle2">
-                Tell us about where you will be camping
-              </Typography>
-              <TextField
-                defaultValue={volunteer.location}
-                fullWidth
-                multiline
-                onBlur={(e) => handleLocationChange(e.target.value)}
-                placeholder="e.g., Counter Culture Camp at 7:30 & G"
-                rows={2}
-                size="small"
-              />
-              <Typography color="text.secondary" variant="caption">
-                How to find you on playa and any other relevant info
-              </Typography>
-            </Box>
           </CardContent>
         </Card>
 
