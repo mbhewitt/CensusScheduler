@@ -16,8 +16,10 @@ export const Hero = ({ imageStyles, text }: IHeroProps) => {
   return (
     <Box
       sx={{
-        ...imageStyles,
+        // default focal point; a caller can override via imageStyles
+        // (e.g. the Home hero shifts up to keep faces in frame)
         backgroundPosition: "center",
+        ...imageStyles,
         height: theme.spacing(30),
         mb: 3,
         position: "relative",

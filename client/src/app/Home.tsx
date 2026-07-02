@@ -48,6 +48,9 @@ export const Home = () => {
       <Hero
         imageStyles={{
           backgroundImage: "url(/banners/peers-headwash.jpg)",
+          // shift the focal point up so the left subject's eyes stay in the
+          // crop without cutting the middle subject's face (papabear 2026-07-02)
+          backgroundPosition: "center 32%",
           backgroundSize: "cover",
         }}
         text="Home"
