@@ -14,18 +14,21 @@ interface IHandleTimeListAdd {
   typeId: number;
 }
 
-// op_shift_times.shift_instance carries a GLOBAL UNIQUE key, but the "Add
-// time" dialog only checks a new label against the current shift type's own
-// times — so a label another type already uses (e.g. "Monday Morning") slips
-// past the UI and then fails the DB insert. Because the inserts used to run
-// fire-and-forget, that duplicate-key error was swallowed and the time
-// silently vanished on reload. Run this read-only check BEFORE any writes so a
-// collision fails cleanly with a clear message instead. Returns the first
-// conflicting label, or null when every label is unique.
+// An Instance label must be unique WITHIN a shift type (enforced by the
+// UNIQUE(shift_name_id, shift_instance) key) — the same label can be reused
+// across different types. The "Add time" dialog already checks a new label
+// against the current type's other times; this is the server-side safety net
+// (it also catches collisions with soft-removed rows in the same type) and,
+// run BEFORE any writes, turns a would-be duplicate-key failure into a clean
+// 409 with a clear message instead of a silently swallowed insert error.
+// Returns the first conflicting label for this type, or null when all are
+// unique.
 export const findInstanceConflict = async ({
   timeList,
+  typeId,
 }: {
   timeList: IReqShiftTypeTimeItem[];
+  typeId: number;
 }): Promise<string | null> => {
   // instance label -> the timeId the request assigns it to
   const requested = new Map<string, number>();
@@ -43,13 +46,14 @@ export const findInstanceConflict = async ({
   const [dbRows] = await pool.query<RowDataPacket[]>(
     `SELECT shift_instance, shift_times_id
     FROM op_shift_times
-    WHERE remove_shift_time = false
+    WHERE shift_name_id = ?
+    AND remove_shift_time = false
     AND shift_instance IN (?)`,
-    [instances]
+    [typeId, instances]
   );
   for (const { shift_instance, shift_times_id } of dbRows) {
     // A conflict only when the label already lives on a DIFFERENT physical
-    // time row. A time keeping its own label (same shift_times_id) is fine.
+    // time row in this type. A time keeping its own label is fine.
     if (requested.get(shift_instance) !== shift_times_id) {
       return shift_instance;
     }
@@ -192,21 +196,24 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
         timeList,
       }: IReqShiftTypeItem = JSON.parse(req.body);
 
-      // reject duplicate instance labels before writing anything (see
-      // findInstanceConflict) so the save fails cleanly instead of silently
-      // dropping the colliding time.
-      const conflict = await findInstanceConflict({ timeList });
-      if (conflict) {
-        return res.status(409).json({
-          statusCode: 409,
-          message: `The time label "${conflict}" is already in use by another shift. Each time's Instance label must be unique across all shifts — please rename it and try again.`,
-        });
-      }
-
       const typeIdNew = generateId(
         `SELECT shift_name_id
         FROM op_shift_name`
       );
+
+      // reject duplicate instance labels before writing anything (see
+      // findInstanceConflict) so the save fails cleanly instead of silently
+      // dropping the colliding time.
+      const conflict = await findInstanceConflict({
+        timeList,
+        typeId: typeIdNew,
+      });
+      if (conflict) {
+        return res.status(409).json({
+          statusCode: 409,
+          message: `The time label "${conflict}" is already used by another time in this shift. Each time's Instance label must be unique within the shift — please rename it and try again.`,
+        });
+      }
 
       // insert new shift name row
       await pool.query(

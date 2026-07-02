@@ -216,7 +216,7 @@ CREATE TABLE `op_shift_times` (
   `end_date_id` bigint DEFAULT NULL,
   `end_time_text` varchar(10) COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (`shift_times_id`),
-  UNIQUE KEY `shift_instance` (`shift_instance`),
+  UNIQUE KEY `shift_instance` (`shift_name_id`,`shift_instance`),
   KEY `shift_name_id` (`shift_name_id`),
   KEY `datename` (`datename`),
   KEY `start_date_id` (`start_date_id`),

@@ -234,11 +234,14 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
       // findInstanceConflict) so the save fails cleanly instead of silently
       // dropping the colliding time. Excludes each time's own row, so keeping
       // an existing label is fine.
-      const conflict = await findInstanceConflict({ timeList });
+      const conflict = await findInstanceConflict({
+        timeList,
+        typeId: Number(typeId),
+      });
       if (conflict) {
         return res.status(409).json({
           statusCode: 409,
-          message: `The time label "${conflict}" is already in use by another shift. Each time's Instance label must be unique across all shifts — please rename it and try again.`,
+          message: `The time label "${conflict}" is already used by another time in this shift. Each time's Instance label must be unique within the shift — please rename it and try again.`,
         });
       }
 
@@ -388,8 +391,30 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           );
         }
       }
-      timeListAdd.forEach(
-        async ({ endTime, instance, meal, notes, startTime }) => {
+      // Snapshot existing time-position rows BEFORE inserting any new times.
+      // handleTimeListAdd (below) inserts each new time's position with a
+      // server-generated id the request doesn't know about; if that fresh row
+      // were included in this snapshot, timePositionListRemove would treat it
+      // as an existing row missing from the request and wrongly mark it
+      // removed — which hides the just-added time on reload (the form GET
+      // filters out times whose position is removed).
+      const [dbTimePositionList] = await pool.query<RowDataPacket[]>(
+        `SELECT time_position_id
+        FROM op_shift_time_position
+        WHERE shift_times_id IN (
+          SELECT shift_times_id
+          FROM op_shift_times
+          WHERE shift_name_id=?
+        )`,
+        [typeId]
+      );
+
+      // add new times. Awaited (not fire-and-forget) so inserts complete and
+      // any error surfaces; each new time is inserted individually — the old
+      // code passed the whole timeListAdd once per item, re-inserting them.
+      await Promise.all(
+        timeListAdd.map(async (timeItem) => {
+          const { endTime, instance, meal, notes, startTime } = timeItem;
           const [dbTime] = await pool.query<RowDataPacket[]>(
             `SELECT shift_times_id
             FROM op_shift_times
@@ -415,35 +440,25 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           } else {
             // insert new shift time rows
             await handleTimeListAdd({
-              timeList: timeListAdd,
+              timeList: [timeItem],
               typeId: Number(typeId),
             });
           }
-        }
+        })
       );
-      timeListRemove.forEach(async ({ shift_times_id }) => {
-        await pool.query<RowDataPacket[]>(
-          `UPDATE op_shift_times
-          SET
-            add_shift_time=false,
-            remove_shift_time=true,
-            shift_instance=?
-          WHERE shift_times_id=?`,
-          // use shift times ID for shift instance because shift instance must be unique
-          [shift_times_id, shift_times_id]
-        );
-      });
-
-      // update time position rows
-      const [dbTimePositionList] = await pool.query<RowDataPacket[]>(
-        `SELECT time_position_id
-        FROM op_shift_time_position
-        WHERE shift_times_id IN (
-          SELECT shift_times_id
-          FROM op_shift_times
-          WHERE shift_name_id=?
-        )`,
-        [typeId]
+      await Promise.all(
+        timeListRemove.map(async ({ shift_times_id }) => {
+          await pool.query<RowDataPacket[]>(
+            `UPDATE op_shift_times
+            SET
+              add_shift_time=false,
+              remove_shift_time=true,
+              shift_instance=?
+            WHERE shift_times_id=?`,
+            // use shift times ID for shift instance because shift instance must be unique
+            [shift_times_id, shift_times_id]
+          );
+        })
       );
       const timePositionList: {
         alias: string;
