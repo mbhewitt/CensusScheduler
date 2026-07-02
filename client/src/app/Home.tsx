@@ -47,7 +47,7 @@ export const Home = () => {
     <>
       <Hero
         imageStyles={{
-          backgroundImage: "url(/banners/camp-at-day.jpg)",
+          backgroundImage: "url(/banners/peers-headwash.jpg)",
           backgroundSize: "cover",
         }}
         text="Home"
