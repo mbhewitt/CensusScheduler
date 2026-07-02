@@ -65,6 +65,10 @@ const uploadHandler = async (
 
     await fs.mkdir(SAP_FILES_DIR, { recursive: true });
 
+    // ponytail: per-row write+insert, no batch transaction. A mid-loop failure
+    // (e.g. a concurrent dup upload racing the ticket_id unique) can leave
+    // earlier files/rows committed and one orphan PDF. Low impact: re-upload is
+    // idempotent on ticket_id. Wrap in a txn + cleanup only if orphans matter.
     let ingested = 0;
     const byDate: Record<string, number> = {};
     const seen = new Set<string>();

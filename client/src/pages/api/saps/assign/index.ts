@@ -120,7 +120,21 @@ async function doAssign(
   }
 
   const conn = await pool.getConnection();
+  // Serialize concurrent assigns for the SAME person. A FOR UPDATE guard alone
+  // can't enforce "one active SAP per person": when they have none, the
+  // matching-no-rows read only takes a (compatible) gap lock, so two racing
+  // requests both fall through and reserve two passes. A named lock closes that.
+  const lockKey = `sap-assign-${burnYear}-${target.col}-${target.value}`;
   try {
+    const [lk] = await conn.query<RowDataPacket[]>(
+      "SELECT GET_LOCK(?, 10) AS ok",
+      [lockKey],
+    );
+    if (lk[0]?.ok !== 1) {
+      return res
+        .status(409)
+        .json({ statusCode: 409, message: "Busy — try again" });
+    }
     await conn.beginTransaction();
 
     // Current active SAP for this target (at most one expected).
@@ -199,6 +213,8 @@ async function doAssign(
     await conn.rollback();
     throw err;
   } finally {
+    // Named locks outlive the txn and the pooled connection, so release it.
+    await conn.query("SELECT RELEASE_LOCK(?)", [lockKey]).catch(() => {});
     conn.release();
   }
 }

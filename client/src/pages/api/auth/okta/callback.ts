@@ -432,14 +432,17 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
         [email]
       );
       if (offbookRows.length > 0) {
-        await pool.query(
-          "UPDATE op_sap_offbook SET linked_shiftboard_id=? WHERE LOWER(email)=LOWER(?)",
-          [shiftboardId, email]
-        );
+        // Move the SAPs BEFORE flipping the link flag: if this fails, the flag
+        // stays null and the whole block retries on the next login (rather than
+        // stranding email-assigned SAPs behind an already-set flag).
         await pool.query(
           `UPDATE op_saps
               SET shiftboard_id=?, assigned_email=NULL
             WHERE LOWER(assigned_email)=LOWER(?) AND shiftboard_id IS NULL`,
+          [shiftboardId, email]
+        );
+        await pool.query(
+          "UPDATE op_sap_offbook SET linked_shiftboard_id=? WHERE LOWER(email)=LOWER(?)",
           [shiftboardId, email]
         );
       }
