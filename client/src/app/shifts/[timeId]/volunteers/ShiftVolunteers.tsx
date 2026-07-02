@@ -682,12 +682,12 @@ export const ShiftVolunteers = ({
                             <Divider sx={{ my: 2 }} />
                           </Grid>
                         )}
-                        <Grid size={2}>
+                        <Grid size={{ xs: 12, sm: 2 }}>
                           <Typography component="h3" variant="h6">
                             {row.label}
                           </Typography>
                         </Grid>
-                        <Grid size={10}>
+                        <Grid size={{ xs: 12, sm: 10 }}>
                           <FormattedText text={String(row.value)} />
                         </Grid>
                       </Fragment>
