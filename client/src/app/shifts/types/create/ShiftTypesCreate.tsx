@@ -144,11 +144,16 @@ export const ShiftTypesCreate = () => {
         timeList,
       };
 
-      // update database
-      await trigger({
+      // update database. fetcherTrigger resolves with the JSON body even on
+      // a non-2xx response, so surface server-side rejections (e.g. a
+      // duplicate instance label) as an error instead of a false success.
+      const result = await trigger({
         body,
         method: "POST",
       });
+      if (result?.statusCode && result.statusCode >= 400) {
+        throw new Error(result.message ?? "Failed to create shift type");
+      }
 
       enqueueSnackbar(
         <SnackbarText>

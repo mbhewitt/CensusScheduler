@@ -14,12 +14,57 @@ interface IHandleTimeListAdd {
   typeId: number;
 }
 
+// op_shift_times.shift_instance carries a GLOBAL UNIQUE key, but the "Add
+// time" dialog only checks a new label against the current shift type's own
+// times — so a label another type already uses (e.g. "Monday Morning") slips
+// past the UI and then fails the DB insert. Because the inserts used to run
+// fire-and-forget, that duplicate-key error was swallowed and the time
+// silently vanished on reload. Run this read-only check BEFORE any writes so a
+// collision fails cleanly with a clear message instead. Returns the first
+// conflicting label, or null when every label is unique.
+export const findInstanceConflict = async ({
+  timeList,
+}: {
+  timeList: IReqShiftTypeTimeItem[];
+}): Promise<string | null> => {
+  // instance label -> the timeId the request assigns it to
+  const requested = new Map<string, number>();
+  for (const { instance, timeId } of timeList) {
+    if (instance == null || instance === "") continue;
+    // same label on two different rows within this one submission
+    if (requested.has(instance) && requested.get(instance) !== timeId) {
+      return instance;
+    }
+    requested.set(instance, timeId);
+  }
+  const instances = [...requested.keys()];
+  if (instances.length === 0) return null;
+
+  const [dbRows] = await pool.query<RowDataPacket[]>(
+    `SELECT shift_instance, shift_times_id
+    FROM op_shift_times
+    WHERE remove_shift_time = false
+    AND shift_instance IN (?)`,
+    [instances]
+  );
+  for (const { shift_instance, shift_times_id } of dbRows) {
+    // A conflict only when the label already lives on a DIFFERENT physical
+    // time row. A time keeping its own label (same shift_times_id) is fine.
+    if (requested.get(shift_instance) !== shift_times_id) {
+      return shift_instance;
+    }
+  }
+  return null;
+};
+
 export const handleTimeListAdd = async ({
   timeList,
   typeId,
 }: IHandleTimeListAdd) => {
-  // insert new shift time rows
-  timeList.forEach(
+  // insert new shift time rows. Awaited (not fire-and-forget) so a failed
+  // insert propagates instead of being silently dropped after the response.
+  await Promise.all(
+    timeList.map(
     async ({ endTime, instance, meal, notes, positionList, startTime }) => {
       const timeIdNew = generateId(
         `SELECT shift_times_id
@@ -73,27 +118,30 @@ export const handleTimeListAdd = async ({
         ]
       );
 
-      positionList.forEach(async ({ alias, positionId, sapPoints, slots }) => {
-        const timePositionIdNew = generateId(
-          `SELECT time_position_id
-          FROM op_shift_time_position`
-        );
+      await Promise.all(
+        positionList.map(async ({ alias, positionId, sapPoints, slots }) => {
+          const timePositionIdNew = generateId(
+            `SELECT time_position_id
+            FROM op_shift_time_position`
+          );
 
-        await pool.query(
-          `INSERT INTO op_shift_time_position (
-            add_time_position,
-            position_alias,
-            position_type_id,
-            sap_points,
-            shift_times_id,
-            slots,
-            time_position_id
-          )
-          VALUES (true, ?, ?, ?, ?, ?, ?)`,
-          [alias, positionId, sapPoints, timeIdNew, slots, timePositionIdNew]
-        );
-      });
+          await pool.query(
+            `INSERT INTO op_shift_time_position (
+              add_time_position,
+              position_alias,
+              position_type_id,
+              sap_points,
+              shift_times_id,
+              slots,
+              time_position_id
+            )
+            VALUES (true, ?, ?, ?, ?, ?, ?)`,
+            [alias, positionId, sapPoints, timeIdNew, slots, timePositionIdNew]
+          );
+        })
+      );
     }
+    )
   );
 };
 
@@ -143,6 +191,18 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
         },
         timeList,
       }: IReqShiftTypeItem = JSON.parse(req.body);
+
+      // reject duplicate instance labels before writing anything (see
+      // findInstanceConflict) so the save fails cleanly instead of silently
+      // dropping the colliding time.
+      const conflict = await findInstanceConflict({ timeList });
+      if (conflict) {
+        return res.status(409).json({
+          statusCode: 409,
+          message: `The time label "${conflict}" is already in use by another shift. Each time's Instance label must be unique across all shifts — please rename it and try again.`,
+        });
+      }
+
       const typeIdNew = generateId(
         `SELECT shift_name_id
         FROM op_shift_name`
@@ -164,7 +224,7 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
       );
 
       // insert new shift time rows
-      handleTimeListAdd({ timeList, typeId: typeIdNew });
+      await handleTimeListAdd({ timeList, typeId: typeIdNew });
 
       return res.status(201).json({
         statusCode: 201,

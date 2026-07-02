@@ -14,7 +14,10 @@ import {
   notifyRemoval,
   notifyRestoration,
 } from "@/components/api/assignmentNotify";
-import { handleTimeListAdd } from "@/pages/api/shifts/types";
+import {
+  findInstanceConflict,
+  handleTimeListAdd,
+} from "@/pages/api/shifts/types";
 
 const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
   const { typeId } = req.query;
@@ -227,6 +230,18 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
       }: IReqShiftTypeItem = JSON.parse(req.body);
       let dbTimeIdExist = 0;
 
+      // reject duplicate instance labels before writing anything (see
+      // findInstanceConflict) so the save fails cleanly instead of silently
+      // dropping the colliding time. Excludes each time's own row, so keeping
+      // an existing label is fine.
+      const conflict = await findInstanceConflict({ timeList });
+      if (conflict) {
+        return res.status(409).json({
+          statusCode: 409,
+          message: `The time label "${conflict}" is already in use by another shift. Each time's Instance label must be unique across all shifts — please rename it and try again.`,
+        });
+      }
+
       // update information row
       await pool.query(
         `UPDATE op_shift_name
@@ -399,7 +414,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
             );
           } else {
             // insert new shift time rows
-            handleTimeListAdd({
+            await handleTimeListAdd({
               timeList: timeListAdd,
               typeId: Number(typeId),
             });
