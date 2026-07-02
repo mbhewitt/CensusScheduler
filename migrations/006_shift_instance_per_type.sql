@@ -16,8 +16,8 @@
 -- the app looks up a row by shift_instance alone (verified 2026-07-02), so no
 -- code depends on the old global uniqueness.
 --
--- Apply once per database (peers prod, census prod, test droplet):
---   mysql ... <db> < 2026-07-02-shift-instance-per-type.sql
+-- NOT idempotent: re-running errors ("Duplicate key name" / "can't DROP") —
+-- apply once per database (peers prod applied 2026-07-02; also test droplet).
 
 ALTER TABLE `op_shift_times`
   DROP INDEX `shift_instance`,
