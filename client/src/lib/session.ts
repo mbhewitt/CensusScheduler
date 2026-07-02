@@ -1,7 +1,17 @@
 import crypto from "crypto";
 
 const COOKIE_NAME = "census-session";
-const SESSION_DURATION_MS = 60 * 60 * 1000; // 1 hour
+// Session lifetime differs by deployment (per Mew 2026-07-02):
+//   - On-playa lab tablets are SHARED — keep the window short so a set-down
+//     tablet doesn't leave someone logged in as another volunteer/admin.
+//   - Off-playa (Okta-only, NEXT_PUBLIC_PIN_ENABLED="false") volunteers sign
+//     up from their own devices at home, so a 1-hour window just logs them
+//     out mid-flow. Give them a full day.
+// NEXT_PUBLIC_* is inlined at build time, so this is a per-build decision.
+const SESSION_DURATION_MS =
+  process.env.NEXT_PUBLIC_PIN_ENABLED === "false"
+    ? 24 * 60 * 60 * 1000 // 24 hours off-playa (web)
+    : 60 * 60 * 1000; // 1 hour on-playa (shared tablets)
 
 interface SessionPayload {
   shiftboardId: number;
