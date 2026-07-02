@@ -204,7 +204,11 @@ export const BehavioralStandards = ({
     <>
       <Hero
         imageStyles={{
-          backgroundImage: "url(/banners/flags.jpg)",
+          backgroundImage: "url(/banners/placement-hq.jpg)",
+          // the "PLACEMENT" sign sits high in the frame; anchor the focal
+          // point up so it stays fully visible under the hero crop
+          // (papabear 2026-07-02)
+          backgroundPosition: "center 15%",
           backgroundSize: "cover",
         }}
         text="Behavioral Standards Agreement"
