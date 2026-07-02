@@ -34,6 +34,7 @@ function makeRow(overrides: Partial<EmailRow> = {}): EmailRow {
     bodyText: "hi",
     bodyHtml: null,
     ics: null,
+    attachment: null,
     category: "test",
     attempts: 0,
     state: "queued",

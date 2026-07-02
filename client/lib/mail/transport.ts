@@ -99,6 +99,17 @@ export function createSmtpTransport(config: MailConfig): Transport {
                 method: extractIcsMethod(row.ics.content),
               }
             : undefined,
+          // Generic file attachments (e.g. a SAP PDF) ride as normal
+          // attachments, distinct from the inline calendar part above.
+          attachments: row.attachment
+            ? [
+                {
+                  filename: row.attachment.filename,
+                  content: row.attachment.content,
+                  contentType: "application/pdf",
+                },
+              ]
+            : undefined,
         });
         return { ok: true };
       } catch (err) {

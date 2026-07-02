@@ -8,29 +8,7 @@ import type {
 import { pool } from "lib/database";
 import { withAuth } from "@/lib/withAuth";
 import { isOwnerOrAdmin } from "@/lib/authz";
-
-// SAP day-by-day requirements keyed by arrival datename.
-// Each entry is either a single datename string, or an array meaning "any of these."
-// EarlyThur, EarlyFri, EarlyMan are equivalent to PreSun.
-const DAY_REQS: Record<string, (string | string[])[]> = {
-  PreSun: [
-    "PreMon",
-    "PreTue",
-    "PreWed",
-    "PreThur",
-    ["PreFri", "PreSat", "OpenSun"],
-  ],
-  PreMon: ["PreTue", "PreWed", "PreThur", ["PreFri", "PreSat", "OpenSun"]],
-  PreTue: ["PreWed", "PreThur", ["PreFri", "PreSat", "OpenSun"]],
-  PreWed: ["PreThur", "PreFri", ["PreSat", "OpenSun"]],
-  PreThur: ["PreFri", ["PreSat", "OpenSun"]],
-  PreFri: [["PreSat", "OpenSun"]],
-  PreSat: ["OpenSun"],
-};
-// Early arrivals use PreSun requirements
-DAY_REQS["EarlyThur"] = DAY_REQS["PreSun"];
-DAY_REQS["EarlyFri"] = DAY_REQS["PreSun"];
-DAY_REQS["EarlyMan"] = DAY_REQS["PreSun"];
+import { buildRequiredDays, PRE_OPEN_DATENAMES } from "lib/sapStatus";
 
 // Role IDs for VIP-specific roles
 const ROLE_STAFF_ID = 2000006;
@@ -38,20 +16,6 @@ const ROLE_OTHER_SAP_ID = 2000007;
 const ROLE_BURNER_PROFILE_UPDATED_ID = 2000010;
 const ROLE_BEHAVIORAL_STANDARDS_ID = 1000012;
 const ROLE_EMAIL_UNSUBSCRIBED_ID = 2000020;
-
-// Datenames that are before or on opening (eligible for SAP)
-const PRE_OPEN_DATENAMES = [
-  "EarlyThur",
-  "EarlyFri",
-  "EarlyMan",
-  "PreSun",
-  "PreMon",
-  "PreTue",
-  "PreWed",
-  "PreThur",
-  "PreFri",
-  "PreSat",
-];
 
 const volunteerInfo = async (
   req: NextApiRequest,
@@ -234,24 +198,10 @@ const volunteerInfo = async (
         bypassReason = "post_opening";
       }
 
-      // compute day-by-day requirements
+      // compute day-by-day requirements (shared with the super-admin SAP page)
       const arrivalDatename = arrivalDate?.datename ?? "";
-      const reqs = DAY_REQS[arrivalDatename] ?? [];
       const requiredDays: IResVolunteerInfo["sapStatus"]["requiredDays"] =
-        reqs.map((r) => {
-          if (Array.isArray(r)) {
-            const label = r
-              .join(", ")
-              .replace(/, ([^,]+)$/, ", or $1");
-            const fulfilled = r.some((d) => (dayCspMap[d] ?? 0) >= 1);
-            return { datenames: r, label, fulfilled };
-          }
-          return {
-            datenames: [r],
-            label: r,
-            fulfilled: (dayCspMap[r] ?? 0) >= 1,
-          };
-        });
+        buildRequiredDays(arrivalDatename, dayCspMap);
 
       const requiredCsp = 12;
       const cspFulfilled = totalCsp >= requiredCsp;

@@ -4,6 +4,7 @@ import {
   EventNote as EventNoteIcon,
   Group as GroupIcon,
   Groups3 as Groups3Icon,
+  ConfirmationNumber as ConfirmationNumberIcon,
   Help as HelpIcon,
   Home as HomeIcon,
   QuestionAnswer as QuestionAnswerIcon,
@@ -62,6 +63,11 @@ export const pageListSuperAdmin = [
     icon: <CalendarMonthIcon />,
     label: "Dates",
     path: "/dates",
+  },
+  {
+    icon: <ConfirmationNumberIcon />,
+    label: "SAPs",
+    path: "/saps",
   },
   {
     icon: <WorkHistoryIcon />,
