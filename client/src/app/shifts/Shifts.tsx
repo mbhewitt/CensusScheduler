@@ -1,6 +1,7 @@
 "use client";
 
 import { Box, Chip, Container, lighten, Typography } from "@mui/material";
+import { blue } from "@mui/material/colors";
 import { useTheme } from "@mui/material/styles";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
@@ -19,6 +20,14 @@ import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { fetcherGet } from "@/utils/fetcher";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
 import { getColorMap } from "@/utils/getColorMap";
+
+// Per-type chip color overrides for the Shifts table. Type chips are normally
+// colored by department (getColorMap), but the PEERS taxonomy puts every shift
+// in one department, so all types share the same color. Override specific
+// shift types here to visually distinguish them (per papabear 2026-07-02).
+const TYPE_COLOR_OVERRIDES: { [type: string]: string } = {
+  "PEERS Lead Shift (HQ)": blue[100],
+};
 
 export const Shifts = () => {
   // context
@@ -297,7 +306,8 @@ export const Shifts = () => {
           <Chip
             label={type}
             sx={{
-              backgroundColor: colorMapDisplay[departmentName],
+              backgroundColor:
+                TYPE_COLOR_OVERRIDES[type] ?? colorMapDisplay[departmentName],
               textDecoration: "line-through",
             }}
           />
@@ -312,7 +322,10 @@ export const Shifts = () => {
         <Chip
           key={`${id}-chip`}
           label={type}
-          sx={{ backgroundColor: colorMapDisplay[departmentName] }}
+          sx={{
+            backgroundColor:
+              TYPE_COLOR_OVERRIDES[type] ?? colorMapDisplay[departmentName],
+          }}
         />
       );
       return [
