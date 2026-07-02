@@ -34,19 +34,19 @@ Legend: ☐ = todo · ✅ = done · ❓ = needs a PEERS decision · 📄 = provi
 - [ ] Confirm body policy text is PEERS-correct (already rebranded to "BRC PEERS"; just confirm content/expectations).
 
 ## 5. Volunteer flow — SAP / CSP / training-first  ❓ (decisions, then code/data)
-- [ ] **SAP** (early-entry "Setup/Special Access Pass" + 12-point requirement): keep, rebrand, or **disable**? If disable: hide UI in `VolunteerInfo.tsx` (~480-502, 646-708, 900-935) and remove `op_saps`/`other-sap`/`sap/[sapId]` paths. Mew said "flow **without** SAP" → likely disable.
+- [x] **SAP** (early-entry "Setup/Special Access Pass"): **volunteer-facing request path DISABLED in prod** (commit `048cdc7`, per papabear 2026-07-01). Removed the On-Playa/Early-Entry/SAP card + arrival-date/other-sap/location handlers from `VolunteerInfo.tsx`, plus the "plans" checklist item. Volunteers can no longer set a pre-open arrival date or request early entry, so the SAP-requirements checklist block (`isPreOpen` gated) is now dormant/unreachable. **Still present (not removed):** admin "SAP issued" download item, the `op_saps`/`other-sap`/`sap/[sapId]` API routes, and role-threshold CSP logic — remove those separately if a full teardown is wanted.
 - [ ] **CSP** ("SAP points" scoring): keep/rebrand/remove. Label "SAP points" in shift-position dialogs; `requiredCsp=12` in `info/index.ts:256`; role thresholds via `op_roles.census_shift_points`.
 - [ ] **Training-first** (per Mew 2026-06-23): **use the existing role gate — no new mechanism.** Volunteer earns a "training completed" role via a training-confirmation hive link, and that role is set as the position's required Role (`op_position_type.role_id`) → can't sign up until trained (same pattern as Lead/Squaddie). Setup is **data only** (create training role + hive link + set the position's role). ⚠️ Note: the position-role gate is currently **UI-side only** (`ShiftVolunteersDialogAdd.tsx`); the signup API doesn't enforce it server-side — only harden there if strict enforcement is wanted.
 - [ ] `ROLE_DISPLAY_NAMES` — `VolunteerInfo.tsx:93-104` — training/role labels (some still Census-flavored).
 - [ ] Training curriculum/URLs — `op_trainings` (5 seed Census trainings) carry Census course links: Hive posts for Census Basics/Random Sampling/OutReach/DataBeast (`database/scheduler_schema.sql:379-383`, and live in prod/test DBs) **and a Census Google-Drive doc for "DataEntry Wiz"** (`scheduler_schema.sql:382`). Replace with PEERS courses or remove. (Lead/Squaddie hive URLs tracked in §7.)
-- [ ] Event datenames — `ARRIVAL_DATENAMES`/`PRE_OPEN_DATENAMES` (`VolunteerInfo.tsx:71-90,122-133`) + `DAY_REQS` (`info/index.ts:15-33`) — only matters if SAP kept.
+- [ ] Event datenames — `ARRIVAL_DATENAMES` was removed from `VolunteerInfo.tsx` with the On-Playa card (048cdc7); `PRE_OPEN_DATENAMES` still there (feeds the now-dormant `isPreOpen` gate) + `DAY_REQS` (`info/index.ts:15-33`) — only matters if SAP kept.
 
 ## 6. Physical playa address  📄
 - [ ] `assignmentNotify.ts:152` (.ics LOCATION) & `:225` (email body) — "PEERS Lab, **6:30 & A**, Black Rock City". 6:30&A is **Census's** spot — provide PEERS's real Placement address.
 - [ ] Same address/location references in `BehavioralStandards.tsx`.
 
 ## 7. Places I was guessing — need confirmation  ❓
-- [ ] GetInvolved sidebar links — `client/src/app/volunteers/[shiftboardId]/info/GetInvolved.tsx:19-41` — all `href="#"` placeholders. Provide PEERS Discord invite / year-round group / Hive space URLs (or remove the sidebar).
+- [~] GetInvolved sidebar links — `GetInvolved.tsx` reworked (048cdc7, per papabear 2026-07-01): removed the Discord + Volunteer-year-round placeholder cards; the remaining card is "Explore PEERS & camp resources" with real links (Camp Resource Guide, The Placement Process). **Still pending:** the "Take Fun with Fulcrum" URL (papabear to supply → add to the `links` array + redeploy).
 - [ ] Lead/Squaddie "hive" course URLs — `op_trainings.url` for codes `AYWOF` (Lead) / `ZNRCZ` (Squaddie) are placeholder `hive.burningman.org`. Provide real course pages.
 - [ ] Confirm final role names: `PEERS Lead` / `PEERS Squaddie` / `PEERS Coordinator` (team set these via admin UI — confirm they're final).
 - [ ] Repo destination for `peers-main` (currently pushed to `mbhewitt/CensusScheduler`; new `PeersScheduler` repo eventually?).
