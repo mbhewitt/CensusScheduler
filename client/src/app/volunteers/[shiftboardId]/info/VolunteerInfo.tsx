@@ -646,7 +646,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
           file in public/banners. */}
       <Hero
         imageStyles={{
-          backgroundImage: "url(/banners/man-at-night.jpg)",
+          backgroundImage: "url(/banners/city-aerial-day.jpg)",
           backgroundSize: "cover",
         }}
         text="Account"
