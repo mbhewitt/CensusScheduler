@@ -9,7 +9,9 @@ import { Box, Card, CardContent, Link, Stack, Typography } from "@mui/material";
 
 interface IGetInvolvedLink {
   label: string;
-  href: string;
+  // Optional: when absent, the label renders as plain (non-clickable) text —
+  // used for entries whose URL isn't available yet (see Fun with Fulcrum).
+  href?: string;
 }
 
 interface IGetInvolvedItem {
@@ -18,13 +20,17 @@ interface IGetInvolvedItem {
   links: IGetInvolvedLink[];
 }
 
-// TODO(peers): "Take Fun with Fulcrum" link is pending a URL from the PEERS
-// team (papabear, 2026-07-01) — add it to the links array below once supplied.
+// TODO(peers): "Take Fun with Fulcrum" is shown as a placeholder (no href →
+// renders as plain text) pending a URL from the PEERS team (papabear,
+// 2026-07-01). Add the href below once supplied to make it a live link.
 const ITEMS: IGetInvolvedItem[] = [
   {
     title: "Explore PEERS & camp resources",
     description: "Browse training resources, guides, and more.",
     links: [
+      {
+        label: "Take Fun with Fulcrum",
+      },
       {
         label: "Camp Resource Guide",
         href: "https://burningman.org/black-rock-city/camps/placement-process/camp-resource-guide/",
@@ -66,22 +72,34 @@ export const GetInvolved = () => {
                 {item.description}
               </Typography>
               <Stack spacing={0.5}>
-                {item.links.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    sx={{
-                      alignItems: "center",
-                      display: "inline-flex",
-                      gap: 0.5,
-                    }}
-                  >
-                    {link.label}
-                    <OpenInNewIcon fontSize="inherit" />
-                  </Link>
-                ))}
+                {item.links.map((link) =>
+                  link.href ? (
+                    <Link
+                      key={link.label}
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      sx={{
+                        alignItems: "center",
+                        display: "inline-flex",
+                        gap: 0.5,
+                      }}
+                    >
+                      {link.label}
+                      <OpenInNewIcon fontSize="inherit" />
+                    </Link>
+                  ) : (
+                    // Placeholder entry: URL not available yet, show as plain
+                    // text so nothing links to a dead "#".
+                    <Typography
+                      key={link.label}
+                      color="text.secondary"
+                      variant="body2"
+                    >
+                      {link.label}
+                    </Typography>
+                  )
+                )}
               </Stack>
             </Box>
           ))}
