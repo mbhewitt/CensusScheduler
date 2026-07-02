@@ -131,7 +131,7 @@ export const Contact = () => {
     <>
       <Hero
         imageStyles={{
-          backgroundImage: "url(/banners/camp-at-night.jpg)",
+          backgroundImage: "url(/banners/peers-headwash-2.jpg)",
           backgroundSize: "cover",
         }}
         text="Contact"
