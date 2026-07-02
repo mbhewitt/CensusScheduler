@@ -8,6 +8,9 @@ export interface EnqueueArgs {
   bodyText: string;
   bodyHtml?: string;
   ics?: { filename: string; content: Buffer };
+  // A generic file attachment (e.g. a SAP PDF). Unlike `ics`, this rides along
+  // as a normal attachment rather than an inline calendar part.
+  attachment?: { filename: string; content: Buffer };
   category: string;
   // When set, enqueueEmail checks op_volunteer_roles for the
   // EmailUnsubscribed role and skips the send if found. Also enables the
@@ -27,6 +30,7 @@ export interface EmailRow {
   bodyText: string;
   bodyHtml: string | null;
   ics: { filename: string; content: Buffer } | null;
+  attachment: { filename: string; content: Buffer } | null;
   category: string;
   attempts: number;
   state: EmailState;

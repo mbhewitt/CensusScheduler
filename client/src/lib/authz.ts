@@ -23,6 +23,21 @@ export async function isAdmin(shiftboardId: number): Promise<boolean> {
   return rows.length > 0;
 }
 
+// True if the given shiftboard_id holds the SuperAdmin role specifically (not
+// plain Admin). Gates the SAP management endpoints, which are super-admin only.
+export async function isSuperAdmin(shiftboardId: number): Promise<boolean> {
+  const [rows] = await pool.query<RowDataPacket[]>(
+    `SELECT 1
+     FROM op_volunteer_roles
+     WHERE shiftboard_id = ?
+       AND role_id = ?
+       AND remove_role = false
+     LIMIT 1`,
+    [shiftboardId, ROLE_SUPER_ADMIN_ID]
+  );
+  return rows.length > 0;
+}
+
 // True if the session may act on `requestedShiftboardId`: it's their own
 // record, or they're an admin.
 export async function isOwnerOrAdmin(

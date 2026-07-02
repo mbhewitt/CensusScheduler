@@ -422,6 +422,34 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
       );
     }
 
+    // Off-book SAP linking: if a super-admin pre-managed SAPs for this email
+    // before the person had an account, claim that off-book entry now and move
+    // any SAPs assigned by email onto this shiftboard_id. Additive + wrapped so
+    // a miss or a deployment without the table never blocks login.
+    try {
+      const [offbookRows] = await pool.query<RowDataPacket[]>(
+        "SELECT email FROM op_sap_offbook WHERE LOWER(email)=LOWER(?) AND linked_shiftboard_id IS NULL",
+        [email]
+      );
+      if (offbookRows.length > 0) {
+        await pool.query(
+          "UPDATE op_sap_offbook SET linked_shiftboard_id=? WHERE LOWER(email)=LOWER(?)",
+          [shiftboardId, email]
+        );
+        await pool.query(
+          `UPDATE op_saps
+              SET shiftboard_id=?, assigned_email=NULL
+            WHERE LOWER(assigned_email)=LOWER(?) AND shiftboard_id IS NULL`,
+          [shiftboardId, email]
+        );
+      }
+    } catch (offbookErr) {
+      console.warn(
+        "off-book SAP link skipped:",
+        offbookErr instanceof Error ? offbookErr.message : offbookErr
+      );
+    }
+
     // build the account response (same shape as passcode sign-in)
     const account = await buildAccountResponse(shiftboardId);
     if (!account) {

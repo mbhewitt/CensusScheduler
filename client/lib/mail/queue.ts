@@ -75,8 +75,8 @@ export async function enqueueEmail(
   const [result] = await pool.execute<ResultSetHeader>(
     `INSERT INTO op_email_queue
       (\`to\`, cc, reply_to, \`from\`, subject, body_text, body_html,
-       ics_attachment, ics_filename, category)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       ics_attachment, ics_filename, attachment, attachment_filename, category)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       to,
       joinAddrs(args.cc),
@@ -87,6 +87,8 @@ export async function enqueueEmail(
       bodyHtml ?? null,
       args.ics?.content ?? null,
       args.ics?.filename ?? null,
+      args.attachment?.content ?? null,
+      args.attachment?.filename ?? null,
       args.category,
     ]
   );
@@ -104,6 +106,8 @@ interface QueueRowPacket extends RowDataPacket {
   body_html: string | null;
   ics_attachment: Buffer | null;
   ics_filename: string | null;
+  attachment: Buffer | null;
+  attachment_filename: string | null;
   category: string;
   attempts: number;
   state: EmailRow["state"];
@@ -122,7 +126,8 @@ export async function claimNextDue(pool: Pool): Promise<EmailRow | null> {
     await conn.beginTransaction();
     const [rows] = await conn.execute<QueueRowPacket[]>(
       `SELECT id, \`to\`, cc, reply_to, \`from\`, subject, body_text, body_html,
-              ics_attachment, ics_filename, category, attempts, state
+              ics_attachment, ics_filename, attachment, attachment_filename,
+              category, attempts, state
          FROM op_email_queue
         WHERE state = 'queued' AND next_attempt_at <= NOW()
         ORDER BY next_attempt_at ASC, id ASC
@@ -150,6 +155,10 @@ export async function claimNextDue(pool: Pool): Promise<EmailRow | null> {
       ics:
         r.ics_attachment && r.ics_filename
           ? { filename: r.ics_filename, content: r.ics_attachment }
+          : null,
+      attachment:
+        r.attachment && r.attachment_filename
+          ? { filename: r.attachment_filename, content: r.attachment }
           : null,
       category: r.category,
       attempts: r.attempts,
