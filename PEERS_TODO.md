@@ -52,6 +52,21 @@ Legend: ☐ = todo · ✅ = done · ❓ = needs a PEERS decision · 📄 = provi
 - [ ] Repo destination for `peers-main` (currently pushed to `mbhewitt/CensusScheduler`; new `PeersScheduler` repo eventually?).
 - [ ] Backup strategy: add git-versioned snapshots like census? (currently 4-hourly disk dumps + RDS daily snapshots; no git repo chosen.)
 
+## 9. On-playa walk-in signup + passcode gating  ❓ (parked — "work out before playa", Mew 2026-07-03)
+Design agreed in #peers 2026-07-03; deferred to pre-playa. Two linked pieces:
+
+**A. Reserve walk-in shifts via a `NewVolunteer` role** (Mew's design):
+- [ ] Add `NewVolunteer` role to `op_roles` (e.g. id `2000103`, matching Lead `2000101` / Squaddie `2000102`).
+- [ ] Auto-grant `NewVolunteer` on self-signup — extra INSERT into `op_volunteer_roles` in the account-creation API (`client/src/pages/api/volunteers/account/index.ts`, currently inserts with empty roleList). **Only for on-playa signups** (else pre-event online self-registrants get it too) → gated by the IP check in B.
+- [ ] Create the walk-in "squaddie shifts" with the position's `role_id = NewVolunteer`. Reserves those slots for walk-ins; pre-event folks (HIVE → Lead/Squaddie, not NewVolunteer) are excluded → forced into trained shifts.
+- [ ] **Harden:** shift-signup role check is **client-side only** — the add-to-shift POST (`client/src/pages/api/shifts/[timeId]/volunteers/index.ts`) does NOT re-verify `role_id`/`prerequisite_id`. Add server-side role enforcement so the reservation isn't bypassable by a forged request.
+
+**B. Passcode sign-in on playa, gated by IP** (Okta unreliable on playa; single prod host serves both pre-event Okta + on-playa passcode):
+- [ ] Blocker: passcode mode is a **build-time, all-or-nothing** flag `NEXT_PUBLIC_PIN_ENABLED` (inlined into the static bundle; `NEXT_PUBLIC_*`). Can't vary per request. Controls the passcode UI (Home/Sign-in/Header), middleware walk-up routes (`/shifts`), and `/api/sign-in`.
+- [ ] Move decision build-time → runtime: (1) **middleware** reads client IP (`x-forwarded-for`), marks request on-playa (cookie/header) if in playa range; (2) **UI** reads that runtime signal instead of the inlined flag (several components hard-read `NEXT_PUBLIC_PIN_ENABLED`); (3) **`/api/sign-in` server enforcement** — only honor a passcode when request IP is in the playa range (currently the env flag is the only gate → anyone worldwide could passcode-login).
+- [ ] **Need from Mew:** (a) the playa **egress IP / CIDR** (BM uplink NAT range) = the allowlist; (b) whether prod is behind a **proxy/CDN** (Cloudflare/nginx) → which header carries the real client IP.
+- [ ] Alt if hard IP range is messy: staff-entered on-playa access code, or an admin toggle enabling passcode mode for the event window (simpler, less bulletproof than IP).
+
 ## 8. Ops / infra files (found in reviewer pass 2026-06-24)  📄
 - [ ] `httpd/public-html/index.html:5,7,13` — on-playa fallback redirect hardcodes `http://census.org:3000` (meta refresh + JS + link). Point at the PEERS app or remove. (Not used by the prod EC2/nginx stack, but ships in the repo / on-playa boxes.)
 - [ ] `Tablet_setup.md:15` — tablet Google account `brccensus.labhost@gmail.com` (Census-branded). Confirm/replace for PEERS tablets.
