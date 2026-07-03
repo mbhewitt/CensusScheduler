@@ -6,11 +6,11 @@ const COOKIE_NAME = "census-session";
 //     tablet doesn't leave someone logged in as another volunteer/admin.
 //   - Off-playa (Okta-only, NEXT_PUBLIC_PIN_ENABLED="false") volunteers sign
 //     up from their own devices at home, so a 1-hour window just logs them
-//     out mid-flow. Give them a full day.
+//     out mid-flow. Give them a generous window (12h, per Mew 2026-07-03).
 // NEXT_PUBLIC_* is inlined at build time, so this is a per-build decision.
 const SESSION_DURATION_MS =
   process.env.NEXT_PUBLIC_PIN_ENABLED === "false"
-    ? 24 * 60 * 60 * 1000 // 24 hours off-playa (web)
+    ? 12 * 60 * 60 * 1000 // 12 hours off-playa (web)
     : 60 * 60 * 1000; // 1 hour on-playa (shared tablets)
 
 interface SessionPayload {
