@@ -8,17 +8,25 @@ import {
   CardContent,
   Chip,
   Container,
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  MenuItem,
+  Select,
   Stack,
+  Switch,
   Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import Link from "next/link";
+import { useMemo, useState } from "react";
 import useSWR from "swr";
 
 import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
 import { ErrorAlert } from "@/components/general/ErrorAlert";
 import { Loading } from "@/components/general/Loading";
 import { Hero } from "@/components/layout/Hero";
+import type { IResShiftRowItem } from "@/components/types/shifts";
 import type { IResVolunteerShiftItem } from "@/components/types/volunteers";
 import { fetcherGet } from "@/utils/fetcher";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
@@ -27,38 +35,122 @@ interface IScheduleProps {
   shiftboardId: number;
 }
 
-// Group the (already date-ordered) shift list into consecutive day buckets so
-// the agenda can render a header per day.
-const groupByDay = (list: IResVolunteerShiftItem[]) => {
-  const days: {
-    date: string;
-    dateName: string;
-    items: IResVolunteerShiftItem[];
-  }[] = [];
-  for (const item of list) {
-    const last = days[days.length - 1];
-    if (last && last.date === item.shift.date) {
-      last.items.push(item);
-    } else {
-      days.push({
-        date: item.shift.date,
-        dateName: item.shift.dateName,
-        items: [item],
-      });
-    }
-  }
-  return days;
-};
+// One normalized row for the agenda, built from either the volunteer's own
+// signups or the open-shift list so both render the same way.
+interface IAgendaItem {
+  key: string;
+  timeId: number;
+  date: string;
+  dateName: string;
+  startTime: string;
+  endTime: string;
+  title: string;
+  department: string;
+  csp: string;
+  canceled: boolean;
+  state: "mine" | "open" | "full";
+  slots?: { filled: number; total: number };
+}
+
+const cspLabel = (min: number, max: number) =>
+  min === max ? `${min}` : `${min}-${max}`;
 
 export const Schedule = ({ shiftboardId }: IScheduleProps) => {
   const theme = useTheme();
+  const [showOpen, setShowOpen] = useState(true);
+  const [department, setDepartment] = useState("All");
+
   const {
-    data,
-    error,
+    data: dataMine,
+    error: errorMine,
   }: { data: IResVolunteerShiftItem[]; error: Error | undefined } = useSWR(
     `/api/volunteers/${shiftboardId}/shifts`,
     fetcherGet
   );
+  const {
+    data: dataOpen,
+    error: errorOpen,
+  }: { data: IResShiftRowItem[]; error: Error | undefined } = useSWR(
+    "/api/shifts",
+    fetcherGet
+  );
+
+  // Normalize + merge the two sources into one date/time-sorted agenda.
+  const { items, departments } = useMemo(() => {
+    const mine = dataMine ?? [];
+    const open = dataOpen ?? [];
+    const myTimeIds = new Set(mine.map((m) => m.shift.timeId));
+
+    const agenda: IAgendaItem[] = [];
+
+    for (const m of mine) {
+      const s = m.shift;
+      agenda.push({
+        key: `mine-${s.timePositionId}`,
+        timeId: s.timeId,
+        date: s.date,
+        dateName: s.dateName,
+        startTime: s.startTime,
+        endTime: s.endTime,
+        title: s.positionName,
+        department: m.department.name,
+        csp: cspLabel(s.csp, s.csp),
+        canceled: s.canceled,
+        state: "mine",
+      });
+    }
+
+    for (const o of open) {
+      if (o.canceled || myTimeIds.has(o.id)) continue; // shown as "mine" already
+      const isFull = o.slotsTotal - o.slotsFilled <= 0;
+      agenda.push({
+        key: `open-${o.id}`,
+        timeId: o.id,
+        date: o.date,
+        dateName: o.dateName,
+        startTime: o.startTime,
+        endTime: o.endTime,
+        title: o.type,
+        department: o.department.name,
+        csp: cspLabel(o.cspMin, o.cspMax),
+        canceled: false,
+        state: isFull ? "full" : "open",
+        slots: { filled: o.slotsFilled, total: o.slotsTotal },
+      });
+    }
+
+    agenda.sort((a, b) =>
+      a.date === b.date
+        ? a.startTime.localeCompare(b.startTime)
+        : a.date.localeCompare(b.date)
+    );
+
+    const departments = [
+      "All",
+      ...Array.from(new Set(agenda.map((i) => i.department).filter(Boolean))).sort(),
+    ];
+
+    return { items: agenda, departments };
+  }, [dataMine, dataOpen]);
+
+  // Apply the toggle + department filter, then group into consecutive days.
+  const days = useMemo(() => {
+    const filtered = items.filter(
+      (i) =>
+        (showOpen || i.state === "mine") &&
+        (department === "All" || i.department === department)
+    );
+    const out: { date: string; dateName: string; items: IAgendaItem[] }[] = [];
+    for (const item of filtered) {
+      const last = out[out.length - 1];
+      if (last && last.date === item.date) last.items.push(item);
+      else
+        out.push({ date: item.date, dateName: item.dateName, items: [item] });
+    }
+    return out;
+  }, [items, showOpen, department]);
+
+  const mineCount = items.filter((i) => i.state === "mine").length;
 
   // render
   // ------------------------------------------------------------
@@ -72,7 +164,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
     />
   );
 
-  if (error) {
+  if (errorMine || errorOpen) {
     return (
       <>
         {hero}
@@ -82,7 +174,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
       </>
     );
   }
-  if (!data) {
+  if (!dataMine || !dataOpen) {
     return (
       <>
         {hero}
@@ -93,8 +185,20 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
     );
   }
 
-  const active = data.filter((item) => !item.shift.canceled);
-  const days = groupByDay(data);
+  const swatch = (color: string) => (
+    <Box
+      component="span"
+      sx={{
+        width: 11,
+        height: 11,
+        borderRadius: "3px",
+        backgroundColor: color,
+        display: "inline-block",
+        mr: 0.75,
+        verticalAlign: -1,
+      }}
+    />
+  );
 
   return (
     <>
@@ -107,17 +211,64 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
         </Box>
 
         <Typography component="h2" variant="h4" sx={{ mb: 1 }}>
-          Your Census shifts
+          Your shifts &amp; open shifts
         </Typography>
-        <Typography color="text.secondary" sx={{ mb: 3 }}>
-          Everything you&apos;re signed up for, so far.
+        <Typography color="text.secondary" sx={{ mb: 2 }}>
+          Everything you&apos;re signed up for, plus what&apos;s still open.
         </Typography>
+
+        {/* controls */}
+        <Stack
+          direction="row"
+          spacing={2}
+          alignItems="center"
+          flexWrap="wrap"
+          useFlexGap
+          sx={{ mb: 1.5 }}
+        >
+          <FormControlLabel
+            control={
+              <Switch
+                checked={showOpen}
+                onChange={(e) => setShowOpen(e.target.checked)}
+              />
+            }
+            label="Show open shifts"
+          />
+          <FormControl size="small" sx={{ minWidth: 170 }}>
+            <InputLabel id="department-filter">Department</InputLabel>
+            <Select
+              labelId="department-filter"
+              label="Department"
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
+            >
+              {departments.map((d) => (
+                <MenuItem key={d} value={d}>
+                  {d}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Stack>
+        <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
+          <Typography color="text.secondary" variant="body2">
+            {swatch(theme.palette.success.main)}You&apos;re signed up
+          </Typography>
+          {showOpen && (
+            <Typography color="text.secondary" variant="body2">
+              {swatch(theme.palette.secondary.main)}Open — you can join
+            </Typography>
+          )}
+        </Stack>
 
         {days.length === 0 ? (
           <Card>
             <CardContent>
               <Typography sx={{ mb: 2 }}>
-                You haven&apos;t signed up for any Census shifts yet.
+                {mineCount === 0
+                  ? "You haven't signed up for any Census shifts yet."
+                  : "No shifts match your filters."}
               </Typography>
               <Button
                 component={Link}
@@ -151,17 +302,22 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
 
               <Stack spacing={1.25}>
                 {day.items.map((item) => {
-                  const { shift, department } = item;
+                  const accent =
+                    item.state === "mine"
+                      ? theme.palette.success.main
+                      : item.state === "open"
+                        ? theme.palette.secondary.main
+                        : theme.palette.divider;
                   return (
                     <Card
-                      key={shift.timePositionId}
+                      key={item.key}
                       sx={{
                         borderLeft: `5px solid ${
-                          shift.canceled
-                            ? theme.palette.error.main
-                            : theme.palette.success.main
+                          item.canceled ? theme.palette.error.main : accent
                         }`,
-                        ...(shift.canceled && { opacity: 0.7 }),
+                        ...((item.canceled || item.state === "full") && {
+                          opacity: 0.72,
+                        }),
                       }}
                     >
                       <CardContent
@@ -179,18 +335,18 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                             variant="body2"
                             sx={{ fontWeight: 700 }}
                           >
-                            {formatTime(shift.startTime, shift.endTime)}
+                            {formatTime(item.startTime, item.endTime)}
                           </Typography>
                           <Typography
                             variant="h6"
                             sx={{
                               fontWeight: 800,
-                              ...(shift.canceled && {
+                              ...(item.canceled && {
                                 textDecoration: "line-through",
                               }),
                             }}
                           >
-                            {shift.positionName}
+                            {item.title}
                           </Typography>
                           <Stack
                             direction="row"
@@ -198,21 +354,21 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                             alignItems="center"
                             sx={{ mt: 0.5, flexWrap: "wrap" }}
                           >
-                            {department.name && (
-                              <Chip label={department.name} size="small" />
+                            {item.department && (
+                              <Chip label={item.department} size="small" />
                             )}
-                            {shift.csp > 0 && (
+                            {item.csp !== "0" && (
                               <Typography
                                 color="text.secondary"
                                 variant="body2"
                               >
-                                {shift.csp} CSP
+                                {item.csp} CSP
                               </Typography>
                             )}
                           </Stack>
                         </Box>
                         <Box sx={{ flexShrink: 0, textAlign: "right" }}>
-                          {shift.canceled ? (
+                          {item.canceled ? (
                             <Typography
                               sx={{
                                 color: "error.main",
@@ -222,13 +378,49 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                             >
                               CANCELED
                             </Typography>
-                          ) : (
+                          ) : item.state === "mine" ? (
                             <Chip
                               label="✓ You're signed up"
                               color="success"
                               size="small"
                               variant="outlined"
                             />
+                          ) : item.state === "full" ? (
+                            <Typography
+                              color="text.secondary"
+                              variant="body2"
+                              sx={{ fontWeight: 700 }}
+                            >
+                              Full
+                            </Typography>
+                          ) : (
+                            <Stack alignItems="flex-end" spacing={0.75}>
+                              <Typography
+                                color="text.secondary"
+                                variant="body2"
+                              >
+                                <Box
+                                  component="span"
+                                  sx={{
+                                    color: theme.palette.secondary.main,
+                                    fontWeight: 800,
+                                  }}
+                                >
+                                  {item.slots
+                                    ? item.slots.total - item.slots.filled
+                                    : 0}
+                                </Box>{" "}
+                                open
+                              </Typography>
+                              <Button
+                                component={Link}
+                                href={`/shifts/${item.timeId}/volunteers`}
+                                size="small"
+                                variant="contained"
+                              >
+                                Sign up
+                              </Button>
+                            </Stack>
                           )}
                         </Box>
                       </CardContent>
@@ -240,22 +432,14 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
           ))
         )}
 
-        {days.length > 0 && (
-          <Stack alignItems="center" sx={{ mt: 4 }}>
-            <Button
-              component={Link}
-              href="/shifts"
-              startIcon={<CalendarMonthIcon />}
-              variant="outlined"
-            >
-              Browse and sign up for more shifts
-            </Button>
-            {active.length > 0 && (
-              <Typography color="text.secondary" variant="body2" sx={{ mt: 1 }}>
-                {active.length} shift{active.length === 1 ? "" : "s"} signed up
-              </Typography>
-            )}
-          </Stack>
+        {mineCount > 0 && (
+          <Typography
+            color="text.secondary"
+            variant="body2"
+            sx={{ mt: 4, textAlign: "center" }}
+          >
+            {mineCount} shift{mineCount === 1 ? "" : "s"} signed up
+          </Typography>
         )}
       </Container>
     </>
