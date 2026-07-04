@@ -49,13 +49,23 @@ interface IAgendaItem {
   department: string;
   csp: string;
   canceled: boolean;
-  state: "mine" | "open" | "full" | "conflict";
+  state: "mine" | "open" | "full" | "conflict" | "ineligible";
   slots?: { filled: number; total: number };
   conflictWith?: string;
+  ineligibleReason?: string;
 }
 
 const cspLabel = (min: number, max: number) =>
   min === max ? `${min}` : `${min}-${max}`;
+
+// Friendlier labels for the internal gating-role names in the "Requires: …"
+// reason. Falls back to the raw role name (Chipper-approved auto-fallback).
+const FRIENDLY_ROLE: Record<string, string> = {
+  CensusLabCamp: "Census Lab camper",
+  CounterCultureCamp: "Counter Culture camper",
+  CensusTicket: "Census ticket holder",
+};
+const friendlyRole = (role: string) => FRIENDLY_ROLE[role] ?? role;
 
 // Strict time overlap (touching endpoints — back-to-back shifts — are fine).
 const overlaps = (
@@ -82,6 +92,12 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
     error: errorOpen,
   }: { data: IResShiftRowItem[]; error: Error | undefined } = useSWR(
     "/api/shifts",
+    fetcherGet
+  );
+  // timeId -> required role name(s) for shifts this volunteer can't take.
+  // Non-blocking: if it hasn't loaded (or errors) we just don't gray anything.
+  const { data: dataElig }: { data: Record<number, string[]> } = useSWR(
+    `/api/volunteers/${shiftboardId}/shift-eligibility`,
     fetcherGet
   );
 
@@ -125,6 +141,10 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
             m.shift.endTime
           )
       );
+      // role-gated: every position needs a role this volunteer lacks
+      const requiredRoles = dataElig?.[o.id];
+      const isIneligible =
+        Array.isArray(requiredRoles) && requiredRoles.length > 0;
       agenda.push({
         key: `open-${o.id}`,
         timeId: o.id,
@@ -136,9 +156,20 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
         department: o.department.name,
         csp: cspLabel(o.cspMin, o.cspMax),
         canceled: false,
-        state: clash ? "conflict" : isFull ? "full" : "open",
+        // ineligibility is the hardest block (can't take it at all), then a
+        // time conflict, then full, else open.
+        state: isIneligible
+          ? "ineligible"
+          : clash
+            ? "conflict"
+            : isFull
+              ? "full"
+              : "open",
         slots: { filled: o.slotsFilled, total: o.slotsTotal },
         conflictWith: clash ? clash.shift.positionName : undefined,
+        ineligibleReason: isIneligible
+          ? `Requires: ${requiredRoles.map(friendlyRole).join(" or ")}`
+          : undefined,
       });
     }
 
@@ -154,7 +185,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
     ];
 
     return { items: agenda, departments };
-  }, [dataMine, dataOpen]);
+  }, [dataMine, dataOpen, dataElig]);
 
   // Apply the toggle + department filter, then group into consecutive days.
   const days = useMemo(() => {
@@ -340,7 +371,8 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                         }`,
                         ...((item.canceled ||
                           item.state === "full" ||
-                          item.state === "conflict") && {
+                          item.state === "conflict" ||
+                          item.state === "ineligible") && {
                           opacity: 0.72,
                         }),
                       }}
@@ -391,7 +423,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                               </Typography>
                             )}
                           </Stack>
-                          {item.conflictWith && (
+                          {item.state === "conflict" && item.conflictWith && (
                             <Typography
                               sx={{
                                 mt: 0.75,
@@ -402,6 +434,18 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                             >
                               ⚠ Same time as your {item.conflictWith} shift —
                               remove it first to take this.
+                            </Typography>
+                          )}
+                          {item.ineligibleReason && (
+                            <Typography
+                              color="text.secondary"
+                              sx={{
+                                mt: 0.75,
+                                fontWeight: 700,
+                                fontSize: "0.72rem",
+                              }}
+                            >
+                              🔒 {item.ineligibleReason}
                             </Typography>
                           )}
                         </Box>
@@ -438,6 +482,14 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                               sx={{ fontWeight: 700 }}
                             >
                               Overlaps
+                            </Typography>
+                          ) : item.state === "ineligible" ? (
+                            <Typography
+                              color="text.secondary"
+                              variant="body2"
+                              sx={{ fontWeight: 700 }}
+                            >
+                              Not eligible
                             </Typography>
                           ) : (
                             <Stack alignItems="flex-end" spacing={0.75}>
