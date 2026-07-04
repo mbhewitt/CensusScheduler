@@ -1,4 +1,5 @@
 import {
+  CalendarMonth as CalendarMonthIcon,
   ExpandLess as ExpandLessIcon,
   ExpandMore as ExpandMoreIcon,
   Login as LoginIcon,
@@ -320,6 +321,23 @@ export const Header = () => {
                         <ManageAccountsIcon />
                       </ListItemIcon>
                       <ListItemText>Account</ListItemText>
+                    </ListItemButton>
+                  </Link>
+                </ListItem>
+                <ListItem disablePadding>
+                  <Link
+                    href={`/volunteers/${shiftboardId}/schedule`}
+                    onClick={handleDrawerClose}
+                  >
+                    <ListItemButton
+                      selected={
+                        pathname === `/volunteers/${shiftboardId}/schedule`
+                      }
+                    >
+                      <ListItemIcon>
+                        <CalendarMonthIcon />
+                      </ListItemIcon>
+                      <ListItemText>My Shifts</ListItemText>
                     </ListItemButton>
                   </Link>
                 </ListItem>
