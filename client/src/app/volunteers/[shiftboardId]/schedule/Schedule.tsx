@@ -18,6 +18,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import dayjs from "dayjs";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import useSWR from "swr";
@@ -48,12 +49,21 @@ interface IAgendaItem {
   department: string;
   csp: string;
   canceled: boolean;
-  state: "mine" | "open" | "full";
+  state: "mine" | "open" | "full" | "conflict";
   slots?: { filled: number; total: number };
+  conflictWith?: string;
 }
 
 const cspLabel = (min: number, max: number) =>
   min === max ? `${min}` : `${min}-${max}`;
+
+// Strict time overlap (touching endpoints — back-to-back shifts — are fine).
+const overlaps = (
+  aStart: string,
+  aEnd: string,
+  bStart: string,
+  bEnd: string
+) => dayjs(aStart).isBefore(dayjs(bEnd)) && dayjs(bStart).isBefore(dayjs(aEnd));
 
 export const Schedule = ({ shiftboardId }: IScheduleProps) => {
   const theme = useTheme();
@@ -103,6 +113,18 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
     for (const o of open) {
       if (o.canceled || myTimeIds.has(o.id)) continue; // shown as "mine" already
       const isFull = o.slotsTotal - o.slotsFilled <= 0;
+      // Flag an open shift that overlaps one you're already on (our edge over
+      // Shiftboard — it doesn't stop cross-department double-booking).
+      const clash = mine.find(
+        (m) =>
+          !m.shift.canceled &&
+          overlaps(
+            o.startTime,
+            o.endTime,
+            m.shift.startTime,
+            m.shift.endTime
+          )
+      );
       agenda.push({
         key: `open-${o.id}`,
         timeId: o.id,
@@ -114,8 +136,9 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
         department: o.department.name,
         csp: cspLabel(o.cspMin, o.cspMax),
         canceled: false,
-        state: isFull ? "full" : "open",
+        state: clash ? "conflict" : isFull ? "full" : "open",
         slots: { filled: o.slotsFilled, total: o.slotsTotal },
+        conflictWith: clash ? clash.shift.positionName : undefined,
       });
     }
 
@@ -315,7 +338,9 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                         borderLeft: `5px solid ${
                           item.canceled ? theme.palette.error.main : accent
                         }`,
-                        ...((item.canceled || item.state === "full") && {
+                        ...((item.canceled ||
+                          item.state === "full" ||
+                          item.state === "conflict") && {
                           opacity: 0.72,
                         }),
                       }}
@@ -366,6 +391,19 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                               </Typography>
                             )}
                           </Stack>
+                          {item.conflictWith && (
+                            <Typography
+                              sx={{
+                                mt: 0.75,
+                                color: "#b0461f",
+                                fontWeight: 700,
+                                fontSize: "0.72rem",
+                              }}
+                            >
+                              ⚠ Same time as your {item.conflictWith} shift —
+                              remove it first to take this.
+                            </Typography>
+                          )}
                         </Box>
                         <Box sx={{ flexShrink: 0, textAlign: "right" }}>
                           {item.canceled ? (
@@ -392,6 +430,14 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                               sx={{ fontWeight: 700 }}
                             >
                               Full
+                            </Typography>
+                          ) : item.state === "conflict" ? (
+                            <Typography
+                              color="text.secondary"
+                              variant="body2"
+                              sx={{ fontWeight: 700 }}
+                            >
+                              Overlaps
                             </Typography>
                           ) : (
                             <Stack alignItems="flex-end" spacing={0.75}>
