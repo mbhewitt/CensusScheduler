@@ -113,8 +113,11 @@ export const PasscodeReveal = ({ shiftboardId }: IPasscodeRevealProps) => {
         ref={canvasRef}
         style={{
           width: 260,
-          height: 260,
           maxWidth: "100%",
+          // Let height follow the intrinsic (square) ratio so a narrow phone
+          // doesn't squash the round logo into an ellipse.
+          height: "auto",
+          aspectRatio: "1 / 1",
         }}
       />
       <Button
