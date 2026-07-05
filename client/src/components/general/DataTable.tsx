@@ -80,7 +80,8 @@ export const DataTable = ({
     elevation: 0,
     filterType: "multiselect" as FilterType,
     print: false,
-    resizableColumns: false,
+    // keep desktop drag-resize; off on mobile (irrelevant in stacked mode)
+    resizableColumns: !isMobile,
     responsive: (isMobile ? "vertical" : "standard") as Responsive,
     rowHover: false,
     rowsPerPage: 100,
