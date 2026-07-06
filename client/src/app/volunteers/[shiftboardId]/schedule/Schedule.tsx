@@ -8,13 +8,19 @@ import {
   CardContent,
   Chip,
   Container,
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  MenuItem,
+  Select,
   Stack,
+  Switch,
   Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import dayjs from "dayjs";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import useSWR from "swr";
 
 import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
@@ -71,17 +77,14 @@ const overlaps = (
 
 export const Schedule = ({ shiftboardId }: IScheduleProps) => {
   const theme = useTheme();
-
-  // Logged-out browse mode (on-playa walk-ups, shiftboardId <= 0): show the
-  // open-shift list only — no personal "your shifts", conflicts, or
-  // eligibility. Authenticated (id > 0) gets the full personalized agenda.
-  const isSignedIn = shiftboardId > 0;
+  const [showOpen, setShowOpen] = useState(true);
+  const [department, setDepartment] = useState("All");
 
   const {
     data: dataMine,
     error: errorMine,
   }: { data: IResVolunteerShiftItem[]; error: Error | undefined } = useSWR(
-    isSignedIn ? `/api/volunteers/${shiftboardId}/shifts` : null,
+    `/api/volunteers/${shiftboardId}/shifts`,
     fetcherGet
   );
   const {
@@ -94,12 +97,12 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
   // timeId -> required role name(s) for shifts this volunteer can't take.
   // Non-blocking: if it hasn't loaded (or errors) we just don't gray anything.
   const { data: dataElig }: { data: Record<number, string[]> } = useSWR(
-    isSignedIn ? `/api/volunteers/${shiftboardId}/shift-eligibility` : null,
+    `/api/volunteers/${shiftboardId}/shift-eligibility`,
     fetcherGet
   );
 
   // Normalize + merge the two sources into one date/time-sorted agenda.
-  const { items } = useMemo(() => {
+  const { items, departments } = useMemo(() => {
     const mine = dataMine ?? [];
     const open = dataOpen ?? [];
     const myTimeIds = new Set(mine.map((m) => m.shift.timeId));
@@ -176,16 +179,20 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
         : a.date.localeCompare(b.date)
     );
 
-    return { items: agenda };
+    const departments = [
+      "All",
+      ...Array.from(new Set(agenda.map((i) => i.department).filter(Boolean))).sort(),
+    ];
+
+    return { items: agenda, departments };
   }, [dataMine, dataOpen, dataElig]);
 
-  // Present/Future by default — hide past shifts so nobody scrolls past
-  // yesterday to reach today. (The full Timeline/Type/Date/Fill filter set +
-  // "Include my assigned shifts" toggle is the next phase, per #470.) Group
-  // into consecutive days.
+  // Apply the toggle + department filter, then group into consecutive days.
   const days = useMemo(() => {
     const filtered = items.filter(
-      (i) => !dayjs(i.date).isBefore(dayjs(), "day")
+      (i) =>
+        (showOpen || i.state === "mine") &&
+        (department === "All" || i.department === department)
     );
     const out: { date: string; dateName: string; items: IAgendaItem[] }[] = [];
     for (const item of filtered) {
@@ -195,7 +202,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
         out.push({ date: item.date, dateName: item.dateName, items: [item] });
     }
     return out;
-  }, [items]);
+  }, [items, showOpen, department]);
 
   const mineCount = items.filter((i) => i.state === "mine").length;
 
@@ -207,7 +214,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
         backgroundImage: "url(/banners/camp-at-day.jpg)",
         backgroundSize: "cover",
       }}
-      text="Shifts"
+      text="My Shifts"
     />
   );
 
@@ -221,7 +228,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
       </>
     );
   }
-  if (!dataOpen || (isSignedIn && !dataMine)) {
+  if (!dataMine || !dataOpen) {
     return (
       <>
         {hero}
@@ -253,39 +260,60 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
       <Container maxWidth="md" component="main">
         <Box sx={{ mb: 3 }}>
           <BreadcrumbsNav>
-            <Typography>Shifts</Typography>
+            <Typography>My Shifts</Typography>
           </BreadcrumbsNav>
         </Box>
 
         <Typography component="h2" variant="h4" sx={{ mb: 1 }}>
-          {isSignedIn ? "Your shifts & open shifts" : "Census shifts"}
+          Your shifts &amp; open shifts
         </Typography>
         <Typography color="text.secondary" sx={{ mb: 2 }}>
-          {isSignedIn
-            ? "Everything you're signed up for, plus what's still open."
-            : "Browse open Census shifts and sign up."}
+          Everything you&apos;re signed up for, plus what&apos;s still open.
         </Typography>
 
-        {/* legend — the full filter set (Timeline / Type / Date / Fill +
-            "Include my assigned shifts" toggle) is the next phase, per #470 */}
+        {/* controls */}
         <Stack
           direction="row"
           spacing={2}
-          sx={{ mb: 3 }}
+          alignItems="center"
           flexWrap="wrap"
           useFlexGap
+          sx={{ mb: 1.5 }}
         >
-          {isSignedIn && (
+          <FormControlLabel
+            control={
+              <Switch
+                checked={showOpen}
+                onChange={(e) => setShowOpen(e.target.checked)}
+              />
+            }
+            label="Show open shifts"
+          />
+          <FormControl size="small" sx={{ minWidth: 170 }}>
+            <InputLabel id="department-filter">Department</InputLabel>
+            <Select
+              labelId="department-filter"
+              label="Department"
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
+            >
+              {departments.map((d) => (
+                <MenuItem key={d} value={d}>
+                  {d}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Stack>
+        <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
+          <Typography color="text.secondary" variant="body2">
+            {swatch(theme.palette.success.main)}You&apos;re signed up
+          </Typography>
+          {showOpen && (
             <Typography color="text.secondary" variant="body2">
-              {swatch(theme.palette.success.main)}You&apos;re signed up
+              {swatch(theme.palette.secondary.main)}Open — you can join
             </Typography>
           )}
-          <Typography color="text.secondary" variant="body2">
-            {swatch(theme.palette.secondary.main)}You can sign up
-          </Typography>
-          <Typography color="text.secondary" variant="body2">
-            {swatch(theme.palette.divider)}Unavailable
-          </Typography>
         </Stack>
 
         {days.length === 0 ? (
