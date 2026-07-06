@@ -168,7 +168,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
         slots: { filled: o.slotsFilled, total: o.slotsTotal },
         conflictWith: clash ? clash.shift.positionName : undefined,
         ineligibleReason: isIneligible
-          ? `Requires: ${requiredRoles.map(friendlyRole).join(" or ")}`
+          ? `Requires the ${requiredRoles.map(friendlyRole).join(" or ")} role`
           : undefined,
       });
     }
@@ -432,8 +432,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                                 fontSize: "0.72rem",
                               }}
                             >
-                              ⚠ Same time as your {item.conflictWith} shift —
-                              remove it first to take this.
+                              ⚠ Overlaps your {item.conflictWith} shift
                             </Typography>
                           )}
                           {item.ineligibleReason && (
