@@ -362,6 +362,12 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                       : item.state === "open"
                         ? theme.palette.secondary.main
                         : theme.palette.divider;
+                  // <=10% filled = genuinely needs help (matches the reports
+                  // sheet's UNDER=0.10 threshold, per #470).
+                  const underfilled =
+                    !!item.slots &&
+                    item.slots.total > 0 &&
+                    item.slots.filled / item.slots.total <= 0.1;
                   return (
                     <Card
                       key={item.key}
@@ -499,7 +505,9 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                                 <Box
                                   component="span"
                                   sx={{
-                                    color: theme.palette.secondary.main,
+                                    color: underfilled
+                                      ? theme.palette.error.main
+                                      : theme.palette.secondary.main,
                                     fontWeight: 800,
                                   }}
                                 >
@@ -507,7 +515,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                                     ? item.slots.total - item.slots.filled
                                     : 0}
                                 </Box>{" "}
-                                open
+                                open{underfilled ? " · needs help" : ""}
                               </Typography>
                               <Button
                                 component={Link}
