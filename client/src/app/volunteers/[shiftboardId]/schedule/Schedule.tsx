@@ -1,6 +1,9 @@
 "use client";
 
-import { CalendarMonth as CalendarMonthIcon } from "@mui/icons-material";
+import {
+  CalendarMonth as CalendarMonthIcon,
+  MoreHoriz as MoreHorizIcon,
+} from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -8,6 +11,7 @@ import {
   CardContent,
   Chip,
   Container,
+  IconButton,
   Stack,
   Typography,
 } from "@mui/material";
@@ -344,6 +348,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                     <Card
                       key={item.key}
                       sx={{
+                        position: "relative",
                         borderLeft: `5px solid ${
                           item.canceled ? theme.palette.error.main : accent
                         }`,
@@ -351,92 +356,119 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                           item.state === "full" ||
                           item.state === "conflict" ||
                           item.state === "ineligible") && {
-                          opacity: 0.72,
+                          backgroundColor: theme.palette.action.hover,
                         }),
                       }}
                     >
-                      <CardContent
+                      {/* actions menu — visible per the approved mockup; the
+                          Remove / check-in wiring is the actions phase (#470) */}
+                      <IconButton
+                        aria-label="Shift actions"
+                        size="small"
                         sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          gap: 2,
-                          "&:last-child": { pb: 2 },
+                          position: "absolute",
+                          top: 6,
+                          right: 6,
+                          color: "text.secondary",
                         }}
                       >
-                        <Box sx={{ minWidth: 0 }}>
-                          <Typography
-                            color="text.secondary"
-                            variant="body2"
-                            sx={{ fontWeight: 700 }}
-                          >
-                            {formatTime(item.startTime, item.endTime)}
+                        <MoreHorizIcon fontSize="small" />
+                      </IconButton>
+                      <CardContent sx={{ "&:last-child": { pb: 2 } }}>
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            fontWeight: 800,
+                            pr: 4,
+                            ...(item.canceled && {
+                              textDecoration: "line-through",
+                            }),
+                          }}
+                        >
+                          {item.title}
+                        </Typography>
+                        {item.department && (
+                          <Typography color="text.secondary" variant="body2">
+                            {item.department}
                           </Typography>
-                          <Typography
-                            variant="h6"
+                        )}
+                        <Stack
+                          direction="row"
+                          spacing={1.5}
+                          alignItems="center"
+                          flexWrap="wrap"
+                          useFlexGap
+                          sx={{ mt: 0.75, color: "text.secondary" }}
+                        >
+                          <Typography variant="body2">
+                            🕐 {formatTime(item.startTime, item.endTime)}
+                          </Typography>
+                          {item.slots && (
+                            <Typography variant="body2">
+                              👥{" "}
+                              <Box
+                                component="span"
+                                sx={{
+                                  color: underfilled
+                                    ? theme.palette.error.main
+                                    : "inherit",
+                                  fontWeight: underfilled ? 800 : 700,
+                                }}
+                              >
+                                {item.slots.filled}
+                              </Box>{" "}
+                              / {item.slots.total} filled
+                              {underfilled ? " · needs help" : ""}
+                            </Typography>
+                          )}
+                          {item.csp !== "0" && (
+                            <Typography variant="body2">
+                              CSP: {item.csp}
+                            </Typography>
+                          )}
+                        </Stack>
+
+                        {item.state === "conflict" && item.conflictWith && (
+                          <Box
                             sx={{
-                              fontWeight: 800,
-                              ...(item.canceled && {
-                                textDecoration: "line-through",
-                              }),
+                              mt: 1,
+                              backgroundColor: "#fff4e5",
+                              color: "#7a4f00",
+                              borderRadius: 1,
+                              px: 1.25,
+                              py: 0.75,
+                              fontSize: "0.8rem",
+                              fontWeight: 600,
                             }}
                           >
-                            {item.title}
-                          </Typography>
-                          <Stack
-                            direction="row"
-                            spacing={1}
-                            alignItems="center"
-                            sx={{ mt: 0.5, flexWrap: "wrap" }}
+                            ⚠️ Overlaps your {item.conflictWith} shift
+                          </Box>
+                        )}
+                        {item.ineligibleReason && (
+                          <Box
+                            sx={{
+                              mt: 1,
+                              backgroundColor: "#fdecec",
+                              color: "#8a1c1c",
+                              borderRadius: 1,
+                              px: 1.25,
+                              py: 0.75,
+                              fontSize: "0.8rem",
+                              fontWeight: 600,
+                            }}
                           >
-                            {item.department && (
-                              <Chip label={item.department} size="small" />
-                            )}
-                            {item.csp !== "0" && (
-                              <Typography
-                                color="text.secondary"
-                                variant="body2"
-                              >
-                                {item.csp} CSP
-                              </Typography>
-                            )}
-                          </Stack>
-                          {item.state === "conflict" && item.conflictWith && (
-                            <Typography
-                              sx={{
-                                mt: 0.75,
-                                color: "#b0461f",
-                                fontWeight: 700,
-                                fontSize: "0.72rem",
-                              }}
-                            >
-                              ⚠ Overlaps your {item.conflictWith} shift
-                            </Typography>
-                          )}
-                          {item.ineligibleReason && (
-                            <Typography
-                              color="text.secondary"
-                              sx={{
-                                mt: 0.75,
-                                fontWeight: 700,
-                                fontSize: "0.72rem",
-                              }}
-                            >
-                              🔒 {item.ineligibleReason}
-                            </Typography>
-                          )}
-                        </Box>
-                        <Box sx={{ flexShrink: 0, textAlign: "right" }}>
+                            🔒 {item.ineligibleReason}
+                          </Box>
+                        )}
+
+                        <Box sx={{ mt: 1.5 }}>
                           {item.canceled ? (
-                            <Typography
-                              sx={{
-                                color: "error.main",
-                                fontWeight: 700,
-                                fontSize: "0.75rem",
-                              }}
-                            >
-                              CANCELED
-                            </Typography>
+                            <Chip
+                              label="Canceled"
+                              color="error"
+                              size="small"
+                              variant="outlined"
+                            />
                           ) : item.state === "mine" ? (
                             <Chip
                               label="✓ You're signed up"
@@ -444,60 +476,19 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                               size="small"
                               variant="outlined"
                             />
-                          ) : item.state === "full" ? (
-                            <Typography
-                              color="text.secondary"
-                              variant="body2"
-                              sx={{ fontWeight: 700 }}
+                          ) : item.state === "open" ? (
+                            <Button
+                              component={Link}
+                              href={`/shifts/${item.timeId}/volunteers`}
+                              variant="contained"
+                              fullWidth
                             >
-                              Full
-                            </Typography>
-                          ) : item.state === "conflict" ? (
-                            <Typography
-                              color="text.secondary"
-                              variant="body2"
-                              sx={{ fontWeight: 700 }}
-                            >
-                              Overlaps
-                            </Typography>
-                          ) : item.state === "ineligible" ? (
-                            <Typography
-                              color="text.secondary"
-                              variant="body2"
-                              sx={{ fontWeight: 700 }}
-                            >
-                              Not eligible
-                            </Typography>
+                              Sign up
+                            </Button>
                           ) : (
-                            <Stack alignItems="flex-end" spacing={0.75}>
-                              <Typography
-                                color="text.secondary"
-                                variant="body2"
-                              >
-                                <Box
-                                  component="span"
-                                  sx={{
-                                    color: underfilled
-                                      ? theme.palette.error.main
-                                      : theme.palette.secondary.main,
-                                    fontWeight: 800,
-                                  }}
-                                >
-                                  {item.slots
-                                    ? item.slots.total - item.slots.filled
-                                    : 0}
-                                </Box>{" "}
-                                open{underfilled ? " · needs help" : ""}
-                              </Typography>
-                              <Button
-                                component={Link}
-                                href={`/shifts/${item.timeId}/volunteers`}
-                                size="small"
-                                variant="contained"
-                              >
-                                Sign up
-                              </Button>
-                            </Stack>
+                            <Button variant="contained" fullWidth disabled>
+                              Sign up unavailable
+                            </Button>
                           )}
                         </Box>
                       </CardContent>

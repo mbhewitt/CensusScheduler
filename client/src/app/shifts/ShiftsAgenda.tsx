@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { Schedule } from "@/app/volunteers/[shiftboardId]/schedule/Schedule";
 import { SessionContext } from "@/state/session/context";
@@ -19,6 +19,17 @@ export const ShiftsAgenda = () => {
       user: { shiftboardId },
     },
   } = useContext(SessionContext);
+
+  // shiftboardId comes from the session (sessionStorage — client only), so
+  // rendering the agenda during SSR / the first client render would produce
+  // different markup than the hydrated client and crash hydration in a
+  // production build (what took down /shifts on 2026-07-06). Render nothing
+  // until mounted so SSR + the first client render match, then render the
+  // agenda client-side. (The /schedule route sidesteps this via AuthGate +
+  // a URL param present on both server and client.)
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
 
   return <Schedule shiftboardId={shiftboardId ?? 0} />;
 };
