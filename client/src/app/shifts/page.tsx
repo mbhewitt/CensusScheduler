@@ -1,12 +1,14 @@
-import { Shifts } from "@/app/shifts/Shifts";
+import { ShiftsAgenda } from "@/app/shifts/ShiftsAgenda";
 
 export const metadata = {
   title: "Census | Shifts",
 };
+
+// Renders the agenda (see ShiftsAgenda). To revert to the old data-table,
+// swap this back to `import { Shifts } ...` / `return <Shifts />` — the old
+// table component is kept intact at @/app/shifts/Shifts.
 const ShiftsPage = () => {
-  // render
-  // ------------------------------------------------------------
-  return <Shifts />;
+  return <ShiftsAgenda />;
 };
 
 export default ShiftsPage;
