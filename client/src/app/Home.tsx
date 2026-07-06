@@ -200,8 +200,12 @@ export const Home = () => {
                 welcome you to our happy crew!
               </Typography>
               <Typography>
-                Are you ready to become a Census volunteer? Sign in above with
-                your Burner Profile to view shift requirements and sign up. If
+                Are you ready to become a Census volunteer?{" "}
+                <a href={isOAuthConfigured ? "/api/auth/okta" : "/sign-in"}>
+                  Sign in
+                </a>{" "}
+                above with your Burner Profile to view shift requirements and
+                sign up. If
                 you still have questions after reviewing our information, or if
                 you would like to share your ideas about how to make an impact
                 some other way, contact{" "}
