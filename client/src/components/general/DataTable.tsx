@@ -1,4 +1,4 @@
-import { createTheme, ThemeProvider } from "@mui/material";
+import { createTheme, ThemeProvider, useMediaQuery } from "@mui/material";
 import MUITable, {
   FilterType,
   MUIDataTableColumn,
@@ -28,7 +28,9 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           "[class*='MUIDataTableFilter-root']": {
-            minWidth: "400px",
+            // 400px on desktop, but shrink to fit narrow phones so the filter
+            // options don't run off the right edge (mobile bug, #478).
+            minWidth: "min(400px, calc(100vw - 32px))",
           },
         },
       },
@@ -67,13 +69,20 @@ export const DataTable = ({
 }: ITableProps) => {
   // logic
   // ------------------------------------------------------------
+  // On phones a wide table overflows the viewport and drags the page sideways
+  // — worst case, an action-column ⋮ ends up off-screen and traps the user
+  // (#478). Stack rows into labeled cards there; desktop keeps the normal
+  // scrolling table. resizableColumns off — it forces fixed widths that fight
+  // the responsive layout.
+  const isMobile = useMediaQuery("(max-width:600px)");
   const optionListFinal = {
     download: false,
     elevation: 0,
     filterType: "multiselect" as FilterType,
     print: false,
-    resizableColumns: true,
-    responsive: "standard" as Responsive,
+    // keep desktop drag-resize; off on mobile (irrelevant in stacked mode)
+    resizableColumns: !isMobile,
+    responsive: (isMobile ? "vertical" : "standard") as Responsive,
     rowHover: false,
     rowsPerPage: 100,
     selectableRows: undefined,

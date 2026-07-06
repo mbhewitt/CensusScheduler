@@ -16,13 +16,14 @@ interface IGetInvolvedItem {
   href: string;
 }
 
+// Order per Chipper 2026-07-05: Hive first, Discord last.
 const ITEMS: IGetInvolvedItem[] = [
   {
-    title: "Join the Census Discord",
+    title: "Explore Census Hive",
     description:
-      "Connect with the Census community to see what we’re up to all year long.",
-    linkLabel: "Join Discord",
-    href: "https://discord.gg/BAzSsh4P9g",
+      "The Census Hive page is a great place to dive into the BRC Census pool. Volunteer training is conducted on Hive, and there’s tonnes to learn about our various volunteer opportunities while you’re there. Log in using your Burner Profile ID and password.",
+    linkLabel: "Visit Census Hive",
+    href: "https://hive.burningman.org/spaces/14264554",
   },
   {
     title: "Sign up as a DataNerd",
@@ -39,11 +40,11 @@ const ITEMS: IGetInvolvedItem[] = [
     href: "https://groups.google.com/a/burningman.org/g/censusyearround",
   },
   {
-    title: "Explore Census Hive",
+    title: "Join the Census Discord",
     description:
-      "The Census Hive page is a great place to dive into the BRC Census pool. Volunteer training is conducted on Hive, and there’s tonnes to learn about our various volunteer opportunities while you’re there. Log in using your Burner Profile ID and password.",
-    linkLabel: "Visit Census Hive",
-    href: "https://hive.burningman.org/spaces/14264554",
+      "Connect with the Census community to see what we’re up to all year long.",
+    linkLabel: "Join Discord",
+    href: "https://discord.gg/BAzSsh4P9g",
   },
 ];
 
@@ -56,10 +57,10 @@ export const GetInvolved = () => {
           variant="overline"
           sx={{ color: "text.secondary", fontWeight: 700, lineHeight: 1.4 }}
         >
-          Optional: Get more involved with Census
+          Get more involved with Census
         </Typography>
         <Typography color="text.secondary" variant="body2" sx={{ mb: 2 }}>
-          Optional ways to stay connected with Census year-round.
+          Ways to stay connected with Census year-round.
         </Typography>
 
         <Stack spacing={2}>
