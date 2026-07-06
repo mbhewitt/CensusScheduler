@@ -92,9 +92,17 @@ export const Header = () => {
     );
   };
 
+  // On-playa (shared tablets) keeps the short idle auto-logout so a walk-up
+  // doesn't leave someone else signed in. Off-playa (personal devices) the
+  // idle timeout matches the ~24h session, so people aren't kicked out for
+  // stepping away for a few minutes. Per Mew 2026-07-06.
+  const idleTimeoutMs =
+    process.env.NEXT_PUBLIC_PIN_ENABLED !== "false"
+      ? IDLE_MINUTES * 60 * 1000
+      : 24 * 60 * 60 * 1000;
   useIdleTimer({
     onIdle: handleSignOut,
-    timeout: isDisableIdleEnabled ? undefined : IDLE_MINUTES * 60 * 1000,
+    timeout: isDisableIdleEnabled ? undefined : idleTimeoutMs,
   });
 
   // side effects
