@@ -28,6 +28,9 @@ export const MoreMenu = ({ Icon, MenuList }: IMoreMenuProps) => {
       <Menu
         anchorEl={anchorEl}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        // Don't lock body scroll on open — MUI's scrollbar-compensation
+        // reflows the page to a tiny width on mobile (#493).
+        disableScrollLock
         elevation={2}
         onClick={handleMenuClose}
         onClose={handleMenuClose}

@@ -254,6 +254,9 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
     );
 
   const isAdmin = checkIsAdmin(accountType, roleList);
+  // Check-in is an on-playa feature; hide the column off-playa (#491) — kept
+  // as a real column (data alignment intact) but excluded from display.
+  const isOnPlaya = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
   const handleCheckInToggle = async ({
     shift: { positionName, timePositionId },
     volunteer: { isCheckedIn, playaName, shiftboardId, worldName },
@@ -328,6 +331,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
     {
       name: "Check in",
       options: {
+        display: (isOnPlaya ? "true" : "excluded") as "true" | "excluded",
         filter: false,
         searchable: false,
         setCellHeaderProps: setCellHeaderPropsCenter,
