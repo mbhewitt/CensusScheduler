@@ -169,12 +169,14 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
               : "open",
         slots: { filled: o.slotsFilled, total: o.slotsTotal },
         conflictWith: clash ? clash.shift.positionName : undefined,
-        // Suppressed when full — "Full" already says nobody can take it, so a
-        // "Requires the X role" note on top of it is just noise.
-        ineligibleReason:
-          isIneligible && !isFull
-            ? `Requires the ${requiredRoles.map(friendlyRole).join(" or ")} role`
-            : undefined,
+        // Shown even when full (Chipper 2026-07-07): both facts are useful —
+        // if it's full AND they lack the role, they know not to check back
+        // hoping a slot opens (it wouldn't help), and they learn which role
+        // to pursue to become eligible later. Label is "Full", note adds the
+        // role. Both true, both shown.
+        ineligibleReason: isIneligible
+          ? `Requires the ${requiredRoles.map(friendlyRole).join(" or ")} role`
+          : undefined,
       });
     }
 
