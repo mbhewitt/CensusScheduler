@@ -157,20 +157,24 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
         department: o.department.name,
         csp: cspLabel(o.cspMin, o.cspMax),
         canceled: false,
-        // ineligibility is the hardest block (can't take it at all), then a
-        // time conflict, then full, else open.
-        state: isIneligible
-          ? "ineligible"
-          : clash
-            ? "conflict"
-            : isFull
-              ? "full"
+        // Full first: a full shift can't be taken by anyone, so "Full" is the
+        // truer label than "not eligible" (which reads as singling the viewer
+        // out). Then role-ineligible, then a time conflict, else open.
+        state: isFull
+          ? "full"
+          : isIneligible
+            ? "ineligible"
+            : clash
+              ? "conflict"
               : "open",
         slots: { filled: o.slotsFilled, total: o.slotsTotal },
         conflictWith: clash ? clash.shift.positionName : undefined,
-        ineligibleReason: isIneligible
-          ? `Requires the ${requiredRoles.map(friendlyRole).join(" or ")} role`
-          : undefined,
+        // Suppressed when full — "Full" already says nobody can take it, so a
+        // "Requires the X role" note on top of it is just noise.
+        ineligibleReason:
+          isIneligible && !isFull
+            ? `Requires the ${requiredRoles.map(friendlyRole).join(" or ")} role`
+            : undefined,
       });
     }
 
