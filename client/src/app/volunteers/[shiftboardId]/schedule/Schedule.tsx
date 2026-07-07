@@ -18,7 +18,7 @@ import {
 import { useTheme } from "@mui/material/styles";
 import dayjs from "dayjs";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useContext, useMemo } from "react";
 import useSWR from "swr";
 
 import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
@@ -27,6 +27,9 @@ import { Loading } from "@/components/general/Loading";
 import { Hero } from "@/components/layout/Hero";
 import type { IResShiftRowItem } from "@/components/types/shifts";
 import type { IResVolunteerShiftItem } from "@/components/types/volunteers";
+import { DeveloperModeContext } from "@/state/developer-mode/context";
+import { SessionContext } from "@/state/session/context";
+import { checkIsAdmin } from "@/utils/checkIsRoleExist";
 import { fetcherGet } from "@/utils/fetcher";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
 
@@ -75,6 +78,21 @@ const overlaps = (
 
 export const Schedule = ({ shiftboardId }: IScheduleProps) => {
   const theme = useTheme();
+
+  // Admins/super-admins can add themselves (or anyone) to any shift via the
+  // admin override, so they're never truly "ineligible" — the eligibility
+  // check only looks at specific gating-role membership, which they may not
+  // hold. Skip ineligibility for them (Mew 2026-07-07: was false-flagged as
+  // "not eligible" on 8 role-gated shifts he could actually take).
+  const {
+    developerModeState: { accountType },
+  } = useContext(DeveloperModeContext);
+  const {
+    sessionState: {
+      user: { roleList },
+    },
+  } = useContext(SessionContext);
+  const isAdmin = checkIsAdmin(accountType, roleList);
 
   // Logged-out browse mode (on-playa walk-ups, shiftboardId <= 0): show the
   // open-shift list only — no personal "your shifts", conflicts, or
@@ -145,7 +163,9 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
       // role-gated: every position needs a role this volunteer lacks
       const requiredRoles = dataElig?.[o.id];
       const isIneligible =
-        Array.isArray(requiredRoles) && requiredRoles.length > 0;
+        !isAdmin &&
+        Array.isArray(requiredRoles) &&
+        requiredRoles.length > 0;
       agenda.push({
         key: `open-${o.id}`,
         timeId: o.id,
@@ -187,7 +207,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
     );
 
     return { items: agenda };
-  }, [dataMine, dataOpen, dataElig]);
+  }, [dataMine, dataOpen, dataElig, isAdmin]);
 
   // Present/Future by default — hide past shifts so nobody scrolls past
   // yesterday to reach today. (The full Timeline/Type/Date/Fill filter set +
