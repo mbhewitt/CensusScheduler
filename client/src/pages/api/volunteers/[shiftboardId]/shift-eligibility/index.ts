@@ -52,7 +52,6 @@ const shiftEligibility = async (
         LEFT JOIN op_volunteer_roles AS vr
           ON vr.role_id = pt.role_id
           AND vr.shiftboard_id = ?
-          AND vr.add_role = true
           AND vr.remove_role = false
         WHERE st.remove_shift_time = false
           AND st.canceled = false`,
