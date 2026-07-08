@@ -13,7 +13,6 @@ import {
   Container,
   FormControl,
   FormControlLabel,
-  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -27,9 +26,11 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import useSWR from "swr";
 
+import { VolunteerShiftsDialogRemove } from "@/app/volunteers/[shiftboardId]/account/VolunteerShiftsDialogRemove";
 import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
 import { ErrorAlert } from "@/components/general/ErrorAlert";
 import { Loading } from "@/components/general/Loading";
+import { MoreMenu } from "@/components/general/MoreMenu";
 import { Hero } from "@/components/layout/Hero";
 import type { IResShiftRowItem } from "@/components/types/shifts";
 import type { IResVolunteerShiftItem } from "@/components/types/volunteers";
@@ -45,6 +46,7 @@ interface IScheduleProps {
 interface IAgendaItem {
   key: string;
   timeId: number;
+  timePositionId?: number;
   date: string;
   dateName: string;
   startTime: string;
@@ -122,6 +124,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
       agenda.push({
         key: `mine-${s.timePositionId}`,
         timeId: s.timeId,
+        timePositionId: s.timePositionId,
         date: s.date,
         dateName: s.dateName,
         startTime: s.startTime,
@@ -205,6 +208,8 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
   const [dates, setDates] = useState<string[]>([]);
   const [fill, setFill] = useState("all"); // "all" | "open" | "full"
   const [includeMine, setIncludeMine] = useState(true);
+  // ⋮ Remove target (a "mine" item) — drives the reused removal dialog.
+  const [removeTarget, setRemoveTarget] = useState<IAgendaItem | null>(null);
 
   // Distinct Type / Date option lists, drawn from the agenda itself.
   const typeOptions = useMemo(
@@ -512,20 +517,25 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                         }),
                       }}
                     >
-                      {/* actions menu — visible per the approved mockup; the
-                          Remove / check-in wiring is the actions phase (#470) */}
-                      <IconButton
-                        aria-label="Shift actions"
-                        size="small"
-                        sx={{
-                          position: "absolute",
-                          top: 6,
-                          right: 6,
-                          color: "text.secondary",
-                        }}
-                      >
-                        <MoreHorizIcon fontSize="small" />
-                      </IconButton>
+                      {/* ⋮ actions — Remove on your own shifts; reuses the
+                          account-page removal dialog + critical-shift warning */}
+                      {item.state === "mine" && item.timePositionId && (
+                        <Box sx={{ position: "absolute", top: 2, right: 2 }}>
+                          <MoreMenu
+                            Icon={
+                              <MoreHorizIcon
+                                fontSize="small"
+                                sx={{ color: "text.secondary" }}
+                              />
+                            }
+                            MenuList={
+                              <MenuItem onClick={() => setRemoveTarget(item)}>
+                                Remove shift
+                              </MenuItem>
+                            }
+                          />
+                        </Box>
+                      )}
                       <CardContent sx={{ "&:last-child": { pb: 2 } }}>
                         <Typography
                           variant="h6"
@@ -662,6 +672,21 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
           </Typography>
         )}
       </Container>
+      {removeTarget && (
+        <VolunteerShiftsDialogRemove
+          handleDialogClose={() => setRemoveTarget(null)}
+          isDialogOpen={Boolean(removeTarget)}
+          shift={{
+            date: removeTarget.date,
+            dateName: removeTarget.dateName,
+            endTime: removeTarget.endTime,
+            positionName: removeTarget.title,
+            startTime: removeTarget.startTime,
+            timePositionId: removeTarget.timePositionId ?? 0,
+          }}
+          volunteer={{ shiftboardId }}
+        />
+      )}
     </>
   );
 };
