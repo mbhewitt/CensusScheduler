@@ -1,6 +1,9 @@
 "use client";
 
-import { CalendarMonth as CalendarMonthIcon } from "@mui/icons-material";
+import {
+  CalendarMonth as CalendarMonthIcon,
+  MoreHoriz as MoreHorizIcon,
+} from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -10,6 +13,7 @@ import {
   Container,
   FormControl,
   FormControlLabel,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -46,6 +50,7 @@ interface IAgendaItem {
   startTime: string;
   endTime: string;
   title: string;
+  type: string;
   department: string;
   csp: string;
   canceled: boolean;
@@ -77,14 +82,17 @@ const overlaps = (
 
 export const Schedule = ({ shiftboardId }: IScheduleProps) => {
   const theme = useTheme();
-  const [showOpen, setShowOpen] = useState(true);
-  const [department, setDepartment] = useState("All");
+
+  // Logged-out browse mode (on-playa walk-ups, shiftboardId <= 0): show the
+  // open-shift list only — no personal "your shifts", conflicts, or
+  // eligibility. Authenticated (id > 0) gets the full personalized agenda.
+  const isSignedIn = shiftboardId > 0;
 
   const {
     data: dataMine,
     error: errorMine,
   }: { data: IResVolunteerShiftItem[]; error: Error | undefined } = useSWR(
-    `/api/volunteers/${shiftboardId}/shifts`,
+    isSignedIn ? `/api/volunteers/${shiftboardId}/shifts` : null,
     fetcherGet
   );
   const {
@@ -97,12 +105,12 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
   // timeId -> required role name(s) for shifts this volunteer can't take.
   // Non-blocking: if it hasn't loaded (or errors) we just don't gray anything.
   const { data: dataElig }: { data: Record<number, string[]> } = useSWR(
-    `/api/volunteers/${shiftboardId}/shift-eligibility`,
+    isSignedIn ? `/api/volunteers/${shiftboardId}/shift-eligibility` : null,
     fetcherGet
   );
 
   // Normalize + merge the two sources into one date/time-sorted agenda.
-  const { items, departments } = useMemo(() => {
+  const { items } = useMemo(() => {
     const mine = dataMine ?? [];
     const open = dataOpen ?? [];
     const myTimeIds = new Set(mine.map((m) => m.shift.timeId));
@@ -119,6 +127,8 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
         startTime: s.startTime,
         endTime: s.endTime,
         title: s.positionName,
+        // mine payload has no shift type — department is the best available
+        type: m.department.name,
         department: m.department.name,
         csp: cspLabel(s.csp, s.csp),
         canceled: s.canceled,
@@ -153,20 +163,27 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
         startTime: o.startTime,
         endTime: o.endTime,
         title: o.type,
+        type: o.type,
         department: o.department.name,
         csp: cspLabel(o.cspMin, o.cspMax),
         canceled: false,
-        // ineligibility is the hardest block (can't take it at all), then a
-        // time conflict, then full, else open.
-        state: isIneligible
-          ? "ineligible"
-          : clash
-            ? "conflict"
-            : isFull
-              ? "full"
+        // Full first: a full shift can't be taken by anyone, so "Full" is the
+        // truer label than "not eligible" (which reads as singling the viewer
+        // out). Then role-ineligible, then a time conflict, else open.
+        state: isFull
+          ? "full"
+          : isIneligible
+            ? "ineligible"
+            : clash
+              ? "conflict"
               : "open",
         slots: { filled: o.slotsFilled, total: o.slotsTotal },
         conflictWith: clash ? clash.shift.positionName : undefined,
+        // Shown even when full (Chipper 2026-07-07): both facts are useful —
+        // if it's full AND they lack the role, they know not to check back
+        // hoping a slot opens (it wouldn't help), and they learn which role
+        // to pursue to become eligible later. Label is "Full", note adds the
+        // role. Both true, both shown.
         ineligibleReason: isIneligible
           ? `Requires the ${requiredRoles.map(friendlyRole).join(" or ")} role`
           : undefined,
@@ -179,21 +196,55 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
         : a.date.localeCompare(b.date)
     );
 
-    const departments = [
-      "All",
-      ...Array.from(new Set(agenda.map((i) => i.department).filter(Boolean))).sort(),
-    ];
-
-    return { items: agenda, departments };
+    return { items: agenda };
   }, [dataMine, dataOpen, dataElig]);
 
-  // Apply the toggle + department filter, then group into consecutive days.
+  // Filter set + pinning toggle (#470).
+  const [timeline, setTimeline] = useState("future"); // "future" | "past"
+  const [types, setTypes] = useState<string[]>([]);
+  const [dates, setDates] = useState<string[]>([]);
+  const [fill, setFill] = useState("all"); // "all" | "open" | "full"
+  const [includeMine, setIncludeMine] = useState(true);
+
+  // Distinct Type / Date option lists, drawn from the agenda itself.
+  const typeOptions = useMemo(
+    () => Array.from(new Set(items.map((i) => i.type))).sort(),
+    [items]
+  );
+  // Keep dates in date order (items is already date-sorted).
+  const dateOptions = useMemo(() => {
+    const seen = new Set<string>();
+    const out: { date: string; dateName: string }[] = [];
+    for (const i of items) {
+      if (!seen.has(i.dateName)) {
+        seen.add(i.dateName);
+        out.push({ date: i.date, dateName: i.dateName });
+      }
+    }
+    return out;
+  }, [items]);
+
+  // Type/Date/Fill are the "narrowing" filters (Timeline doesn't count).
+  const anyNarrowing = types.length > 0 || dates.length > 0 || fill !== "all";
+
+  // Present/Future by default — hide past shifts so nobody scrolls past
+  // yesterday to reach today. Timeline always applies; Type/Date/Fill narrow.
+  // When "Include my assigned shifts" is on, "mine" items are pinned (always
+  // pass narrowing filters) but still obey Timeline. Group into consecutive days.
   const days = useMemo(() => {
-    const filtered = items.filter(
-      (i) =>
-        (showOpen || i.state === "mine") &&
-        (department === "All" || i.department === department)
-    );
+    const filtered = items.filter((i) => {
+      const isPast = dayjs(i.date).isBefore(dayjs(), "day");
+      if (timeline === "past" ? !isPast : isPast) return false;
+
+      // Pinned: mine items skip the narrowing filters when the toggle is on.
+      if (i.state === "mine" && includeMine && anyNarrowing) return true;
+
+      if (types.length > 0 && !types.includes(i.type)) return false;
+      if (dates.length > 0 && !dates.includes(i.dateName)) return false;
+      if (fill === "open" && i.state !== "open") return false;
+      if (fill === "full" && i.state !== "full") return false;
+      return true;
+    });
     const out: { date: string; dateName: string; items: IAgendaItem[] }[] = [];
     for (const item of filtered) {
       const last = out[out.length - 1];
@@ -202,7 +253,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
         out.push({ date: item.date, dateName: item.dateName, items: [item] });
     }
     return out;
-  }, [items, showOpen, department]);
+  }, [items, timeline, types, dates, fill, includeMine, anyNarrowing]);
 
   const mineCount = items.filter((i) => i.state === "mine").length;
 
@@ -214,7 +265,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
         backgroundImage: "url(/banners/camp-at-day.jpg)",
         backgroundSize: "cover",
       }}
-      text="My Shifts"
+      text="Shifts"
     />
   );
 
@@ -228,7 +279,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
       </>
     );
   }
-  if (!dataMine || !dataOpen) {
+  if (!dataOpen || (isSignedIn && !dataMine)) {
     return (
       <>
         {hero}
@@ -260,60 +311,137 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
       <Container maxWidth="md" component="main">
         <Box sx={{ mb: 3 }}>
           <BreadcrumbsNav>
-            <Typography>My Shifts</Typography>
+            <Typography>Shifts</Typography>
           </BreadcrumbsNav>
         </Box>
 
         <Typography component="h2" variant="h4" sx={{ mb: 1 }}>
-          Your shifts &amp; open shifts
+          {isSignedIn ? "Your shifts & open shifts" : "Census shifts"}
         </Typography>
         <Typography color="text.secondary" sx={{ mb: 2 }}>
-          Everything you&apos;re signed up for, plus what&apos;s still open.
+          {isSignedIn
+            ? "Everything you're signed up for, plus what's still open."
+            : "Browse open Census shifts and sign up."}
         </Typography>
 
-        {/* controls */}
+        {/* filter set + pinning toggle (#470) */}
         <Stack
           direction="row"
-          spacing={2}
+          spacing={1.5}
           alignItems="center"
+          sx={{ mb: 2 }}
           flexWrap="wrap"
           useFlexGap
-          sx={{ mb: 1.5 }}
         >
-          <FormControlLabel
-            control={
-              <Switch
-                checked={showOpen}
-                onChange={(e) => setShowOpen(e.target.checked)}
-              />
-            }
-            label="Show open shifts"
-          />
-          <FormControl size="small" sx={{ minWidth: 170 }}>
-            <InputLabel id="department-filter">Department</InputLabel>
+          <FormControl size="small" sx={{ minWidth: 150 }}>
+            <InputLabel id="timeline-label">Timeline</InputLabel>
             <Select
-              labelId="department-filter"
-              label="Department"
-              value={department}
-              onChange={(e) => setDepartment(e.target.value)}
+              labelId="timeline-label"
+              label="Timeline"
+              value={timeline}
+              onChange={(e) => setTimeline(e.target.value)}
             >
-              {departments.map((d) => (
-                <MenuItem key={d} value={d}>
-                  {d}
+              <MenuItem value="future">Present / Future</MenuItem>
+              <MenuItem value="past">Past</MenuItem>
+            </Select>
+          </FormControl>
+
+          <FormControl size="small" sx={{ minWidth: 150 }}>
+            <InputLabel id="type-label">Type</InputLabel>
+            <Select
+              labelId="type-label"
+              label="Type"
+              multiple
+              value={types}
+              onChange={(e) =>
+                setTypes(
+                  typeof e.target.value === "string"
+                    ? e.target.value.split(",")
+                    : e.target.value
+                )
+              }
+              renderValue={(selected) => selected.join(", ")}
+            >
+              {typeOptions.map((t) => (
+                <MenuItem key={t} value={t}>
+                  {t}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
+
+          <FormControl size="small" sx={{ minWidth: 150 }}>
+            <InputLabel id="date-label">Date</InputLabel>
+            <Select
+              labelId="date-label"
+              label="Date"
+              multiple
+              value={dates}
+              onChange={(e) =>
+                setDates(
+                  typeof e.target.value === "string"
+                    ? e.target.value.split(",")
+                    : e.target.value
+                )
+              }
+              renderValue={(selected) => selected.join(", ")}
+            >
+              {dateOptions.map((d) => (
+                <MenuItem key={d.dateName} value={d.dateName}>
+                  {d.dateName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl size="small" sx={{ minWidth: 120 }}>
+            <InputLabel id="fill-label">Fill</InputLabel>
+            <Select
+              labelId="fill-label"
+              label="Fill"
+              value={fill}
+              onChange={(e) => setFill(e.target.value)}
+            >
+              <MenuItem value="all">All</MenuItem>
+              <MenuItem value="open">Open</MenuItem>
+              <MenuItem value="full">Full</MenuItem>
+            </Select>
+          </FormControl>
+
+          {isSignedIn && (
+            <FormControlLabel
+              control={
+                <Switch
+                  size="small"
+                  checked={includeMine}
+                  disabled={!anyNarrowing}
+                  onChange={(e) => setIncludeMine(e.target.checked)}
+                />
+              }
+              label="Include my assigned shifts"
+            />
+          )}
         </Stack>
-        <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
-          <Typography color="text.secondary" variant="body2">
-            {swatch(theme.palette.success.main)}You&apos;re signed up
-          </Typography>
-          {showOpen && (
+
+        {/* legend */}
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{ mb: 3 }}
+          flexWrap="wrap"
+          useFlexGap
+        >
+          {isSignedIn && (
             <Typography color="text.secondary" variant="body2">
-              {swatch(theme.palette.secondary.main)}Open — you can join
+              {swatch(theme.palette.success.main)}You&apos;re signed up
             </Typography>
           )}
+          <Typography color="text.secondary" variant="body2">
+            {swatch(theme.palette.secondary.main)}You can sign up
+          </Typography>
+          <Typography color="text.secondary" variant="body2">
+            {swatch(theme.palette.divider)}Unavailable
+          </Typography>
         </Stack>
 
         {days.length === 0 ? (
@@ -372,6 +500,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                     <Card
                       key={item.key}
                       sx={{
+                        position: "relative",
                         borderLeft: `5px solid ${
                           item.canceled ? theme.palette.error.main : accent
                         }`,
@@ -379,92 +508,119 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                           item.state === "full" ||
                           item.state === "conflict" ||
                           item.state === "ineligible") && {
-                          opacity: 0.72,
+                          backgroundColor: theme.palette.action.hover,
                         }),
                       }}
                     >
-                      <CardContent
+                      {/* actions menu — visible per the approved mockup; the
+                          Remove / check-in wiring is the actions phase (#470) */}
+                      <IconButton
+                        aria-label="Shift actions"
+                        size="small"
                         sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          gap: 2,
-                          "&:last-child": { pb: 2 },
+                          position: "absolute",
+                          top: 6,
+                          right: 6,
+                          color: "text.secondary",
                         }}
                       >
-                        <Box sx={{ minWidth: 0 }}>
-                          <Typography
-                            color="text.secondary"
-                            variant="body2"
-                            sx={{ fontWeight: 700 }}
-                          >
-                            {formatTime(item.startTime, item.endTime)}
+                        <MoreHorizIcon fontSize="small" />
+                      </IconButton>
+                      <CardContent sx={{ "&:last-child": { pb: 2 } }}>
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            fontWeight: 800,
+                            pr: 4,
+                            ...(item.canceled && {
+                              textDecoration: "line-through",
+                            }),
+                          }}
+                        >
+                          {item.title}
+                        </Typography>
+                        {item.department && (
+                          <Typography color="text.secondary" variant="body2">
+                            {item.department}
                           </Typography>
-                          <Typography
-                            variant="h6"
+                        )}
+                        <Stack
+                          direction="row"
+                          spacing={1.5}
+                          alignItems="center"
+                          flexWrap="wrap"
+                          useFlexGap
+                          sx={{ mt: 0.75, color: "text.secondary" }}
+                        >
+                          <Typography variant="body2">
+                            🕐 {formatTime(item.startTime, item.endTime)}
+                          </Typography>
+                          {item.slots && (
+                            <Typography variant="body2">
+                              👥{" "}
+                              <Box
+                                component="span"
+                                sx={{
+                                  color: underfilled
+                                    ? theme.palette.error.main
+                                    : "inherit",
+                                  fontWeight: underfilled ? 800 : 700,
+                                }}
+                              >
+                                {item.slots.filled}
+                              </Box>{" "}
+                              / {item.slots.total} filled
+                              {underfilled ? " · needs help" : ""}
+                            </Typography>
+                          )}
+                          {item.csp !== "0" && (
+                            <Typography variant="body2">
+                              CSP: {item.csp}
+                            </Typography>
+                          )}
+                        </Stack>
+
+                        {item.state === "conflict" && item.conflictWith && (
+                          <Box
                             sx={{
-                              fontWeight: 800,
-                              ...(item.canceled && {
-                                textDecoration: "line-through",
-                              }),
+                              mt: 1,
+                              backgroundColor: "#fff4e5",
+                              color: "#7a4f00",
+                              borderRadius: 1,
+                              px: 1.25,
+                              py: 0.75,
+                              fontSize: "0.8rem",
+                              fontWeight: 600,
                             }}
                           >
-                            {item.title}
-                          </Typography>
-                          <Stack
-                            direction="row"
-                            spacing={1}
-                            alignItems="center"
-                            sx={{ mt: 0.5, flexWrap: "wrap" }}
+                            ⚠️ Overlaps your {item.conflictWith} shift
+                          </Box>
+                        )}
+                        {item.ineligibleReason && (
+                          <Box
+                            sx={{
+                              mt: 1,
+                              backgroundColor: "#fdecec",
+                              color: "#8a1c1c",
+                              borderRadius: 1,
+                              px: 1.25,
+                              py: 0.75,
+                              fontSize: "0.8rem",
+                              fontWeight: 600,
+                            }}
                           >
-                            {item.department && (
-                              <Chip label={item.department} size="small" />
-                            )}
-                            {item.csp !== "0" && (
-                              <Typography
-                                color="text.secondary"
-                                variant="body2"
-                              >
-                                {item.csp} CSP
-                              </Typography>
-                            )}
-                          </Stack>
-                          {item.state === "conflict" && item.conflictWith && (
-                            <Typography
-                              sx={{
-                                mt: 0.75,
-                                color: "#b0461f",
-                                fontWeight: 700,
-                                fontSize: "0.72rem",
-                              }}
-                            >
-                              ⚠ Overlaps your {item.conflictWith} shift
-                            </Typography>
-                          )}
-                          {item.ineligibleReason && (
-                            <Typography
-                              color="text.secondary"
-                              sx={{
-                                mt: 0.75,
-                                fontWeight: 700,
-                                fontSize: "0.72rem",
-                              }}
-                            >
-                              🔒 {item.ineligibleReason}
-                            </Typography>
-                          )}
-                        </Box>
-                        <Box sx={{ flexShrink: 0, textAlign: "right" }}>
+                            🔒 {item.ineligibleReason}
+                          </Box>
+                        )}
+
+                        <Box sx={{ mt: 1.5 }}>
                           {item.canceled ? (
-                            <Typography
-                              sx={{
-                                color: "error.main",
-                                fontWeight: 700,
-                                fontSize: "0.75rem",
-                              }}
-                            >
-                              CANCELED
-                            </Typography>
+                            <Chip
+                              label="Canceled"
+                              color="error"
+                              size="small"
+                              variant="outlined"
+                            />
                           ) : item.state === "mine" ? (
                             <Chip
                               label="✓ You're signed up"
@@ -472,60 +628,19 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                               size="small"
                               variant="outlined"
                             />
-                          ) : item.state === "full" ? (
-                            <Typography
-                              color="text.secondary"
-                              variant="body2"
-                              sx={{ fontWeight: 700 }}
+                          ) : item.state === "open" ? (
+                            <Button
+                              component={Link}
+                              href={`/shifts/${item.timeId}/volunteers`}
+                              variant="contained"
+                              fullWidth
                             >
-                              Full
-                            </Typography>
-                          ) : item.state === "conflict" ? (
-                            <Typography
-                              color="text.secondary"
-                              variant="body2"
-                              sx={{ fontWeight: 700 }}
-                            >
-                              Overlaps
-                            </Typography>
-                          ) : item.state === "ineligible" ? (
-                            <Typography
-                              color="text.secondary"
-                              variant="body2"
-                              sx={{ fontWeight: 700 }}
-                            >
-                              Not eligible
-                            </Typography>
+                              Sign up
+                            </Button>
                           ) : (
-                            <Stack alignItems="flex-end" spacing={0.75}>
-                              <Typography
-                                color="text.secondary"
-                                variant="body2"
-                              >
-                                <Box
-                                  component="span"
-                                  sx={{
-                                    color: underfilled
-                                      ? theme.palette.error.main
-                                      : theme.palette.secondary.main,
-                                    fontWeight: 800,
-                                  }}
-                                >
-                                  {item.slots
-                                    ? item.slots.total - item.slots.filled
-                                    : 0}
-                                </Box>{" "}
-                                open{underfilled ? " · needs help" : ""}
-                              </Typography>
-                              <Button
-                                component={Link}
-                                href={`/shifts/${item.timeId}/volunteers`}
-                                size="small"
-                                variant="contained"
-                              >
-                                Sign up
-                              </Button>
-                            </Stack>
+                            <Button variant="contained" fullWidth disabled>
+                              Sign up unavailable
+                            </Button>
                           )}
                         </Box>
                       </CardContent>
