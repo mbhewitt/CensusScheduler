@@ -14,6 +14,7 @@ import { buildRequiredDays, PRE_OPEN_DATENAMES } from "lib/sapStatus";
 const ROLE_STAFF_ID = 2000006;
 const ROLE_OTHER_SAP_ID = 2000007;
 const ROLE_BURNER_PROFILE_UPDATED_ID = 2000010;
+const ROLE_WELCOME_COMPLETE_ID = 174766;
 const ROLE_BEHAVIORAL_STANDARDS_ID = 1000012;
 const ROLE_EMAIL_UNSUBSCRIBED_ID = 2000020;
 
@@ -261,6 +262,7 @@ const volunteerInfo = async (
       }
 
       const burnerProfileUpdated = roleIdSet.has(ROLE_BURNER_PROFILE_UPDATED_ID);
+      const welcomeComplete = roleIdSet.has(ROLE_WELCOME_COMPLETE_ID);
       const behavioralStandardsSigned = roleIdSet.has(
         ROLE_BEHAVIORAL_STANDARDS_ID
       );
@@ -318,6 +320,7 @@ const volunteerInfo = async (
           csp: s.sap_points ?? 0,
         })),
         burnerProfileUpdated,
+        welcomeComplete,
         behavioralStandardsSigned,
         emailUnsubscribed,
       };
