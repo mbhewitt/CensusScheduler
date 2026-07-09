@@ -246,12 +246,16 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
     return out;
   };
 
-  // Top section: open shifts only (never "mine"), narrowed by Type/Date/Fill.
-  const openDays = useMemo(
+  // Main list: ALL shifts — open AND your assigned — mixed by date, narrowed by
+  // Type/Date/Fill. Your assigned shifts show here (with the "You're signed up"
+  // marker) so you see everything in context and can tell which are yours —
+  // that's the whole point (Chipper 2026-07-09). (Fill=open/full naturally
+  // drops "mine" shifts from the main, but they're preserved in the bottom
+  // "Your assigned shifts" list below.)
+  const mainDays = useMemo(
     () =>
       groupByDay(
         items.filter((i) => {
-          if (i.state === "mine") return false;
           if (!inTimeline(i)) return false;
           if (types.length > 0 && !types.includes(i.type)) return false;
           if (dates.length > 0 && !dates.includes(i.dateName)) return false;
@@ -263,8 +267,11 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
     [items, timeline, types, dates, fill]
   );
 
-  // Bottom section: the volunteer's full assigned schedule for this time
-  // scope — Timeline only, never narrowed by Type/Date/Fill.
+  // Bottom section: the volunteer's full assigned schedule for this time scope
+  // (Timeline only, never narrowed). Shown ONLY when a narrowing filter is
+  // active, so filtering can't hide your commitments — but no redundant
+  // double-listing when the main already shows everything.
+  const anyNarrowing = types.length > 0 || dates.length > 0 || fill !== "all";
   const mineDays = useMemo(
     () => groupByDay(items.filter((i) => i.state === "mine" && inTimeline(i))),
     [items, timeline]
@@ -641,22 +648,20 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
           </Typography>
         </Stack>
 
-        {/* Open shifts */}
-        <Typography component="h3" variant="h6" sx={{ fontWeight: 800, mb: 1 }}>
-          Open shifts
-        </Typography>
-        {openDays.length === 0 ? (
+        {/* Main list: ALL shifts (open + your assigned), mixed by date */}
+        {mainDays.length === 0 ? (
           <Card sx={{ mb: 4 }}>
             <CardContent>
-              <Typography>No open shifts match your filters.</Typography>
+              <Typography>No shifts match your filters.</Typography>
             </CardContent>
           </Card>
         ) : (
-          <Box sx={{ mb: 4 }}>{openDays.map(renderDay)}</Box>
+          <Box sx={{ mb: 4 }}>{mainDays.map(renderDay)}</Box>
         )}
 
-        {/* Your assigned shifts — full Timeline scope, filters don't narrow it */}
-        {isSignedIn && mineCount > 0 && (
+        {/* Your assigned shifts — complete schedule, shown when a filter is
+            active so filtering can't hide your commitments */}
+        {isSignedIn && mineCount > 0 && anyNarrowing && (
           <>
             <Typography
               component="h3"
