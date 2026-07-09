@@ -101,6 +101,7 @@ const ROLE_DISPLAY_NAMES: Record<string, string> = {
   TrainingOutReachComplete: "Training: OutReach",
   TrainingDataEntryWizComplete: "Training: Data Entry Wiz",
   TrainingDataBeastDriverComplete: "Training: Data Beast Driver",
+  TrainingWelcomeComplete: "Training: Welcome",
 };
 
 // format ISO date string to readable format like "Aug 17"
