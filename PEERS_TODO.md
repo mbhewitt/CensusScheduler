@@ -42,8 +42,8 @@ Legend: ☐ = todo · ✅ = done · ❓ = needs a PEERS decision · 📄 = provi
 - [ ] Event datenames — `ARRIVAL_DATENAMES` was removed from `VolunteerInfo.tsx` with the On-Playa card (048cdc7); `PRE_OPEN_DATENAMES` still there (feeds the now-dormant `isPreOpen` gate) + `DAY_REQS` (`info/index.ts:15-33`) — only matters if SAP kept.
 
 ## 6. Physical playa address  📄
-- [ ] `assignmentNotify.ts:152` (.ics LOCATION) & `:225` (email body) — "PEERS Lab, **6:30 & A**, Black Rock City". 6:30&A is **Census's** spot — provide PEERS's real Placement address.
-- [ ] Same address/location references in `BehavioralStandards.tsx`.
+- [x] `assignmentNotify.ts:152` (.ics LOCATION) & `:225` (email body) — set to **PEERS Lab, Esplanade & 5:45, Black Rock City** (per stickybeak, 2026-07-09). Was Census's "6:30 & A".
+- [x] `BehavioralStandards.tsx` — no street address here; only generic "PEERS Lab" location-name mentions (lines 307/310), which are correct. Nothing to change.
 
 ## 7. Places I was guessing — need confirmation  ❓
 - [~] GetInvolved sidebar links — `GetInvolved.tsx` reworked (048cdc7, per papabear 2026-07-01): removed the Discord + Volunteer-year-round placeholder cards; the remaining card is "Explore PEERS & camp resources" with real links (Camp Resource Guide, The Placement Process). **Still pending:** the "Take Fun with Fulcrum" URL (papabear to supply → add to the `links` array + redeploy).
