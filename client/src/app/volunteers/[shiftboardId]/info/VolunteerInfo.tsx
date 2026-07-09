@@ -68,7 +68,7 @@ import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 // human-readable display names for internal role identifiers
 const ROLE_DISPLAY_NAMES: Record<string, string> = {
   CounterCultureCamp: "Camping with Counter Culture",
-  CensusLabCamp: "Camping with PEERS Lab",
+  CensusLabCamp: "Camping with PEERS / Placement HQ",
   CensusTicket: "PEERS Ticket",
   BurnerProfileUpdated: "Burner Profile Updated",
   OtherSAP: "Other SAP",

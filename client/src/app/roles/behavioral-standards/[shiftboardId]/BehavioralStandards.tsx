@@ -303,11 +303,13 @@ export const BehavioralStandards = ({
                 information.
               </Typography>
               <Typography>
-                On-playa, members of BRC PEERS leadership can be found at the
-                PEERS Lab or reached via radio on the PEERS channel while
+                On-playa, members of BRC PEERS leadership can be found at
+                PEERS / Placement HQ or reached via radio on the PEERS channel
+                while
                 shifts are active. Additional on-playa resources are made
                 available by other teams, including peer mediators, private
-                locations for conversations outside of PEERS Lab, etc.
+                locations for conversations outside of PEERS / Placement HQ,
+                etc.
               </Typography>
               <Typography>
                 If a situation ever arises in which a member of the BRC PEERS

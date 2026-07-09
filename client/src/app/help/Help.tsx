@@ -285,15 +285,18 @@ export const Help = () => {
                   </Typography>
                   <Typography paragraph>
                     If for some reason the interface isn&apos;t working, there
-                    will be an “Unanswered Questions” book at the PEERS Lab for
+                    will be an “Unanswered Questions” book at PEERS / Placement
+                    HQ for
                     participants to write down their contact information and
                     question. In this case, please ask them to write clearly!
                   </Typography>
                   <Typography>
                     If you still have questions about using the tablet, please
-                    consult the PEERS Lab Tablet Guide. Access a digital copy
+                    consult the PEERS / Placement HQ Tablet Guide. Access a
+                    digital copy
                     of the tablet guide in the file folder on this tablet. A
-                    printed copy is also available in the PEERS Lab binder,
+                    printed copy is also available in the PEERS / Placement HQ
+                    binder,
                     which is located in the Data Entry Office. You can also ask
                     a shift lead or volunteer coordinator to help or look for
                     one of the volunteers shown on the &quot;Who&apos;s Who

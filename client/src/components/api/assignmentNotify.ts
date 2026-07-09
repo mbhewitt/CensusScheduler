@@ -149,7 +149,7 @@ function buildIcs(args: {
     `SUMMARY:${escape(args.summary)}`,
     `DESCRIPTION:${escape(args.description)}`,
     // Commas need RFC 5545 \, escape inside LOCATION text values.
-    "LOCATION:PEERS Lab\\, Esplanade & 5:45\\, Black Rock City",
+    "LOCATION:PEERS / Placement HQ\\, Esplanade & 5:45\\, Black Rock City",
     `STATUS:${status}`,
     "TRANSP:OPAQUE",
     "END:VEVENT",
@@ -222,7 +222,7 @@ function renderShiftBody(
   // body and (via DESCRIPTION mirroring the body) in the .ics too.
   lines.push(
     "",
-    "Location: All PEERS shifts start and end at PEERS Lab at Esplanade & 5:45."
+    "Location: All PEERS shifts start and end at PEERS / Placement HQ at Esplanade & 5:45."
   );
   return lines.join("\n");
 }
