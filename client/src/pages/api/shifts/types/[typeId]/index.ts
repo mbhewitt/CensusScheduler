@@ -414,18 +414,30 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
       // code passed the whole timeListAdd once per item, re-inserting them.
       await Promise.all(
         timeListAdd.map(async (timeItem) => {
-          const { endTime, instance, meal, notes, startTime } = timeItem;
+          const { endTime, instance, meal, notes, positionList, startTime } =
+            timeItem;
+          // Only resurrect a SOFT-REMOVED time of THIS shift type at the same
+          // slot. The old query matched start_time/end_time across ALL types
+          // and live rows, so a shared time slot reused (and renamed) an
+          // unrelated row instead of creating a new one — and because this
+          // branch never inserted position rows, the "new" time came back with
+          // zero positions and vanished from the form (the GET only returns
+          // times that have a position row). See
+          // [[shift-type-add-time-reuse-scope]].
           const [dbTime] = await pool.query<RowDataPacket[]>(
             `SELECT shift_times_id
             FROM op_shift_times
-            WHERE end_time=?
+            WHERE shift_name_id=?
+            AND remove_shift_time=true
+            AND end_time=?
             AND start_time=?`,
-            [endTime, startTime]
+            [typeId, endTime, startTime]
           );
           const [dbTimeFirst] = dbTime;
           dbTimeIdExist = dbTimeFirst?.shift_times_id;
 
           if (dbTimeFirst) {
+            // resurrect the soft-removed row ...
             await pool.query<RowDataPacket[]>(
               `UPDATE op_shift_times
               SET
@@ -437,8 +449,73 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
               WHERE shift_times_id=?`,
               [meal === "None" ? "" : meal, notes, instance, dbTimeIdExist]
             );
+            // ... and (re)attach its positions. The submitted positions carry
+            // timePositionId=0 and are skipped by the timePositionListAdd loop
+            // below (its timeId===0 guard), so they must be upserted here or
+            // the resurrected time would come back with no positions. Upsert
+            // (not plain insert) because the old soft-removed position rows may
+            // still exist and would collide with UNIQUE(position_type_id,
+            // shift_times_id).
+            await Promise.all(
+              positionList.map(
+                async ({ alias, positionId, sapPoints, slots }) => {
+                  const [dbTimePosition] = await pool.query<RowDataPacket[]>(
+                    `SELECT time_position_id
+                    FROM op_shift_time_position
+                    WHERE shift_times_id=?
+                    AND position_type_id=?`,
+                    [dbTimeIdExist, positionId]
+                  );
+                  const [dbTimePositionFirst] = dbTimePosition;
+
+                  if (dbTimePositionFirst) {
+                    await pool.query<RowDataPacket[]>(
+                      `UPDATE op_shift_time_position
+                      SET
+                        add_time_position=true,
+                        position_alias=?,
+                        sap_points=?,
+                        slots=?,
+                        remove_time_position=false
+                      WHERE time_position_id=?`,
+                      [
+                        alias,
+                        sapPoints,
+                        slots,
+                        dbTimePositionFirst.time_position_id,
+                      ]
+                    );
+                  } else {
+                    const timePositionIdNew = generateId(
+                      `SELECT time_position_id
+                      FROM op_shift_time_position`
+                    );
+                    await pool.query(
+                      `INSERT INTO op_shift_time_position (
+                        add_time_position,
+                        position_alias,
+                        position_type_id,
+                        sap_points,
+                        shift_times_id,
+                        slots,
+                        time_position_id
+                      )
+                      VALUES (true, ?, ?, ?, ?, ?, ?)`,
+                      [
+                        alias,
+                        positionId,
+                        sapPoints,
+                        dbTimeIdExist,
+                        slots,
+                        timePositionIdNew,
+                      ]
+                    );
+                  }
+                }
+              )
+            );
           } else {
-            // insert new shift time rows
+            // insert new shift time rows (also inserts their positions)
             await handleTimeListAdd({
               timeList: [timeItem],
               typeId: Number(typeId),
