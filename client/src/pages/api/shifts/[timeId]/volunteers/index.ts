@@ -35,7 +35,7 @@ const shiftVolunteers = async (
           d.date,
           d.datename,
           pt.position_details,
-          pt.position,
+          COALESCE(NULLIF(stp.position_alias, ''), pt.position) AS position,
           pt.prerequisite_id,
           pt.role_id,
           pt.max_per_volunteer,
@@ -72,7 +72,7 @@ const shiftVolunteers = async (
       );
       const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT
-          pt.position,
+          COALESCE(NULLIF(stp.position_alias, ''), pt.position) AS position,
           stp.position_type_id,
           v.playa_name,
           v.world_name,
