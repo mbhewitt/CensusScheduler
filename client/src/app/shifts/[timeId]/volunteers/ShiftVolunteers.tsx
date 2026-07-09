@@ -26,6 +26,7 @@ import {
   Stack,
   Switch,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import dayjs from "dayjs";
 import Link from "next/link";
@@ -154,6 +155,8 @@ export const ShiftVolunteers = ({
   // other hooks
   // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
+  // match the same 600px breakpoint the shared DataTable switches at
+  const isMobile = useMediaQuery("(max-width:600px)");
 
   // side effects
   // ------------------------------------------------------------
@@ -744,11 +747,152 @@ export const ShiftVolunteers = ({
               Add volunteer
             </Button>
           </Stack>
-          <DataTable
-            columnList={columnListVolunteers}
-            dataTable={dataTableVolunteers}
-            optionListCustom={optionListCustomVolunteers}
-          />
+          {isMobile ? (
+            <Box>
+              {dataShiftVolunteersItem.volunteerList.map(
+                ({
+                  isCheckedIn,
+                  notes,
+                  playaName,
+                  positionName,
+                  rating,
+                  shiftboardId,
+                  timePositionId,
+                  worldName,
+                }: IResShiftVolunteerRowItem) => (
+                  <Box
+                    key={`${shiftboardId}-shift-volunteer-card`}
+                    sx={{
+                      borderBottom: 1,
+                      borderColor: "divider",
+                      py: 1,
+                    }}
+                  >
+                    {/* line 1: playa name (bold) + world name (secondary) */}
+                    <Typography sx={{ fontWeight: 700 }}>
+                      {playaName}
+                      {worldName && worldName !== playaName && (
+                        <Typography
+                          component="span"
+                          variant="caption"
+                          sx={{ color: "text.secondary", ml: 1 }}
+                        >
+                          &quot;{worldName}&quot;
+                        </Typography>
+                      )}
+                    </Typography>
+                    {/* line 2: position (secondary) + inline controls */}
+                    <Stack
+                      alignItems="center"
+                      direction="row"
+                      justifyContent="space-between"
+                    >
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "text.secondary" }}
+                      >
+                        {positionName}
+                      </Typography>
+                      <Stack alignItems="center" direction="row">
+                        <Switch
+                          checked={isCheckedIn === ""}
+                          disabled={!isCheckInAvailable}
+                          onChange={(event) =>
+                            handleCheckInToggle({
+                              shift: {
+                                positionName,
+                                timePositionId,
+                              },
+                              volunteer: {
+                                isCheckedIn: event.target.checked,
+                                playaName,
+                                shiftboardId,
+                                worldName,
+                              },
+                            })
+                          }
+                        />
+                        {isAdmin && (
+                          <IconButton
+                            onClick={() => {
+                              setDialogCurrent({
+                                dialogItem: DialogList.Review,
+                                shift: {
+                                  positionName,
+                                  timePositionId,
+                                },
+                                volunteer: {
+                                  notes,
+                                  playaName,
+                                  rating,
+                                  shiftboardId,
+                                  worldName,
+                                },
+                              });
+                              setIsDialogOpen(true);
+                            }}
+                          >
+                            {rating ? (
+                              <ChatIcon color="primary" />
+                            ) : (
+                              <ChatIcon color="disabled" />
+                            )}
+                          </IconButton>
+                        )}
+                        {isAdmin && (
+                          <MoreMenu
+                            Icon={<MoreHorizIcon />}
+                            MenuList={
+                              <MenuList>
+                                <Link href={`/volunteers/${shiftboardId}/info`}>
+                                  <MenuItem>
+                                    <ListItemIcon>
+                                      <ManageAccountsIcon />
+                                    </ListItemIcon>
+                                    <ListItemText>View account</ListItemText>
+                                  </MenuItem>
+                                </Link>
+                                <MenuItem
+                                  onClick={() => {
+                                    setDialogCurrent({
+                                      dialogItem: DialogList.Remove,
+                                      shift: {
+                                        positionName,
+                                        timePositionId,
+                                      },
+                                      volunteer: {
+                                        notes: "",
+                                        playaName,
+                                        rating: null,
+                                        shiftboardId,
+                                        worldName,
+                                      },
+                                    });
+                                    setIsDialogOpen(true);
+                                  }}
+                                >
+                                  <ListItemIcon>
+                                    <PersonRemoveIcon />
+                                  </ListItemIcon>
+                                  <ListItemText>Remove volunteer</ListItemText>
+                                </MenuItem>
+                              </MenuList>
+                            }
+                          />
+                        )}
+                      </Stack>
+                    </Stack>
+                  </Box>
+                )
+              )}
+            </Box>
+          ) : (
+            <DataTable
+              columnList={columnListVolunteers}
+              dataTable={dataTableVolunteers}
+              optionListCustom={optionListCustomVolunteers}
+            />
+          )}
         </Box>
 
         {/* add dialog */}
