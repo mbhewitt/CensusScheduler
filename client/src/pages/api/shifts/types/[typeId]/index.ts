@@ -504,7 +504,13 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         }
       );
 
-      timePositionListUpdate.forEach(
+      // Awaited (was forEach(async), fire-and-forget): the three time-position
+      // loops must finish before the 200, or the response races the writes and
+      // a just-added position/time vanishes on reload (the form GET drops any
+      // time with no position row). Same fix already applied to the time loops
+      // above (see the [[shift-type-patch-forEach-race]] comments).
+      await Promise.all(
+        timePositionListUpdate.map(
         async ({ alias, sapPoints, slots, timePositionId }) => {
           await pool.query<RowDataPacket[]>(
             `UPDATE op_shift_time_position
@@ -517,8 +523,9 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
             [alias, sapPoints, slots, timePositionId]
           );
         }
-      );
-      timePositionListAdd.forEach(
+      ));
+      await Promise.all(
+        timePositionListAdd.map(
         async ({ alias, positionId, sapPoints, slots, timeId }) => {
           const [dbTimePosition] = await pool.query<RowDataPacket[]>(
             `SELECT time_position_id
@@ -565,8 +572,9 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
             );
           }
         }
-      );
-      timePositionListRemove.forEach(
+      ));
+      await Promise.all(
+        timePositionListRemove.map(
         async ({ time_position_id: timePositionId }) => {
           await pool.query<RowDataPacket[]>(
             `UPDATE op_shift_time_position
@@ -577,7 +585,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
             [timePositionId]
           );
         }
-      );
+      ));
 
       return res.status(200).json({
         statusCode: 200,
