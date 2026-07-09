@@ -30,7 +30,7 @@ const volunteerShifts = async (
         `SELECT
           d.date,
           d.datename,
-          pt.position,
+          COALESCE(NULLIF(stp.position_alias, ''), pt.position) AS position,
           stp.position_type_id,
           stp.sap_points,
           sc.department,

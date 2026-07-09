@@ -705,11 +705,48 @@ export const ShiftVolunteers = ({
           <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
             Positions
           </Typography>
-          <DataTable
-            columnList={columnListPositions}
-            dataTable={dataTablePositions}
-            optionListCustom={optionListCustomPositions}
-          />
+          {isMobile ? (
+            <Stack spacing={1}>
+              {dataShiftVolunteersItem.positionList.map(
+                ({
+                  csp,
+                  positionName,
+                  slotsFilled,
+                  slotsTotal,
+                }: IResShiftPositionCountItem) => (
+                  <Box
+                    key={`${positionName}-position-card`}
+                    sx={{
+                      bgcolor: "background.paper",
+                      border: 1,
+                      borderColor: "divider",
+                      borderRadius: 1,
+                      px: 2,
+                      py: 1,
+                    }}
+                  >
+                    {/* line 1: position name (bold) */}
+                    <Typography sx={{ fontWeight: 700 }}>
+                      {positionName}
+                    </Typography>
+                    {/* line 2: filled / total + CSP (secondary, no labels) */}
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      {slotsFilled} / {slotsTotal} · CSP {csp}
+                    </Typography>
+                  </Box>
+                )
+              )}
+            </Stack>
+          ) : (
+            <DataTable
+              columnList={columnListPositions}
+              dataTable={dataTablePositions}
+              optionListCustom={optionListCustomPositions}
+            />
+          )}
         </Box>
         <Box component="section">
           <Stack
@@ -748,7 +785,7 @@ export const ShiftVolunteers = ({
             </Button>
           </Stack>
           {isMobile ? (
-            <Box>
+            <Stack spacing={1}>
               {dataShiftVolunteersItem.volunteerList.map(
                 ({
                   isCheckedIn,
@@ -763,8 +800,11 @@ export const ShiftVolunteers = ({
                   <Box
                     key={`${shiftboardId}-shift-volunteer-card`}
                     sx={{
-                      borderBottom: 1,
+                      bgcolor: "background.paper",
+                      border: 1,
                       borderColor: "divider",
+                      borderRadius: 1,
+                      px: 2,
                       py: 1,
                     }}
                   >
@@ -885,7 +925,7 @@ export const ShiftVolunteers = ({
                   </Box>
                 )
               )}
-            </Box>
+            </Stack>
           ) : (
             <DataTable
               columnList={columnListVolunteers}
