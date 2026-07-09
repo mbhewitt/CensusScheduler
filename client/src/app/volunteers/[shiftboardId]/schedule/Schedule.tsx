@@ -2,6 +2,7 @@
 
 import {
   CalendarMonth as CalendarMonthIcon,
+  Close as CloseIcon,
   FilterList as FilterListIcon,
 } from "@mui/icons-material";
 import {
@@ -13,11 +14,13 @@ import {
   Collapse,
   Container,
   FormControl,
+  FormControlLabel,
   IconButton,
   InputLabel,
   MenuItem,
   Select,
   Stack,
+  Switch,
   Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -26,7 +29,6 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import useSWR from "swr";
 
-import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
 import { ErrorAlert } from "@/components/general/ErrorAlert";
 import { Loading } from "@/components/general/Loading";
 import { Hero } from "@/components/layout/Hero";
@@ -203,11 +205,36 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
   }, [dataMine, dataOpen, dataElig]);
 
   // Filter set (#470). Funnel toggles the panel; chips show/remove active values.
+  // Every filter follows the same "empty = show all" convention; empty selection
+  // is no filter (the label renders "All").
   const [showFilters, setShowFilters] = useState(false);
-  const [timeline, setTimeline] = useState("future"); // "future" | "past"
+  const [timeline, setTimeline] = useState<string[]>(["future"]); // "future" | "past"
   const [types, setTypes] = useState<string[]>([]);
   const [dates, setDates] = useState<string[]>([]);
-  const [fill, setFill] = useState("all"); // "all" | "open" | "full"
+  const [availability, setAvailability] = useState<string[]>([]); // "open" | "full"
+  const [myShiftsOnly, setMyShiftsOnly] = useState(false);
+
+  // Reset every filter to its default (#470 design review, item 8).
+  const removeAllFilters = () => {
+    setTimeline(["future"]);
+    setTypes([]);
+    setDates([]);
+    setAvailability([]);
+    setMyShiftsOnly(false);
+  };
+
+  // Keep a multiselect's Select value as a string[] (MUI hands back a comma
+  // string on native change). Shared by every dropdown below.
+  const asArray = (v: string | string[]) =>
+    typeof v === "string" ? v.split(",").filter(Boolean) : v;
+
+  // "Select all" toggle for a multiselect: if every option is already picked,
+  // clear it; otherwise select them all.
+  const toggleSelectAll = (
+    current: string[],
+    all: string[],
+    set: (next: string[]) => void
+  ) => set(current.length === all.length ? [] : all);
 
   // Distinct Type / Date option lists, drawn from the agenda itself.
   const typeOptions = useMemo(
@@ -229,9 +256,11 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
 
   // Present/Future by default — hide past shifts so nobody scrolls past
   // yesterday to reach today. Timeline always applies to both sections.
+  // Empty selection = show all (both future and past), like every other filter.
   const inTimeline = (i: IAgendaItem) => {
+    if (timeline.length === 0) return true;
     const isPast = dayjs(i.date).isBefore(dayjs(), "day");
-    return timeline === "past" ? isPast : !isPast;
+    return timeline.includes(isPast ? "past" : "future");
   };
 
   // Group a flat (already date-sorted) list into consecutive-day sections.
@@ -246,32 +275,35 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
     return out;
   };
 
-  // Main list: ALL shifts — open AND your assigned — mixed by date, narrowed by
-  // Type/Date/Fill. Your assigned shifts show here (with the "You're signed up"
-  // marker) so you see everything in context and can tell which are yours —
-  // that's the whole point (Chipper 2026-07-09). (Fill=open/full naturally
-  // drops "mine" shifts from the main, but they're preserved in the bottom
-  // "Your assigned shifts" list below.)
+  // Main list: ALL shifts — open AND your own — mixed by date, narrowed by
+  // Timeline/Type/Date/Availability. Your own shifts show here (with the
+  // "You're signed up" marker) so you see everything in context and can tell
+  // which are yours — that's the whole point (Chipper 2026-07-09). When the
+  // "My Shifts" toggle is ON the main list is restricted to your own shifts
+  // (still narrowed by the other filters), and the bottom section is dropped.
   const mainDays = useMemo(
     () =>
       groupByDay(
         items.filter((i) => {
+          if (myShiftsOnly && i.state !== "mine") return false;
           if (!inTimeline(i)) return false;
           if (types.length > 0 && !types.includes(i.type)) return false;
           if (dates.length > 0 && !dates.includes(i.dateName)) return false;
-          if (fill === "open" && i.state !== "open") return false;
-          if (fill === "full" && i.state !== "full") return false;
+          if (availability.length > 0 && !availability.includes(i.state))
+            return false;
           return true;
         })
       ),
-    [items, timeline, types, dates, fill]
+    [items, timeline, types, dates, availability, myShiftsOnly]
   );
 
-  // Bottom section: the volunteer's full assigned schedule for this time scope
-  // (Timeline only, never narrowed). Shown ONLY when a narrowing filter is
-  // active, so filtering can't hide your commitments — but no redundant
-  // double-listing when the main already shows everything.
-  const anyNarrowing = types.length > 0 || dates.length > 0 || fill !== "all";
+  // Bottom "My Shifts" section: the volunteer's full schedule for this time
+  // scope (Timeline only, never narrowed). Shown ONLY when a narrowing filter
+  // is active, so filtering can't hide your commitments — but no redundant
+  // double-listing when the main already shows everything, and suppressed
+  // entirely when the My Shifts toggle already restricts the main to yours.
+  const anyNarrowing =
+    types.length > 0 || dates.length > 0 || availability.length > 0;
   const mineDays = useMemo(
     () => groupByDay(items.filter((i) => i.state === "mine" && inTimeline(i))),
     [items, timeline]
@@ -284,7 +316,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
   const hero = (
     <Hero
       imageStyles={{
-        backgroundImage: "url(/banners/camp-at-day.jpg)",
+        backgroundImage: "url(/banners/databeast-volunteers-exiting.jpg)",
         backgroundSize: "cover",
       }}
       text="Shifts"
@@ -480,26 +512,18 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
     </Box>
   );
 
+  // Keep dropdowns bounded on mobile (not fullscreen) and don't lock scroll.
+  const menuProps = {
+    disableScrollLock: true,
+    PaperProps: { sx: { maxHeight: 320 } },
+  };
+
   return (
     <>
       {hero}
       <Container maxWidth="md" component="main">
-        <Box sx={{ mb: 3 }}>
-          <BreadcrumbsNav>
-            <Typography>Shifts</Typography>
-          </BreadcrumbsNav>
-        </Box>
-
-        {/* heading + funnel */}
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-          sx={{ mb: 1 }}
-        >
-          <Typography component="h2" variant="h4">
-            Shifts
-          </Typography>
+        {/* funnel toggle (single title lives in the Hero, #470 item 5) */}
+        <Stack direction="row" justifyContent="flex-end" sx={{ mt: 1, mb: 1 }}>
           <IconButton
             aria-label="Filter"
             onClick={() => setShowFilters((v) => !v)}
@@ -509,87 +533,189 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
           </IconButton>
         </Stack>
 
-        {/* filter panel (#470) — stacked full-width so it fits mobile */}
+        {/* filter panel (#470) — bounded, full-width so it fits mobile with a
+            header row (Filters + remove-all + close) matching /shifts */}
         <Collapse in={showFilters}>
-          <Stack spacing={2} sx={{ mb: 2 }}>
-            <FormControl size="small" fullWidth>
-              <InputLabel id="timeline-label">Timeline</InputLabel>
-              <Select
-                labelId="timeline-label"
-                label="Timeline"
-                value={timeline}
-                onChange={(e) => setTimeline(e.target.value)}
-              >
-                <MenuItem value="future">Present / Future</MenuItem>
-                <MenuItem value="past">Past</MenuItem>
-              </Select>
-            </FormControl>
+          <Box
+            sx={{
+              mb: 2,
+              p: 2,
+              border: `1px solid ${theme.palette.divider}`,
+              borderRadius: 1,
+            }}
+          >
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              sx={{ mb: 2 }}
+            >
+              <Typography sx={{ fontWeight: 800 }}>Filters</Typography>
+              <Stack direction="row" alignItems="center" spacing={0.5}>
+                <Button size="small" onClick={removeAllFilters}>
+                  Remove all filters
+                </Button>
+                <IconButton
+                  aria-label="Close filters"
+                  size="small"
+                  onClick={() => setShowFilters(false)}
+                >
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+              </Stack>
+            </Stack>
 
-            <FormControl size="small" fullWidth>
-              <InputLabel id="type-label">Type</InputLabel>
-              <Select
-                labelId="type-label"
-                label="Type"
-                multiple
-                value={types}
-                onChange={(e) =>
-                  setTypes(
-                    typeof e.target.value === "string"
-                      ? e.target.value.split(",")
-                      : e.target.value
-                  )
-                }
-                renderValue={(selected) => selected.join(", ")}
-              >
-                {typeOptions.map((t) => (
-                  <MenuItem key={t} value={t}>
-                    {t}
+            <Stack spacing={2}>
+              <FormControl size="small" fullWidth>
+                <InputLabel id="timeline-label" shrink>
+                  Timeline
+                </InputLabel>
+                <Select
+                  labelId="timeline-label"
+                  label="Timeline"
+                  multiple
+                  displayEmpty
+                  value={timeline}
+                  MenuProps={menuProps}
+                  onChange={(e) => setTimeline(asArray(e.target.value))}
+                  renderValue={(selected) =>
+                    selected.length === 0
+                      ? "All"
+                      : selected
+                          .map((v) => (v === "past" ? "Past" : "Present / Future"))
+                          .join(", ")
+                  }
+                >
+                  <MenuItem
+                    onClick={() =>
+                      toggleSelectAll(timeline, ["future", "past"], setTimeline)
+                    }
+                  >
+                    Select all
                   </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                  <MenuItem value="future">Present / Future</MenuItem>
+                  <MenuItem value="past">Past</MenuItem>
+                </Select>
+              </FormControl>
 
-            <FormControl size="small" fullWidth>
-              <InputLabel id="date-label">Date</InputLabel>
-              <Select
-                labelId="date-label"
-                label="Date"
-                multiple
-                value={dates}
-                onChange={(e) =>
-                  setDates(
-                    typeof e.target.value === "string"
-                      ? e.target.value.split(",")
-                      : e.target.value
-                  )
-                }
-                renderValue={(selected) => selected.join(", ")}
-              >
-                {dateOptions.map((d) => (
-                  <MenuItem key={d.dateName} value={d.dateName}>
-                    {d.dateName}
+              <FormControl size="small" fullWidth>
+                <InputLabel id="type-label" shrink>
+                  Type
+                </InputLabel>
+                <Select
+                  labelId="type-label"
+                  label="Type"
+                  multiple
+                  displayEmpty
+                  value={types}
+                  MenuProps={menuProps}
+                  onChange={(e) => setTypes(asArray(e.target.value))}
+                  renderValue={(selected) =>
+                    selected.length === 0 ? "All" : selected.join(", ")
+                  }
+                >
+                  <MenuItem
+                    onClick={() =>
+                      toggleSelectAll(types, typeOptions, setTypes)
+                    }
+                  >
+                    Select all
                   </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                  {typeOptions.map((t) => (
+                    <MenuItem key={t} value={t}>
+                      {t}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
 
-            <FormControl size="small" fullWidth>
-              <InputLabel id="fill-label">Fill</InputLabel>
-              <Select
-                labelId="fill-label"
-                label="Fill"
-                value={fill}
-                onChange={(e) => setFill(e.target.value)}
-              >
-                <MenuItem value="all">All</MenuItem>
-                <MenuItem value="open">Open</MenuItem>
-                <MenuItem value="full">Full</MenuItem>
-              </Select>
-            </FormControl>
-          </Stack>
+              <FormControl size="small" fullWidth>
+                <InputLabel id="date-label" shrink>
+                  Date
+                </InputLabel>
+                <Select
+                  labelId="date-label"
+                  label="Date"
+                  multiple
+                  displayEmpty
+                  value={dates}
+                  MenuProps={menuProps}
+                  onChange={(e) => setDates(asArray(e.target.value))}
+                  renderValue={(selected) =>
+                    selected.length === 0 ? "All" : selected.join(", ")
+                  }
+                >
+                  <MenuItem
+                    onClick={() =>
+                      toggleSelectAll(
+                        dates,
+                        dateOptions.map((d) => d.dateName),
+                        setDates
+                      )
+                    }
+                  >
+                    Select all
+                  </MenuItem>
+                  {dateOptions.map((d) => (
+                    <MenuItem key={d.dateName} value={d.dateName}>
+                      {d.dateName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <FormControl size="small" fullWidth>
+                <InputLabel id="availability-label" shrink>
+                  Availability
+                </InputLabel>
+                <Select
+                  labelId="availability-label"
+                  label="Availability"
+                  multiple
+                  displayEmpty
+                  value={availability}
+                  MenuProps={menuProps}
+                  onChange={(e) => setAvailability(asArray(e.target.value))}
+                  renderValue={(selected) =>
+                    selected.length === 0
+                      ? "All"
+                      : selected
+                          .map((v) => (v === "open" ? "Open" : "Full"))
+                          .join(", ")
+                  }
+                >
+                  <MenuItem
+                    onClick={() =>
+                      toggleSelectAll(
+                        availability,
+                        ["open", "full"],
+                        setAvailability
+                      )
+                    }
+                  >
+                    Select all
+                  </MenuItem>
+                  <MenuItem value="open">Open</MenuItem>
+                  <MenuItem value="full">Full</MenuItem>
+                </Select>
+              </FormControl>
+
+              {isSignedIn && (
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={myShiftsOnly}
+                      onChange={(e) => setMyShiftsOnly(e.target.checked)}
+                    />
+                  }
+                  label="My Shifts"
+                />
+              )}
+            </Stack>
+          </Box>
         </Collapse>
 
-        {/* active-filter chips (Timeline always shows; deleting resets to default) */}
+        {/* active-filter chips (each ✕ removes just that value) */}
         <Stack
           direction="row"
           spacing={1}
@@ -597,11 +723,14 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
           useFlexGap
           sx={{ mb: 2 }}
         >
-          <Chip
-            label={timeline === "past" ? "Past" : "Present / Future"}
-            size="small"
-            onDelete={() => setTimeline("future")}
-          />
+          {timeline.map((t) => (
+            <Chip
+              key={`chip-timeline-${t}`}
+              label={t === "past" ? "Past" : "Present / Future"}
+              size="small"
+              onDelete={() => setTimeline(timeline.filter((x) => x !== t))}
+            />
+          ))}
           {types.map((t) => (
             <Chip
               key={`chip-type-${t}`}
@@ -618,13 +747,16 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
               onDelete={() => setDates(dates.filter((x) => x !== d))}
             />
           ))}
-          {fill !== "all" && (
+          {availability.map((a) => (
             <Chip
-              label={fill === "open" ? "Open" : "Full"}
+              key={`chip-availability-${a}`}
+              label={a === "open" ? "Open" : "Full"}
               size="small"
-              onDelete={() => setFill("all")}
+              onDelete={() =>
+                setAvailability(availability.filter((x) => x !== a))
+              }
             />
-          )}
+          ))}
         </Stack>
 
         {/* legend */}
@@ -659,16 +791,17 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
           <Box sx={{ mb: 4 }}>{mainDays.map(renderDay)}</Box>
         )}
 
-        {/* Your assigned shifts — complete schedule, shown when a filter is
-            active so filtering can't hide your commitments */}
-        {isSignedIn && mineCount > 0 && anyNarrowing && (
+        {/* My Shifts — your complete schedule, shown when a filter is active so
+            filtering can't hide your commitments. Suppressed when the My Shifts
+            toggle already restricts the main list to yours (redundant). */}
+        {isSignedIn && !myShiftsOnly && mineCount > 0 && anyNarrowing && (
           <>
             <Typography
               component="h3"
               variant="h6"
               sx={{ fontWeight: 800, mb: 1 }}
             >
-              Your assigned shifts
+              My Shifts
             </Typography>
             {mineDays.length === 0 ? (
               <Card>
