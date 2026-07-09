@@ -12,9 +12,6 @@ export interface IReqToggleOtherSap {
 export interface IReqToggleProfileUpdated {
   updated: boolean;
 }
-export interface IReqToggleWelcomeComplete {
-  complete: boolean;
-}
 export interface IReqToggleEmailUnsubscribed {
   unsubscribed: boolean;
 }

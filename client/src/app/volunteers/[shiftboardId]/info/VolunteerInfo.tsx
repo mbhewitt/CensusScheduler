@@ -192,10 +192,6 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     `/api/volunteers/${shiftboardId}/info/profile-updated`,
     fetcherTrigger
   );
-  const { trigger: triggerWelcomeComplete } = useSWRMutation(
-    `/api/volunteers/${shiftboardId}/info/welcome-complete`,
-    fetcherTrigger
-  );
   const { trigger: triggerEmailPreference } = useSWRMutation(
     `/api/volunteers/${shiftboardId}/info/email-preference`,
     fetcherTrigger
@@ -378,34 +374,6 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
       }
     },
     [triggerProfileUpdated, mutate, enqueueSnackbar]
-  );
-
-  const handleWelcomeCompleteToggle = useCallback(
-    async (complete: boolean) => {
-      try {
-        await triggerWelcomeComplete({
-          body: { complete },
-          method: "POST",
-        });
-        mutate();
-        enqueueSnackbar(
-          <SnackbarText>
-            Welcome step <strong>updated</strong>
-          </SnackbarText>,
-          { variant: "success" }
-        );
-      } catch (error) {
-        if (error instanceof Error) {
-          enqueueSnackbar(
-            <SnackbarText>
-              <strong>{error.message}</strong>
-            </SnackbarText>,
-            { persist: true, variant: "error" }
-          );
-        }
-      }
-    },
-    [triggerWelcomeComplete, mutate, enqueueSnackbar]
   );
 
   // role toggle handler
@@ -935,19 +903,19 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   }
 
   // Welcome course (#483): learn about Census on the Burning Man Hive.
-  // Completes either via the self-check below or by clicking through from the
-  // end of the Hive course (which hits /welcome-complete → POSTs complete=true).
+  // The welcome course is now a real training (WELCM). Completing it — either
+  // via the "already familiar" link below or by clicking through from the end
+  // of the Hive course — routes through the shared training-confirmation
+  // facility (/training/confirmation/WELCM), which assigns the welcome role.
   checklistItems.push({
     id: "welcome",
-    label: welcomeComplete
-      ? "Learned about Census on Burning Man Hive"
-      : "Learn more about Census by reviewing the information on Burning Man Hive",
+    label:
+      "Learn more about Black Rock City Census by reviewing the Census community on Burning Man Hive",
     done: welcomeComplete,
     content: (
       <Box>
         <Typography sx={{ mb: 1 }}>
-          Get to know Census and what your volunteering makes possible. Review
-          the information on the Burning Man Hive.
+          Get to know Census and what your volunteering makes possible.
         </Typography>
         <Typography sx={{ mb: 1 }}>
           <a
@@ -955,18 +923,22 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
             rel="noopener noreferrer"
             target="_blank"
           >
-            Open the Census Hive page
+            Review the Census community on Hive
           </a>
         </Typography>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={welcomeComplete}
-              onChange={(e) => handleWelcomeCompleteToggle(e.target.checked)}
-            />
-          }
-          label="I am already familiar with this information. Mark this item as complete."
-        />
+        {!welcomeComplete && (
+          <Link
+            href="/training/confirmation/WELCM"
+            style={{
+              color: theme.palette.primary.main,
+              fontWeight: 500,
+              textDecoration: "underline",
+            }}
+          >
+            I am already familiar with this information. Mark this item as
+            complete.
+          </Link>
+        )}
       </Box>
     ),
   });
