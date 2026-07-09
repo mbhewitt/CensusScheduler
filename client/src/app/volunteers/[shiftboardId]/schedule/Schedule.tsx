@@ -392,12 +392,10 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
               : item.state === "open"
                 ? theme.palette.secondary.main
                 : theme.palette.divider;
-          // <=10% filled = genuinely needs help (matches the reports
-          // sheet's UNDER=0.10 threshold, per #470).
+          // Not at full compliment (any open spot) → show the count red so
+          // shifts that still need people stand out (Mew 2026-07-09).
           const underfilled =
-            !!item.slots &&
-            item.slots.total > 0 &&
-            item.slots.filled / item.slots.total <= 0.1;
+            !!item.slots && item.slots.filled < item.slots.total;
           return (
             <Card
               key={item.key}
@@ -429,11 +427,6 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                 >
                   {item.title}
                 </Typography>
-                {item.department && (
-                  <Typography color="text.secondary" variant="body2">
-                    {item.department}
-                  </Typography>
-                )}
                 <Stack
                   direction="row"
                   spacing={1.5}
@@ -460,7 +453,6 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                         {item.slots.filled}
                       </Box>{" "}
                       / {item.slots.total} filled
-                      {underfilled ? " · needs help" : ""}
                     </Typography>
                   )}
                   {item.csp !== "0" && (
@@ -468,21 +460,58 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                   )}
                 </Stack>
 
-                {item.ineligibleReason && (
-                  <Box
-                    sx={{
-                      mt: 1,
-                      backgroundColor: "#fdecec",
-                      color: "#8a1c1c",
-                      borderRadius: 1,
-                      px: 1.25,
-                      py: 0.75,
-                      fontSize: "0.8rem",
-                      fontWeight: 600,
-                    }}
-                  >
-                    🔒 {item.ineligibleReason}
-                  </Box>
+                {/* Gray-out reasons: explain why a shift can't be taken
+                    (Mew 2026-07-09). Show every reason that applies. */}
+                {(item.state === "full" ||
+                  item.ineligibleReason ||
+                  item.conflictWith) && (
+                  <Stack spacing={0.75} sx={{ mt: 1 }}>
+                    {item.state === "full" && (
+                      <Box
+                        sx={{
+                          backgroundColor: "#f0ede6",
+                          color: "#5a5548",
+                          borderRadius: 1,
+                          px: 1.25,
+                          py: 0.75,
+                          fontSize: "0.8rem",
+                          fontWeight: 600,
+                        }}
+                      >
+                        🚫 Full — no open spots
+                      </Box>
+                    )}
+                    {item.ineligibleReason && (
+                      <Box
+                        sx={{
+                          backgroundColor: "#fdecec",
+                          color: "#8a1c1c",
+                          borderRadius: 1,
+                          px: 1.25,
+                          py: 0.75,
+                          fontSize: "0.8rem",
+                          fontWeight: 600,
+                        }}
+                      >
+                        🔒 {item.ineligibleReason}
+                      </Box>
+                    )}
+                    {item.conflictWith && (
+                      <Box
+                        sx={{
+                          backgroundColor: "#fdf3e2",
+                          color: "#8a5a1c",
+                          borderRadius: 1,
+                          px: 1.25,
+                          py: 0.75,
+                          fontSize: "0.8rem",
+                          fontWeight: 600,
+                        }}
+                      >
+                        ⚠️ Overlaps your {item.conflictWith} shift
+                      </Box>
+                    )}
+                  </Stack>
                 )}
 
                 {(item.canceled || item.state === "mine") && (
