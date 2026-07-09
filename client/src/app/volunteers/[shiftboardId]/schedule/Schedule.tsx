@@ -2,7 +2,7 @@
 
 import {
   CalendarMonth as CalendarMonthIcon,
-  MoreHoriz as MoreHorizIcon,
+  FilterList as FilterListIcon,
 } from "@mui/icons-material";
 import {
   Box,
@@ -10,14 +10,14 @@ import {
   Card,
   CardContent,
   Chip,
+  Collapse,
   Container,
   FormControl,
-  FormControlLabel,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
   Stack,
-  Switch,
   Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -26,11 +26,9 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import useSWR from "swr";
 
-import { VolunteerShiftsDialogRemove } from "@/app/volunteers/[shiftboardId]/account/VolunteerShiftsDialogRemove";
 import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
 import { ErrorAlert } from "@/components/general/ErrorAlert";
 import { Loading } from "@/components/general/Loading";
-import { MoreMenu } from "@/components/general/MoreMenu";
 import { Hero } from "@/components/layout/Hero";
 import type { IResShiftRowItem } from "@/components/types/shifts";
 import type { IResVolunteerShiftItem } from "@/components/types/volunteers";
@@ -193,23 +191,23 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
       });
     }
 
+    // Null-safe: some shifts have a missing date/startTime; a bare
+    // .localeCompare on null throws and white-screens the page (2026-07-08).
     agenda.sort((a, b) =>
-      a.date === b.date
-        ? a.startTime.localeCompare(b.startTime)
-        : a.date.localeCompare(b.date)
+      (a.date ?? "") === (b.date ?? "")
+        ? (a.startTime ?? "").localeCompare(b.startTime ?? "")
+        : (a.date ?? "").localeCompare(b.date ?? "")
     );
 
     return { items: agenda };
   }, [dataMine, dataOpen, dataElig]);
 
-  // Filter set + pinning toggle (#470).
+  // Filter set (#470). Funnel toggles the panel; chips show/remove active values.
+  const [showFilters, setShowFilters] = useState(false);
   const [timeline, setTimeline] = useState("future"); // "future" | "past"
   const [types, setTypes] = useState<string[]>([]);
   const [dates, setDates] = useState<string[]>([]);
   const [fill, setFill] = useState("all"); // "all" | "open" | "full"
-  const [includeMine, setIncludeMine] = useState(true);
-  // ⋮ Remove target (a "mine" item) — drives the reused removal dialog.
-  const [removeTarget, setRemoveTarget] = useState<IAgendaItem | null>(null);
 
   // Distinct Type / Date option lists, drawn from the agenda itself.
   const typeOptions = useMemo(
@@ -229,36 +227,48 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
     return out;
   }, [items]);
 
-  // Type/Date/Fill are the "narrowing" filters (Timeline doesn't count).
-  const anyNarrowing = types.length > 0 || dates.length > 0 || fill !== "all";
-
   // Present/Future by default — hide past shifts so nobody scrolls past
-  // yesterday to reach today. Timeline always applies; Type/Date/Fill narrow.
-  // When "Include my assigned shifts" is on, "mine" items are pinned (always
-  // pass narrowing filters) but still obey Timeline. Group into consecutive days.
-  const days = useMemo(() => {
-    const filtered = items.filter((i) => {
-      const isPast = dayjs(i.date).isBefore(dayjs(), "day");
-      if (timeline === "past" ? !isPast : isPast) return false;
+  // yesterday to reach today. Timeline always applies to both sections.
+  const inTimeline = (i: IAgendaItem) => {
+    const isPast = dayjs(i.date).isBefore(dayjs(), "day");
+    return timeline === "past" ? isPast : !isPast;
+  };
 
-      // Pinned: mine items skip the narrowing filters when the toggle is on.
-      if (i.state === "mine" && includeMine && anyNarrowing) return true;
-
-      if (types.length > 0 && !types.includes(i.type)) return false;
-      if (dates.length > 0 && !dates.includes(i.dateName)) return false;
-      if (fill === "open" && i.state !== "open") return false;
-      if (fill === "full" && i.state !== "full") return false;
-      return true;
-    });
+  // Group a flat (already date-sorted) list into consecutive-day sections.
+  const groupByDay = (list: IAgendaItem[]) => {
     const out: { date: string; dateName: string; items: IAgendaItem[] }[] = [];
-    for (const item of filtered) {
+    for (const item of list) {
       const last = out[out.length - 1];
       if (last && last.date === item.date) last.items.push(item);
       else
         out.push({ date: item.date, dateName: item.dateName, items: [item] });
     }
     return out;
-  }, [items, timeline, types, dates, fill, includeMine, anyNarrowing]);
+  };
+
+  // Top section: open shifts only (never "mine"), narrowed by Type/Date/Fill.
+  const openDays = useMemo(
+    () =>
+      groupByDay(
+        items.filter((i) => {
+          if (i.state === "mine") return false;
+          if (!inTimeline(i)) return false;
+          if (types.length > 0 && !types.includes(i.type)) return false;
+          if (dates.length > 0 && !dates.includes(i.dateName)) return false;
+          if (fill === "open" && i.state !== "open") return false;
+          if (fill === "full" && i.state !== "full") return false;
+          return true;
+        })
+      ),
+    [items, timeline, types, dates, fill]
+  );
+
+  // Bottom section: the volunteer's full assigned schedule for this time
+  // scope — Timeline only, never narrowed by Type/Date/Fill.
+  const mineDays = useMemo(
+    () => groupByDay(items.filter((i) => i.state === "mine" && inTimeline(i))),
+    [items, timeline]
+  );
 
   const mineCount = items.filter((i) => i.state === "mine").length;
 
@@ -310,6 +320,159 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
     />
   );
 
+  // One day-grouped section of browse-only cards. Whole card links to the
+  // shift detail page; no sign-up / remove actions here (#470).
+  const renderDay = (day: {
+    date: string;
+    dateName: string;
+    items: IAgendaItem[];
+  }) => (
+    <Box component="section" key={day.date} sx={{ mb: 1 }}>
+      <Typography
+        component="h4"
+        sx={{
+          color: theme.palette.text.secondary,
+          fontWeight: 800,
+          letterSpacing: "0.06em",
+          textTransform: "uppercase",
+          fontSize: "0.8rem",
+          borderBottom: `2px solid ${theme.palette.divider}`,
+          pb: 0.75,
+          mt: 2.5,
+          mb: 1.5,
+        }}
+      >
+        {formatDateName(day.date, day.dateName)}
+      </Typography>
+
+      <Stack spacing={1.25}>
+        {day.items.map((item) => {
+          const accent =
+            item.state === "mine"
+              ? theme.palette.success.main
+              : item.state === "open"
+                ? theme.palette.secondary.main
+                : theme.palette.divider;
+          // <=10% filled = genuinely needs help (matches the reports
+          // sheet's UNDER=0.10 threshold, per #470).
+          const underfilled =
+            !!item.slots &&
+            item.slots.total > 0 &&
+            item.slots.filled / item.slots.total <= 0.1;
+          return (
+            <Card
+              key={item.key}
+              component={Link}
+              href={`/shifts/${item.timeId}/volunteers`}
+              sx={{
+                display: "block",
+                textDecoration: "none",
+                color: "inherit",
+                borderLeft: `5px solid ${
+                  item.canceled ? theme.palette.error.main : accent
+                }`,
+                ...((item.canceled ||
+                  item.state === "full" ||
+                  item.state === "ineligible") && {
+                  backgroundColor: theme.palette.action.hover,
+                }),
+              }}
+            >
+              <CardContent sx={{ "&:last-child": { pb: 2 } }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: 800,
+                    ...(item.canceled && {
+                      textDecoration: "line-through",
+                    }),
+                  }}
+                >
+                  {item.title}
+                </Typography>
+                {item.department && (
+                  <Typography color="text.secondary" variant="body2">
+                    {item.department}
+                  </Typography>
+                )}
+                <Stack
+                  direction="row"
+                  spacing={1.5}
+                  alignItems="center"
+                  flexWrap="wrap"
+                  useFlexGap
+                  sx={{ mt: 0.75, color: "text.secondary" }}
+                >
+                  <Typography variant="body2">
+                    🕐 {formatTime(item.startTime, item.endTime)}
+                  </Typography>
+                  {item.slots && (
+                    <Typography variant="body2">
+                      👥{" "}
+                      <Box
+                        component="span"
+                        sx={{
+                          color: underfilled
+                            ? theme.palette.error.main
+                            : "inherit",
+                          fontWeight: underfilled ? 800 : 700,
+                        }}
+                      >
+                        {item.slots.filled}
+                      </Box>{" "}
+                      / {item.slots.total} filled
+                      {underfilled ? " · needs help" : ""}
+                    </Typography>
+                  )}
+                  {item.csp !== "0" && (
+                    <Typography variant="body2">CSP: {item.csp}</Typography>
+                  )}
+                </Stack>
+
+                {item.ineligibleReason && (
+                  <Box
+                    sx={{
+                      mt: 1,
+                      backgroundColor: "#fdecec",
+                      color: "#8a1c1c",
+                      borderRadius: 1,
+                      px: 1.25,
+                      py: 0.75,
+                      fontSize: "0.8rem",
+                      fontWeight: 600,
+                    }}
+                  >
+                    🔒 {item.ineligibleReason}
+                  </Box>
+                )}
+
+                {(item.canceled || item.state === "mine") && (
+                  <Box sx={{ mt: 1.5 }}>
+                    {item.canceled ? (
+                      <Chip
+                        label="Canceled"
+                        color="error"
+                        size="small"
+                        variant="outlined"
+                      />
+                    ) : (
+                      <Chip
+                        label="✓ You're signed up"
+                        color="success"
+                        size="small"
+                        variant="outlined"
+                      />
+                    )}
+                  </Box>
+                )}
+              </CardContent>
+            </Card>
+          );
+        })}
+      </Stack>
+    </Box>
+  );
+
   return (
     <>
       {hero}
@@ -320,110 +483,139 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
           </BreadcrumbsNav>
         </Box>
 
-        <Typography component="h2" variant="h4" sx={{ mb: 1 }}>
-          {isSignedIn ? "Your shifts & open shifts" : "Census shifts"}
-        </Typography>
-        <Typography color="text.secondary" sx={{ mb: 2 }}>
-          {isSignedIn
-            ? "Everything you're signed up for, plus what's still open."
-            : "Browse open Census shifts and sign up."}
-        </Typography>
-
-        {/* filter set + pinning toggle (#470) */}
+        {/* heading + funnel */}
         <Stack
           direction="row"
-          spacing={1.5}
           alignItems="center"
-          sx={{ mb: 2 }}
+          justifyContent="space-between"
+          sx={{ mb: 1 }}
+        >
+          <Typography component="h2" variant="h4">
+            Shifts
+          </Typography>
+          <IconButton
+            aria-label="Filter"
+            onClick={() => setShowFilters((v) => !v)}
+            color={showFilters ? "primary" : "default"}
+          >
+            <FilterListIcon />
+          </IconButton>
+        </Stack>
+
+        {/* filter panel (#470) — stacked full-width so it fits mobile */}
+        <Collapse in={showFilters}>
+          <Stack spacing={2} sx={{ mb: 2 }}>
+            <FormControl size="small" fullWidth>
+              <InputLabel id="timeline-label">Timeline</InputLabel>
+              <Select
+                labelId="timeline-label"
+                label="Timeline"
+                value={timeline}
+                onChange={(e) => setTimeline(e.target.value)}
+              >
+                <MenuItem value="future">Present / Future</MenuItem>
+                <MenuItem value="past">Past</MenuItem>
+              </Select>
+            </FormControl>
+
+            <FormControl size="small" fullWidth>
+              <InputLabel id="type-label">Type</InputLabel>
+              <Select
+                labelId="type-label"
+                label="Type"
+                multiple
+                value={types}
+                onChange={(e) =>
+                  setTypes(
+                    typeof e.target.value === "string"
+                      ? e.target.value.split(",")
+                      : e.target.value
+                  )
+                }
+                renderValue={(selected) => selected.join(", ")}
+              >
+                {typeOptions.map((t) => (
+                  <MenuItem key={t} value={t}>
+                    {t}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl size="small" fullWidth>
+              <InputLabel id="date-label">Date</InputLabel>
+              <Select
+                labelId="date-label"
+                label="Date"
+                multiple
+                value={dates}
+                onChange={(e) =>
+                  setDates(
+                    typeof e.target.value === "string"
+                      ? e.target.value.split(",")
+                      : e.target.value
+                  )
+                }
+                renderValue={(selected) => selected.join(", ")}
+              >
+                {dateOptions.map((d) => (
+                  <MenuItem key={d.dateName} value={d.dateName}>
+                    {d.dateName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl size="small" fullWidth>
+              <InputLabel id="fill-label">Fill</InputLabel>
+              <Select
+                labelId="fill-label"
+                label="Fill"
+                value={fill}
+                onChange={(e) => setFill(e.target.value)}
+              >
+                <MenuItem value="all">All</MenuItem>
+                <MenuItem value="open">Open</MenuItem>
+                <MenuItem value="full">Full</MenuItem>
+              </Select>
+            </FormControl>
+          </Stack>
+        </Collapse>
+
+        {/* active-filter chips (Timeline always shows; deleting resets to default) */}
+        <Stack
+          direction="row"
+          spacing={1}
           flexWrap="wrap"
           useFlexGap
+          sx={{ mb: 2 }}
         >
-          <FormControl size="small" sx={{ minWidth: 150 }}>
-            <InputLabel id="timeline-label">Timeline</InputLabel>
-            <Select
-              labelId="timeline-label"
-              label="Timeline"
-              value={timeline}
-              onChange={(e) => setTimeline(e.target.value)}
-            >
-              <MenuItem value="future">Present / Future</MenuItem>
-              <MenuItem value="past">Past</MenuItem>
-            </Select>
-          </FormControl>
-
-          <FormControl size="small" sx={{ minWidth: 150 }}>
-            <InputLabel id="type-label">Type</InputLabel>
-            <Select
-              labelId="type-label"
-              label="Type"
-              multiple
-              value={types}
-              onChange={(e) =>
-                setTypes(
-                  typeof e.target.value === "string"
-                    ? e.target.value.split(",")
-                    : e.target.value
-                )
-              }
-              renderValue={(selected) => selected.join(", ")}
-            >
-              {typeOptions.map((t) => (
-                <MenuItem key={t} value={t}>
-                  {t}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <FormControl size="small" sx={{ minWidth: 150 }}>
-            <InputLabel id="date-label">Date</InputLabel>
-            <Select
-              labelId="date-label"
-              label="Date"
-              multiple
-              value={dates}
-              onChange={(e) =>
-                setDates(
-                  typeof e.target.value === "string"
-                    ? e.target.value.split(",")
-                    : e.target.value
-                )
-              }
-              renderValue={(selected) => selected.join(", ")}
-            >
-              {dateOptions.map((d) => (
-                <MenuItem key={d.dateName} value={d.dateName}>
-                  {d.dateName}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <FormControl size="small" sx={{ minWidth: 120 }}>
-            <InputLabel id="fill-label">Fill</InputLabel>
-            <Select
-              labelId="fill-label"
-              label="Fill"
-              value={fill}
-              onChange={(e) => setFill(e.target.value)}
-            >
-              <MenuItem value="all">All</MenuItem>
-              <MenuItem value="open">Open</MenuItem>
-              <MenuItem value="full">Full</MenuItem>
-            </Select>
-          </FormControl>
-
-          {isSignedIn && (
-            <FormControlLabel
-              control={
-                <Switch
-                  size="small"
-                  checked={includeMine}
-                  disabled={!anyNarrowing}
-                  onChange={(e) => setIncludeMine(e.target.checked)}
-                />
-              }
-              label="Include my assigned shifts"
+          <Chip
+            label={timeline === "past" ? "Past" : "Present / Future"}
+            size="small"
+            onDelete={() => setTimeline("future")}
+          />
+          {types.map((t) => (
+            <Chip
+              key={`chip-type-${t}`}
+              label={t}
+              size="small"
+              onDelete={() => setTypes(types.filter((x) => x !== t))}
+            />
+          ))}
+          {dates.map((d) => (
+            <Chip
+              key={`chip-date-${d}`}
+              label={d}
+              size="small"
+              onDelete={() => setDates(dates.filter((x) => x !== d))}
+            />
+          ))}
+          {fill !== "all" && (
+            <Chip
+              label={fill === "open" ? "Open" : "Full"}
+              size="small"
+              onDelete={() => setFill("all")}
             />
           )}
         </Stack>
@@ -449,244 +641,52 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
           </Typography>
         </Stack>
 
-        {days.length === 0 ? (
-          <Card>
+        {/* Open shifts */}
+        <Typography component="h3" variant="h6" sx={{ fontWeight: 800, mb: 1 }}>
+          Open shifts
+        </Typography>
+        {openDays.length === 0 ? (
+          <Card sx={{ mb: 4 }}>
             <CardContent>
-              <Typography sx={{ mb: 2 }}>
-                {mineCount === 0
-                  ? "You haven't signed up for any Census shifts yet."
-                  : "No shifts match your filters."}
-              </Typography>
-              <Button
-                component={Link}
-                href="/shifts"
-                startIcon={<CalendarMonthIcon />}
-                variant="contained"
-              >
-                Browse and sign up for shifts
-              </Button>
+              <Typography>No open shifts match your filters.</Typography>
             </CardContent>
           </Card>
         ) : (
-          days.map((day) => (
-            <Box component="section" key={day.date} sx={{ mb: 1 }}>
-              <Typography
-                component="h3"
-                sx={{
-                  color: theme.palette.text.secondary,
-                  fontWeight: 800,
-                  letterSpacing: "0.06em",
-                  textTransform: "uppercase",
-                  fontSize: "0.8rem",
-                  borderBottom: `2px solid ${theme.palette.divider}`,
-                  pb: 0.75,
-                  mt: 2.5,
-                  mb: 1.5,
-                }}
-              >
-                {formatDateName(day.date, day.dateName)}
-              </Typography>
-
-              <Stack spacing={1.25}>
-                {day.items.map((item) => {
-                  const accent =
-                    item.state === "mine"
-                      ? theme.palette.success.main
-                      : item.state === "open"
-                        ? theme.palette.secondary.main
-                        : theme.palette.divider;
-                  // <=10% filled = genuinely needs help (matches the reports
-                  // sheet's UNDER=0.10 threshold, per #470).
-                  const underfilled =
-                    !!item.slots &&
-                    item.slots.total > 0 &&
-                    item.slots.filled / item.slots.total <= 0.1;
-                  return (
-                    <Card
-                      key={item.key}
-                      sx={{
-                        position: "relative",
-                        borderLeft: `5px solid ${
-                          item.canceled ? theme.palette.error.main : accent
-                        }`,
-                        ...((item.canceled ||
-                          item.state === "full" ||
-                          item.state === "conflict" ||
-                          item.state === "ineligible") && {
-                          backgroundColor: theme.palette.action.hover,
-                        }),
-                      }}
-                    >
-                      {/* ⋮ actions — Remove on your own shifts; reuses the
-                          account-page removal dialog + critical-shift warning */}
-                      {item.state === "mine" && item.timePositionId && (
-                        <Box sx={{ position: "absolute", top: 2, right: 2 }}>
-                          <MoreMenu
-                            Icon={
-                              <MoreHorizIcon
-                                fontSize="small"
-                                sx={{ color: "text.secondary" }}
-                              />
-                            }
-                            MenuList={
-                              <MenuItem onClick={() => setRemoveTarget(item)}>
-                                Remove shift
-                              </MenuItem>
-                            }
-                          />
-                        </Box>
-                      )}
-                      <CardContent sx={{ "&:last-child": { pb: 2 } }}>
-                        <Typography
-                          variant="h6"
-                          sx={{
-                            fontWeight: 800,
-                            pr: 4,
-                            ...(item.canceled && {
-                              textDecoration: "line-through",
-                            }),
-                          }}
-                        >
-                          {item.title}
-                        </Typography>
-                        {item.department && (
-                          <Typography color="text.secondary" variant="body2">
-                            {item.department}
-                          </Typography>
-                        )}
-                        <Stack
-                          direction="row"
-                          spacing={1.5}
-                          alignItems="center"
-                          flexWrap="wrap"
-                          useFlexGap
-                          sx={{ mt: 0.75, color: "text.secondary" }}
-                        >
-                          <Typography variant="body2">
-                            🕐 {formatTime(item.startTime, item.endTime)}
-                          </Typography>
-                          {item.slots && (
-                            <Typography variant="body2">
-                              👥{" "}
-                              <Box
-                                component="span"
-                                sx={{
-                                  color: underfilled
-                                    ? theme.palette.error.main
-                                    : "inherit",
-                                  fontWeight: underfilled ? 800 : 700,
-                                }}
-                              >
-                                {item.slots.filled}
-                              </Box>{" "}
-                              / {item.slots.total} filled
-                              {underfilled ? " · needs help" : ""}
-                            </Typography>
-                          )}
-                          {item.csp !== "0" && (
-                            <Typography variant="body2">
-                              CSP: {item.csp}
-                            </Typography>
-                          )}
-                        </Stack>
-
-                        {item.state === "conflict" && item.conflictWith && (
-                          <Box
-                            sx={{
-                              mt: 1,
-                              backgroundColor: "#fff4e5",
-                              color: "#7a4f00",
-                              borderRadius: 1,
-                              px: 1.25,
-                              py: 0.75,
-                              fontSize: "0.8rem",
-                              fontWeight: 600,
-                            }}
-                          >
-                            ⚠️ Overlaps your {item.conflictWith} shift
-                          </Box>
-                        )}
-                        {item.ineligibleReason && (
-                          <Box
-                            sx={{
-                              mt: 1,
-                              backgroundColor: "#fdecec",
-                              color: "#8a1c1c",
-                              borderRadius: 1,
-                              px: 1.25,
-                              py: 0.75,
-                              fontSize: "0.8rem",
-                              fontWeight: 600,
-                            }}
-                          >
-                            🔒 {item.ineligibleReason}
-                          </Box>
-                        )}
-
-                        <Box sx={{ mt: 1.5 }}>
-                          {item.canceled ? (
-                            <Chip
-                              label="Canceled"
-                              color="error"
-                              size="small"
-                              variant="outlined"
-                            />
-                          ) : item.state === "mine" ? (
-                            <Chip
-                              label="✓ You're signed up"
-                              color="success"
-                              size="small"
-                              variant="outlined"
-                            />
-                          ) : item.state === "open" ? (
-                            <Button
-                              component={Link}
-                              href={`/shifts/${item.timeId}/volunteers`}
-                              variant="contained"
-                              fullWidth
-                            >
-                              Sign up
-                            </Button>
-                          ) : (
-                            <Button variant="contained" fullWidth disabled>
-                              Sign up unavailable
-                            </Button>
-                          )}
-                        </Box>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </Stack>
-            </Box>
-          ))
+          <Box sx={{ mb: 4 }}>{openDays.map(renderDay)}</Box>
         )}
 
-        {mineCount > 0 && (
-          <Typography
-            color="text.secondary"
-            variant="body2"
-            sx={{ mt: 4, textAlign: "center" }}
-          >
-            {mineCount} shift{mineCount === 1 ? "" : "s"} signed up
-          </Typography>
+        {/* Your assigned shifts — full Timeline scope, filters don't narrow it */}
+        {isSignedIn && mineCount > 0 && (
+          <>
+            <Typography
+              component="h3"
+              variant="h6"
+              sx={{ fontWeight: 800, mb: 1 }}
+            >
+              Your assigned shifts
+            </Typography>
+            {mineDays.length === 0 ? (
+              <Card>
+                <CardContent>
+                  <Typography sx={{ mb: 2 }}>
+                    You have no shifts in this time range.
+                  </Typography>
+                  <Button
+                    component={Link}
+                    href="/shifts"
+                    startIcon={<CalendarMonthIcon />}
+                    variant="contained"
+                  >
+                    Browse and sign up for shifts
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              mineDays.map(renderDay)
+            )}
+          </>
         )}
       </Container>
-      {removeTarget && (
-        <VolunteerShiftsDialogRemove
-          handleDialogClose={() => setRemoveTarget(null)}
-          isDialogOpen={Boolean(removeTarget)}
-          shift={{
-            date: removeTarget.date,
-            dateName: removeTarget.dateName,
-            endTime: removeTarget.endTime,
-            positionName: removeTarget.title,
-            startTime: removeTarget.startTime,
-            timePositionId: removeTarget.timePositionId ?? 0,
-          }}
-          volunteer={{ shiftboardId }}
-        />
-      )}
     </>
   );
 };
