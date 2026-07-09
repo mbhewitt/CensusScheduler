@@ -1001,6 +1001,15 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     ),
   });
 
+  // Welcome leads the checklist — learn about Census first, then pick shifts
+  // (Chipper 2026-07-09). Pull it ahead of the view/add-shifts item (which was
+  // just unshifted to index 0).
+  const welcomeIdx = checklistItems.findIndex((i) => i.id === "welcome");
+  if (welcomeIdx > 0) {
+    const [welcomeItem] = checklistItems.splice(welcomeIdx, 1);
+    checklistItems.unshift(welcomeItem);
+  }
+
   const incompleteItems = checklistItems.filter((item) => !item.done);
   const completedItems = checklistItems.filter((item) => item.done);
 
