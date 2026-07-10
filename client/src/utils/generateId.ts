@@ -11,19 +11,10 @@ const checkIsIdExists = async (query: string, id: number) => {
   return Boolean(dbIdFirst);
 };
 
-export const generateId = (query: string) => {
-  let idNew = 0;
-
-  const changeNum = async () => {
+export const generateId = async (query: string): Promise<number> => {
+  let idNew = randomNum();
+  while (await checkIsIdExists(query, idNew)) {
     idNew = randomNum();
-
-    const isIdExists = await checkIsIdExists(query, idNew);
-
-    // if shift name ID exists already
-    // then execute function recursively
-    if (isIdExists) changeNum();
-  };
-  changeNum();
-
+  }
   return idNew;
 };

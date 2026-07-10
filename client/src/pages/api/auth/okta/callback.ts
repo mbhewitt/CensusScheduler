@@ -375,7 +375,7 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // 4. create new volunteer with a generated id
     if (!shiftboardId) {
-      const newId = generateId(`
+      const newId = await generateId(`
         SELECT shiftboard_id
         FROM op_volunteers
         WHERE shiftboard_id=?

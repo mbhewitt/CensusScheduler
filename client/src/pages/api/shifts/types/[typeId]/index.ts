@@ -515,7 +515,7 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
             );
             // else insert them into the table
           } else {
-            const timePositionIdNew = generateId(
+            const timePositionIdNew = await generateId(
               `SELECT time_position_id
               FROM op_shift_time_position`
             );
