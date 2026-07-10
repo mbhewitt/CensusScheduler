@@ -18,6 +18,7 @@ import {
   Stack,
   Switch,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import dayjs from "dayjs";
@@ -145,6 +146,8 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
   // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
+  // match the same 600px breakpoint the shared DataTable switches at
+  const isMobile = useMediaQuery("(max-width:600px)");
 
   // side effects
   // ------------------------------------------------------------
@@ -590,11 +593,206 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
           Add shift
         </Button>
       </Stack>
-      <DataTable
-        columnList={columnList}
-        dataTable={dataTable}
-        optionListCustom={optionListCustom}
-      />
+      {isMobile ? (
+        <Stack spacing={1}>
+          {data.map(
+            ({
+              department: { name: departmentName },
+              shift: {
+                canceled,
+                date,
+                dateName,
+                endTime,
+                positionName,
+                startTime,
+                timeId,
+                timePositionId,
+              },
+              volunteer: { noShow, notes, rating },
+            }: IResVolunteerShiftItem) => {
+              // evaluate the check-in type and available features
+              const checkInType = getCheckInType({
+                dateTime: dayjs(dateTimeValue),
+                endTime: dayjs(endTime),
+                startTime: dayjs(startTime),
+              });
+              let isVolunteerRemoveAvailable = false;
+              let isCheckInAvailable = false;
+
+              switch (checkInType) {
+                case SHIFT_FUTURE:
+                  isVolunteerRemoveAvailable = true;
+                  isCheckInAvailable = false;
+                  break;
+                case SHIFT_DURING: {
+                  isVolunteerRemoveAvailable = true;
+                  isCheckInAvailable = true;
+                  break;
+                }
+                case SHIFT_PAST: {
+                  isVolunteerRemoveAvailable = isAdmin;
+                  isCheckInAvailable = isAdmin;
+                  break;
+                }
+                default: {
+                  throw new Error(`Unknown check-in type: ${checkInType}`);
+                }
+              }
+
+              return (
+                <Box
+                  key={`${timePositionId}-volunteer-shift-card`}
+                  sx={{
+                    bgcolor: "background.paper",
+                    border: 1,
+                    borderColor: "divider",
+                    borderRadius: 1,
+                    px: 2,
+                    py: 1,
+                  }}
+                >
+                  {/* line 1: position (bold) + canceled marker */}
+                  <Typography sx={{ fontWeight: 700 }}>
+                    <Box
+                      component="span"
+                      sx={
+                        canceled
+                          ? { textDecoration: "line-through" }
+                          : undefined
+                      }
+                    >
+                      {positionName}
+                    </Box>
+                    {canceled && (
+                      <Typography
+                        component="span"
+                        sx={{ color: "error.main", fontWeight: 700, ml: 1 }}
+                      >
+                        CANCELED
+                      </Typography>
+                    )}
+                  </Typography>
+                  {/* line 2: date · time (secondary) + inline controls */}
+                  <Stack
+                    alignItems="center"
+                    direction="row"
+                    justifyContent="space-between"
+                  >
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      {formatDateName(date, dateName)} ·{" "}
+                      {formatTime(startTime, endTime)}
+                    </Typography>
+                    <Stack alignItems="center" direction="row">
+                      {isOnPlaya && (
+                        <Switch
+                          checked={noShow === ""}
+                          disabled={!isCheckInAvailable}
+                          onChange={(event) =>
+                            handleCheckInToggle({
+                              shift: {
+                                positionName,
+                                timePositionId,
+                              },
+                              volunteer: {
+                                isCheckedIn: event.target.checked,
+                                playaName,
+                                shiftboardId: Number(shiftboardId),
+                                worldName,
+                              },
+                            })
+                          }
+                        />
+                      )}
+                      {isAdmin && (
+                        <IconButton
+                          onClick={() => {
+                            setDialogCurrent({
+                              dialogItem: DialogList.Review,
+                              shift: {
+                                date,
+                                dateName,
+                                endTime,
+                                positionName,
+                                startTime,
+                                timeId: 0,
+                                timePositionId,
+                              },
+                              volunteer: {
+                                noShow: "",
+                                notes,
+                                rating,
+                              },
+                            });
+                            setIsDialogOpen(true);
+                          }}
+                        >
+                          {rating ? (
+                            <ChatIcon color="primary" />
+                          ) : (
+                            <ChatIcon color="disabled" />
+                          )}
+                        </IconButton>
+                      )}
+                      <MoreMenu
+                        Icon={<MoreHorizIcon />}
+                        MenuList={
+                          <MenuList>
+                            <Link href={`/shifts/${timeId}/volunteers`}>
+                              <MenuItem>
+                                <ListItemIcon>
+                                  <Groups3Icon />
+                                </ListItemIcon>
+                                <ListItemText>View volunteers</ListItemText>
+                              </MenuItem>
+                            </Link>
+                            <MenuItem
+                              disabled={!isVolunteerRemoveAvailable}
+                              onClick={() => {
+                                setDialogCurrent({
+                                  dialogItem: DialogList.Remove,
+                                  shift: {
+                                    date,
+                                    dateName,
+                                    endTime,
+                                    positionName,
+                                    startTime,
+                                    timeId,
+                                    timePositionId,
+                                  },
+                                  volunteer: {
+                                    noShow: "",
+                                    notes: "",
+                                    rating: null,
+                                  },
+                                });
+                                setIsDialogOpen(true);
+                              }}
+                            >
+                              <ListItemIcon>
+                                <EventBusyIcon />
+                              </ListItemIcon>
+                              <ListItemText>Remove shift</ListItemText>
+                            </MenuItem>
+                          </MenuList>
+                        }
+                      />
+                    </Stack>
+                  </Stack>
+                </Box>
+              );
+            }
+          )}
+        </Stack>
+      ) : (
+        <DataTable
+          columnList={columnList}
+          dataTable={dataTable}
+          optionListCustom={optionListCustom}
+        />
+      )}
 
       {/* remove dialog */}
       <VolunteerShiftsDialogRemove
