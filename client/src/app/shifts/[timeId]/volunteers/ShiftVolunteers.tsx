@@ -483,28 +483,33 @@ export const ShiftVolunteers = ({
         playaName,
         worldName,
         positionName,
-        <Switch
-          checked={isCheckedIn === ""}
-          disabled={!isCheckInAvailable}
-          onChange={(event) =>
-            handleCheckInToggle({
-              shift: {
-                positionName,
-                timePositionId,
-              },
-              volunteer: {
-                isCheckedIn: event.target.checked,
-                playaName,
-                shiftboardId,
-                worldName,
-              },
-            })
-          }
-          key={`${shiftboardId}-shift-volunteer`}
-        />,
-        // if volunteer is admin
+        // Check-in only appears once the shift's check-in window is open
+        // (getCheckInType !== SHIFT_FUTURE); before that it's meaningless.
+        isCheckInAvailable ? (
+          <Switch
+            checked={isCheckedIn === ""}
+            onChange={(event) =>
+              handleCheckInToggle({
+                shift: {
+                  positionName,
+                  timePositionId,
+                },
+                volunteer: {
+                  isCheckedIn: event.target.checked,
+                  playaName,
+                  shiftboardId,
+                  worldName,
+                },
+              })
+            }
+            key={`${shiftboardId}-shift-volunteer`}
+          />
+        ) : (
+          ""
+        ),
+        // if volunteer is admin AND check-in is open,
         // then display volunteer shift review and volunteer menu
-        isAdmin && (
+        isAdmin && isCheckInAvailable && (
           <IconButton
             onClick={() => {
               setDialogCurrent({
@@ -781,7 +786,7 @@ export const ShiftVolunteers = ({
               type="button"
               variant="contained"
             >
-              Add volunteer
+              {isAdmin ? "Add volunteer" : "Add this shift"}
             </Button>
           </Stack>
           {isMobile ? (
@@ -834,25 +839,26 @@ export const ShiftVolunteers = ({
                         {positionName}
                       </Typography>
                       <Stack alignItems="center" direction="row">
-                        <Switch
-                          checked={isCheckedIn === ""}
-                          disabled={!isCheckInAvailable}
-                          onChange={(event) =>
-                            handleCheckInToggle({
-                              shift: {
-                                positionName,
-                                timePositionId,
-                              },
-                              volunteer: {
-                                isCheckedIn: event.target.checked,
-                                playaName,
-                                shiftboardId,
-                                worldName,
-                              },
-                            })
-                          }
-                        />
-                        {isAdmin && (
+                        {isCheckInAvailable && (
+                          <Switch
+                            checked={isCheckedIn === ""}
+                            onChange={(event) =>
+                              handleCheckInToggle({
+                                shift: {
+                                  positionName,
+                                  timePositionId,
+                                },
+                                volunteer: {
+                                  isCheckedIn: event.target.checked,
+                                  playaName,
+                                  shiftboardId,
+                                  worldName,
+                                },
+                              })
+                            }
+                          />
+                        )}
+                        {isAdmin && isCheckInAvailable && (
                           <IconButton
                             onClick={() => {
                               setDialogCurrent({
