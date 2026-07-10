@@ -416,10 +416,9 @@ export const ShiftVolunteers = ({
     filter: false,
     pagination: false,
     search: false,
-    sortOrder: {
-      direction: "asc" as const,
-      name: "Name",
-    },
+    // No default sortOrder: the API already returns positions in priority
+    // order (lead first, then non-lead critical, then the rest alphabetically).
+    // Column headers stay clickable for ad-hoc re-sorting.
   };
 
   // prepare datatable volunteers
@@ -577,10 +576,9 @@ export const ShiftVolunteers = ({
     }
   );
   const optionListCustomVolunteers = {
-    sortOrder: {
-      direction: "asc" as const,
-      name: "Playa name",
-    },
+    // No default sortOrder: the API already returns the roster in priority
+    // order (lead positions first, then non-lead critical, then the rest by
+    // playa name). Column headers stay clickable for ad-hoc re-sorting.
   };
 
   // render

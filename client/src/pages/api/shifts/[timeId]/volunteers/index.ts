@@ -67,7 +67,13 @@ const shiftVolunteers = async (
         AND pt.position_type_id=stp.position_type_id
         WHERE st.remove_shift_time=false
         AND st.shift_times_id=?
-        ORDER BY pt.position COLLATE utf8mb4_general_ci`,
+        ORDER BY
+          CASE
+            WHEN pt.\`lead\`=1 THEN 0
+            WHEN pt.critical=1 THEN 1
+            ELSE 2
+          END,
+          pt.position COLLATE utf8mb4_general_ci`,
         [timeId]
       );
       const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
@@ -94,6 +100,11 @@ const shiftVolunteers = async (
         AND v.shiftboard_id=vs.shiftboard_id
         WHERE vs.remove_shift=false
         ORDER BY
+          CASE
+            WHEN pt.\`lead\`=1 THEN 0
+            WHEN pt.critical=1 THEN 1
+            ELSE 2
+          END,
           v.playa_name COLLATE utf8mb4_general_ci,
           v.world_name COLLATE utf8mb4_general_ci`,
         [timeId]
