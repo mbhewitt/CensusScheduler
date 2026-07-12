@@ -373,51 +373,57 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           );
         }
       }
-      timeListAdd.forEach(
-        async ({ endTime, instance, meal, notes, startTime }) => {
-          const [dbTime] = await pool.query<RowDataPacket[]>(
-            `SELECT shift_times_id
-            FROM op_shift_times
-            WHERE end_time=?
-            AND start_time=?`,
-            [endTime, startTime]
-          );
-          const [dbTimeFirst] = dbTime;
-          dbTimeIdExist = dbTimeFirst?.shift_times_id;
-
-          if (dbTimeFirst) {
-            await pool.query<RowDataPacket[]>(
-              `UPDATE op_shift_times
-              SET
-                add_shift_time=true,
-                meal=?,
-                notes=?,
-                remove_shift_time=false,
-                shift_instance=?
-              WHERE shift_times_id=?`,
-              [meal === "None" ? "" : meal, notes, instance, dbTimeIdExist]
-            );
-          } else {
-            // insert new shift time rows
-            handleTimeListAdd({
-              timeList: timeListAdd,
-              typeId: Number(typeId),
-            });
-          }
-        }
-      );
-      timeListRemove.forEach(async ({ shift_times_id }) => {
-        await pool.query<RowDataPacket[]>(
-          `UPDATE op_shift_times
-          SET
-            add_shift_time=false,
-            remove_shift_time=true,
-            shift_instance=?
-          WHERE shift_times_id=?`,
-          // use shift times ID for shift instance because shift instance must be unique
-          [shift_times_id, shift_times_id]
+      // Sequential for-of so each write is awaited before the handler responds
+      // (a bare forEach(async ...) returned 200 before the writes landed, so the
+      // added shift/position looked missing on refetch — #515). Brand-new shift
+      // times are collected here and inserted LAST (see handleTimeListAdd below),
+      // AFTER dbTimePositionList is read and the position remove-pass runs — if
+      // they were inserted now, their freshly-generated positions would be in
+      // dbTimePositionList but not in the request payload, so the remove-pass
+      // would immediately delete the position we just added.
+      const timeListAddNew: typeof timeListAdd = [];
+      for (const timeItem of timeListAdd) {
+        const { endTime, instance, meal, notes, startTime } = timeItem;
+        const [dbTime] = await pool.query<RowDataPacket[]>(
+          `SELECT shift_times_id
+          FROM op_shift_times
+          WHERE end_time=?
+          AND start_time=?`,
+          [endTime, startTime]
         );
-      });
+        const [dbTimeFirst] = dbTime;
+        dbTimeIdExist = dbTimeFirst?.shift_times_id;
+
+        if (dbTimeFirst) {
+          await pool.query<RowDataPacket[]>(
+            `UPDATE op_shift_times
+            SET
+              add_shift_time=true,
+              meal=?,
+              notes=?,
+              remove_shift_time=false,
+              shift_instance=?
+            WHERE shift_times_id=?`,
+            [meal === "None" ? "" : meal, notes, instance, dbTimeIdExist]
+          );
+        } else {
+          timeListAddNew.push(timeItem);
+        }
+      }
+      await Promise.all(
+        timeListRemove.map(async ({ shift_times_id }) => {
+          await pool.query<RowDataPacket[]>(
+            `UPDATE op_shift_times
+            SET
+              add_shift_time=false,
+              remove_shift_time=true,
+              shift_instance=?
+            WHERE shift_times_id=?`,
+            // use shift times ID for shift instance because shift instance must be unique
+            [shift_times_id, shift_times_id]
+          );
+        })
+      );
 
       // update time position rows
       const [dbTimePositionList] = await pool.query<RowDataPacket[]>(
@@ -474,22 +480,24 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
         }
       );
 
-      timePositionListUpdate.forEach(
-        async ({ alias, sapPoints, slots, timePositionId }) => {
-          await pool.query<RowDataPacket[]>(
-            `UPDATE op_shift_time_position
-            SET
-              position_alias=?,
-              sap_points=?,
-              slots=?,
-              update_time_position=true
-            WHERE time_position_id=?`,
-            [alias, sapPoints, slots, timePositionId]
-          );
-        }
+      await Promise.all(
+        timePositionListUpdate.map(
+          async ({ alias, sapPoints, slots, timePositionId }) => {
+            await pool.query<RowDataPacket[]>(
+              `UPDATE op_shift_time_position
+              SET
+                position_alias=?,
+                sap_points=?,
+                slots=?,
+                update_time_position=true
+              WHERE time_position_id=?`,
+              [alias, sapPoints, slots, timePositionId]
+            );
+          }
+        )
       );
-      timePositionListAdd.forEach(
-        async ({ alias, positionId, sapPoints, slots, timeId }) => {
+      await Promise.all(
+        timePositionListAdd.map(async ({ alias, positionId, sapPoints, slots, timeId }) => {
           const [dbTimePosition] = await pool.query<RowDataPacket[]>(
             `SELECT time_position_id
             FROM op_shift_time_position
@@ -534,20 +542,32 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
               [alias, positionId, sapPoints, timeId, slots, timePositionIdNew]
             );
           }
-        }
+        })
       );
-      timePositionListRemove.forEach(
-        async ({ time_position_id: timePositionId }) => {
-          await pool.query<RowDataPacket[]>(
-            `UPDATE op_shift_time_position
-            SET
-              add_time_position=false,
-              remove_time_position=true
-            WHERE time_position_id=?`,
-            [timePositionId]
-          );
-        }
+      await Promise.all(
+        timePositionListRemove.map(
+          async ({ time_position_id: timePositionId }) => {
+            await pool.query<RowDataPacket[]>(
+              `UPDATE op_shift_time_position
+              SET
+                add_time_position=false,
+                remove_time_position=true
+              WHERE time_position_id=?`,
+              [timePositionId]
+            );
+          }
+        )
       );
+
+      // Insert brand-new shift times (and their positions) LAST — after the
+      // reads and remove-pass above — and await it so the writes are committed
+      // before we respond (#515). handleTimeListAdd is itself sequential.
+      if (timeListAddNew.length > 0) {
+        await handleTimeListAdd({
+          timeList: timeListAddNew,
+          typeId: Number(typeId),
+        });
+      }
 
       return res.status(200).json({
         statusCode: 200,

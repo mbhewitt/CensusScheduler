@@ -18,9 +18,20 @@ export const handleTimeListAdd = async ({
   timeList,
   typeId,
 }: IHandleTimeListAdd) => {
-  // insert new shift time rows
-  timeList.forEach(
-    async ({ endTime, instance, meal, notes, positionList, startTime }) => {
+  // insert new shift time rows. NOTE: sequential for-of (not forEach) so every
+  // INSERT is actually awaited before the caller's handler responds — a bare
+  // forEach(async ...) fires-and-forgets, so the "add shift/position" write
+  // could still be in flight when the API returns 200 and the client refetches,
+  // making the new row appear missing until a later reload (#515). Sequential
+  // also avoids generateId() races on concurrent inserts.
+  for (const {
+    endTime,
+    instance,
+    meal,
+    notes,
+    positionList,
+    startTime,
+  } of timeList) {
       const timeIdNew = generateId(
         `SELECT shift_times_id
         FROM op_shift_times`
@@ -73,7 +84,7 @@ export const handleTimeListAdd = async ({
         ]
       );
 
-      positionList.forEach(async ({ alias, positionId, sapPoints, slots }) => {
+      for (const { alias, positionId, sapPoints, slots } of positionList) {
         const timePositionIdNew = generateId(
           `SELECT time_position_id
           FROM op_shift_time_position`
@@ -92,9 +103,8 @@ export const handleTimeListAdd = async ({
           VALUES (true, ?, ?, ?, ?, ?, ?)`,
           [alias, positionId, sapPoints, timeIdNew, slots, timePositionIdNew]
         );
-      });
-    }
-  );
+      }
+  }
 };
 
 const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
