@@ -9,6 +9,7 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  Typography,
 } from "@mui/material";
 import Link from "next/link";
 
@@ -45,6 +46,17 @@ export const Reports = () => {
       <Container component="main" sx={{ flex: 1 }}>
         <Card>
           <CardContent>
+            <Typography sx={{ mb: 2 }}>
+              For the complete Black Rock City Census reports, visit{" "}
+              <Link
+                href="https://blackrockcitycensus.org"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                blackrockcitycensus.org
+              </Link>
+              .
+            </Typography>
             <List disablePadding>
               {reportList.map(({ id, text, url }) => {
                 return (
