@@ -223,18 +223,32 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
     setMyShiftsOnly(false);
   };
 
-  // Keep a multiselect's Select value as a string[] (MUI hands back a comma
-  // string on native change). Shared by every dropdown below.
-  const asArray = (v: string | string[]) =>
-    typeof v === "string" ? v.split(",").filter(Boolean) : v;
+  // Sentinel value for the "Select all" menu item. It's routed through the
+  // Select's onChange (below) rather than a plain onClick — an onClick fights
+  // the Select's own selection handling and injects a phantom "" entry, which
+  // surfaced as a duplicate "Full, Full" and wedged the filter. Never stored.
+  const SELECT_ALL = "__select_all__";
 
-  // "Select all" toggle for a multiselect: if every option is already picked,
-  // clear it; otherwise select them all.
-  const toggleSelectAll = (
+  // Keep a multiselect's Select value as a string[], dropping empty/phantom
+  // entries (MUI hands back a comma string on native change).
+  const asArray = (v: string | string[]): string[] =>
+    (typeof v === "string" ? v.split(",") : v).filter(Boolean);
+
+  // Shared onChange for the filter multiselects: if "Select all" was clicked,
+  // toggle every option (all picked → clear); otherwise store the selection.
+  const onMultiChange = (
+    raw: string | string[],
     current: string[],
     all: string[],
     set: (next: string[]) => void
-  ) => set(current.length === all.length ? [] : all);
+  ) => {
+    const next = asArray(raw);
+    if (next.includes(SELECT_ALL)) {
+      set(current.length === all.length ? [] : all);
+    } else {
+      set(next);
+    }
+  };
 
   // Distinct Type / Date option lists, drawn from the agenda itself.
   const typeOptions = useMemo(
@@ -606,7 +620,14 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                   displayEmpty
                   value={timeline}
                   MenuProps={menuProps}
-                  onChange={(e) => setTimeline(asArray(e.target.value))}
+                  onChange={(e) =>
+                    onMultiChange(
+                      e.target.value,
+                      timeline,
+                      ["future", "past"],
+                      setTimeline
+                    )
+                  }
                   renderValue={(selected) =>
                     selected.length === 0
                       ? "All"
@@ -615,13 +636,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                           .join(", ")
                   }
                 >
-                  <MenuItem
-                    onClick={() =>
-                      toggleSelectAll(timeline, ["future", "past"], setTimeline)
-                    }
-                  >
-                    Select all
-                  </MenuItem>
+                  <MenuItem value={SELECT_ALL}>Select all</MenuItem>
                   <MenuItem value="future">Present / Future</MenuItem>
                   <MenuItem value="past">Past</MenuItem>
                 </Select>
@@ -638,18 +653,14 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                   displayEmpty
                   value={types}
                   MenuProps={menuProps}
-                  onChange={(e) => setTypes(asArray(e.target.value))}
+                  onChange={(e) =>
+                    onMultiChange(e.target.value, types, typeOptions, setTypes)
+                  }
                   renderValue={(selected) =>
                     selected.length === 0 ? "All" : selected.join(", ")
                   }
                 >
-                  <MenuItem
-                    onClick={() =>
-                      toggleSelectAll(types, typeOptions, setTypes)
-                    }
-                  >
-                    Select all
-                  </MenuItem>
+                  <MenuItem value={SELECT_ALL}>Select all</MenuItem>
                   {typeOptions.map((t) => (
                     <MenuItem key={t} value={t}>
                       {t}
@@ -669,22 +680,19 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                   displayEmpty
                   value={dates}
                   MenuProps={menuProps}
-                  onChange={(e) => setDates(asArray(e.target.value))}
+                  onChange={(e) =>
+                    onMultiChange(
+                      e.target.value,
+                      dates,
+                      dateOptions.map((d) => d.dateName),
+                      setDates
+                    )
+                  }
                   renderValue={(selected) =>
                     selected.length === 0 ? "All" : selected.join(", ")
                   }
                 >
-                  <MenuItem
-                    onClick={() =>
-                      toggleSelectAll(
-                        dates,
-                        dateOptions.map((d) => d.dateName),
-                        setDates
-                      )
-                    }
-                  >
-                    Select all
-                  </MenuItem>
+                  <MenuItem value={SELECT_ALL}>Select all</MenuItem>
                   {dateOptions.map((d) => (
                     <MenuItem key={d.dateName} value={d.dateName}>
                       {d.dateName}
@@ -704,7 +712,14 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                   displayEmpty
                   value={availability}
                   MenuProps={menuProps}
-                  onChange={(e) => setAvailability(asArray(e.target.value))}
+                  onChange={(e) =>
+                    onMultiChange(
+                      e.target.value,
+                      availability,
+                      ["open", "full"],
+                      setAvailability
+                    )
+                  }
                   renderValue={(selected) =>
                     selected.length === 0
                       ? "All"
@@ -713,17 +728,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                           .join(", ")
                   }
                 >
-                  <MenuItem
-                    onClick={() =>
-                      toggleSelectAll(
-                        availability,
-                        ["open", "full"],
-                        setAvailability
-                      )
-                    }
-                  >
-                    Select all
-                  </MenuItem>
+                  <MenuItem value={SELECT_ALL}>Select all</MenuItem>
                   <MenuItem value="open">Open</MenuItem>
                   <MenuItem value="full">Full</MenuItem>
                 </Select>
