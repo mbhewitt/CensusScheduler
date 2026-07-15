@@ -214,6 +214,14 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
   const [availability, setAvailability] = useState<string[]>([]); // "open" | "full"
   const [myShiftsOnly, setMyShiftsOnly] = useState(false);
 
+  // ponytail: Timeline (Present/Future vs Past) filter is hidden until the
+  // on-playa work lands (past shifts + the check-in toggle). There are no past
+  // shifts off-playa, so the control just confused people — "Remove all
+  // filters" left its default "future" chip stuck (Chipper 2026-07-15). State
+  // stays ["future"] (the correct off-playa behavior); we only hide the UI.
+  // Flip to true to bring the filter back.
+  const SHOW_TIMELINE_FILTER = false;
+
   // Reset every filter to its default (#470 design review, item 8).
   const removeAllFilters = () => {
     setTimeline(["future"]);
@@ -295,16 +303,26 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
   // which are yours — that's the whole point (Chipper 2026-07-09). When the
   // "My Shifts" toggle is ON the main list is restricted to your own shifts
   // (still narrowed by the other filters), and the bottom section is dropped.
+  //
+  // Type/Availability describe *open (browse) shifts* and never hide a shift
+  // you're already signed up for: a "mine" item has no shift-type (its `type`
+  // is a department-name fallback, so a Type filter can't match it) and its
+  // state is "mine" (never "open"/"full", so an Availability filter can't
+  // match it either). Applying those two to your own shifts silently dropped
+  // them from the top list — the bug Chipper hit (2026-07-15). So they're
+  // exempt; only Timeline/Date (real properties of a mine item) narrow it.
   const mainDays = useMemo(
     () =>
       groupByDay(
         items.filter((i) => {
           if (myShiftsOnly && i.state !== "mine") return false;
           if (!inTimeline(i)) return false;
-          if (types.length > 0 && !types.includes(i.type)) return false;
           if (dates.length > 0 && !dates.includes(i.dateName)) return false;
-          if (availability.length > 0 && !availability.includes(i.state))
-            return false;
+          if (i.state !== "mine") {
+            if (types.length > 0 && !types.includes(i.type)) return false;
+            if (availability.length > 0 && !availability.includes(i.state))
+              return false;
+          }
           return true;
         })
       ),
@@ -312,12 +330,13 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
   );
 
   // Bottom "My Shifts" section: the volunteer's full schedule for this time
-  // scope (Timeline only, never narrowed). Shown ONLY when a narrowing filter
-  // is active, so filtering can't hide your commitments — but no redundant
-  // double-listing when the main already shows everything, and suppressed
-  // entirely when the My Shifts toggle already restricts the main to yours.
-  const anyNarrowing =
-    types.length > 0 || dates.length > 0 || availability.length > 0;
+  // scope (Timeline only, never narrowed) — a safety net so filtering can't
+  // hide your commitments. Now that the main list keeps your own shifts under
+  // Type/Availability filters (above), the only narrowing that can still drop
+  // a mine item from the top is a Date filter — so that's the sole case where
+  // this extra section earns its place (otherwise it just double-lists).
+  // Suppressed when the My Shifts toggle already restricts the main to yours.
+  const dateFilterActive = dates.length > 0;
   const mineDays = useMemo(
     () => groupByDay(items.filter((i) => i.state === "mine" && inTimeline(i))),
     [items, timeline]
@@ -609,38 +628,42 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
             </Stack>
 
             <Stack spacing={2}>
-              <FormControl size="small" fullWidth>
-                <InputLabel id="timeline-label" shrink>
-                  Timeline
-                </InputLabel>
-                <Select
-                  labelId="timeline-label"
-                  label="Timeline"
-                  multiple
-                  displayEmpty
-                  value={timeline}
-                  MenuProps={menuProps}
-                  onChange={(e) =>
-                    onMultiChange(
-                      e.target.value,
-                      timeline,
-                      ["future", "past"],
-                      setTimeline
-                    )
-                  }
-                  renderValue={(selected) =>
-                    selected.length === 0
-                      ? "All"
-                      : selected
-                          .map((v) => (v === "past" ? "Past" : "Present / Future"))
-                          .join(", ")
-                  }
-                >
-                  <MenuItem value={SELECT_ALL}>Select all</MenuItem>
-                  <MenuItem value="future">Present / Future</MenuItem>
-                  <MenuItem value="past">Past</MenuItem>
-                </Select>
-              </FormControl>
+              {SHOW_TIMELINE_FILTER && (
+                <FormControl size="small" fullWidth>
+                  <InputLabel id="timeline-label" shrink>
+                    Timeline
+                  </InputLabel>
+                  <Select
+                    labelId="timeline-label"
+                    label="Timeline"
+                    multiple
+                    displayEmpty
+                    value={timeline}
+                    MenuProps={menuProps}
+                    onChange={(e) =>
+                      onMultiChange(
+                        e.target.value,
+                        timeline,
+                        ["future", "past"],
+                        setTimeline
+                      )
+                    }
+                    renderValue={(selected) =>
+                      selected.length === 0
+                        ? "All"
+                        : selected
+                            .map((v) =>
+                              v === "past" ? "Past" : "Present / Future"
+                            )
+                            .join(", ")
+                    }
+                  >
+                    <MenuItem value={SELECT_ALL}>Select all</MenuItem>
+                    <MenuItem value="future">Present / Future</MenuItem>
+                    <MenuItem value="past">Past</MenuItem>
+                  </Select>
+                </FormControl>
+              )}
 
               <FormControl size="small" fullWidth>
                 <InputLabel id="type-label" shrink>
@@ -757,14 +780,15 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
           useFlexGap
           sx={{ mb: 2 }}
         >
-          {timeline.map((t) => (
-            <Chip
-              key={`chip-timeline-${t}`}
-              label={t === "past" ? "Past" : "Present / Future"}
-              size="small"
-              onDelete={() => setTimeline(timeline.filter((x) => x !== t))}
-            />
-          ))}
+          {SHOW_TIMELINE_FILTER &&
+            timeline.map((t) => (
+              <Chip
+                key={`chip-timeline-${t}`}
+                label={t === "past" ? "Past" : "Present / Future"}
+                size="small"
+                onDelete={() => setTimeline(timeline.filter((x) => x !== t))}
+              />
+            ))}
           {types.map((t) => (
             <Chip
               key={`chip-type-${t}`}
@@ -828,7 +852,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
         {/* My Shifts — your complete schedule, shown when a filter is active so
             filtering can't hide your commitments. Suppressed when the My Shifts
             toggle already restricts the main list to yours (redundant). */}
-        {isSignedIn && !myShiftsOnly && mineCount > 0 && anyNarrowing && (
+        {isSignedIn && !myShiftsOnly && mineCount > 0 && dateFilterActive && (
           <>
             <Typography
               component="h3"
