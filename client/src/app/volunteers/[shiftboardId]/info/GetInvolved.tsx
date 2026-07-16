@@ -20,9 +20,6 @@ interface IGetInvolvedItem {
   links: IGetInvolvedLink[];
 }
 
-// TODO(peers): "Take Fun with Fulcrum" is shown as a placeholder (no href →
-// renders as plain text) pending a URL from the PEERS team (papabear,
-// 2026-07-01). Add the href below once supplied to make it a live link.
 const ITEMS: IGetInvolvedItem[] = [
   {
     title: "Explore PEERS & camp resources",
@@ -30,6 +27,7 @@ const ITEMS: IGetInvolvedItem[] = [
     links: [
       {
         label: "Take Fun with Fulcrum",
+        href: "https://hive.burningman.org/share/LE7a4J-96g3hYQ15?utm_source=manual",
       },
       {
         label: "Camp Resource Guide",

@@ -46,7 +46,7 @@ Legend: ☐ = todo · ✅ = done · ❓ = needs a PEERS decision · 📄 = provi
 - [x] `BehavioralStandards.tsx` — no street address here; only generic "PEERS Lab" location-name mentions (lines 307/310), which are correct. Nothing to change.
 
 ## 7. Places I was guessing — need confirmation  ❓
-- [~] GetInvolved sidebar links — `GetInvolved.tsx` reworked (048cdc7, per papabear 2026-07-01): removed the Discord + Volunteer-year-round placeholder cards; the remaining card is "Explore PEERS & camp resources" with real links (Camp Resource Guide, The Placement Process). **Still pending:** the "Take Fun with Fulcrum" URL (papabear to supply → add to the `links` array + redeploy).
+- [x] GetInvolved sidebar links — `GetInvolved.tsx` reworked (048cdc7, per papabear 2026-07-01): removed the Discord + Volunteer-year-round placeholder cards; the remaining card is "Explore PEERS & camp resources" with real links (Camp Resource Guide, The Placement Process). "Take Fun with Fulcrum" URL supplied by papabear 2026-07-16 (`https://hive.burningman.org/share/LE7a4J-96g3hYQ15`) → now a live link.
 - [ ] Lead/Squaddie "hive" course URLs — `op_trainings.url` for codes `AYWOF` (Lead) / `ZNRCZ` (Squaddie) are placeholder `hive.burningman.org`. Provide real course pages.
 - [ ] Confirm final role names: `PEERS Lead` / `PEERS Squaddie` / `PEERS Coordinator` (team set these via admin UI — confirm they're final).
 - [ ] Repo destination for `peers-main` (currently pushed to `mbhewitt/CensusScheduler`; new `PeersScheduler` repo eventually?).
