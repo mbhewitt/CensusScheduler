@@ -10,7 +10,7 @@ import { enqueueEmail } from "lib/mail";
 //
 // Body shape approved by Mew 2026-05-31 — see the per-shift sample
 // rendered in the chat: shift_name + position headline, day/time,
-// PEERS Shift Points, critical callout when applicable, then the
+// critical callout when applicable, then the
 // rich-text sections (shift_details, position_details, shift notes,
 // meal) — each section is dropped if its column is empty.
 //
@@ -198,9 +198,6 @@ function renderShiftBody(
   const lines: string[] = [];
   lines.push(`  📌 ${ctx.shift_name}: ${ctx.position}`);
   lines.push(`  ${dayLabel}${timeLabel ? ` • ${timeLabel}` : ""}`);
-  if (ctx.sap_points != null) {
-    lines.push(`  PEERS Shift Points: ${ctx.sap_points}`);
-  }
   if (ctx.critical) {
     lines.push(
       `  **This is a critical position** — many other volunteers depend on you being there.`
@@ -222,7 +219,7 @@ function renderShiftBody(
   // body and (via DESCRIPTION mirroring the body) in the .ics too.
   lines.push(
     "",
-    "Location: All PEERS shifts start and end at PEERS / Placement HQ at Esplanade & 5:45."
+    "Location: All PEERS shifts start and end at Placement HQ at Esplanade & 5:45."
   );
   return lines.join("\n");
 }
