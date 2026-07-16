@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Chip, Container, lighten, Typography } from "@mui/material";
-import { blue } from "@mui/material/colors";
+import { blue, green } from "@mui/material/colors";
 import { useTheme } from "@mui/material/styles";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
@@ -26,6 +26,8 @@ import { getColorMap } from "@/utils/getColorMap";
 // in one department, so all types share the same color. Override specific
 // shift types here to visually distinguish them (per papabear 2026-07-02).
 const TYPE_COLOR_OVERRIDES: { [type: string]: string } = {
+  "PEERS Coordinator On Call (PCoC) Shift": green[100],
+  "PEERS Coordinator in Office (PCiO) shift": green[100],
   "PEERS Lead Shift (HQ)": blue[100],
 };
 
