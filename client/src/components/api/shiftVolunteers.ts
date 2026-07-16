@@ -16,7 +16,12 @@ import {
 // refilling. The warning dialog from #308 (which would make the
 // volunteer acknowledge the gap before a self-drop) is not built yet,
 // so the email no longer claims a warning was shown (#402).
-const VC_LIST_EMAIL = "peers@burningman.org";
+// Critical-drop alerts go to the PEERS inbox AND the coordinators list
+// (papabear 2026-07-16). joinAddrs() renders the array as a comma-list.
+const VC_LIST_EMAILS = [
+  "peers@burningman.org",
+  "peers-coordinators@burningman.org",
+];
 const APP_BASE_URL =
   process.env.APP_BASE_URL ?? "https://volunteers.census.burningman.org";
 
@@ -87,7 +92,7 @@ async function notifyCriticalDrop(
     : (actorName ?? "an administrator");
 
   await enqueueEmail({
-    to: VC_LIST_EMAIL,
+    to: VC_LIST_EMAILS,
     subject: `[PEERS] CRITICAL OPENING: ${ctx.position} on ${dayLabel}`,
     bodyText: [
       "A critical position is now open and needs to be refilled.",
