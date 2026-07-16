@@ -66,7 +66,7 @@ export const Home = () => {
           <Stack alignItems="center" sx={{ mb: 3 }}>
             <Image
               alt="PEERS logo"
-              height={160}
+              height={181}
               src="/general/logo-peers.png"
               width={160}
             />

@@ -15,19 +15,20 @@ interface IPasscodeRevealProps {
 // the "PEERS" wordmark with the 4-digit passcode so it reads as a
 // delight artifact rather than a plain text reveal.
 //
-// FIXME(peers): coordinates below are a first pass for logo-peers.png
-// (454×512 native). The mask covers the "EERS" portion of the wordmark
-// to leave the "P" visible, mirroring the original "C[code]" effect.
-// Eyeball the result and retune MASK_X/Y/W/H + DIGIT_FONT_PX once we
-// see it in the browser.
+// FIXME(peers): coordinates below are scaled from the original 454×512
+// art to the current logo-peers.png (1722×1943 native, badge added
+// 2026-07-16). The new wordmark is *arched* across the top, so a flat
+// rectangle mask no longer aligns cleanly — retune MASK_X/Y/W/H +
+// DIGIT_FONT_PX against the badge in-browser when passcode mode is
+// activated for playa (this delight feature isn't live off-playa).
 const LOGO_SRC = "/general/logo-peers.png";
 const MASK_FILL = "#202020";
 const DIGIT_FILL = "#F0E0D0";
-const MASK_X = 150;
-const MASK_Y = 80;
-const MASK_W = 200;
-const MASK_H = 90;
-const DIGIT_FONT_PX = 80;
+const MASK_X = 569;
+const MASK_Y = 303;
+const MASK_W = 758;
+const MASK_H = 341;
+const DIGIT_FONT_PX = 303;
 
 export const PasscodeReveal = ({ shiftboardId }: IPasscodeRevealProps) => {
   const [passcode, setPasscode] = useState<null | string>(null);

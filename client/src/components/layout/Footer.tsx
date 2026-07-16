@@ -11,7 +11,6 @@ import {
 import { useTheme } from "@mui/material/styles";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Fragment, useContext } from "react";
 
 import {
@@ -37,7 +36,6 @@ export const Footer = () => {
 
   // other hooks
   // ------------------------------------------------------------
-  const router = useRouter();
   const theme = useTheme();
 
   // logic
@@ -202,16 +200,21 @@ export const Footer = () => {
           </Stack>
           <Box
             sx={{
-              height: theme.spacing(15),
+              cursor: "pointer",
+              height: "135px",
               position: "relative",
               width: theme.spacing(15),
             }}
           >
             <Image
               alt="PEERS logo"
-              height={120}
+              height={135}
               onClick={() => {
-                router.push("/doodle");
+                window.open(
+                  "https://burningman.org/black-rock-city/camps/placement-process/peers/",
+                  "_blank",
+                  "noopener,noreferrer"
+                );
               }}
               src="/general/logo-peers.png"
               width={120}
