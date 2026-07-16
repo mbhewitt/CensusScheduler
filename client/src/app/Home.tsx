@@ -58,7 +58,11 @@ export const Home = () => {
       />
       <Container component="main">
         <Box component="section">
-          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
+          <Typography
+            component="h2"
+            variant="h4"
+            sx={{ mb: 2, textAlign: "center" }}
+          >
             Welcome!
           </Typography>
 
