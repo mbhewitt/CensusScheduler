@@ -266,7 +266,7 @@ export const BehavioralStandards = ({
                 Team to agree to the terms and sign this document prior to their
                 first volunteer shift. Concerns or questions that need to be
                 resolved prior to signing should be sent to
-                censusvolunteercoordinators@burningman.org
+                peers@burningman.org
               </Typography>
             </CardContent>
           </Card>

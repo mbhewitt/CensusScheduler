@@ -51,7 +51,7 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
       // Best-effort send. Per #312 acceptance: enqueue failure does
       // NOT fail the form submission — the row write above is the
       // canonical record. Headers per the domain-admin contract:
-      // From locked to census@burningmail.burningman.org (default in
+      // From locked to peers@burningmail.burningman.org (default in
       // enqueueEmail), Reply-To = volunteer's email. No Cc — the form
       // only ever emails the single PEERS inbox.
       try {

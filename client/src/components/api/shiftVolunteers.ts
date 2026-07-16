@@ -16,7 +16,7 @@ import {
 // refilling. The warning dialog from #308 (which would make the
 // volunteer acknowledge the gap before a self-drop) is not built yet,
 // so the email no longer claims a warning was shown (#402).
-const VC_LIST_EMAIL = "censusvolunteercoordinators@burningman.org";
+const VC_LIST_EMAIL = "peers@burningman.org";
 const APP_BASE_URL =
   process.env.APP_BASE_URL ?? "https://volunteers.census.burningman.org";
 

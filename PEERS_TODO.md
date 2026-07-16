@@ -10,7 +10,7 @@ Legend: ☐ = todo · ✅ = done · ❓ = needs a PEERS decision · 📄 = provi
 
 ## 1. Return / contact email addresses  📄
 - [x] `CONTACT_RECIPIENTS` → replaced with single `CONTACT_RECIPIENT = "peers@burningman.org"` (`client/src/constants.ts`). Contact "To" field is now prepopulated + read-only; form routes only to `peers@burningman.org`. (commit `6444bbc`, deployed to prod 2026-06-30)
-- [ ] `VC_LIST_EMAIL` — `client/src/components/api/shiftVolunteers.ts:19` — `censusvolunteercoordinators@burningman.org` (critical-drop alerts).
+- [x] `VC_LIST_EMAIL` — `client/src/components/api/shiftVolunteers.ts:19` — changed to `peers@burningman.org` (critical-drop alerts). Was `censusvolunteercoordinators@burningman.org`. (papabear 2026-07-16 email audit). ⚠️ Note: peers@ is the Salesforce Email-to-Case inbox, so critical-opening alerts now create cases there — redirect to a dedicated coordinator address if that's noisy.
 - [x] Contact-form CC — removed (`client/src/pages/api/contact/index.ts`). Contact form now sends with no Cc. (commit `6444bbc`)
 - [x] `MAIL_FROM` — default changed to `peers@burningmail.burningman.org` (`client/lib/mail/index.ts`). Uses the SES-verified `burningmail.burningman.org` subdomain (apex `burningman.org` not a confirmed SES identity). (commit `802673e`, deployed to prod 2026-06-30)
 - [x] `MAIL_DEFAULT_REPLY_TO` — default changed to `PEERS Volunteer Coordinators <peers@burningman.org>` (`client/lib/mail/index.ts:13-15`). Was `censusvc@burningman.org`; prod has no env override so the code default applies. (papabear 2026-07-16, caught via test email)
@@ -30,7 +30,7 @@ Legend: ☐ = todo · ✅ = done · ❓ = needs a PEERS decision · 📄 = provi
 
 ## 4. Behavioral Standards document  📄
 - [ ] Leadership roster + emails — `BehavioralStandards.tsx:290-299` ("As of Jun 2026..." names/aliases). Confirm current PEERS leadership + addresses.
-- [ ] Coordinator email — `BehavioralStandards.tsx:265` (`censusvolunteercoordinators@`).
+- [x] Coordinator email — `BehavioralStandards.tsx` "should be sent to" address changed `censusvolunteercoordinators@` → `peers@burningman.org`. (papabear 2026-07-16)
 - [ ] Confirm body policy text is PEERS-correct (already rebranded to "BRC PEERS"; just confirm content/expectations).
 
 ## 5. Volunteer flow — SAP / CSP / training-first  ❓ (decisions, then code/data)
