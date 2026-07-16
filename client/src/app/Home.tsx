@@ -13,6 +13,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import Image from "next/image";
 import Link from "next/link";
 import { useContext } from "react";
 
@@ -60,6 +61,16 @@ export const Home = () => {
           <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
             Welcome!
           </Typography>
+
+          {/* PEERS logo, centered beneath the Welcome header (papabear 2026-07-16) */}
+          <Stack alignItems="center" sx={{ mb: 3 }}>
+            <Image
+              alt="PEERS logo"
+              height={160}
+              src="/general/logo-peers.png"
+              width={160}
+            />
+          </Stack>
 
           {/*
            * Login affordance sits between the Welcome header and the body
