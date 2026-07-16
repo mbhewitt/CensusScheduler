@@ -586,6 +586,10 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
           Add shift
         </Button>
       </Stack>
+      <Typography sx={{ mb: 2 }}>
+        If you are looking to schedule a shift with a friend, make sure you both
+        select the same time and day in your account.
+      </Typography>
       <DataTable
         columnList={columnList}
         dataTable={dataTable}
