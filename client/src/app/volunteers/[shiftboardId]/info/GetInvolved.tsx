@@ -1,7 +1,7 @@
 import { OpenInNew as OpenInNewIcon } from "@mui/icons-material";
 import { Box, Card, CardContent, Link, Stack, Typography } from "@mui/material";
 
-// "Optional: Get more involved with PEERS" sidebar on the account/info page.
+// "Optional: Learn More About PEERS & Placement" sidebar on the account/info page.
 // Off-playa only (gated by the parent) — the links don't work on the offline
 // on-playa tablets, and volunteers aren't signed in there anyway (#335).
 // Plain link-cards, not checklist items: these are optional, open-ended ways
@@ -48,12 +48,14 @@ export const GetInvolved = () => {
         <Typography
           component="h2"
           variant="overline"
-          sx={{ color: "text.secondary", fontWeight: 700, lineHeight: 1.4 }}
+          sx={{
+            color: "text.secondary",
+            fontWeight: 700,
+            lineHeight: 1.4,
+            mb: 2,
+          }}
         >
-          Optional: Get more involved with PEERS
-        </Typography>
-        <Typography color="text.secondary" variant="body2" sx={{ mb: 2 }}>
-          Optional ways to stay connected with PEERS year-round.
+          Optional: Learn More About PEERS &amp; Placement
         </Typography>
 
         <Stack spacing={2}>
