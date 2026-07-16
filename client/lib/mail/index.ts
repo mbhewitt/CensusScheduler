@@ -12,7 +12,7 @@ function readConfig(): MailConfig {
     from: process.env.MAIL_FROM ?? "peers@burningmail.burningman.org",
     defaultReplyTo:
       process.env.MAIL_DEFAULT_REPLY_TO ??
-      "PEERS Volunteer Coordinators <censusvc@burningman.org>",
+      "PEERS Volunteer Coordinators <peers@burningman.org>",
     smtpHost: process.env.SMTP_HOST ?? "127.0.0.1",
     smtpPort: Number.isFinite(port) ? port : 25,
     dryRun: process.env.MAIL_DRY_RUN === "1",

@@ -13,7 +13,7 @@ Legend: ☐ = todo · ✅ = done · ❓ = needs a PEERS decision · 📄 = provi
 - [ ] `VC_LIST_EMAIL` — `client/src/components/api/shiftVolunteers.ts:19` — `censusvolunteercoordinators@burningman.org` (critical-drop alerts).
 - [x] Contact-form CC — removed (`client/src/pages/api/contact/index.ts`). Contact form now sends with no Cc. (commit `6444bbc`)
 - [x] `MAIL_FROM` — default changed to `peers@burningmail.burningman.org` (`client/lib/mail/index.ts`). Uses the SES-verified `burningmail.burningman.org` subdomain (apex `burningman.org` not a confirmed SES identity). (commit `802673e`, deployed to prod 2026-06-30)
-- [ ] `MAIL_DEFAULT_REPLY_TO` — default `... <censusvc@burningman.org>` (`client/lib/mail/index.ts:13-15`).
+- [x] `MAIL_DEFAULT_REPLY_TO` — default changed to `PEERS Volunteer Coordinators <peers@burningman.org>` (`client/lib/mail/index.ts:13-15`). Was `censusvc@burningman.org`; prod has no env override so the code default applies. (papabear 2026-07-16, caught via test email)
 - [ ] Calendar UID domain — `client/src/components/api/assignmentNotify.ts:165` — `@volunteers.census.burningman.org` (keep stable; pick PEERS domain).
 - [ ] BS-doc emails — `BehavioralStandards.tsx:265,291,295-296` (see §4).
 - [x] Home page `mailto:` — `client/src/app/Home.tsx` — confirmed `peers@burningman.org` (in source + live). (2026-07-01)
