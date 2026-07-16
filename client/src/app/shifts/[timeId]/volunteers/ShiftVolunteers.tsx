@@ -65,7 +65,12 @@ import {
 } from "@/constants";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
-import { checkIsAdmin, checkIsAuthenticated } from "@/utils/checkIsRoleExist";
+import {
+  checkIsAdmin,
+  checkIsAuthenticated,
+  checkIsPeersCoordinator,
+  checkIsPeersShiftLead,
+} from "@/utils/checkIsRoleExist";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
 import { getCheckInType } from "@/utils/getCheckInType";
@@ -281,6 +286,8 @@ export const ShiftVolunteers = ({
     isAuthenticatedSession
   );
   const isAdmin = checkIsAdmin(accountType, roleList);
+  const isPeersCoordinator = checkIsPeersCoordinator(roleList);
+  const isPeersShiftLead = checkIsPeersShiftLead(roleList);
 
   const handleCheckInToggle = async ({
     shift: { positionName, timePositionId },
@@ -356,12 +363,15 @@ export const ShiftVolunteers = ({
     }
     case SHIFT_DURING: {
       isVolunteerAddAvailable = true;
-      isCheckInAvailable = true;
+      // Check-in during the live shift: PEERS Shift Leads, PEERS
+      // Coordinators, and Admins (papabear 2026-07-16).
+      isCheckInAvailable = isAdmin || isPeersCoordinator || isPeersShiftLead;
       break;
     }
     case SHIFT_PAST: {
       isVolunteerAddAvailable = isAdmin;
-      isCheckInAvailable = isAdmin;
+      // Check-in after the shift: PEERS Coordinators and Admins only.
+      isCheckInAvailable = isAdmin || isPeersCoordinator;
       break;
     }
     default: {

@@ -86,6 +86,8 @@ export const ROLE_ADMIN_ID = 2;
 export const ROLE_BEHAVIORAL_STANDARDS_ID = 1000012;
 export const ROLE_CORE_CREW_ID = 13184;
 export const ROLE_EMAIL_UNSUBSCRIBED_ID = 2000020;
+export const ROLE_PEERS_COORDINATOR_ID = 95209;
+export const ROLE_PEERS_SHIFT_LEAD_ID = 2000101;
 export const ROLE_SUPER_ADMIN_ID = 1;
 
 // sockets

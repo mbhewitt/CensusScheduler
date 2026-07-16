@@ -4,6 +4,8 @@ import {
   ACCOUNT_TYPE_AUTHENTICATED,
   ROLE_ADMIN_ID,
   ROLE_BEHAVIORAL_STANDARDS_ID,
+  ROLE_PEERS_COORDINATOR_ID,
+  ROLE_PEERS_SHIFT_LEAD_ID,
   ROLE_SUPER_ADMIN_ID,
 } from "@/constants";
 import { IAccountTypePayload } from "@/state/developer-mode/reducer";
@@ -40,6 +42,14 @@ export const checkIsBehavioralStandardsSigned = (
   roleList: IResVolunteerRoleItem[]
 ) => {
   return checkIsRoleExist(ROLE_BEHAVIORAL_STANDARDS_ID, roleList);
+};
+// check for PEERS Coordinator role
+export const checkIsPeersCoordinator = (roleList: IResVolunteerRoleItem[]) => {
+  return checkIsRoleExist(ROLE_PEERS_COORDINATOR_ID, roleList);
+};
+// check for PEERS Shift Lead role
+export const checkIsPeersShiftLead = (roleList: IResVolunteerRoleItem[]) => {
+  return checkIsRoleExist(ROLE_PEERS_SHIFT_LEAD_ID, roleList);
 };
 // check for super admin role, including when dev mode is on
 export const checkIsSuperAdmin = (
