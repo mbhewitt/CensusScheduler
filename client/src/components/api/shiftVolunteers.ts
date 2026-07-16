@@ -1,15 +1,36 @@
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
 import { RowDataPacket } from "mysql2";
 import { Pool } from "mysql2/promise";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import type { IReqReviewValues, IReqSwitchValues } from "@/components/types";
-import { UPDATE_TYPE_CHECK_IN, UPDATE_TYPE_REVIEW } from "@/constants";
+import {
+  ROLE_ADMIN_ID,
+  ROLE_PEERS_COORDINATOR_ID,
+  ROLE_PEERS_SHIFT_LEAD_ID,
+  ROLE_SUPER_ADMIN_ID,
+  SHIFT_DURING,
+  SHIFT_PAST,
+  UPDATE_TYPE_CHECK_IN,
+  UPDATE_TYPE_REVIEW,
+} from "@/constants";
+import { getCheckInType } from "@/utils/getCheckInType";
 import { enqueueEmail } from "lib/mail";
 import {
   lookupActorDisplayName,
   notifyRemoval,
   type RemovalCause,
 } from "@/components/api/assignmentNotify";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+// Shift start/end times are stored as naive playa-local strings
+// (e.g. "2026-08-31 19:00"); interpret them in this zone so the
+// window math is correct regardless of the server's own timezone.
+const PLAYA_TZ = "America/Los_Angeles";
 
 // #313 — when a volunteer (self) or admin removes someone from a
 // position with `critical=1`, notify the VC list so they can move on
@@ -107,6 +128,81 @@ async function notifyCriticalDrop(
     category: "critical-drop",
   });
 }
+
+// Server-side authorization for coordinator-page check-in, mirroring the
+// UI gate in ShiftVolunteers.tsx so the restriction can't be bypassed with
+// a crafted PATCH (the toggle is only hidden client-side):
+//   - during the shift window: PEERS Shift Lead / Coordinator / Admin
+//   - after the window:        PEERS Coordinator / Admin
+//   - before the window / canceled shift: nobody
+// (papabear 2026-07-16). NOTE: this is intentionally NOT applied to the
+// volunteer self-check-in route (/api/volunteers/[id]/shifts), where a
+// volunteer may still check themselves in during their own shift.
+export const checkCheckInAuthorized = async (
+  pool: Pool,
+  session: { shiftboardId: number },
+  timePositionId: number | string
+): Promise<{ ok: true } | { ok: false; status: number; message: string }> => {
+  const [dbShiftRows] = await pool.query<RowDataPacket[]>(
+    `SELECT st.start_time, st.end_time, st.canceled
+     FROM op_shift_time_position stp
+     JOIN op_shift_times st ON st.shift_times_id = stp.shift_times_id
+     WHERE stp.time_position_id = ?
+     LIMIT 1`,
+    [timePositionId]
+  );
+  const dbShift = dbShiftRows[0];
+  if (!dbShift) {
+    return { ok: false, status: 404, message: "Shift not found." };
+  }
+  if (dbShift.canceled) {
+    return {
+      ok: false,
+      status: 409,
+      message: "Shift is canceled; check-in is unavailable.",
+    };
+  }
+
+  // Requester's roles (by their authenticated shiftboard id).
+  const [dbRoleRows] = await pool.query<RowDataPacket[]>(
+    `SELECT role_id FROM op_volunteer_roles WHERE shiftboard_id = ?`,
+    [session.shiftboardId]
+  );
+  const roleIdSet = new Set(dbRoleRows.map((row) => Number(row.role_id)));
+  // Super Admin is the strict superset of Admin — never lock it out.
+  const isAdmin =
+    roleIdSet.has(ROLE_ADMIN_ID) || roleIdSet.has(ROLE_SUPER_ADMIN_ID);
+  const isPeersCoordinator = roleIdSet.has(ROLE_PEERS_COORDINATOR_ID);
+  const isPeersShiftLead = roleIdSet.has(ROLE_PEERS_SHIFT_LEAD_ID);
+
+  // Determine where "now" falls relative to the shift window. If the
+  // times are missing/unparseable, fall back to the DURING rule so a
+  // data hiccup can't lock out legitimate staff.
+  const startTime = dayjs.tz(dbShift.start_time, PLAYA_TZ);
+  const endTime = dayjs.tz(dbShift.end_time, PLAYA_TZ);
+  const checkInType =
+    startTime.isValid() && endTime.isValid()
+      ? getCheckInType({ dateTime: dayjs(), endTime, startTime })
+      : SHIFT_DURING;
+
+  let isCheckInAllowed = false;
+  if (checkInType === SHIFT_DURING) {
+    isCheckInAllowed = isAdmin || isPeersCoordinator || isPeersShiftLead;
+  } else if (checkInType === SHIFT_PAST) {
+    isCheckInAllowed = isAdmin || isPeersCoordinator;
+  }
+  // SHIFT_FUTURE → not allowed for anyone.
+
+  if (!isCheckInAllowed) {
+    return {
+      ok: false,
+      status: 403,
+      message:
+        "You don't have permission to change check-in for this shift right now.",
+    };
+  }
+  return { ok: true };
+};
 
 export const shiftVolunteerUpdate = async (
   pool: Pool,

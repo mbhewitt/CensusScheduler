@@ -301,10 +301,16 @@ export const ShiftVolunteers = ({
     };
 
     try {
-      await trigger({
+      // fetcherTrigger doesn't throw on non-2xx, so surface a server
+      // rejection (e.g. 403 from the check-in role/time gate) explicitly
+      // — otherwise it would read as a false success and still broadcast.
+      const result = await trigger({
         body,
         method: "PATCH",
       });
+      if (result?.statusCode && result.statusCode >= 400) {
+        throw new Error(result.message ?? "Check-in update failed.");
+      }
       socket.emit(TOGGLE_CHECK_IN_REQ, {
         isCheckedIn,
         shiftboardId,

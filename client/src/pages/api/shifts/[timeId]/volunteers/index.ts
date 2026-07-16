@@ -11,9 +11,11 @@ import { withAuth } from "@/lib/withAuth";
 import { pool } from "lib/database";
 import { notifyAssignment } from "@/components/api/assignmentNotify";
 import {
+  checkCheckInAuthorized,
   shiftVolunteerRemove,
   shiftVolunteerUpdate,
 } from "@/components/api/shiftVolunteers";
+import { UPDATE_TYPE_CHECK_IN } from "@/constants";
 
 const shiftVolunteers = async (
   req: NextApiRequest,
@@ -265,7 +267,22 @@ const shiftVolunteers = async (
     // patch
     // ------------------------------------------------------------
     case "PATCH": {
-      // check volunteer into shift
+      // check volunteer into shift. Coordinator-page check-in is
+      // role/time gated server-side (see checkCheckInAuthorized);
+      // review updates fall through unchanged.
+      const patchBody = JSON.parse(req.body);
+      if (patchBody.updateType === UPDATE_TYPE_CHECK_IN) {
+        const auth = await checkCheckInAuthorized(
+          pool,
+          session,
+          patchBody.timePositionId
+        );
+        if (!auth.ok) {
+          return res
+            .status(auth.status)
+            .json({ statusCode: auth.status, message: auth.message });
+        }
+      }
       return shiftVolunteerUpdate(pool, req, res);
     }
 
