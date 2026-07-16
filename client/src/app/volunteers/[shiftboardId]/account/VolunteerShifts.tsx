@@ -16,7 +16,6 @@ import {
   MenuItem,
   MenuList,
   Stack,
-  Switch,
   Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -27,7 +26,6 @@ import { useSnackbar } from "notistack";
 import { useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import useSWR, { KeyedMutator } from "swr";
-import useSWRMutation from "swr/mutation";
 
 import { VolunteerShiftsDialogRemove } from "@/app/volunteers/[shiftboardId]/account/VolunteerShiftsDialogRemove";
 import { VolunteerShiftsDialogReview } from "@/app/volunteers/[shiftboardId]/account/VolunteerShiftsDialogReview";
@@ -36,22 +34,19 @@ import { ErrorAlert } from "@/components/general/ErrorAlert";
 import { Loading } from "@/components/general/Loading";
 import { MoreMenu } from "@/components/general/MoreMenu";
 import { SnackbarText } from "@/components/general/SnackbarText";
-import type { IReqSwitchValues, ISwitchValues } from "@/components/types";
 import type { IResVolunteerShiftItem } from "@/components/types/volunteers";
 import {
   REMOVE_SHIFT_VOLUNTEER_RES,
   SHIFT_DURING,
   SHIFT_FUTURE,
   SHIFT_PAST,
-  TOGGLE_CHECK_IN_REQ,
   TOGGLE_CHECK_IN_RES,
   UPDATE_REVIEW_RES,
-  UPDATE_TYPE_CHECK_IN,
 } from "@/constants";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
 import { checkIsAdmin } from "@/utils/checkIsRoleExist";
-import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
+import { fetcherGet } from "@/utils/fetcher";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
 import { getCheckInType } from "@/utils/getCheckInType";
 import { getColorMap } from "@/utils/getColorMap";
@@ -97,7 +92,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
   } = useContext(DeveloperModeContext);
   const {
     sessionState: {
-      user: { roleList, playaName, worldName },
+      user: { roleList },
     },
   } = useContext(SessionContext);
 
@@ -136,10 +131,6 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mutate: KeyedMutator<any>;
   } = useSWR(`/api/volunteers/${shiftboardId}/shifts`, fetcherGet);
-  const { trigger } = useSWRMutation(
-    `/api/volunteers/${shiftboardId}/shifts`,
-    fetcherTrigger
-  );
 
   // other hooks
   // ------------------------------------------------------------
@@ -254,58 +245,6 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
     );
 
   const isAdmin = checkIsAdmin(accountType, roleList);
-  const handleCheckInToggle = async ({
-    shift: { positionName, timePositionId },
-    volunteer: { isCheckedIn, playaName, shiftboardId, worldName },
-  }: ISwitchValues) => {
-    try {
-      const body: IReqSwitchValues = {
-        isCheckedIn,
-        shiftboardId,
-        timePositionId,
-        updateType: UPDATE_TYPE_CHECK_IN,
-      };
-
-      // update database
-      await trigger({
-        body,
-        method: "PATCH",
-      });
-      socket.emit(TOGGLE_CHECK_IN_REQ, {
-        isCheckedIn,
-        shiftboardId,
-        timePositionId,
-      });
-
-      enqueueSnackbar(
-        <SnackbarText>
-          <strong>
-            {playaName} &quot;{worldName}&quot;
-          </strong>{" "}
-          for <strong>{positionName}</strong> has{" "}
-          <strong>checked {isCheckedIn ? "in" : "out"}</strong>
-        </SnackbarText>,
-        {
-          variant: "success",
-        }
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        enqueueSnackbar(
-          <SnackbarText>
-            <strong>{error.message}</strong>
-          </SnackbarText>,
-          {
-            persist: true,
-            variant: "error",
-          }
-        );
-      }
-
-      throw error;
-    }
-  };
-
   // prepare datatable
   const columnList = [
     {
@@ -326,16 +265,6 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
     },
     { name: "Position", options: { filter: false, sortThirdClickReset: true } },
     {
-      name: "Check in",
-      options: {
-        filter: false,
-        searchable: false,
-        setCellHeaderProps: setCellHeaderPropsCenter,
-        setCellProps: setCellPropsCenter,
-        sort: false,
-      },
-    },
-    {
       name: "Actions",
       options: {
         filter: false,
@@ -347,7 +276,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
     },
   ];
   if (isAdmin) {
-    columnList.splice(5, 0, {
+    columnList.splice(4, 0, {
       name: "Admin review",
       options: {
         filter: false,
@@ -373,7 +302,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
         timeId,
         timePositionId,
       },
-      volunteer: { noShow, notes, rating },
+      volunteer: { notes, rating },
     }: IResVolunteerShiftItem) => {
       // evaluate the check-in type and available features
       const checkInType = getCheckInType({
@@ -382,21 +311,17 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
         startTime: dayjs(startTime),
       });
       let isVolunteerRemoveAvailable = false;
-      let isCheckInAvailable = false;
 
       switch (checkInType) {
         case SHIFT_FUTURE:
           isVolunteerRemoveAvailable = true;
-          isCheckInAvailable = false;
           break;
         case SHIFT_DURING: {
           isVolunteerRemoveAvailable = true;
-          isCheckInAvailable = true;
           break;
         }
         case SHIFT_PAST: {
           isVolunteerRemoveAvailable = isAdmin;
-          isCheckInAvailable = isAdmin;
           break;
         }
         default: {
@@ -482,25 +407,6 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
         formatTime(startTime, endTime),
         positionName,
         positionCell,
-        <Switch
-          checked={noShow === ""}
-          disabled={!isCheckInAvailable}
-          onChange={(event) =>
-            handleCheckInToggle({
-              shift: {
-                positionName,
-                timePositionId,
-              },
-              volunteer: {
-                isCheckedIn: event.target.checked,
-                playaName,
-                shiftboardId: Number(shiftboardId),
-                worldName,
-              },
-            })
-          }
-          key={`${shiftboardId}-volunteer-shift`}
-        />,
 
         // if volunteer is admin
         // then display volunteer shift review and volunteer menu
