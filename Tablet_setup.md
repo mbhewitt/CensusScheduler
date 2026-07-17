@@ -16,7 +16,7 @@ log into tablet account "brccensus.labhost@gmail.com" ask Mew or Chipper for pas
 
 Click skip for all of the setups, including the passcode.
 
-go to play store, click on census logo, manage apps & device, Click Update All
+go to play store, click on the PEERS account logo (top-right avatar), manage apps & device, Click Update All
 
 pull down from top long press on wifi symbol. Scroll to  bottom, click "add network".
 
