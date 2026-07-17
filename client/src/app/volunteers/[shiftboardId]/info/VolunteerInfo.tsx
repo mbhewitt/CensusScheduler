@@ -306,7 +306,6 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     behavioralStandardsSigned,
     burnerProfileUpdated,
     emailUnsubscribed,
-    trainings,
     volunteer,
   } = data;
 
@@ -346,68 +345,6 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
       </Box>
     ),
   });
-
-  // Training
-  if (trainings.length > 0) {
-    const allTrainingDone = trainings.every((t) => t.completed);
-    checklistItems.push({
-      id: "training",
-      label: allTrainingDone
-        ? "Required training courses completed"
-        : "Complete required training courses",
-      done: allTrainingDone,
-      content: (
-        <Box>
-          <Typography sx={{ mb: 1 }}>
-            Complete each required training course on PEERS Hive. Click a
-            course name below to open it.
-          </Typography>
-          {trainings.map((t) => (
-            <Stack
-              alignItems="center"
-              direction="row"
-              key={t.trainingId}
-              spacing={1}
-              sx={{ py: 0.5 }}
-            >
-              {t.completed ? (
-                <CheckBoxIcon color="success" fontSize="small" />
-              ) : (
-                <CheckBoxOutlineBlankIcon
-                  sx={{ color: theme.palette.secondary.main }}
-                  fontSize="small"
-                />
-              )}
-              {!t.url ? (
-                <Typography variant="body2">{t.trainingName}</Typography>
-              ) : (
-                <Typography
-                  component="a"
-                  href={t.url}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  variant="body2"
-                  sx={{
-                    color: theme.palette.secondary.main,
-                    fontWeight: 500,
-                    textDecoration: "underline",
-                  }}
-                >
-                  {t.trainingName}
-                </Typography>
-              )}
-              <Typography
-                color="text.secondary"
-                variant="body2"
-              >
-                {t.completed ? "Completed" : "Not yet completed"}
-              </Typography>
-            </Stack>
-          ))}
-        </Box>
-      ),
-    });
-  }
 
   // Burner Profile
   checklistItems.push({
