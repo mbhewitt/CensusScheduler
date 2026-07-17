@@ -608,7 +608,7 @@ export const ShiftVolunteers = ({
     <>
       <Hero
         imageStyles={{
-          backgroundImage: "url(/banners/databeast-volunteers-waving.jpg)",
+          backgroundImage: "url(/banners/peers-footwash.jpg)",
           backgroundSize: "cover",
         }}
         text="Shift volunteers"

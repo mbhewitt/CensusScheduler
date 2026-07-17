@@ -138,7 +138,7 @@ export const AccountCreate = () => {
     <>
       <Hero
         imageStyles={{
-          backgroundImage: "url(/banners/desk-person.jpg)",
+          backgroundImage: "url(/banners/city-aerial-day.jpg)",
           backgroundSize: "cover",
         }}
         text="Create account"
