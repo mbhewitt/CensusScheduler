@@ -20,6 +20,7 @@ import { useContext } from "react";
 import { Hero } from "@/components/layout/Hero";
 import { SessionContext } from "@/state/session/context";
 import { checkIsAuthenticated } from "@/utils/checkIsRoleExist";
+import { useIsOnPlaya } from "@/utils/useIsOnPlaya";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 
 export const Home = () => {
@@ -40,7 +41,7 @@ export const Home = () => {
     isAuthenticatedSession
   );
   const isOAuthConfigured = process.env.NEXT_PUBLIC_OKTA_ENABLED === "true";
-  const isPinEnabled = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
+  const isPinEnabled = useIsOnPlaya();
 
   // render
   // ------------------------------------------------------------

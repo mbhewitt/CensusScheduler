@@ -45,6 +45,7 @@ import {
   checkIsSuperAdmin,
 } from "@/utils/checkIsRoleExist";
 import { signOut } from "@/utils/signOut";
+import { useIsOnPlaya } from "@/utils/useIsOnPlaya";
 
 export const Header = () => {
   // context
@@ -116,8 +117,9 @@ export const Header = () => {
   // page is still reachable via /info if they want to sign it.
   // NEXT_PUBLIC_* inlines at build time so this is a static decision.
   // isOnPlaya still drives the walk-up /shifts nav visibility below —
-  // only the BS gate is decoupled from it.
-  const isOnPlaya = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
+  // only the BS gate is decoupled from it. Now a runtime (per-request, by
+  // client IP) signal instead of the old build-time flag.
+  const isOnPlaya = useIsOnPlaya();
   const isBehavioralStandardsGateEnabled =
     process.env.NEXT_PUBLIC_BS_GATE_ENABLED != null
       ? process.env.NEXT_PUBLIC_BS_GATE_ENABLED === "true"

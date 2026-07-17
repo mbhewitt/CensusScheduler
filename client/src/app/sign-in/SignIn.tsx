@@ -37,6 +37,7 @@ import { SESSION_SIGN_IN } from "@/constants";
 import { SessionContext } from "@/state/session/context";
 import { ensure } from "@/utils/ensure";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
+import { useIsOnPlaya } from "@/utils/useIsOnPlaya";
 import { resetFilterList } from "@/utils/resetFilterList";
 
 interface IFormValues {
@@ -88,7 +89,9 @@ export const SignIn = () => {
 
   const oauthError = searchParams?.get("error");
   const isOAuthConfigured = process.env.NEXT_PUBLIC_OKTA_ENABLED === "true";
-  const isPinEnabled = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
+  // Passcode is offered only when the request is from the on-playa network
+  // (runtime, via the middleware-set cookie) — replaces the old build-time flag.
+  const isPinEnabled = useIsOnPlaya();
 
   // Forward returnTo through the Okta init so the callback can land the user
   // back where they started (e.g. /training/confirmation/[code] after clicking

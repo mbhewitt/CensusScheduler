@@ -63,6 +63,7 @@ import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
 import { checkIsAdmin, checkIsSuperAdmin } from "@/utils/checkIsRoleExist";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
+import { useIsOnPlaya } from "@/utils/useIsOnPlaya";
 
 // human-readable display names for internal role identifiers
 // Pretty labels for role identifiers shown in the admin roles list. Only
@@ -101,7 +102,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   // Off-playa only: the "Get more involved" sidebar links don't work on the
   // offline on-playa tablets, and volunteers aren't signed into those
   // accounts there (#335).
-  const isOnPlaya = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
+  const isOnPlaya = useIsOnPlaya();
 
   // refs
   // ------------------------------------------------------------

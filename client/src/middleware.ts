@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { isOnPlaya, ON_PLAYA_COOKIE } from "@/lib/onPlaya";
+
 // Inlined deliberately — Next.js middleware runs in the Edge runtime which
 // does not have access to Node's `crypto` module. The session module uses
 // `import crypto from "crypto"` so importing from it would break the build.
@@ -16,13 +18,6 @@ const SESSION_COOKIE_NAME = "census-session";
 //
 // This is a stopgap. The proper fix is per-route role-based authorization
 // (issue #237). For now: block the obvious enumeration paths.
-
-// On-playa deployments (passcode UI enabled) leave /shifts open so a
-// walk-up volunteer with no session can see what's available without
-// signing in. Off-playa (Okta-only, PIN_ENABLED=false) keeps it gated.
-// NEXT_PUBLIC_* is inlined at build time, so this is a static decision
-// per deployment.
-const isOnPlaya = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
 
 const ALLOWLIST = [
   // Sign-in surface (must be reachable while unauthenticated)
@@ -69,10 +64,12 @@ const ALLOWLIST = [
   "/general",
   "/help/",
   "/reports/",
-
-  // On-playa only: walk-up shifts view
-  ...(isOnPlaya ? ["/shifts", "/api/shifts"] : []),
 ];
+
+// On-playa (walk-up) only: /shifts + /api/shifts are reachable without a
+// session so a walk-up volunteer can browse. Now gated per-request by the
+// client's IP (the on-playa gateway range) rather than a build-time flag.
+const ON_PLAYA_ALLOWLIST = ["/shifts", "/api/shifts"];
 
 // Home is public again as of 2026-05-25 — the page now hosts the
 // login affordance inline (Okta button off-playa, "Sign in with
@@ -81,9 +78,10 @@ const ALLOWLIST = [
 // PUBLIC_PATHS purge that came in with PR #337 / closed-#306.
 const PUBLIC_PATHS = new Set(["/"]);
 
-function isAllowlisted(pathname: string): boolean {
+function isAllowlisted(pathname: string, onPlaya: boolean): boolean {
   if (PUBLIC_PATHS.has(pathname)) return true;
-  for (const prefix of ALLOWLIST) {
+  const list = onPlaya ? [...ALLOWLIST, ...ON_PLAYA_ALLOWLIST] : ALLOWLIST;
+  for (const prefix of list) {
     if (pathname === prefix || pathname.startsWith(prefix + "/")) return true;
   }
   return false;
@@ -92,23 +90,40 @@ function isAllowlisted(pathname: string): boolean {
 export function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
 
-  if (isAllowlisted(pathname)) {
-    return NextResponse.next();
+  // Is this request coming from the on-playa gateway network? Keyed off the
+  // unspoofable X-Real-IP that nginx sets. Drives passcode availability.
+  const onPlaya = isOnPlaya((name) => req.headers.get(name));
+
+  // Expose the decision to client components via a readable cookie, set on
+  // every response so the passcode UI can react at runtime.
+  const withOnPlayaCookie = (res: NextResponse) => {
+    res.cookies.set(ON_PLAYA_COOKIE, onPlaya ? "1" : "0", {
+      httpOnly: false,
+      path: "/",
+      sameSite: "lax",
+    });
+    return res;
+  };
+
+  if (isAllowlisted(pathname, onPlaya)) {
+    return withOnPlayaCookie(NextResponse.next());
   }
 
   const cookie = req.cookies.get(SESSION_COOKIE_NAME);
   if (cookie?.value) {
-    return NextResponse.next();
+    return withOnPlayaCookie(NextResponse.next());
   }
 
   // API requests get a 401 instead of a redirect so callers see the error
   if (pathname.startsWith("/api/")) {
-    return new NextResponse(
-      JSON.stringify({
-        statusCode: 401,
-        message: "Authentication required",
-      }),
-      { status: 401, headers: { "content-type": "application/json" } }
+    return withOnPlayaCookie(
+      new NextResponse(
+        JSON.stringify({
+          statusCode: 401,
+          message: "Authentication required",
+        }),
+        { status: 401, headers: { "content-type": "application/json" } }
+      )
     );
   }
 
@@ -118,7 +133,7 @@ export function middleware(req: NextRequest) {
   url.pathname = "/sign-in";
   url.search = "";
   url.searchParams.set("returnTo", pathname + search);
-  return NextResponse.redirect(url);
+  return withOnPlayaCookie(NextResponse.redirect(url));
 }
 
 export const config = {

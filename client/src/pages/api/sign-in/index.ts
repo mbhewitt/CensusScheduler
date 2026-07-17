@@ -3,14 +3,23 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import type { IReqSignIn } from "@/components/types/sign-in";
 import type { IResVolunteerAccount } from "@/components/types/volunteers";
+import { isOnPlaya } from "@/lib/onPlaya";
 import { buildSessionCookie } from "@/lib/session";
 import { pool } from "lib/database";
 
 const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (process.env.NEXT_PUBLIC_PIN_ENABLED === "false") {
+  // Passcode sign-in is only honored from the on-playa gateway network. This
+  // is re-verified server-side off the unspoofable X-Real-IP (nginx-set), not
+  // just the UI cookie — so a forged cookie can't unlock passcode login from
+  // off-playa. (per Mew 2026-07-17)
+  const onPlaya = isOnPlaya((name) => {
+    const value = req.headers[name.toLowerCase()];
+    return Array.isArray(value) ? value[0] : value ?? null;
+  });
+  if (!onPlaya) {
     return res.status(403).json({
       statusCode: 403,
-      message: "Passcode sign-in is not enabled for this deployment",
+      message: "Passcode sign-in is only available on-playa",
     });
   }
 
