@@ -87,15 +87,20 @@ export const Shifts = () => {
     if (checkIsAdmin(accountType, roleList)) return true;
     const required = requiredRoleForType(type);
     if (!required) return true;
-    if (checkIsRoleExist(required.id, roleList)) return true;
-    // Leads can also work Squaddie shifts.
-    if (
-      required.id === ROLE_PEERS_SQUADDIE_ID &&
-      checkIsRoleExist(ROLE_PEERS_SHIFT_LEAD_ID, roleList)
-    ) {
-      return true;
+    const hasSquaddie = checkIsRoleExist(ROLE_PEERS_SQUADDIE_ID, roleList);
+    const hasLead = checkIsRoleExist(ROLE_PEERS_SHIFT_LEAD_ID, roleList);
+    // Shift Lead shifts require BOTH trainings — the Squaddie role AND the
+    // Shift Lead role (each earned from its Hive confirmation link), per
+    // papabear 2026-07-17.
+    if (required.id === ROLE_PEERS_SHIFT_LEAD_ID) {
+      return hasLead && hasSquaddie;
     }
-    return false;
+    // Squaddie shifts: anyone who's completed Squaddie training (Leads too).
+    if (required.id === ROLE_PEERS_SQUADDIE_ID) {
+      return hasSquaddie || hasLead;
+    }
+    // Other types (e.g. Coordinator): the single matching role.
+    return checkIsRoleExist(required.id, roleList);
   };
 
   // state
@@ -387,7 +392,11 @@ export const Shifts = () => {
       ) : (
         <Tooltip
           key={`${id}-locked`}
-          title={`Requires the ${required?.label} role — complete your Hive training to sign up`}
+          title={
+            required?.id === ROLE_PEERS_SHIFT_LEAD_ID
+              ? "Requires completing both the Squaddie and Shift Lead Hive trainings to sign up"
+              : `Requires the ${required?.label} role — complete your Hive training to sign up`
+          }
         >
           <Box sx={{ alignItems: "center", display: "inline-flex", gap: 0.5 }}>
             <LockIcon fontSize="small" sx={{ color: "text.disabled" }} />
