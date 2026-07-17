@@ -316,14 +316,14 @@ export const ShiftTypesPositionDialogAdd = ({
                 error={Boolean(errors.positionAdd?.sapPoints)}
                 fullWidth
                 helperText={errors.positionAdd?.sapPoints?.message}
-                label="SAP points"
+                label="Participation points (PPP)"
                 required
                 type="number"
                 variant="standard"
               />
             )}
             rules={{
-              required: "SAP points is required",
+              required: "Participation points is required",
             }}
           />
         </Grid>

@@ -3,7 +3,6 @@
 import {
   CheckBox as CheckBoxIcon,
   CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon,
-  Download as DownloadIcon,
   ExpandMore as ExpandMoreIcon,
   LockReset as LockResetIcon,
   OpenInNew as OpenInNewIcon,
@@ -24,7 +23,6 @@ import {
   Container,
   FormControlLabel,
   Grid,
-  LinearProgress,
   List,
   ListItem,
   ListItemIcon,
@@ -82,20 +80,6 @@ const ROLE_DISPLAY_NAMES: Record<string, string> = {
 interface IVolunteerInfoProps {
   shiftboardId: number;
 }
-
-// datenames eligible for SAP (pre-opening)
-const PRE_OPEN_DATENAMES = [
-  "EarlyThur",
-  "EarlyFri",
-  "EarlyMan",
-  "PreSun",
-  "PreMon",
-  "PreTue",
-  "PreWed",
-  "PreThur",
-  "PreFri",
-  "PreSat",
-];
 
 export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   // context
@@ -323,23 +307,14 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   if (!data) return <Loading />;
 
   const {
-    arrivalDate,
     behavioralStandardsSigned,
     burnerProfileUpdated,
     emailUnsubscribed,
-    roles,
-    roleThresholds,
-    sapStatus,
     trainings,
     volunteer,
   } = data;
 
   const isAdmin = checkIsAdmin(accountType, roleListSession);
-  const isPreOpen = arrivalDate
-    ? PRE_OPEN_DATENAMES.includes(arrivalDate.datename)
-    : false;
-  const hasOtherSap = roles.includes("OtherSAP");
-  const isStaff = roles.includes("Staff");
 
   // determine which checklist items are complete vs incomplete
   const checklistItems: {
@@ -348,30 +323,6 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     done: boolean;
     content: React.ReactNode;
   }[] = [];
-
-  // SAP Issued
-  if (sapStatus.sapFile) {
-    checklistItems.push({
-      id: "sap-issued",
-      label: "Your Setup Access Pass (SAP) is ready",
-      done: true,
-      content: (
-        <Box>
-          <Typography sx={{ mb: 1 }}>
-            Your SAP has been issued and emailed to you. You can also download it
-            here:
-          </Typography>
-          <Button
-            href={`/api/volunteers/${shiftboardId}/sap/${sapStatus.sapFile.sapId}`}
-            startIcon={<DownloadIcon />}
-            variant="contained"
-          >
-            Download SAP PDF
-          </Button>
-        </Box>
-      ),
-    });
-  }
 
   // Behavioral Standards
   checklistItems.push({
@@ -498,143 +449,8 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     ),
   });
 
-  // SAP Requirements (only for pre-open, non-staff, non-other-SAP)
-  if (isPreOpen && !isStaff && !hasOtherSap) {
-    const allDaysFulfilled = sapStatus.requiredDays.every((d) => d.fulfilled);
-    const sapDone = sapStatus.cspFulfilled && allDaysFulfilled;
-    checklistItems.push({
-      id: "sap-requirements",
-      label: sapDone
-        ? "SAP shift requirements met"
-        : "Sign up for pre-event shifts to earn a PEERS SAP for early entry",
-      done: sapDone,
-      content: (
-        <Box>
-          <Typography sx={{ mb: 2 }}>
-            Earn a PEERS SAP for early entry to the event. Volunteers must sign
-            up for shifts worth at least 12 PEERS Shift Points (CSP). You will
-            also need one PEERS shift per day beginning the day after your
-            planned arrival.
-          </Typography>
-          <Stack spacing={0.5}>
-            <Stack alignItems="center" direction="row" spacing={1}>
-              {sapStatus.cspFulfilled ? (
-                <CheckBoxIcon color="success" fontSize="small" />
-              ) : (
-                <CheckBoxOutlineBlankIcon
-                  sx={{ color: theme.palette.secondary.main }}
-                  fontSize="small"
-                />
-              )}
-              <Typography variant="body2">
-                Sign up for at least 12 PEERS Shift Points
-              </Typography>
-              <Typography color="text.secondary" variant="body2">
-                {sapStatus.totalCsp} / 12 CSP
-              </Typography>
-            </Stack>
-            {sapStatus.requiredDays.map((day) => (
-              <Stack
-                alignItems="center"
-                direction="row"
-                key={day.label}
-                spacing={1}
-              >
-                {day.fulfilled ? (
-                  <CheckBoxIcon color="success" fontSize="small" />
-                ) : (
-                  <CheckBoxOutlineBlankIcon
-                    sx={{ color: theme.palette.secondary.main }}
-                    fontSize="small"
-                  />
-                )}
-                <Typography variant="body2">
-                  Shift on {day.label}
-                </Typography>
-                <Typography color="text.secondary" variant="body2">
-                  {day.fulfilled ? "Fulfilled" : "Still needed"}
-                </Typography>
-              </Stack>
-            ))}
-          </Stack>
-        </Box>
-      ),
-    });
-  }
-
-  // Staff are exempt from CSP tracking \u2014 same copy is reused below for
-  // role-threshold (camp / ticket) items so a Staff volunteer never sees a
-  // CSP gauge anywhere in the checklist (per Mew 2026-05-25).
-  const staffNoCspCopy = (
-    <Typography>
-      As PEERS Staff we know you will work your butt off, so we don&rsquo;t
-      track CSP.
-    </Typography>
-  );
-
-  // Staff bypass
-  if (isStaff) {
-    checklistItems.push({
-      id: "staff",
-      label: "Staff \u2014 Early entry confirmed",
-      done: true,
-      content: staffNoCspCopy,
-    });
-  }
-
-  // Role-based thresholds (Counter Culture, PEERS Lab, PEERS Ticket).
-  // Staff short-circuit: emit a "Requirements met" item with the no-CSP
-  // copy, regardless of actual currentCsp/requiredCsp.
-  for (const rt of roleThresholds) {
-    const displayRole = ROLE_DISPLAY_NAMES[rt.role] ?? rt.role;
-    if (isStaff) {
-      checklistItems.push({
-        id: `role-${rt.role}`,
-        label: `${displayRole} \u2014 Requirements met`,
-        done: true,
-        content: staffNoCspCopy,
-      });
-      continue;
-    }
-    const pct = Math.min(100, Math.round((rt.currentCsp / rt.requiredCsp) * 100));
-    checklistItems.push({
-      id: `role-${rt.role}`,
-      label: rt.fulfilled
-        ? `${displayRole} \u2014 Requirements met`
-        : `Meet shift requirements for ${displayRole}`,
-      done: rt.fulfilled,
-      content: (
-        <Box>
-          <Typography sx={{ mb: 1 }}>
-            Sign up for shifts worth at least {rt.requiredCsp} CSP.
-          </Typography>
-          <Stack alignItems="center" direction="row" spacing={2}>
-            <LinearProgress
-              sx={{ flexGrow: 1, height: 8, borderRadius: 4 }}
-              value={pct}
-              variant="determinate"
-            />
-            <Typography variant="body2">
-              {rt.fulfilled
-                ? "Requirement fulfilled"
-                : `${rt.currentCsp} / ${rt.requiredCsp} CSP`}
-            </Typography>
-          </Stack>
-        </Box>
-      ),
-    });
-  }
-
   const incompleteItems = checklistItems.filter((item) => !item.done);
   const completedItems = checklistItems.filter((item) => item.done);
-
-  // show CSP bar when relevant
-  // Staff are CSP-exempt across the whole checklist (per Mew 2026-05-25),
-  // so the global gauge should not appear at all for them — even if they
-  // happen to have a role threshold attached.
-  const showCspBar =
-    !isStaff &&
-    ((isPreOpen && !hasOtherSap) || roleThresholds.length > 0);
 
   // render
   // ------------------------------------------------------------
@@ -747,15 +563,6 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                 <Typography variant="caption">Completed</Typography>
               </Stack>
             </Stack>
-
-            {/* CSP bar */}
-            {showCspBar && (
-              <Alert severity="info" sx={{ mb: 2 }}>
-                Your current total:{" "}
-                <strong>{sapStatus.totalCsp}</strong> PEERS Shift Points (CSP)
-                scheduled
-              </Alert>
-            )}
 
             {/* incomplete items */}
             {incompleteItems.length === 0 ? (

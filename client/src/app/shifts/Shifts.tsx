@@ -90,13 +90,6 @@ export const Shifts = () => {
       options: { filter: false, sortThirdClickReset: true },
     },
     {
-      name: "CSP",
-      options: {
-        filter: false,
-        sort: false,
-      },
-    },
-    {
       name: columnNameTypeHidden, // hide for filter dialog
       label: "Type",
       options: {
@@ -286,8 +279,6 @@ export const Shifts = () => {
   const dataTable = data.map(
     ({
       canceled,
-      cspMax,
-      cspMin,
       date,
       dateName,
       department: { name: departmentName },
@@ -298,8 +289,6 @@ export const Shifts = () => {
       startTime,
       type,
     }) => {
-      const cspDisplay =
-        cspMin === cspMax ? `${cspMin}` : `${cspMin}-${cspMax}`;
       const typeCell = canceled ? (
         <Box
           key={`${id}-type`}
@@ -335,7 +324,6 @@ export const Shifts = () => {
         date, // hide for filter dialog (Present/Future vs Past)
         formatDateName(date, dateName),
         formatTime(startTime, endTime),
-        cspDisplay,
         type, // hide for filter dialog
         typeCell,
         `${slotsFilled} / ${slotsTotal}`,

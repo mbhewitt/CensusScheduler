@@ -470,14 +470,14 @@ export const ShiftTypesTimeDialogForm = ({
                         errors.timeAdd.positionList[timePositionAddIndex]
                           ?.sapPoints?.message
                       }
-                      label="SAP points"
+                      label="Participation points (PPP)"
                       onBlur={(event) => {
                         if (event.target.value === "") {
                           setError(
                             `timeAdd.positionList.${timePositionAddIndex}.sapPoints`,
                             {
                               type: "required",
-                              message: "SAP points is required",
+                              message: "Participation points is required",
                             }
                           );
                         }
@@ -499,7 +499,7 @@ export const ShiftTypesTimeDialogForm = ({
                     />
                   )}
                   rules={{
-                    required: "SAP points is required",
+                    required: "Participation points is required",
                   }}
                 />
               </Grid>

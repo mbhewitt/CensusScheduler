@@ -407,14 +407,18 @@ export const ShiftVolunteers = ({
         sort: false,
       },
     },
-    {
-      name: "CSP",
+  ];
+  // Participation points (PPP) are an admin/audit-only figure now — hidden
+  // from participants across the app (per papabear 2026-07-17), so the
+  // column only appears for admins on the shift roster.
+  if (isAdmin) {
+    columnListPositions.push({
+      name: "PPP",
       options: {
-        filter: false,
         sort: false,
       },
-    },
-  ];
+    });
+  }
   const dataTablePositions = dataShiftVolunteersItem.positionList.map(
     ({
       csp,
@@ -422,7 +426,9 @@ export const ShiftVolunteers = ({
       slotsFilled,
       slotsTotal,
     }: IResShiftPositionCountItem) => {
-      return [positionName, `${slotsFilled} / ${slotsTotal}`, csp];
+      return isAdmin
+        ? [positionName, `${slotsFilled} / ${slotsTotal}`, csp]
+        : [positionName, `${slotsFilled} / ${slotsTotal}`];
     }
   );
   const optionListCustomPositions = {

@@ -1022,7 +1022,7 @@ export const ShiftTypesForm = ({
                                   <TextField
                                     disabled
                                     fullWidth
-                                    label="SAP points"
+                                    label="Participation points (PPP)"
                                     required
                                     type="number"
                                     value={value}

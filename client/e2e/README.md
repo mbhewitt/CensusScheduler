@@ -92,7 +92,7 @@ TEST_MYSQL_HOST=localhost TEST_MYSQL_DATABASE=census_test npm run test:e2e
 | 15 | reports-page | Reports page functionality |
 | 16 | help-page | Help page content |
 | 17 | doodle | Doodle/poll feature |
-| 18 | vip-page | VIP (Volunteer Info Page): UI sections, SAP eligibility, role toggles, API endpoints |
+| 18 | vip-page | VIP (Volunteer Info Page): UI sections, role toggles, API endpoints |
 
 ## Reading Test Results
 

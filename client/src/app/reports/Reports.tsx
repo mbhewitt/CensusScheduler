@@ -1,37 +1,34 @@
 "use client";
 
-import { Assessment as AssessmentIcon } from "@mui/icons-material";
+import { Download as DownloadIcon } from "@mui/icons-material";
 import {
+  Button,
   Card,
   CardContent,
   Container,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
+  Typography,
 } from "@mui/material";
-import Link from "next/link";
+import { useContext } from "react";
 
 import { Hero } from "@/components/layout/Hero";
+import { DeveloperModeContext } from "@/state/developer-mode/context";
+import { SessionContext } from "@/state/session/context";
+import { checkIsAdmin } from "@/utils/checkIsRoleExist";
 
-export const reportList = [
-  {
-    id: "2024",
-    text: "Black Rock City Census 2024 Population Report",
-    url: "/reports/2024/index.html",
-  },
-  {
-    id: "2023",
-    text: "Black Rock City Census 2023 Population Report",
-    url: "/reports/2023/index.html",
-  },
-  {
-    id: "2022",
-    text: "Black Rock City Census: 2013-2022 Population Analysis",
-    url: "/reports/2013-2022/index.html",
-  },
-];
 export const Reports = () => {
+  // context
+  // ------------------------------------------------------------
+  const {
+    developerModeState: { accountType },
+  } = useContext(DeveloperModeContext);
+  const {
+    sessionState: {
+      user: { roleList: roleListSession },
+    },
+  } = useContext(SessionContext);
+
+  const isAdmin = checkIsAdmin(accountType, roleListSession);
+
   // render
   // ------------------------------------------------------------
   return (
@@ -45,24 +42,30 @@ export const Reports = () => {
       <Container component="main" sx={{ flex: 1 }}>
         <Card>
           <CardContent>
-            <List disablePadding>
-              {reportList.map(({ id, text, url }) => {
-                return (
-                  <ListItem disablePadding key={id}>
-                    <Link
-                      href={url}
-                      style={{ alignItems: "center", display: "flex" }}
-                      target="_blank"
-                    >
-                      <ListItemIcon sx={{ pr: 1 }}>
-                        <AssessmentIcon color="secondary" />
-                      </ListItemIcon>
-                      <ListItemText primary={text} />
-                    </Link>
-                  </ListItem>
-                );
-              })}
-            </List>
+            {isAdmin ? (
+              <>
+                <Typography component="h2" variant="h6" sx={{ mb: 1 }}>
+                  PEERS Participation Points (PPP)
+                </Typography>
+                <Typography color="text.secondary" sx={{ mb: 2 }}>
+                  Post-event audit export. One row per volunteer with their
+                  contact info, shifts signed up for, shifts checked in for,
+                  and total PPP earned for the shifts they completed (checked
+                  in). Points are only credited for checked-in shifts.
+                </Typography>
+                <Button
+                  href="/api/admin/participation-report"
+                  startIcon={<DownloadIcon />}
+                  variant="contained"
+                >
+                  Download PPP report (CSV)
+                </Button>
+              </>
+            ) : (
+              <Typography color="text.secondary">
+                There are no reports available.
+              </Typography>
+            )}
           </CardContent>
         </Card>
       </Container>
