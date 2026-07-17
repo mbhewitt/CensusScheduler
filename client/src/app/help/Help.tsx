@@ -78,6 +78,11 @@ export const Help = () => {
                 </ListItem>
                 <ListItem disablePadding sx={{ display: "list-item" }}>
                   <ListItemText primary="Find the Date and Time of the shift you'd like to sign up for and click on the row." />
+                  <List disablePadding sx={{ listStyle: "upper-alpha", pl: 4 }}>
+                    <ListItem disablePadding sx={{ display: "list-item" }}>
+                      <ListItemText primary="You can filter both the calendar and table views by shift type and availability, and by date in the table view. In the calendar view the filters are at the top-left, above the grid. In the table view, open the filter list with the funnel icon (three dashes) at the top-right." />
+                    </ListItem>
+                  </List>
                 </ListItem>
                 <ListItem disablePadding sx={{ display: "list-item" }}>
                   <ListItemText primary='Rightmost top of the "Volunteers" section, click "Add Volunteer".' />
