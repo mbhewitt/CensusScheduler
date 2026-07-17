@@ -44,13 +44,14 @@ export const ShiftsCalendar = ({ events, onSelect }: IShiftsCalendarProps) => {
     events.length > 0
       ? events.map((e) => e.date).sort()[0]
       : dayjs().format("YYYY-MM-DD");
-  const [weekStart, setWeekStart] = useState<Dayjs>(
-    dayjs(earliest).startOf("week")
-  );
+  // Mon–Fri only — PEERS runs no weekend shifts (per papabear 2026-07-17).
+  // startOf("week") is Sunday, so +1 day = the Monday of that week.
+  const mondayOf = (d: string | Dayjs) => dayjs(d).startOf("week").add(1, "day");
+  const [weekStart, setWeekStart] = useState<Dayjs>(mondayOf(earliest));
 
-  const days = Array.from({ length: 7 }, (_, i) => weekStart.add(i, "day"));
+  const days = Array.from({ length: 5 }, (_, i) => weekStart.add(i, "day"));
   const weekLabel = `${weekStart.format("MMM D")} – ${weekStart
-    .add(6, "day")
+    .add(4, "day")
     .format("MMM D, YYYY")}`;
 
   return (
@@ -74,7 +75,7 @@ export const ShiftsCalendar = ({ events, onSelect }: IShiftsCalendarProps) => {
             {weekLabel}
           </Typography>
           <Button
-            onClick={() => setWeekStart(dayjs(earliest).startOf("week"))}
+            onClick={() => setWeekStart(mondayOf(earliest))}
             size="small"
             variant="text"
           >
@@ -96,7 +97,7 @@ export const ShiftsCalendar = ({ events, onSelect }: IShiftsCalendarProps) => {
           sx={{
             display: "grid",
             gap: 1,
-            gridTemplateColumns: "repeat(7, minmax(130px, 1fr))",
+            gridTemplateColumns: "repeat(5, minmax(150px, 1fr))",
           }}
         >
           {days.map((day) => {
