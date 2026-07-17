@@ -276,10 +276,10 @@ export const BehavioralStandards = ({
                 </ListItem>
               </List>
               <Typography>
-                I agree, as volunteer staff, to abide by this Behavioral
-                Standards Agreement. Nothing in this Agreement modifies,
-                conflicts or affects the Burning Man Harassment, Discrimination
-                and Retaliation Prevention Policy.
+                I agree, as volunteer staff, to abide by this{" "}
+                <strong>Behavioral Standards Agreement</strong>. Nothing in this
+                Agreement modifies, conflicts or affects the Burning Man
+                Harassment, Discrimination and Retaliation Prevention Policy.
               </Typography>
               <Typography>
                 In addition to the above, I agree to be my awesome self, look
