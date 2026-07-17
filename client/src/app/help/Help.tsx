@@ -162,9 +162,9 @@ export const Help = () => {
                   <ListItemText primary='Select "Shifts" from the menu options.' />
                 </ListItem>
                 <ListItem disablePadding sx={{ display: "list-item" }}>
-                  <ListItemText primary='Find the appropriate shift in the list and click on it to access the "Shift Volunteers" page.' />
+                  <ListItemText primary='Find the appropriate shift in the table list or calendar and click on it to access the "Shift Volunteers" page.' />
                   <ListItemText
-                    primary="Note: Shifts are sorted by date and time, by default."
+                    primary="Note: Shifts on the table are sorted by date and time, by default."
                     primaryTypographyProps={{ sx: { fontStyle: "italic" } }}
                   />
                 </ListItem>
