@@ -1,12 +1,18 @@
 "use client";
 
-import { Lock as LockIcon } from "@mui/icons-material";
+import {
+  CalendarMonth as CalendarMonthIcon,
+  Lock as LockIcon,
+  ViewList as ViewListIcon,
+} from "@mui/icons-material";
 import {
   Alert,
   Box,
   Chip,
   Container,
   lighten,
+  ToggleButton,
+  ToggleButtonGroup,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -16,10 +22,14 @@ import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import { MUIDataTableColumn } from "mui-datatables";
 import { useRouter } from "next/navigation";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import useSWR from "swr";
 import { useImmer } from "use-immer";
 
+import {
+  ShiftsCalendar,
+  type ICalendarEvent,
+} from "@/app/shifts/ShiftsCalendar";
 import { DataTable } from "@/components/general/DataTable";
 import { ErrorPage } from "@/components/general/ErrorPage";
 import { Loading } from "@/components/general/Loading";
@@ -105,6 +115,7 @@ export const Shifts = () => {
 
   // state
   // ------------------------------------------------------------
+  const [view, setView] = useState<"calendar" | "table">("calendar");
   const columnNameDateHidden = "Date - hidden";
   const columnNameDate = "Date";
   const columnNameTypeHidden = "Type - hidden";
@@ -421,6 +432,32 @@ export const Shifts = () => {
     }
   );
 
+  // calendar events — same eligibility / color logic as the table
+  const calendarEvents: ICalendarEvent[] = data.map((shift) => {
+    const eligible = isEligibleForType(shift.type);
+    const required = requiredRoleForType(shift.type);
+    return {
+      id: shift.id,
+      date: shift.date,
+      startTime: shift.startTime,
+      endTime: shift.endTime,
+      type: shift.type,
+      filled: shift.slotsFilled,
+      total: shift.slotsTotal,
+      canceled: shift.canceled,
+      eligible,
+      lockedReason: eligible
+        ? ""
+        : required?.id === ROLE_PEERS_SHIFT_LEAD_ID
+          ? "Requires completing both the Squaddie and Shift Lead Hive trainings to sign up"
+          : `Requires the ${required?.label} role — complete your Hive training to sign up`,
+      color:
+        TYPE_COLOR_OVERRIDES[shift.type] ??
+        colorMapDisplay[shift.department.name] ??
+        theme.palette.grey[300],
+    };
+  });
+
   let shiftDateCurrent = "";
   let shiftDateToggle = false;
   const optionListCustom = {
@@ -483,12 +520,40 @@ export const Shifts = () => {
           are grayed out, and sign-ups made before onboarding is complete may be
           removed.
         </Alert>
+        {/* view toggle — calendar (default) vs table */}
+        <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
+          <ToggleButtonGroup
+            color="primary"
+            exclusive
+            onChange={(_, nextView) => {
+              if (nextView) setView(nextView);
+            }}
+            size="small"
+            value={view}
+          >
+            <ToggleButton value="calendar">
+              <CalendarMonthIcon fontSize="small" sx={{ mr: 0.5 }} />
+              Calendar
+            </ToggleButton>
+            <ToggleButton value="table">
+              <ViewListIcon fontSize="small" sx={{ mr: 0.5 }} />
+              Table
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Box>
         <Box component="section">
-          <DataTable
-            columnList={columnList}
-            dataTable={dataTable}
-            optionListCustom={optionListCustom}
-          />
+          {view === "calendar" ? (
+            <ShiftsCalendar
+              events={calendarEvents}
+              onSelect={(id) => router.push(`/shifts/${id}/volunteers`)}
+            />
+          ) : (
+            <DataTable
+              columnList={columnList}
+              dataTable={dataTable}
+              optionListCustom={optionListCustom}
+            />
+          )}
         </Box>
       </Container>
     </>
