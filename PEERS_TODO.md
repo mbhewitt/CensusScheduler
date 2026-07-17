@@ -23,9 +23,9 @@ Legend: ☐ = todo · ✅ = done · ❓ = needs a PEERS decision · 📄 = provi
 - [x] Census population report listing **removed**; Reports page is now an admin-only **PPP CSV audit export**, and the Reports nav entry is hidden from non-admins (2026-07-17).
 
 ## 3. Hero/banner images & brand assets  📄
-- [ ] Review/replace banners in `client/public/banners/` — esp. `databeast-volunteers-*.jpg`, `desk-*.jpg` (may show Census volunteers/branding). `Home.tsx:50` uses `camp-at-day.jpg`.
-- [ ] Verify `client/public/general/favicon.ico` is the PEERS badge.
-- [ ] Review help screenshots `client/public/help/*.jpg` for Census-era tablet UI.
+- [x] Banners (2026-07-17): deleted the census `databeast-volunteers-*` / `desk-*` + unused `storage.jpg`; repointed the 3 pages that used them (Role-volunteers→volunteers-greeting, Shift-volunteers→peers-footwash, Account-create→city-aerial-day). Remaining unused generic BM banners (camp-at-day/night, flags, man-at-night) left available. papabear can request different images per page anytime.
+- [x] Favicon — confirmed correct PEERS badge (papabear 2026-07-17).
+- [x] Help screenshots — replaced with papabear's current PEERS captures, live on the Help page (2026-07-17).
 - [x] Logo (`logo-peers.png`/`logo-header.svg`), page titles, home-page copy/mission — already PEERS.
 
 ## 4. Behavioral Standards document  📄
