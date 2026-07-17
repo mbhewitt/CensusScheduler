@@ -120,6 +120,22 @@ export const Shifts = () => {
     return checkIsRoleExist(required.id, roleList);
   };
 
+  // Whether a shift type is even VISIBLE to the signed-in volunteer (separate
+  // from eligibility/graying). Coordinator shifts show only to Coordinators;
+  // Shift Lead shifts show to Shift Leads (and Coordinators, who see all four);
+  // Squaddie shifts show to everyone. Admins see all. (per papabear 2026-07-17)
+  const isTypeVisible = (type: string): boolean => {
+    if (checkIsAdmin(accountType, roleList)) return true;
+    const hasCoordinator = checkIsRoleExist(
+      ROLE_PEERS_COORDINATOR_ID,
+      roleList
+    );
+    const hasLead = checkIsRoleExist(ROLE_PEERS_SHIFT_LEAD_ID, roleList);
+    if (/coordinator|pcoc|pcio/i.test(type)) return hasCoordinator;
+    if (/lead/i.test(type)) return hasLead || hasCoordinator;
+    return true;
+  };
+
   // state
   // ------------------------------------------------------------
   const [view, setView] = useState<"calendar" | "table">("calendar");
@@ -365,9 +381,13 @@ export const Shifts = () => {
 
   dayjs.extend(isSameOrAfter);
 
+  // Hide shift types the volunteer isn't entitled to see (role-based), before
+  // building either view — applies to both the table and the calendar.
+  const visibleData = data.filter((shift) => isTypeVisible(shift.type));
+
   // prepare datatable
   const colorMapDisplay = getColorMap(data);
-  const dataTable = data.map(
+  const dataTable = visibleData.map(
     ({
       canceled,
       date,
@@ -447,7 +467,7 @@ export const Shifts = () => {
   );
 
   // calendar events — same eligibility / color logic as the table
-  const calendarEvents: ICalendarEvent[] = data.map((shift) => {
+  const calendarEvents: ICalendarEvent[] = visibleData.map((shift) => {
     const eligible = isEligibleForType(shift.type);
     const required = requiredRoleForType(shift.type);
     return {
@@ -472,7 +492,7 @@ export const Shifts = () => {
     };
   });
 
-  const distinctTypes = [...new Set(data.map((s) => s.type))].sort();
+  const distinctTypes = [...new Set(visibleData.map((s) => s.type))].sort();
   const filteredCalendarEvents = calendarEvents.filter((e) => {
     const typeOk = typeFilter.length === 0 || typeFilter.includes(e.type);
     const availabilityOk =
