@@ -1,26 +1,10 @@
-import { Schedule } from "@/app/volunteers/[shiftboardId]/schedule/Schedule";
-import { AuthGate } from "@/components/general/AuthGate";
-import { ACCOUNT_TYPE_AUTHENTICATED } from "@/constants";
+import { redirect } from "next/navigation";
 
-interface ISchedulePageProps {
-  params: Promise<{ shiftboardId: string }>;
-}
-
-export const metadata = {
-  title: "Census | My Shifts",
-};
-const SchedulePage = async ({ params }: ISchedulePageProps) => {
-  // logic
-  // ------------------------------------------------------------
-  const { shiftboardId } = await params;
-
-  // render
-  // ------------------------------------------------------------
-  return (
-    <AuthGate accountTypeToCheck={ACCOUNT_TYPE_AUTHENTICATED}>
-      <Schedule shiftboardId={Number(shiftboardId)} />
-    </AuthGate>
-  );
+// My Shifts is no longer a separate page — /shifts IS the agenda now (the flip).
+// Redirect any old bookmarks/links here to the single Shifts page, which reads
+// the signed-in volunteer from the session and shows the same personal view.
+const SchedulePage = () => {
+  redirect("/shifts");
 };
 
 export default SchedulePage;
