@@ -20,7 +20,11 @@ import {
 } from "@/components/layout/pageList";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
-import { checkIsAdmin, checkIsSuperAdmin } from "@/utils/checkIsRoleExist";
+import {
+  checkIsAdmin,
+  checkIsAuthenticated,
+  checkIsSuperAdmin,
+} from "@/utils/checkIsRoleExist";
 
 export const Footer = () => {
   // context
@@ -30,7 +34,8 @@ export const Footer = () => {
   } = useContext(DeveloperModeContext);
   const {
     sessionState: {
-      user: { roleList },
+      settings: { isAuthenticated: isAuthenticatedSession },
+      user: { roleList, shiftboardId },
     },
   } = useContext(SessionContext);
 
@@ -42,6 +47,10 @@ export const Footer = () => {
   // ------------------------------------------------------------
   const isAdmin = checkIsAdmin(accountType, roleList);
   const isSuperAdmin = checkIsSuperAdmin(accountType, roleList);
+  const isAuthenticated = checkIsAuthenticated(
+    accountType,
+    isAuthenticatedSession
+  );
 
   // render
   // ------------------------------------------------------------
@@ -90,6 +99,20 @@ export const Footer = () => {
                   ))}
                 </List>
                 <List sx={{ p: 0 }}>
+                  {/* Account tops the right column (above Help) for signed-in
+                      users (per papabear 2026-07-17). */}
+                  {isAuthenticated && (
+                    <ListItem disablePadding>
+                      <Link href={`/volunteers/${shiftboardId}/info`}>
+                        <ListItemText
+                          primary="Account"
+                          primaryTypographyProps={{
+                            sx: { color: theme.palette.common.white },
+                          }}
+                        />
+                      </Link>
+                    </ListItem>
+                  )}
                   {pageListHalfSecond.map(({ label, path }) => (
                     <ListItem disablePadding key={path}>
                       <Link href={path}>

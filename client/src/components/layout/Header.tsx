@@ -218,14 +218,37 @@ export const Header = () => {
                   return true;
                 })
                 .map(({ icon, label, path }) => (
-                <ListItem disablePadding key={path}>
-                  <Link href={path} onClick={handleDrawerClose}>
-                    <ListItemButton selected={pathname === path}>
-                      <ListItemIcon>{icon}</ListItemIcon>
-                      <ListItemText primary={label} />
-                    </ListItemButton>
-                  </Link>
-                </ListItem>
+                <Fragment key={path}>
+                  <ListItem disablePadding>
+                    <Link href={path} onClick={handleDrawerClose}>
+                      <ListItemButton selected={pathname === path}>
+                        <ListItemIcon>{icon}</ListItemIcon>
+                        <ListItemText primary={label} />
+                      </ListItemButton>
+                    </Link>
+                  </ListItem>
+                  {/* Account sits directly below Home and above Shifts for
+                      signed-in users (per papabear 2026-07-17). */}
+                  {path === "/" && isAuthenticated && (
+                    <ListItem disablePadding>
+                      <Link
+                        href={`/volunteers/${shiftboardId}/info`}
+                        onClick={handleDrawerClose}
+                      >
+                        <ListItemButton
+                          selected={
+                            pathname === `/volunteers/${shiftboardId}/info`
+                          }
+                        >
+                          <ListItemIcon>
+                            <ManageAccountsIcon />
+                          </ListItemIcon>
+                          <ListItemText primary="Account" />
+                        </ListItemButton>
+                      </Link>
+                    </ListItem>
+                  )}
+                </Fragment>
               ))}
             </List>
             {/* admin nav */}
@@ -317,23 +340,6 @@ export const Header = () => {
                   </ListSubheader>
                 }
               >
-                <ListItem disablePadding>
-                  <Link
-                    href={`/volunteers/${shiftboardId}/info`}
-                    onClick={handleDrawerClose}
-                  >
-                    <ListItemButton
-                      selected={
-                        pathname === `/volunteers/${shiftboardId}/info`
-                      }
-                    >
-                      <ListItemIcon>
-                        <ManageAccountsIcon />
-                      </ListItemIcon>
-                      <ListItemText>Account</ListItemText>
-                    </ListItemButton>
-                  </Link>
-                </ListItem>
                 <ListItem disablePadding>
                   <Link href="/sign-in">
                     <ListItemButton
