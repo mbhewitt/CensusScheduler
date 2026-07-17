@@ -65,17 +65,12 @@ import { checkIsAdmin } from "@/utils/checkIsRoleExist";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 
 // human-readable display names for internal role identifiers
+// Pretty labels for role identifiers shown in the admin roles list. Only
+// active roles need an entry; anything without one falls back to the raw
+// role name. The census-era camp/ticket/SAP/training-complete roles were
+// deleted 2026-07-17, so their labels were pruned here.
 const ROLE_DISPLAY_NAMES: Record<string, string> = {
-  CounterCultureCamp: "Camping with Counter Culture",
-  CensusLabCamp: "Camping with PEERS / Placement HQ",
-  CensusTicket: "PEERS Ticket",
   BurnerProfileUpdated: "Burner Profile Updated",
-  OtherSAP: "Other SAP",
-  TrainingCensusBasicsComplete: "Training: PEERS Basics",
-  TrainingRandomSamplingComplete: "Training: Random Sampling",
-  TrainingOutReachComplete: "Training: OutReach",
-  TrainingDataEntryWizComplete: "Training: Data Entry Wiz",
-  TrainingDataBeastDriverComplete: "Training: Data Beast Driver",
 };
 
 interface IVolunteerInfoProps {

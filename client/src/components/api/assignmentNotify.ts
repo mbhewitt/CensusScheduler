@@ -162,7 +162,7 @@ function shiftIcsUid(
   shiftboardId: number,
   timePositionId: number | string
 ): string {
-  return `peers-shift-${timePositionId}-${shiftboardId}@volunteers.census.burningman.org`;
+  return `peers-shift-${timePositionId}-${shiftboardId}@volunteers.peers.burningman.org`;
 }
 
 export async function lookupActorDisplayName(
