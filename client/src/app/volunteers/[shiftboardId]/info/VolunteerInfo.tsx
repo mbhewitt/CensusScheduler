@@ -61,7 +61,7 @@ import {
 } from "@/constants";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
-import { checkIsAdmin } from "@/utils/checkIsRoleExist";
+import { checkIsAdmin, checkIsSuperAdmin } from "@/utils/checkIsRoleExist";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 
 // human-readable display names for internal role identifiers
@@ -310,6 +310,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   } = data;
 
   const isAdmin = checkIsAdmin(accountType, roleListSession);
+  const isSuperAdmin = checkIsSuperAdmin(accountType, roleListSession);
 
   // determine which checklist items are complete vs incomplete
   const checklistItems: {
@@ -585,7 +586,10 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
           <VolunteerShifts shiftboardId={shiftboardId} />
         </Box>
 
-        {/* security — available to all users */}
+        {/* security — admin/superadmin only. The passcode feature isn't in use
+            yet (prod is Okta-only), so hide it from regular volunteers until we
+            settle its purpose (per papabear 2026-07-17). */}
+        {(isAdmin || isSuperAdmin) && (
         <Box component="section" sx={{ mt: 3 }}>
           <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
             Security
@@ -627,6 +631,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
             </CardContent>
           </Card>
         </Box>
+        )}
 
         {/* settings — available to all users (email-footer #settings anchor) */}
         <Box component="section" id="settings" sx={{ mt: 3 }}>
