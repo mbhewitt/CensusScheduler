@@ -241,12 +241,16 @@ export const BehavioralStandards = ({
           <Card>
             <CardContent>
               <Typography>
-                Burning Man&apos;s culture honors and promotes freedom of
-                expression, unless that expression harms others. The Burning Man
-                organization that supports the year-round activities of the
-                Burning Man community, has zero tolerance for behavior that is
-                non-consensual, abusive, or harmful to others. This includes and
-                is not limited to:
+                <strong>
+                  <em>
+                    Burning Man&apos;s culture honors and promotes freedom of
+                    expression, unless that expression harms others.
+                  </em>
+                </strong>{" "}
+                The Burning Man organization that supports the year-round
+                activities of the Burning Man community, has zero tolerance for
+                behavior that is non-consensual, abusive, or harmful to others.
+                This includes and is not limited to:
               </Typography>
               <List sx={{ listStyle: "disc", pl: 4 }}>
                 <ListItem disablePadding sx={{ display: "list-item" }}>
