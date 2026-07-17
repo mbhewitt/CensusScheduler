@@ -25,11 +25,6 @@ export const pageListDefault = [
     path: "/shifts",
   },
   {
-    icon: <BarChartIcon />,
-    label: "Reports",
-    path: "/reports",
-  },
-  {
     icon: <HelpIcon />,
     label: "Help",
     path: "/help",
@@ -41,6 +36,11 @@ export const pageListDefault = [
   },
 ];
 export const pageListAdmin = [
+  {
+    icon: <BarChartIcon />,
+    label: "Reports",
+    path: "/reports",
+  },
   {
     icon: <Groups3Icon />,
     label: "Volunteers",

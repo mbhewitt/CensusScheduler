@@ -321,7 +321,12 @@ export const Shifts = () => {
       );
       return [
         id, // hide for row click
-        date, // hide for filter dialog (Present/Future vs Past)
+        // Full start datetime (not just the date): drives BOTH the
+        // Present/Future-vs-Past filter (compared at "date" granularity) and
+        // the default Date-column sort, which now orders by date THEN start
+        // time within a day (per Mew 2026-07-17). Falls back to `date` if a
+        // row somehow has no start time.
+        startTime || date,
         formatDateName(date, dateName),
         formatTime(startTime, endTime),
         type, // hide for filter dialog
