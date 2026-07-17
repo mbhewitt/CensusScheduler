@@ -20,7 +20,7 @@ Legend: ☐ = todo · ✅ = done · ❓ = needs a PEERS decision · 📄 = provi
 - [x] `APP_BASE_URL` — set correctly in prod `.env.production` (`https://volunteers.peers.burningman.org`). *(Code fallbacks in queue.ts/assignmentNotify.ts/shiftVolunteers.ts still say census — harmless since env overrides; optional cleanup.)*
 
 ## 2. Reports listing  📄
-- [ ] `client/src/app/reports/Reports.tsx:20,25,30` — three "Black Rock City Census 20XX Population Report" entries (link to `/reports/<year>/index.html`). Provide PEERS reports or remove the listing.
+- [x] Census population report listing **removed**; Reports page is now an admin-only **PPP CSV audit export**, and the Reports nav entry is hidden from non-admins (2026-07-17).
 
 ## 3. Hero/banner images & brand assets  📄
 - [ ] Review/replace banners in `client/public/banners/` — esp. `databeast-volunteers-*.jpg`, `desk-*.jpg` (may show Census volunteers/branding). `Home.tsx:50` uses `camp-at-day.jpg`.
@@ -35,11 +35,11 @@ Legend: ☐ = todo · ✅ = done · ❓ = needs a PEERS decision · 📄 = provi
 
 ## 5. Volunteer flow — SAP / CSP / training-first  ❓ (decisions, then code/data)
 - [x] **SAP** (early-entry "Setup/Special Access Pass"): **volunteer-facing request path DISABLED in prod** (commit `048cdc7`, per papabear 2026-07-01; confirmed by Mew 2026-07-02 — "PEERS doesn't need it"). Removed the On-Playa/Early-Entry/SAP card + arrival-date/other-sap/location handlers from `VolunteerInfo.tsx`, plus the "plans" checklist item. Volunteers can no longer set a pre-open arrival date or request early entry, so the SAP-requirements checklist block (`isPreOpen` gated) is now dormant/unreachable. **Still present (not removed):** admin "SAP issued" download item, the `op_saps`/`other-sap`/`sap/[sapId]` API routes, and role-threshold CSP logic — remove those separately if a full teardown is wanted.
-- [ ] **CSP** ("SAP points" scoring): keep/rebrand/remove. Label "SAP points" in shift-position dialogs; `requiredCsp=12` in `info/index.ts:256`; role thresholds via `op_roles.census_shift_points`.
-- [ ] **Training-first** (per Mew 2026-06-23): **use the existing role gate — no new mechanism.** Volunteer earns a "training completed" role via a training-confirmation hive link, and that role is set as the position's required Role (`op_position_type.role_id`) → can't sign up until trained (same pattern as Lead/Squaddie). Setup is **data only** (create training role + hive link + set the position's role). ⚠️ Note: the position-role gate is currently **UI-side only** (`ShiftVolunteersDialogAdd.tsx`); the signup API doesn't enforce it server-side — only harden there if strict enforcement is wanted.
-- [ ] `ROLE_DISPLAY_NAMES` — `VolunteerInfo.tsx:93-104` — training/role labels (some still Census-flavored).
-- [ ] Training curriculum/URLs — `op_trainings` (5 seed Census trainings) carry Census course links: Hive posts for Census Basics/Random Sampling/OutReach/DataBeast (`database/scheduler_schema.sql:379-383`, and live in prod/test DBs) **and a Census Google-Drive doc for "DataEntry Wiz"** (`scheduler_schema.sql:382`). Replace with PEERS courses or remove. (Lead/Squaddie hive URLs tracked in §7.)
-- [ ] Event datenames — `ARRIVAL_DATENAMES` was removed from `VolunteerInfo.tsx` with the On-Playa card (048cdc7); `PRE_OPEN_DATENAMES` still there (feeds the now-dormant `isPreOpen` gate) + `DAY_REQS` (`info/index.ts:15-33`) — only matters if SAP kept.
+- [x] **CSP → PPP** (2026-07-17): rebranded "SAP points"/"CSP" to **PEERS Participation Points**, hidden from participants, admin-only CSV audit report. Squaddie=3/Lead=6 (already correct on prod). The 12-CSP / role-threshold early-entry logic was removed with the SAP mechanic.
+- [x] **Training-first shift gating LIVE** (2026-07-17): on `/shifts`, shifts a volunteer lacks the matching PEERS access role for are grayed out + non-clickable (role granted via the Hive confirmation link). ⚠️ Still **UI-side only** — server-side signup enforcement remains open (see §9 hardening).
+- [ ] `ROLE_DISPLAY_NAMES` — `VolunteerInfo.tsx` — training/role labels (some still Census-flavored). (SAP-related entries like OtherSAP now dead but harmless.)
+- [x] The 5 Census training courses (Census Basics / Random Sampling / OutReach / DataEntry Wiz / DataBeast Driver) **soft-deleted from prod** 2026-07-17 along with their roles; only Peers Lead/Squaddie trainings remain active. (Their real Hive URLs still tracked in §7.)
+- [x] Event datenames — `PRE_OPEN_DATENAMES` **removed** from `VolunteerInfo.tsx` in the 2026-07-17 SAP teardown. `DAY_REQS` in `info/index.ts` still present but fully dormant (SAP gone).
 
 ## 6. Physical playa address  📄
 - [x] `assignmentNotify.ts:152` (.ics LOCATION) & `:225` (email body) — set to **PEERS Lab, Esplanade & 5:45, Black Rock City** (per stickybeak, 2026-07-09). Was Census's "6:30 & A".
@@ -48,7 +48,7 @@ Legend: ☐ = todo · ✅ = done · ❓ = needs a PEERS decision · 📄 = provi
 ## 7. Places I was guessing — need confirmation  ❓
 - [x] GetInvolved sidebar links — `GetInvolved.tsx` reworked (048cdc7, per papabear 2026-07-01): removed the Discord + Volunteer-year-round placeholder cards; the remaining card is "Explore PEERS & camp resources" with real links (Camp Resource Guide, The Placement Process). "Take Fun with Fulcrum" URL supplied by papabear 2026-07-16 (`https://hive.burningman.org/share/LE7a4J-96g3hYQ15`) → now a live link.
 - [ ] Lead/Squaddie "hive" course URLs — `op_trainings.url` for codes `AYWOF` (Lead) / `ZNRCZ` (Squaddie) are placeholder `hive.burningman.org`. Provide real course pages.
-- [ ] Confirm final role names: `PEERS Lead` / `PEERS Squaddie` / `PEERS Coordinator` (team set these via admin UI — confirm they're final).
+- [x] Role names confirmed final by papabear (2026-07-17): `PEERS Lead` / `PEERS Squaddie` / `PEERS Coordinator`. (Also: legacy census roles cleaned up — only 8 keeper roles remain active in prod.)
 - [ ] Repo destination for `peers-main` (currently pushed to `mbhewitt/CensusScheduler`; new `PeersScheduler` repo eventually?).
 - [ ] Backup strategy: add git-versioned snapshots like census? (currently 4-hourly disk dumps + RDS daily snapshots; no git repo chosen.)
 
