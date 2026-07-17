@@ -555,52 +555,59 @@ export const Shifts = () => {
             mb: 2,
           }}
         >
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5 }}>
+          <Box>
             {view === "calendar" && (
-              <>
-                <FormControl size="small" sx={{ minWidth: 170 }}>
-                  <Select<string[]>
-                    displayEmpty
-                    input={<OutlinedInput />}
-                    multiple
-                    onChange={(e) =>
-                      setTypeFilter(e.target.value as string[])
-                    }
-                    renderValue={(selected) =>
-                      selected.length === 0
-                        ? "Type: All"
-                        : `Type: ${selected.length}`
-                    }
-                    value={typeFilter}
-                  >
-                    {distinctTypes.map((t) => (
-                      <MenuItem key={t} value={t}>
-                        <Checkbox checked={typeFilter.includes(t)} />
-                        <ListItemText primary={t} />
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <FormControl size="small" sx={{ minWidth: 150 }}>
-                  <InputLabel id="calendar-availability-label">
-                    Availability
-                  </InputLabel>
-                  <Select
-                    label="Availability"
-                    labelId="calendar-availability-label"
-                    onChange={(e) =>
-                      setAvailabilityFilter(
-                        e.target.value as "all" | "open" | "full"
-                      )
-                    }
-                    value={availabilityFilter}
-                  >
-                    <MenuItem value="all">All</MenuItem>
-                    <MenuItem value="open">Open only</MenuItem>
-                    <MenuItem value="full">Full only</MenuItem>
-                  </Select>
-                </FormControl>
-              </>
+              <Box>
+                <Typography
+                  sx={{ fontWeight: 700, mb: 0.5, textAlign: "center" }}
+                >
+                  Filters
+                </Typography>
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5 }}>
+                  <FormControl size="small" sx={{ minWidth: 170 }}>
+                    <Select<string[]>
+                      displayEmpty
+                      input={<OutlinedInput />}
+                      multiple
+                      onChange={(e) =>
+                        setTypeFilter(e.target.value as string[])
+                      }
+                      renderValue={(selected) =>
+                        selected.length === 0
+                          ? "Type: All"
+                          : `Type: ${selected.length}`
+                      }
+                      value={typeFilter}
+                    >
+                      {distinctTypes.map((t) => (
+                        <MenuItem key={t} value={t}>
+                          <Checkbox checked={typeFilter.includes(t)} />
+                          <ListItemText primary={t} />
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <FormControl size="small" sx={{ minWidth: 150 }}>
+                    <InputLabel id="calendar-availability-label">
+                      Availability
+                    </InputLabel>
+                    <Select
+                      label="Availability"
+                      labelId="calendar-availability-label"
+                      onChange={(e) =>
+                        setAvailabilityFilter(
+                          e.target.value as "all" | "open" | "full"
+                        )
+                      }
+                      value={availabilityFilter}
+                    >
+                      <MenuItem value="all">All</MenuItem>
+                      <MenuItem value="open">Open only</MenuItem>
+                      <MenuItem value="full">Full only</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Box>
+              </Box>
             )}
           </Box>
           <ToggleButtonGroup
