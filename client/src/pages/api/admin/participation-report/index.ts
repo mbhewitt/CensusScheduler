@@ -78,7 +78,15 @@ const participationReport = async (
                '-',
                LOWER(TIME_FORMAT(STR_TO_DATE(st.end_time_text, '%H:%i'), '%l:%i%p'))
              ),
-             sn.shift_name
+             CASE
+               WHEN sn.shift_name LIKE '%Lead%' THEN 'Shift Lead'
+               WHEN sn.shift_name LIKE '%Squaddie%' THEN 'Squaddie'
+               WHEN sn.shift_name LIKE '%PCoC%'
+                 OR sn.shift_name LIKE '%On Call%' THEN 'PCoC'
+               WHEN sn.shift_name LIKE '%PCiO%'
+                 OR sn.shift_name LIKE '%in Office%' THEN 'PCiO'
+               ELSE sn.shift_name
+             END
            )
          END
          ORDER BY d.date, st.start_time_text
