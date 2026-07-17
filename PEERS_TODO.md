@@ -68,9 +68,9 @@ Design agreed in #peers 2026-07-03; deferred to pre-playa. Two linked pieces:
 - [ ] Alt if hard IP range is messy: staff-entered on-playa access code, or an admin toggle enabling passcode mode for the event window (simpler, less bulletproof than IP).
 
 ## 8. Ops / infra files (found in reviewer pass 2026-06-24)  📄
-- [ ] `httpd/public-html/index.html:5,7,13` — on-playa fallback redirect hardcodes `http://census.org:3000` (meta refresh + JS + link). Point at the PEERS app or remove. (Not used by the prod EC2/nginx stack, but ships in the repo / on-playa boxes.)
-- [ ] `Tablet_setup.md:15` — tablet Google account `brccensus.labhost@gmail.com` (Census-branded). Confirm/replace for PEERS tablets.
-- [ ] `Tablet_setup.md:19` — "click on census logo" instruction → PEERS logo.
+- [x] `httpd/public-html/index.html` — fallback redirect repointed `census.org:3000` → `https://volunteers.peers.burningman.org` (2026-07-17). (Unused this year — cloud-only playa — but tidied.)
+- [ ] `Tablet_setup.md:15` — tablet Google account `brccensus.labhost@gmail.com` (Census-branded). **Still needs the PEERS tablet Google account from papabear.**
+- [x] `Tablet_setup.md:19` — "census logo" instruction updated → PEERS account avatar (2026-07-17).
 - [x] `database/scheduler_schema.sql:4` — `-- Database: census` dump-header comment: cosmetic metadata, leave as-is.
 
 ## Go-live flip (do together when ready)
