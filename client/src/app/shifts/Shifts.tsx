@@ -344,7 +344,8 @@ export const Shifts = () => {
         dateFilterList.push(
           dateName ? formatDateName(date, dateName) : formatDateName(date)
         );
-        typeFilterList.push(type);
+        // Only offer the Type filter for types the volunteer can see.
+        if (isTypeVisible(type)) typeFilterList.push(type);
       });
 
       const dateFilterListDisplay = [...new Set(dateFilterList)];
@@ -372,6 +373,9 @@ export const Shifts = () => {
         })
       );
     }
+    // NB: isTypeVisible is deliberately not a dep — it changes identity each
+    // render and this effect writes a fresh filterOptions object, so adding it
+    // would loop. Role rarely changes mid-session; options refresh on data.
   }, [data, setColumnList]);
 
   // logic
