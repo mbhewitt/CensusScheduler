@@ -8,9 +8,16 @@ import {
 import {
   Alert,
   Box,
+  Checkbox,
   Chip,
   Container,
+  FormControl,
+  InputLabel,
   lighten,
+  ListItemText,
+  MenuItem,
+  OutlinedInput,
+  Select,
   ToggleButton,
   ToggleButtonGroup,
   Tooltip,
@@ -116,6 +123,13 @@ export const Shifts = () => {
   // state
   // ------------------------------------------------------------
   const [view, setView] = useState<"calendar" | "table">("calendar");
+  // Calendar-view filters (Type + availability). The table has its own
+  // built-in filters; these mirror them for the calendar (per papabear
+  // 2026-07-17). Empty typeFilter = all types.
+  const [typeFilter, setTypeFilter] = useState<string[]>([]);
+  const [availabilityFilter, setAvailabilityFilter] = useState<
+    "all" | "open" | "full"
+  >("all");
   const columnNameDateHidden = "Date - hidden";
   const columnNameDate = "Date";
   const columnNameTypeHidden = "Type - hidden";
@@ -458,6 +472,16 @@ export const Shifts = () => {
     };
   });
 
+  const distinctTypes = [...new Set(data.map((s) => s.type))].sort();
+  const filteredCalendarEvents = calendarEvents.filter((e) => {
+    const typeOk = typeFilter.length === 0 || typeFilter.includes(e.type);
+    const availabilityOk =
+      availabilityFilter === "all" ||
+      (availabilityFilter === "open" && e.filled < e.total) ||
+      (availabilityFilter === "full" && e.filled >= e.total);
+    return typeOk && availabilityOk;
+  });
+
   let shiftDateCurrent = "";
   let shiftDateToggle = false;
   const optionListCustom = {
@@ -520,8 +544,65 @@ export const Shifts = () => {
           are grayed out, and sign-ups made before onboarding is complete may be
           removed.
         </Alert>
-        {/* view toggle — calendar (default) vs table */}
-        <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
+        {/* view toggle + calendar filters (Type + availability) */}
+        <Box
+          sx={{
+            alignItems: "center",
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 2,
+            justifyContent: "space-between",
+            mb: 2,
+          }}
+        >
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5 }}>
+            {view === "calendar" && (
+              <>
+                <FormControl size="small" sx={{ minWidth: 170 }}>
+                  <Select<string[]>
+                    displayEmpty
+                    input={<OutlinedInput />}
+                    multiple
+                    onChange={(e) =>
+                      setTypeFilter(e.target.value as string[])
+                    }
+                    renderValue={(selected) =>
+                      selected.length === 0
+                        ? "Type: All"
+                        : `Type: ${selected.length}`
+                    }
+                    value={typeFilter}
+                  >
+                    {distinctTypes.map((t) => (
+                      <MenuItem key={t} value={t}>
+                        <Checkbox checked={typeFilter.includes(t)} />
+                        <ListItemText primary={t} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl size="small" sx={{ minWidth: 150 }}>
+                  <InputLabel id="calendar-availability-label">
+                    Availability
+                  </InputLabel>
+                  <Select
+                    label="Availability"
+                    labelId="calendar-availability-label"
+                    onChange={(e) =>
+                      setAvailabilityFilter(
+                        e.target.value as "all" | "open" | "full"
+                      )
+                    }
+                    value={availabilityFilter}
+                  >
+                    <MenuItem value="all">All</MenuItem>
+                    <MenuItem value="open">Open only</MenuItem>
+                    <MenuItem value="full">Full only</MenuItem>
+                  </Select>
+                </FormControl>
+              </>
+            )}
+          </Box>
           <ToggleButtonGroup
             color="primary"
             exclusive
@@ -544,7 +625,7 @@ export const Shifts = () => {
         <Box component="section">
           {view === "calendar" ? (
             <ShiftsCalendar
-              events={calendarEvents}
+              events={filteredCalendarEvents}
               onSelect={(id) => router.push(`/shifts/${id}/volunteers`)}
             />
           ) : (
