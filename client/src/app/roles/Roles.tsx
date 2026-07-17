@@ -261,7 +261,7 @@ export const Roles = () => {
     <>
       <Hero
         imageStyles={{
-          backgroundImage: "url(/banners/storage.jpg)",
+          backgroundImage: "url(/banners/placement-hq.jpg)",
           backgroundSize: "cover",
         }}
         text="Roles"
