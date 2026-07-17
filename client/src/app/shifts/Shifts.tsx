@@ -1,6 +1,15 @@
 "use client";
 
-import { Box, Chip, Container, lighten, Typography } from "@mui/material";
+import { Lock as LockIcon } from "@mui/icons-material";
+import {
+  Alert,
+  Box,
+  Chip,
+  Container,
+  lighten,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { blue, green } from "@mui/material/colors";
 import { useTheme } from "@mui/material/styles";
 import dayjs from "dayjs";
@@ -16,10 +25,37 @@ import { ErrorPage } from "@/components/general/ErrorPage";
 import { Loading } from "@/components/general/Loading";
 import { Hero } from "@/components/layout/Hero";
 import type { IResShiftRowItem } from "@/components/types/shifts";
+import {
+  ROLE_PEERS_COORDINATOR_ID,
+  ROLE_PEERS_SHIFT_LEAD_ID,
+  ROLE_PEERS_SQUADDIE_ID,
+} from "@/constants";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
+import { SessionContext } from "@/state/session/context";
+import { checkIsAdmin, checkIsRoleExist } from "@/utils/checkIsRoleExist";
 import { fetcherGet } from "@/utils/fetcher";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
 import { getColorMap } from "@/utils/getColorMap";
+
+// Which access role a shift type requires to sign up. Returns null for shift
+// types with no gating (open to any signed-in volunteer). The PEERS access
+// roles are granted by completing the corresponding Hive training, so gating
+// signup on them also enforces "finish training first" (per papabear
+// 2026-07-17).
+const requiredRoleForType = (
+  type: string
+): { id: number; label: string } | null => {
+  if (/lead/i.test(type)) {
+    return { id: ROLE_PEERS_SHIFT_LEAD_ID, label: "PEERS Lead" };
+  }
+  if (/coordinator|pcoc|pcio/i.test(type)) {
+    return { id: ROLE_PEERS_COORDINATOR_ID, label: "PEERS Coordinator" };
+  }
+  if (/squaddie/i.test(type)) {
+    return { id: ROLE_PEERS_SQUADDIE_ID, label: "PEERS Squaddie" };
+  }
+  return null;
+};
 
 // Per-type chip color overrides for the Shifts table. Type chips are normally
 // colored by department (getColorMap), but the PEERS taxonomy puts every shift
@@ -35,10 +71,32 @@ export const Shifts = () => {
   // context
   // ------------------------------------------------------------
   const {
-    developerModeState: {
-      dateTime: { value: dateTimeValue },
-    },
+    developerModeState: { accountType, dateTime: { value: dateTimeValue } },
   } = useContext(DeveloperModeContext);
+  const {
+    sessionState: {
+      user: { roleList },
+    },
+  } = useContext(SessionContext);
+
+  // Whether the signed-in volunteer may sign up for a given shift type. Admins
+  // bypass; PEERS Leads may also take Squaddie shifts. Untrained volunteers
+  // (no PEERS access role) are ineligible everywhere → the whole list grays
+  // out, which nudges them to finish Hive training first.
+  const isEligibleForType = (type: string): boolean => {
+    if (checkIsAdmin(accountType, roleList)) return true;
+    const required = requiredRoleForType(type);
+    if (!required) return true;
+    if (checkIsRoleExist(required.id, roleList)) return true;
+    // Leads can also work Squaddie shifts.
+    if (
+      required.id === ROLE_PEERS_SQUADDIE_ID &&
+      checkIsRoleExist(ROLE_PEERS_SHIFT_LEAD_ID, roleList)
+    ) {
+      return true;
+    }
+    return false;
+  };
 
   // state
   // ------------------------------------------------------------
@@ -108,8 +166,11 @@ export const Shifts = () => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             shift2: { [key: string]: any }
           ) => {
-            const type1 = shift1.data.props.label;
-            const type2 = shift2.data.props.label;
+            // Sort by the raw type string (hidden Type column, rowData[4]) so
+            // sorting is independent of the rendered cell's structure (the
+            // eligibility wrapper below is not a bare Chip with a `label`).
+            const type1 = shift1.rowData[4];
+            const type2 = shift2.rowData[4];
 
             return type1 > type2 && order === "asc" ? 1 : -1;
           };
@@ -289,6 +350,18 @@ export const Shifts = () => {
       startTime,
       type,
     }) => {
+      const eligible = isEligibleForType(type);
+      const required = requiredRoleForType(type);
+      const baseChip = (
+        <Chip
+          key={`${id}-chip`}
+          label={type}
+          sx={{
+            backgroundColor:
+              TYPE_COLOR_OVERRIDES[type] ?? colorMapDisplay[departmentName],
+          }}
+        />
+      );
       const typeCell = canceled ? (
         <Box
           key={`${id}-type`}
@@ -309,15 +382,18 @@ export const Shifts = () => {
             CANCELED
           </Typography>
         </Box>
+      ) : eligible ? (
+        baseChip
       ) : (
-        <Chip
-          key={`${id}-chip`}
-          label={type}
-          sx={{
-            backgroundColor:
-              TYPE_COLOR_OVERRIDES[type] ?? colorMapDisplay[departmentName],
-          }}
-        />
+        <Tooltip
+          key={`${id}-locked`}
+          title={`Requires the ${required?.label} role — complete your Hive training to sign up`}
+        >
+          <Box sx={{ alignItems: "center", display: "inline-flex", gap: 0.5 }}>
+            <LockIcon fontSize="small" sx={{ color: "text.disabled" }} />
+            {baseChip}
+          </Box>
+        </Tooltip>
       );
       return [
         id, // hide for row click
@@ -346,6 +422,9 @@ export const Shifts = () => {
       sessionStorage.setItem("filterListState", JSON.stringify(filterList));
     },
     onRowClick: (row: string[]) => {
+      // row[4] = raw shift type. Ineligible shifts are grayed out and not
+      // clickable — signup requires the matching PEERS access role.
+      if (!isEligibleForType(row[4])) return;
       router.push(`/shifts/${row[0]}/volunteers`);
     },
     rowHover: true,
@@ -356,12 +435,14 @@ export const Shifts = () => {
         shiftDateToggle = !shiftDateToggle;
       }
 
+      const eligible = isEligibleForType(row[4]);
       return {
         sx: {
           backgroundColor: shiftDateToggle
             ? lighten(theme.palette.secondary.main, 0.9)
             : theme.palette.common.white,
-          cursor: "pointer",
+          cursor: eligible ? "pointer" : "not-allowed",
+          opacity: eligible ? 1 : 0.5,
         },
       };
     },
@@ -384,6 +465,15 @@ export const Shifts = () => {
         text="Shifts"
       />
       <Container component="main">
+        <Alert severity="warning" sx={{ my: 2 }}>
+          <Typography component="span" sx={{ fontWeight: 700 }}>
+            Complete your PEERS onboarding first.
+          </Typography>{" "}
+          You must finish your Hive training and the full onboarding process
+          before signing up for shifts. Shifts you aren&rsquo;t yet eligible for
+          are grayed out, and sign-ups made before onboarding is complete may be
+          removed.
+        </Alert>
         <Box component="section">
           <DataTable
             columnList={columnList}
