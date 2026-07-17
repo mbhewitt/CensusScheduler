@@ -69,8 +69,7 @@ Design agreed in #peers 2026-07-03; deferred to pre-playa. Two linked pieces:
 
 ## 8. Ops / infra files (found in reviewer pass 2026-06-24)  📄
 - [x] `httpd/public-html/index.html` — fallback redirect repointed `census.org:3000` → `https://volunteers.peers.burningman.org` (2026-07-17). (Unused this year — cloud-only playa — but tidied.)
-- [ ] `Tablet_setup.md:15` — tablet Google account `brccensus.labhost@gmail.com` (Census-branded). **Still needs the PEERS tablet Google account from papabear.**
-- [x] `Tablet_setup.md:19` — "census logo" instruction updated → PEERS account avatar (2026-07-17).
+- [x] `Tablet_setup.md` — **deleted** (2026-07-17, papabear): it's a Census kiosk-provisioning process PEERS doesn't use (playa is cloud-only; tablets just open the cloud app). No PEERS tablet Google account exists / is needed.
 - [x] `database/scheduler_schema.sql:4` — `-- Database: census` dump-header comment: cosmetic metadata, leave as-is.
 
 ## Go-live flip (do together when ready)
