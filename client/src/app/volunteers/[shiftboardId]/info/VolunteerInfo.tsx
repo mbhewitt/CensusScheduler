@@ -32,6 +32,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import Image from "next/image";
 import Link from "next/link";
 import { useSnackbar } from "notistack";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
@@ -483,6 +484,11 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
           </BreadcrumbsNav>
         </Box>
 
+        {/* main content \u2014 the welcome header now lives INSIDE the main
+            column so its width matches the sections below it, and the PEERS
+            logo can sit to its right in the sidebar (per papabear 2026-07-17). */}
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, md: isOnPlaya ? 12 : 8 }}>
         {/* welcome header */}
         <Card sx={{ mb: 3 }}>
           <CardContent>
@@ -525,11 +531,6 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
             </Typography>
           </CardContent>
         </Card>
-
-        {/* main content (checklist and everything below) shares a row with
-            the get-involved sidebar, so the sidebar starts at the checklist */}
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 12, md: isOnPlaya ? 12 : 8 }}>
         {/* checklist */}
         <Card sx={{ mb: 3 }}>
           <CardContent>
@@ -905,6 +906,22 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
           </Grid>
           {!isOnPlaya && (
             <Grid size={{ xs: 12, md: 4 }}>
+              {/* PEERS logo to the right of the header, above the
+                  "get more involved" panel (per papabear 2026-07-17). */}
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  mb: 3,
+                }}
+              >
+                <Image
+                  alt="PEERS logo"
+                  height={180}
+                  src="/general/logo-peers.png"
+                  width={160}
+                />
+              </Box>
               <GetInvolved />
             </Grid>
           )}
