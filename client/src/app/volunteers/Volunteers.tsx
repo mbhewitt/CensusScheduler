@@ -235,7 +235,7 @@ export const Volunteers = () => {
     <>
       <Hero
         imageStyles={{
-          backgroundImage: "url(/banners/volunteers-greeting.jpg)",
+          backgroundImage: "url(/banners/city-aerial-day.jpg)",
           backgroundSize: "cover",
         }}
         text="Volunteers"

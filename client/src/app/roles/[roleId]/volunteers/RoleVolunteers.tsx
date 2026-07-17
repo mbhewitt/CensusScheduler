@@ -194,7 +194,7 @@ export const RoleVolunteers = ({ roleId }: IRoleVolunteersProps) => {
     <>
       <Hero
         imageStyles={{
-          backgroundImage: "url(/banners/volunteers-greeting.jpg)",
+          backgroundImage: "url(/banners/peers-headwash-2.jpg)",
           backgroundSize: "cover",
         }}
         text="Role volunteers"
