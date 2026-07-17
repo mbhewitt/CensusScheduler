@@ -186,12 +186,6 @@ export const TrainingConfirmation = ({ code }: ITrainingConfirmationProps) => {
                     </MuiLink>
                     .
                   </Typography>
-                  <Typography color="text.secondary" variant="body2">
-                    Note: To review this training material later, use the
-                    links from the completed checklist item on your account.
-                    From there, you can return to the course on Hive or
-                    view/print a PDF copy of the course.
-                  </Typography>
                 </>
               )}
             </CardContent>
