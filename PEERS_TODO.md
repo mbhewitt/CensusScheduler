@@ -52,7 +52,7 @@ Legend: ☐ = todo · ✅ = done · ❓ = needs a PEERS decision · 📄 = provi
 - [ ] Repo destination for `peers-main` (currently pushed to `mbhewitt/CensusScheduler`; new `PeersScheduler` repo eventually?).
 - [ ] Backup strategy: add git-versioned snapshots like census? (currently 4-hourly disk dumps + RDS daily snapshots; no git repo chosen.)
 
-## 9. On-playa walk-in signup + passcode gating  ❓ (parked — "work out before playa", Mew 2026-07-03)
+## 9. On-playa walk-in signup + passcode gating  ❓ (DEFERRED to on-playa network setup, Mew 2026-07-17 — the playa egress IP/CIDR allowlist only exists once the on-playa net is up; earlier note: "work out before playa", Mew 2026-07-03)
 Design agreed in #peers 2026-07-03; deferred to pre-playa. Two linked pieces:
 
 **A. Reserve walk-in shifts via a `NewVolunteer` role** (Mew's design):
