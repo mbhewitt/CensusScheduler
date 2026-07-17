@@ -80,11 +80,11 @@ export const Help = () => {
                   <ListItemText primary="Find the Date and Time of the shift you'd like to sign up for and click on the row." />
                 </ListItem>
                 <ListItem disablePadding sx={{ display: "list-item" }}>
-                  <ListItemText primary='Above the "Volunteers" section, click "Add Volunteer".' />
+                  <ListItemText primary='Rightmost top of the "Volunteers" section, click "Add Volunteer".' />
                 </ListItem>
                 <ListItem disablePadding sx={{ display: "list-item" }}>
                   <ListItemText primary='Select your name if not already selected and the shift type in the "Position" field.' />
-                  <List disablePadding sx={{ listStyle: "decimal", pl: 4 }}>
+                  <List disablePadding sx={{ listStyle: "upper-alpha", pl: 4 }}>
                     <ListItem disablePadding sx={{ display: "list-item" }}>
                       <ListItemText primary="If the Position is greyed out, you have not been approved or taken the training to select that shift." />
                     </ListItem>
@@ -158,11 +158,17 @@ export const Help = () => {
                 </ListItem>
                 <ListItem disablePadding sx={{ display: "list-item" }}>
                   <ListItemText primary='Find the appropriate shift in the list and click on it to access the "Shift Volunteers" page.' />
-                  <ListItemText primary="Note: Shifts are sorted by date and time, by default." />
+                  <ListItemText
+                    primary="Note: Shifts are sorted by date and time, by default."
+                    primaryTypographyProps={{ sx: { fontStyle: "italic" } }}
+                  />
                 </ListItem>
                 <ListItem disablePadding sx={{ display: "list-item" }}>
                   <ListItemText primary="Find the volunteer's name in the list and click on the toggle-switch to the right to check them in. A green notification will display at the bottom of the screen and the toggle switch will change from light gray to tan, indicating the volunteer is now checked in." />
-                  <ListItemText primary="Note: Names are sorted alphabetically, by default. You can also click the magnifying glass icon above the list on the right to type in the volunteer's default or playa name, if preferred instead of scrolling." />
+                  <ListItemText
+                    primary="Note: Names are sorted alphabetically, by default. You can also click the magnifying glass icon above the list on the right to type in the volunteer's default or playa name, if preferred instead of scrolling."
+                    primaryTypographyProps={{ sx: { fontStyle: "italic" } }}
+                  />
                 </ListItem>
               </List>
               <Stack
