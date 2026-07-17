@@ -67,12 +67,34 @@ const participationReport = async (
            AND vs.noshow = ''
            AND stp.remove_time_position = false
          THEN stp.sap_points ELSE 0
-       END), 0) AS points_earned
+       END), 0) AS points_earned,
+       GROUP_CONCAT(
+         CASE WHEN vs.remove_shift = false AND vs.noshow = '' THEN
+           CONCAT_WS(' ',
+             CONCAT(COALESCE(d.datename, ''), ' ',
+               COALESCE(DATE_FORMAT(d.date, '%c/%e'), '')),
+             CONCAT(
+               LOWER(TIME_FORMAT(STR_TO_DATE(st.start_time_text, '%H:%i'), '%l:%i%p')),
+               '-',
+               LOWER(TIME_FORMAT(STR_TO_DATE(st.end_time_text, '%H:%i'), '%l:%i%p'))
+             ),
+             sn.shift_name
+           )
+         END
+         ORDER BY d.date, st.start_time_text
+         SEPARATOR '; '
+       ) AS shifts_worked
      FROM op_volunteers v
      JOIN op_volunteer_shifts vs
        ON vs.shiftboard_id = v.shiftboard_id
      LEFT JOIN op_shift_time_position stp
        ON stp.time_position_id = vs.time_position_id
+     LEFT JOIN op_shift_times st
+       ON st.shift_times_id = stp.shift_times_id
+     LEFT JOIN op_shift_name sn
+       ON sn.shift_name_id = st.shift_name_id
+     LEFT JOIN op_dates d
+       ON d.date_id = st.start_date_id
      WHERE v.delete_volunteer = false
      GROUP BY v.shiftboard_id, v.playa_name, v.world_name, v.email, v.phone
      HAVING signed_up_count > 0
@@ -87,6 +109,7 @@ const participationReport = async (
     "Shifts Signed Up",
     "Shifts Checked In",
     "Participation Points (PPP) Earned",
+    "Shifts Worked (checked in)",
   ];
   const lines = [
     header.map(csvCell).join(","),
@@ -99,6 +122,7 @@ const participationReport = async (
         r.signed_up_count,
         r.checked_in_count,
         r.points_earned,
+        r.shifts_worked,
       ]
         .map(csvCell)
         .join(",")
