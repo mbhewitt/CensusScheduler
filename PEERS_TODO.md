@@ -15,7 +15,7 @@ Legend: ☐ = todo · ✅ = done · ❓ = needs a PEERS decision · 📄 = provi
 - [x] `MAIL_FROM` — default changed to `peers@burningmail.burningman.org` (`client/lib/mail/index.ts`). Uses the SES-verified `burningmail.burningman.org` subdomain (apex `burningman.org` not a confirmed SES identity). (commit `802673e`, deployed to prod 2026-06-30)
 - [x] `MAIL_DEFAULT_REPLY_TO` — default changed to `PEERS Volunteer Coordinators <peers@burningman.org>` (`client/lib/mail/index.ts:13-15`). Was `censusvc@burningman.org`; prod has no env override so the code default applies. (papabear 2026-07-16, caught via test email)
 - [ ] Calendar UID domain — `client/src/components/api/assignmentNotify.ts:165` — `@volunteers.census.burningman.org` (keep stable; pick PEERS domain).
-- [ ] BS-doc emails — `BehavioralStandards.tsx:265,291,295-296` (see §4).
+- [x] BS-doc emails — the entire Methods/Communication section (and its personal emails) was removed in the 2026-07-16 BS rewrite. No emails remain in the doc.
 - [x] Home page `mailto:` — `client/src/app/Home.tsx` — confirmed `peers@burningman.org` (in source + live). (2026-07-01)
 - [x] `APP_BASE_URL` — set correctly in prod `.env.production` (`https://volunteers.peers.burningman.org`). *(Code fallbacks in queue.ts/assignmentNotify.ts/shiftVolunteers.ts still say census — harmless since env overrides; optional cleanup.)*
 
@@ -29,9 +29,9 @@ Legend: ☐ = todo · ✅ = done · ❓ = needs a PEERS decision · 📄 = provi
 - [x] Logo (`logo-peers.png`/`logo-header.svg`), page titles, home-page copy/mission — already PEERS.
 
 ## 4. Behavioral Standards document  📄
-- [ ] Leadership roster + emails — `BehavioralStandards.tsx:290-299` ("As of Jun 2026..." names/aliases). Confirm current PEERS leadership + addresses.
+- [x] Leadership roster + emails — removed entirely in the 2026-07-16 BS rewrite (Random/Rescue/Captain Mew names + random@/ann.norton@/mu@ aliases are gone; page no longer lists individuals).
 - [x] Coordinator email — `BehavioralStandards.tsx` "should be sent to" address changed `censusvolunteercoordinators@` → `peers@burningman.org`. (papabear 2026-07-16)
-- [ ] Confirm body policy text is PEERS-correct (already rebranded to "BRC PEERS"; just confirm content/expectations).
+- [x] Body policy text — replaced with the finalized standardized Burning Man Behavioral Standards Agreement copy (papabear-supplied Google Doc, 2026-07-16).
 
 ## 5. Volunteer flow — SAP / CSP / training-first  ❓ (decisions, then code/data)
 - [x] **SAP** (early-entry "Setup/Special Access Pass"): **volunteer-facing request path DISABLED in prod** (commit `048cdc7`, per papabear 2026-07-01; confirmed by Mew 2026-07-02 — "PEERS doesn't need it"). Removed the On-Playa/Early-Entry/SAP card + arrival-date/other-sap/location handlers from `VolunteerInfo.tsx`, plus the "plans" checklist item. Volunteers can no longer set a pre-open arrival date or request early entry, so the SAP-requirements checklist block (`isPreOpen` gated) is now dormant/unreachable. **Still present (not removed):** admin "SAP issued" download item, the `op_saps`/`other-sap`/`sap/[sapId]` API routes, and role-threshold CSP logic — remove those separately if a full teardown is wanted.
