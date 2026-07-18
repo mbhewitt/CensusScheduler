@@ -74,7 +74,7 @@ live; A (walk-in NewVolunteer role/shifts) remains:
 - [x] `database/scheduler_schema.sql:4` — `-- Database: census` dump-header comment: cosmetic metadata, leave as-is.
 
 ## Go-live flip (do together when ready)
-- [ ] Lift `MAIL_OVERRIDE_TO` (currently routes all mail to papabear@burningman.org).
+- [x] Lift `MAIL_OVERRIDE_TO` — **DONE 2026-07-17** (Mew's go): commented it in prod `client/.env.production` (backup saved) and **rebuilt** (it's build-time inlined, so a restart alone wasn't enough). Mail worker now runs with no override → real recipients. Reverse = uncomment + rebuild.
 - [x] Contact form From (`peers@burningmail.burningman.org`) + recipient (`peers@burningman.org`) set. *(General `MAIL_DEFAULT_REPLY_TO` default still §1.)*
 - [ ] Confirm playa address, reports, images, BS roster all finalized first.
 
