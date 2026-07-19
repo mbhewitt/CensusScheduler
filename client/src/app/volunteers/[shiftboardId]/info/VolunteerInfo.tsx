@@ -852,8 +852,8 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
       content: (
         <Box>
           <Typography sx={{ mb: 1 }}>
-            Complete each required training course on Census Hive. Click a
-            course name below to open it.
+            Complete each required training course in the Census Community on
+            Hive. Click a course name below to open it.
           </Typography>
           {trainings.map((t) => (
             <Stack

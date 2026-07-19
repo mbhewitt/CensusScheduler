@@ -19,10 +19,10 @@ interface IGetInvolvedItem {
 // Order per Chipper 2026-07-05: Hive first, Discord last.
 const ITEMS: IGetInvolvedItem[] = [
   {
-    title: "Explore Census Hive",
+    title: "Explore the Census Community on Hive",
     description:
-      "The Census Hive page is a great place to dive into the BRC Census pool. Volunteer training is conducted on Hive, and there’s tonnes to learn about our various volunteer opportunities while you’re there. Log in using your Burner Profile ID and password.",
-    linkLabel: "Visit Census Hive",
+      "The Census Hive Community is a great place to dive into the BRC Census pool. Volunteer training is conducted on Hive, and there’s tonnes to learn about our various volunteer opportunities while you’re there. Log in using your Burner Profile ID and password.",
+    linkLabel: "Visit the Census Community on Hive",
     href: "https://hive.burningman.org/spaces/14264554",
   },
   {
