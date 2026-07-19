@@ -14,6 +14,11 @@ import {
   Checkbox,
   CircularProgress,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   FormControlLabel,
   List,
   ListItem,
@@ -67,6 +72,7 @@ export const BehavioralStandards = ({
   // state
   // ------------------------------------------------------------
   const [isSignedChecked, setIsSignedChecked] = useState(false);
+  const [isDeclineDialogOpen, setIsDeclineDialogOpen] = useState(false);
   const [isDeclinedLoading, setIsDeclinedLoading] = useState(false);
   const [isSignedLoading, setIsSignedLoading] = useState(false);
 
@@ -315,7 +321,7 @@ export const BehavioralStandards = ({
             >
               <Button
                 disabled={isMutating}
-                onClick={handleDecline}
+                onClick={() => setIsDeclineDialogOpen(true)}
                 startIcon={
                   isDeclinedLoading ? (
                     <CircularProgress size="1rem" />
@@ -347,6 +353,53 @@ export const BehavioralStandards = ({
           </Card>
         </Box>
       </Container>
+
+      {/* Confirm decline — declining releases all shifts, then signs out
+          (per stickybeak 2026-07-19). */}
+      <Dialog
+        open={isDeclineDialogOpen}
+        onClose={() => setIsDeclineDialogOpen(false)}
+        aria-labelledby="decline-dialog-title"
+      >
+        <DialogTitle id="decline-dialog-title">
+          Decline Behavioral Standards Agreement?
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            If you decline the Behavioral Standards Agreement, you will not be
+            able to volunteer for PEERS, and any shifts you have already claimed
+            will be released. Are you sure you wish to decline?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ pb: 2, pr: 2 }}>
+          <Button
+            disabled={isDeclinedLoading}
+            onClick={() => setIsDeclineDialogOpen(false)}
+            type="button"
+            variant="outlined"
+          >
+            No
+          </Button>
+          <Button
+            disabled={isDeclinedLoading}
+            onClick={() => {
+              setIsDeclineDialogOpen(false);
+              handleDecline();
+            }}
+            startIcon={
+              isDeclinedLoading ? (
+                <CircularProgress size="1rem" />
+              ) : (
+                <CheckIcon />
+              )
+            }
+            type="button"
+            variant="contained"
+          >
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

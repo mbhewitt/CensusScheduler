@@ -56,6 +56,19 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
         );
       }
 
+      // Declining the agreement releases the volunteer from every shift they
+      // signed up for — they can no longer volunteer for PEERS (per stickybeak
+      // 2026-07-19). Soft-remove all their active signups.
+      if (isBehavioralStandardsSigned === false) {
+        await pool.query<RowDataPacket[]>(
+          `UPDATE op_volunteer_shifts
+          SET remove_shift=true, update_shift=true
+          WHERE shiftboard_id=?
+          AND remove_shift=false`,
+          [shiftboardId]
+        );
+      }
+
       return res.status(201).json({
         statusCode: 201,
         message: "Created",
