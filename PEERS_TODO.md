@@ -78,6 +78,9 @@ live; A (walk-in NewVolunteer role/shifts) remains:
 - [x] Contact form From (`peers@burningmail.burningman.org`) + recipient (`peers@burningman.org`) set. *(General `MAIL_DEFAULT_REPLY_TO` default still §1.)*
 - [ ] Confirm playa address, reports, images, BS roster all finalized first.
 
+## Parked / nice-to-have
+- [ ] **Training-completion audit report** (papabear parked 2026-07-19): honor-system access, but a post-event way to catch anyone handed the HIVE confirmation link who skipped training. No universal ID (HIVE uses a "Token" ≠ Okta `sub` ≠ Salesforce BPGUID), so match by **email**: HIVE-completion email ↔ PEERS scheduler email (= Burner-Profile/Okta email; watch the burner-vs-@burningman mismatch). I offered to export the scheduler side (everyone holding the Squaddie/Lead access role + name + email = who "completed" per the link click) and/or build a "has-access-role but no HIVE-completion match" report next to the PPP report. **Build when they have a HIVE completion export to diff against.**
+
 ---
 
 ## Already completed (reference)
