@@ -58,18 +58,26 @@ export const Home = () => {
             2026 Black Rock City Census volunteer shifts are now open!
           </Typography>
 
-          <Typography sx={{ mb: 2 }}>
-            Sign in below with your Burner Profile to view shift requirements and
-            sign up. Don&apos;t have a Burner Profile yet? Create one at{" "}
-            <a
-              href="https://profiles.burningman.org"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              profiles.burningman.org
-            </a>
-            .
-          </Typography>
+          {isAuthenticated ? (
+            <Typography sx={{ mb: 2 }}>
+              You&apos;re signed in. View your account below, or head to the{" "}
+              <Link href="/shifts">Shifts</Link> page to see requirements and sign
+              up.
+            </Typography>
+          ) : (
+            <Typography sx={{ mb: 2 }}>
+              Sign in below with your Burner Profile to view shift requirements and
+              sign up. Don&apos;t have a Burner Profile yet? Create one at{" "}
+              <a
+                href="https://profiles.burningman.org"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                profiles.burningman.org
+              </a>
+              .
+            </Typography>
+          )}
 
           {/*
            * Login affordance sits between the header and the body copy
@@ -200,13 +208,23 @@ export const Home = () => {
                 welcome you to our happy crew!
               </Typography>
               <Typography>
-                Are you ready to become a Census volunteer?{" "}
-                <a href={isOAuthConfigured ? "/api/auth/okta" : "/sign-in"}>
-                  Sign in
-                </a>{" "}
-                above with your Burner Profile to view shift requirements and
-                sign up. If
-                you still have questions after reviewing our information, or if
+                {isAuthenticated ? (
+                  <>
+                    You&apos;re all set — use the{" "}
+                    <Link href="/shifts">Shifts</Link> page above to view shift
+                    requirements and sign up.
+                  </>
+                ) : (
+                  <>
+                    Are you ready to become a Census volunteer?{" "}
+                    <a href={isOAuthConfigured ? "/api/auth/okta" : "/sign-in"}>
+                      Sign in
+                    </a>{" "}
+                    above with your Burner Profile to view shift requirements and
+                    sign up.
+                  </>
+                )}{" "}
+                If you still have questions after reviewing our information, or if
                 you would like to share your ideas about how to make an impact
                 some other way, contact{" "}
                 <a href="mailto:censusvolunteercoordinators@burningman.org">
@@ -236,7 +254,7 @@ export const Home = () => {
               <Typography>
                 Brief descriptions of the various volunteer roles are below.
                 More information about roles and the training necessary for each
-                can be found at our Census Hive site linked above.
+                can be found in our Census Community on Hive, linked above.
               </Typography>
               <Typography>
                 <strong>Random Samplers</strong> are stationed on Gate Road or
