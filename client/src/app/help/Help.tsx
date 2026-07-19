@@ -1,30 +1,51 @@
 "use client";
 
-import { Menu as MenuIcon } from "@mui/icons-material";
+import { ExpandMore as ExpandMoreIcon } from "@mui/icons-material";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Box,
   Card,
   CardContent,
   Container,
-  IconButton,
   List,
   ListItem,
   ListItemText,
-  Stack,
   Typography,
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import Image from "next/image";
+
+import type { ReactNode } from "react";
 
 import { Hero } from "@/components/layout/Hero";
 
-export const Help = () => {
-  // other hooks
-  // ------------------------------------------------------------
-  const theme = useTheme();
+// Bulleted list that renders naturally inside an accordion.
+const Bullets = ({ items }: { items: ReactNode[] }) => (
+  <List disablePadding sx={{ listStyle: "disc", pl: 4 }}>
+    {items.map((item, index) => (
+      <ListItem key={index} disablePadding sx={{ display: "list-item" }}>
+        <ListItemText primary={item} />
+      </ListItem>
+    ))}
+  </List>
+);
 
-  // render
-  // ------------------------------------------------------------
+const Section = ({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) => (
+  <Accordion disableGutters>
+    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+      <Typography sx={{ fontWeight: 700 }}>{title}</Typography>
+    </AccordionSummary>
+    <AccordionDetails>{children}</AccordionDetails>
+  </Accordion>
+);
+
+export const Help = () => {
   return (
     <>
       <Hero
@@ -35,302 +56,220 @@ export const Help = () => {
         text="Help"
       />
       <Container component="main">
-        <Box component="section">
+        <Box component="section" sx={{ mb: 3 }}>
           <Card>
             <CardContent>
               <Typography>
-                Below are instructions on how to perform three of the most
-                common operations available on the tablet.
+                Welcome! This page walks you through using the Census volunteer
+                app — signing in, signing up for shifts, your checklist,
+                trainings, and more. Tap any section below to open it. If
+                you&apos;re using a tablet at the Census Lab on playa, jump to{" "}
+                <strong>At the Census Lab (on playa)</strong> near the bottom.
               </Typography>
             </CardContent>
           </Card>
         </Box>
-        <Box component="section">
-          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
-            Sign a volunteer in for a shift
-          </Typography>
-          <Card>
-            <CardContent>
-              <Typography>To sign in a volunteer:</Typography>
-              <List disablePadding sx={{ listStyle: "decimal", pl: 4 }}>
-                <ListItem disablePadding sx={{ display: "list-item" }}>
-                  <ListItemText primary="Open the menu by clicking the hamburger icon in the top left-hand corner of the screen." />
-                  <IconButton
-                    disabled
-                    sx={{
-                      "&:disabled": {
-                        backgroundColor: theme.palette.primary.main,
-                      },
-                    }}
+
+        <Box component="section" sx={{ mb: 4 }}>
+          <Section title="Getting started — signing in">
+            <Bullets
+              items={[
+                <>
+                  <strong>From home, on your own device:</strong> open the{" "}
+                  <strong>Home</strong> page and use{" "}
+                  <strong>Sign in to Census</strong>. You&apos;ll sign in with
+                  your Burner Profile. Don&apos;t have one yet? Create it at{" "}
+                  <a
+                    href="https://profiles.burningman.org"
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
-                    <MenuIcon
-                      sx={{
-                        color: theme.palette.common.white,
-                      }}
-                    />
-                  </IconButton>
-                </ListItem>
-                <ListItem disablePadding sx={{ display: "list-item" }}>
-                  <ListItemText primary='Select "Shifts" from the menu options.' />
-                </ListItem>
-                <ListItem disablePadding sx={{ display: "list-item" }}>
-                  <ListItemText primary='Find the appropriate shift in the list and click on it to access the "Shift Volunteers" page.' />
-                  <ListItemText primary="Note: Shifts are sorted by date and time, by default." />
-                </ListItem>
-                <ListItem disablePadding sx={{ display: "list-item" }}>
-                  <ListItemText primary="Find the volunteer's name in the list and click on the toggle-switch to the right to check them in. A green notification will display at the bottom of the screen and the toggle switch will change from light gray to pink, indicating the volunteer is now checked in." />
-                  <ListItemText primary="Note: Names are sorted alphabetically, by default. You can also click the magnifying glass icon above the list on the right to type in the volunteer's default or playa name, if preferred instead of scrolling." />
-                </ListItem>
-              </List>
-              <Stack
-                alignItems="center"
-                sx={{
-                  mb: 2,
-                }}
-              >
-                <Box
-                  sx={{
-                    height: theme.spacing(60),
-                    mb: 2,
-                    position: "relative",
-                    width: 1,
-                  }}
-                >
-                  <Image
-                    alt="snapshot of shift volunteers page"
-                    fill
-                    src="/help/check-in-1.jpg"
-                    style={{
-                      objectFit: "contain",
-                    }}
-                  />
-                </Box>
-                <Typography variant="caption">
-                  Cali Green is not yet checked in.
-                </Typography>
-              </Stack>
-              <Stack
-                alignItems="center"
-                sx={{
-                  mb: 2,
-                }}
-              >
-                <Box
-                  sx={{
-                    height: theme.spacing(60),
-                    mb: 2,
-                    position: "relative",
-                    width: 1,
-                  }}
-                >
-                  <Image
-                    alt="snapshot of shift volunteers page"
-                    fill
-                    src="/help/check-in-2.jpg"
-                    style={{
-                      objectFit: "contain",
-                    }}
-                  />
-                </Box>
-                <Typography variant="caption">
-                  Cali Green is now checked in. The gray toggle is now pink and
-                  a green notification displays at the bottom of the screen.
-                </Typography>
-              </Stack>
-              <Typography>
-                If you accidentally check in the wrong volunteer, you can simply
-                click the toggle switch again, changing it back from pink to
-                gray. A notification will indicate that the volunteer is no
-                longer marked as checked in.
-              </Typography>
-            </CardContent>
-          </Card>
-        </Box>
-        <Box component="section">
-          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
-            Create an account for a new volunteer
-          </Typography>
-          <Card>
-            <CardContent>
-              <Typography>
-                There will be extra name badges for new volunteers. These will
-                be kept with the other volunteer badges in the Data Entry Office
-                (If you cannot find the badges, locate a shift lead/member of
-                Census leadership - please see the Who&apos;s Who in the lounge
-                if you don&apos;t know who to look for).
-              </Typography>
-              <Typography>
-                New volunteer name badges are automatically assigned a passcode,
-                which will be located on the badge itself. This will become the
-                new volunteer&apos;s ongoing passcode, so it is important they
-                do not lose their badge.
-              </Typography>
-              <Typography>
-                The provided name on the new volunteer name badge will be used
-                to initially sign-up the volunteer. In this example, the name
-                provided was &quot;Red Quad.&quot; In order to add this account,
-                press the hamburger pop-out menu in the top left-hand corner of
-                the screen (looks like three horizontal lines), select
-                &quot;Sign In&quot; and locate the name on the badge in the
-                drop-down &quot;Name&quot; menu (as seen below). Use the
-                passcode on the name badge to sign the volunteer in.
-              </Typography>
-              <Stack
-                alignItems="center"
-                sx={{
-                  mb: 2,
-                }}
-              >
-                <Box
-                  sx={{
-                    height: theme.spacing(30),
-                    mb: 2,
-                    position: "relative",
-                    width: 1,
-                  }}
-                >
-                  <Image
-                    alt="snapshot of sign in page"
-                    fill
-                    src="/help/create-account-1.jpg"
-                    style={{
-                      objectFit: "contain",
-                    }}
-                  />
-                </Box>
-              </Stack>
-              <Typography>
-                After entering the passcode, you should see the screen below.
-              </Typography>
-              <Stack
-                alignItems="center"
-                sx={{
-                  mb: 2,
-                }}
-              >
-                <Box
-                  sx={{
-                    height: theme.spacing(30),
-                    position: "relative",
-                    width: 1,
-                  }}
-                >
-                  <Image
-                    alt="snapshot of volunteer account page"
-                    fill
-                    src="/help/create-account-2.jpg"
-                    style={{
-                      objectFit: "contain",
-                    }}
-                  />
-                </Box>
-              </Stack>
-              <Typography>
-                Either the lab host or volunteer can fill out the requested
-                information, followed by pressing the &quot;update&quot; button.
-                After this process is complete, the volunteer will be located in
-                our system, and can be added to the shift of their choice
-                (pending open availability).
-              </Typography>
-            </CardContent>
-          </Card>
-        </Box>
-        <Box component="section">
-          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
-            Send a message
-          </Typography>
-          <Card>
-            <CardContent>
-              <Typography>
-                If a BRC participant would like an email reminder to fill out
-                their Census form, asks a question you do not know the answer
-                to, would like to provide anonymous feedback, or would like to
-                contact a specific volunteer coordinator or Census lead, you can
-                select the hamburger pop-out menu in the top left-hand corner of
-                the screen (looks like three horizontal lines) and select
-                &quot;Contact.&quot; From there, the participant can select the
-                option that fits their needs. &quot;Send me a reminder&quot;
-                will be the first available option at the top of the drop-down
-                menu, in addition to the specific names of possible individuals
-                they might be trying to contact (see example below).
-              </Typography>
-              <Box
-                sx={{
-                  height: theme.spacing(30),
-                  position: "relative",
-                  width: 1,
-                }}
-              >
-                <Image
-                  alt="snapshot of contact page"
-                  fill
-                  src="/help/send-message-1.jpg"
-                  style={{
-                    objectFit: "contain",
-                  }}
-                />
-              </Box>
-              <Stack direction="row" gap={2}>
-                <Box sx={{ flex: 1 }}>
-                  <Typography paragraph>
-                    Ask the participant to{" "}
-                    <strong>double check their email address</strong>, as every
-                    year many email addresses are entered incorrectly.
-                    Unanswered questions will be addressed post-event via an
-                    email reply.{" "}
-                    <strong>
-                      Make sure to use the checkbox feature to select
-                      &quot;reply wanted after Burning Man&quot; as seen above!
-                    </strong>
-                  </Typography>
-                  <Typography paragraph>
-                    If for some reason the interface isn&apos;t working, there
-                    will be an “Unanswered Questions” book at the Census Lab for
-                    participants to write down their contact information and
-                    question. In this case, please ask them to write clearly!
-                  </Typography>
-                  <Typography>
-                    If you still have questions about using the tablet, please
-                    consult the Census Lab Tablet Guide. Access a digital copy
-                    of the tablet guide in the file folder on this tablet. A
-                    printed copy is also available in the Census Lab binder,
-                    which is located in the Data Entry Office. You can also ask
-                    a shift lead or volunteer coordinator to help or look for
-                    one of the volunteers shown on the &quot;Who&apos;s Who
-                    board&quot;, which can be found in the Census Lounge area.
-                  </Typography>
-                </Box>
-                <Stack
-                  alignItems="center"
-                  sx={{
-                    flex: 1,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      height: theme.spacing(60),
-                      mb: 2,
-                      position: "relative",
-                      width: 1,
-                    }}
+                    profiles.burningman.org
+                  </a>
+                  .
+                </>,
+                <>
+                  <strong>On the Census Lab tablets (on playa):</strong> sign in
+                  with the passcode printed on your volunteer name badge.
+                </>,
+                <>
+                  <strong>New volunteer without an account?</strong> Use the{" "}
+                  <strong>Create an account</strong> link on the sign-in screen,
+                  or ask a lab host to set you up with a name badge.
+                </>,
+              ]}
+            />
+          </Section>
+
+          <Section title="Signing up for shifts">
+            <Typography sx={{ mb: 1 }}>
+              Open <strong>Shifts</strong> from the menu. Shifts are grouped by
+              day, and each card shows the time, how many spots are filled, and
+              the points it&apos;s worth.
+            </Typography>
+            <Typography sx={{ mb: 1 }}>What the cards mean:</Typography>
+            <Bullets
+              items={[
+                <>
+                  <strong>✓ You&apos;re signed up</strong> — a shift you&apos;re
+                  already on.
+                </>,
+                <>
+                  <strong>You can sign up</strong> — an open shift you&apos;re
+                  eligible for.
+                </>,
+                <>
+                  <strong>Unavailable</strong> — grayed out, with the reason:{" "}
+                  <strong>🚫 Full</strong> (no open spots),{" "}
+                  <strong>🔒 Requires a role</strong> (a shift limited to a
+                  specific crew), or <strong>⚠️ Overlaps</strong> another shift
+                  you&apos;re already on.
+                </>,
+              ]}
+            />
+            <Typography sx={{ mt: 1, mb: 1 }}>
+              <strong>To sign up:</strong> tap the shift, choose your position,
+              then tap <strong>Add this shift</strong>.
+            </Typography>
+            <Typography sx={{ mb: 1 }}>
+              <strong>To remove a shift:</strong> go to your{" "}
+              <strong>Account</strong> page, find the shift in your list, open
+              its menu, and choose <strong>Remove shift</strong>. (A few lead or
+              critical shifts can&apos;t be dropped on your own — reach out to a
+              volunteer coordinator if you need off one of those.)
+            </Typography>
+            <Typography>
+              Use the filter (funnel icon) to narrow by day, type, or
+              availability — or turn on <strong>My Shifts</strong> to see just
+              the ones you&apos;re on.
+            </Typography>
+          </Section>
+
+          <Section title="Your checklist">
+            <Typography sx={{ mb: 1 }}>
+              Your <strong>Account</strong> page has a checklist of what to
+              complete before playa:
+            </Typography>
+            <Bullets
+              items={[
+                "Required trainings for the shifts you sign up for",
+                "The Behavioral Standards agreement",
+                "The welcome course",
+                "Keeping your Burner Profile up to date",
+              ]}
+            />
+            <Typography sx={{ mt: 1 }}>
+              Items check off automatically as you finish them — no need to
+              report back.
+            </Typography>
+          </Section>
+
+          <Section title="Trainings">
+            <Bullets
+              items={[
+                <>
+                  Trainings live in the <strong>Census community on Hive</strong>{" "}
+                  (Burning Man&apos;s Hive platform). Complete each required
+                  course there.
+                </>,
+                <>
+                  On your checklist, tap a course name to open it in Hive, then
+                  log in with your Burner Profile.
+                </>,
+                <>
+                  When you finish a course, it&apos;s marked complete on your
+                  checklist. If a course you&apos;ve finished still shows as
+                  incomplete, open its link from the checklist once more to sync
+                  it.
+                </>,
+              ]}
+            />
+          </Section>
+
+          <Section title="Shift points (CSP) & early entry (SAP)">
+            <Bullets
+              items={[
+                <>
+                  <strong>CSP (Census Shift Points):</strong> every shift is
+                  worth points. Signing up for enough shifts meets your
+                  volunteer commitment. Your Account page shows your running
+                  total and anything still needed.
+                </>,
+                <>
+                  <strong>SAP (early-entry access):</strong> if you&apos;re
+                  arriving before the event opens to help with setup shifts, you
+                  may need an early-entry pass. It&apos;s generally issued for
+                  the day before your first shift. Staff, anyone who already has
+                  a pass from another source, and folks arriving after gates
+                  open don&apos;t need one. Set your{" "}
+                  <strong>arrival date</strong> on your Account page so this is
+                  calculated correctly.
+                </>,
+              ]}
+            />
+          </Section>
+
+          <Section title="Your account">
+            <Bullets
+              items={[
+                "Update your playa name, world name, email, phone, location, and emergency contact.",
+                "Set your arrival date (this drives your early-entry requirements).",
+                "Manage your email preferences.",
+                "View or reset your passcode.",
+              ]}
+            />
+          </Section>
+
+          <Section title="At the Census Lab (on playa)">
+            <Typography sx={{ mb: 1 }}>
+              The Census Lab has tablets for signing volunteers in, plus a kiosk
+              anyone visiting can use.
+            </Typography>
+            <Bullets
+              items={[
+                <>
+                  <strong>Checking a volunteer in:</strong> open{" "}
+                  <strong>Shifts</strong>, tap the shift, find the
+                  volunteer&apos;s name, and flip their toggle. The check-in
+                  toggle appears from 1 hour before the shift starts until 2
+                  hours after it ends.
+                </>,
+                <>
+                  <strong>If the tablet interface isn&apos;t working:</strong>{" "}
+                  let a shift lead or a member of Census leadership know so it
+                  can be sorted out.
+                </>,
+                <>
+                  For full step-by-step tablet instructions, see the printed{" "}
+                  <strong>Census Lab Tablet Guide</strong> kept in the Census Lab
+                  binder in the Data Entry Office.
+                </>,
+              ]}
+            />
+          </Section>
+
+          <Section title="Still need help?">
+            <Bullets
+              items={[
+                <>
+                  Send a message from the <strong>Contact</strong> page (menu →
+                  Contact) — pick a coordinator, or choose the technology option
+                  for app issues.
+                </>,
+                <>
+                  Join the conversation on the{" "}
+                  <a
+                    href="https://discord.gg/jcWuyYDGcn"
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
-                    <Image
-                      alt="snapshot of to drop-down options in contact page"
-                      fill
-                      src="/help/send-message-2.jpg"
-                      style={{
-                        objectFit: "contain",
-                      }}
-                    />
-                  </Box>
-                  <Typography variant="caption">
-                    Drop-down menu when searching for a specific role lead or
-                    core volunteer.
-                  </Typography>
-                </Stack>
-              </Stack>
-            </CardContent>
-          </Card>
+                    Census Discord server
+                  </a>
+                  .
+                </>,
+              ]}
+            />
+          </Section>
         </Box>
       </Container>
     </>
