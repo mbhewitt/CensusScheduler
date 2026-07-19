@@ -1151,7 +1151,7 @@ export const ShiftVolunteersDialogAdd = ({
             type="submit"
             variant="contained"
           >
-            Add volunteer
+            {isAdmin ? "Add volunteer" : "Add this shift"}
           </Button>
         </DialogActions>
       </form>
