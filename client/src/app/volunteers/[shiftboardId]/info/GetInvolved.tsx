@@ -21,7 +21,7 @@ const ITEMS: IGetInvolvedItem[] = [
   {
     title: "Explore the Census Community on Hive",
     description:
-      "The Census Hive Community is a great place to dive into the BRC Census pool. Volunteer training is conducted on Hive, and there’s tonnes to learn about our various volunteer opportunities while you’re there. Log in using your Burner Profile ID and password.",
+      "The Census community on Burning Man Hive is a great place to dive into the BRC Census pool. Volunteer training is conducted on Hive, and there’s tonnes to learn about our various volunteer opportunities while you’re there. Log in using your Burner Profile ID and password.",
     linkLabel: "Visit the Census Community on Hive",
     href: "https://hive.burningman.org/spaces/14264554",
   },
