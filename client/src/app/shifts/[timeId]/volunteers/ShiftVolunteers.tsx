@@ -28,6 +28,7 @@ import {
   Typography,
 } from "@mui/material";
 import dayjs from "dayjs";
+import { MUIDataTableColumn } from "mui-datatables";
 import Link from "next/link";
 import { useSnackbar } from "notistack";
 import { Fragment, useContext, useEffect, useState } from "react";
@@ -70,6 +71,7 @@ import {
   checkIsAuthenticated,
   checkIsPeersCoordinator,
   checkIsPeersShiftLead,
+  checkIsSuperAdmin,
 } from "@/utils/checkIsRoleExist";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
@@ -286,8 +288,13 @@ export const ShiftVolunteers = ({
     isAuthenticatedSession
   );
   const isAdmin = checkIsAdmin(accountType, roleList);
+  const isSuperAdmin = checkIsSuperAdmin(accountType, roleList);
   const isPeersCoordinator = checkIsPeersCoordinator(roleList);
   const isPeersShiftLead = checkIsPeersShiftLead(roleList);
+  // World name + Check-in columns are for leadership only — hidden from plain
+  // Squaddies (per stickybeak 2026-07-19).
+  const canSeeVolunteerDetails =
+    isAdmin || isSuperAdmin || isPeersCoordinator || isPeersShiftLead;
 
   const handleCheckInToggle = async ({
     shift: { positionName, timePositionId },
@@ -442,19 +449,24 @@ export const ShiftVolunteers = ({
   };
 
   // prepare datatable volunteers
-  const columnListVolunteers = [
+  const columnListVolunteers: MUIDataTableColumn[] = [
     {
       name: "Playa name",
       options: { filter: false, sortThirdClickReset: true },
     },
     {
       name: "World name",
-      options: { filter: false, sortThirdClickReset: true },
+      options: {
+        display: canSeeVolunteerDetails ? true : "excluded",
+        filter: false,
+        sortThirdClickReset: true,
+      },
     },
     { name: "Position", options: { sortThirdClickReset: true } },
     {
       name: "Check in",
       options: {
+        display: canSeeVolunteerDetails ? true : "excluded",
         filter: false,
         searchable: false,
         setCellHeaderProps: setCellHeaderPropsCenter,
@@ -596,6 +608,10 @@ export const ShiftVolunteers = ({
     }
   );
   const optionListCustomVolunteers = {
+    // Hide the filter (funnel) icon on the volunteers table for everyone — our
+    // shifts only have one position type, so it isn't useful (per stickybeak
+    // 2026-07-19).
+    filter: false,
     sortOrder: {
       direction: "asc" as const,
       name: "Playa name",
