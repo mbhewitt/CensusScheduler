@@ -1,14 +1,12 @@
 "use client";
 
 import {
-  ChevronLeft as ChevronLeftIcon,
-  ChevronRight as ChevronRightIcon,
+  CheckBox as CheckBoxIcon,
   Lock as LockIcon,
 } from "@mui/icons-material";
-import { Box, Button, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import { lighten, useTheme } from "@mui/material/styles";
 import dayjs, { Dayjs } from "dayjs";
-import { useState } from "react";
 
 import { formatTime } from "@/utils/formatDateTime";
 
@@ -22,6 +20,7 @@ export interface ICalendarEvent {
   total: number;
   canceled: boolean;
   eligible: boolean;
+  isMine: boolean;
   lockedReason: string;
   color: string;
 }
@@ -47,7 +46,8 @@ export const ShiftsCalendar = ({ events, onSelect }: IShiftsCalendarProps) => {
   // Mon–Fri only — PEERS runs no weekend shifts (per papabear 2026-07-17).
   // startOf("week") is Sunday, so +1 day = the Monday of that week.
   const mondayOf = (d: string | Dayjs) => dayjs(d).startOf("week").add(1, "day");
-  const [weekStart, setWeekStart] = useState<Dayjs>(mondayOf(earliest));
+  // Fixed to the event week — no navigation (per stickybeak 2026-07-19).
+  const weekStart = mondayOf(earliest);
 
   const days = Array.from({ length: 5 }, (_, i) => weekStart.add(i, "day"));
   const weekLabel = `${weekStart.format("MMM D")} – ${weekStart
@@ -56,40 +56,14 @@ export const ShiftsCalendar = ({ events, onSelect }: IShiftsCalendarProps) => {
 
   return (
     <Box>
-      {/* week navigation */}
-      <Stack
-        alignItems="center"
-        direction="row"
-        justifyContent="space-between"
-        sx={{ mb: 2 }}
+      {/* week label — fixed to the event week, no navigation */}
+      <Typography
+        component="h2"
+        sx={{ mb: 2, textAlign: "center" }}
+        variant="h6"
       >
-        <Button
-          onClick={() => setWeekStart(weekStart.subtract(7, "day"))}
-          startIcon={<ChevronLeftIcon />}
-          size="small"
-        >
-          Prev
-        </Button>
-        <Stack alignItems="center" spacing={0.5}>
-          <Typography component="h2" variant="h6">
-            {weekLabel}
-          </Typography>
-          <Button
-            onClick={() => setWeekStart(mondayOf(earliest))}
-            size="small"
-            variant="text"
-          >
-            Jump to shifts
-          </Button>
-        </Stack>
-        <Button
-          onClick={() => setWeekStart(weekStart.add(7, "day"))}
-          endIcon={<ChevronRightIcon />}
-          size="small"
-        >
-          Next
-        </Button>
-      </Stack>
+        {weekLabel}
+      </Typography>
 
       {/* 7-day grid; scrolls horizontally on narrow screens */}
       <Box sx={{ overflowX: "auto" }}>
@@ -171,17 +145,35 @@ export const ShiftsCalendar = ({ events, onSelect }: IShiftsCalendarProps) => {
                         <Stack
                           alignItems="center"
                           direction="row"
+                          justifyContent="space-between"
                           spacing={0.5}
                         >
-                          {!e.eligible && !e.canceled && (
-                            <LockIcon
-                              fontSize="inherit"
-                              sx={{ color: "text.disabled" }}
+                          <Stack
+                            alignItems="center"
+                            direction="row"
+                            spacing={0.5}
+                          >
+                            {!e.eligible && !e.canceled && (
+                              <LockIcon
+                                fontSize="inherit"
+                                sx={{ color: "text.disabled" }}
+                              />
+                            )}
+                            <Typography
+                              sx={{ fontWeight: 600 }}
+                              variant="caption"
+                            >
+                              {formatTime(e.startTime, e.endTime)}
+                            </Typography>
+                          </Stack>
+                          {/* checked box = you're signed up for this shift */}
+                          {e.isMine && (
+                            <CheckBoxIcon
+                              color="success"
+                              fontSize="small"
+                              titleAccess="You are signed up for this shift"
                             />
                           )}
-                          <Typography sx={{ fontWeight: 600 }} variant="caption">
-                            {formatTime(e.startTime, e.endTime)}
-                          </Typography>
                         </Stack>
                         <Typography
                           sx={{

@@ -2,6 +2,7 @@
 
 import {
   CalendarMonth as CalendarMonthIcon,
+  CheckBox as CheckBoxIcon,
   Lock as LockIcon,
   ViewList as ViewListIcon,
 } from "@mui/icons-material";
@@ -42,6 +43,7 @@ import { ErrorPage } from "@/components/general/ErrorPage";
 import { Loading } from "@/components/general/Loading";
 import { Hero } from "@/components/layout/Hero";
 import type { IResShiftRowItem } from "@/components/types/shifts";
+import type { IResVolunteerShiftItem } from "@/components/types/volunteers";
 import {
   ROLE_PEERS_COORDINATOR_ID,
   ROLE_PEERS_SHIFT_LEAD_ID,
@@ -92,7 +94,7 @@ export const Shifts = () => {
   } = useContext(DeveloperModeContext);
   const {
     sessionState: {
-      user: { roleList },
+      user: { roleList, shiftboardId },
     },
   } = useContext(SessionContext);
 
@@ -224,6 +226,16 @@ export const Shifts = () => {
       },
     },
     {
+      name: "My shifts",
+      options: {
+        filter: false,
+        searchable: false,
+        setCellHeaderProps: () => ({ style: { textAlign: "center" } }),
+        setCellProps: () => ({ style: { textAlign: "center" } }),
+        sort: false,
+      },
+    },
+    {
       name: "Filled / Total",
       options: {
         // Underlying value stays "<filled> / <total>" so the filter logic
@@ -279,6 +291,14 @@ export const Shifts = () => {
     data: IResShiftRowItem[];
     error: Error | undefined;
   } = useSWR("/api/shifts", fetcherGet);
+
+  // The signed-in volunteer's own signups — used to mark shifts they're already
+  // on (per stickybeak 2026-07-19). Skipped for walk-ups with no session.
+  const { data: myShifts } = useSWR<IResVolunteerShiftItem[]>(
+    shiftboardId ? `/api/volunteers/${shiftboardId}/shifts` : null,
+    fetcherGet
+  );
+  const myShiftTimeIds = new Set((myShifts ?? []).map((s) => s.shift.timeId));
 
   // other hooks
   // ------------------------------------------------------------
@@ -465,6 +485,16 @@ export const Shifts = () => {
         formatTime(startTime, endTime),
         type, // hide for filter dialog
         typeCell,
+        myShiftTimeIds.has(id) ? (
+          <CheckBoxIcon
+            key={`${id}-mine`}
+            color="success"
+            fontSize="small"
+            titleAccess="You are signed up for this shift"
+          />
+        ) : (
+          ""
+        ),
         `${slotsFilled} / ${slotsTotal}`,
       ];
     }
@@ -484,6 +514,7 @@ export const Shifts = () => {
       total: shift.slotsTotal,
       canceled: shift.canceled,
       eligible,
+      isMine: myShiftTimeIds.has(shift.id),
       lockedReason: eligible
         ? ""
         : required?.id === ROLE_PEERS_SHIFT_LEAD_ID
