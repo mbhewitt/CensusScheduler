@@ -259,7 +259,7 @@ export const Help = () => {
                 <>
                   Join the conversation on the{" "}
                   <a
-                    href="https://discord.gg/jcWuyYDGcn"
+                    href="https://discord.com/invite/NNheeaPQRY"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
