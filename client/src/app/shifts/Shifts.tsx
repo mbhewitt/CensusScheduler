@@ -24,7 +24,6 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { blue, green } from "@mui/material/colors";
 import { useTheme } from "@mui/material/styles";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
@@ -54,7 +53,7 @@ import { SessionContext } from "@/state/session/context";
 import { checkIsAdmin, checkIsRoleExist } from "@/utils/checkIsRoleExist";
 import { fetcherGet } from "@/utils/fetcher";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
-import { getColorMap } from "@/utils/getColorMap";
+import { getColorMap, TYPE_COLOR_OVERRIDES } from "@/utils/getColorMap";
 
 // Which access role a shift type requires to sign up. Returns null for shift
 // types with no gating (open to any signed-in volunteer). The PEERS access
@@ -74,16 +73,6 @@ const requiredRoleForType = (
     return { id: ROLE_PEERS_SQUADDIE_ID, label: "PEERS Squaddie" };
   }
   return null;
-};
-
-// Per-type chip color overrides for the Shifts table. Type chips are normally
-// colored by department (getColorMap), but the PEERS taxonomy puts every shift
-// in one department, so all types share the same color. Override specific
-// shift types here to visually distinguish them (per papabear 2026-07-02).
-const TYPE_COLOR_OVERRIDES: { [type: string]: string } = {
-  "PEERS Coordinator On Call (PCoC) Shift": green[100],
-  "PEERS Coordinator in Office (PCiO) shift": green[100],
-  "PEERS Lead Shift (HQ)": blue[100],
 };
 
 export const Shifts = () => {
@@ -587,7 +576,7 @@ export const Shifts = () => {
           backgroundImage: "url(/banners/peers-footwash.jpg)",
           backgroundSize: "cover",
         }}
-        text="Shifts"
+        text="All Shifts"
       />
       <Container component="main">
         <Alert severity="warning" sx={{ my: 2 }}>

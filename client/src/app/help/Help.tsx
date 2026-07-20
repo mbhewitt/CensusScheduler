@@ -15,13 +15,41 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import Image from "next/image";
+import { useContext } from "react";
 
 import { Hero } from "@/components/layout/Hero";
+import { DeveloperModeContext } from "@/state/developer-mode/context";
+import { SessionContext } from "@/state/session/context";
+import {
+  checkIsAdmin,
+  checkIsPeersCoordinator,
+  checkIsPeersShiftLead,
+  checkIsSuperAdmin,
+} from "@/utils/checkIsRoleExist";
 
 export const Help = () => {
+  // context
+  // ------------------------------------------------------------
+  const {
+    developerModeState: { accountType },
+  } = useContext(DeveloperModeContext);
+  const {
+    sessionState: {
+      user: { roleList },
+    },
+  } = useContext(SessionContext);
+
   // other hooks
   // ------------------------------------------------------------
   const theme = useTheme();
+
+  // The "Shift Leads Only" help section is only relevant to leadership roles
+  // (per stickybeak 2026-07-19).
+  const canSeeShiftLeadHelp =
+    checkIsAdmin(accountType, roleList) ||
+    checkIsSuperAdmin(accountType, roleList) ||
+    checkIsPeersCoordinator(roleList) ||
+    checkIsPeersShiftLead(roleList);
 
   // render
   // ------------------------------------------------------------
@@ -130,6 +158,7 @@ export const Help = () => {
           </Card>
         </Box>
 
+        {canSeeShiftLeadHelp && (
         <Box component="section">
           <Typography component="h2" variant="h4" sx={{ mb: 1 }}>
             Shift Leads Only
@@ -240,6 +269,7 @@ export const Help = () => {
             </CardContent>
           </Card>
         </Box>
+        )}
       </Container>
     </>
   );

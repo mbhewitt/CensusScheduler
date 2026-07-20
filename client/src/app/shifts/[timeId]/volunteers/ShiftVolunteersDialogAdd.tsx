@@ -191,17 +191,21 @@ export const ShiftVolunteersDialogAdd = ({
         dataVolunteerItem.shiftboardId === volunteerWatch.shiftboardId
     );
   useEffect(() => {
+    // Pre-select the position when the shift has only one (per stickybeak
+    // 2026-07-19) — saves a click for the common single-position PEERS shifts.
+    const solePositionId =
+      positionList.length === 1 ? positionList[0].timePositionId : "";
     if (isAuthenticated && isDialogOpen) {
       reset({
         timeIdTraining: "",
-        timePositionIdShift: "",
+        timePositionIdShift: solePositionId,
         timePositionIdTraining: "",
         volunteer: { label: `${playaName} "${worldName}"`, shiftboardId },
       });
     } else if (isDialogOpen) {
       reset({
         timeIdTraining: "",
-        timePositionIdShift: "",
+        timePositionIdShift: solePositionId,
         timePositionIdTraining: "",
         volunteer: null,
       });
@@ -210,6 +214,7 @@ export const ShiftVolunteersDialogAdd = ({
     isAuthenticated,
     isDialogOpen,
     playaName,
+    positionList,
     reset,
     shiftboardId,
     worldName,
@@ -278,7 +283,7 @@ export const ShiftVolunteersDialogAdd = ({
       <DialogContainer
         handleDialogClose={handleDialogClose}
         isDialogOpen={isDialogOpen}
-        text="Add volunteer"
+        text="Claim Shift"
       >
         <ErrorAlert />
       </DialogContainer>
@@ -289,7 +294,7 @@ export const ShiftVolunteersDialogAdd = ({
       <DialogContainer
         handleDialogClose={handleDialogClose}
         isDialogOpen={isDialogOpen}
-        text="Add volunteer"
+        text="Claim Shift"
       >
         <Loading />
       </DialogContainer>
@@ -844,7 +849,7 @@ export const ShiftVolunteersDialogAdd = ({
     <DialogContainer
       handleDialogClose={handleDialogClose}
       isDialogOpen={isDialogOpen}
-      text="Add volunteer"
+      text="Claim Shift"
     >
       <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={2}>
@@ -1002,7 +1007,7 @@ export const ShiftVolunteersDialogAdd = ({
             type="submit"
             variant="contained"
           >
-            Add volunteer
+            Claim Shift
           </Button>
         </DialogActions>
       </form>

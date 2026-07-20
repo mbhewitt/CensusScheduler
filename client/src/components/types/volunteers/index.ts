@@ -62,6 +62,7 @@ export interface IResVolunteerShiftItem {
     startTime: string;
     timeId: number;
     timePositionId: number;
+    type: string;
   };
   volunteer: {
     noShow: string;

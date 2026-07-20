@@ -1,9 +1,8 @@
 import {
+  CalendarMonth as CalendarMonthIcon,
   Chat as ChatIcon,
   EventAvailable as EventAvailableIcon,
-  EventBusy as EventBusyIcon,
-  Groups3 as Groups3Icon,
-  MoreHoriz as MoreHorizIcon,
+  ViewList as ViewListIcon,
 } from "@mui/icons-material";
 import {
   Box,
@@ -11,11 +10,9 @@ import {
   Chip,
   IconButton,
   lighten,
-  ListItemIcon,
-  ListItemText,
-  MenuItem,
-  MenuList,
   Stack,
+  ToggleButton,
+  ToggleButtonGroup,
   Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -27,12 +24,15 @@ import { useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import useSWR, { KeyedMutator } from "swr";
 
+import {
+  ShiftsCalendar,
+  type ICalendarEvent,
+} from "@/app/shifts/ShiftsCalendar";
 import { VolunteerShiftsDialogRemove } from "@/app/volunteers/[shiftboardId]/account/VolunteerShiftsDialogRemove";
 import { VolunteerShiftsDialogReview } from "@/app/volunteers/[shiftboardId]/account/VolunteerShiftsDialogReview";
 import { DataTable } from "@/components/general/DataTable";
 import { ErrorAlert } from "@/components/general/ErrorAlert";
 import { Loading } from "@/components/general/Loading";
-import { MoreMenu } from "@/components/general/MoreMenu";
 import { SnackbarText } from "@/components/general/SnackbarText";
 import type { IResVolunteerShiftItem } from "@/components/types/volunteers";
 import {
@@ -49,7 +49,7 @@ import { checkIsAdmin } from "@/utils/checkIsRoleExist";
 import { fetcherGet } from "@/utils/fetcher";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
 import { getCheckInType } from "@/utils/getCheckInType";
-import { getColorMap } from "@/utils/getColorMap";
+import { getColorMap, TYPE_COLOR_OVERRIDES } from "@/utils/getColorMap";
 import {
   setCellHeaderPropsCenter,
   setCellPropsCenter,
@@ -117,6 +117,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
   });
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [view, setView] = useState<"calendar" | "table">("table");
 
   // fetching, mutation, and revalidation
   // ------------------------------------------------------------
@@ -229,7 +230,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
     return (
       <>
         <Typography component="h2" sx={{ mb: 1 }} variant="h4">
-          Shifts
+          My Shifts
         </Typography>
         <ErrorAlert />
       </>
@@ -238,7 +239,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
     return (
       <>
         <Typography component="h2" sx={{ mb: 1 }} variant="h4">
-          Shifts
+          My Shifts
         </Typography>
         <Loading />
       </>
@@ -301,6 +302,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
         startTime,
         timeId,
         timePositionId,
+        type,
       },
       volunteer: { notes, rating },
     }: IResVolunteerShiftItem) => {
@@ -328,51 +330,52 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
           throw new Error(`Unknown check-in type: ${checkInType}`);
         }
       }
-      const actionsMenu = (
-        <MoreMenu
-          Icon={<MoreHorizIcon />}
-          key={`${shiftboardId}-menu`}
-          MenuList={
-            <MenuList>
-              <Link href={`/shifts/${timeId}/volunteers`}>
-                <MenuItem>
-                  <ListItemIcon>
-                    <Groups3Icon />
-                  </ListItemIcon>
-                  <ListItemText>View volunteers</ListItemText>
-                </MenuItem>
-              </Link>
-              <MenuItem
-                disabled={!isVolunteerRemoveAvailable}
-                onClick={() => {
-                  setDialogCurrent({
-                    dialogItem: DialogList.Remove,
-                    shift: {
-                      date,
-                      dateName,
-                      endTime,
-                      positionName,
-                      startTime,
-                      timeId,
-                      timePositionId,
-                    },
-                    volunteer: {
-                      noShow: "",
-                      notes: "",
-                      rating: null,
-                    },
-                  });
-                  setIsDialogOpen(true);
-                }}
-              >
-                <ListItemIcon>
-                  <EventBusyIcon />
-                </ListItemIcon>
-                <ListItemText>Remove shift</ListItemText>
-              </MenuItem>
-            </MenuList>
-          }
-        />
+      // Replaced the "…" menu with two explicit links — some users didn't
+      // realize the ellipsis opened a menu (per stickybeak 2026-07-19).
+      const actionsLinks = (
+        <Stack
+          direction="row"
+          justifyContent="center"
+          key={`${timePositionId}-actions`}
+          spacing={1}
+        >
+          <Button
+            component={Link}
+            href={`/shifts/${timeId}/volunteers`}
+            size="small"
+            variant="text"
+          >
+            View Shift
+          </Button>
+          <Button
+            color="error"
+            disabled={!isVolunteerRemoveAvailable}
+            onClick={() => {
+              setDialogCurrent({
+                dialogItem: DialogList.Remove,
+                shift: {
+                  date,
+                  dateName,
+                  endTime,
+                  positionName,
+                  startTime,
+                  timeId,
+                  timePositionId,
+                },
+                volunteer: {
+                  noShow: "",
+                  notes: "",
+                  rating: null,
+                },
+              });
+              setIsDialogOpen(true);
+            }}
+            size="small"
+            variant="text"
+          >
+            Drop Shift
+          </Button>
+        </Stack>
       );
 
       const positionCell = canceled ? (
@@ -383,7 +386,8 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
           <Chip
             label={positionName}
             sx={{
-              backgroundColor: colorMapDisplay[departmentName],
+              backgroundColor:
+                TYPE_COLOR_OVERRIDES[type] ?? colorMapDisplay[departmentName],
               textDecoration: "line-through",
             }}
           />
@@ -398,7 +402,10 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
         <Chip
           key={`${timePositionId}-chip`}
           label={positionName}
-          sx={{ backgroundColor: colorMapDisplay[departmentName] }}
+          sx={{
+            backgroundColor:
+              TYPE_COLOR_OVERRIDES[type] ?? colorMapDisplay[departmentName],
+          }}
         />
       );
 
@@ -440,9 +447,9 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
             )}
           </IconButton>
         ) : (
-          actionsMenu
+          actionsLinks
         ),
-        isAdmin && actionsMenu,
+        isAdmin && actionsLinks,
       ];
     }
   );
@@ -468,6 +475,29 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
     },
   };
 
+  // calendar view of the user's own shifts (event week only, no navigation).
+  // filled/total are 0 — this lists only the user's shifts, so the "X / Y
+  // filled" line is omitted by ShiftsCalendar (per stickybeak 2026-07-19).
+  const calendarEvents: ICalendarEvent[] = data.map(
+    ({
+      department: { name: departmentName },
+      shift: { canceled, date, endTime, positionName, startTime, timeId, type },
+    }: IResVolunteerShiftItem) => ({
+      id: timeId,
+      date,
+      startTime,
+      endTime,
+      type: type || positionName,
+      filled: 0,
+      total: 0,
+      canceled,
+      eligible: true,
+      isMine: false,
+      lockedReason: "",
+      color: TYPE_COLOR_OVERRIDES[type] ?? colorMapDisplay[departmentName],
+    })
+  );
+
   // render
   // ------------------------------------------------------------
   return (
@@ -479,7 +509,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
         sx={{ mb: 2 }}
       >
         <Typography component="h2" variant="h4">
-          Shifts
+          My Shifts
         </Typography>
         <Button
           onClick={() => {
@@ -496,11 +526,38 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
         If you are looking to schedule a shift with a friend, make sure you both
         select the same time and day in your account.
       </Typography>
-      <DataTable
-        columnList={columnList}
-        dataTable={dataTable}
-        optionListCustom={optionListCustom}
-      />
+      <Stack alignItems="flex-end" sx={{ mb: 2 }}>
+        <ToggleButtonGroup
+          color="primary"
+          exclusive
+          onChange={(_, nextView) => {
+            if (nextView) setView(nextView);
+          }}
+          size="small"
+          value={view}
+        >
+          <ToggleButton value="calendar">
+            <CalendarMonthIcon fontSize="small" sx={{ mr: 0.5 }} />
+            Calendar
+          </ToggleButton>
+          <ToggleButton value="table">
+            <ViewListIcon fontSize="small" sx={{ mr: 0.5 }} />
+            Table
+          </ToggleButton>
+        </ToggleButtonGroup>
+      </Stack>
+      {view === "calendar" ? (
+        <ShiftsCalendar
+          events={calendarEvents}
+          onSelect={(id) => router.push(`/shifts/${id}/volunteers`)}
+        />
+      ) : (
+        <DataTable
+          columnList={columnList}
+          dataTable={dataTable}
+          optionListCustom={optionListCustom}
+        />
+      )}
 
       {/* remove dialog */}
       <VolunteerShiftsDialogRemove

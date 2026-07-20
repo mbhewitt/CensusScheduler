@@ -1,7 +1,7 @@
 import { Shifts } from "@/app/shifts/Shifts";
 
 export const metadata = {
-  title: "PEERS | Shifts",
+  title: "PEERS | All Shifts",
 };
 const ShiftsPage = () => {
   // render

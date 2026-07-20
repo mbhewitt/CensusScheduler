@@ -245,7 +245,7 @@ export const Header = () => {
                           <ListItemIcon>
                             <ManageAccountsIcon />
                           </ListItemIcon>
-                          <ListItemText primary="Account" />
+                          <ListItemText primary="My Account and Shifts" />
                         </ListItemButton>
                       </Link>
                     </ListItem>

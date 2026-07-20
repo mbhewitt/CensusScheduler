@@ -21,7 +21,7 @@ export const pageListDefault = [
   },
   {
     icon: <WorkHistoryIcon />,
-    label: "Shifts",
+    label: "All Shifts",
     path: "/shifts",
   },
   {

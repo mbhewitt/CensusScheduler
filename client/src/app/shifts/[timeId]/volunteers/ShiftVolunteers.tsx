@@ -777,7 +777,7 @@ export const ShiftVolunteers = ({
               type="button"
               variant="contained"
             >
-              Add volunteer
+              Claim Shift
             </Button>
           </Stack>
           <DataTable

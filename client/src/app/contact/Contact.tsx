@@ -155,6 +155,7 @@ export const Contact = () => {
                           error={Boolean(errors.name)}
                           fullWidth
                           helperText={errors.name?.message}
+                          InputProps={{ readOnly: true }}
                           label="Name"
                           required
                           variant="standard"
@@ -178,6 +179,7 @@ export const Contact = () => {
                           error={Boolean(errors.email)}
                           fullWidth
                           helperText={errors.email?.message}
+                          InputProps={{ readOnly: true }}
                           label="Email"
                           required
                           type="email"

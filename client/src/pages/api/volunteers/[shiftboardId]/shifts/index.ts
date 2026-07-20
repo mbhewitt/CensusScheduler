@@ -31,6 +31,7 @@ const volunteerShifts = async (
           d.date,
           d.datename,
           pt.position,
+          sn.shift_name,
           sc.department,
           st.canceled,
           st.end_time,
@@ -72,6 +73,7 @@ const volunteerShifts = async (
           notes,
           position,
           rating,
+          shift_name,
           shift_times_id,
           start_time,
           start_time_text,
@@ -90,6 +92,7 @@ const volunteerShifts = async (
               startTime: start_time ?? start_time_text,
               timeId: shift_times_id,
               timePositionId: time_position_id,
+              type: shift_name ?? "",
             },
             volunteer: {
               noShow: noshow,

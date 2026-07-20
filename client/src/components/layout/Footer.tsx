@@ -105,7 +105,7 @@ export const Footer = () => {
                     <ListItem disablePadding>
                       <Link href={`/volunteers/${shiftboardId}/info`}>
                         <ListItemText
-                          primary="Account"
+                          primary="My Account and Shifts"
                           primaryTypographyProps={{
                             sx: { color: theme.palette.common.white },
                           }}

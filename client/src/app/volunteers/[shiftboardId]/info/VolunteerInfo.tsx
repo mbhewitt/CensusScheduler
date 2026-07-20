@@ -400,7 +400,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
           backgroundImage: "url(/banners/city-aerial-day.jpg)",
           backgroundSize: "cover",
         }}
-        text="Account"
+        text="My Account and Shifts"
       />
       <Container maxWidth="lg">
         {/* Header (breadcrumbs + welcome + on-playa/SAP) spans full width.

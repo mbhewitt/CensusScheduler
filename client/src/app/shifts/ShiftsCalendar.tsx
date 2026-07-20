@@ -186,15 +186,21 @@ export const ShiftsCalendar = ({ events, onSelect }: IShiftsCalendarProps) => {
                         >
                           {e.type}
                         </Typography>
-                        <Typography
-                          color={e.canceled ? "error.main" : "text.secondary"}
-                          variant="caption"
-                          component="div"
-                        >
-                          {e.canceled
-                            ? "CANCELED"
-                            : `${e.filled} / ${e.total} filled`}
-                        </Typography>
+                        {/* filled count is omitted (total 0) for the account
+                            "My Shifts" calendar, which lists only own shifts */}
+                        {(e.canceled || e.total > 0) && (
+                          <Typography
+                            color={
+                              e.canceled ? "error.main" : "text.secondary"
+                            }
+                            variant="caption"
+                            component="div"
+                          >
+                            {e.canceled
+                              ? "CANCELED"
+                              : `${e.filled} / ${e.total} filled`}
+                          </Typography>
+                        )}
                       </Box>
                     );
 
