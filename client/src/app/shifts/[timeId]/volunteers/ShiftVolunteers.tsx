@@ -672,7 +672,7 @@ export const ShiftVolunteers = ({
             <Box sx={{ mb: 2 }}>
               <ShareButton
                 title="Census shift"
-                text="I just signed up for this shift on playa. Come join me!"
+                text="I just signed up for this Black Rock City Census shift on playa. Come join me!"
                 path={`/shifts/${timeIdParam}/volunteers`}
                 label="Share this shift"
               />
