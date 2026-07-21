@@ -9,7 +9,6 @@ import { lighten, useTheme } from "@mui/material/styles";
 import dayjs, { Dayjs } from "dayjs";
 
 import { formatTime } from "@/utils/formatDateTime";
-import { shiftBadge } from "@/utils/shiftBadge";
 
 export interface ICalendarEvent {
   id: number;
@@ -130,7 +129,6 @@ export const ShiftsCalendar = ({ events, onSelect }: IShiftsCalendarProps) => {
                     </Typography>
                   )}
                   {dayEvents.map((e) => {
-                    const badge = shiftBadge(e.type);
                     const block = (
                       <Box
                         onClick={() => {
@@ -185,37 +183,17 @@ export const ShiftsCalendar = ({ events, onSelect }: IShiftsCalendarProps) => {
                             />
                           )}
                         </Stack>
-                        <Stack
-                          alignItems="center"
-                          direction="row"
-                          justifyContent="space-between"
-                          spacing={0.5}
+                        <Typography
+                          sx={{
+                            textDecoration: e.canceled
+                              ? "line-through"
+                              : "none",
+                          }}
+                          variant="caption"
+                          component="div"
                         >
-                          <Typography
-                            sx={{
-                              textDecoration: e.canceled
-                                ? "line-through"
-                                : "none",
-                            }}
-                            variant="caption"
-                            component="div"
-                          >
-                            {e.type}
-                          </Typography>
-                          {/* SQUAD / LEAD badge on the middle-right */}
-                          {badge && (
-                            <Box
-                              alt={badge.alt}
-                              component="img"
-                              src={badge.src}
-                              sx={{
-                                flexShrink: 0,
-                                height: 16,
-                                width: "auto",
-                              }}
-                            />
-                          )}
-                        </Stack>
+                          {e.type}
+                        </Typography>
                         {/* filled count is omitted (total 0) for the account
                             "My Shifts" calendar, which lists only own shifts */}
                         {(e.canceled || e.total > 0) && (

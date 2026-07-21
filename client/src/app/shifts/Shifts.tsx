@@ -54,7 +54,6 @@ import { checkIsAdmin, checkIsRoleExist } from "@/utils/checkIsRoleExist";
 import { fetcherGet } from "@/utils/fetcher";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
 import { getColorMap, TYPE_COLOR_OVERRIDES } from "@/utils/getColorMap";
-import { shiftBadge } from "@/utils/shiftBadge";
 
 // Which access role a shift type requires to sign up. Returns null for shift
 // types with no gating (open to any signed-in volunteer). The PEERS access
@@ -463,24 +462,6 @@ export const Shifts = () => {
           </Box>
         </Tooltip>
       );
-      // SQUAD / LEAD badge appended to the end of the Type cell
-      const badge = shiftBadge(type);
-      const typeCellBadged = (
-        <Box
-          key={`${id}-type-badged`}
-          sx={{ alignItems: "center", display: "flex", gap: 1 }}
-        >
-          {typeCell}
-          {badge && (
-            <Box
-              alt={badge.alt}
-              component="img"
-              src={badge.src}
-              sx={{ display: "block", height: 26, width: "auto" }}
-            />
-          )}
-        </Box>
-      );
       return [
         id, // hide for row click
         // Full start datetime (not just the date): drives BOTH the
@@ -492,7 +473,7 @@ export const Shifts = () => {
         formatDateName(date, dateName),
         formatTime(startTime, endTime),
         type, // hide for filter dialog
-        typeCellBadged,
+        typeCell,
         myShiftTimeIds.has(id) ? (
           <CheckBoxIcon
             key={`${id}-mine`}
