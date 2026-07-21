@@ -15,7 +15,7 @@ import {
   Typography,
 } from "@mui/material";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 
 import { Hero } from "@/components/layout/Hero";
@@ -30,12 +30,6 @@ const PageLink = ({ href, children }: { href: string; children: ReactNode }) => 
   <a href={href} target="_blank" rel="noopener noreferrer">
     {children}
   </a>
-);
-
-// In-page jump to another Help section. A plain hash anchor fires hashchange,
-// which the page listens for to open + scroll to the target accordion.
-const Jump = ({ to, children }: { to: string; children: ReactNode }) => (
-  <a href={`#${to}`}>{children}</a>
 );
 
 // Bulleted list that renders naturally inside an accordion.
@@ -102,19 +96,42 @@ export const Help = () => {
       return next;
     });
 
-  // Open + scroll to a section when the URL hash points at it — both on load
-  // (arriving from another page's link) and on in-page jump clicks.
-  useEffect(() => {
-    const openFromHash = () => {
-      const id = window.location.hash.slice(1);
-      if (!id) return;
-      setOpen((prev) => new Set(prev).add(id));
-      document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-    };
-    openFromHash();
-    window.addEventListener("hashchange", openFromHash);
-    return () => window.removeEventListener("hashchange", openFromHash);
+  // Open a section and scroll to it. rAF lets the accordion expand before we
+  // scroll, so sections low on the page don't land short.
+  const openSection = useCallback((id: string) => {
+    setOpen((prev) => new Set(prev).add(id));
+    requestAnimationFrame(() =>
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })
+    );
   }, []);
+
+  // Open + scroll when the URL hash points at a section — on load (arriving
+  // from another page's link) and on back/forward navigation.
+  useEffect(() => {
+    const fromHash = () => {
+      const id = window.location.hash.slice(1);
+      if (id) openSection(id);
+    };
+    fromHash();
+    window.addEventListener("hashchange", fromHash);
+    return () => window.removeEventListener("hashchange", fromHash);
+  }, [openSection]);
+
+  // In-page jump. Drives open+scroll directly (not via hashchange) so it still
+  // works when the hash already matches the target — e.g. a #vip link clicked
+  // while the URL is already #vip but the VIP accordion was collapsed.
+  const Jump = ({ to, children }: { to: string; children: ReactNode }) => (
+    <a
+      href={`#${to}`}
+      onClick={(e) => {
+        e.preventDefault();
+        window.history.replaceState(null, "", `#${to}`);
+        openSection(to);
+      }}
+    >
+      {children}
+    </a>
+  );
 
   return (
     <>
