@@ -45,6 +45,7 @@ import { DataTable } from "@/components/general/DataTable";
 import { ErrorPage } from "@/components/general/ErrorPage";
 import { Loading } from "@/components/general/Loading";
 import { MoreMenu } from "@/components/general/MoreMenu";
+import { ShareButton } from "@/components/general/ShareButton";
 import { SnackbarText } from "@/components/general/SnackbarText";
 import { Hero } from "@/components/layout/Hero";
 import type { IReqSwitchValues, ISwitchValues } from "@/components/types";
@@ -113,7 +114,7 @@ export const ShiftVolunteers = ({
   const {
     sessionState: {
       settings: { isAuthenticated: isAuthenticatedSession },
-      user: { roleList },
+      user: { roleList, shiftboardId },
     },
   } = useContext(SessionContext);
 
@@ -343,6 +344,13 @@ export const ShiftVolunteers = ({
     startTime: dayjs(dataShiftVolunteersItem.shift.startTime),
   });
   const isShiftCanceled = Boolean(dataShiftVolunteersItem.shift.canceled);
+  // Only offer "Come join me!" sharing on a shift the viewer is actually on,
+  // so the message is truthful (and not on a canceled shift).
+  const isSignedUp =
+    shiftboardId > 0 &&
+    dataShiftVolunteersItem.volunteerList.some(
+      (volunteerItem) => volunteerItem.shiftboardId === shiftboardId
+    );
   let isVolunteerAddAvailable = false;
   let isCheckInAvailable = false;
 
@@ -660,6 +668,16 @@ export const ShiftVolunteers = ({
               {dataShiftVolunteersItem.shift.typeName}
             </Typography>
           </Box>
+          {isSignedUp && !isShiftCanceled && (
+            <Box sx={{ mb: 2 }}>
+              <ShareButton
+                title="Census shift"
+                text="I just signed up for this shift on playa. Come join me!"
+                path={`/shifts/${timeIdParam}/volunteers`}
+                label="Share this shift"
+              />
+            </Box>
+          )}
           {/*
            * Suppress any row whose right-column value is empty so we
            * don't render a lonely "Meal" or "Notes" label with nothing
