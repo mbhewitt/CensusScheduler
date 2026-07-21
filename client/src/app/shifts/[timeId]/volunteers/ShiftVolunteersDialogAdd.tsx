@@ -95,7 +95,7 @@ export const ShiftVolunteersDialogAdd = ({
   isDialogOpen,
   shiftVolunteersItem: {
     positionList,
-    shift: { date, dateName, details, endTime, startTime, typeName },
+    shift: { date, dateName, details, endTime, startTime },
     timeId: timeIdShift,
     volunteerList,
   },
@@ -220,56 +220,13 @@ export const ShiftVolunteersDialogAdd = ({
     worldName,
   ]);
 
-  useEffect(() => {
-    if (dataVolunteerShiftList) {
-      const isVolunteerSlotAvailable = volunteerList.every((volunteer) => {
-        return volunteer.shiftboardId !== Number(shiftboardId);
-      });
-      const isVolunteerShiftAvailable = dataVolunteerShiftList.every(
-        (volunteerShiftItem) => {
-          return !dayjs(startTime).isBetween(
-            dayjs(volunteerShiftItem.shift.startTime),
-            dayjs(volunteerShiftItem.shift.endTime),
-            null,
-            "[]"
-          );
-        }
-      );
-
-      // if slot is available and shift causes time conflict
-      // then display warning notification
-      if (isVolunteerSlotAvailable && !isVolunteerShiftAvailable) {
-        enqueueSnackbar(
-          <SnackbarText>
-            Adding{" "}
-            <strong>{`${formatDateName(date, dateName)}, ${formatTime(
-              startTime,
-              endTime
-            )}, ${typeName}`}</strong>{" "}
-            shift will cause a time conflict for{" "}
-            <strong>
-              {volunteerSelected?.playaName} &quot;
-              {volunteerSelected?.worldName}
-              &quot;
-            </strong>
-          </SnackbarText>,
-          {
-            variant: "warning",
-          }
-        );
-      }
-    }
-  }, [
-    dataVolunteerShiftList,
-    dateName,
-    endTime,
-    enqueueSnackbar,
-    shiftboardId,
-    typeName,
-    startTime,
-    volunteerList,
-    volunteerSelected,
-  ]);
+  // NOTE: the old client-side "time conflict" warning was removed here. It
+  // flagged any overlap with an existing signup, which produced false
+  // alarms for legitimate back-to-back shifts (e.g. two Shift Lead shifts
+  // that overlap by ≤60 min). The real scheduling rules — cross-type
+  // overlap, no-3-consecutive, and the per-day cap — are now enforced
+  // server-side and surface precise messages when a claim is actually
+  // blocked, so this pre-emptive warning is no longer needed.
 
   // logic
   // ------------------------------------------------------------
