@@ -17,12 +17,21 @@ import { DialogContainer } from "@/components/general/DialogContainer";
 import { SnackbarText } from "@/components/general/SnackbarText";
 import { REMOVE_SHIFT_VOLUNTEER_REQ } from "@/constants";
 import { fetcherTrigger } from "@/utils/fetcher";
+import { formatDateName, formatTime } from "@/utils/formatDateTime";
 
 interface IShiftVolunteersDialogRemoveProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
+  // when the volunteer being removed is the current user, the dialog uses
+  // self-service "Drop Shift" wording; otherwise the admin "Remove
+  // volunteer" wording is kept unchanged.
+  isSelfRemoval: boolean;
   shift: {
+    date: string;
+    dateName: string;
+    endTime: string;
     positionName: string;
+    startTime: string;
     timeId: number;
     timePositionId: number;
   };
@@ -37,7 +46,16 @@ const socket = io();
 export const ShiftVolunteersDialogRemove = ({
   handleDialogClose,
   isDialogOpen,
-  shift: { positionName, timeId, timePositionId },
+  isSelfRemoval,
+  shift: {
+    date,
+    dateName,
+    endTime,
+    positionName,
+    startTime,
+    timeId,
+    timePositionId,
+  },
   volunteer: { playaName, shiftboardId, worldName },
 }: IShiftVolunteersDialogRemoveProps) => {
   // fetching, mutation, and revalidation
@@ -101,15 +119,29 @@ export const ShiftVolunteersDialogRemove = ({
     <DialogContainer
       handleDialogClose={handleDialogClose}
       isDialogOpen={isDialogOpen}
-      text="Remove volunteer"
+      text={isSelfRemoval ? "Drop Shift" : "Remove volunteer"}
     >
       <DialogContentText>
         <Typography component="span">
-          Are you sure you want to remove{" "}
-          <strong>
-            {playaName} &quot;{worldName}&quot;
-          </strong>{" "}
-          for <strong>{positionName}</strong>?
+          {isSelfRemoval ? (
+            <>
+              Are you sure you want to drop your{" "}
+              <strong>{positionName}</strong> on{" "}
+              <strong>
+                {formatDateName(date, dateName)},{" "}
+                {formatTime(startTime, endTime)}
+              </strong>
+              ?
+            </>
+          ) : (
+            <>
+              Are you sure you want to remove{" "}
+              <strong>
+                {playaName} &quot;{worldName}&quot;
+              </strong>{" "}
+              for <strong>{positionName}</strong>?
+            </>
+          )}
         </Typography>
       </DialogContentText>
       <DialogActions>
@@ -131,7 +163,7 @@ export const ShiftVolunteersDialogRemove = ({
           type="submit"
           variant="contained"
         >
-          Remove volunteer
+          {isSelfRemoval ? "Drop Shift" : "Remove volunteer"}
         </Button>
       </DialogActions>
     </DialogContainer>

@@ -842,7 +842,17 @@ export const ShiftVolunteers = ({
           isDialogOpen={
             dialogCurrent.dialogItem === DialogList.Remove && isDialogOpen
           }
-          shift={{ ...dialogCurrent.shift, timeId: timeIdParam }}
+          isSelfRemoval={
+            dialogCurrent.volunteer.shiftboardId === shiftboardIdSession
+          }
+          shift={{
+            ...dialogCurrent.shift,
+            date: dataShiftVolunteersItem.shift.date,
+            dateName: dataShiftVolunteersItem.shift.dateName,
+            endTime: dataShiftVolunteersItem.shift.endTime,
+            startTime: dataShiftVolunteersItem.shift.startTime,
+            timeId: timeIdParam,
+          }}
           volunteer={dialogCurrent.volunteer}
         />
 
