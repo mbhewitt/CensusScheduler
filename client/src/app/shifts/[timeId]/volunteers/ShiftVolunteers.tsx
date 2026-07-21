@@ -344,8 +344,9 @@ export const ShiftVolunteers = ({
     startTime: dayjs(dataShiftVolunteersItem.shift.startTime),
   });
   const isShiftCanceled = Boolean(dataShiftVolunteersItem.shift.canceled);
-  // Only offer "Come join me!" sharing on a shift the viewer is actually on,
-  // so the message is truthful (and not on a canceled shift).
+  // Whether the current viewer is already on this shift. Drives the share
+  // message wording and hides the non-admin "Add this shift" self-signup
+  // button (you can't add a shift you're already on).
   const isSignedUp =
     shiftboardId > 0 &&
     dataShiftVolunteersItem.volunteerList.some(
@@ -356,9 +357,12 @@ export const ShiftVolunteers = ({
 
   switch (checkInType) {
     case SHIFT_FUTURE: {
+      // Admins add other volunteers; a non-admin self-signs-up, but only if
+      // they're not already on the shift and a slot is open.
       isVolunteerAddAvailable =
         isAdmin ||
         (isAuthenticated &&
+          !isSignedUp &&
           dataShiftVolunteersItem.positionList.some(
             (positionItem: IResShiftPositionCountItem) =>
               positionItem.slotsTotal - positionItem.slotsFilled > 0
@@ -366,7 +370,9 @@ export const ShiftVolunteers = ({
       break;
     }
     case SHIFT_DURING: {
-      isVolunteerAddAvailable = true;
+      // Admins add others; a non-admin can still self-add during the shift
+      // unless they're already on it.
+      isVolunteerAddAvailable = isAdmin || !isSignedUp;
       isCheckInAvailable = true;
       break;
     }
@@ -668,11 +674,15 @@ export const ShiftVolunteers = ({
               {dataShiftVolunteersItem.shift.typeName}
             </Typography>
           </Box>
-          {isSignedUp && !isShiftCanceled && (
+          {!isShiftCanceled && (
             <Box sx={{ mb: 2 }}>
               <ShareButton
-                title="Census shift"
-                text="I just signed up for this Black Rock City Census shift on playa. Come join me!"
+                title="Black Rock City Census shift"
+                text={
+                  isSignedUp
+                    ? "I just signed up for this Black Rock City Census shift on playa. Come join me!"
+                    : "Check out this Black Rock City Census shift on playa!"
+                }
                 path={`/shifts/${timeIdParam}/volunteers`}
                 label="Share this shift"
               />
