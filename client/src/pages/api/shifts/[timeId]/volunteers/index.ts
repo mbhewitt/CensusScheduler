@@ -43,6 +43,15 @@ const BACK_TO_BACK_MAX_RUN = 2;
 const BACK_TO_BACK_GAP_MINUTES = 60;
 const BACK_TO_BACK_OVERLAP_MINUTES = 60;
 
+// PEERS #dailycap: separate from the consecutive rule, a volunteer may
+// hold at most this many non-Coordinator shifts (Squaddie + Shift Lead
+// combined) on any single day. Coordinators are exempt and uncounted.
+const MAX_SHIFTS_PER_DAY = 3;
+
+// The calendar day of a shift = the date portion of its playa-local start
+// ("2026-08-31 12:00" -> "2026-08-31").
+const shiftDay = (value: string): string => `${value}`.slice(0, 10);
+
 // Parse a naive playa-local datetime string ("2026-08-31 12:00") to epoch
 // minutes. Both endpoints are parsed identically, so the delta is correct
 // regardless of the server timezone.
@@ -341,6 +350,24 @@ const shiftVolunteers = async (
              AND vs.time_position_id <> ?`,
           [shiftboardId, ROLE_PEERS_COORDINATOR_ID, timePositionId]
         );
+
+        // PEERS #dailycap: cap total non-Coordinator shifts per day. Block
+        // if the volunteer already holds MAX_SHIFTS_PER_DAY on the claimed
+        // shift's day (this claim would push them over).
+        const claimedDay = shiftDay(claimedShift.start_time);
+        const sameDayHeldCount = dbChainableShifts.filter(
+          (shift) => shiftDay(shift.start_time) === claimedDay
+        ).length;
+        if (sameDayHeldCount >= MAX_SHIFTS_PER_DAY) {
+          return res.status(409).json({
+            statusCode: 409,
+            message:
+              `A volunteer can hold at most ${MAX_SHIFTS_PER_DAY} shifts ` +
+              `per day, and this one would be number ` +
+              `${sameDayHeldCount + 1}. Drop one of that day's shifts ` +
+              `first if you need to swap.`,
+          });
+        }
 
         // combine held non-Coordinator shifts + the claimed one, sort by
         // start, then find the maximal run of back-to-back shifts that
