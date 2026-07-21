@@ -84,6 +84,7 @@ export const ShiftsCalendar = ({ events, onSelect }: IShiftsCalendarProps) => {
               <Box
                 key={day.format("YYYY-MM-DD")}
                 sx={{
+                  bgcolor: theme.palette.common.white,
                   border: `1px solid ${theme.palette.divider}`,
                   borderRadius: 1,
                   minHeight: 120,
