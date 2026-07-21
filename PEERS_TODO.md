@@ -80,6 +80,7 @@ live; A (walk-in NewVolunteer role/shifts) remains:
 
 ## Parked / nice-to-have
 - [ ] **Training-completion audit report** (papabear parked 2026-07-19): honor-system access, but a post-event way to catch anyone handed the HIVE confirmation link who skipped training. No universal ID (HIVE uses a "Token" ≠ Okta `sub` ≠ Salesforce BPGUID), so match by **email**: HIVE-completion email ↔ PEERS scheduler email (= Burner-Profile/Okta email; watch the burner-vs-@burningman mismatch). I offered to export the scheduler side (everyone holding the Squaddie/Lead access role + name + email = who "completed" per the link click) and/or build a "has-access-role but no HIVE-completion match" report next to the PPP report. **Build when they have a HIVE completion export to diff against.**
+- [ ] **Same-type (Lead↔Lead) shift-overlap policy** (papabear parked 2026-07-21): the cross-type Squaddie↔Shift-Lead >60 min overlap block shipped to prod (`9b58f07`), but whether two *Shift Lead* shifts may overlap (back-to-back OK) or must have a break (no overlap) is still an open policy call. Squaddie↔Squaddie never overlap in the schedule, so this only matters for Lead↔Lead. **One-line change:** drop the `claimedPt.role_id <> existingPt.role_id` clause in the overlap guard (`src/pages/api/shifts/[timeId]/volunteers/index.ts`) to block *any* two non-coordinator shifts overlapping >60 min. Await papabear's decision.
 
 ---
 
