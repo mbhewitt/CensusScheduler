@@ -351,24 +351,11 @@ const shiftVolunteers = async (
           [shiftboardId, ROLE_PEERS_COORDINATOR_ID, timePositionId]
         );
 
-        // PEERS #dailycap: cap total non-Coordinator shifts per day. Block
-        // if the volunteer already holds MAX_SHIFTS_PER_DAY on the claimed
-        // shift's day (this claim would push them over).
-        const claimedDay = shiftDay(claimedShift.start_time);
-        const sameDayHeldCount = dbChainableShifts.filter(
-          (shift) => shiftDay(shift.start_time) === claimedDay
-        ).length;
-        if (sameDayHeldCount >= MAX_SHIFTS_PER_DAY) {
-          return res.status(409).json({
-            statusCode: 409,
-            message:
-              `A volunteer can hold at most ${MAX_SHIFTS_PER_DAY} shifts ` +
-              `per day, and this one would be number ` +
-              `${sameDayHeldCount + 1}. Drop one of that day's shifts ` +
-              `first if you need to swap.`,
-          });
-        }
-
+        // The consecutive check runs BEFORE the daily cap so that when a
+        // claim trips both (e.g. a 4th shift that also completes a 3-in-a-
+        // row), the user sees the "no 3 consecutive" message rather than
+        // the raw per-day count.
+        //
         // combine held non-Coordinator shifts + the claimed one, sort by
         // start, then find the maximal run of back-to-back shifts that
         // includes the claim. Block if that run reaches three.
@@ -417,10 +404,29 @@ const shiftVolunteers = async (
           return res.status(409).json({
             statusCode: 409,
             message:
-              `This would give the volunteer three back-to-back shifts. A ` +
-              `Squaddie or Shift Lead can hold at most two consecutive ` +
-              `shifts in a row — drop one of the adjacent shifts, or pick ` +
-              `one with a longer break before or after it.`,
+              `A volunteer can only hold two consecutive shifts per day, ` +
+              `and this one makes 3 shifts in a row. Drop one of your two ` +
+              `back to back shifts if you need to swap or pick a ` +
+              `non-consecutive shift if you want 3 shifts for the day.`,
+          });
+        }
+
+        // PEERS #dailycap: cap total non-Coordinator shifts per day. This
+        // runs after the consecutive check, so it only fires for a 4th
+        // same-day shift that is NOT itself part of a 3-in-a-row (e.g. on
+        // a mixed Squaddie/Lead day with enough spacing).
+        const claimedDay = shiftDay(claimedShift.start_time);
+        const sameDayHeldCount = dbChainableShifts.filter(
+          (shift) => shiftDay(shift.start_time) === claimedDay
+        ).length;
+        if (sameDayHeldCount >= MAX_SHIFTS_PER_DAY) {
+          return res.status(409).json({
+            statusCode: 409,
+            message:
+              `A volunteer can hold at most ${MAX_SHIFTS_PER_DAY} shifts ` +
+              `per day, and this one would be number ` +
+              `${sameDayHeldCount + 1}. Drop one of that day's shifts ` +
+              `first if you need to swap.`,
           });
         }
       }
