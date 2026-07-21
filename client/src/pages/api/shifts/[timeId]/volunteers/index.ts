@@ -15,7 +15,14 @@ import {
   shiftVolunteerRemove,
   shiftVolunteerUpdate,
 } from "@/components/api/shiftVolunteers";
-import { UPDATE_TYPE_CHECK_IN } from "@/constants";
+import { ROLE_PEERS_COORDINATOR_ID, UPDATE_TYPE_CHECK_IN } from "@/constants";
+
+// PEERS #overlap: a volunteer may not hold a Squaddie shift and a Shift
+// Lead shift that overlap by more than this many minutes. Coordinator
+// shifts (PCIO / PCOC) are exempt — one person can fill a coordinator
+// role alongside another shift. A small edge overlap (shift handoff) is
+// allowed; only the "bulk overlaps" case is blocked.
+const SHIFT_OVERLAP_LIMIT_MINUTES = 60;
 
 const shiftVolunteers = async (
   req: NextApiRequest,
@@ -202,6 +209,72 @@ const shiftVolunteers = async (
         return res.status(409).json({
           statusCode: 409,
           message: "Shift is canceled; cannot add volunteers.",
+        });
+      }
+
+      // PEERS #overlap: block claiming a Squaddie/Shift Lead shift that
+      // overlaps a shift of the OTHER type the volunteer already holds by
+      // more than SHIFT_OVERLAP_LIMIT_MINUTES. Coordinator shifts (role
+      // 95209) are exempt on both sides. Overlap is computed in SQL from
+      // the naive playa-local datetime strings (both cast the same way, so
+      // the minute delta is correct regardless of timezone). Enforced
+      // server-side so a stale tab / forged request can't bypass it.
+      const [dbShiftOverlapCheck] = await pool.query<RowDataPacket[]>(
+        `SELECT
+          existingPt.position AS conflictPosition,
+          existingSt.start_time AS conflictStart,
+          existingSt.end_time AS conflictEnd,
+          TIMESTAMPDIFF(
+            MINUTE,
+            GREATEST(
+              CAST(claimedSt.start_time AS DATETIME),
+              CAST(existingSt.start_time AS DATETIME)
+            ),
+            LEAST(
+              CAST(claimedSt.end_time AS DATETIME),
+              CAST(existingSt.end_time AS DATETIME)
+            )
+          ) AS overlapMinutes
+        FROM op_shift_time_position AS claimedStp
+        JOIN op_shift_times AS claimedSt
+          ON claimedSt.shift_times_id = claimedStp.shift_times_id
+        JOIN op_position_type AS claimedPt
+          ON claimedPt.position_type_id = claimedStp.position_type_id
+        JOIN op_volunteer_shifts AS vs
+          ON vs.shiftboard_id = ? AND vs.remove_shift = false
+        JOIN op_shift_time_position AS existingStp
+          ON existingStp.time_position_id = vs.time_position_id
+        JOIN op_position_type AS existingPt
+          ON existingPt.position_type_id = existingStp.position_type_id
+        JOIN op_shift_times AS existingSt
+          ON existingSt.shift_times_id = existingStp.shift_times_id
+        WHERE claimedStp.time_position_id = ?
+          AND claimedPt.role_id <> ?
+          AND existingPt.role_id <> ?
+          AND claimedPt.role_id <> existingPt.role_id
+          AND existingStp.time_position_id <> claimedStp.time_position_id
+        HAVING overlapMinutes > ?
+        ORDER BY overlapMinutes DESC
+        LIMIT 1`,
+        [
+          shiftboardId,
+          timePositionId,
+          ROLE_PEERS_COORDINATOR_ID,
+          ROLE_PEERS_COORDINATOR_ID,
+          SHIFT_OVERLAP_LIMIT_MINUTES,
+        ]
+      );
+      if (dbShiftOverlapCheck[0]) {
+        const { conflictPosition } = dbShiftOverlapCheck[0];
+        return res.status(409).json({
+          statusCode: 409,
+          message:
+            `This shift overlaps "${conflictPosition}" — which this ` +
+            `volunteer already holds — by more than ` +
+            `${SHIFT_OVERLAP_LIMIT_MINUTES} minutes. A Squaddie shift and ` +
+            `a Shift Lead shift can't overlap by more than an hour. Drop ` +
+            `the conflicting shift first, or pick a shift that doesn't ` +
+            `overlap it.`,
         });
       }
 

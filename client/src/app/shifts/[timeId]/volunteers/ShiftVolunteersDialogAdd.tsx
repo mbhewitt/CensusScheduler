@@ -591,10 +591,18 @@ export const ShiftVolunteersDialogAdd = ({
       };
 
       // update database
-      await trigger({
+      const resShiftAdd = await trigger({
         body,
         method: "POST",
       });
+      // the fetcher resolves the JSON body regardless of HTTP status, so
+      // surface a server-side rejection (e.g. the PEERS shift-overlap
+      // block or a canceled shift) as an error instead of a false success
+      if (resShiftAdd?.statusCode && resShiftAdd.statusCode >= 400) {
+        throw new Error(
+          resShiftAdd.message ?? "Unable to claim this shift."
+        );
+      }
       // emit event
       socket.emit(ADD_SHIFT_VOLUNTEER_REQ, {
         noShow: noShowShift,
