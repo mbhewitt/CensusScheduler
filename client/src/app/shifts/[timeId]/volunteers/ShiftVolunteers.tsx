@@ -119,7 +119,7 @@ export const ShiftVolunteers = ({
   const {
     sessionState: {
       settings: { isAuthenticated: isAuthenticatedSession },
-      user: { roleList },
+      user: { roleList, shiftboardId: shiftboardIdSession },
     },
   } = useContext(SessionContext);
 
@@ -360,6 +360,12 @@ export const ShiftVolunteers = ({
     startTime: dayjs(dataShiftVolunteersItem.shift.startTime),
   });
   const isShiftCanceled = Boolean(dataShiftVolunteersItem.shift.canceled);
+  // the current user's own signup on this shift, if any — drives the
+  // self-service "Drop Shift" button (shown only when they're signed up).
+  // Self-removal stays available even on a canceled shift.
+  const currentUserVolunteer = dataShiftVolunteersItem.volunteerList.find(
+    (volunteerItem) => volunteerItem.shiftboardId === shiftboardIdSession
+  );
   let isVolunteerAddAvailable = false;
   let isCheckInAvailable = false;
 
@@ -754,31 +760,61 @@ export const ShiftVolunteers = ({
             <Typography component="h2" variant="h4">
               Volunteers
             </Typography>
-            <Button
-              disabled={!isVolunteerAddAvailable}
-              onClick={() => {
-                setDialogCurrent({
-                  dialogItem: DialogList.Add,
-                  shift: {
-                    positionName: "",
-                    timePositionId: 0,
-                  },
-                  volunteer: {
-                    notes: "",
-                    playaName: "",
-                    rating: null,
-                    shiftboardId: 0,
-                    worldName: "",
-                  },
-                });
-                setIsDialogOpen(true);
-              }}
-              startIcon={<PersonAddAlt1Icon />}
-              type="button"
-              variant="contained"
-            >
-              Claim Shift
-            </Button>
+            <Stack direction="row" spacing={1}>
+              {/* self-service drop — only shown when the current user is
+                  signed up for this shift; reuses the remove dialog */}
+              {currentUserVolunteer && (
+                <Button
+                  onClick={() => {
+                    setDialogCurrent({
+                      dialogItem: DialogList.Remove,
+                      shift: {
+                        positionName: currentUserVolunteer.positionName,
+                        timePositionId: currentUserVolunteer.timePositionId,
+                      },
+                      volunteer: {
+                        notes: "",
+                        playaName: currentUserVolunteer.playaName,
+                        rating: null,
+                        shiftboardId: currentUserVolunteer.shiftboardId,
+                        worldName: currentUserVolunteer.worldName,
+                      },
+                    });
+                    setIsDialogOpen(true);
+                  }}
+                  startIcon={<PersonRemoveIcon />}
+                  type="button"
+                  variant="contained"
+                >
+                  Drop Shift
+                </Button>
+              )}
+              <Button
+                disabled={!isVolunteerAddAvailable}
+                onClick={() => {
+                  setDialogCurrent({
+                    dialogItem: DialogList.Add,
+                    shift: {
+                      positionName: "",
+                      timePositionId: 0,
+                    },
+                    volunteer: {
+                      notes: "",
+                      playaName: "",
+                      rating: null,
+                      shiftboardId: 0,
+                      worldName: "",
+                    },
+                  });
+                  setIsDialogOpen(true);
+                }}
+                startIcon={<PersonAddAlt1Icon />}
+                type="button"
+                variant="contained"
+              >
+                Claim Shift
+              </Button>
+            </Stack>
           </Stack>
           <DataTable
             columnList={columnListVolunteers}
