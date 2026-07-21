@@ -30,15 +30,17 @@ import {
 const SHIFT_OVERLAP_LIMIT_MINUTES = 60;
 
 // PEERS #backtoback: a volunteer may hold at most two CONSECUTIVE shifts
-// — never three back-to-back. This is type-agnostic: Squaddie and Shift
-// Lead shifts chain together (a Lead shift followed by two back-to-back
+// — never three in a row. This is type-agnostic: Squaddie and Shift Lead
+// shifts chain together (a Lead shift followed by two back-to-back
 // Squaddie shifts is still three in a row). Two shifts count as
-// "back-to-back" when they either overlap by up to OVERLAP minutes OR the
-// next starts within GAP minutes of the previous ending. Squaddie shifts
-// chain via the 30-min gaps; Shift Lead shifts chain via their ≤60-min
-// overlaps. Coordinators are exempt.
+// "consecutive" when they either overlap by up to OVERLAP minutes OR the
+// next starts within GAP minutes of the previous ending. The day's shift
+// slots are spaced with breaks of up to 60 min (e.g. the Squaddie
+// 15:30–18:30 → 19:30–22:30 handoff), and those still count as
+// consecutive; only a longer break (the gap to a later block, or the next
+// day) resets the chain. Coordinators are exempt.
 const BACK_TO_BACK_MAX_RUN = 2;
-const BACK_TO_BACK_GAP_MINUTES = 30;
+const BACK_TO_BACK_GAP_MINUTES = 60;
 const BACK_TO_BACK_OVERLAP_MINUTES = 60;
 
 // Parse a naive playa-local datetime string ("2026-08-31 12:00") to epoch
