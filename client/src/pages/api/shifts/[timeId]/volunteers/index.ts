@@ -29,12 +29,14 @@ import {
 // allowed; only the "bulk overlaps" case is blocked.
 const SHIFT_OVERLAP_LIMIT_MINUTES = 60;
 
-// PEERS #backtoback: a Squaddie (or a Shift Lead) may hold at most two
-// CONSECUTIVE same-type shifts — never three back-to-back. Two same-type
-// shifts count as "back-to-back" when they either overlap by up to
-// OVERLAP minutes OR the next starts within GAP minutes of the previous
-// ending. Squaddie shifts chain via the 30-min gaps; Shift Lead shifts
-// chain via their ≤60-min overlaps. Coordinators are exempt.
+// PEERS #backtoback: a volunteer may hold at most two CONSECUTIVE shifts
+// — never three back-to-back. This is type-agnostic: Squaddie and Shift
+// Lead shifts chain together (a Lead shift followed by two back-to-back
+// Squaddie shifts is still three in a row). Two shifts count as
+// "back-to-back" when they either overlap by up to OVERLAP minutes OR the
+// next starts within GAP minutes of the previous ending. Squaddie shifts
+// chain via the 30-min gaps; Shift Lead shifts chain via their ≤60-min
+// overlaps. Coordinators are exempt.
 const BACK_TO_BACK_MAX_RUN = 2;
 const BACK_TO_BACK_GAP_MINUTES = 30;
 const BACK_TO_BACK_OVERLAP_MINUTES = 60;
@@ -300,9 +302,12 @@ const shiftVolunteers = async (
       }
 
       // PEERS #backtoback: block a claim that would create three (or more)
-      // consecutive SAME-TYPE shifts. Only Squaddie and Shift Lead are
-      // limited; Coordinators are exempt. Enforced server-side alongside
-      // the cross-type overlap rule above.
+      // consecutive shifts. This is TYPE-AGNOSTIC — Squaddie and Shift Lead
+      // shifts are counted together (a Lead shift immediately followed by
+      // two back-to-back Squaddie shifts is still three in a row). Only the
+      // claimed shift must be Squaddie/Lead to trigger the check; both it
+      // and the held shifts it chains with exclude Coordinators, which are
+      // exempt. Enforced server-side alongside the cross-type overlap rule.
       const [dbClaimedShiftRows] = await pool.query<RowDataPacket[]>(
         `SELECT pt.role_id, st.start_time, st.end_time
          FROM op_shift_time_position stp
@@ -318,8 +323,8 @@ const shiftVolunteers = async (
         (claimedShift.role_id === ROLE_PEERS_SQUADDIE_ID ||
           claimedShift.role_id === ROLE_PEERS_SHIFT_LEAD_ID)
       ) {
-        // all OTHER same-type shifts the volunteer already holds
-        const [dbSameTypeShifts] = await pool.query<RowDataPacket[]>(
+        // all OTHER non-Coordinator shifts the volunteer already holds
+        const [dbChainableShifts] = await pool.query<RowDataPacket[]>(
           `SELECT st.start_time, st.end_time
            FROM op_volunteer_shifts vs
            JOIN op_shift_time_position stp
@@ -330,21 +335,21 @@ const shiftVolunteers = async (
              ON st.shift_times_id = stp.shift_times_id
            WHERE vs.shiftboard_id = ?
              AND vs.remove_shift = false
-             AND pt.role_id = ?
+             AND pt.role_id <> ?
              AND vs.time_position_id <> ?`,
-          [shiftboardId, claimedShift.role_id, timePositionId]
+          [shiftboardId, ROLE_PEERS_COORDINATOR_ID, timePositionId]
         );
 
-        // combine held same-type shifts + the claimed one, sort by start,
-        // then find the maximal run of back-to-back shifts that includes
-        // the claim. Block if that run reaches three.
+        // combine held non-Coordinator shifts + the claimed one, sort by
+        // start, then find the maximal run of back-to-back shifts that
+        // includes the claim. Block if that run reaches three.
         const shiftRun = [
           {
             start: shiftTimeToMinutes(claimedShift.start_time),
             end: shiftTimeToMinutes(claimedShift.end_time),
             isClaimed: true,
           },
-          ...dbSameTypeShifts.map((shift) => ({
+          ...dbChainableShifts.map((shift) => ({
             start: shiftTimeToMinutes(shift.start_time),
             end: shiftTimeToMinutes(shift.end_time),
             isClaimed: false,
