@@ -59,7 +59,14 @@ export const ShiftsCalendar = ({ events, onSelect }: IShiftsCalendarProps) => {
       {/* week label — fixed to the event week, no navigation */}
       <Typography
         component="h2"
-        sx={{ mb: 2, textAlign: "center" }}
+        sx={{
+          bgcolor: theme.palette.common.white,
+          border: `1px solid ${theme.palette.divider}`,
+          borderRadius: 1,
+          mb: 2,
+          py: 1,
+          textAlign: "center",
+        }}
         variant="h6"
       >
         {weekLabel}
