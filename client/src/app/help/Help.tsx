@@ -152,7 +152,7 @@ export const Help = () => {
                 trainings, and more. Tap any section below to open it.
               </Typography>
               <Typography>
-                Some steps depend on where you are: <strong>🏜️ on playa</strong>{" "}
+                Some steps depend on where you are: <strong>⛺ on playa</strong>{" "}
                 (at the Census Lab) vs <strong>🏠 from home</strong> (your own
                 device). Watch for those icons. On the tablets at the Census
                 Lab? Jump to{" "}
@@ -212,7 +212,7 @@ export const Help = () => {
             />
 
             <Typography sx={{ mt: 2, mb: 1, fontWeight: 700 }}>
-              🏜️ On playa, at the Census Lab tablets
+              ⛺ On playa, at the Census Lab tablets
             </Typography>
             <Bullets
               items={[
@@ -233,7 +233,7 @@ export const Help = () => {
                   <strong>Create an account</strong> link on the sign-in screen.
                 </>,
                 <>
-                  <strong>🏜️ On playa:</strong> ask a lab host to set you up with
+                  <strong>⛺ On playa:</strong> ask a lab host to set you up with
                   a name badge.
                 </>,
               ]}
@@ -410,7 +410,7 @@ export const Help = () => {
 
           <Section
             id="on-playa"
-            title="🏜️ At the Census Lab (on playa)"
+            title="⛺ At the Census Lab (on playa)"
             expanded={open.has("on-playa")}
             onToggle={() => toggle("on-playa")}
           >
