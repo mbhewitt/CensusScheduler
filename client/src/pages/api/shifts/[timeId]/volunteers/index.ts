@@ -15,7 +15,12 @@ import {
   shiftVolunteerRemove,
   shiftVolunteerUpdate,
 } from "@/components/api/shiftVolunteers";
-import { ROLE_PEERS_COORDINATOR_ID, UPDATE_TYPE_CHECK_IN } from "@/constants";
+import {
+  ROLE_PEERS_COORDINATOR_ID,
+  ROLE_PEERS_SHIFT_LEAD_ID,
+  ROLE_PEERS_SQUADDIE_ID,
+  UPDATE_TYPE_CHECK_IN,
+} from "@/constants";
 
 // PEERS #overlap: a volunteer may not hold a Squaddie shift and a Shift
 // Lead shift that overlap by more than this many minutes. Coordinator
@@ -23,6 +28,22 @@ import { ROLE_PEERS_COORDINATOR_ID, UPDATE_TYPE_CHECK_IN } from "@/constants";
 // role alongside another shift. A small edge overlap (shift handoff) is
 // allowed; only the "bulk overlaps" case is blocked.
 const SHIFT_OVERLAP_LIMIT_MINUTES = 60;
+
+// PEERS #backtoback: a Squaddie (or a Shift Lead) may hold at most two
+// CONSECUTIVE same-type shifts — never three back-to-back. Two same-type
+// shifts count as "back-to-back" when they either overlap by up to
+// OVERLAP minutes OR the next starts within GAP minutes of the previous
+// ending. Squaddie shifts chain via the 30-min gaps; Shift Lead shifts
+// chain via their ≤60-min overlaps. Coordinators are exempt.
+const BACK_TO_BACK_MAX_RUN = 2;
+const BACK_TO_BACK_GAP_MINUTES = 30;
+const BACK_TO_BACK_OVERLAP_MINUTES = 60;
+
+// Parse a naive playa-local datetime string ("2026-08-31 12:00") to epoch
+// minutes. Both endpoints are parsed identically, so the delta is correct
+// regardless of the server timezone.
+const shiftTimeToMinutes = (value: string): number =>
+  new Date(`${value}`.replace(" ", "T")).getTime() / 60000;
 
 const shiftVolunteers = async (
   req: NextApiRequest,
@@ -276,6 +297,98 @@ const shiftVolunteers = async (
             `the conflicting shift first, or pick a shift that doesn't ` +
             `overlap it.`,
         });
+      }
+
+      // PEERS #backtoback: block a claim that would create three (or more)
+      // consecutive SAME-TYPE shifts. Only Squaddie and Shift Lead are
+      // limited; Coordinators are exempt. Enforced server-side alongside
+      // the cross-type overlap rule above.
+      const [dbClaimedShiftRows] = await pool.query<RowDataPacket[]>(
+        `SELECT pt.role_id, st.start_time, st.end_time
+         FROM op_shift_time_position stp
+         JOIN op_position_type pt ON pt.position_type_id = stp.position_type_id
+         JOIN op_shift_times st ON st.shift_times_id = stp.shift_times_id
+         WHERE stp.time_position_id = ?
+         LIMIT 1`,
+        [timePositionId]
+      );
+      const claimedShift = dbClaimedShiftRows[0];
+      if (
+        claimedShift &&
+        (claimedShift.role_id === ROLE_PEERS_SQUADDIE_ID ||
+          claimedShift.role_id === ROLE_PEERS_SHIFT_LEAD_ID)
+      ) {
+        // all OTHER same-type shifts the volunteer already holds
+        const [dbSameTypeShifts] = await pool.query<RowDataPacket[]>(
+          `SELECT st.start_time, st.end_time
+           FROM op_volunteer_shifts vs
+           JOIN op_shift_time_position stp
+             ON stp.time_position_id = vs.time_position_id
+           JOIN op_position_type pt
+             ON pt.position_type_id = stp.position_type_id
+           JOIN op_shift_times st
+             ON st.shift_times_id = stp.shift_times_id
+           WHERE vs.shiftboard_id = ?
+             AND vs.remove_shift = false
+             AND pt.role_id = ?
+             AND vs.time_position_id <> ?`,
+          [shiftboardId, claimedShift.role_id, timePositionId]
+        );
+
+        // combine held same-type shifts + the claimed one, sort by start,
+        // then find the maximal run of back-to-back shifts that includes
+        // the claim. Block if that run reaches three.
+        const shiftRun = [
+          {
+            start: shiftTimeToMinutes(claimedShift.start_time),
+            end: shiftTimeToMinutes(claimedShift.end_time),
+            isClaimed: true,
+          },
+          ...dbSameTypeShifts.map((shift) => ({
+            start: shiftTimeToMinutes(shift.start_time),
+            end: shiftTimeToMinutes(shift.end_time),
+            isClaimed: false,
+          })),
+        ].sort((a, b) => a.start - b.start);
+
+        // adjacent = overlap up to OVERLAP min, or gap up to GAP min
+        const isBackToBack = (
+          earlier: { end: number },
+          later: { start: number }
+        ): boolean => {
+          const gap = later.start - earlier.end;
+          return gap <= BACK_TO_BACK_GAP_MINUTES &&
+            gap >= -BACK_TO_BACK_OVERLAP_MINUTES;
+        };
+
+        let runStart = 0;
+        let wouldChainThree = false;
+        for (let i = 1; i <= shiftRun.length; i += 1) {
+          const isBreak =
+            i === shiftRun.length ||
+            !isBackToBack(shiftRun[i - 1], shiftRun[i]);
+          if (isBreak) {
+            const run = shiftRun.slice(runStart, i);
+            if (
+              run.length > BACK_TO_BACK_MAX_RUN &&
+              run.some((shift) => shift.isClaimed)
+            ) {
+              wouldChainThree = true;
+              break;
+            }
+            runStart = i;
+          }
+        }
+        if (wouldChainThree) {
+          return res.status(409).json({
+            statusCode: 409,
+            message:
+              `This would give the volunteer three back-to-back shifts. A ` +
+              `Squaddie or Shift Lead can hold at most two consecutive ` +
+              `shifts in a row — drop one of the adjacent shifts, or pick ` +
+              `one with a longer break before or after it.`,
+          });
+        }
       }
 
       const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
