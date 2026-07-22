@@ -222,9 +222,9 @@ export const Help = () => {
                   <Image
                     alt="snapshot of shift volunteers page"
                     fill
-                    // ?v=2 busts browser/Next image cache after the World
-                    // name values were redacted in the screenshot
-                    src="/help/check-in-1.png?v=2"
+                    // -v2 filename busts browser/Next image cache after the
+                    // World name values were redacted in the screenshot
+                    src="/help/check-in-1-v2.png"
                     style={{
                       objectFit: "contain",
                     }}
@@ -251,9 +251,9 @@ export const Help = () => {
                   <Image
                     alt="snapshot of shift volunteers page"
                     fill
-                    // ?v=2 busts browser/Next image cache after the World
-                    // name values were redacted in the screenshot
-                    src="/help/check-in-2.png?v=2"
+                    // -v2 filename busts browser/Next image cache after the
+                    // World name values were redacted in the screenshot
+                    src="/help/check-in-2-v2.png"
                     style={{
                       objectFit: "contain",
                     }}
