@@ -283,10 +283,17 @@ export const Help = () => {
               can&apos;t be dropped on your own — reach out to a volunteer
               coordinator if you need off one of those.)
             </Typography>
-            <Typography>
+            <Typography sx={{ mb: 1 }}>
               Use the filter (funnel icon) to narrow by day, type, or
               availability — or turn on <strong>My Shifts</strong> to see just
               the ones you&apos;re on.
+            </Typography>
+            <Typography>
+              <strong>Share a shift with a friend:</strong> on any shift, tap{" "}
+              <strong>Share this shift</strong> to send it through your
+              phone&apos;s share menu (text, Messenger, etc.). Your friend taps
+              the link, signs in with their Burner Profile, and can join the
+              shift too — handy for signing up together.
             </Typography>
           </Section>
 
