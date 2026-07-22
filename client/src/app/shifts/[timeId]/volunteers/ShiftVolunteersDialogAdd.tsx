@@ -7,7 +7,11 @@ import {
   Autocomplete,
   Button,
   CircularProgress,
+  Dialog,
   DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   FormControl,
   FormHelperText,
   Grid,
@@ -20,7 +24,7 @@ import {
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import { useSnackbar } from "notistack";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { io } from "socket.io-client";
 import useSWR from "swr";
@@ -176,6 +180,11 @@ export const ShiftVolunteersDialogAdd = ({
   // other hooks
   // ------------------------------------------------------------
   const { enqueueSnackbar } = useSnackbar();
+  // Holds the pending form values when an admin is about to overbook a full
+  // position — drives the "Are you sure you want to overbook?" confirmation.
+  const [overbookPending, setOverbookPending] = useState<IFormValues | null>(
+    null
+  );
 
   // side effects
   // ------------------------------------------------------------
@@ -492,7 +501,7 @@ export const ShiftVolunteersDialogAdd = ({
 
   // form submission
   // ------------------------------------------------------------
-  const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
+  const performAdd = async (formValues: IFormValues) => {
     try {
       const volunteerAdd = ensure(
         dataVolunteerList.find(
@@ -623,6 +632,37 @@ export const ShiftVolunteersDialogAdd = ({
       }
 
       throw error;
+    }
+  };
+
+  // Gate submission: admins/superadmins may overbook, but confirm the intent
+  // first when the chosen position is already full. Everyone else falls
+  // straight through (the server also enforces capacity as a backstop).
+  const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
+    const shiftPositionFound = positionList.find(
+      (shiftPositionItem) =>
+        shiftPositionItem.timePositionId === formValues.timePositionIdShift
+    );
+    const isPositionFull =
+      shiftPositionFound !== undefined &&
+      shiftPositionFound.slotsFilled >= shiftPositionFound.slotsTotal;
+
+    if (isAdmin && isPositionFull) {
+      setOverbookPending(formValues);
+      return;
+    }
+    await performAdd(formValues);
+  };
+
+  const handleOverbookConfirm = async () => {
+    if (!overbookPending) return;
+
+    const formValues = overbookPending;
+    setOverbookPending(null);
+    try {
+      await performAdd(formValues);
+    } catch {
+      // performAdd already surfaces the error via a snackbar
     }
   };
 
@@ -976,6 +1016,38 @@ export const ShiftVolunteersDialogAdd = ({
           </Button>
         </DialogActions>
       </form>
+
+      {/* admin/superadmin overbook confirmation (portals to body, so it can
+          live inside DialogContainer) */}
+      <Dialog
+        open={Boolean(overbookPending)}
+        onClose={() => setOverbookPending(null)}
+      >
+        <DialogTitle>Overbook shift?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to overbook this shift?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setOverbookPending(null)}
+            startIcon={<CloseIcon />}
+            type="button"
+            variant="outlined"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleOverbookConfirm}
+            startIcon={<PersonAddAlt1Icon />}
+            type="button"
+            variant="contained"
+          >
+            Yes, overbook
+          </Button>
+        </DialogActions>
+      </Dialog>
     </DialogContainer>
   );
 };

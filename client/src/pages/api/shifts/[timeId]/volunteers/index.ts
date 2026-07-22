@@ -16,9 +16,11 @@ import {
   shiftVolunteerUpdate,
 } from "@/components/api/shiftVolunteers";
 import {
+  ROLE_ADMIN_ID,
   ROLE_PEERS_COORDINATOR_ID,
   ROLE_PEERS_SHIFT_LEAD_ID,
   ROLE_PEERS_SQUADDIE_ID,
+  ROLE_SUPER_ADMIN_ID,
   UPDATE_TYPE_CHECK_IN,
 } from "@/constants";
 
@@ -431,40 +433,103 @@ const shiftVolunteers = async (
         }
       }
 
-      const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
-        `SELECT *
-        FROM op_volunteer_shifts
-        WHERE shiftboard_id=?
-        AND time_position_id=?`,
-        [shiftboardId, timePositionId]
+      // PEERS #capacity: the requester's roles (by their authenticated
+      // shiftboard id) — admins/superadmins may intentionally overbook (the
+      // UI asks them to confirm first), so they're exempt from the cap below.
+      const [dbRequesterRoleRows] = await pool.query<RowDataPacket[]>(
+        `SELECT role_id FROM op_volunteer_roles WHERE shiftboard_id = ?`,
+        [session.shiftboardId]
       );
-      const [dbShiftVolunteerFirst] = dbShiftVolunteerList;
+      const requesterRoleIds = new Set(
+        dbRequesterRoleRows.map((row) => Number(row.role_id))
+      );
+      const isRequesterAdmin =
+        requesterRoleIds.has(ROLE_ADMIN_ID) ||
+        requesterRoleIds.has(ROLE_SUPER_ADMIN_ID);
 
-      // if volunteer exists in shift already
-      // then update add_shift and remove_shift fields
-      if (dbShiftVolunteerFirst) {
-        await pool.query<RowDataPacket[]>(
-          `UPDATE op_volunteer_shifts
-          SET
-            noshow=?,
-            add_shift=true,
-            remove_shift=false
+      // PEERS #capacity: block a claim that would exceed the position's slot
+      // count. Race-safe: the slot count and the insert run in one
+      // transaction with the position row locked FOR UPDATE, so two
+      // volunteers claiming the last slot at the same instant can't both
+      // slip through. Enforced server-side so a stale tab / forged request
+      // can't overbook either; the client only greys out full positions.
+      const connection = await pool.getConnection();
+      try {
+        await connection.beginTransaction();
+
+        // Lock the position row so concurrent claims serialize here.
+        const [dbPositionRows] = await connection.query<RowDataPacket[]>(
+          `SELECT slots FROM op_shift_time_position
+           WHERE time_position_id = ?
+           FOR UPDATE`,
+          [timePositionId]
+        );
+        const slotsTotal = Number(dbPositionRows[0]?.slots ?? 0);
+
+        const [dbShiftVolunteerList] = await connection.query<RowDataPacket[]>(
+          `SELECT remove_shift
+          FROM op_volunteer_shifts
           WHERE shiftboard_id=?
           AND time_position_id=?`,
-          [noShow, shiftboardId, timePositionId]
+          [shiftboardId, timePositionId]
         );
-        // else insert them into the table
-      } else {
-        await pool.query<RowDataPacket[]>(
-          `INSERT INTO op_volunteer_shifts (
-            add_shift,
-            noshow,
-            shiftboard_id,
-            time_position_id
-          )
-          VALUES (true, ?, ?, ?)`,
-          [noShow, shiftboardId, timePositionId]
-        );
+        const [dbShiftVolunteerFirst] = dbShiftVolunteerList;
+        // A previously-removed (remove_shift=true) row is re-activated below
+        // and DOES reclaim a slot, so only an already-ACTIVE row is exempt.
+        const isAlreadyActive =
+          dbShiftVolunteerFirst && !dbShiftVolunteerFirst.remove_shift;
+
+        if (!isAlreadyActive && !isRequesterAdmin) {
+          const [dbFilledRows] = await connection.query<RowDataPacket[]>(
+            `SELECT COUNT(*) AS filled
+             FROM op_volunteer_shifts
+             WHERE time_position_id=?
+             AND remove_shift=false`,
+            [timePositionId]
+          );
+          const slotsFilled = Number(dbFilledRows[0]?.filled ?? 0);
+          if (slotsFilled >= slotsTotal) {
+            await connection.rollback();
+            return res.status(409).json({
+              statusCode: 409,
+              message: "This position is already full.",
+            });
+          }
+        }
+
+        // if volunteer exists in shift already
+        // then update add_shift and remove_shift fields
+        if (dbShiftVolunteerFirst) {
+          await connection.query<RowDataPacket[]>(
+            `UPDATE op_volunteer_shifts
+            SET
+              noshow=?,
+              add_shift=true,
+              remove_shift=false
+            WHERE shiftboard_id=?
+            AND time_position_id=?`,
+            [noShow, shiftboardId, timePositionId]
+          );
+          // else insert them into the table
+        } else {
+          await connection.query<RowDataPacket[]>(
+            `INSERT INTO op_volunteer_shifts (
+              add_shift,
+              noshow,
+              shiftboard_id,
+              time_position_id
+            )
+            VALUES (true, ?, ?, ?)`,
+            [noShow, shiftboardId, timePositionId]
+          );
+        }
+
+        await connection.commit();
+      } catch (transactionError) {
+        await connection.rollback();
+        throw transactionError;
+      } finally {
+        connection.release();
       }
 
       // #309: notify the assigned volunteer with the shift details
