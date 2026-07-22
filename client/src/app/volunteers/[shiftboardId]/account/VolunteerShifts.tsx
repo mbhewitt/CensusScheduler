@@ -50,6 +50,7 @@ import { fetcherGet } from "@/utils/fetcher";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
 import { getCheckInType } from "@/utils/getCheckInType";
 import { getColorMap, TYPE_COLOR_OVERRIDES } from "@/utils/getColorMap";
+import { shiftBadge } from "@/utils/shiftBadge";
 import {
   setCellHeaderPropsCenter,
   setCellPropsCenter,
@@ -408,12 +409,30 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
           }}
         />
       );
+      // SQUAD / LEAD badge appended to the end of the Position cell
+      const badge = shiftBadge(positionName);
+      const positionCellBadged = (
+        <Box
+          key={`${timePositionId}-position-badged`}
+          sx={{ alignItems: "center", display: "flex", gap: 1 }}
+        >
+          {positionCell}
+          {badge && (
+            <Box
+              alt={badge.alt}
+              component="img"
+              src={badge.src}
+              sx={{ display: "block", height: 26, width: "auto" }}
+            />
+          )}
+        </Box>
+      );
 
       return [
         formatDateName(date, dateName),
         formatTime(startTime, endTime),
         positionName,
-        positionCell,
+        positionCellBadged,
 
         // if volunteer is admin
         // then display volunteer shift review and volunteer menu
