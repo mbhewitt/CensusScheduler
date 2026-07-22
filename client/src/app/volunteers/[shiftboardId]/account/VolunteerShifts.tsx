@@ -8,6 +8,8 @@ import {
 import {
   Box,
   Button,
+  Card,
+  CardContent,
   Chip,
   IconButton,
   lighten,
@@ -565,10 +567,14 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
           Add shift
         </Button>
       </Stack>
-      <Typography sx={{ mb: 2 }}>
-        If you are looking to schedule a shift with a friend, make sure you both
-        select the same time and day in your account.
-      </Typography>
+      <Card sx={{ mb: 2 }}>
+        <CardContent>
+          <Typography>
+            If you are looking to schedule a shift with a friend, make sure you
+            both select the same time and day in your account.
+          </Typography>
+        </CardContent>
+      </Card>
       <Stack
         alignItems="center"
         direction="row"
