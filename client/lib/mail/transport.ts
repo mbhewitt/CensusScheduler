@@ -73,7 +73,12 @@ export function createSmtpTransport(config: MailConfig): Transport {
     auth: config.smtpUser
       ? { user: config.smtpUser, pass: config.smtpPass ?? "" }
       : undefined,
-    tls: config.smtpSecure ? undefined : { rejectUnauthorized: false },
+    // Strict cert verification whenever credentials are in play (covers 587
+    // STARTTLS too) — the relaxed setting exists only for the localhost hop.
+    tls:
+      config.smtpSecure || config.smtpUser
+        ? undefined
+        : { rejectUnauthorized: false },
   });
 
   return {

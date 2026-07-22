@@ -41,8 +41,10 @@ Notes:
   because it is a configured send-as alias on the mu account; otherwise it
   rewrites From to mu@burningman.org (harmless).
 * Make sure `MAIL_DRY_RUN` and `MAIL_WORKER_DISABLED` are NOT set.
-* Rebuild/recreate the container after editing the env file.
+* Recreate the container after editing the env file (`docker compose up -d`
+  is enough — these are runtime vars, no rebuild needed).
 * Watch it: `docker logs census-app | grep mail:` — the worker logs
   `smtp=smtp.gmail.com:465 auth=mu@burningman.org secure=true` on boot,
-  and queue state lives in `op_email_queue` (`status`, `attempts`,
-  `next_attempt_at`, `last_error`).
+  and queue state lives in `op_email_queue` (`state`, `attempts`,
+  `next_attempt_at`, `last_error`). A wrong/rotated app password shows up
+  as endless 535 retries in `last_error`, not as a dead row.
