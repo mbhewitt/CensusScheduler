@@ -192,11 +192,11 @@ const labels = async (req: NextApiRequest, res: NextApiResponse) => {
     centered("Online survey: census.burningman.org", x0, top - 27.1, 7, helv);
 
     // schedule rows: <=7 shifts print at 9pt; 8-9 print all at 8pt; 10+ are
-    // capped at 7 rows with an overflow note (legacy thresholds, including its
-    // "total - 8" count)
+    // capped at 8 rows with a "total - 8 more" overflow note (legacy checks
+    // its cap before incrementing, so row 8 still prints)
     const shifts = shiftsById.get(v.shiftboard_id) ?? [];
     const dense = shifts.length > 7;
-    const shown = shifts.length >= 10 ? shifts.slice(0, 7) : shifts;
+    const shown = shifts.length >= 10 ? shifts.slice(0, 8) : shifts;
     const size = dense ? 8 : 9;
     const [timeX, posX] = dense ? [42.45, 122.04] : [53.05, 145.89];
     const pitch = dense ? 10 : 11.25;
