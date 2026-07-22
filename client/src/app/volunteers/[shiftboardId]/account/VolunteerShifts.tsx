@@ -567,61 +567,63 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
           Add shift
         </Button>
       </Stack>
+      {/* Whole My Shifts body on one continuous white card — the note, the
+          view controls, and the calendar/table (per papabear 2026-07-22). */}
       <Card sx={{ mb: 2 }}>
         <CardContent>
-          <Typography>
+          <Typography sx={{ mb: 2 }}>
             If you are looking to schedule a shift with a friend, make sure you
             both select the same time and day in your account.
           </Typography>
+          <Stack
+            alignItems="center"
+            direction="row"
+            justifyContent="space-between"
+            sx={{ mb: 2 }}
+          >
+            <Button
+              onClick={handlePrint}
+              size="small"
+              startIcon={<PrintIcon />}
+              type="button"
+              variant="outlined"
+            >
+              Print my Schedule
+            </Button>
+            <ToggleButtonGroup
+              color="primary"
+              exclusive
+              onChange={(_, nextView) => {
+                if (nextView) setView(nextView);
+              }}
+              size="small"
+              value={view}
+            >
+              <ToggleButton value="calendar">
+                <CalendarMonthIcon fontSize="small" sx={{ mr: 0.5 }} />
+                Calendar
+              </ToggleButton>
+              <ToggleButton value="table">
+                <ViewListIcon fontSize="small" sx={{ mr: 0.5 }} />
+                Table
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Stack>
+          {view === "calendar" ? (
+            <ShiftsCalendar
+              events={calendarEvents}
+              layout="time"
+              onSelect={(id) => router.push(`/shifts/${id}/volunteers`)}
+            />
+          ) : (
+            <DataTable
+              columnList={columnList}
+              dataTable={dataTable}
+              optionListCustom={optionListCustom}
+            />
+          )}
         </CardContent>
       </Card>
-      <Stack
-        alignItems="center"
-        direction="row"
-        justifyContent="space-between"
-        sx={{ mb: 2 }}
-      >
-        <Button
-          onClick={handlePrint}
-          size="small"
-          startIcon={<PrintIcon />}
-          type="button"
-          variant="outlined"
-        >
-          Print my Schedule
-        </Button>
-        <ToggleButtonGroup
-          color="primary"
-          exclusive
-          onChange={(_, nextView) => {
-            if (nextView) setView(nextView);
-          }}
-          size="small"
-          value={view}
-        >
-          <ToggleButton value="calendar">
-            <CalendarMonthIcon fontSize="small" sx={{ mr: 0.5 }} />
-            Calendar
-          </ToggleButton>
-          <ToggleButton value="table">
-            <ViewListIcon fontSize="small" sx={{ mr: 0.5 }} />
-            Table
-          </ToggleButton>
-        </ToggleButtonGroup>
-      </Stack>
-      {view === "calendar" ? (
-        <ShiftsCalendar
-          events={calendarEvents}
-          layout="time"
-          onSelect={(id) => router.push(`/shifts/${id}/volunteers`)}
-        />
-      ) : (
-        <DataTable
-          columnList={columnList}
-          dataTable={dataTable}
-          optionListCustom={optionListCustom}
-        />
-      )}
 
       {/* remove dialog */}
       <VolunteerShiftsDialogRemove
