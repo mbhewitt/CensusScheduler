@@ -61,11 +61,19 @@ export function createSmtpTransport(config: MailConfig): Transport {
   const transporter = nodemailer.createTransport({
     host: config.smtpHost,
     port: config.smtpPort,
-    secure: false,
-    // Local Exim on the prod EC2 box accepts unauthenticated submission
-    // from localhost. No TLS required for the localhost hop — the upstream
-    // SES relay handles TLS to the wider internet.
-    tls: { rejectUnauthorized: false },
+    // Two supported shapes:
+    //  - Cloud/prod: unauthenticated hop to local Exim on 127.0.0.1:25; the
+    //    upstream SES relay handles TLS to the wider internet. Cert checks
+    //    stay relaxed because the peer is localhost.
+    //  - On-playa: authenticated submission straight to a real provider
+    //    (SMTP_SECURE=1 SMTP_USER/SMTP_PASS, e.g. Gmail on 465 as
+    //    mu@burningman.org — same account the legacy PHP mailer used), with
+    //    full certificate verification.
+    secure: config.smtpSecure,
+    auth: config.smtpUser
+      ? { user: config.smtpUser, pass: config.smtpPass ?? "" }
+      : undefined,
+    tls: config.smtpSecure ? undefined : { rejectUnauthorized: false },
   });
 
   return {
