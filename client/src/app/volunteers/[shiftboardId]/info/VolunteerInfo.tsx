@@ -402,7 +402,10 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
         }}
         text="My Account and Shifts"
       />
-      <Container maxWidth="lg">
+      {/* xl (not lg) so the main column is wide enough to show the full
+          Mon–Fri calendar without horizontal scroll on wide screens
+          (per papabear 2026-07-22). */}
+      <Container maxWidth="xl">
         {/* Header (breadcrumbs + welcome + on-playa/SAP) spans full width.
             The two-column split with the "get more involved" sidebar
             begins lower, at the checklist, so the sidebar aligns with the
@@ -422,7 +425,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
             column so its width matches the sections below it, and the PEERS
             logo can sit to its right in the sidebar (per papabear 2026-07-17). */}
         <Grid container spacing={3}>
-          <Grid size={{ xs: 12, md: isOnPlaya ? 12 : 8 }}>
+          <Grid size={{ xs: 12, md: isOnPlaya ? 12 : 9 }}>
         {/* welcome header */}
         <Card sx={{ mb: 3 }}>
           <CardContent>
@@ -843,7 +846,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
         )}
           </Grid>
           {!isOnPlaya && (
-            <Grid size={{ xs: 12, md: 4 }}>
+            <Grid size={{ xs: 12, md: 3 }}>
               {/* PEERS logo to the right of the header, above the
                   "get more involved" panel (per papabear 2026-07-17). */}
               <Box
