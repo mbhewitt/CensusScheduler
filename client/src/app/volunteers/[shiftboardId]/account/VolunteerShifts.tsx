@@ -11,6 +11,7 @@ import {
   Card,
   CardContent,
   Chip,
+  Divider,
   IconButton,
   lighten,
   Stack,
@@ -609,6 +610,9 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
               </ToggleButton>
             </ToggleButtonGroup>
           </Stack>
+          {/* divider between the controls and the calendar/table, matching the
+              rules used inside them (per papabear 2026-07-22) */}
+          <Divider sx={{ mb: 2 }} />
           {view === "calendar" ? (
             <ShiftsCalendar
               events={calendarEvents}
