@@ -2,6 +2,7 @@ import {
   CalendarMonth as CalendarMonthIcon,
   Chat as ChatIcon,
   EventAvailable as EventAvailableIcon,
+  Print as PrintIcon,
   ViewList as ViewListIcon,
 } from "@mui/icons-material";
 import {
@@ -49,6 +50,7 @@ import { checkIsAdmin } from "@/utils/checkIsRoleExist";
 import { fetcherGet } from "@/utils/fetcher";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
 import { getCheckInType } from "@/utils/getCheckInType";
+import { buildSchedulePrintHtml } from "@/utils/buildSchedulePrintHtml";
 import { getColorMap, TYPE_COLOR_OVERRIDES } from "@/utils/getColorMap";
 import { shiftBadge } from "@/utils/shiftBadge";
 import {
@@ -93,7 +95,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
   } = useContext(DeveloperModeContext);
   const {
     sessionState: {
-      user: { roleList },
+      user: { playaName, roleList, worldName },
     },
   } = useContext(SessionContext);
 
@@ -517,6 +519,27 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
     })
   );
 
+  // Open a printable, time-grid version of the schedule in a new window.
+  const handlePrint = () => {
+    const printName = worldName || playaName;
+    const html = buildSchedulePrintHtml({
+      events: calendarEvents,
+      title: printName ? `${printName}'s Schedule` : "My Schedule",
+    });
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) {
+      enqueueSnackbar(
+        <SnackbarText>
+          Please allow pop-ups for this site to print your schedule.
+        </SnackbarText>,
+        { variant: "error" }
+      );
+      return;
+    }
+    printWindow.document.write(html);
+    printWindow.document.close();
+  };
+
   // render
   // ------------------------------------------------------------
   return (
@@ -545,7 +568,21 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
         If you are looking to schedule a shift with a friend, make sure you both
         select the same time and day in your account.
       </Typography>
-      <Stack alignItems="flex-end" sx={{ mb: 2 }}>
+      <Stack
+        alignItems="center"
+        direction="row"
+        justifyContent="space-between"
+        sx={{ mb: 2 }}
+      >
+        <Button
+          onClick={handlePrint}
+          size="small"
+          startIcon={<PrintIcon />}
+          type="button"
+          variant="outlined"
+        >
+          Print my Schedule
+        </Button>
         <ToggleButtonGroup
           color="primary"
           exclusive
@@ -568,6 +605,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
       {view === "calendar" ? (
         <ShiftsCalendar
           events={calendarEvents}
+          layout="time"
           onSelect={(id) => router.push(`/shifts/${id}/volunteers`)}
         />
       ) : (
