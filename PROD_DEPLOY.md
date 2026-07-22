@@ -201,6 +201,14 @@ sudo -u census bash -c '
 
 # Wait for "Ready" in logs
 sudo docker logs -f census-app
+
+# After EVERY successful deploy: clean up what the build left behind.
+# Old images and build cache otherwise accumulate forever — this filled
+# the peers box's 20G disk to 100% (2026-07-22) and had 25GB of dead
+# cache on census prod. Safe: never touches the running container, its
+# image, or cache younger than a week (so the next build stays fast).
+sudo docker image prune -af
+sudo docker builder prune -af --filter until=168h
 ```
 
 App should now be answering on `127.0.0.1:3000`.
@@ -279,7 +287,7 @@ Okta app's whitelist — talk to the BM Okta admin.
 
 | What | How |
 |---|---|
-| Pull a new code release | `cd /home/census/CensusScheduler && git fetch && git checkout <ref>`, then `docker compose --file docker-compose-prod.yaml build && docker compose --file docker-compose-prod.yaml up -d` |
+| Pull a new code release | `cd /home/census/CensusScheduler && git fetch && git checkout <ref>`, then `docker compose --file docker-compose-prod.yaml build && docker compose --file docker-compose-prod.yaml up -d`, then `docker image prune -af && docker builder prune -af --filter until=168h` |
 | Tail app logs | `sudo docker logs -f census-app` |
 | Container restart only (env change) | `sudo -u census docker compose --file docker-compose-prod.yaml up -d --force-recreate` |
 | Rotate Okta secret | edit `client/.env.production`, restart the container |
