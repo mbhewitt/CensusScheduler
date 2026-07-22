@@ -525,6 +525,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
     const html = buildSchedulePrintHtml({
       events: calendarEvents,
       title: printName ? `${printName}'s Schedule` : "My Schedule",
+      origin: window.location.origin,
     });
     const printWindow = window.open("", "_blank");
     if (!printWindow) {

@@ -44,7 +44,7 @@ interface IShiftsCalendarProps {
 }
 
 // pixels per hour for the time-grid layout
-const PX_PER_HOUR = 56;
+const PX_PER_HOUR = 28;
 // width of the hour-label gutter in the time-grid layout
 const GUTTER_WIDTH = 52;
 

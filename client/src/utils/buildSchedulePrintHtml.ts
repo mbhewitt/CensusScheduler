@@ -8,6 +8,7 @@ import {
   getTimeAxis,
   packDayLanes,
 } from "@/utils/scheduleTimeGrid";
+import { shiftBadge } from "@/utils/shiftBadge";
 
 // Builds a self-contained, printable HTML document of a volunteer's schedule in
 // the time-grid calendar format. Opened in a new window and auto-printed, so it
@@ -15,7 +16,7 @@ import {
 // on-screen account calendar — PEERS schedules one week in August (per papabear
 // 2026-07-22).
 
-const PX_PER_HOUR = 56;
+const PX_PER_HOUR = 28;
 const GUTTER_WIDTH = 52;
 const DAY_COUNT = 5; // Mon–Fri
 
@@ -33,9 +34,13 @@ const mondayOf = (date: string) =>
 export const buildSchedulePrintHtml = ({
   events,
   title,
+  origin,
 }: {
   events: ICalendarEvent[];
   title: string;
+  // Site origin so root-relative badge image URLs (/general/*.png) resolve in
+  // the new blank window; injected as a <base href>.
+  origin: string;
 }): string => {
   const { startMin, endMin } = getTimeAxis(events);
   const hourMarks = getHourMarks(startMin, endMin);
@@ -90,13 +95,22 @@ export const buildSchedulePrintHtml = ({
             const widthPct = 100 / laneCount;
             const left = lane * widthPct;
             const canceled = event.canceled ? " canceled" : "";
+            const badge = shiftBadge(event.type);
+            const badgeImg = badge
+              ? `<img class="badge" src="${badge.src}" alt="${escapeHtml(
+                  badge.alt
+                )}" />`
+              : "";
             return `<div class="block${canceled}" style="top:${top}px;height:${height}px;left:calc(${left}% + 2px);width:calc(${widthPct}% - 4px);border-color:${
               event.color
             };background:${event.color}22">
               <div class="block-time">${escapeHtml(
                 formatTime(event.startTime, event.endTime)
               )}</div>
-              <div class="block-type">${escapeHtml(event.type)}</div>
+              <div class="block-type-row">
+                <span class="block-type">${escapeHtml(event.type)}</span>
+                ${badgeImg}
+              </div>
               ${event.canceled ? '<div class="block-canceled">CANCELED</div>' : ""}
             </div>`;
           })
@@ -128,6 +142,7 @@ export const buildSchedulePrintHtml = ({
 <html lang="en">
 <head>
 <meta charset="utf-8" />
+<base href="${escapeHtml(origin)}/" />
 <title>${escapeHtml(title)}</title>
 <style>
   @page { size: landscape; margin: 1cm; }
@@ -194,7 +209,14 @@ export const buildSchedulePrintHtml = ({
     font-size: 10px;
   }
   .block-time { font-weight: 700; }
-  .block-type { }
+  .block-type-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3px;
+  }
+  .block-type { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .badge { height: 12px; width: auto; flex-shrink: 0; }
   .block.canceled .block-time, .block.canceled .block-type {
     text-decoration: line-through;
   }
