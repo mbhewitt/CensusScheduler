@@ -7,6 +7,7 @@ import {
   ConfirmationNumber as ConfirmationNumberIcon,
   Help as HelpIcon,
   Home as HomeIcon,
+  Print as PrintIcon,
   QuestionAnswer as QuestionAnswerIcon,
   Settings as SettingsIcon,
   VerifiedUser as VerifiedUserIcon,
@@ -68,6 +69,12 @@ export const pageListSuperAdmin = [
     icon: <ConfirmationNumberIcon />,
     label: "SAPs",
     path: "/saps",
+  },
+  {
+    // direct PDF download (Avery 5523 sheet), not an app page
+    icon: <PrintIcon />,
+    label: "User Labels",
+    path: "/api/labels",
   },
   {
     icon: <WorkHistoryIcon />,
