@@ -666,6 +666,13 @@ export const ShiftVolunteersDialogAdd = ({
     }
   };
 
+  // Canceling (or dismissing) the overbook prompt closes everything — the
+  // confirmation and the underlying claim dialog (per papabear 2026-07-22).
+  const handleOverbookCancel = () => {
+    setOverbookPending(null);
+    handleDialogClose();
+  };
+
   // render
   // ------------------------------------------------------------
   let trainingDisplay: React.ReactNode;
@@ -1019,10 +1026,7 @@ export const ShiftVolunteersDialogAdd = ({
 
       {/* admin/superadmin overbook confirmation (portals to body, so it can
           live inside DialogContainer) */}
-      <Dialog
-        open={Boolean(overbookPending)}
-        onClose={() => setOverbookPending(null)}
-      >
+      <Dialog open={Boolean(overbookPending)} onClose={handleOverbookCancel}>
         <DialogTitle>Overbook shift?</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -1031,7 +1035,7 @@ export const ShiftVolunteersDialogAdd = ({
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={() => setOverbookPending(null)}
+            onClick={handleOverbookCancel}
             startIcon={<CloseIcon />}
             type="button"
             variant="outlined"
