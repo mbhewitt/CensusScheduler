@@ -66,6 +66,12 @@ export interface MailConfig {
   defaultReplyTo: string;
   smtpHost: string;
   smtpPort: number;
+  // Authenticated submission to a real provider (e.g. Gmail on 465 for the
+  // on-playa build, where there is no local Exim/SES relay). When smtpUser is
+  // null the transport stays an unauthenticated localhost-relay hop.
+  smtpSecure: boolean;
+  smtpUser: string | null;
+  smtpPass: string | null;
   dryRun: boolean;
   // When set: SMTP envelope + To header are rewritten to this single
   // address; Cc is dropped; the body is prepended with a banner showing

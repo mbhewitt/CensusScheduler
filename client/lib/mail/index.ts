@@ -15,6 +15,9 @@ function readConfig(): MailConfig {
       "Census Volunteer Coordinators <censusvc@burningman.org>",
     smtpHost: process.env.SMTP_HOST ?? "127.0.0.1",
     smtpPort: Number.isFinite(port) ? port : 25,
+    smtpSecure: process.env.SMTP_SECURE === "1",
+    smtpUser: process.env.SMTP_USER?.trim() || null,
+    smtpPass: process.env.SMTP_PASS || null,
     dryRun: process.env.MAIL_DRY_RUN === "1",
     overrideTo: process.env.MAIL_OVERRIDE_TO?.trim() || null,
     workerDisabled: process.env.MAIL_WORKER_DISABLED === "1",
@@ -59,6 +62,6 @@ export function bootstrapMailWorker(): void {
   const store = createMysqlStore(pool);
   startWorker(store, cfg, transport);
   console.warn(
-    `[mail:worker] started — tickMs=${cfg.workerTickMs} ratePerMinute=${cfg.ratePerMinute} ratePerDay=${cfg.ratePerDay} dryRun=${cfg.dryRun} smtp=${cfg.smtpHost}:${cfg.smtpPort}${cfg.overrideTo ? ` overrideTo=${cfg.overrideTo}` : ""}`
+    `[mail:worker] started — tickMs=${cfg.workerTickMs} ratePerMinute=${cfg.ratePerMinute} ratePerDay=${cfg.ratePerDay} dryRun=${cfg.dryRun} smtp=${cfg.smtpHost}:${cfg.smtpPort}${cfg.smtpUser ? ` auth=${cfg.smtpUser} secure=${cfg.smtpSecure}` : ""}${cfg.overrideTo ? ` overrideTo=${cfg.overrideTo}` : ""}`
   );
 }
