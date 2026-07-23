@@ -251,26 +251,30 @@ export const Header = () => {
                         </Link>
                       </ListItem>
                     )}
-                    {/* Create Account sits under Contact; admin/superadmin only —
-                      it's the walk-in onboarding page a lead opens on the
-                      kiosk tablet (per papabear 2026-07-23). */}
-                    {path === "/contact" && (isAdmin || isSuperAdmin) && (
-                      <ListItem disablePadding>
-                        <Link
-                          href="/volunteers/account/create"
-                          onClick={handleDrawerClose}
-                        >
-                          <ListItemButton
-                            selected={pathname === "/volunteers/account/create"}
+                    {/* Create Account sits under Contact. Shown on-playa (the
+                      kiosk network) to anyone so a walk-in can self-serve, and
+                      to admins/superadmins everywhere so they can reach it
+                      off-playa too (per papabear 2026-07-23). */}
+                    {path === "/contact" &&
+                      (isOnPlaya || isAdmin || isSuperAdmin) && (
+                        <ListItem disablePadding>
+                          <Link
+                            href="/volunteers/account/create"
+                            onClick={handleDrawerClose}
                           >
-                            <ListItemIcon>
-                              <PersonAddIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Create Account" />
-                          </ListItemButton>
-                        </Link>
-                      </ListItem>
-                    )}
+                            <ListItemButton
+                              selected={
+                                pathname === "/volunteers/account/create"
+                              }
+                            >
+                              <ListItemIcon>
+                                <PersonAddIcon />
+                              </ListItemIcon>
+                              <ListItemText primary="Create Account" />
+                            </ListItemButton>
+                          </Link>
+                        </ListItem>
+                      )}
                   </Fragment>
                 ))}
             </List>
