@@ -166,7 +166,12 @@ export const SignIn = () => {
           returnToParam && returnToParam.startsWith("/")
             ? returnToParam
             : `/volunteers/${dataVolunteerItem.shiftboardId}/info`;
-        router.push(returnTo);
+        // PEERS #walkin: hard navigation (not router.push) so the session
+        // cookie just set on the sign-in response is fully applied before the
+        // destination loads. A soft push can serve the stale (pre-cookie)
+        // router cache and hang on the loading spinner until a manual refresh
+        // (papabear 2026-07-23).
+        window.location.assign(returnTo);
       }
     } catch (error) {
       if (error instanceof Error) {

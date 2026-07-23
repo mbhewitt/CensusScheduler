@@ -55,6 +55,7 @@ import { fetcherGet } from "@/utils/fetcher";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
 import { getColorMap, TYPE_COLOR_OVERRIDES } from "@/utils/getColorMap";
 import { shiftBadge } from "@/utils/shiftBadge";
+import { useIsOnPlaya } from "@/utils/useIsOnPlaya";
 
 // Which access role a shift type requires to sign up. Returns null for shift
 // types with no gating (open to any signed-in volunteer). The PEERS access
@@ -87,11 +88,16 @@ export const Shifts = () => {
       user: { roleList, shiftboardId },
     },
   } = useContext(SessionContext);
+  // PEERS #walkin: on-playa (by IP), an untrained walk-in may claim SQUADDIE
+  // shifts — mirrors the server-side bypass. Drives both the grey-out and the
+  // onboarding banner below.
+  const isOnPlaya = useIsOnPlaya();
 
   // Whether the signed-in volunteer may sign up for a given shift type. Admins
   // bypass; PEERS Leads may also take Squaddie shifts. Untrained volunteers
   // (no PEERS access role) are ineligible everywhere → the whole list grays
-  // out, which nudges them to finish Hive training first.
+  // out, which nudges them to finish Hive training first — UNLESS they're
+  // on-playa, where Squaddie shifts open up (walk-in bypass).
   const isEligibleForType = (type: string): boolean => {
     if (checkIsAdmin(accountType, roleList)) return true;
     const required = requiredRoleForType(type);
@@ -100,13 +106,14 @@ export const Shifts = () => {
     const hasLead = checkIsRoleExist(ROLE_PEERS_SHIFT_LEAD_ID, roleList);
     // Shift Lead shifts require BOTH trainings — the Squaddie role AND the
     // Shift Lead role (each earned from its Hive confirmation link), per
-    // papabear 2026-07-17.
+    // papabear 2026-07-17. No on-playa bypass — Lead stays training-gated.
     if (required.id === ROLE_PEERS_SHIFT_LEAD_ID) {
       return hasLead && hasSquaddie;
     }
-    // Squaddie shifts: anyone who's completed Squaddie training (Leads too).
+    // Squaddie shifts: anyone who's completed Squaddie training (Leads too),
+    // OR anyone on-playa (the walk-in bypass — being on-site is the "pass").
     if (required.id === ROLE_PEERS_SQUADDIE_ID) {
-      return hasSquaddie || hasLead;
+      return hasSquaddie || hasLead || isOnPlaya;
     }
     // Other types (e.g. Coordinator): the single matching role.
     return checkIsRoleExist(required.id, roleList);
@@ -598,15 +605,21 @@ export const Shifts = () => {
         text="All Shifts"
       />
       <Container component="main">
-        <Alert severity="warning" sx={{ my: 2 }}>
-          <Typography component="span" sx={{ fontWeight: 700 }}>
-            Complete your PEERS onboarding first.
-          </Typography>{" "}
-          You must finish your Hive training and the full onboarding process
-          before signing up for shifts. Shifts you aren&rsquo;t yet eligible for
-          are grayed out, and sign-ups made before onboarding is complete may be
-          removed.
-        </Alert>
+        {/* PEERS #walkin: the onboarding warning only applies off-playa, where
+            training is still required. On-playa a walk-in can sign up for
+            Squaddie shifts without training, so the banner would be wrong —
+            hide it (papabear 2026-07-23). */}
+        {!isOnPlaya && (
+          <Alert severity="warning" sx={{ my: 2 }}>
+            <Typography component="span" sx={{ fontWeight: 700 }}>
+              Complete your PEERS onboarding first.
+            </Typography>{" "}
+            You must finish your Hive training and the full onboarding process
+            before signing up for shifts. Shifts you aren&rsquo;t yet eligible
+            for are grayed out, and sign-ups made before onboarding is complete
+            may be removed.
+          </Alert>
+        )}
         {/* view toggle + calendar filters (Type + availability) */}
         <Box
           sx={{

@@ -2,6 +2,7 @@ import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import type { IResVolunteerAccount } from "@/components/types/volunteers";
+import { buildSessionCookie } from "@/lib/session";
 import { pool } from "lib/database";
 
 // New-account shiftboard_ids start at 10,000,000 — keeps a clear range
@@ -86,6 +87,14 @@ const account = async (req: NextApiRequest, res: NextApiResponse) => {
         shiftboardId: shiftboardIdNew,
         worldName,
       };
+
+      // PEERS #walkin: sign the new walk-in in immediately by setting the
+      // server-side session cookie (same as the passcode sign-in path). Without
+      // this the client dispatches SESSION_SIGN_IN locally but the middleware
+      // sees no session cookie on the next navigation and bounces them to
+      // /sign-in — which is exactly the "create account sent me back to the
+      // sign-on screen" bug (papabear 2026-07-23).
+      res.setHeader("Set-Cookie", buildSessionCookie(shiftboardIdNew));
 
       return res.status(201).json(resAccount);
     }

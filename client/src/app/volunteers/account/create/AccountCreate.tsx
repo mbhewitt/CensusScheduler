@@ -113,8 +113,14 @@ export const AccountCreate = () => {
         }
       );
 
-      // route to volunteer info page (replaces the old account page)
-      router.push(`/volunteers/${dataVolunteerItem.shiftboardId}/info`);
+      // PEERS #walkin: hard navigation (not router.push) so the session cookie
+      // just set on the create response is fully applied before the account
+      // page loads. A soft push can render the account page against the stale
+      // (pre-cookie) router cache, leaving it stuck on the loading spinner
+      // until a manual refresh (papabear 2026-07-23).
+      window.location.assign(
+        `/volunteers/${dataVolunteerItem.shiftboardId}/info`
+      );
     } catch (error) {
       if (error instanceof Error) {
         enqueueSnackbar(
