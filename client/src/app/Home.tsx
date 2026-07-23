@@ -82,9 +82,11 @@ export const Home = () => {
            * copy (per Chipper + Mew, 2026-05-25). Auth state drives the
            * content:
            *   - authenticated → "View your account" link to /info
-           *   - unauth + Okta enabled (off-playa) → Okta SSO button
-           *   - unauth + PIN enabled (on-playa) → link to /sign-in for
-           *     the passcode form (volunteer dropdown stays off Home)
+           *   - unauth + PIN enabled (on-playa) → link to the /sign-in block,
+           *     which offers Okta + passcode + Create Account together. This
+           *     is checked BEFORE Okta so an on-playa walk-in isn't dumped
+           *     straight into Okta (papabear, 2026-07-23).
+           *   - unauth + Okta enabled (off-playa) → Okta SSO button direct
            */}
           <Stack alignItems="center" sx={{ mb: 3 }}>
             {isAuthenticated ? (
@@ -97,6 +99,16 @@ export const Home = () => {
               >
                 Welcome, {playaName} &quot;{worldName}&quot; — view your account
               </Button>
+            ) : isPinEnabled ? (
+              <Button
+                component={Link}
+                href="/sign-in"
+                size="large"
+                startIcon={<LoginIcon />}
+                variant="contained"
+              >
+                Sign in to PEERS
+              </Button>
             ) : isOAuthConfigured ? (
               <Button
                 component="a"
@@ -106,16 +118,6 @@ export const Home = () => {
                 variant="contained"
               >
                 Sign in to PEERS
-              </Button>
-            ) : isPinEnabled ? (
-              <Button
-                component={Link}
-                href="/sign-in"
-                size="large"
-                startIcon={<LoginIcon />}
-                variant="contained"
-              >
-                Sign in with passcode
               </Button>
             ) : null}
           </Stack>
@@ -135,21 +137,22 @@ export const Home = () => {
               <Typography>
                 Squaddies visit every theme camp in pairs during 3-hour shifts,
                 Monday through Friday, between 8:30am and 10:30pm. Their role is
-                first and foremost to{" "}
-                <strong>CELEBRATE</strong> the theme camps and their hard work in
-                bringing their vision to life! Squaddies ask a few questions
-                about their placement experience and neighborhood then{" "}
-                <strong>LISTEN</strong> to their responses. Finally, they{" "}
-                <strong>OBSERVE</strong> their camp and take a few photos.
+                first and foremost to <strong>CELEBRATE</strong> the theme camps
+                and their hard work in bringing their vision to life! Squaddies
+                ask a few questions about their placement experience and
+                neighborhood then <strong>LISTEN</strong> to their responses.
+                Finally, they <strong>OBSERVE</strong> their camp and take a few
+                photos.
               </Typography>
               <Typography>
                 The data collected is held with the camp&apos;s record and helps
                 the Placers better visualize the neighborhoods they assembled so
                 they can continue to improve their craft. Anything urgent gets
-                escalated on-playa to Rangers or Placement leadership. Anyone can
-                volunteer — new Burners, veterans, camp organizers. We&apos;re
-                looking for friendly, respectful, curious people who are willing
-                to collaborate, stay objective, and have a good time doing it.
+                escalated on-playa to Rangers or Placement leadership. Anyone
+                can volunteer — new Burners, veterans, camp organizers.
+                We&apos;re looking for friendly, respectful, curious people who
+                are willing to collaborate, stay objective, and have a good time
+                doing it.
               </Typography>
             </CardContent>
           </Card>
@@ -174,9 +177,8 @@ export const Home = () => {
               <Typography>
                 Questions, comments, or want to volunteer? Reach the team at{" "}
                 <a href="mailto:peers@burningman.org">peers@burningman.org</a>{" "}
-                or use the{" "}
-                <Link href={{ pathname: "/contact" }}>Contact</Link> form in
-                the tablet menu.
+                or use the <Link href={{ pathname: "/contact" }}>Contact</Link>{" "}
+                form in the tablet menu.
               </Typography>
             </CardContent>
           </Card>
