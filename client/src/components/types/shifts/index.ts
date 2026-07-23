@@ -45,6 +45,7 @@ export interface IResShiftPositionCountItem {
 }
 export interface IResShiftVolunteerRowItem {
   isCheckedIn: string;
+  isWalkIn: boolean;
   notes: string;
   playaName: string;
   positionName: string;

@@ -57,6 +57,8 @@ import type {
 } from "@/components/types/volunteers";
 import {
   ROLE_ADMIN_ID,
+  ROLE_PEERS_COORDINATOR_ID,
+  ROLE_PEERS_SHIFT_LEAD_ID,
   ROLE_SUPER_ADMIN_ID,
 } from "@/constants";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
@@ -86,10 +88,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   } = useContext(DeveloperModeContext);
   const {
     sessionState: {
-      user: {
-        roleList: roleListSession,
-        shiftboardId: shiftboardIdSession,
-      },
+      user: { roleList: roleListSession, shiftboardId: shiftboardIdSession },
     },
   } = useContext(SessionContext);
 
@@ -144,10 +143,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     mutate: any;
   } = useSWR(`/api/volunteers/${shiftboardId}/account`, fetcherGet);
   const { isMutating: isAccountMutating, trigger: triggerAccount } =
-    useSWRMutation(
-      `/api/volunteers/${shiftboardId}/account`,
-      fetcherTrigger
-    );
+    useSWRMutation(`/api/volunteers/${shiftboardId}/account`, fetcherTrigger);
 
   // all roles (for admin role toggle)
   const {
@@ -274,7 +270,9 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   );
 
   // notes form submission
-  const onNotesSubmit: SubmitHandler<{ notes: string }> = async (formValues) => {
+  const onNotesSubmit: SubmitHandler<{ notes: string }> = async (
+    formValues
+  ) => {
     try {
       await triggerAccount({
         body: { ...accountData, notes: formValues.notes },
@@ -312,6 +310,35 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
 
   const isAdmin = checkIsAdmin(accountType, roleListSession);
   const isSuperAdmin = checkIsSuperAdmin(accountType, roleListSession);
+
+  // PEERS #walkin: leadership hierarchy for the passcode-reset button — mirrors
+  // the server gate (lib/authz canManageVolunteer). Rank = highest role held;
+  // you may reset anyone STRICTLY below you (admin > coordinator > shift lead >
+  // squaddie). Admins reset anyone; a volunteer always manages their own. The
+  // target's roles come from accountData (the /account read is now open to
+  // rank-superior leadership), so the button only shows once that has loaded.
+  const leadershipRank = (
+    roles: IResVolunteerRoleItem[] | undefined
+  ): number => {
+    if (!roles) return 0;
+    if (
+      roles.some(
+        (role) => role.id === ROLE_ADMIN_ID || role.id === ROLE_SUPER_ADMIN_ID
+      )
+    ) {
+      return 3;
+    }
+    if (roles.some((role) => role.id === ROLE_PEERS_COORDINATOR_ID)) return 2;
+    if (roles.some((role) => role.id === ROLE_PEERS_SHIFT_LEAD_ID)) return 1;
+    return 0;
+  };
+  const requesterRank = leadershipRank(roleListSession);
+  const targetRank = leadershipRank(accountData?.roleList);
+  const canManagePasscode =
+    isSelfView ||
+    isAdmin ||
+    isSuperAdmin ||
+    (requesterRank > 0 && Boolean(accountData) && requesterRank > targetRank);
 
   // determine which checklist items are complete vs incomplete
   const checklistItems: {
@@ -426,424 +453,431 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
             logo can sit to its right in the sidebar (per papabear 2026-07-17). */}
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, md: isOnPlaya ? 12 : 9 }}>
-        {/* welcome header */}
-        <Card sx={{ mb: 3 }}>
-          <CardContent>
-            <Typography component="h2" sx={{ mb: 1 }} variant="h5">
-              Welcome, {volunteer.playaName}!
-            </Typography>
-            <Typography color="text.secondary" sx={{ mb: 2 }}>
-              Review your account and complete the checklist items below to
-              get ready for the event.
-            </Typography>
-            <Stack direction="row" spacing={3}>
-              <Box>
-                <Typography color="text.secondary" variant="body2">
-                  Playa Name
-                </Typography>
-                <Typography>{volunteer.playaName || "\u2014"}</Typography>
-              </Box>
-              <Box>
-                <Typography color="text.secondary" variant="body2">
-                  World Name
-                </Typography>
-                <Typography>{volunteer.worldName || "\u2014"}</Typography>
-              </Box>
-              <Box>
-                <Typography color="text.secondary" variant="body2">
-                  Email
-                </Typography>
-                <Typography>{volunteer.email || "\u2014"}</Typography>
-              </Box>
-            </Stack>
-            <Typography color="text.secondary" sx={{ mt: 1 }} variant="body2">
-              Need to update your info?{" "}
-              <a
-                href="https://profiles.burningman.org/my-profile"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                Visit your Burner Profile
-              </a>
-            </Typography>
-          </CardContent>
-        </Card>
-        {/* checklist */}
-        <Card sx={{ mb: 3 }}>
-          <CardContent>
-            <Typography component="h2" sx={{ mb: 1 }} variant="h5">
-              PEERS Volunteer Pre-playa Checklist
-            </Typography>
-
-            {/* color/status legend */}
-            <Stack
-              direction="row"
-              spacing={3}
-              sx={{
-                mb: 2,
-                py: 1,
-                px: 2,
-                bgcolor: "rgba(0,0,0,0.02)",
-                borderRadius: 1,
-                fontSize: "0.875rem",
-                color: "text.secondary",
-              }}
-            >
-              <Stack alignItems="center" direction="row" spacing={0.5}>
-                <CheckBoxOutlineBlankIcon
-                  sx={{ color: theme.palette.secondary.main }}
-                  fontSize="small"
-                />
-                <Typography variant="caption">Action needed</Typography>
-              </Stack>
-              <Stack alignItems="center" direction="row" spacing={0.5}>
-                <CheckBoxIcon color="success" fontSize="small" />
-                <Typography variant="caption">Completed</Typography>
-              </Stack>
-            </Stack>
-
-            {/* incomplete items */}
-            {incompleteItems.length === 0 ? (
-              <Alert severity="success" sx={{ mb: 2 }}>
-                All items complete!
-              </Alert>
-            ) : (
-              incompleteItems.map((item) => (
-                <Accordion
-                  key={item.id}
-                  defaultExpanded
-                  sx={{
-                    "&:before": { display: "none" },
-                    boxShadow: "none",
-                    border: `1px solid ${theme.palette.divider}`,
-                    mb: 1,
-                  }}
-                >
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Stack alignItems="center" direction="row" spacing={1}>
-                      <CheckBoxOutlineBlankIcon
-                        sx={{ color: theme.palette.secondary.main }}
-                        fontSize="small"
-                      />
-                      <Typography>{item.label}</Typography>
-                    </Stack>
-                  </AccordionSummary>
-                  <AccordionDetails>{item.content}</AccordionDetails>
-                </Accordion>
-              ))
-            )}
-
-            {/* completed items toggle */}
-            {completedItems.length > 0 && (
-              <Box sx={{ mt: 1 }}>
-                <Accordion
-                  onChange={() => setShowCompleted(!showCompleted)}
-                  expanded={showCompleted}
-                  sx={{
-                    "&:before": { display: "none" },
-                    boxShadow: "none",
-                    border: `1px solid ${theme.palette.divider}`,
-                    mb: 1,
-                  }}
-                >
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Stack alignItems="center" direction="row" spacing={1}>
-                      <CheckBoxIcon color="success" fontSize="small" />
-                      <Typography>
-                        View {completedItems.length} completed item
-                        {completedItems.length > 1 ? "s" : ""}
-                      </Typography>
-                    </Stack>
-                  </AccordionSummary>
-                  <AccordionDetails sx={{ p: 0 }}>
-                    {completedItems.map((item) => (
-                      <Accordion
-                        key={item.id}
-                        sx={{
-                          "&:before": { display: "none" },
-                          boxShadow: "none",
-                          borderTop: `1px solid ${theme.palette.divider}`,
-                        }}
-                      >
-                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                          <Stack
-                            alignItems="center"
-                            direction="row"
-                            spacing={1}
-                          >
-                            <CheckBoxIcon color="success" fontSize="small" />
-                            <Typography>{item.label}</Typography>
-                          </Stack>
-                        </AccordionSummary>
-                        <AccordionDetails>{item.content}</AccordionDetails>
-                      </Accordion>
-                    ))}
-                  </AccordionDetails>
-                </Accordion>
-              </Box>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* shifts — reuse existing VolunteerShifts component */}
-        <Box component="section" ref={passcodeRef}>
-          <VolunteerShifts shiftboardId={shiftboardId} />
-        </Box>
-
-        {/* security — admin/superadmin only. The passcode feature isn't in use
-            yet (prod is Okta-only), so hide it from regular volunteers until we
-            settle its purpose (per papabear 2026-07-17). */}
-        {(isAdmin || isSuperAdmin) && (
-        <Box component="section" sx={{ mt: 3 }}>
-          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
-            Security
-          </Typography>
-          <Card>
-            <CardContent>
-              <Grid container alignItems="center">
-                <Grid size={4}>
-                  <Typography component="h3" variant="h6">
-                    Passcode
-                  </Typography>
-                  <Typography color="text.secondary" variant="body2">
-                    This passcode is for signing in on tablets on-playa
-                    only.
-                  </Typography>
-                </Grid>
-                <Grid size={8}>
-                  <Stack
-                    direction="row"
-                    justifyContent="flex-end"
-                    spacing={1}
-                  >
-                    {/* Reveal is self-only — admins can reset (below) but not
-                        see existing values. */}
-                    {isSelfView && (
-                      <PasscodeReveal shiftboardId={shiftboardId} />
-                    )}
-                    <Button
-                      onClick={() => setIsPasscodeDialogOpen(true)}
-                      startIcon={<LockResetIcon />}
-                      type="button"
-                      variant="contained"
-                    >
-                      Update passcode
-                    </Button>
-                  </Stack>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-        </Box>
-        )}
-
-        {/* settings — available to all users (email-footer #settings anchor) */}
-        <Box component="section" id="settings" sx={{ mt: 3 }}>
-          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
-            Settings
-          </Typography>
-          <Card>
-            <CardContent>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={!emailUnsubscribed}
-                    onChange={(e) =>
-                      handleEmailUnsubscribedToggle(!e.target.checked)
-                    }
-                  />
-                }
-                label={
-                  <Box>
-                    <Typography component="span" variant="body1">
-                      Receive emails from PEERS
-                    </Typography>
-                    <Typography
-                      color="text.secondary"
-                      component="div"
-                      variant="body2"
-                    >
-                      Uncheck to stop receiving automated emails (shift
-                      assignments, cancellations, calendar invites). You can
-                      re-subscribe here at any time.
-                    </Typography>
-                  </Box>
-                }
-                sx={{ alignItems: "flex-start", m: 0 }}
-              />
-            </CardContent>
-          </Card>
-        </Box>
-
-        {/* admin sections */}
-        {isAdmin && accountData && (
-          <Box component="section" sx={{ mt: 3 }}>
-            <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
-              Admin
-            </Typography>
-
-            {/* roles */}
-            <Card sx={{ mb: 2 }}>
+            {/* welcome header */}
+            <Card sx={{ mb: 3 }}>
               <CardContent>
-                <Typography component="h3" variant="h6" sx={{ mb: 2 }}>
-                  Roles
+                <Typography component="h2" sx={{ mb: 1 }} variant="h5">
+                  Welcome, {volunteer.playaName}!
                 </Typography>
-                {(() => {
-                  const activeRoleIds = new Set(
-                    accountData.roleList.map(
-                      (r: IResVolunteerRoleItem) => r.id
-                    )
-                  );
-                  const protectedRoleIds = new Set([
-                    ROLE_ADMIN_ID,
-                    ROLE_SUPER_ADMIN_ID,
-                  ]);
-                  const displayRoles = (allRolesData ?? []).filter(
-                    (r: IResRoleRowItem) => r.display
-                  );
-                  const activeRoles = displayRoles.filter(
-                    (r: IResRoleRowItem) => activeRoleIds.has(r.id)
-                  );
-                  const inactiveRoles = displayRoles.filter(
-                    (r: IResRoleRowItem) => !activeRoleIds.has(r.id)
-                  );
+                <Typography color="text.secondary" sx={{ mb: 2 }}>
+                  Review your account and complete the checklist items below to
+                  get ready for the event.
+                </Typography>
+                <Stack direction="row" spacing={3}>
+                  <Box>
+                    <Typography color="text.secondary" variant="body2">
+                      Playa Name
+                    </Typography>
+                    <Typography>{volunteer.playaName || "\u2014"}</Typography>
+                  </Box>
+                  <Box>
+                    <Typography color="text.secondary" variant="body2">
+                      World Name
+                    </Typography>
+                    <Typography>{volunteer.worldName || "\u2014"}</Typography>
+                  </Box>
+                  <Box>
+                    <Typography color="text.secondary" variant="body2">
+                      Email
+                    </Typography>
+                    <Typography>{volunteer.email || "\u2014"}</Typography>
+                  </Box>
+                </Stack>
+                <Typography
+                  color="text.secondary"
+                  sx={{ mt: 1 }}
+                  variant="body2"
+                >
+                  Need to update your info?{" "}
+                  <a
+                    href="https://profiles.burningman.org/my-profile"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    Visit your Burner Profile
+                  </a>
+                </Typography>
+              </CardContent>
+            </Card>
+            {/* checklist */}
+            <Card sx={{ mb: 3 }}>
+              <CardContent>
+                <Typography component="h2" sx={{ mb: 1 }} variant="h5">
+                  PEERS Volunteer Pre-playa Checklist
+                </Typography>
 
-                  return (
-                    <>
-                      {/* active roles */}
-                      <List disablePadding>
-                        {activeRoles.map((r: IResRoleRowItem) => {
-                          const isProtected = protectedRoleIds.has(r.id);
-                          return (
-                            <ListItem
-                              disablePadding
-                              key={r.id}
-                              sx={{
-                                cursor: isProtected
-                                  ? "default"
-                                  : "pointer",
-                                py: 0.5,
-                                "&:hover": isProtected
-                                  ? {}
-                                  : {
+                {/* color/status legend */}
+                <Stack
+                  direction="row"
+                  spacing={3}
+                  sx={{
+                    mb: 2,
+                    py: 1,
+                    px: 2,
+                    bgcolor: "rgba(0,0,0,0.02)",
+                    borderRadius: 1,
+                    fontSize: "0.875rem",
+                    color: "text.secondary",
+                  }}
+                >
+                  <Stack alignItems="center" direction="row" spacing={0.5}>
+                    <CheckBoxOutlineBlankIcon
+                      sx={{ color: theme.palette.secondary.main }}
+                      fontSize="small"
+                    />
+                    <Typography variant="caption">Action needed</Typography>
+                  </Stack>
+                  <Stack alignItems="center" direction="row" spacing={0.5}>
+                    <CheckBoxIcon color="success" fontSize="small" />
+                    <Typography variant="caption">Completed</Typography>
+                  </Stack>
+                </Stack>
+
+                {/* incomplete items */}
+                {incompleteItems.length === 0 ? (
+                  <Alert severity="success" sx={{ mb: 2 }}>
+                    All items complete!
+                  </Alert>
+                ) : (
+                  incompleteItems.map((item) => (
+                    <Accordion
+                      key={item.id}
+                      defaultExpanded
+                      sx={{
+                        "&:before": { display: "none" },
+                        boxShadow: "none",
+                        border: `1px solid ${theme.palette.divider}`,
+                        mb: 1,
+                      }}
+                    >
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Stack alignItems="center" direction="row" spacing={1}>
+                          <CheckBoxOutlineBlankIcon
+                            sx={{ color: theme.palette.secondary.main }}
+                            fontSize="small"
+                          />
+                          <Typography>{item.label}</Typography>
+                        </Stack>
+                      </AccordionSummary>
+                      <AccordionDetails>{item.content}</AccordionDetails>
+                    </Accordion>
+                  ))
+                )}
+
+                {/* completed items toggle */}
+                {completedItems.length > 0 && (
+                  <Box sx={{ mt: 1 }}>
+                    <Accordion
+                      onChange={() => setShowCompleted(!showCompleted)}
+                      expanded={showCompleted}
+                      sx={{
+                        "&:before": { display: "none" },
+                        boxShadow: "none",
+                        border: `1px solid ${theme.palette.divider}`,
+                        mb: 1,
+                      }}
+                    >
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Stack alignItems="center" direction="row" spacing={1}>
+                          <CheckBoxIcon color="success" fontSize="small" />
+                          <Typography>
+                            View {completedItems.length} completed item
+                            {completedItems.length > 1 ? "s" : ""}
+                          </Typography>
+                        </Stack>
+                      </AccordionSummary>
+                      <AccordionDetails sx={{ p: 0 }}>
+                        {completedItems.map((item) => (
+                          <Accordion
+                            key={item.id}
+                            sx={{
+                              "&:before": { display: "none" },
+                              boxShadow: "none",
+                              borderTop: `1px solid ${theme.palette.divider}`,
+                            }}
+                          >
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                              <Stack
+                                alignItems="center"
+                                direction="row"
+                                spacing={1}
+                              >
+                                <CheckBoxIcon
+                                  color="success"
+                                  fontSize="small"
+                                />
+                                <Typography>{item.label}</Typography>
+                              </Stack>
+                            </AccordionSummary>
+                            <AccordionDetails>{item.content}</AccordionDetails>
+                          </Accordion>
+                        ))}
+                      </AccordionDetails>
+                    </Accordion>
+                  </Box>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* shifts — reuse existing VolunteerShifts component */}
+            <Box component="section" ref={passcodeRef}>
+              <VolunteerShifts shiftboardId={shiftboardId} />
+            </Box>
+
+            {/* security — PEERS #walkin: visible to (a) the volunteer on their own
+            record so returning walk-ins can view/change their own passcode, (b)
+            admins, and (c) rank-superior leadership (coordinator/shift lead)
+            resetting a subordinate's passcode at the kiosk. Reveal stays
+            self-only; everyone else only gets the reset (Update) button. */}
+            {canManagePasscode && (
+              <Box component="section" sx={{ mt: 3 }}>
+                <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
+                  Security
+                </Typography>
+                <Card>
+                  <CardContent>
+                    <Grid container alignItems="center">
+                      <Grid size={4}>
+                        <Typography component="h3" variant="h6">
+                          Passcode
+                        </Typography>
+                        <Typography color="text.secondary" variant="body2">
+                          This passcode is for signing in on tablets on-playa
+                          only.
+                        </Typography>
+                      </Grid>
+                      <Grid size={8}>
+                        <Stack
+                          direction="row"
+                          justifyContent="flex-end"
+                          spacing={1}
+                        >
+                          {/* Reveal is self-only — admins can reset (below) but not
+                        see existing values. */}
+                          {isSelfView && (
+                            <PasscodeReveal shiftboardId={shiftboardId} />
+                          )}
+                          <Button
+                            onClick={() => setIsPasscodeDialogOpen(true)}
+                            startIcon={<LockResetIcon />}
+                            type="button"
+                            variant="contained"
+                          >
+                            Update passcode
+                          </Button>
+                        </Stack>
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                </Card>
+              </Box>
+            )}
+
+            {/* settings — available to all users (email-footer #settings anchor) */}
+            <Box component="section" id="settings" sx={{ mt: 3 }}>
+              <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
+                Settings
+              </Typography>
+              <Card>
+                <CardContent>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={!emailUnsubscribed}
+                        onChange={(e) =>
+                          handleEmailUnsubscribedToggle(!e.target.checked)
+                        }
+                      />
+                    }
+                    label={
+                      <Box>
+                        <Typography component="span" variant="body1">
+                          Receive emails from PEERS
+                        </Typography>
+                        <Typography
+                          color="text.secondary"
+                          component="div"
+                          variant="body2"
+                        >
+                          Uncheck to stop receiving automated emails (shift
+                          assignments, cancellations, calendar invites). You can
+                          re-subscribe here at any time.
+                        </Typography>
+                      </Box>
+                    }
+                    sx={{ alignItems: "flex-start", m: 0 }}
+                  />
+                </CardContent>
+              </Card>
+            </Box>
+
+            {/* admin sections */}
+            {isAdmin && accountData && (
+              <Box component="section" sx={{ mt: 3 }}>
+                <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
+                  Admin
+                </Typography>
+
+                {/* roles */}
+                <Card sx={{ mb: 2 }}>
+                  <CardContent>
+                    <Typography component="h3" variant="h6" sx={{ mb: 2 }}>
+                      Roles
+                    </Typography>
+                    {(() => {
+                      const activeRoleIds = new Set(
+                        accountData.roleList.map(
+                          (r: IResVolunteerRoleItem) => r.id
+                        )
+                      );
+                      const protectedRoleIds = new Set([
+                        ROLE_ADMIN_ID,
+                        ROLE_SUPER_ADMIN_ID,
+                      ]);
+                      const displayRoles = (allRolesData ?? []).filter(
+                        (r: IResRoleRowItem) => r.display
+                      );
+                      const activeRoles = displayRoles.filter(
+                        (r: IResRoleRowItem) => activeRoleIds.has(r.id)
+                      );
+                      const inactiveRoles = displayRoles.filter(
+                        (r: IResRoleRowItem) => !activeRoleIds.has(r.id)
+                      );
+
+                      return (
+                        <>
+                          {/* active roles */}
+                          <List disablePadding>
+                            {activeRoles.map((r: IResRoleRowItem) => {
+                              const isProtected = protectedRoleIds.has(r.id);
+                              return (
+                                <ListItem
+                                  disablePadding
+                                  key={r.id}
+                                  sx={{
+                                    cursor: isProtected ? "default" : "pointer",
+                                    py: 0.5,
+                                    "&:hover": isProtected
+                                      ? {}
+                                      : {
+                                          backgroundColor:
+                                            theme.palette.action.hover,
+                                        },
+                                  }}
+                                  onClick={() => {
+                                    if (!isProtected) {
+                                      handleRoleToggle(r.id, r.name, true);
+                                    }
+                                  }}
+                                >
+                                  <ListItemIcon sx={{ minWidth: 36 }}>
+                                    <VerifiedUserIcon color="secondary" />
+                                  </ListItemIcon>
+                                  <ListItemText>
+                                    {ROLE_DISPLAY_NAMES[r.name] ?? r.name}
+                                  </ListItemText>
+                                  {isProtected && (
+                                    <Typography
+                                      color="text.secondary"
+                                      variant="caption"
+                                    >
+                                      protected
+                                    </Typography>
+                                  )}
+                                </ListItem>
+                              );
+                            })}
+                          </List>
+
+                          {/* inactive roles */}
+                          {inactiveRoles.length > 0 && (
+                            <List disablePadding sx={{ mt: 1 }}>
+                              {inactiveRoles.map((r: IResRoleRowItem) => (
+                                <ListItem
+                                  disablePadding
+                                  key={r.id}
+                                  sx={{
+                                    cursor: "pointer",
+                                    py: 0.5,
+                                    opacity: 0.5,
+                                    "&:hover": {
                                       backgroundColor:
                                         theme.palette.action.hover,
+                                      opacity: 1,
                                     },
-                              }}
-                              onClick={() => {
-                                if (!isProtected) {
-                                  handleRoleToggle(r.id, r.name, true);
-                                }
-                              }}
-                            >
-                              <ListItemIcon sx={{ minWidth: 36 }}>
-                                <VerifiedUserIcon color="secondary" />
-                              </ListItemIcon>
-                              <ListItemText>
-                                {ROLE_DISPLAY_NAMES[r.name] ?? r.name}
-                              </ListItemText>
-                              {isProtected && (
-                                <Typography
-                                  color="text.secondary"
-                                  variant="caption"
+                                  }}
+                                  onClick={() =>
+                                    handleRoleToggle(r.id, r.name, false)
+                                  }
                                 >
-                                  protected
-                                </Typography>
-                              )}
-                            </ListItem>
-                          );
-                        })}
-                      </List>
+                                  <ListItemIcon sx={{ minWidth: 36 }}>
+                                    <VerifiedUserIcon color="disabled" />
+                                  </ListItemIcon>
+                                  <ListItemText>
+                                    <Typography color="text.secondary">
+                                      {ROLE_DISPLAY_NAMES[r.name] ?? r.name}
+                                    </Typography>
+                                  </ListItemText>
+                                </ListItem>
+                              ))}
+                            </List>
+                          )}
+                        </>
+                      );
+                    })()}
+                  </CardContent>
+                </Card>
 
-                      {/* inactive roles */}
-                      {inactiveRoles.length > 0 && (
-                        <List disablePadding sx={{ mt: 1 }}>
-                          {inactiveRoles.map((r: IResRoleRowItem) => (
-                            <ListItem
-                              disablePadding
-                              key={r.id}
-                              sx={{
-                                cursor: "pointer",
-                                py: 0.5,
-                                opacity: 0.5,
-                                "&:hover": {
-                                  backgroundColor:
-                                    theme.palette.action.hover,
-                                  opacity: 1,
-                                },
-                              }}
-                              onClick={() =>
-                                handleRoleToggle(r.id, r.name, false)
-                              }
-                            >
-                              <ListItemIcon sx={{ minWidth: 36 }}>
-                                <VerifiedUserIcon color="disabled" />
-                              </ListItemIcon>
-                              <ListItemText>
-                                <Typography color="text.secondary">
-                                  {ROLE_DISPLAY_NAMES[r.name] ?? r.name}
-                                </Typography>
-                              </ListItemText>
-                            </ListItem>
-                          ))}
-                        </List>
-                      )}
-                    </>
-                  );
-                })()}
-              </CardContent>
-            </Card>
-
-            {/* notes */}
-            <Card sx={{ mb: 2 }}>
-              <CardContent>
-                <Grid container>
-                  <Grid size={4}>
-                    <Typography component="h3" variant="h6">
-                      Notes
-                    </Typography>
-                  </Grid>
-                  <Grid size={8}>
-                    <form
-                      autoComplete="off"
-                      onSubmit={handleSubmit(onNotesSubmit)}
-                    >
-                      <Controller
-                        control={control}
-                        name="notes"
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            fullWidth
-                            multiline
-                            variant="standard"
-                          />
-                        )}
-                      />
-                      <Stack direction="row" justifyContent="flex-end">
-                        <Button
-                          disabled={isAccountMutating}
-                          startIcon={
-                            isAccountMutating ? (
-                              <CircularProgress size="1rem" />
-                            ) : (
-                              <RateReviewIcon />
-                            )
-                          }
-                          sx={{ mt: 2 }}
-                          type="submit"
-                          variant="contained"
+                {/* notes */}
+                <Card sx={{ mb: 2 }}>
+                  <CardContent>
+                    <Grid container>
+                      <Grid size={4}>
+                        <Typography component="h3" variant="h6">
+                          Notes
+                        </Typography>
+                      </Grid>
+                      <Grid size={8}>
+                        <form
+                          autoComplete="off"
+                          onSubmit={handleSubmit(onNotesSubmit)}
                         >
-                          Update notes
-                        </Button>
-                      </Stack>
-                    </form>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          </Box>
-        )}
+                          <Controller
+                            control={control}
+                            name="notes"
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                fullWidth
+                                multiline
+                                variant="standard"
+                              />
+                            )}
+                          />
+                          <Stack direction="row" justifyContent="flex-end">
+                            <Button
+                              disabled={isAccountMutating}
+                              startIcon={
+                                isAccountMutating ? (
+                                  <CircularProgress size="1rem" />
+                                ) : (
+                                  <RateReviewIcon />
+                                )
+                              }
+                              sx={{ mt: 2 }}
+                              type="submit"
+                              variant="contained"
+                            >
+                              Update notes
+                            </Button>
+                          </Stack>
+                        </form>
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                </Card>
+              </Box>
+            )}
           </Grid>
           {!isOnPlaya && (
             <Grid size={{ xs: 12, md: 3 }}>

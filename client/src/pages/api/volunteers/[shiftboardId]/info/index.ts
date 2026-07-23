@@ -7,7 +7,7 @@ import type {
 } from "@/components/types/volunteer-info";
 import { pool } from "lib/database";
 import { withAuth } from "@/lib/withAuth";
-import { isOwnerOrAdmin } from "@/lib/authz";
+import { canManageVolunteer, isOwnerOrAdmin } from "@/lib/authz";
 
 // SAP day-by-day requirements keyed by arrival datename.
 // Each entry is either a single datename string, or an array meaning "any of these."
@@ -61,8 +61,13 @@ const volunteerInfo = async (
   const { shiftboardId } = req.query;
 
   // Owner-or-admin gate (#410): being logged in isn't enough — a volunteer may
-  // only read their own record; admins may read anyone's.
-  if (!(await isOwnerOrAdmin(session, Number(shiftboardId)))) {
+  // only read their own record; admins may read anyone's. PEERS #walkin: READ
+  // also allowed to rank-superior leadership (coordinator/shift lead over a
+  // subordinate) so they can open a subordinate's page to reset a passcode;
+  // MUTATION (PATCH) stays strictly owner-or-admin.
+  const canRead = await canManageVolunteer(session, Number(shiftboardId));
+  const canWrite = await isOwnerOrAdmin(session, Number(shiftboardId));
+  if (req.method === "GET" ? !canRead : !canWrite) {
     return res.status(403).json({ statusCode: 403, message: "Forbidden" });
   }
 
@@ -240,9 +245,7 @@ const volunteerInfo = async (
       const requiredDays: IResVolunteerInfo["sapStatus"]["requiredDays"] =
         reqs.map((r) => {
           if (Array.isArray(r)) {
-            const label = r
-              .join(", ")
-              .replace(/, ([^,]+)$/, ", or $1");
+            const label = r.join(", ").replace(/, ([^,]+)$/, ", or $1");
             const fulfilled = r.some((d) => (dayCspMap[d] ?? 0) >= 1);
             return { datenames: r, label, fulfilled };
           }
@@ -310,15 +313,17 @@ const volunteerInfo = async (
         }
       }
 
-      const burnerProfileUpdated = roleIdSet.has(ROLE_BURNER_PROFILE_UPDATED_ID);
+      const burnerProfileUpdated = roleIdSet.has(
+        ROLE_BURNER_PROFILE_UPDATED_ID
+      );
       const behavioralStandardsSigned = roleIdSet.has(
         ROLE_BEHAVIORAL_STANDARDS_ID
       );
       // Strict (add_role=true AND remove_role=false) so the checkbox state
-       // matches the queue's send-time filter in client/lib/mail/queue.ts
+      // matches the queue's send-time filter in client/lib/mail/queue.ts
       // exactly. The bulk role-list query above is intentionally looser to
-       // keep parity with the rest of this endpoint (other-sap, profile-updated,
-       // behavioral-standards, etc.).
+      // keep parity with the rest of this endpoint (other-sap, profile-updated,
+      // behavioral-standards, etc.).
       const [dbUnsubRow] = await pool.query<RowDataPacket[]>(
         `SELECT 1
         FROM op_volunteer_roles

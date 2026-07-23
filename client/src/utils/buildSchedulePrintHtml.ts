@@ -35,12 +35,20 @@ export const buildSchedulePrintHtml = ({
   events,
   title,
   origin,
+  passcode,
 }: {
   events: ICalendarEvent[];
   title: string;
   // Site origin so root-relative badge image URLs (/general/*.png) resolve in
   // the new blank window; injected as a <base href>.
   origin: string;
+  // PEERS #walkin: the volunteer's current passcode, printed so they can
+  // bring it to playa and sign in / manage their account without a Burner
+  // Profile. Optional — omitted (blank) when unavailable. Prints the most
+  // current passcode at print time (see the print handler in
+  // VolunteerShifts.tsx). Conscious tradeoff: readable by anyone who sees
+  // the printout; low-stakes on-playa (IP-gated, own schedule only).
+  passcode?: string;
 }): string => {
   const { startMin, endMin } = getTimeAxis(events);
   const hourMarks = getHourMarks(startMin, endMin);
@@ -226,6 +234,13 @@ export const buildSchedulePrintHtml = ({
 <body onload="window.print()">
   <h1>${escapeHtml(title)}</h1>
   <p class="subtitle">Printed from PEERS &middot; volunteers.peers.burningman.org</p>
+  ${
+    passcode
+      ? `<p class="subtitle">Your passcode: <strong>${escapeHtml(
+          passcode
+        )}</strong> &middot; sign in on-playa with your name + this code</p>`
+      : ""
+  }
   ${emptyState}
   ${weeksHtml}
 </body>

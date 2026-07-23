@@ -7,7 +7,7 @@ import type {
 } from "@/components/types/volunteers";
 import { pool } from "lib/database";
 import { withAuth } from "@/lib/withAuth";
-import { isOwnerOrAdmin } from "@/lib/authz";
+import { canManageVolunteer, isOwnerOrAdmin } from "@/lib/authz";
 
 const volunteers = async (
   req: NextApiRequest,
@@ -16,7 +16,13 @@ const volunteers = async (
 ) => {
   const { shiftboardId } = req.query;
 
-  if (!(await isOwnerOrAdmin(session, Number(shiftboardId)))) {
+  // PEERS #walkin: READ is allowed to owner/admin AND rank-superior leadership
+  // (so a Coordinator/Shift Lead can open a subordinate's page to reset their
+  // passcode). MUTATION (PATCH: contact info, notes) stays strictly
+  // owner-or-admin — leadership read access must NOT grant edit rights.
+  const canRead = await canManageVolunteer(session, Number(shiftboardId));
+  const canWrite = await isOwnerOrAdmin(session, Number(shiftboardId));
+  if (req.method === "GET" ? !canRead : !canWrite) {
     return res.status(403).json({ statusCode: 403, message: "Forbidden" });
   }
 

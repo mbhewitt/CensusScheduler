@@ -7,6 +7,7 @@ import type {
   IResShiftVolunteerInformation,
   IResShiftVolunteerRowItem,
 } from "@/components/types/shifts";
+import { isOnPlaya } from "@/lib/onPlaya";
 import { withAuth } from "@/lib/withAuth";
 import { pool } from "lib/database";
 import { notifyAssignment } from "@/components/api/assignmentNotify";
@@ -123,7 +124,13 @@ const shiftVolunteers = async (
           vs.notes,
           vs.rating,
           vs.shiftboard_id,
-          vs.time_position_id
+          vs.time_position_id,
+          EXISTS(
+            SELECT 1 FROM op_volunteer_roles AS ovr
+            WHERE ovr.shiftboard_id=vs.shiftboard_id
+            AND ovr.role_id=?
+            AND ovr.remove_role=false
+          ) AS is_squaddie
         FROM op_volunteer_shifts AS vs
         JOIN op_shift_time_position AS stp
         ON stp.remove_time_position=false
@@ -139,7 +146,7 @@ const shiftVolunteers = async (
         ORDER BY
           v.playa_name COLLATE utf8mb4_general_ci,
           v.world_name COLLATE utf8mb4_general_ci`,
-        [timeId]
+        [ROLE_PEERS_SQUADDIE_ID, timeId]
       );
       const [resShiftPositionFirst] = dbShiftPositionList;
       const resShiftPositionList = dbShiftPositionList.map(
@@ -170,6 +177,7 @@ const shiftVolunteers = async (
       );
       const resShiftVolunteerList = dbShiftVolunteerList.map(
         ({
+          is_squaddie,
           noshow,
           notes,
           playa_name,
@@ -181,6 +189,11 @@ const shiftVolunteers = async (
         }) => {
           const resShiftVolunteerItem: IResShiftVolunteerRowItem = {
             isCheckedIn: noshow,
+            // PEERS #walkin: a volunteer on a Squaddie shift who does NOT
+            // hold the Squaddie role (2000102) never did Hive training —
+            // i.e. they're a walk-in. Auto-derived from current roles, so
+            // it clears itself if they train later. Read-only display only.
+            isWalkIn: !Number(is_squaddie),
             notes: notes ?? "",
             playaName: playa_name,
             positionName: position,
@@ -209,10 +222,14 @@ const shiftVolunteers = async (
           date: resShiftPositionFirst.date,
           dateName: resShiftPositionFirst.datename ?? "",
           details: resShiftPositionFirst.shift_details,
-          endTime: resShiftPositionFirst.end_time ?? resShiftPositionFirst.end_time_text,
+          endTime:
+            resShiftPositionFirst.end_time ??
+            resShiftPositionFirst.end_time_text,
           meal: resShiftPositionFirst.meal,
           notes: resShiftPositionFirst.notes,
-          startTime: resShiftPositionFirst.start_time ?? resShiftPositionFirst.start_time_text,
+          startTime:
+            resShiftPositionFirst.start_time ??
+            resShiftPositionFirst.start_time_text,
           typeName: resShiftPositionFirst.shift_name,
         },
         volunteerList: resShiftVolunteerList,
@@ -380,8 +397,10 @@ const shiftVolunteers = async (
           later: { start: number }
         ): boolean => {
           const gap = later.start - earlier.end;
-          return gap <= BACK_TO_BACK_GAP_MINUTES &&
-            gap >= -BACK_TO_BACK_OVERLAP_MINUTES;
+          return (
+            gap <= BACK_TO_BACK_GAP_MINUTES &&
+            gap >= -BACK_TO_BACK_OVERLAP_MINUTES
+          );
         };
 
         let runStart = 0;
@@ -446,6 +465,52 @@ const shiftVolunteers = async (
       const isRequesterAdmin =
         requesterRoleIds.has(ROLE_ADMIN_ID) ||
         requesterRoleIds.has(ROLE_SUPER_ADMIN_ID);
+
+      // PEERS #walkin: server-side role gate + on-playa Squaddie bypass.
+      // The position's required role (op_position_type.role_id, surfaced on
+      // the claimed shift as role_id; 0/null = open) was previously enforced
+      // UI-side ONLY, so an off-playa untrained user could claim a role-gated
+      // position via a direct/forged request. Enforce it here, and add the
+      // walk-in bypass: a position whose required role is the SQUADDIE role
+      // may be claimed by a volunteer who lacks that role ONLY when the
+      // request is on-playa (unspoofable nginx X-Real-IP). Every OTHER
+      // role-gated position (Shift Lead, etc.) stays strictly role-gated
+      // regardless of IP — walk-ins are a Squaddie-only concept. The check
+      // is against the TARGET volunteer's roles (the person being added), so
+      // a lead adding a walk-in at the kiosk works via the on-playa branch.
+      // Admins/superadmins (the requester) are exempt, matching the capacity
+      // guard's overbook/add-anyone flow.
+      if (!isRequesterAdmin) {
+        const roleRequiredId = Number(claimedShift?.role_id ?? 0);
+        if (roleRequiredId !== 0) {
+          const [dbTargetRoleRows] = await pool.query<RowDataPacket[]>(
+            `SELECT role_id FROM op_volunteer_roles
+             WHERE shiftboard_id = ? AND remove_role = false`,
+            [shiftboardId]
+          );
+          const targetRoleIds = new Set(
+            dbTargetRoleRows.map((row) => Number(row.role_id))
+          );
+          const onPlaya = isOnPlaya((name) => {
+            const headerValue = req.headers[name.toLowerCase()];
+            return Array.isArray(headerValue)
+              ? headerValue[0]
+              : (headerValue ?? null);
+          });
+          const hasRequiredRole = targetRoleIds.has(roleRequiredId);
+          const squaddieWalkInOk =
+            roleRequiredId === ROLE_PEERS_SQUADDIE_ID && onPlaya;
+          if (!hasRequiredRole && !squaddieWalkInOk) {
+            return res.status(403).json({
+              statusCode: 403,
+              message:
+                roleRequiredId === ROLE_PEERS_SQUADDIE_ID
+                  ? "This shift requires Hive training, or sign up on-playa."
+                  : "This shift requires a role this volunteer doesn't have.",
+            });
+          }
+        }
+      }
 
       // PEERS #capacity: block a claim that would exceed the position's slot
       // count. Race-safe: the slot count and the insert run in one

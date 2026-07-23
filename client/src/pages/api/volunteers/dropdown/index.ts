@@ -6,6 +6,9 @@ import type {
   IResVolunteerRoleItem,
 } from "@/components/types/volunteers";
 import { ROLE_CORE_CREW_ID } from "@/constants";
+import { isAdmin } from "@/lib/authz";
+import { isOnPlaya } from "@/lib/onPlaya";
+import { readSessionFromCookies } from "@/lib/session";
 import { pool } from "lib/database";
 
 const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -13,6 +16,29 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     // get
     // ------------------------------------------------------------
     case "GET": {
+      // PEERS #walkin (roster privacy): this endpoint returns the whole
+      // roster's playa + world (legal) names, so it must NOT be publicly
+      // enumerable off-playa. Allow it only when the request is on-playa (the
+      // kiosk name-picker needs it BEFORE a walk-in has signed in, so no
+      // session is required there) OR the requester is an admin/superadmin
+      // (the authed role-add / shift-add dialogs use it off-playa). A regular
+      // off-playa Squaddie is blocked from enumerating names.
+      const onPlaya = isOnPlaya((name) => {
+        const headerValue = req.headers[name.toLowerCase()];
+        return Array.isArray(headerValue)
+          ? headerValue[0]
+          : (headerValue ?? null);
+      });
+      if (!onPlaya) {
+        const session = readSessionFromCookies(req.cookies);
+        if (!session || !(await isAdmin(session.shiftboardId))) {
+          return res.status(403).json({
+            statusCode: 403,
+            message: "Forbidden",
+          });
+        }
+      }
+
       const { filter } = req.query;
       let dbVolunteerList: RowDataPacket[] = [];
 

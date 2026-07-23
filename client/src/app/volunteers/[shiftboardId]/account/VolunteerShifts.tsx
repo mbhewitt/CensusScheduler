@@ -523,13 +523,9 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
   );
 
   // Open a printable, time-grid version of the schedule in a new window.
-  const handlePrint = () => {
-    const printName = worldName || playaName;
-    const html = buildSchedulePrintHtml({
-      events: calendarEvents,
-      title: printName ? `${printName}'s Schedule` : "My Schedule",
-      origin: window.location.origin,
-    });
+  const handlePrint = async () => {
+    // Open the window synchronously (before any await) so the browser's
+    // pop-up blocker treats it as a direct result of the click.
     const printWindow = window.open("", "_blank");
     if (!printWindow) {
       enqueueSnackbar(
@@ -540,6 +536,30 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
       );
       return;
     }
+
+    // PEERS #walkin: fetch the volunteer's CURRENT passcode (self-only
+    // endpoint) so it prints on the schedule — lets them bring it to playa
+    // and sign in / manage their account without a Burner Profile. Prints
+    // the most current code at print time. Best-effort: if the endpoint is
+    // unavailable (e.g. an admin viewing someone else's page → 403), we just
+    // omit it and print the schedule without a passcode.
+    let passcode: string | undefined;
+    try {
+      const passcodeRes = await fetcherGet(
+        `/api/volunteers/${shiftboardId}/account/passcode`
+      );
+      passcode = passcodeRes?.passcode || undefined;
+    } catch {
+      passcode = undefined;
+    }
+
+    const printName = worldName || playaName;
+    const html = buildSchedulePrintHtml({
+      events: calendarEvents,
+      title: printName ? `${printName}'s Schedule` : "My Schedule",
+      origin: window.location.origin,
+      passcode,
+    });
     printWindow.document.write(html);
     printWindow.document.close();
   };

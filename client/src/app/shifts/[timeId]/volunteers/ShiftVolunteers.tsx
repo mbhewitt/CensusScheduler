@@ -15,6 +15,7 @@ import {
   Button,
   Card,
   CardContent,
+  Checkbox,
   Container,
   Divider,
   Grid,
@@ -174,6 +175,7 @@ export const ShiftVolunteers = ({
           ADD_SHIFT_VOLUNTEER_RES,
           ({
             isCheckedIn,
+            isWalkIn,
             notes,
             playaName,
             positionName,
@@ -186,6 +188,7 @@ export const ShiftVolunteers = ({
               const dataMutate = structuredClone(dataShiftVolunteersItem);
               dataMutate.volunteerList.push({
                 isCheckedIn,
+                isWalkIn,
                 notes,
                 playaName,
                 positionName,
@@ -480,6 +483,20 @@ export const ShiftVolunteers = ({
         sort: false,
       },
     },
+    {
+      // PEERS #walkin: read-only indicator — checked when the volunteer is
+      // on a Squaddie shift without the Squaddie role (no Hive training).
+      // Leadership-only, same as Check in / World name.
+      name: "Walk-In",
+      options: {
+        display: canSeeVolunteerDetails ? true : "excluded",
+        filter: false,
+        searchable: false,
+        setCellHeaderProps: setCellHeaderPropsCenter,
+        setCellProps: setCellPropsCenter,
+        sort: false,
+      },
+    },
   ];
   if (isAdmin) {
     columnListVolunteers.push(
@@ -508,6 +525,7 @@ export const ShiftVolunteers = ({
   const dataTableVolunteers = dataShiftVolunteersItem.volunteerList.map(
     ({
       isCheckedIn,
+      isWalkIn,
       notes,
       playaName,
       positionName,
@@ -538,6 +556,14 @@ export const ShiftVolunteers = ({
             })
           }
           key={`${shiftboardId}-shift-volunteer`}
+        />,
+        // PEERS #walkin: read-only checkbox — checked = walk-in (no Squaddie
+        // role / no Hive training). Disabled so leads can't toggle it; it's
+        // auto-derived from the volunteer's current roles.
+        <Checkbox
+          checked={isWalkIn}
+          disabled
+          key={`${shiftboardId}-walk-in`}
         />,
         // if volunteer is admin
         // then display volunteer shift review and volunteer menu

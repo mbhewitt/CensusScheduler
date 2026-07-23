@@ -49,6 +49,7 @@ import type {
 } from "@/components/types/volunteers";
 import {
   ADD_SHIFT_VOLUNTEER_REQ,
+  ROLE_PEERS_SQUADDIE_ID,
   SHIFT_DURING,
   SHIFT_FUTURE,
   SHIFT_PAST,
@@ -58,6 +59,7 @@ import { SessionContext } from "@/state/session/context";
 import { checkIsAdmin, checkIsAuthenticated } from "@/utils/checkIsRoleExist";
 import { ensure } from "@/utils/ensure";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
+import { useIsOnPlaya } from "@/utils/useIsOnPlaya";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
 import { getCheckInType } from "@/utils/getCheckInType";
 
@@ -118,6 +120,11 @@ export const ShiftVolunteersDialogAdd = ({
       user: { playaName, roleList, shiftboardId, worldName },
     },
   } = useContext(SessionContext);
+  // PEERS #walkin: on-playa (read from the middleware-set cookie) lets the
+  // add dialog treat SQUADDIE positions as claimable for an untrained
+  // volunteer — mirrors the server-side walk-in bypass so a lead at the
+  // kiosk doesn't see a confusingly greyed-out Squaddie option.
+  const isOnPlaya = useIsOnPlaya();
 
   // fetching, mutation, and revalidation
   // ------------------------------------------------------------
@@ -342,6 +349,10 @@ export const ShiftVolunteersDialogAdd = ({
             isAdmin ||
             (slotsTotal - slotsFilled > 0 &&
               (roleRequiredId === 0 ||
+                // PEERS #walkin: on-playa, a SQUADDIE position is claimable
+                // even without the role (Lead/other positions stay
+                // role-gated). Cosmetic — the server is the real gate.
+                (roleRequiredId === ROLE_PEERS_SQUADDIE_ID && isOnPlaya) ||
                 volunteerSelected?.roleList?.some(
                   ({ id: roleId }: { id: number }) => roleId === roleRequiredId
                 )));
@@ -515,6 +526,12 @@ export const ShiftVolunteersDialogAdd = ({
             timePositionIdShift === formValues.timePositionIdShift
         )
       );
+      // PEERS #walkin: a volunteer who lacks the Squaddie role is a walk-in
+      // (no Hive training). Sent on the socket push so the real-time row shows
+      // the correct Walk-In state without a page refresh, matching the GET.
+      const isWalkInAdd = !volunteerAdd.roleList?.some(
+        ({ id }: { id: number }) => id === ROLE_PEERS_SQUADDIE_ID
+      );
       const trainingAdd = dataTrainingList.find(
         ({ id: timeIdTraining }) => timeIdTraining === formValues.timeIdTraining
       );
@@ -565,12 +582,11 @@ export const ShiftVolunteersDialogAdd = ({
       // surface a server-side rejection (e.g. the PEERS shift-overlap
       // block or a canceled shift) as an error instead of a false success
       if (resShiftAdd?.statusCode && resShiftAdd.statusCode >= 400) {
-        throw new Error(
-          resShiftAdd.message ?? "Unable to claim this shift."
-        );
+        throw new Error(resShiftAdd.message ?? "Unable to claim this shift.");
       }
       // emit event
       socket.emit(ADD_SHIFT_VOLUNTEER_REQ, {
+        isWalkIn: isWalkInAdd,
         noShow: noShowShift,
         playaName: volunteerAdd.playaName,
         positionName: shiftPositionAdd.positionName,
@@ -596,6 +612,7 @@ export const ShiftVolunteersDialogAdd = ({
         });
         // emit event
         socket.emit(ADD_SHIFT_VOLUNTEER_REQ, {
+          isWalkIn: isWalkInAdd,
           noShow: noShowTraining,
           playaName: volunteerAdd.playaName,
           positionName: trainingPositionAdd?.positionName,
