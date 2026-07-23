@@ -5,6 +5,7 @@ import {
   Logout as LogoutIcon,
   ManageAccounts as ManageAccountsIcon,
   Menu as MenuIcon,
+  PersonAdd as PersonAddIcon,
 } from "@mui/icons-material";
 import {
   AppBar,
@@ -220,38 +221,58 @@ export const Header = () => {
                   return true;
                 })
                 .map(({ icon, label, path }) => (
-                <Fragment key={path}>
-                  <ListItem disablePadding>
-                    <Link href={path} onClick={handleDrawerClose}>
-                      <ListItemButton selected={pathname === path}>
-                        <ListItemIcon>{icon}</ListItemIcon>
-                        <ListItemText primary={label} />
-                      </ListItemButton>
-                    </Link>
-                  </ListItem>
-                  {/* Account sits directly below Home and above Shifts for
-                      signed-in users (per papabear 2026-07-17). */}
-                  {path === "/" && isAuthenticated && (
+                  <Fragment key={path}>
                     <ListItem disablePadding>
-                      <Link
-                        href={`/volunteers/${shiftboardId}/info`}
-                        onClick={handleDrawerClose}
-                      >
-                        <ListItemButton
-                          selected={
-                            pathname === `/volunteers/${shiftboardId}/info`
-                          }
-                        >
-                          <ListItemIcon>
-                            <ManageAccountsIcon />
-                          </ListItemIcon>
-                          <ListItemText primary="My Account and Shifts" />
+                      <Link href={path} onClick={handleDrawerClose}>
+                        <ListItemButton selected={pathname === path}>
+                          <ListItemIcon>{icon}</ListItemIcon>
+                          <ListItemText primary={label} />
                         </ListItemButton>
                       </Link>
                     </ListItem>
-                  )}
-                </Fragment>
-              ))}
+                    {/* Account sits directly below Home and above Shifts for
+                      signed-in users (per papabear 2026-07-17). */}
+                    {path === "/" && isAuthenticated && (
+                      <ListItem disablePadding>
+                        <Link
+                          href={`/volunteers/${shiftboardId}/info`}
+                          onClick={handleDrawerClose}
+                        >
+                          <ListItemButton
+                            selected={
+                              pathname === `/volunteers/${shiftboardId}/info`
+                            }
+                          >
+                            <ListItemIcon>
+                              <ManageAccountsIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="My Account and Shifts" />
+                          </ListItemButton>
+                        </Link>
+                      </ListItem>
+                    )}
+                    {/* Create Account sits under Contact; admin/superadmin only —
+                      it's the walk-in onboarding page a lead opens on the
+                      kiosk tablet (per papabear 2026-07-23). */}
+                    {path === "/contact" && (isAdmin || isSuperAdmin) && (
+                      <ListItem disablePadding>
+                        <Link
+                          href="/volunteers/account/create"
+                          onClick={handleDrawerClose}
+                        >
+                          <ListItemButton
+                            selected={pathname === "/volunteers/account/create"}
+                          >
+                            <ListItemIcon>
+                              <PersonAddIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Create Account" />
+                          </ListItemButton>
+                        </Link>
+                      </ListItem>
+                    )}
+                  </Fragment>
+                ))}
             </List>
             {/* admin nav */}
             {isAdmin && (
