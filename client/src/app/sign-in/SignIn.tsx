@@ -218,7 +218,7 @@ export const SignIn = () => {
                 startIcon={<LoginIcon />}
                 variant="contained"
               >
-                Sign in to PEERS
+                Sign in via Burner Profiles
               </Button>
               {isPinEnabled && (
                 <Divider sx={{ mt: 2 }}>
