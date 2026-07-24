@@ -49,8 +49,11 @@ import type {
 } from "@/components/types/volunteers";
 import {
   ADD_SHIFT_VOLUNTEER_REQ,
+  ROLE_ADMIN_ID,
+  ROLE_PEERS_COORDINATOR_ID,
   ROLE_PEERS_SHIFT_LEAD_ID,
   ROLE_PEERS_SQUADDIE_ID,
+  ROLE_SUPER_ADMIN_ID,
   SHIFT_DURING,
   SHIFT_FUTURE,
   SHIFT_PAST,
@@ -548,11 +551,19 @@ export const ShiftVolunteersDialogAdd = ({
             timePositionIdShift === formValues.timePositionIdShift
         )
       );
-      // PEERS #walkin: a volunteer who lacks the Squaddie role is a walk-in
-      // (no Hive training). Sent on the socket push so the real-time row shows
-      // the correct Walk-In state without a page refresh, matching the GET.
+      // PEERS #walkin: a walk-in holds NONE of the onboarded/senior roles
+      // (Squaddie, Shift Lead, Coordinator, Admin/SuperAdmin). Sent on the
+      // socket push so the real-time row shows the correct Walk-In state
+      // without a page refresh, matching the GET.
+      const onboardedRoleIds = [
+        ROLE_PEERS_SQUADDIE_ID,
+        ROLE_PEERS_SHIFT_LEAD_ID,
+        ROLE_PEERS_COORDINATOR_ID,
+        ROLE_ADMIN_ID,
+        ROLE_SUPER_ADMIN_ID,
+      ];
       const isWalkInAdd = !volunteerAdd.roleList?.some(
-        ({ id }: { id: number }) => id === ROLE_PEERS_SQUADDIE_ID
+        ({ id }: { id: number }) => onboardedRoleIds.includes(id)
       );
       const trainingAdd = dataTrainingList.find(
         ({ id: timeIdTraining }) => timeIdTraining === formValues.timeIdTraining

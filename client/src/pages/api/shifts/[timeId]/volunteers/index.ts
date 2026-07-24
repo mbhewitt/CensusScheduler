@@ -128,9 +128,9 @@ const shiftVolunteers = async (
           EXISTS(
             SELECT 1 FROM op_volunteer_roles AS ovr
             WHERE ovr.shiftboard_id=vs.shiftboard_id
-            AND ovr.role_id=?
+            AND ovr.role_id IN (?, ?, ?, ?, ?)
             AND ovr.remove_role=false
-          ) AS is_squaddie
+          ) AS is_trained
         FROM op_volunteer_shifts AS vs
         JOIN op_shift_time_position AS stp
         ON stp.remove_time_position=false
@@ -146,7 +146,14 @@ const shiftVolunteers = async (
         ORDER BY
           v.playa_name COLLATE utf8mb4_general_ci,
           v.world_name COLLATE utf8mb4_general_ci`,
-        [ROLE_PEERS_SQUADDIE_ID, timeId]
+        [
+          ROLE_PEERS_SQUADDIE_ID,
+          ROLE_PEERS_SHIFT_LEAD_ID,
+          ROLE_PEERS_COORDINATOR_ID,
+          ROLE_ADMIN_ID,
+          ROLE_SUPER_ADMIN_ID,
+          timeId,
+        ]
       );
       const [resShiftPositionFirst] = dbShiftPositionList;
       const resShiftPositionList = dbShiftPositionList.map(
@@ -177,7 +184,7 @@ const shiftVolunteers = async (
       );
       const resShiftVolunteerList = dbShiftVolunteerList.map(
         ({
-          is_squaddie,
+          is_trained,
           noshow,
           notes,
           playa_name,
@@ -189,11 +196,12 @@ const shiftVolunteers = async (
         }) => {
           const resShiftVolunteerItem: IResShiftVolunteerRowItem = {
             isCheckedIn: noshow,
-            // PEERS #walkin: a volunteer on a Squaddie shift who does NOT
-            // hold the Squaddie role (2000102) never did Hive training —
-            // i.e. they're a walk-in. Auto-derived from current roles, so
-            // it clears itself if they train later. Read-only display only.
-            isWalkIn: !Number(is_squaddie),
+            // PEERS #walkin: a walk-in is a volunteer who holds NONE of the
+            // onboarded/senior roles — Squaddie, Shift Lead, Coordinator, or
+            // Admin/SuperAdmin. Anyone with any of those has been onboarded
+            // (so a Lead/Coord/Admin without the plain Squaddie role is NOT a
+            // walk-in). Auto-derived from current roles; read-only display.
+            isWalkIn: !Number(is_trained),
             notes: notes ?? "",
             playaName: playa_name,
             positionName: position,
