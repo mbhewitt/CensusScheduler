@@ -123,9 +123,7 @@ async function exchangeCode(
 }
 
 // helper: fetch user profile from Okta
-async function fetchUserInfo(
-  accessToken: string
-): Promise<OktaUserInfo> {
+async function fetchUserInfo(accessToken: string): Promise<OktaUserInfo> {
   const issuer = process.env.OKTA_ISSUER!;
   const resp = await fetchWithRetry(
     `${issuer}/v1/userinfo`,
@@ -240,8 +238,18 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
   // extract returnTo from state param (format: "randomhex|/path/to/page")
   const stateStr = String(state);
   const pipeIndex = stateStr.indexOf("|");
-  const receivedState = pipeIndex >= 0 ? stateStr.substring(0, pipeIndex) : stateStr;
+  const receivedState =
+    pipeIndex >= 0 ? stateStr.substring(0, pipeIndex) : stateStr;
   const returnTo = pipeIndex >= 0 ? stateStr.substring(pipeIndex + 1) : "";
+
+  // PEERS #walkin: a new account created while the user is arriving via a HIVE
+  // completion link (returnTo points at /training/confirmation) came in THROUGH
+  // HIVE, so it is NOT a mailing-list "new volunteer". Any other new Burner
+  // Profile sign-in is stamped (mailing_list_new=1) for the New Volunteers
+  // report. The stamp is persistent — it stays even after they later train,
+  // and is only reset by the "Clear Mailing List Report" action (papabear
+  // 2026-07-24).
+  const mailingListNew = returnTo.startsWith("/training/confirmation") ? 0 : 1;
 
   if (receivedState !== storedState) {
     return res.redirect("/sign-in?error=state_mismatch");
@@ -265,7 +273,10 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
       userInfo.preferred_username ||
       userInfo.given_name ||
       "";
-    const worldName = userInfo.name || `${userInfo.given_name || ""} ${userInfo.family_name || ""}`.trim() || email;
+    const worldName =
+      userInfo.name ||
+      `${userInfo.given_name || ""} ${userInfo.family_name || ""}`.trim() ||
+      email;
 
     if (!email) {
       return res.redirect("/sign-in?error=no_email");
@@ -356,9 +367,17 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
             const passcode = generatePasscode();
             await pool.query<RowDataPacket[]>(
               `INSERT INTO op_volunteers (
-                shiftboard_id, playa_name, world_name, email, okta_id, passcode, create_volunteer
-              ) VALUES (?, ?, ?, ?, ?, ?, true)`,
-              [canonicalId, playaName, worldName, email, oktaId, passcode]
+                shiftboard_id, playa_name, world_name, email, okta_id, passcode, create_volunteer, mailing_list_new
+              ) VALUES (?, ?, ?, ?, ?, ?, true, ?)`,
+              [
+                canonicalId,
+                playaName,
+                worldName,
+                email,
+                oktaId,
+                passcode,
+                mailingListNew,
+              ]
             );
             shiftboardId = canonicalId;
           }
@@ -387,9 +406,9 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
 
       await pool.query<RowDataPacket[]>(
         `INSERT INTO op_volunteers (
-          shiftboard_id, playa_name, world_name, email, okta_id, passcode, create_volunteer
-        ) VALUES (?, ?, ?, ?, ?, ?, true)`,
-        [newId, playaName, worldName, email, oktaId, passcode]
+          shiftboard_id, playa_name, world_name, email, okta_id, passcode, create_volunteer, mailing_list_new
+        ) VALUES (?, ?, ?, ?, ?, ?, true, ?)`,
+        [newId, playaName, worldName, email, oktaId, passcode, mailingListNew]
       );
       shiftboardId = newId;
     }
@@ -406,7 +425,10 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // encode account data for client-side session hydration
     const accountData = encodeURIComponent(JSON.stringify(account));
-    const redirectPath = returnTo && returnTo.startsWith("/") ? returnTo : `/volunteers/${shiftboardId}/info`;
+    const redirectPath =
+      returnTo && returnTo.startsWith("/")
+        ? returnTo
+        : `/volunteers/${shiftboardId}/info`;
 
     return res.redirect(
       `/auth/complete?data=${accountData}&returnTo=${encodeURIComponent(redirectPath)}`

@@ -49,20 +49,24 @@ const account = async (req: NextApiRequest, res: NextApiResponse) => {
       } = JSON.parse(req.body);
       const shiftboardIdNew = await generateNewUserShiftboardId();
 
-      // insert new account row
+      // insert new account row. PEERS #walkin: mailing_list_new=1 — a
+      // self-registration is always a direct sign-up (they came to the URL,
+      // not via a HIVE link), so they're stamped for the New Volunteers
+      // mailing-list report. Persistent until "Clear Mailing List Report".
       await pool.query<RowDataPacket[]>(
         `INSERT INTO op_volunteers (
           create_volunteer,
           email,
           emergency_contact,
           location,
+          mailing_list_new,
           passcode,
           phone,
           playa_name,
           shiftboard_id,
           world_name
         )
-        VALUES (true, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        VALUES (true, ?, ?, ?, 1, ?, ?, ?, ?, ?)`,
         [
           email,
           emergencyContact,
