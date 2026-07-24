@@ -1,9 +1,9 @@
 import { test, expect, type Page } from "@playwright/test";
 
-// Repro for #533: adding a position in the shift-type editor silently fails to
-// persist. The backend is fine (#528) — the client drops the added position
-// from the PATCH payload. This test intercepts the save request and asserts the
-// added position is actually in it. FAILS on the bug; passes once fixed.
+// #533 regression: adding a position in the shift-type editor must reach the
+// save. Drives the real editor, adds a position, and asserts the added position
+// is in the PATCH payload. (Set REAL_SAVE=1 to let the save hit the DB instead
+// of being mocked — confirms end-to-end persistence.)
 const TYPE_ID = 3; // "Gate Sampling" — has a category set + 10 times/positions
 
 // Log in as the built-in super-admin ("Admin"/123456). Inlined (not the shared
@@ -28,19 +28,8 @@ test.describe("Shift-type editor: adding a position (#533)", () => {
   test("an added position is present in the save (PATCH) payload", async ({
     page,
   }) => {
-    page.on("pageerror", (e) => console.log("PAGEERROR:", e.message));
-    page.on("console", (m) => {
-      const t = m.text();
-      if (t.startsWith("NATIVE_SUBMIT") || t.startsWith("DBG_"))
-        console.log("BROWSER:", t);
-    });
-    page.on("request", (r) => {
-      if (r.method() === "PATCH") console.log("REQ PATCH:", r.url());
-    });
-
     await signIn(page);
 
-    // Intercept the save so we can inspect the payload without mutating local data.
     let patchBody: { timeList?: { positionList?: { name: string }[] }[] } | null =
       null;
     const realSave = process.env.REAL_SAVE === "1";
@@ -48,7 +37,7 @@ test.describe("Shift-type editor: adding a position (#533)", () => {
       if (route.request().method() === "PATCH") {
         patchBody = route.request().postDataJSON();
         if (realSave) {
-          await route.continue(); // hit the real backend to test persistence
+          await route.continue(); // hit the real backend to verify persistence
         } else {
           await route.fulfill({
             status: 200,
@@ -90,52 +79,8 @@ test.describe("Shift-type editor: adding a position (#533)", () => {
       timeout: 10_000,
     });
 
-    // watch the native form submit event to distinguish "click didn't submit"
-    // from "submitted but validation/handler dropped it"
-    await page.evaluate(() => {
-      document.querySelector("form")?.addEventListener(
-        "submit",
-        () => console.log("NATIVE_SUBMIT_FIRED"),
-        { capture: true }
-      );
-    });
-
     // save
-    const submitBtn = page
-      .getByRole("button", { name: "Update shift type" })
-      .last();
-    console.log(
-      "DBG count=",
-      await page.getByRole("button", { name: "Update shift type" }).count(),
-      "disabled=",
-      await submitBtn.isDisabled(),
-      "type=",
-      await submitBtn.getAttribute("type"),
-      "forms=",
-      await page.locator("form").count()
-    );
-    await submitBtn.click();
-    await page.waitForTimeout(2500);
-    console.log("DBG after click, patchBody null?", patchBody === null);
-
-    // isolate HTML5 constraint validation: which required field blocks submit?
-    if (patchBody === null) {
-      const report = await page.evaluate(() => {
-        const f = document.querySelector("form") as HTMLFormElement | null;
-        if (!f) return "no form";
-        const valid = f.checkValidity();
-        const invalids = Array.from(
-          f.querySelectorAll(":invalid")
-        ).map((el) => {
-          const e = el as HTMLInputElement;
-          return `${e.name || e.getAttribute("name") || e.tagName}[req=${e.required},disabled=${e.disabled},val="${e.value}"]`;
-        });
-        return `checkValidity=${valid} invalid=[${invalids.join(", ")}]`;
-      });
-      console.log("DBG_CONSTRAINT", report);
-    }
-
-    // wait for the intercepted PATCH
+    await page.getByRole("button", { name: "Update shift type" }).last().click();
     await expect.poll(() => patchBody, { timeout: 15_000 }).not.toBeNull();
 
     // the added position must be in at least one time's positionList
