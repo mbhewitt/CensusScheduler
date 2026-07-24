@@ -15,6 +15,7 @@ import { Fragment, useContext } from "react";
 
 import {
   pageListAdmin,
+  pageListCoordinator,
   pageListDefault,
   pageListSuperAdmin,
 } from "@/components/layout/pageList";
@@ -23,6 +24,7 @@ import { SessionContext } from "@/state/session/context";
 import {
   checkIsAdmin,
   checkIsAuthenticated,
+  checkIsPeersCoordinator,
   checkIsSuperAdmin,
 } from "@/utils/checkIsRoleExist";
 
@@ -47,6 +49,7 @@ export const Footer = () => {
   // ------------------------------------------------------------
   const isAdmin = checkIsAdmin(accountType, roleList);
   const isSuperAdmin = checkIsSuperAdmin(accountType, roleList);
+  const isPeersCoordinator = checkIsPeersCoordinator(roleList);
   const isAuthenticated = checkIsAuthenticated(
     accountType,
     isAuthenticatedSession
@@ -128,6 +131,35 @@ export const Footer = () => {
                 </List>
               </Stack>
             </Box>
+            {/* coordinator — Reports only, when not also an admin */}
+            {isPeersCoordinator && !isAdmin && (
+              <Box>
+                <Typography
+                  component="h3"
+                  sx={{
+                    color: theme.palette.common.white,
+                    mb: 2,
+                  }}
+                  variant="h6"
+                >
+                  Coordinator
+                </Typography>
+                <List sx={{ p: 0 }}>
+                  {pageListCoordinator.map(({ label, path }) => (
+                    <ListItem disablePadding key={path}>
+                      <Link href={path}>
+                        <ListItemText
+                          primary={label}
+                          primaryTypographyProps={{
+                            sx: { color: theme.palette.common.white },
+                          }}
+                        />
+                      </Link>
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
+            )}
             {/* admin */}
             {isAdmin && (
               <Box>

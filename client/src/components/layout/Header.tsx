@@ -33,6 +33,7 @@ import { useIdleTimer } from "react-idle-timer";
 
 import {
   pageListAdmin,
+  pageListCoordinator,
   pageListDefault,
   pageListSuperAdmin,
 } from "@/components/layout/pageList";
@@ -43,6 +44,7 @@ import {
   checkIsAdmin,
   checkIsAuthenticated,
   checkIsBehavioralStandardsSigned,
+  checkIsPeersCoordinator,
   checkIsSuperAdmin,
 } from "@/utils/checkIsRoleExist";
 import { signOut } from "@/utils/signOut";
@@ -148,6 +150,9 @@ export const Header = () => {
   // ------------------------------------------------------------
   const isAdmin = checkIsAdmin(accountType, roleList);
   const isSuperAdmin = checkIsSuperAdmin(accountType, roleList);
+  // PEERS #walkin: Coordinators (who aren't already admins) get a Reports nav
+  // entry so they can reach the New Volunteers CSV (papabear 2026-07-24).
+  const isPeersCoordinator = checkIsPeersCoordinator(roleList);
 
   const handleCollapseNavClick = () => {
     setIsCollapseNavOpen((prev) => !prev);
@@ -278,6 +283,25 @@ export const Header = () => {
                   </Fragment>
                 ))}
             </List>
+            {/* coordinator nav — Reports only, and only when not also an admin
+                (admins already get Reports in the Admin section below) */}
+            {isPeersCoordinator && !isAdmin && (
+              <>
+                <Divider />
+                <List subheader={<ListSubheader>Coordinator</ListSubheader>}>
+                  {pageListCoordinator.map(({ icon, label, path }) => (
+                    <ListItem disablePadding key={path}>
+                      <Link href={path} onClick={handleDrawerClose}>
+                        <ListItemButton selected={pathname === path}>
+                          <ListItemIcon>{icon}</ListItemIcon>
+                          <ListItemText primary={label} />
+                        </ListItemButton>
+                      </Link>
+                    </ListItem>
+                  ))}
+                </List>
+              </>
+            )}
             {/* admin nav */}
             {isAdmin && (
               <>

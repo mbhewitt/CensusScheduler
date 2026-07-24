@@ -57,6 +57,16 @@ export const pageListAdmin = [
     path: "/settings",
   },
 ];
+// PEERS #walkin: Coordinators get the Reports page (for the New Volunteers
+// mailing-list CSV), even though they don't get the rest of the Admin nav
+// (papabear 2026-07-24). Only shown to Coordinators who aren't already admins.
+export const pageListCoordinator = [
+  {
+    icon: <BarChartIcon />,
+    label: "Reports",
+    path: "/reports",
+  },
+];
 export const pageListSuperAdmin = [
   {
     icon: <CalendarMonthIcon />,
