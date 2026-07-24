@@ -67,7 +67,11 @@ export const Header = () => {
   // state
   // ------------------------------------------------------------
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isCollapseNavOpen, setIsCollapseNavOpen] = useState(true);
+  // per-group open state for collapsible nav sections (Shifts, Labels, ...);
+  // groups default to open
+  const [collapseNavOpen, setCollapseNavOpen] = useState<
+    Record<string, boolean>
+  >({});
 
   // other hooks
   // ------------------------------------------------------------
@@ -143,8 +147,11 @@ export const Header = () => {
   const isAdmin = checkIsAdmin(accountType, roleList);
   const isSuperAdmin = checkIsSuperAdmin(accountType, roleList);
 
-  const handleCollapseNavClick = () => {
-    setIsCollapseNavOpen((prev) => !prev);
+  const handleCollapseNavClick = (label: string) => {
+    setCollapseNavOpen((prev) => ({
+      ...prev,
+      [label]: !(prev[label] ?? true),
+    }));
   };
   const handleDrawerOpen = () => {
     setIsDrawerOpen(true);
@@ -250,13 +257,16 @@ export const Header = () => {
                 <List subheader={<ListSubheader>Super admin</ListSubheader>}>
                   {pageListSuperAdmin.map(({ children, icon, label, path }) => {
                     if (children) {
+                      const isGroupOpen = collapseNavOpen[label] ?? true;
                       return (
                         <Fragment key={label}>
                           <ListItem disablePadding>
-                            <ListItemButton onClick={handleCollapseNavClick}>
+                            <ListItemButton
+                              onClick={() => handleCollapseNavClick(label)}
+                            >
                               <ListItemIcon>{icon}</ListItemIcon>
                               <ListItemText primary={label} />
-                              {isCollapseNavOpen ? (
+                              {isGroupOpen ? (
                                 <ExpandLessIcon />
                               ) : (
                                 <ExpandMoreIcon />
@@ -264,7 +274,7 @@ export const Header = () => {
                             </ListItemButton>
                           </ListItem>
                           <Collapse
-                            in={isCollapseNavOpen}
+                            in={isGroupOpen}
                             timeout="auto"
                             unmountOnExit
                           >
