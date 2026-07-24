@@ -40,8 +40,10 @@ const ROLE_BEHAVIORAL_STANDARDS_ID = 1000012;
 const ROLE_EMAIL_UNSUBSCRIBED_ID = 2000020;
 // PEERS #walkin: the Squaddie access role (granted by the HIVE Squaddie
 // training confirmation link) — drives the read-only "HIVE Squaddie Training"
-// checklist item.
+// checklist item. A Shift Lead has also completed Squaddie training, so either
+// role checks the box (papabear 2026-07-24).
 const ROLE_PEERS_SQUADDIE_ID = 2000102;
+const ROLE_PEERS_SHIFT_LEAD_ID = 2000101;
 
 // Datenames that are before or on opening (eligible for SAP)
 const PRE_OPEN_DATENAMES = [
@@ -323,11 +325,14 @@ const volunteerInfo = async (
       const behavioralStandardsSigned = roleIdSet.has(
         ROLE_BEHAVIORAL_STANDARDS_ID
       );
-      // PEERS #walkin: read-only — checked only when the volunteer holds the
+      // PEERS #walkin: read-only — checked when the volunteer holds the
       // Squaddie role (earned by clicking the access link at the end of the
-      // HIVE Squaddie training). No self-attest (that would be a training
-      // loophole), per papabear 2026-07-24.
-      const squaddieTrainingComplete = roleIdSet.has(ROLE_PEERS_SQUADDIE_ID);
+      // HIVE Squaddie training) OR the Shift Lead role (Leads have also done
+      // Squaddie training). No self-attest (that would be a training loophole),
+      // per papabear 2026-07-24.
+      const squaddieTrainingComplete =
+        roleIdSet.has(ROLE_PEERS_SQUADDIE_ID) ||
+        roleIdSet.has(ROLE_PEERS_SHIFT_LEAD_ID);
       // Strict (add_role=true AND remove_role=false) so the checkbox state
       // matches the queue's send-time filter in client/lib/mail/queue.ts
       // exactly. The bulk role-list query above is intentionally looser to

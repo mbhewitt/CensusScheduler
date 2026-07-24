@@ -11,6 +11,10 @@ import {
 } from "@/constants";
 import { pool } from "lib/database";
 
+// The "Staff" flag role — excluded from the mailing list (org staff, not a new
+// volunteer). Not in @/constants; mirrors the local const in the /info route.
+const ROLE_STAFF_ID = 2000006;
+
 // PEERS #walkin — "New Volunteers for Mailing List" CSV export.
 //
 // One row per volunteer who created an account on the scheduler
@@ -75,14 +79,23 @@ const newVolunteersReport = async (
        AND NOT EXISTS (
          SELECT 1 FROM op_volunteer_roles AS vr
          WHERE vr.shiftboard_id = v.shiftboard_id
-           AND vr.role_id IN (?, ?)
+           AND vr.role_id IN (?, ?, ?, ?, ?, ?)
            AND vr.remove_role = false
        )
      ORDER BY
        v.created_at IS NULL,
        v.created_at DESC,
        v.world_name COLLATE utf8mb4_general_ci`,
-    [ROLE_PEERS_SQUADDIE_ID, ROLE_PEERS_SHIFT_LEAD_ID]
+    [
+      // HIVE-trained (already qualified — not "new")
+      ROLE_PEERS_SQUADDIE_ID,
+      ROLE_PEERS_SHIFT_LEAD_ID,
+      // org staff/leadership — not new volunteers for a mailing list
+      ROLE_ADMIN_ID,
+      ROLE_SUPER_ADMIN_ID,
+      ROLE_PEERS_COORDINATOR_ID,
+      ROLE_STAFF_ID,
+    ]
   );
 
   const header = ["Signed up", "Name", "Playa name", "Email"];
