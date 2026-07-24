@@ -618,6 +618,7 @@ export const Shifts = () => {
             <a
               href="https://hive.burningman.org/spaces/24147649?utm_source=manual"
               rel="noopener noreferrer"
+              style={{ color: "#0000EE", textDecoration: "underline" }}
               target="_blank"
             >
               finish your HIVE training
