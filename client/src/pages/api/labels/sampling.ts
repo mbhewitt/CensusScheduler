@@ -154,8 +154,9 @@ const sampling = async (req: NextApiRequest, res: NextApiResponse) => {
     draw(label.header, 0, 20, 12, helvBold);
     if (label.dateline) draw(label.dateline, 0, 35, 12, helvItal);
     draw("__________<-Clicker", 0, 72, 14, helv);
-    draw(`Lane: ${label.lane}`, 0, 98, 14, helv);
-    draw("Notes:", 92, 98, 8, helv);
+    // lane line is gate-only; airport/BxB labels don't need it (Mew)
+    if (label.lane) draw(`Lane: ${label.lane}`, 0, 98, 14, helv);
+    draw("Notes:", label.lane ? 92 : 0, 98, 8, helv);
     // census wheel, right side (template: ~1.71 x 1.68 in), vertically centered
     const w = 123;
     const h = (logo.height / logo.width) * w;
