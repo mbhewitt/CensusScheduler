@@ -123,7 +123,8 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
   });
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [view, setView] = useState<"calendar" | "table">("table");
+  // Default to the calendar view (papabear 2026-07-23).
+  const [view, setView] = useState<"calendar" | "table">("calendar");
 
   // fetching, mutation, and revalidation
   // ------------------------------------------------------------
@@ -592,6 +593,13 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
           view controls, and the calendar/table (per papabear 2026-07-22). */}
       <Card sx={{ mb: 2 }}>
         <CardContent>
+          {/* PEERS #walkin: always-on reminder to print the schedule (which
+              now carries the passcode) so volunteers can edit shifts on-playa
+              without a Burner Profile (papabear 2026-07-23). */}
+          <Typography sx={{ fontWeight: 700, mb: 2 }}>
+            Don&rsquo;t forget to print your schedule which includes a passcode
+            for easy shift editing on playa!
+          </Typography>
           <Typography sx={{ mb: 2 }}>
             If you are looking to schedule a shift with a friend, make sure you
             both select the same time and day in your account.
