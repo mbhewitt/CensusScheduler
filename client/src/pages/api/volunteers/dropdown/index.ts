@@ -67,6 +67,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             FROM op_volunteers AS v
             JOIN op_volunteer_roles AS vr
             ON vr.shiftboard_id=v.shiftboard_id
+            AND vr.remove_role=false
             JOIN op_roles AS r
             ON r.role_id=vr.role_id
             AND r.role_id=?
@@ -88,6 +89,7 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             FROM op_volunteers AS v
             LEFT JOIN op_volunteer_roles AS vr
             ON vr.shiftboard_id=v.shiftboard_id
+            AND vr.remove_role=false
             LEFT JOIN op_roles AS r
             ON r.role_id=vr.role_id
             ${selfOnlyId ? "WHERE v.shiftboard_id=?" : ""}
