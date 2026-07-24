@@ -559,11 +559,15 @@ export const ShiftVolunteers = ({
         />,
         // PEERS #walkin: read-only checkbox — checked = walk-in (no Squaddie
         // role / no Hive training). Disabled so leads can't toggle it; it's
-        // auto-derived from the volunteer's current roles.
+        // auto-derived from the volunteer's current roles. The checked state
+        // renders green (sx override, since a disabled checkbox would
+        // otherwise grey out) so walk-ins stand out at a glance (papabear
+        // 2026-07-23).
         <Checkbox
           checked={isWalkIn}
           disabled
           key={`${shiftboardId}-walk-in`}
+          sx={{ "&.Mui-checked.Mui-disabled": { color: "success.main" } }}
         />,
         // if volunteer is admin
         // then display volunteer shift review and volunteer menu
