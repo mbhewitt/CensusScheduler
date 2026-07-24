@@ -614,10 +614,17 @@ export const Shifts = () => {
             <Typography component="span" sx={{ fontWeight: 700 }}>
               Complete your PEERS onboarding first.
             </Typography>{" "}
-            You must finish your Hive training and the full onboarding process
-            before signing up for shifts. Shifts you aren&rsquo;t yet eligible
-            for are grayed out, and sign-ups made before onboarding is complete
-            may be removed.
+            You must{" "}
+            <a
+              href="https://hive.burningman.org/spaces/24147649?utm_source=manual"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              finish your HIVE training
+            </a>{" "}
+            and the full onboarding process before signing up for shifts. Shifts
+            you aren&rsquo;t yet eligible for are grayed out, and sign-ups made
+            before onboarding is complete may be removed.
           </Alert>
         )}
         {/* view toggle + calendar filters (Type + availability) */}
