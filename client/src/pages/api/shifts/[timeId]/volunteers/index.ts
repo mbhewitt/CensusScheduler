@@ -465,6 +465,11 @@ const shiftVolunteers = async (
       const isRequesterAdmin =
         requesterRoleIds.has(ROLE_ADMIN_ID) ||
         requesterRoleIds.has(ROLE_SUPER_ADMIN_ID);
+      // PEERS #walkin: Coordinators are treated like admins for sign-ups —
+      // exempt from the role-eligibility gate AND the capacity cap (they may
+      // overbook), both on- and off-playa (papabear 2026-07-24).
+      const isRequesterAdminLike =
+        isRequesterAdmin || requesterRoleIds.has(ROLE_PEERS_COORDINATOR_ID);
 
       // PEERS #walkin: server-side role gate + on-playa Squaddie bypass.
       // The position's required role (op_position_type.role_id, surfaced on
@@ -478,9 +483,9 @@ const shiftVolunteers = async (
       // regardless of IP — walk-ins are a Squaddie-only concept. The check
       // is against the TARGET volunteer's roles (the person being added), so
       // a lead adding a walk-in at the kiosk works via the on-playa branch.
-      // Admins/superadmins (the requester) are exempt, matching the capacity
-      // guard's overbook/add-anyone flow.
-      if (!isRequesterAdmin) {
+      // Admins/superadmins AND Coordinators (the requester) are exempt,
+      // matching the capacity guard's overbook/add-anyone flow.
+      if (!isRequesterAdminLike) {
         const roleRequiredId = Number(claimedShift?.role_id ?? 0);
         if (roleRequiredId !== 0) {
           const [dbTargetRoleRows] = await pool.query<RowDataPacket[]>(
@@ -499,19 +504,22 @@ const shiftVolunteers = async (
           });
           // Eligibility by required role (papabear 2026-07-24):
           //  - SQUADDIE position: needs the Squaddie role (Squaddie training)
-          //    OR on-playa (the walk-in bypass).
+          //    OR on-playa (the walk-in bypass) OR the Coordinator role.
           //  - SHIFT LEAD position: needs BOTH the Shift Lead role AND the
-          //    Squaddie role — a Lead must still have completed Squaddie
-          //    training. No on-playa bypass (Lead shifts are always
-          //    role-gated).
+          //    Squaddie role (a Lead must still have completed Squaddie
+          //    training; no on-playa bypass) OR the Coordinator role.
           //  - any other role-gated position: needs that exact role.
+          // Coordinators are senior and NOT gated out of Squaddie or Lead
+          // shifts.
           const hasSquaddie = targetRoleIds.has(ROLE_PEERS_SQUADDIE_ID);
+          const hasCoordinator = targetRoleIds.has(ROLE_PEERS_COORDINATOR_ID);
           let eligible: boolean;
           if (roleRequiredId === ROLE_PEERS_SQUADDIE_ID) {
-            eligible = hasSquaddie || onPlaya;
+            eligible = hasSquaddie || hasCoordinator || onPlaya;
           } else if (roleRequiredId === ROLE_PEERS_SHIFT_LEAD_ID) {
             eligible =
-              targetRoleIds.has(ROLE_PEERS_SHIFT_LEAD_ID) && hasSquaddie;
+              (targetRoleIds.has(ROLE_PEERS_SHIFT_LEAD_ID) && hasSquaddie) ||
+              hasCoordinator;
           } else {
             eligible = targetRoleIds.has(roleRequiredId);
           }
@@ -561,7 +569,7 @@ const shiftVolunteers = async (
         const isAlreadyActive =
           dbShiftVolunteerFirst && !dbShiftVolunteerFirst.remove_shift;
 
-        if (!isAlreadyActive && !isRequesterAdmin) {
+        if (!isAlreadyActive && !isRequesterAdminLike) {
           const [dbFilledRows] = await connection.query<RowDataPacket[]>(
             `SELECT COUNT(*) AS filled
              FROM op_volunteer_shifts

@@ -81,7 +81,10 @@ export const Shifts = () => {
   // context
   // ------------------------------------------------------------
   const {
-    developerModeState: { accountType, dateTime: { value: dateTimeValue } },
+    developerModeState: {
+      accountType,
+      dateTime: { value: dateTimeValue },
+    },
   } = useContext(DeveloperModeContext);
   const {
     sessionState: {
@@ -100,6 +103,10 @@ export const Shifts = () => {
   // on-playa, where Squaddie shifts open up (walk-in bypass).
   const isEligibleForType = (type: string): boolean => {
     if (checkIsAdmin(accountType, roleList)) return true;
+    // PEERS #walkin: Coordinators are treated like admins for sign-ups — they
+    // may take any shift type (Squaddie, Lead, Coordinator), on- or off-playa
+    // (papabear 2026-07-24).
+    if (checkIsRoleExist(ROLE_PEERS_COORDINATOR_ID, roleList)) return true;
     const required = requiredRoleForType(type);
     if (!required) return true;
     const hasSquaddie = checkIsRoleExist(ROLE_PEERS_SQUADDIE_ID, roleList);

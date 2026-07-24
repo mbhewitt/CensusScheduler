@@ -57,7 +57,11 @@ import {
 } from "@/constants";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
-import { checkIsAdmin, checkIsAuthenticated } from "@/utils/checkIsRoleExist";
+import {
+  checkIsAdmin,
+  checkIsAuthenticated,
+  checkIsPeersCoordinator,
+} from "@/utils/checkIsRoleExist";
 import { ensure } from "@/utils/ensure";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 import { useIsOnPlaya } from "@/utils/useIsOnPlaya";
@@ -276,6 +280,11 @@ export const ShiftVolunteersDialogAdd = ({
   }
 
   const isAdmin = checkIsAdmin(accountType, roleList);
+  // PEERS #walkin: the requester being a Coordinator is treated like an admin
+  // for sign-ups — eligible for any shift type and may overbook a full
+  // position (papabear 2026-07-24).
+  const isCoordinator = checkIsPeersCoordinator(roleList);
+  const isAdminLike = isAdmin || isCoordinator;
   const timePositionIdShiftWatch = watch("timePositionIdShift");
   const prerequisiteIdWatch = positionList.find(
     (shiftPositionItem) =>
@@ -358,7 +367,9 @@ export const ShiftVolunteersDialogAdd = ({
               )
             );
           const isShiftPositionAvailable =
-            isAdmin ||
+            // isAdminLike (admin OR coordinator requester) bypasses the slot
+            // cap too — they may overbook, like admins.
+            isAdminLike ||
             (slotsTotal - slotsFilled > 0 &&
               (roleRequiredId === 0 ||
                 (roleRequiredId === ROLE_PEERS_SQUADDIE_ID
@@ -675,7 +686,7 @@ export const ShiftVolunteersDialogAdd = ({
       shiftPositionFound !== undefined &&
       shiftPositionFound.slotsFilled >= shiftPositionFound.slotsTotal;
 
-    if (isAdmin && isPositionFull) {
+    if (isAdminLike && isPositionFull) {
       setOverbookPending(formValues);
       return;
     }
