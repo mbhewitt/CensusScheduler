@@ -15,20 +15,21 @@ interface IPasscodeRevealProps {
 // the "PEERS" wordmark with the 4-digit passcode so it reads as a
 // delight artifact rather than a plain text reveal.
 //
-// FIXME(peers): coordinates below are scaled from the original 454×512
-// art to the current logo-peers.png (1722×1943 native, badge added
-// 2026-07-16). The new wordmark is *arched* across the top, so a flat
-// rectangle mask no longer aligns cleanly — retune MASK_X/Y/W/H +
-// DIGIT_FONT_PX against the badge in-browser when passcode mode is
-// activated for playa (this delight feature isn't live off-playa).
+// Coordinates are in the native logo-peers.png pixel space (1722×1943,
+// badge art added 2026-07-16). The "PEERS" wordmark is arched across the
+// upper-middle of the badge; these values place the charcoal mask + the
+// 4 digits centered over that wordmark. Retuned 2026-07-23 (papabear: the
+// digits weren't centered over "PEERS" once the reveal was exposed
+// off-playa) so the digit group sits squarely on the wordmark rather than
+// shifted up/right into the banner.
 const LOGO_SRC = "/general/logo-peers.png";
 const MASK_FILL = "#202020";
 const DIGIT_FILL = "#F0E0D0";
-const MASK_X = 569;
-const MASK_Y = 303;
-const MASK_W = 758;
-const MASK_H = 341;
-const DIGIT_FONT_PX = 303;
+const MASK_X = 480;
+const MASK_Y = 378;
+const MASK_W = 762;
+const MASK_H = 278;
+const DIGIT_FONT_PX = 245;
 
 export const PasscodeReveal = ({ shiftboardId }: IPasscodeRevealProps) => {
   const [passcode, setPasscode] = useState<null | string>(null);
