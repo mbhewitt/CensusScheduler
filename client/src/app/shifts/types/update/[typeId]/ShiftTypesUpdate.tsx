@@ -350,7 +350,12 @@ export const ShiftTypesUpdate = ({ typeId }: IShiftTypesUpdateProps) => {
           </BreadcrumbsNav>
         </Box>
         <Box component="section">
-          <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+          {/* noValidate: without it, an empty required field (e.g. a shift
+              type whose category is blank) trips native HTML5 constraint
+              validation, which blocks submit BEFORE react-hook-form runs — so
+              Save silently does nothing with no error shown. Disabling native
+              validation lets RHF's own `rules` surface the message (#533). */}
+          <form autoComplete="off" noValidate onSubmit={handleSubmit(onSubmit)}>
             <ShiftTypesForm
               clearErrors={clearErrors}
               control={control}
