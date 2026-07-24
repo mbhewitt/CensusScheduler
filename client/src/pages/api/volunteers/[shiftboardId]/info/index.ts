@@ -40,10 +40,14 @@ const ROLE_BEHAVIORAL_STANDARDS_ID = 1000012;
 const ROLE_EMAIL_UNSUBSCRIBED_ID = 2000020;
 // PEERS #walkin: the Squaddie access role (granted by the HIVE Squaddie
 // training confirmation link) — drives the read-only "HIVE Squaddie Training"
-// checklist item. A Shift Lead has also completed Squaddie training, so either
-// role checks the box (papabear 2026-07-24).
+// checklist item. The box requires actual Squaddie training: a Shift Lead role
+// alone does NOT check it (a Lead still needs the Squaddie role). Admins and
+// Coordinators get it auto-checked by virtue of that role (papabear
+// 2026-07-24).
 const ROLE_PEERS_SQUADDIE_ID = 2000102;
-const ROLE_PEERS_SHIFT_LEAD_ID = 2000101;
+const ROLE_ADMIN_ID = 2;
+const ROLE_SUPER_ADMIN_ID = 1;
+const ROLE_PEERS_COORDINATOR_ID = 95209;
 
 // Datenames that are before or on opening (eligible for SAP)
 const PRE_OPEN_DATENAMES = [
@@ -325,14 +329,17 @@ const volunteerInfo = async (
       const behavioralStandardsSigned = roleIdSet.has(
         ROLE_BEHAVIORAL_STANDARDS_ID
       );
-      // PEERS #walkin: read-only — checked when the volunteer holds the
-      // Squaddie role (earned by clicking the access link at the end of the
-      // HIVE Squaddie training) OR the Shift Lead role (Leads have also done
-      // Squaddie training). No self-attest (that would be a training loophole),
-      // per papabear 2026-07-24.
+      // PEERS #walkin: read-only. Checked when the volunteer has actually
+      // completed Squaddie training (holds the Squaddie role, earned via the
+      // access link at the end of the HIVE Squaddie training) — a Shift Lead
+      // role by itself does NOT check it. Admins and Coordinators are
+      // auto-checked by virtue of their role. No self-attest (training
+      // loophole). Per papabear 2026-07-24.
       const squaddieTrainingComplete =
         roleIdSet.has(ROLE_PEERS_SQUADDIE_ID) ||
-        roleIdSet.has(ROLE_PEERS_SHIFT_LEAD_ID);
+        roleIdSet.has(ROLE_ADMIN_ID) ||
+        roleIdSet.has(ROLE_SUPER_ADMIN_ID) ||
+        roleIdSet.has(ROLE_PEERS_COORDINATOR_ID);
       // Strict (add_role=true AND remove_role=false) so the checkbox state
       // matches the queue's send-time filter in client/lib/mail/queue.ts
       // exactly. The bulk role-list query above is intentionally looser to
