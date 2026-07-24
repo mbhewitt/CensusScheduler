@@ -304,6 +304,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   const {
     behavioralStandardsSigned,
     burnerProfileUpdated,
+    squaddieTrainingComplete,
     emailUnsubscribed,
     volunteer,
   } = data;
@@ -371,6 +372,34 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
         >
           Review and sign the Behavioral Standards Agreement
         </Link>
+      </Box>
+    ),
+  });
+
+  // HIVE Squaddie Training (PEERS #walkin) — read-only: checked only when the
+  // volunteer holds the Squaddie role (earned via the access link at the end of
+  // the HIVE Squaddie training). No self-attest checkbox — that would be a
+  // training loophole (papabear 2026-07-24).
+  checklistItems.push({
+    id: "squaddie-training",
+    label: squaddieTrainingComplete
+      ? "HIVE Squaddie Training — Completed"
+      : "Complete HIVE Squaddie Training",
+    done: squaddieTrainingComplete,
+    content: (
+      <Box>
+        <Typography sx={{ mb: 1 }}>
+          To sign up for shifts you must have completed the HIVE Squaddie
+          Training. Please{" "}
+          <a
+            href="https://hive.burningman.org/spaces/24147649?utm_source=manual"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            click here
+          </a>{" "}
+          to take it.
+        </Typography>
       </Box>
     ),
   });
