@@ -18,25 +18,37 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
     case "GET": {
       // PEERS #walkin (roster privacy): this endpoint returns the whole
       // roster's playa + world (legal) names, so it must NOT be publicly
-      // enumerable off-playa. Allow it only when the request is on-playa (the
-      // kiosk name-picker needs it BEFORE a walk-in has signed in, so no
-      // session is required there) OR the requester is an admin/superadmin
-      // (the authed role-add / shift-add dialogs use it off-playa). A regular
-      // off-playa Squaddie is blocked from enumerating names.
+      // enumerable off-playa. The FULL roster is returned only when the
+      // request is on-playa (the kiosk name-picker needs it BEFORE a walk-in
+      // has signed in, so no session is required there) OR the requester is an
+      // admin/superadmin (the authed role-add / shift-add dialogs use it
+      // off-playa).
+      //
+      // A regular authenticated volunteer off-playa still needs their OWN row
+      // for the self-signup dialog (ShiftVolunteersDialogAdd calls .find/.map
+      // on this list), so we return JUST their own entry rather than the whole
+      // roster — and crucially NOT a 403, which would make those dialogs crash
+      // with a client-side exception (#walkin regression, real volunteers
+      // blocked at launch 2026-07-24). Truly unauthenticated off-playa → 403.
       const onPlaya = isOnPlaya((name) => {
         const headerValue = req.headers[name.toLowerCase()];
         return Array.isArray(headerValue)
           ? headerValue[0]
           : (headerValue ?? null);
       });
-      if (!onPlaya) {
-        const session = readSessionFromCookies(req.cookies);
-        if (!session || !(await isAdmin(session.shiftboardId))) {
+      const session = readSessionFromCookies(req.cookies);
+      const requesterIsAdmin = session
+        ? await isAdmin(session.shiftboardId)
+        : false;
+      let selfOnlyId: number | null = null;
+      if (!onPlaya && !requesterIsAdmin) {
+        if (!session) {
           return res.status(403).json({
             statusCode: 403,
             message: "Forbidden",
           });
         }
+        selfOnlyId = session.shiftboardId;
       }
 
       const { filter } = req.query;
@@ -58,8 +70,9 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             JOIN op_roles AS r
             ON r.role_id=vr.role_id
             AND r.role_id=?
+            ${selfOnlyId ? "WHERE v.shiftboard_id=?" : ""}
             ORDER BY playa_name COLLATE utf8mb4_general_ci`,
-            [ROLE_CORE_CREW_ID]
+            selfOnlyId ? [ROLE_CORE_CREW_ID, selfOnlyId] : [ROLE_CORE_CREW_ID]
           );
           break;
         }
@@ -77,7 +90,9 @@ const volunteers = async (req: NextApiRequest, res: NextApiResponse) => {
             ON vr.shiftboard_id=v.shiftboard_id
             LEFT JOIN op_roles AS r
             ON r.role_id=vr.role_id
-            ORDER BY playa_name COLLATE utf8mb4_general_ci`
+            ${selfOnlyId ? "WHERE v.shiftboard_id=?" : ""}
+            ORDER BY playa_name COLLATE utf8mb4_general_ci`,
+            selfOnlyId ? [selfOnlyId] : []
           );
           break;
         }
