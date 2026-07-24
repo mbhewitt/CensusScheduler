@@ -43,14 +43,19 @@ test.describe("Shift-type editor: adding a position (#533)", () => {
     // Intercept the save so we can inspect the payload without mutating local data.
     let patchBody: { timeList?: { positionList?: { name: string }[] }[] } | null =
       null;
+    const realSave = process.env.REAL_SAVE === "1";
     await page.route(`**/api/shifts/types/${TYPE_ID}`, async (route) => {
       if (route.request().method() === "PATCH") {
         patchBody = route.request().postDataJSON();
-        await route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: "{}",
-        });
+        if (realSave) {
+          await route.continue(); // hit the real backend to test persistence
+        } else {
+          await route.fulfill({
+            status: 200,
+            contentType: "application/json",
+            body: "{}",
+          });
+        }
       } else {
         await route.continue();
       }
