@@ -18,7 +18,6 @@ import { shiftBadge } from "@/utils/shiftBadge";
 
 const PX_PER_HOUR = 28;
 const GUTTER_WIDTH = 52;
-const DAY_COUNT = 5; // Mon–Fri
 
 const escapeHtml = (value: string): string =>
   value
@@ -54,10 +53,20 @@ export const buildSchedulePrintHtml = ({
   const hourMarks = getHourMarks(startMin, endMin);
   const gridHeight = ((endMin - startMin) / 60) * PX_PER_HOUR;
 
-  // Single event week only — the Monday of the earliest shift's week — to match
-  // the on-screen account calendar (no navigation).
+  // Single event week only, to match the on-screen account calendar (no
+  // navigation). Normally Mon–Fri, but extend to Sun–Fri when the schedule
+  // includes a Sunday shift (Shift Lead / Coordinator shifts on 8/30) so it
+  // isn't silently dropped from the printout (papabear 2026-07-24).
   const earliest = events.map((e) => e.date).sort()[0];
-  const weekStarts = earliest ? [mondayOf(earliest)] : [];
+  const includeSunday = events.some((e) => dayjs(e.date).day() === 0);
+  const dayCount = includeSunday ? 6 : 5;
+  const weekStarts = earliest
+    ? [
+        includeSunday
+          ? dayjs(earliest).startOf("week").format("YYYY-MM-DD")
+          : mondayOf(earliest),
+      ]
+    : [];
 
   const hourLabels = hourMarks
     .map((hour) => {
@@ -77,20 +86,20 @@ export const buildSchedulePrintHtml = ({
 
   const weeksHtml = weekStarts
     .map((weekStart) => {
-      const monday = dayjs(weekStart);
-      const weekLabel = `${monday.format("MMM D")} – ${monday
-        .add(DAY_COUNT - 1, "day")
+      const weekStartDay = dayjs(weekStart);
+      const weekLabel = `${weekStartDay.format("MMM D")} – ${weekStartDay
+        .add(dayCount - 1, "day")
         .format("MMM D, YYYY")}`;
 
-      const dayHeaders = Array.from({ length: DAY_COUNT }, (_, i) => {
-        const day = monday.add(i, "day");
+      const dayHeaders = Array.from({ length: dayCount }, (_, i) => {
+        const day = weekStartDay.add(i, "day");
         return `<div class="day-header"><div class="dow">${day.format(
           "ddd"
         )}</div><div class="dom">${day.format("M/D")}</div></div>`;
       }).join("");
 
-      const dayColumns = Array.from({ length: DAY_COUNT }, (_, i) => {
-        const day = monday.add(i, "day");
+      const dayColumns = Array.from({ length: dayCount }, (_, i) => {
+        const day = weekStartDay.add(i, "day");
         const dayEvents = events.filter((e) =>
           dayjs(e.date).isSame(day, "day")
         );
@@ -175,7 +184,7 @@ export const buildSchedulePrintHtml = ({
   }
   .grid {
     display: grid;
-    grid-template-columns: ${GUTTER_WIDTH}px repeat(${DAY_COUNT}, 1fr);
+    grid-template-columns: ${GUTTER_WIDTH}px repeat(${dayCount}, 1fr);
     gap: 6px;
   }
   .header-grid { margin-bottom: 6px; }

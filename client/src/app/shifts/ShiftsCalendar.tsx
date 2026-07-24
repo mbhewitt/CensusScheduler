@@ -41,6 +41,11 @@ interface IShiftsCalendarProps {
   events: ICalendarEvent[];
   onSelect: (id: number) => void;
   layout?: CalendarLayout;
+  // PEERS: extend the week to Sun–Fri (6 days) instead of Mon–Fri (5). Used on
+  // All Shifts for Shift Lead / Coordinator / admin viewers (who have Sunday
+  // shifts), and on the account page when the volunteer holds a Sunday shift
+  // (papabear 2026-07-24).
+  includeSunday?: boolean;
 }
 
 // pixels per hour for the time-grid layout
@@ -56,6 +61,7 @@ export const ShiftsCalendar = ({
   events,
   onSelect,
   layout = "stack",
+  includeSunday = false,
 }: IShiftsCalendarProps) => {
   const theme = useTheme();
 
@@ -65,16 +71,22 @@ export const ShiftsCalendar = ({
     events.length > 0
       ? events.map((e) => e.date).sort()[0]
       : dayjs().format("YYYY-MM-DD");
-  // Mon–Fri only — PEERS runs no weekend shifts (per papabear 2026-07-17).
-  // startOf("week") is Sunday, so +1 day = the Monday of that week.
+  // startOf("week") is Sunday, so +1 day = the Monday of that week. PEERS
+  // normally runs Mon–Fri, but Shift Lead / Coordinator viewers (and anyone
+  // holding a Sunday shift) get Sun–Fri (papabear 2026-07-24).
   const mondayOf = (d: string | Dayjs) =>
     dayjs(d).startOf("week").add(1, "day");
+  const dayCount = includeSunday ? 6 : 5;
   // Fixed to the event week — no navigation (per stickybeak 2026-07-19).
-  const weekStart = mondayOf(earliest);
+  const weekStart = includeSunday
+    ? dayjs(earliest).startOf("week")
+    : mondayOf(earliest);
 
-  const days = Array.from({ length: 5 }, (_, i) => weekStart.add(i, "day"));
+  const days = Array.from({ length: dayCount }, (_, i) =>
+    weekStart.add(i, "day")
+  );
   const weekLabel = `${weekStart.format("MMM D")} – ${weekStart
-    .add(4, "day")
+    .add(dayCount - 1, "day")
     .format("MMM D, YYYY")}`;
 
   // Time-grid axis, shared across every day column so the same time of day sits
@@ -220,15 +232,15 @@ export const ShiftsCalendar = ({
     </Typography>
   );
 
-  // Time-grid layout — hour gutter + Mon–Fri columns, shifts positioned by time.
+  // Time-grid layout — hour gutter + day columns, shifts positioned by time.
   if (layout === "time") {
-    const gridColumns = `${GUTTER_WIDTH}px repeat(5, minmax(140px, 1fr))`;
+    const gridColumns = `${GUTTER_WIDTH}px repeat(${dayCount}, minmax(140px, 1fr))`;
 
     return (
       <Box>
         {weekLabelBar}
         <Box sx={{ overflowX: "auto" }}>
-          <Box sx={{ minWidth: GUTTER_WIDTH + 5 * 140 }}>
+          <Box sx={{ minWidth: GUTTER_WIDTH + dayCount * 140 }}>
             {/* header row: empty gutter + day headers */}
             <Box
               sx={{
@@ -357,7 +369,7 @@ export const ShiftsCalendar = ({
           sx={{
             display: "grid",
             gap: 1,
-            gridTemplateColumns: "repeat(5, minmax(150px, 1fr))",
+            gridTemplateColumns: `repeat(${dayCount}, minmax(150px, 1fr))`,
           }}
         >
           {days.map((day) => {

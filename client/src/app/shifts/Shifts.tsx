@@ -47,6 +47,7 @@ import {
   ROLE_PEERS_COORDINATOR_ID,
   ROLE_PEERS_SHIFT_LEAD_ID,
   ROLE_PEERS_SQUADDIE_ID,
+  ROLE_SUPER_ADMIN_ID,
 } from "@/constants";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
@@ -143,6 +144,15 @@ export const Shifts = () => {
     if (/lead/i.test(type)) return hasLead || hasCoordinator;
     return true;
   };
+
+  // PEERS: Shift Leads, Coordinators, and admins/superadmins have Sunday
+  // shifts (8/30), so the All Shifts calendar shows Sun–Fri for them; everyone
+  // else stays Mon–Fri (papabear 2026-07-24).
+  const includeSundayShifts =
+    checkIsAdmin(accountType, roleList) ||
+    checkIsRoleExist(ROLE_SUPER_ADMIN_ID, roleList) ||
+    checkIsRoleExist(ROLE_PEERS_SHIFT_LEAD_ID, roleList) ||
+    checkIsRoleExist(ROLE_PEERS_COORDINATOR_ID, roleList);
 
   // state
   // ------------------------------------------------------------
@@ -726,6 +736,7 @@ export const Shifts = () => {
           {view === "calendar" ? (
             <ShiftsCalendar
               events={filteredCalendarEvents}
+              includeSunday={includeSundayShifts}
               onSelect={(id) => router.push(`/shifts/${id}/volunteers`)}
             />
           ) : (

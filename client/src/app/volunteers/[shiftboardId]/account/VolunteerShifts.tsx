@@ -644,6 +644,9 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
           {view === "calendar" ? (
             <ShiftsCalendar
               events={calendarEvents}
+              includeSunday={calendarEvents.some(
+                (event) => dayjs(event.date).day() === 0
+              )}
               layout="time"
               onSelect={(id) => router.push(`/shifts/${id}/volunteers`)}
             />
