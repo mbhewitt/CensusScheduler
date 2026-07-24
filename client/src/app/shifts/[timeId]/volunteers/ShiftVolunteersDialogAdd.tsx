@@ -49,6 +49,7 @@ import type {
 } from "@/components/types/volunteers";
 import {
   ADD_SHIFT_VOLUNTEER_REQ,
+  ROLE_PEERS_SHIFT_LEAD_ID,
   ROLE_PEERS_SQUADDIE_ID,
   SHIFT_DURING,
   SHIFT_FUTURE,
@@ -345,17 +346,27 @@ export const ShiftVolunteersDialogAdd = ({
           slotsTotal,
           timePositionId,
         }) => {
+          // PEERS #walkin: mirror the server eligibility (papabear 2026-07-24).
+          // SQUADDIE position → has Squaddie role OR on-playa (walk-in bypass);
+          // SHIFT LEAD position → has BOTH Lead and Squaddie (a Lead must have
+          // done Squaddie training; no on-playa bypass); other role-gated →
+          // that exact role. Cosmetic — the server is the real gate.
+          const hasRoleId = (id: number) =>
+            Boolean(
+              volunteerSelected?.roleList?.some(
+                ({ id: roleId }: { id: number }) => roleId === id
+              )
+            );
           const isShiftPositionAvailable =
             isAdmin ||
             (slotsTotal - slotsFilled > 0 &&
               (roleRequiredId === 0 ||
-                // PEERS #walkin: on-playa, a SQUADDIE position is claimable
-                // even without the role (Lead/other positions stay
-                // role-gated). Cosmetic — the server is the real gate.
-                (roleRequiredId === ROLE_PEERS_SQUADDIE_ID && isOnPlaya) ||
-                volunteerSelected?.roleList?.some(
-                  ({ id: roleId }: { id: number }) => roleId === roleRequiredId
-                )));
+                (roleRequiredId === ROLE_PEERS_SQUADDIE_ID
+                  ? hasRoleId(ROLE_PEERS_SQUADDIE_ID) || isOnPlaya
+                  : roleRequiredId === ROLE_PEERS_SHIFT_LEAD_ID
+                    ? hasRoleId(ROLE_PEERS_SHIFT_LEAD_ID) &&
+                      hasRoleId(ROLE_PEERS_SQUADDIE_ID)
+                    : hasRoleId(roleRequiredId))));
 
           return (
             <MenuItem

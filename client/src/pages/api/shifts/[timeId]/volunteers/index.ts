@@ -497,16 +497,33 @@ const shiftVolunteers = async (
               ? headerValue[0]
               : (headerValue ?? null);
           });
-          const hasRequiredRole = targetRoleIds.has(roleRequiredId);
-          const squaddieWalkInOk =
-            roleRequiredId === ROLE_PEERS_SQUADDIE_ID && onPlaya;
-          if (!hasRequiredRole && !squaddieWalkInOk) {
+          // Eligibility by required role (papabear 2026-07-24):
+          //  - SQUADDIE position: needs the Squaddie role (Squaddie training)
+          //    OR on-playa (the walk-in bypass).
+          //  - SHIFT LEAD position: needs BOTH the Shift Lead role AND the
+          //    Squaddie role — a Lead must still have completed Squaddie
+          //    training. No on-playa bypass (Lead shifts are always
+          //    role-gated).
+          //  - any other role-gated position: needs that exact role.
+          const hasSquaddie = targetRoleIds.has(ROLE_PEERS_SQUADDIE_ID);
+          let eligible: boolean;
+          if (roleRequiredId === ROLE_PEERS_SQUADDIE_ID) {
+            eligible = hasSquaddie || onPlaya;
+          } else if (roleRequiredId === ROLE_PEERS_SHIFT_LEAD_ID) {
+            eligible =
+              targetRoleIds.has(ROLE_PEERS_SHIFT_LEAD_ID) && hasSquaddie;
+          } else {
+            eligible = targetRoleIds.has(roleRequiredId);
+          }
+          if (!eligible) {
             return res.status(403).json({
               statusCode: 403,
               message:
                 roleRequiredId === ROLE_PEERS_SQUADDIE_ID
                   ? "This shift requires Hive training, or sign up on-playa."
-                  : "This shift requires a role this volunteer doesn't have.",
+                  : roleRequiredId === ROLE_PEERS_SHIFT_LEAD_ID
+                    ? "Shift Lead shifts require completing both the Squaddie and Shift Lead Hive trainings."
+                    : "This shift requires a role this volunteer doesn't have.",
             });
           }
         }

@@ -110,10 +110,12 @@ export const Shifts = () => {
     if (required.id === ROLE_PEERS_SHIFT_LEAD_ID) {
       return hasLead && hasSquaddie;
     }
-    // Squaddie shifts: anyone who's completed Squaddie training (Leads too),
-    // OR anyone on-playa (the walk-in bypass — being on-site is the "pass").
+    // Squaddie shifts: requires the Squaddie role (actual Squaddie training)
+    // OR on-playa (the walk-in bypass). A Lead who hasn't done Squaddie
+    // training does NOT qualify — a proper Lead holds Squaddie anyway
+    // (papabear 2026-07-24).
     if (required.id === ROLE_PEERS_SQUADDIE_ID) {
-      return hasSquaddie || hasLead || isOnPlaya;
+      return hasSquaddie || isOnPlaya;
     }
     // Other types (e.g. Coordinator): the single matching role.
     return checkIsRoleExist(required.id, roleList);
