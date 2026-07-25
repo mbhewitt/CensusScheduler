@@ -58,6 +58,19 @@ Form fields on the agreement: **Camp Name**, **Camp Address**, **Phone Number**,
   Squaddie returns the tablet — tells us the Squaddie + tablet are back. New
   field (op_volunteer_shifts.tablet_returned) + endpoint + toggle UI.
 
+## 5. Tablet report export (papabear 2026-07-25)
+- New CSV export on the Reports page, for **Shift Leads AND higher** (Shift
+  Lead + Coordinator + Admin/SuperAdmin — broader than the other reports which
+  are admin+coord). Columns: **Which shift** (name + date/time), **Name** (world
+  name), **Playa name**, **email**, **camp name**, **camp address**, **phone
+  number**, **tablet number**.
+- One row per active shift assignment. Depends on the Tablet # field (#3) +
+  camp/address/phone (from the agreement). So build this WITH the Tablet #
+  column. Reuse the CSV pattern from the New Volunteers report.
+- Note: Shift Leads don't currently get a Reports nav entry (only coords/admins
+  via pageListCoordinator) — extend nav to Shift Leads for this, or give them a
+  direct link.
+
 ## Build pieces (all on test first)
 - [ ] Migration: op_volunteers.camp_name, camp_address (phone exists); a
       tablet-agreement signed marker (role or column); op_volunteer_shifts

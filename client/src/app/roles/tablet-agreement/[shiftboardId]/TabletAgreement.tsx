@@ -125,21 +125,21 @@ export const TabletAgreement = ({ shiftboardId }: ITabletAgreementProps) => {
               <Stack spacing={2}>
                 <TextField
                   fullWidth
-                  label="Camp Name"
+                  label="Your Camp Name"
                   onChange={(e) => setCampName(e.target.value)}
                   value={campName}
                   variant="standard"
                 />
                 <TextField
                   fullWidth
-                  label="Camp Address"
+                  label="Your Camp Address"
                   onChange={(e) => setCampAddress(e.target.value)}
                   value={campAddress}
                   variant="standard"
                 />
                 <TextField
                   fullWidth
-                  label="Phone Number"
+                  label="Your Phone Number"
                   onChange={(e) => setPhone(e.target.value)}
                   value={phone}
                   variant="standard"
