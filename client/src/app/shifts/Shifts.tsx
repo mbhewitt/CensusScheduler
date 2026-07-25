@@ -28,6 +28,7 @@ import { useTheme } from "@mui/material/styles";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import { MUIDataTableColumn } from "mui-datatables";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import useSWR from "swr";
@@ -648,9 +649,20 @@ export const Shifts = () => {
             >
               finish your HIVE training
             </a>{" "}
-            and the full onboarding process before signing up for shifts. Shifts
-            you aren&rsquo;t yet eligible for are grayed out, and sign-ups made
-            before onboarding is complete may be removed.
+            and the{" "}
+            <Link
+              href={
+                shiftboardId
+                  ? `/volunteers/${shiftboardId}/account`
+                  : "/sign-in"
+              }
+              style={{ color: "#0000EE", textDecoration: "underline" }}
+            >
+              Pre-playa Checklist
+            </Link>{" "}
+            process before signing up for shifts. Shifts you aren&rsquo;t yet
+            eligible for are grayed out, and sign-ups made before onboarding is
+            complete may be removed.
           </Alert>
         )}
         {/* view toggle + calendar filters (Type + availability) */}
