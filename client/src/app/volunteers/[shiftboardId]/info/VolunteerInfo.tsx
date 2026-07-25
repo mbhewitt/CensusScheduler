@@ -478,6 +478,18 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     ),
   });
 
+  // Checklist display order (papabear 2026-07-25): HIVE training → Tablet
+  // agreement → Behavioral Standards → Burner Profile.
+  const checklistOrder = [
+    "squaddie-training",
+    "tablet-agreement",
+    "behavioral-standards",
+    "burner-profile",
+  ];
+  checklistItems.sort(
+    (a, b) => checklistOrder.indexOf(a.id) - checklistOrder.indexOf(b.id)
+  );
+
   const incompleteItems = checklistItems.filter((item) => !item.done);
   const completedItems = checklistItems.filter((item) => item.done);
 
