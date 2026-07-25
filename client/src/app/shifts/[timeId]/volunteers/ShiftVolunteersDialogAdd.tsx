@@ -50,6 +50,7 @@ import type {
 import {
   ADD_SHIFT_VOLUNTEER_REQ,
   ROLE_ADMIN_ID,
+  ROLE_BEHAVIORAL_STANDARDS_ID,
   ROLE_PEERS_COORDINATOR_ID,
   ROLE_PEERS_SHIFT_LEAD_ID,
   ROLE_PEERS_SQUADDIE_ID,
@@ -369,11 +370,20 @@ export const ShiftVolunteersDialogAdd = ({
                 ({ id: roleId }: { id: number }) => roleId === id
               )
             );
+          // PEERS: Behavioral Standards is a hard requirement to take a shift
+          // for Squaddies/Shift Leads; Coordinators/Admins are exempt. Grey the
+          // position when the target hasn't signed it (papabear 2026-07-25).
+          const targetBsOk =
+            hasRoleId(ROLE_BEHAVIORAL_STANDARDS_ID) ||
+            hasRoleId(ROLE_PEERS_COORDINATOR_ID) ||
+            hasRoleId(ROLE_ADMIN_ID) ||
+            hasRoleId(ROLE_SUPER_ADMIN_ID);
           const isShiftPositionAvailable =
             // isAdminLike (admin OR coordinator requester) bypasses the slot
             // cap too — they may overbook, like admins.
             isAdminLike ||
-            (slotsTotal - slotsFilled > 0 &&
+            (targetBsOk &&
+              slotsTotal - slotsFilled > 0 &&
               (roleRequiredId === 0 ||
                 (roleRequiredId === ROLE_PEERS_SQUADDIE_ID
                   ? hasRoleId(ROLE_PEERS_SQUADDIE_ID) || isOnPlaya

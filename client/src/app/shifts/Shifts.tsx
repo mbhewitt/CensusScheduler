@@ -44,6 +44,7 @@ import { Hero } from "@/components/layout/Hero";
 import type { IResShiftRowItem } from "@/components/types/shifts";
 import type { IResVolunteerShiftItem } from "@/components/types/volunteers";
 import {
+  ROLE_BEHAVIORAL_STANDARDS_ID,
   ROLE_PEERS_COORDINATOR_ID,
   ROLE_PEERS_SHIFT_LEAD_ID,
   ROLE_PEERS_SQUADDIE_ID,
@@ -108,6 +109,11 @@ export const Shifts = () => {
     // may take any shift type (Squaddie, Lead, Coordinator), on- or off-playa
     // (papabear 2026-07-24).
     if (checkIsRoleExist(ROLE_PEERS_COORDINATOR_ID, roleList)) return true;
+    // PEERS: Behavioral Standards is a hard requirement to take ANY shift for
+    // Squaddies + Shift Leads (Coordinators/Admins exempt, handled above). If
+    // it's not signed, everything is greyed until they sign it (papabear
+    // 2026-07-25).
+    if (!checkIsRoleExist(ROLE_BEHAVIORAL_STANDARDS_ID, roleList)) return false;
     const required = requiredRoleForType(type);
     if (!required) return true;
     const hasSquaddie = checkIsRoleExist(ROLE_PEERS_SQUADDIE_ID, roleList);

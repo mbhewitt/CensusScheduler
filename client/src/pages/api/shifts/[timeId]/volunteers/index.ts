@@ -18,6 +18,7 @@ import {
 } from "@/components/api/shiftVolunteers";
 import {
   ROLE_ADMIN_ID,
+  ROLE_BEHAVIORAL_STANDARDS_ID,
   ROLE_PEERS_COORDINATOR_ID,
   ROLE_PEERS_SHIFT_LEAD_ID,
   ROLE_PEERS_SQUADDIE_ID,
@@ -494,16 +495,38 @@ const shiftVolunteers = async (
       // Admins/superadmins AND Coordinators (the requester) are exempt,
       // matching the capacity guard's overbook/add-anyone flow.
       if (!isRequesterAdminLike) {
+        const [dbTargetRoleRows] = await pool.query<RowDataPacket[]>(
+          `SELECT role_id FROM op_volunteer_roles
+           WHERE shiftboard_id = ? AND remove_role = false`,
+          [shiftboardId]
+        );
+        const targetRoleIds = new Set(
+          dbTargetRoleRows.map((row) => Number(row.role_id))
+        );
+
+        // PEERS: Behavioral Standards is a HARD requirement to take ANY shift
+        // for Squaddies and Shift Leads — they must have signed it. Coordinators
+        // and Admins/SuperAdmins are exempt (they've signed it elsewhere), and
+        // they already bypass this whole block via isRequesterAdminLike; the
+        // target-role exemption here covers a coord/admin being added by someone
+        // else. Per papabear 2026-07-25.
+        const targetBsExempt =
+          targetRoleIds.has(ROLE_PEERS_COORDINATOR_ID) ||
+          targetRoleIds.has(ROLE_ADMIN_ID) ||
+          targetRoleIds.has(ROLE_SUPER_ADMIN_ID);
+        if (
+          !targetBsExempt &&
+          !targetRoleIds.has(ROLE_BEHAVIORAL_STANDARDS_ID)
+        ) {
+          return res.status(403).json({
+            statusCode: 403,
+            message:
+              "You must read and sign the Behavioral Standards agreement before signing up for shifts.",
+          });
+        }
+
         const roleRequiredId = Number(claimedShift?.role_id ?? 0);
         if (roleRequiredId !== 0) {
-          const [dbTargetRoleRows] = await pool.query<RowDataPacket[]>(
-            `SELECT role_id FROM op_volunteer_roles
-             WHERE shiftboard_id = ? AND remove_role = false`,
-            [shiftboardId]
-          );
-          const targetRoleIds = new Set(
-            dbTargetRoleRows.map((row) => Number(row.role_id))
-          );
           const onPlaya = isOnPlaya((name) => {
             const headerValue = req.headers[name.toLowerCase()];
             return Array.isArray(headerValue)
