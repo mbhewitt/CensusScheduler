@@ -90,6 +90,9 @@ export const ROLE_PEERS_COORDINATOR_ID = 95209;
 export const ROLE_PEERS_SHIFT_LEAD_ID = 2000101;
 export const ROLE_PEERS_SQUADDIE_ID = 2000102;
 export const ROLE_SUPER_ADMIN_ID = 1;
+// PEERS: signed the Tablet Responsibility Agreement (self-sign, status-flag
+// range) — papabear 2026-07-25.
+export const ROLE_TABLET_AGREEMENT_ID = 2000030;
 
 // sockets
 export const ADD_SHIFT_VOLUNTEER_REQ = "addShiftVolunteerReq";

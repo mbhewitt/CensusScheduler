@@ -446,6 +446,38 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     ),
   });
 
+  // Tablet Responsibility Agreement (PEERS, papabear 2026-07-25) — read-&-sign,
+  // links to the agreement form (camp name/address/phone + agree). Review
+  // increment: shown to everyone for now; Squaddie-only visibility + the
+  // shift-gate + Tablet #/Returned columns are the follow-up (see TABLET_SPEC).
+  const tabletAgreementSigned = (data.roles ?? []).includes("TabletAgreement");
+  checklistItems.push({
+    id: "tablet-agreement",
+    label: tabletAgreementSigned
+      ? "Tablet Responsibility Agreement — Signed"
+      : "Sign the Tablet Responsibility Agreement",
+    done: tabletAgreementSigned,
+    content: (
+      <Box>
+        <Typography sx={{ mb: 1 }}>
+          Squaddies who check out a PEERS recording tablet must read and sign
+          the Tablet Responsibility Agreement (and provide their camp name,
+          address, and phone).
+        </Typography>
+        <Link
+          href={`/roles/tablet-agreement/${shiftboardId}`}
+          style={{
+            color: theme.palette.primary.main,
+            fontWeight: 500,
+            textDecoration: "underline",
+          }}
+        >
+          Read and sign the Tablet Responsibility Agreement
+        </Link>
+      </Box>
+    ),
+  });
+
   const incompleteItems = checklistItems.filter((item) => !item.done);
   const completedItems = checklistItems.filter((item) => item.done);
 
