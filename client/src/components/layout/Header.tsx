@@ -45,6 +45,7 @@ import {
   checkIsAuthenticated,
   checkIsBehavioralStandardsSigned,
   checkIsPeersCoordinator,
+  checkIsPeersShiftLead,
   checkIsSuperAdmin,
 } from "@/utils/checkIsRoleExist";
 import { signOut } from "@/utils/signOut";
@@ -153,6 +154,9 @@ export const Header = () => {
   // PEERS #walkin: Coordinators (who aren't already admins) get a Reports nav
   // entry so they can reach the New Volunteers CSV (papabear 2026-07-24).
   const isPeersCoordinator = checkIsPeersCoordinator(roleList);
+  // PEERS tablet: Shift Leads (who aren't already Coordinator/admin) also get a
+  // Reports nav entry so they can reach the Tablet Report (papabear 2026-07-26).
+  const isPeersShiftLead = checkIsPeersShiftLead(roleList);
 
   const handleCollapseNavClick = () => {
     setIsCollapseNavOpen((prev) => !prev);
@@ -289,6 +293,25 @@ export const Header = () => {
               <>
                 <Divider />
                 <List subheader={<ListSubheader>Coordinator</ListSubheader>}>
+                  {pageListCoordinator.map(({ icon, label, path }) => (
+                    <ListItem disablePadding key={path}>
+                      <Link href={path} onClick={handleDrawerClose}>
+                        <ListItemButton selected={pathname === path}>
+                          <ListItemIcon>{icon}</ListItemIcon>
+                          <ListItemText primary={label} />
+                        </ListItemButton>
+                      </Link>
+                    </ListItem>
+                  ))}
+                </List>
+              </>
+            )}
+            {/* shift lead nav — Reports only (Tablet Report), and only when not
+                also a coordinator or admin (they already get Reports above) */}
+            {isPeersShiftLead && !isPeersCoordinator && !isAdmin && (
+              <>
+                <Divider />
+                <List subheader={<ListSubheader>Shift Lead</ListSubheader>}>
                   {pageListCoordinator.map(({ icon, label, path }) => (
                     <ListItem disablePadding key={path}>
                       <Link href={path} onClick={handleDrawerClose}>

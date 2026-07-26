@@ -28,6 +28,7 @@ import { SessionContext } from "@/state/session/context";
 import {
   checkIsAdmin,
   checkIsPeersCoordinator,
+  checkIsPeersShiftLead,
 } from "@/utils/checkIsRoleExist";
 
 export const Reports = () => {
@@ -46,7 +47,10 @@ export const Reports = () => {
   // PEERS #walkin: the New Volunteers mailing-list report is available to
   // Coordinators as well as admins (papabear 2026-07-24).
   const isCoordinator = checkIsPeersCoordinator(roleListSession);
-  const canSeeAnyReport = isAdmin || isCoordinator;
+  // PEERS tablet: the Tablet Report is available to Shift Leads & up
+  // (papabear 2026-07-26).
+  const isShiftLead = checkIsPeersShiftLead(roleListSession);
+  const canSeeAnyReport = isAdmin || isCoordinator || isShiftLead;
 
   // state
   // ------------------------------------------------------------
@@ -157,6 +161,26 @@ export const Reports = () => {
                     Clear Mailing List Report
                   </Button>
                 </Stack>
+                {/* Tablet report — Shift Leads & up. The mailing-list section
+                    above is admin/coord only, so add a divider before this only
+                    when it rendered. */}
+                {(isAdmin || isCoordinator) && <Divider sx={{ my: 3 }} />}
+                <Typography component="h2" variant="h6" sx={{ mb: 1 }}>
+                  Tablet Report
+                </Typography>
+                <Typography color="text.secondary" sx={{ mb: 2 }}>
+                  One row per Squaddie / Shift Lead shift assignment with the
+                  camp and contact info from the Tablet Responsibility
+                  Agreement. Columns: shift, name, playa name, email, camp name,
+                  camp address, phone, tablet #, landmark, and open camping.
+                </Typography>
+                <Button
+                  href="/api/admin/tablet-report"
+                  startIcon={<DownloadIcon />}
+                  variant="contained"
+                >
+                  Download Tablet Report (CSV)
+                </Button>
               </>
             ) : (
               <Typography color="text.secondary">
