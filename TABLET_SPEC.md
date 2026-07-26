@@ -95,3 +95,39 @@ matches — just insert the two new columns in these spots when building #3/#4.
 Shift Leads (Coordinators/Admins exempt — signed elsewhere). Server-gated in the
 shift-claim POST + client grey-out (Shifts.tsx, add dialog). Gates the claim
 only; existing shifts kept. The tablet gate follows this exact pattern.
+
+## Decisions & progress — 2026-07-26 (papabear)
+
+**SHIPPED TO TEST (`c62e00a`), required fields + Open Camping:**
+- Camp Name + Phone are **always required** to Sign; Camp Address **required too**,
+  EXCEPT an "I'm in Open Camping" volunteer **before Gate open**.
+- **Gate open = Sun 2026-08-30, 12:01am PDT = 07:01 UTC** → `GATE_OPEN_ISO` in
+  constants.ts (shared client+server).
+- **"I'm in Open Camping" checkbox** sits under Camp Name, before Camp Address.
+  Pre-Gate, checking it **hides + waives** Camp Address (sign with Name+Phone).
+  At/after Gate the checkbox no longer hides it; address shown + required for all.
+- No new DB column — "address pending" is **inferred** = holds TabletAgreement role
+  AND `camp_address` empty (only an open camper pre-Gate can reach that state).
+- `/info` now returns `tabletAgreementSigned` + `tabletAddressPending`. Checklist:
+  pre-Gate pending = **"Signed (camp address pending)"** and counts as **done**;
+  post-Gate pending = **outstanding** "Add your camp address" item (not done).
+- Server mirrors the required-field validation (400 if missing). Files: constants.ts,
+  roles/tablet-agreement/[shiftboardId]/TabletAgreement.tsx, api/roles/tablet-agreement,
+  api/volunteers/[id]/info, types/volunteer-info.ts, info/VolunteerInfo.tsx.
+
+**2.a — how open campers get their address in later (NEXT to build):**
+- Shift Leads **CANNOT** edit a volunteer's account (verified: account write =
+  `isOwnerOrAdmin`; leadership is read-only — "leadership read access must NOT grant
+  edit rights"). So NOT via the account page.
+- Build: on the Shift Volunteers page, an open-camper still missing an address shows
+  an **"address needed" indicator** on their row → lead **clicks the volunteer → small
+  popup** with just a **Camp Address** field + **Confirm/Cancel** (no navigation).
+  Saves via a **new narrow endpoint** that lets Shift Lead+coord+admin write ONLY
+  `camp_address` for that assignment's volunteer. Self-serve re-flag stays as a light
+  nudge but is NOT the primary path (papabear: unlikely to happen).
+- Known follow-up: the self-serve reopen-form path starts blank (post-Gate requires
+  re-entering name/phone too). Fine for now since the lead popup is primary; pre-fill later.
+
+**Loose ends resolved:** NO shift-capacity bumps (papabear makes that call manually);
+NO new shifts-by-day/type report (he'll use the Shifts table view). Lead-capacity note
+retained: Lead shifts are 2 slots each, several already full (Sun, Mon×2, Thu).
