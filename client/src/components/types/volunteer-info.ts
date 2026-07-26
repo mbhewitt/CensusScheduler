@@ -30,6 +30,10 @@ export interface IResVolunteerInfo {
     datename: string;
     date: string;
   } | null;
+  // true when arrival was auto-set from the volunteer's first SAP-eligible
+  // shift (rather than chosen by them) — drives a "we set this, adjust if
+  // you're arriving earlier" warning header.
+  arrivalAutoSet: boolean;
   sapStatus: {
     bypass: boolean;
     bypassReason: "sap_issued" | "staff" | "other_sap" | "post_opening" | null;
