@@ -42,6 +42,7 @@ import useSWRMutation from "swr/mutation";
 
 import { PasscodeDialogUpdate } from "@/app/volunteers/[shiftboardId]/account/PasscodeDialogUpdate";
 import { PasscodeReveal } from "@/app/volunteers/[shiftboardId]/account/PasscodeReveal";
+import { VolunteerCampInfo } from "@/app/volunteers/[shiftboardId]/info/VolunteerCampInfo";
 import { VolunteerShifts } from "@/app/volunteers/[shiftboardId]/account/VolunteerShifts";
 import { GetInvolved } from "@/app/volunteers/[shiftboardId]/info/GetInvolved";
 import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
@@ -778,6 +779,15 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                     </Grid>
                   </CardContent>
                 </Card>
+              </Box>
+            )}
+
+            {/* PEERS camp info (papabear 2026-07-26) — editable Camp Name /
+                Camp Address / Open Camping / Landmark, placed after Security and
+                above Settings. Owner or admin only (endpoint enforces write). */}
+            {(isSelfView || isAdmin) && (
+              <Box component="section" sx={{ mt: 3 }}>
+                <VolunteerCampInfo shiftboardId={shiftboardId} />
               </Box>
             )}
 
