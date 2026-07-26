@@ -56,6 +56,7 @@ import type {
   IResVolunteerRoleItem,
 } from "@/components/types/volunteers";
 import {
+  GATE_OPEN_ISO,
   ROLE_ADMIN_ID,
   ROLE_PEERS_COORDINATOR_ID,
   ROLE_PEERS_SHIFT_LEAD_ID,
@@ -450,20 +451,44 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   // links to the agreement form (camp name/address/phone + agree). Review
   // increment: shown to everyone for now; Squaddie-only visibility + the
   // shift-gate + Tablet #/Returned columns are the follow-up (see TABLET_SPEC).
-  const tabletAgreementSigned = (data.roles ?? []).includes("TabletAgreement");
+  const tabletAgreementSigned = data.tabletAgreementSigned;
+  // "address pending" only happens for an open camper who signed before Gate.
+  // Before Gate that's fine (done — nothing more they can do); at/after Gate the
+  // camp address is required, so it becomes an outstanding item that prompts.
+  const isAfterGate = new Date() >= new Date(GATE_OPEN_ISO);
+  const tabletAddressPending = data.tabletAddressPending;
+  const tabletDone =
+    tabletAgreementSigned && (!tabletAddressPending || !isAfterGate);
+  let tabletLabel = "Sign the Tablet Responsibility Agreement";
+  if (tabletAgreementSigned && !tabletAddressPending) {
+    tabletLabel = "Tablet Responsibility Agreement — Signed";
+  } else if (tabletAgreementSigned && tabletAddressPending && !isAfterGate) {
+    tabletLabel =
+      "Tablet Responsibility Agreement — Signed (camp address pending)";
+  } else if (tabletAgreementSigned && tabletAddressPending && isAfterGate) {
+    tabletLabel = "Add your camp address (Tablet Responsibility Agreement)";
+  }
   checklistItems.push({
     id: "tablet-agreement",
-    label: tabletAgreementSigned
-      ? "Tablet Responsibility Agreement — Signed"
-      : "Sign the Tablet Responsibility Agreement",
-    done: tabletAgreementSigned,
+    label: tabletLabel,
+    done: tabletDone,
     content: (
       <Box>
-        <Typography sx={{ mb: 1 }}>
-          Squaddies who check out a PEERS recording tablet must read and sign
-          the Tablet Responsibility Agreement (and provide their camp name,
-          address, and phone).
-        </Typography>
+        {tabletAgreementSigned && tabletAddressPending ? (
+          <Typography sx={{ mb: 1 }}>
+            You signed the Tablet Responsibility Agreement as an open camper
+            without a camp address.{" "}
+            {isAfterGate
+              ? "Gate is open — please add your camp address now."
+              : "Once Gate opens and you arrive on playa, add your camp address here."}
+          </Typography>
+        ) : (
+          <Typography sx={{ mb: 1 }}>
+            Squaddies who check out a PEERS recording tablet must read and sign
+            the Tablet Responsibility Agreement (and provide their camp name,
+            address, and phone).
+          </Typography>
+        )}
         <Link
           href={`/roles/tablet-agreement/${shiftboardId}`}
           style={{
@@ -472,7 +497,9 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
             textDecoration: "underline",
           }}
         >
-          Read and sign the Tablet Responsibility Agreement
+          {tabletAgreementSigned && tabletAddressPending
+            ? "Add your camp address"
+            : "Read and sign the Tablet Responsibility Agreement"}
         </Link>
       </Box>
     ),

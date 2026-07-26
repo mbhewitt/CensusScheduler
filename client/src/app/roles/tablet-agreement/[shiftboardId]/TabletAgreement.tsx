@@ -22,7 +22,11 @@ import useSWRMutation from "swr/mutation";
 
 import { SnackbarText } from "@/components/general/SnackbarText";
 import { Hero } from "@/components/layout/Hero";
-import { ROLE_TABLET_AGREEMENT_ID, SESSION_ROLE_ITEM_ADD } from "@/constants";
+import {
+  GATE_OPEN_ISO,
+  ROLE_TABLET_AGREEMENT_ID,
+  SESSION_ROLE_ITEM_ADD,
+} from "@/constants";
 import { SessionContext } from "@/state/session/context";
 import { ensure } from "@/utils/ensure";
 import { fetcherTrigger } from "@/utils/fetcher";
@@ -42,7 +46,21 @@ export const TabletAgreement = ({ shiftboardId }: ITabletAgreementProps) => {
   const [campName, setCampName] = useState("");
   const [campAddress, setCampAddress] = useState("");
   const [phone, setPhone] = useState("");
+  const [isOpenCamping, setIsOpenCamping] = useState(false);
   const [isAgreed, setIsAgreed] = useState(false);
+
+  // Gate-open logic (papabear 2026-07-26): before Gate open, an "I'm in Open
+  // Camping" volunteer has no camp address yet, so we hide + waive the Camp
+  // Address field. At/after Gate open the checkbox no longer hides it and the
+  // address is required for everyone.
+  const isAfterGate = new Date() >= new Date(GATE_OPEN_ISO);
+  const showAddress = isAfterGate || !isOpenCamping;
+  const addressRequired = showAddress;
+  const canSign =
+    isAgreed &&
+    campName.trim() !== "" &&
+    phone.trim() !== "" &&
+    (!addressRequired || campAddress.trim() !== "");
 
   const { isMutating, trigger } = useSWRMutation(
     "/api/roles/tablet-agreement",
@@ -58,8 +76,11 @@ export const TabletAgreement = ({ shiftboardId }: ITabletAgreementProps) => {
           isSigned: true,
           shiftboardId: ensure(shiftboardId),
           campName,
-          campAddress,
+          // when the address field is hidden (open camper before Gate) there is
+          // no address yet — persist empty so it re-surfaces as "pending".
+          campAddress: showAddress ? campAddress : "",
           phone,
+          isOpenCamping,
         },
         method: "POST",
       });
@@ -127,20 +148,46 @@ export const TabletAgreement = ({ shiftboardId }: ITabletAgreementProps) => {
                   fullWidth
                   label="Your Camp Name"
                   onChange={(e) => setCampName(e.target.value)}
+                  required
                   value={campName}
                   variant="standard"
                 />
-                <TextField
-                  fullWidth
-                  label="Your Camp Address"
-                  onChange={(e) => setCampAddress(e.target.value)}
-                  value={campAddress}
-                  variant="standard"
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={isOpenCamping}
+                      color="secondary"
+                      onChange={() => setIsOpenCamping((prev) => !prev)}
+                    />
+                  }
+                  label="I'm in Open Camping"
                 />
+                {showAddress && (
+                  <TextField
+                    fullWidth
+                    helperText={
+                      isOpenCamping
+                        ? "Gate is open — open campers must now provide their camp address."
+                        : undefined
+                    }
+                    label="Your Camp Address"
+                    onChange={(e) => setCampAddress(e.target.value)}
+                    required={addressRequired}
+                    value={campAddress}
+                    variant="standard"
+                  />
+                )}
+                {!showAddress && (
+                  <Typography color="text.secondary" variant="body2">
+                    You&rsquo;ll add your camp address once Gate opens and you
+                    arrive on playa.
+                  </Typography>
+                )}
                 <TextField
                   fullWidth
                   label="Your Phone Number"
                   onChange={(e) => setPhone(e.target.value)}
+                  required
                   value={phone}
                   variant="standard"
                 />
@@ -160,7 +207,7 @@ export const TabletAgreement = ({ shiftboardId }: ITabletAgreementProps) => {
               sx={{ justifyContent: "flex-end", pb: 2, pt: 0, pr: 2 }}
             >
               <Button
-                disabled={isMutating || !isAgreed}
+                disabled={isMutating || !canSign}
                 onClick={handleSign}
                 startIcon={
                   isMutating ? <CircularProgress size="1rem" /> : <CheckIcon />

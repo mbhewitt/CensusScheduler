@@ -94,6 +94,12 @@ export const ROLE_SUPER_ADMIN_ID = 1;
 // range) — papabear 2026-07-25.
 export const ROLE_TABLET_AGREEMENT_ID = 2000030;
 
+// PEERS Gate open — Sun 2026-08-30, 12:01am PDT (= 07:01 UTC), confirmed by
+// papabear 2026-07-26. Before this instant an "I'm in Open Camping" volunteer
+// may sign the Tablet Agreement without a camp address; at/after it the camp
+// address is shown and required for everyone, open campers included.
+export const GATE_OPEN_ISO = "2026-08-30T07:01:00.000Z";
+
 // sockets
 export const ADD_SHIFT_VOLUNTEER_REQ = "addShiftVolunteerReq";
 export const ADD_SHIFT_VOLUNTEER_RES = "addShiftVolunteerRes";

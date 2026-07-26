@@ -77,6 +77,8 @@ export interface IResVolunteerInfo {
   }[];
   burnerProfileUpdated: boolean;
   behavioralStandardsSigned: boolean;
+  tabletAgreementSigned: boolean;
+  tabletAddressPending: boolean;
   squaddieTrainingComplete: boolean;
   emailUnsubscribed: boolean;
 }

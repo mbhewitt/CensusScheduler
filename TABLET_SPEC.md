@@ -53,6 +53,13 @@ Form fields on the agreement: **Camp Name**, **Camp Address**, **Phone Number**,
   (like Check In / World name). New per-assignment field
   (op_volunteer_shifts.tablet_number) + a save endpoint + editable cell UI.
 
+## Shift Volunteers column order (papabear 2026-07-25)
+Full desired left-to-right order (some are leadership-only, listed for
+reference): **Playa Name, World Name, Position, Tablet #, Check-in, Returned,
+Walk-In, Admin, Admin actions.** So Tablet # slots between Position and Check-in;
+Returned slots between Check-in and Walk-In. The existing relative order already
+matches — just insert the two new columns in these spots when building #3/#4.
+
 ## 4. "Returned Tablet" toggle on Shift Volunteers page
 - New leadership-only per-assignment toggle; Lead/Coord/Admin flips it when the
   Squaddie returns the tablet — tells us the Squaddie + tablet are back. New

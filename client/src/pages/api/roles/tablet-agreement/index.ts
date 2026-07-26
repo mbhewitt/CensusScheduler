@@ -1,7 +1,7 @@
 import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
-import { ROLE_TABLET_AGREEMENT_ID } from "@/constants";
+import { GATE_OPEN_ISO, ROLE_TABLET_AGREEMENT_ID } from "@/constants";
 import { pool } from "lib/database";
 
 // PEERS Tablet Responsibility Agreement sign (papabear 2026-07-25). Mirrors the
@@ -13,6 +13,7 @@ interface IReqTabletAgreement {
   campName?: string;
   campAddress?: string;
   phone?: string;
+  isOpenCamping?: boolean;
 }
 
 const tabletAgreement = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -26,7 +27,29 @@ const tabletAgreement = async (req: NextApiRequest, res: NextApiResponse) => {
         campName,
         campAddress,
         phone,
+        isOpenCamping,
       }: IReqTabletAgreement = JSON.parse(req.body);
+
+      // Required-field validation (papabear 2026-07-26): camp name + phone are
+      // always required; camp address is required too, EXCEPT for an open camper
+      // before Gate open (they have no address yet). Mirrors the client gate.
+      if (isSigned === true) {
+        const isAfterGate = new Date() >= new Date(GATE_OPEN_ISO);
+        const addressRequired = isAfterGate || isOpenCamping !== true;
+        if (
+          !campName ||
+          campName.trim() === "" ||
+          !phone ||
+          phone.trim() === "" ||
+          (addressRequired && (!campAddress || campAddress.trim() === ""))
+        ) {
+          return res.status(400).json({
+            statusCode: 400,
+            message:
+              "Camp name, phone, and (unless open camping) camp address are required",
+          });
+        }
+      }
 
       const [addRole, removeRole] = [isSigned === true, isSigned === false];
 

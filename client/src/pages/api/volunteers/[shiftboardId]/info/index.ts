@@ -37,6 +37,7 @@ const ROLE_STAFF_ID = 2000006;
 const ROLE_OTHER_SAP_ID = 2000007;
 const ROLE_BURNER_PROFILE_UPDATED_ID = 2000010;
 const ROLE_BEHAVIORAL_STANDARDS_ID = 1000012;
+const ROLE_TABLET_AGREEMENT_ID = 2000030;
 const ROLE_EMAIL_UNSUBSCRIBED_ID = 2000020;
 // PEERS #walkin: the Squaddie access role (granted by the HIVE Squaddie
 // training confirmation link) — drives the read-only "HIVE Squaddie Training"
@@ -93,6 +94,7 @@ const volunteerInfo = async (
           world_name,
           email,
           location,
+          camp_address,
           arrival_date_id
         FROM op_volunteers
         WHERE delete_volunteer=false
@@ -329,6 +331,15 @@ const volunteerInfo = async (
       const behavioralStandardsSigned = roleIdSet.has(
         ROLE_BEHAVIORAL_STANDARDS_ID
       );
+      // PEERS Tablet Agreement (papabear 2026-07-26): "signed" = holds the
+      // self-sign role. "address pending" = signed but no camp address on file,
+      // which only happens for an open camper who signed before Gate open. The
+      // client decides how to surface it (pre-Gate = done-but-noted; post-Gate =
+      // outstanding, prompting the address).
+      const tabletAgreementSigned = roleIdSet.has(ROLE_TABLET_AGREEMENT_ID);
+      const tabletAddressPending =
+        tabletAgreementSigned &&
+        (dbVolunteer.camp_address ?? "").toString().trim() === "";
       // PEERS #walkin: read-only. Checked when the volunteer has actually
       // completed Squaddie training (holds the Squaddie role, earned via the
       // access link at the end of the HIVE Squaddie training) — a Shift Lead
@@ -395,6 +406,8 @@ const volunteerInfo = async (
         })),
         burnerProfileUpdated,
         behavioralStandardsSigned,
+        tabletAgreementSigned,
+        tabletAddressPending,
         squaddieTrainingComplete,
         emailUnsubscribed,
       };
