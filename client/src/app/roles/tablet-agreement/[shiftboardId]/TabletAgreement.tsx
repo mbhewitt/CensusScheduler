@@ -17,11 +17,13 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useSnackbar } from "notistack";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
+import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
 import { SnackbarText } from "@/components/general/SnackbarText";
 import { Hero } from "@/components/layout/Hero";
+import type { IResVolunteerAccount } from "@/components/types/volunteers";
 import {
   GATE_OPEN_ISO,
   ROLE_TABLET_AGREEMENT_ID,
@@ -29,7 +31,7 @@ import {
 } from "@/constants";
 import { SessionContext } from "@/state/session/context";
 import { ensure } from "@/utils/ensure";
-import { fetcherTrigger } from "@/utils/fetcher";
+import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 
 interface ITabletAgreementProps {
   shiftboardId: string;
@@ -48,6 +50,20 @@ export const TabletAgreement = ({ shiftboardId }: ITabletAgreementProps) => {
   const [phone, setPhone] = useState("");
   const [isOpenCamping, setIsOpenCamping] = useState(false);
   const [isAgreed, setIsAgreed] = useState(false);
+
+  // Pre-fill phone from the volunteer's saved account so they don't type it
+  // twice (papabear 2026-07-26). Fill once, and only if still untouched so we
+  // never stomp on what they're editing.
+  const { data: accountData } = useSWR<IResVolunteerAccount>(
+    `/api/volunteers/${shiftboardId}/account`,
+    fetcherGet
+  );
+  const prefilledRef = useRef(false);
+  useEffect(() => {
+    if (prefilledRef.current || !accountData) return;
+    prefilledRef.current = true;
+    if (accountData.phone) setPhone(accountData.phone);
+  }, [accountData]);
 
   // Gate-open logic (papabear 2026-07-26): before Gate open, an "I'm in Open
   // Camping" volunteer has no camp address yet, so we hide + waive the Camp
