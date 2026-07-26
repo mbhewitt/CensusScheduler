@@ -36,7 +36,8 @@ Groups, so running this never emails anyone.
 Each run computes, from the prod DB, who should be on each list and appends the
 missing (deduped against rows already in the sheet, by shiftboard_id or email):
 - **CensusVolunteers{year}@** — anyone with a shift dated in the burn-end→burn-end
-  window `[LaborDay(Y-1)+7, LaborDay(Y)+7]` (all `op_volunteer_shifts`). Year and
+  window `[LaborDay(Y-1)+7, LaborDay(Y)+7]`, from EITHER the app
+  (`op_volunteer_shifts`) OR Shiftboard (`sb_shifts`, see below). Year and
   anchors are derived dynamically (Labor Day = first Monday of September; gates
   open = LaborDay−8), so no more `$year`.
 - **CensusNewVolunteers@** — a *new volunteer* is EITHER **(A)** added to the
@@ -57,6 +58,24 @@ misses that window (accepted, per Mew).
 Extra env (`secrets/etl.env`) + deps beyond Phase 2: `MAILLIST_SHEET_ID`,
 `GOOGLE_CREDENTIALS_FILE` (path to the `vccensus@…` service-account JSON, which
 must be shared as Editor on the sheet); `pip install gspread google-auth`.
+
+## Shiftboard shifts ETL (`etl_sb_shifts.py`)
+Pulls the Shiftboard **coverage report** (shift signups) into a prod `sb_shifts`
+table, so the mailing-list generator counts shifts signed up directly in
+Shiftboard as well as in the app. Cron: `25 2-22/4 * * *` (before `maillist_sync`).
+
+- `shiftboard_client.download_coverage(start, end)` GETs
+  `report.cgi?type=coverage&…&format=tab_delimited&download=Download` (the
+  `download=Download` and `YYYYMMDD` dates are both required — dashes or omitting
+  download silently return an HTML page / 0 rows) and parses the TSV.
+- Dates (per Mew): one-time `--catchup` pulls from the start of last year's burn;
+  the cron then uses the old `censusload.php` rolling window of ±4 months.
+- Within the pulled window it deletes + reinserts `source='shiftboard'` rows
+  (so in-window cancellations drop out) but never touches rows outside the window
+  or `source='seed'` rows — reserved for off-playa activity that isn't actually
+  in Shiftboard, if seeded from the legacy `shiftboard2`.
+
+Manual: `python etl_sb_shifts.py --catchup` / `--dry-run` / (no args = rolling apply).
 
 ## What's not
 - **Phase 3** (intake / welcome workflow): not started. Needs:
