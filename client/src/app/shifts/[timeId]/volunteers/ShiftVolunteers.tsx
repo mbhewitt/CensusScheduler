@@ -549,14 +549,60 @@ export const ShiftVolunteers = ({
     },
     {
       // PEERS tablet #: leadership-only editable cell, recorded at check-in.
+      // Sortable on screen (papabear 2026-07-26): the cell's raw value is the
+      // number so the header sorts numerically, while customBodyRenderLite
+      // draws the editable field from the original row (dataIndex-keyed, so it
+      // stays correct after a sort). Blank tablet #s sort as the lowest value.
       name: "Tablet #",
       options: {
+        customBodyRenderLite: (dataIndex: number) => {
+          const volunteerItem =
+            dataShiftVolunteersItem.volunteerList[dataIndex];
+          if (!volunteerItem) return null;
+
+          const { shiftboardId, timePositionId, tabletNumber } = volunteerItem;
+          return (
+            <TextField
+              defaultValue={tabletNumber ?? ""}
+              disabled={!canSeeVolunteerDetails}
+              inputProps={{
+                max: 99,
+                min: 0,
+                style: { textAlign: "center", width: "3rem" },
+              }}
+              key={`${shiftboardId}-tablet-number`}
+              onBlur={(event) => {
+                const raw = event.target.value.trim();
+                const next = raw === "" ? null : Number(raw);
+                if (next !== (tabletNumber ?? null)) {
+                  handleTabletPatch({
+                    shiftboardId,
+                    timePositionId,
+                    updateType: UPDATE_TYPE_TABLET_NUMBER,
+                    tabletNumber: next,
+                  });
+                }
+              }}
+              type="number"
+              variant="standard"
+            />
+          );
+        },
         display: canSeeVolunteerDetails ? true : "excluded",
         filter: false,
         searchable: false,
         setCellHeaderProps: setCellHeaderPropsCenter,
         setCellProps: setCellPropsCenter,
-        sort: false,
+        sort: true,
+        sortCompare:
+          (order: string) =>
+          (a: { data: number | string }, b: { data: number | string }) => {
+            const toValue = (raw: number | string) =>
+              raw === "" || raw == null ? -1 : Number(raw);
+            const diff = toValue(a.data) - toValue(b.data);
+
+            return order === "asc" ? diff : -diff;
+          },
       },
     },
     {
@@ -655,30 +701,9 @@ export const ShiftVolunteers = ({
         playaName,
         worldName,
         positionName,
-        <TextField
-          defaultValue={tabletNumber ?? ""}
-          disabled={!canSeeVolunteerDetails}
-          inputProps={{
-            max: 99,
-            min: 0,
-            style: { textAlign: "center", width: "3rem" },
-          }}
-          key={`${shiftboardId}-tablet-number`}
-          onBlur={(event) => {
-            const raw = event.target.value.trim();
-            const next = raw === "" ? null : Number(raw);
-            if (next !== (tabletNumber ?? null)) {
-              handleTabletPatch({
-                shiftboardId,
-                timePositionId,
-                updateType: UPDATE_TYPE_TABLET_NUMBER,
-                tabletNumber: next,
-              });
-            }
-          }}
-          type="number"
-          variant="standard"
-        />,
+        // Tablet #: raw value for sorting/search; the editable field is drawn
+        // by the column's customBodyRenderLite (papabear 2026-07-26).
+        tabletNumber ?? "",
         <Switch
           checked={isCheckedIn === ""}
           disabled={!isCheckInAvailable}
