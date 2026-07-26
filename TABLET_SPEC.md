@@ -131,3 +131,44 @@ only; existing shifts kept. The tablet gate follows this exact pattern.
 **Loose ends resolved:** NO shift-capacity bumps (papabear makes that call manually);
 NO new shifts-by-day/type report (he'll use the Shifts table view). Lead-capacity note
 retained: Lead shifts are 2 slots each, several already full (Sun, Mon×2, Thu).
+
+## Create-account ↔ Tablet reconcile — 2026-07-26 (SHIPPED TO TEST `acdc0b5`)
+
+papabear expanded the design after learning camp name/address are asked ONLY on the
+tablet form:
+- **Create Account form** now collects **Your Camp Name** + **Your Camp Address**
+  (both **optional**) + **"I'm in Open Camping"** checkbox (captured; does NOT hide
+  address on create-account). The old **"Location"** field is **renamed**
+  **"Landmark or other relevant information to help find you"** (kept, optional; the
+  `op_volunteers.location` column is unchanged, only the label changed).
+- **`open_camping` column** added — **migration `010_open_camping.sql`** (tinyint(1)
+  default 0). Reverses the earlier "no column / infer" plan: the flag is now persisted
+  because it's captured at create-account, pre-fills, and feeds the tablet report.
+- **Phone is NOT pulled from Okta/Burner Profiles** (scopes are `openid profile email`;
+  only email/playa/world synced, re-synced every login). So the tablet/create forms are
+  the capture point. Phone pre-fill avoids double entry.
+- **Tablet form** gained the **Landmark** field (optional, under Camp Address, label
+  ends "(optional)") and now **pre-fills Camp Name / Camp Address / Phone / Open Camping
+  checkbox / Landmark** from the saved account via a new **authed `GET /api/roles/
+  tablet-agreement?shiftboardId=`** (canManageVolunteer). The tablet **POST** now also
+  saves `open_camping` + `location`, and is **auth-gated (isOwnerOrAdmin)** via withAuth.
+- **Landmark → the tablet report** (papabear wants it there); Camp Name/Address on the
+  tablet form stay REQUIRED (Landmark optional).
+- Files: migrations/010, constants.ts (GATE_OPEN_ISO), account create form
+  (AccountCreate.tsx) + api/volunteers/account, api/roles/tablet-agreement (GET+POST),
+  TabletAgreement.tsx, types/index.ts (IVolunteerAccountFormValues).
+- Verified on test: create-account POST persists camp_name/camp_address/open_camping/
+  location; tablet GET returns them for pre-fill.
+
+**OPEN Q (asked papabear, awaiting):** should the **account EDIT page** (Account.tsx,
+`/volunteers/[id]/account`) also get the camp fields + Landmark rename so existing
+volunteers can edit them? (I recommended yes for consistency — NOT built yet.)
+
+**Tablet report columns (revised):** Which shift / Name / Playa name / Email / Camp name /
+Camp address / **Landmark** / Phone / **Open Camping** / Tablet #.
+
+**PROD DEPLOY (Monday) now needs BOTH migrations first:** apply `009_tablet_agreement.sql`
+AND `010_open_camping.sql` to prod RDS, THEN `git reset --hard origin/peers-main` +
+rebuild. (The create-account form is prod-live and now depends on the 009+010 columns —
+do NOT ship peers-main to prod without both migrations or the account create/edit +
+account read paths will 500.)
