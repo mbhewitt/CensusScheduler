@@ -542,17 +542,29 @@ const shiftVolunteers = async (
           });
         }
 
+        // The claimed position's required role (0/null = open). Computed here so
+        // both the tablet gate and the role/on-playa gate below can use it.
+        const roleRequiredId = Number(claimedShift?.role_id ?? 0);
+
         // PEERS: the Tablet Responsibility Agreement is likewise a HARD
         // requirement to take shifts for anyone who carries a tablet — Squaddies
         // AND Shift Leads (a Lead trains as a Squaddie first). Coordinators and
         // Admins/SuperAdmins are exempt. Blocks NEW claims only; existing claims
         // are untouched. Per papabear 2026-07-26.
+        //
+        // #walkin (papabear 2026-07-26): also required when the *shift being
+        // claimed* is a Squaddie/Lead shift, not only when the volunteer already
+        // holds the role — this folds the agreement into the on-playa walk-in
+        // flow (a walk-in holds no role yet but still carries a tablet).
+        const shiftTakesTablet =
+          roleRequiredId === ROLE_PEERS_SQUADDIE_ID ||
+          roleRequiredId === ROLE_PEERS_SHIFT_LEAD_ID;
         const targetTakesTablet =
           targetRoleIds.has(ROLE_PEERS_SQUADDIE_ID) ||
           targetRoleIds.has(ROLE_PEERS_SHIFT_LEAD_ID);
         if (
           !targetBsExempt &&
-          targetTakesTablet &&
+          (targetTakesTablet || shiftTakesTablet) &&
           !targetRoleIds.has(ROLE_TABLET_AGREEMENT_ID)
         ) {
           return res.status(403).json({
@@ -562,7 +574,6 @@ const shiftVolunteers = async (
           });
         }
 
-        const roleRequiredId = Number(claimedShift?.role_id ?? 0);
         if (roleRequiredId !== 0) {
           const onPlaya = isOnPlaya((name) => {
             const headerValue = req.headers[name.toLowerCase()];

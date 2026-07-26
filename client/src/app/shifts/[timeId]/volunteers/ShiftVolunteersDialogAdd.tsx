@@ -55,6 +55,7 @@ import {
   ROLE_PEERS_SHIFT_LEAD_ID,
   ROLE_PEERS_SQUADDIE_ID,
   ROLE_SUPER_ADMIN_ID,
+  ROLE_TABLET_AGREEMENT_ID,
   SHIFT_DURING,
   SHIFT_FUTURE,
   SHIFT_PAST,
@@ -378,11 +379,27 @@ export const ShiftVolunteersDialogAdd = ({
             hasRoleId(ROLE_PEERS_COORDINATOR_ID) ||
             hasRoleId(ROLE_ADMIN_ID) ||
             hasRoleId(ROLE_SUPER_ADMIN_ID);
+          // PEERS #walkin: the Tablet Agreement is required for tablet carriers
+          // — the target holds the Squaddie/Lead role, OR this is a Squaddie/
+          // Lead position (covers on-playa walk-ins with no role yet).
+          // Coordinators/Admins exempt. Grey until signed (papabear 2026-07-26).
+          const takesTablet =
+            hasRoleId(ROLE_PEERS_SQUADDIE_ID) ||
+            hasRoleId(ROLE_PEERS_SHIFT_LEAD_ID) ||
+            roleRequiredId === ROLE_PEERS_SQUADDIE_ID ||
+            roleRequiredId === ROLE_PEERS_SHIFT_LEAD_ID;
+          const targetTabletOk =
+            hasRoleId(ROLE_PEERS_COORDINATOR_ID) ||
+            hasRoleId(ROLE_ADMIN_ID) ||
+            hasRoleId(ROLE_SUPER_ADMIN_ID) ||
+            !takesTablet ||
+            hasRoleId(ROLE_TABLET_AGREEMENT_ID);
           const isShiftPositionAvailable =
             // isAdminLike (admin OR coordinator requester) bypasses the slot
             // cap too — they may overbook, like admins.
             isAdminLike ||
             (targetBsOk &&
+              targetTabletOk &&
               slotsTotal - slotsFilled > 0 &&
               (roleRequiredId === 0 ||
                 (roleRequiredId === ROLE_PEERS_SQUADDIE_ID

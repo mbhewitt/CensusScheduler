@@ -116,16 +116,23 @@ export const Shifts = () => {
     // it's not signed, everything is greyed until they sign it (papabear
     // 2026-07-25).
     if (!checkIsRoleExist(ROLE_BEHAVIORAL_STANDARDS_ID, roleList)) return false;
+    const required = requiredRoleForType(type);
     // PEERS: the Tablet Responsibility Agreement is likewise required for anyone
     // who carries a tablet — Squaddies + Shift Leads (Coordinators/Admins exempt,
     // handled above). Greyed until signed (papabear 2026-07-26).
+    //
+    // #walkin: also required when the *shift itself* is a Squaddie/Lead shift,
+    // not only when the volunteer holds the role — folds the agreement into the
+    // on-playa walk-in flow (a walk-in holds no role yet but carries a tablet).
     const takesTablet =
       checkIsRoleExist(ROLE_PEERS_SQUADDIE_ID, roleList) ||
-      checkIsRoleExist(ROLE_PEERS_SHIFT_LEAD_ID, roleList);
+      checkIsRoleExist(ROLE_PEERS_SHIFT_LEAD_ID, roleList) ||
+      (required != null &&
+        (required.id === ROLE_PEERS_SQUADDIE_ID ||
+          required.id === ROLE_PEERS_SHIFT_LEAD_ID));
     if (takesTablet && !checkIsRoleExist(ROLE_TABLET_AGREEMENT_ID, roleList)) {
       return false;
     }
-    const required = requiredRoleForType(type);
     if (!required) return true;
     const hasSquaddie = checkIsRoleExist(ROLE_PEERS_SQUADDIE_ID, roleList);
     const hasLead = checkIsRoleExist(ROLE_PEERS_SHIFT_LEAD_ID, roleList);

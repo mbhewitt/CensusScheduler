@@ -8,6 +8,7 @@ import type {
 import { pool } from "lib/database";
 import { withAuth } from "@/lib/withAuth";
 import { canManageVolunteer, isOwnerOrAdmin } from "@/lib/authz";
+import { isOnPlaya } from "@/lib/onPlaya";
 
 // SAP day-by-day requirements keyed by arrival datename.
 // Each entry is either a single datename string, or an array meaning "any of these."
@@ -344,9 +345,25 @@ const volunteerInfo = async (
       // The tablet checklist item + shift-gate apply to whoever carries a tablet
       // — Squaddies AND Shift Leads (a Lead may finish Squaddie training first).
       // Coordinators/Admins don't see it. Per papabear 2026-07-26.
+      //
+      // #walkin (papabear 2026-07-26): also applies to an on-playa walk-in who
+      // holds no access role yet — being on-playa (unspoofable nginx X-Real-IP)
+      // means they'll carry a tablet on a Squaddie shift, so they must sign it
+      // too. Coordinators/Admins stay exempt.
+      const onPlaya = isOnPlaya((name) => {
+        const headerValue = req.headers[name.toLowerCase()];
+        return Array.isArray(headerValue)
+          ? headerValue[0]
+          : (headerValue ?? null);
+      });
+      const tabletExempt =
+        roleIdSet.has(ROLE_PEERS_COORDINATOR_ID) ||
+        roleIdSet.has(ROLE_ADMIN_ID) ||
+        roleIdSet.has(ROLE_SUPER_ADMIN_ID);
       const tabletChecklistApplies =
         roleIdSet.has(ROLE_PEERS_SQUADDIE_ID) ||
-        roleIdSet.has(ROLE_PEERS_SHIFT_LEAD_ID);
+        roleIdSet.has(ROLE_PEERS_SHIFT_LEAD_ID) ||
+        (onPlaya && !tabletExempt);
       // PEERS #walkin: read-only. Checked when the volunteer has actually
       // completed Squaddie training (holds the Squaddie role, earned via the
       // access link at the end of the HIVE Squaddie training) — a Shift Lead
