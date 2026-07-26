@@ -50,6 +50,7 @@ import {
   ROLE_PEERS_SHIFT_LEAD_ID,
   ROLE_PEERS_SQUADDIE_ID,
   ROLE_SUPER_ADMIN_ID,
+  ROLE_TABLET_AGREEMENT_ID,
 } from "@/constants";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
@@ -115,6 +116,15 @@ export const Shifts = () => {
     // it's not signed, everything is greyed until they sign it (papabear
     // 2026-07-25).
     if (!checkIsRoleExist(ROLE_BEHAVIORAL_STANDARDS_ID, roleList)) return false;
+    // PEERS: the Tablet Responsibility Agreement is likewise required for anyone
+    // who carries a tablet — Squaddies + Shift Leads (Coordinators/Admins exempt,
+    // handled above). Greyed until signed (papabear 2026-07-26).
+    const takesTablet =
+      checkIsRoleExist(ROLE_PEERS_SQUADDIE_ID, roleList) ||
+      checkIsRoleExist(ROLE_PEERS_SHIFT_LEAD_ID, roleList);
+    if (takesTablet && !checkIsRoleExist(ROLE_TABLET_AGREEMENT_ID, roleList)) {
+      return false;
+    }
     const required = requiredRoleForType(type);
     if (!required) return true;
     const hasSquaddie = checkIsRoleExist(ROLE_PEERS_SQUADDIE_ID, roleList);

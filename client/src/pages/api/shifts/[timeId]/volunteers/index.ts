@@ -23,6 +23,7 @@ import {
   ROLE_PEERS_SHIFT_LEAD_ID,
   ROLE_PEERS_SQUADDIE_ID,
   ROLE_SUPER_ADMIN_ID,
+  ROLE_TABLET_AGREEMENT_ID,
   UPDATE_TYPE_CAMP_ADDRESS,
   UPDATE_TYPE_CHECK_IN,
   UPDATE_TYPE_TABLET_NUMBER,
@@ -537,6 +538,26 @@ const shiftVolunteers = async (
             statusCode: 403,
             message:
               "You must read and sign the Behavioral Standards agreement before signing up for shifts.",
+          });
+        }
+
+        // PEERS: the Tablet Responsibility Agreement is likewise a HARD
+        // requirement to take shifts for anyone who carries a tablet — Squaddies
+        // AND Shift Leads (a Lead trains as a Squaddie first). Coordinators and
+        // Admins/SuperAdmins are exempt. Blocks NEW claims only; existing claims
+        // are untouched. Per papabear 2026-07-26.
+        const targetTakesTablet =
+          targetRoleIds.has(ROLE_PEERS_SQUADDIE_ID) ||
+          targetRoleIds.has(ROLE_PEERS_SHIFT_LEAD_ID);
+        if (
+          !targetBsExempt &&
+          targetTakesTablet &&
+          !targetRoleIds.has(ROLE_TABLET_AGREEMENT_ID)
+        ) {
+          return res.status(403).json({
+            statusCode: 403,
+            message:
+              "You must read and sign the Tablet Responsibility Agreement before signing up for shifts.",
           });
         }
 

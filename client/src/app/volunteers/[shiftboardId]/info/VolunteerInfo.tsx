@@ -447,10 +447,9 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     ),
   });
 
-  // Tablet Responsibility Agreement (PEERS, papabear 2026-07-25) — read-&-sign,
-  // links to the agreement form (camp name/address/phone + agree). Review
-  // increment: shown to everyone for now; Squaddie-only visibility + the
-  // shift-gate + Tablet #/Returned columns are the follow-up (see TABLET_SPEC).
+  // Tablet Responsibility Agreement (PEERS, papabear 2026-07-25/26) — read-&-
+  // sign, links to the agreement form. Shown to (and shift-gated for) Squaddies
+  // + Shift Leads only; Coordinators/Admins are exempt (tabletChecklistApplies).
   const tabletAgreementSigned = data.tabletAgreementSigned;
   // "address pending" only happens for an open camper who signed before Gate.
   // Before Gate that's fine (done — nothing more they can do); at/after Gate the
@@ -468,42 +467,45 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   } else if (tabletAgreementSigned && tabletAddressPending && isAfterGate) {
     tabletLabel = "Add your camp address (Tablet Responsibility Agreement)";
   }
-  checklistItems.push({
-    id: "tablet-agreement",
-    label: tabletLabel,
-    done: tabletDone,
-    content: (
-      <Box>
-        {tabletAgreementSigned && tabletAddressPending ? (
-          <Typography sx={{ mb: 1 }}>
-            You signed the Tablet Responsibility Agreement as an open camper
-            without a camp address.{" "}
-            {isAfterGate
-              ? "Gate is open — please add your camp address now."
-              : "Once Gate opens and you arrive on playa, add your camp address here."}
-          </Typography>
-        ) : (
-          <Typography sx={{ mb: 1 }}>
-            Squaddies who check out a PEERS recording tablet must read and sign
-            the Tablet Responsibility Agreement (and provide their camp name,
-            address, and phone).
-          </Typography>
-        )}
-        <Link
-          href={`/roles/tablet-agreement/${shiftboardId}`}
-          style={{
-            color: theme.palette.primary.main,
-            fontWeight: 500,
-            textDecoration: "underline",
-          }}
-        >
-          {tabletAgreementSigned && tabletAddressPending
-            ? "Add your camp address"
-            : "Read and sign the Tablet Responsibility Agreement"}
-        </Link>
-      </Box>
-    ),
-  });
+  // Only Squaddies + Shift Leads carry tablets, so only they see this item /
+  // are gated on it (papabear 2026-07-26). Coordinators/Admins are exempt.
+  if (data.tabletChecklistApplies)
+    checklistItems.push({
+      id: "tablet-agreement",
+      label: tabletLabel,
+      done: tabletDone,
+      content: (
+        <Box>
+          {tabletAgreementSigned && tabletAddressPending ? (
+            <Typography sx={{ mb: 1 }}>
+              You signed the Tablet Responsibility Agreement as an open camper
+              without a camp address.{" "}
+              {isAfterGate
+                ? "Gate is open — please add your camp address now."
+                : "Once Gate opens and you arrive on playa, add your camp address here."}
+            </Typography>
+          ) : (
+            <Typography sx={{ mb: 1 }}>
+              Squaddies who check out a PEERS recording tablet must read and
+              sign the Tablet Responsibility Agreement (and provide their camp
+              name, address, and phone).
+            </Typography>
+          )}
+          <Link
+            href={`/roles/tablet-agreement/${shiftboardId}`}
+            style={{
+              color: theme.palette.primary.main,
+              fontWeight: 500,
+              textDecoration: "underline",
+            }}
+          >
+            {tabletAgreementSigned && tabletAddressPending
+              ? "Add your camp address"
+              : "Read and sign the Tablet Responsibility Agreement"}
+          </Link>
+        </Box>
+      ),
+    });
 
   // Checklist display order (papabear 2026-07-25): HIVE training → Tablet
   // agreement → Behavioral Standards → Burner Profile.

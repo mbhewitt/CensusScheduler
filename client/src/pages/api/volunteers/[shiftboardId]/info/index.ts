@@ -46,6 +46,7 @@ const ROLE_EMAIL_UNSUBSCRIBED_ID = 2000020;
 // Coordinators get it auto-checked by virtue of that role (papabear
 // 2026-07-24).
 const ROLE_PEERS_SQUADDIE_ID = 2000102;
+const ROLE_PEERS_SHIFT_LEAD_ID = 2000101;
 const ROLE_ADMIN_ID = 2;
 const ROLE_SUPER_ADMIN_ID = 1;
 const ROLE_PEERS_COORDINATOR_ID = 95209;
@@ -340,6 +341,12 @@ const volunteerInfo = async (
       const tabletAddressPending =
         tabletAgreementSigned &&
         (dbVolunteer.camp_address ?? "").toString().trim() === "";
+      // The tablet checklist item + shift-gate apply to whoever carries a tablet
+      // — Squaddies AND Shift Leads (a Lead may finish Squaddie training first).
+      // Coordinators/Admins don't see it. Per papabear 2026-07-26.
+      const tabletChecklistApplies =
+        roleIdSet.has(ROLE_PEERS_SQUADDIE_ID) ||
+        roleIdSet.has(ROLE_PEERS_SHIFT_LEAD_ID);
       // PEERS #walkin: read-only. Checked when the volunteer has actually
       // completed Squaddie training (holds the Squaddie role, earned via the
       // access link at the end of the HIVE Squaddie training) — a Shift Lead
@@ -408,6 +415,7 @@ const volunteerInfo = async (
         behavioralStandardsSigned,
         tabletAgreementSigned,
         tabletAddressPending,
+        tabletChecklistApplies,
         squaddieTrainingComplete,
         emailUnsubscribed,
       };
