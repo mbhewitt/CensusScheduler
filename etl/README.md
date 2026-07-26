@@ -25,6 +25,39 @@ Python scripts that run on the prod EC2 box (under `mew` user) to keep the prod 
 - **Phase 1**: `sb_pinfo` SCD2 table on prod RDS, seeded from `CensusData/data/sql/shiftboard_pinfohis.sql`. Okta callback looks up by email -> canonical `shiftboard_id` (see `client/src/pages/api/auth/okta/callback.ts`, step 3).
 - **Phase 2**: `etl_sb_pinfo.py` cron, every 4h. Pulls profiles for Active Census Team (597584) + Intake (602158), dedupes by `shiftboard_id`, SCD2-upserts into `sb_pinfo`.
 
+## Mailing-list generator (`maillist_sync.py`)
+Keeps the **Census_Email_lists** Google Sheet current (replaces the legacy
+generator, which ran off stale data and wrote a literal, unsubstituted
+`$year` group name). Cron on prod: `35 2-22/4 * * *` (after `etl_sb_pinfo`, so
+`sb_pinfo` is fresh). Idempotent — appends only new **pending** rows (`done`
+blank); a human-in-the-loop processes pending rows into the actual Google
+Groups, so running this never emails anyone.
+
+Each run computes, from the prod DB, who should be on each list and appends the
+missing (deduped against rows already in the sheet, by shiftboard_id or email):
+- **CensusVolunteers{year}@** — anyone with a shift dated in the burn-end→burn-end
+  window `[LaborDay(Y-1)+7, LaborDay(Y)+7]` (all `op_volunteer_shifts`). Year and
+  anchors are derived dynamically (Labor Day = first Monday of September; gates
+  open = LaborDay−8), so no more `$year`.
+- **CensusNewVolunteers@** — a *new volunteer* is EITHER **(A)** added to the
+  Census team in Shiftboard since last burn — a `sb_pinfo` row with
+  `source='shiftboard_etl'` and **no** `historical_seed` row for that
+  shiftboard_id (a genuinely new member, not an email-change re-version), first
+  seen ≥ start of last burn — OR **(B)** added to the app with an unknown
+  shiftboard id — an `op_volunteers` row with **no** `sb_pinfo` profile (the
+  okta callback generated a random id). Do NOT use `sb_pinfo.valid_from` as a
+  join date; it's a profile-snapshot date for most people and mislabels vets.
+  (The general `CensusVolunteers@` list is rolled over manually — not touched.)
+
+Coverage gap: the prod ETL began 2026-05-31, so Shiftboard team-adds between
+last burn and the seed are indistinguishable in `sb_pinfo` — signal (A) only
+catches post-seed joins. Going forward it's complete; only the initial backfill
+misses that window (accepted, per Mew).
+
+Extra env (`secrets/etl.env`) + deps beyond Phase 2: `MAILLIST_SHEET_ID`,
+`GOOGLE_CREDENTIALS_FILE` (path to the `vccensus@…` service-account JSON, which
+must be shared as Editor on the sheet); `pip install gspread google-auth`.
+
 ## What's not
 - **Phase 3** (intake / welcome workflow): not started. Needs:
   - port of `Intake()` from `VCcensus/src/censusload.php`
