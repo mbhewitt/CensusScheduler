@@ -17,6 +17,10 @@ import {
   CardContent,
   Checkbox,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   Grid,
   IconButton,
@@ -26,6 +30,7 @@ import {
   MenuList,
   Stack,
   Switch,
+  TextField,
   Typography,
 } from "@mui/material";
 import dayjs from "dayjs";
@@ -63,7 +68,10 @@ import {
   TOGGLE_CHECK_IN_REQ,
   TOGGLE_CHECK_IN_RES,
   UPDATE_REVIEW_RES,
+  UPDATE_TYPE_CAMP_ADDRESS,
   UPDATE_TYPE_CHECK_IN,
+  UPDATE_TYPE_TABLET_NUMBER,
+  UPDATE_TYPE_TABLET_RETURNED,
 } from "@/constants";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
@@ -187,13 +195,17 @@ export const ShiftVolunteers = ({
             if (dataShiftVolunteersItem) {
               const dataMutate = structuredClone(dataShiftVolunteersItem);
               dataMutate.volunteerList.push({
+                campAddress: "",
                 isCheckedIn,
+                isOpenCamping: false,
                 isWalkIn,
                 notes,
                 playaName,
                 positionName,
                 rating,
                 shiftboardId,
+                tabletNumber: null,
+                tabletReturned: false,
                 timePositionId,
                 worldName,
               });
@@ -356,6 +368,53 @@ export const ShiftVolunteers = ({
     }
   };
 
+  // PEERS tablet tracking (papabear 2026-07-26). Leadership records the tablet
+  // number, flips "returned", and fills an open camper's camp address inline
+  // (no navigating to the account page). All three are leadership-gated server
+  // side; a refetch keeps the "Needs Address" state and values current.
+  const [campAddressDialog, setCampAddressDialog] = useState<{
+    open: boolean;
+    shiftboardId: number;
+    playaName: string;
+    worldName: string;
+    value: string;
+  }>({ open: false, shiftboardId: 0, playaName: "", worldName: "", value: "" });
+
+  const handleTabletPatch = async (body: {
+    shiftboardId: number;
+    updateType: string;
+    timePositionId?: number;
+    tabletNumber?: number | null;
+    tabletReturned?: boolean;
+    campAddress?: string;
+  }) => {
+    try {
+      const result = await trigger({ body, method: "PATCH" });
+      if (result?.statusCode && result.statusCode >= 400) {
+        throw new Error(result.message ?? "Update failed.");
+      }
+      mutateShiftVolunteersItem();
+    } catch (error) {
+      if (error instanceof Error) {
+        enqueueSnackbar(
+          <SnackbarText>
+            <strong>{error.message}</strong>
+          </SnackbarText>,
+          { persist: true, variant: "error" }
+        );
+      }
+    }
+  };
+
+  const handleCampAddressConfirm = async () => {
+    await handleTabletPatch({
+      shiftboardId: campAddressDialog.shiftboardId,
+      updateType: UPDATE_TYPE_CAMP_ADDRESS,
+      campAddress: campAddressDialog.value,
+    });
+    setCampAddressDialog((prev) => ({ ...prev, open: false }));
+  };
+
   // evaluate the check-in type and available features
   const checkInType = getCheckInType({
     dateTime: dayjs(dateTimeValue),
@@ -471,9 +530,61 @@ export const ShiftVolunteers = ({
         sortThirdClickReset: true,
       },
     },
-    { name: "Position", options: { sortThirdClickReset: true } },
+    {
+      // Cap the Position width to ~"PEERS Squaddie" and ellipsis the rest (the
+      // "(in the field)" tail can be cut off) — papabear 2026-07-26.
+      name: "Position",
+      options: {
+        setCellProps: () => ({
+          style: {
+            maxWidth: "9rem",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          },
+        }),
+        sortThirdClickReset: true,
+      },
+    },
+    {
+      // PEERS tablet #: leadership-only editable cell, recorded at check-in.
+      name: "Tablet #",
+      options: {
+        display: canSeeVolunteerDetails ? true : "excluded",
+        filter: false,
+        searchable: false,
+        setCellHeaderProps: setCellHeaderPropsCenter,
+        setCellProps: setCellPropsCenter,
+        sort: false,
+      },
+    },
     {
       name: "Check in",
+      options: {
+        display: canSeeVolunteerDetails ? true : "excluded",
+        filter: false,
+        searchable: false,
+        setCellHeaderProps: setCellHeaderPropsCenter,
+        setCellProps: setCellPropsCenter,
+        sort: false,
+      },
+    },
+    {
+      // PEERS "Needs Address": checked = open camper with no camp address on
+      // file; click it to fill the address inline. Leadership-only.
+      name: "Needs Address",
+      options: {
+        display: canSeeVolunteerDetails ? true : "excluded",
+        filter: false,
+        searchable: false,
+        setCellHeaderProps: setCellHeaderPropsCenter,
+        setCellProps: setCellPropsCenter,
+        sort: false,
+      },
+    },
+    {
+      // PEERS "Returned": leadership toggle when the tablet comes back.
+      name: "Returned",
       options: {
         display: canSeeVolunteerDetails ? true : "excluded",
         filter: false,
@@ -524,20 +635,49 @@ export const ShiftVolunteers = ({
   }
   const dataTableVolunteers = dataShiftVolunteersItem.volunteerList.map(
     ({
+      campAddress,
       isCheckedIn,
+      isOpenCamping,
       isWalkIn,
       notes,
       playaName,
       positionName,
       rating,
       shiftboardId,
+      tabletNumber,
+      tabletReturned,
       timePositionId,
       worldName,
     }: IResShiftVolunteerRowItem) => {
+      const needsAddress = isOpenCamping && campAddress.trim() === "";
       return [
         playaName,
         worldName,
         positionName,
+        <TextField
+          defaultValue={tabletNumber ?? ""}
+          disabled={!canSeeVolunteerDetails}
+          inputProps={{
+            max: 99,
+            min: 0,
+            style: { textAlign: "center", width: "3rem" },
+          }}
+          key={`${shiftboardId}-tablet-number`}
+          onBlur={(event) => {
+            const raw = event.target.value.trim();
+            const next = raw === "" ? null : Number(raw);
+            if (next !== (tabletNumber ?? null)) {
+              handleTabletPatch({
+                shiftboardId,
+                timePositionId,
+                updateType: UPDATE_TYPE_TABLET_NUMBER,
+                tabletNumber: next,
+              });
+            }
+          }}
+          type="number"
+          variant="standard"
+        />,
         <Switch
           checked={isCheckedIn === ""}
           disabled={!isCheckInAvailable}
@@ -556,6 +696,40 @@ export const ShiftVolunteers = ({
             })
           }
           key={`${shiftboardId}-shift-volunteer`}
+        />,
+        // PEERS "Needs Address": checked = open camper with no address on file.
+        // Clicking opens the inline camp-address popup (preventDefault so the
+        // box itself doesn't toggle) — works checked or not, so a lead can also
+        // edit an existing address.
+        <Checkbox
+          checked={needsAddress}
+          disabled={!canSeeVolunteerDetails}
+          key={`${shiftboardId}-needs-address`}
+          onClick={(event) => {
+            event.preventDefault();
+            setCampAddressDialog({
+              open: true,
+              playaName,
+              shiftboardId,
+              value: campAddress,
+              worldName,
+            });
+          }}
+          sx={{ "&.Mui-checked": { color: "warning.main" } }}
+        />,
+        // PEERS "Returned": leadership toggle when the tablet comes back.
+        <Switch
+          checked={tabletReturned}
+          disabled={!canSeeVolunteerDetails}
+          key={`${shiftboardId}-tablet-returned`}
+          onChange={(event) =>
+            handleTabletPatch({
+              shiftboardId,
+              timePositionId,
+              tabletReturned: event.target.checked,
+              updateType: UPDATE_TYPE_TABLET_RETURNED,
+            })
+          }
         />,
         // PEERS #walkin: read-only checkbox — checked = walk-in (no Squaddie
         // role / no Hive training). Disabled so leads can't toggle it; it's
@@ -895,6 +1069,49 @@ export const ShiftVolunteers = ({
           shift={{ ...dialogCurrent.shift, timeId: timeIdParam }}
           volunteer={dialogCurrent.volunteer}
         />
+        {/* PEERS camp-address popup (papabear 2026-07-26): leadership fills an
+            open camper's camp address inline from the Shift Volunteers page. */}
+        <Dialog
+          fullWidth
+          maxWidth="sm"
+          onClose={() =>
+            setCampAddressDialog((prev) => ({ ...prev, open: false }))
+          }
+          open={campAddressDialog.open}
+        >
+          <DialogTitle>
+            Camp address — {campAddressDialog.playaName} &quot;
+            {campAddressDialog.worldName}&quot;
+          </DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              fullWidth
+              label="Camp Address"
+              onChange={(event) =>
+                setCampAddressDialog((prev) => ({
+                  ...prev,
+                  value: event.target.value,
+                }))
+              }
+              sx={{ mt: 1 }}
+              value={campAddressDialog.value}
+              variant="standard"
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() =>
+                setCampAddressDialog((prev) => ({ ...prev, open: false }))
+              }
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleCampAddressConfirm} variant="contained">
+              Confirm
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Container>
     </>
   );

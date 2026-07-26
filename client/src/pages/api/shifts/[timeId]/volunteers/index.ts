@@ -23,7 +23,10 @@ import {
   ROLE_PEERS_SHIFT_LEAD_ID,
   ROLE_PEERS_SQUADDIE_ID,
   ROLE_SUPER_ADMIN_ID,
+  UPDATE_TYPE_CAMP_ADDRESS,
   UPDATE_TYPE_CHECK_IN,
+  UPDATE_TYPE_TABLET_NUMBER,
+  UPDATE_TYPE_TABLET_RETURNED,
 } from "@/constants";
 
 // PEERS #overlap: a volunteer may not hold a Squaddie shift and a Shift
@@ -126,6 +129,10 @@ const shiftVolunteers = async (
           vs.rating,
           vs.shiftboard_id,
           vs.time_position_id,
+          vs.tablet_number,
+          vs.tablet_returned,
+          v.camp_address,
+          v.open_camping,
           EXISTS(
             SELECT 1 FROM op_volunteer_roles AS ovr
             WHERE ovr.shiftboard_id=vs.shiftboard_id
@@ -185,18 +192,26 @@ const shiftVolunteers = async (
       );
       const resShiftVolunteerList = dbShiftVolunteerList.map(
         ({
+          camp_address,
           is_trained,
           noshow,
           notes,
+          open_camping,
           playa_name,
           position,
           rating,
           shiftboard_id,
+          tablet_number,
+          tablet_returned,
           time_position_id,
           world_name,
         }) => {
           const resShiftVolunteerItem: IResShiftVolunteerRowItem = {
+            campAddress: camp_address ?? "",
             isCheckedIn: noshow,
+            isOpenCamping: Boolean(open_camping),
+            tabletNumber: tablet_number ?? null,
+            tabletReturned: Boolean(tablet_returned),
             // PEERS #walkin: a walk-in is a volunteer who holds NONE of the
             // onboarded/senior roles — Squaddie, Shift Lead, Coordinator, or
             // Admin/SuperAdmin. Anyone with any of those has been onboarded
@@ -693,6 +708,31 @@ const shiftVolunteers = async (
           return res
             .status(auth.status)
             .json({ statusCode: auth.status, message: auth.message });
+        }
+      }
+      // PEERS tablet tracking (papabear 2026-07-26): tablet # / returned / camp
+      // address edits are leadership-only (Shift Lead + Coordinator + Admin +
+      // SuperAdmin), gated server-side so the UI gate can't be bypassed.
+      if (
+        patchBody.updateType === UPDATE_TYPE_TABLET_NUMBER ||
+        patchBody.updateType === UPDATE_TYPE_TABLET_RETURNED ||
+        patchBody.updateType === UPDATE_TYPE_CAMP_ADDRESS
+      ) {
+        const [dbRoleRows] = await pool.query<RowDataPacket[]>(
+          `SELECT role_id FROM op_volunteer_roles
+           WHERE shiftboard_id=? AND remove_role=false`,
+          [session.shiftboardId]
+        );
+        const roleIdSet = new Set(dbRoleRows.map((row) => Number(row.role_id)));
+        const isLeadership =
+          roleIdSet.has(ROLE_ADMIN_ID) ||
+          roleIdSet.has(ROLE_SUPER_ADMIN_ID) ||
+          roleIdSet.has(ROLE_PEERS_COORDINATOR_ID) ||
+          roleIdSet.has(ROLE_PEERS_SHIFT_LEAD_ID);
+        if (!isLeadership) {
+          return res
+            .status(403)
+            .json({ statusCode: 403, message: "Leadership only" });
         }
       }
       return shiftVolunteerUpdate(pool, req, res);

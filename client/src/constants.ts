@@ -72,6 +72,12 @@ export const SHIFT_PAST = "shiftPast";
 // shift volunteer update types
 export const UPDATE_TYPE_CHECK_IN = "updateTypeCheckIn";
 export const UPDATE_TYPE_REVIEW = "updateTypeReview";
+// PEERS tablet tracking (papabear 2026-07-26): leadership records the tablet
+// number, flips "returned", and can fill an open camper's camp address from the
+// Shift Volunteers page.
+export const UPDATE_TYPE_TABLET_NUMBER = "updateTypeTabletNumber";
+export const UPDATE_TYPE_TABLET_RETURNED = "updateTypeTabletReturned";
+export const UPDATE_TYPE_CAMP_ADDRESS = "updateTypeCampAddress";
 
 // idle time
 export const IDLE_MINUTES = 5;

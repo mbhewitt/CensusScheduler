@@ -13,8 +13,11 @@ import {
   ROLE_SUPER_ADMIN_ID,
   SHIFT_DURING,
   SHIFT_PAST,
+  UPDATE_TYPE_CAMP_ADDRESS,
   UPDATE_TYPE_CHECK_IN,
   UPDATE_TYPE_REVIEW,
+  UPDATE_TYPE_TABLET_NUMBER,
+  UPDATE_TYPE_TABLET_RETURNED,
 } from "@/constants";
 import { getCheckInType } from "@/utils/getCheckInType";
 import { enqueueEmail } from "lib/mail";
@@ -253,6 +256,65 @@ export const shiftVolunteerUpdate = async (
         statusCode: 200,
         message: "OK",
       });
+    }
+
+    // patch - tablet number (leadership records the tablet handed out)
+    case UPDATE_TYPE_TABLET_NUMBER: {
+      const { tabletNumber, shiftboardId, timePositionId } = JSON.parse(
+        req.body
+      );
+
+      await pool.query<RowDataPacket[]>(
+        `UPDATE op_volunteer_shifts
+        SET
+          tablet_number=?,
+          update_shift=true
+        WHERE shiftboard_id=?
+        AND time_position_id=?`,
+        [
+          tabletNumber === null || tabletNumber === "" ? null : tabletNumber,
+          shiftboardId,
+          timePositionId,
+        ]
+      );
+
+      return res.status(200).json({ statusCode: 200, message: "OK" });
+    }
+
+    // patch - tablet returned toggle
+    case UPDATE_TYPE_TABLET_RETURNED: {
+      const { tabletReturned, shiftboardId, timePositionId } = JSON.parse(
+        req.body
+      );
+
+      await pool.query<RowDataPacket[]>(
+        `UPDATE op_volunteer_shifts
+        SET
+          tablet_returned=?,
+          update_shift=true
+        WHERE shiftboard_id=?
+        AND time_position_id=?`,
+        [tabletReturned ? 1 : 0, shiftboardId, timePositionId]
+      );
+
+      return res.status(200).json({ statusCode: 200, message: "OK" });
+    }
+
+    // patch - camp address (leadership fills an open camper's address from the
+    // shift page; writes the volunteer, not the assignment)
+    case UPDATE_TYPE_CAMP_ADDRESS: {
+      const { campAddress, shiftboardId } = JSON.parse(req.body);
+
+      await pool.query<RowDataPacket[]>(
+        `UPDATE op_volunteers
+        SET
+          camp_address=?,
+          update_volunteer=true
+        WHERE shiftboard_id=?`,
+        [campAddress ?? "", shiftboardId]
+      );
+
+      return res.status(200).json({ statusCode: 200, message: "OK" });
     }
 
     default: {

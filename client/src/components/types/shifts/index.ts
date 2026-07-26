@@ -44,13 +44,17 @@ export interface IResShiftPositionCountItem {
   timePositionId: number;
 }
 export interface IResShiftVolunteerRowItem {
+  campAddress: string;
   isCheckedIn: string;
+  isOpenCamping: boolean;
   isWalkIn: boolean;
   notes: string;
   playaName: string;
   positionName: string;
   rating: number;
   shiftboardId: number;
+  tabletNumber: number | null;
+  tabletReturned: boolean;
   timePositionId: number;
   worldName: string;
 }
