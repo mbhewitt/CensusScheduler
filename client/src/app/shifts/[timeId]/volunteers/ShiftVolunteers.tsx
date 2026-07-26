@@ -61,6 +61,7 @@ import type {
 } from "@/components/types/shifts";
 import {
   ADD_SHIFT_VOLUNTEER_RES,
+  GATE_OPEN_ISO,
   REMOVE_SHIFT_VOLUNTEER_RES,
   SHIFT_DURING,
   SHIFT_FUTURE,
@@ -319,6 +320,11 @@ export const ShiftVolunteers = ({
   // Squaddies (per stickybeak 2026-07-19).
   const canSeeVolunteerDetails =
     isAdmin || isSuperAdmin || isPeersCoordinator || isPeersShiftLead;
+  // PEERS: the "Returned" tablet toggle stays locked until Gate open — tablets
+  // aren't handed back before the event starts (papabear 2026-07-26). Real
+  // wall-clock, matching the app's other GATE_OPEN_ISO checks (VolunteerInfo,
+  // TabletAgreement) and the server-side enforcement on this update type.
+  const isBeforeGateOpen = new Date() < new Date(GATE_OPEN_ISO);
 
   const handleCheckInToggle = async ({
     shift: { positionName, timePositionId },
@@ -724,12 +730,13 @@ export const ShiftVolunteers = ({
           key={`${shiftboardId}-shift-volunteer`}
         />,
         // PEERS "Needs Address": checked = open camper with no address on file.
-        // Clicking opens the inline camp-address popup (preventDefault so the
-        // box itself doesn't toggle) — works checked or not, so a lead can also
-        // edit an existing address.
+        // Only clickable while checked — an unchecked box (address already on
+        // file) is disabled and does nothing, so it can't open an empty popup
+        // (papabear 2026-07-26). Clicking a checked box opens the inline
+        // camp-address popup (preventDefault so the box itself doesn't toggle).
         <Checkbox
           checked={needsAddress}
-          disabled={!canSeeVolunteerDetails}
+          disabled={!canSeeVolunteerDetails || !needsAddress}
           key={`${shiftboardId}-needs-address`}
           onClick={(event) => {
             event.preventDefault();
@@ -744,9 +751,11 @@ export const ShiftVolunteers = ({
           sx={{ "&.Mui-checked": { color: "warning.main" } }}
         />,
         // PEERS "Returned": leadership toggle when the tablet comes back.
+        // Locked until Gate open (papabear 2026-07-26) — tablets can't be
+        // returned before the event.
         <Switch
           checked={tabletReturned}
-          disabled={!canSeeVolunteerDetails}
+          disabled={!canSeeVolunteerDetails || isBeforeGateOpen}
           key={`${shiftboardId}-tablet-returned`}
           onChange={(event) =>
             handleTabletPatch({

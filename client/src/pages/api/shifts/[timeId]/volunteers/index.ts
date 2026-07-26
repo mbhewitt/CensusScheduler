@@ -17,6 +17,7 @@ import {
   shiftVolunteerUpdate,
 } from "@/components/api/shiftVolunteers";
 import {
+  GATE_OPEN_ISO,
   ROLE_ADMIN_ID,
   ROLE_BEHAVIORAL_STANDARDS_ID,
   ROLE_PEERS_COORDINATOR_ID,
@@ -754,6 +755,18 @@ const shiftVolunteers = async (
           return res
             .status(403)
             .json({ statusCode: 403, message: "Leadership only" });
+        }
+        // PEERS: the "Returned" toggle is locked until Gate open — tablets
+        // can't be handed back before the event (papabear 2026-07-26). Mirrors
+        // the client-side disable so the UI gate can't be bypassed.
+        if (
+          patchBody.updateType === UPDATE_TYPE_TABLET_RETURNED &&
+          new Date() < new Date(GATE_OPEN_ISO)
+        ) {
+          return res.status(403).json({
+            statusCode: 403,
+            message: "Tablets can't be marked returned until Gate open.",
+          });
         }
       }
       return shiftVolunteerUpdate(pool, req, res);
