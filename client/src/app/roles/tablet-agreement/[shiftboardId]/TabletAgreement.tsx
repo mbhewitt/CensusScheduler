@@ -1,6 +1,6 @@
 "use client";
 
-import { Check as CheckIcon, Tablet as TabletIcon } from "@mui/icons-material";
+import { Check as CheckIcon } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -127,16 +127,13 @@ export const TabletAgreement = ({ shiftboardId }: ITabletAgreementProps) => {
           </Typography>
           <Card>
             <CardContent>
-              <Stack alignItems="flex-start" direction="row">
-                <TabletIcon color="secondary" fontSize="large" sx={{ mr: 1 }} />
-                <Typography>
-                  In signing this document, I agree to return the PEERS
-                  recording tablet to my PEERS shift lead at the conclusion of
-                  my shift. Normal wear and tear is expected, and accidents
-                  happen, but I may be held financially responsible if the
-                  tablet is not returned at all.
-                </Typography>
-              </Stack>
+              <Typography>
+                In signing this document, I agree to return the PEERS recording
+                tablet to my PEERS shift lead at the conclusion of my shift.
+                Normal wear and tear is expected, and accidents happen, but I
+                may be held financially responsible if the tablet is not
+                returned at all.
+              </Typography>
             </CardContent>
           </Card>
         </Box>
