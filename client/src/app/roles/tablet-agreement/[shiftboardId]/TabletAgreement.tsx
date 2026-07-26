@@ -23,7 +23,6 @@ import useSWRMutation from "swr/mutation";
 
 import { SnackbarText } from "@/components/general/SnackbarText";
 import { Hero } from "@/components/layout/Hero";
-import type { IResVolunteerAccount } from "@/components/types/volunteers";
 import {
   GATE_OPEN_ISO,
   ROLE_TABLET_AGREEMENT_ID,
@@ -49,21 +48,29 @@ export const TabletAgreement = ({ shiftboardId }: ITabletAgreementProps) => {
   const [campAddress, setCampAddress] = useState("");
   const [phone, setPhone] = useState("");
   const [isOpenCamping, setIsOpenCamping] = useState(false);
+  const [landmark, setLandmark] = useState("");
   const [isAgreed, setIsAgreed] = useState(false);
 
-  // Pre-fill phone from the volunteer's saved account so they don't type it
-  // twice (papabear 2026-07-26). Fill once, and only if still untouched so we
-  // never stomp on what they're editing.
-  const { data: accountData } = useSWR<IResVolunteerAccount>(
-    `/api/volunteers/${shiftboardId}/account`,
-    fetcherGet
-  );
+  // Pre-fill camp name / address / phone / open-camping / landmark from the
+  // volunteer's saved account (captured at create-account) so nothing is typed
+  // twice (papabear 2026-07-26). Fill once, only if still untouched.
+  const { data: prefillData } = useSWR<{
+    campName: string;
+    campAddress: string;
+    phone: string;
+    isOpenCamping: boolean;
+    location: string;
+  }>(`/api/roles/tablet-agreement?shiftboardId=${shiftboardId}`, fetcherGet);
   const prefilledRef = useRef(false);
   useEffect(() => {
-    if (prefilledRef.current || !accountData) return;
+    if (prefilledRef.current || !prefillData) return;
     prefilledRef.current = true;
-    if (accountData.phone) setPhone(accountData.phone);
-  }, [accountData]);
+    if (prefillData.campName) setCampName(prefillData.campName);
+    if (prefillData.campAddress) setCampAddress(prefillData.campAddress);
+    if (prefillData.phone) setPhone(prefillData.phone);
+    if (prefillData.isOpenCamping) setIsOpenCamping(true);
+    if (prefillData.location) setLandmark(prefillData.location);
+  }, [prefillData]);
 
   // Gate-open logic (papabear 2026-07-26): before Gate open, an "I'm in Open
   // Camping" volunteer has no camp address yet, so we hide + waive the Camp
@@ -97,6 +104,7 @@ export const TabletAgreement = ({ shiftboardId }: ITabletAgreementProps) => {
           campAddress: showAddress ? campAddress : "",
           phone,
           isOpenCamping,
+          location: landmark,
         },
         method: "POST",
       });
@@ -196,6 +204,13 @@ export const TabletAgreement = ({ shiftboardId }: ITabletAgreementProps) => {
                     arrive on playa.
                   </Typography>
                 )}
+                <TextField
+                  fullWidth
+                  label="Landmark or other relevant information to help find you (optional)"
+                  onChange={(e) => setLandmark(e.target.value)}
+                  value={landmark}
+                  variant="standard"
+                />
                 <TextField
                   fullWidth
                   label="Your Phone Number"

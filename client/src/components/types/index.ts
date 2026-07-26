@@ -30,8 +30,11 @@ export interface IVolunteerOption {
   shiftboardId: number;
 }
 export interface IVolunteerAccountFormValues {
+  campAddress?: string;
+  campName?: string;
   email?: string;
   emergencyContact?: string;
+  isOpenCamping?: boolean;
   location?: string;
   passcodeConfirm?: string;
   passcodeCreate?: string;

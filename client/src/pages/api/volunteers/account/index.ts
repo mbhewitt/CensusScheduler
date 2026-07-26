@@ -39,8 +39,11 @@ const account = async (req: NextApiRequest, res: NextApiResponse) => {
     case "POST": {
       // create volunteer account
       const {
+        campAddress,
+        campName,
         email,
         emergencyContact,
+        isOpenCamping,
         location,
         passcodeCreate,
         phone,
@@ -55,22 +58,28 @@ const account = async (req: NextApiRequest, res: NextApiResponse) => {
       // mailing-list report. Persistent until "Clear Mailing List Report".
       await pool.query<RowDataPacket[]>(
         `INSERT INTO op_volunteers (
+          camp_address,
+          camp_name,
           create_volunteer,
           email,
           emergency_contact,
           location,
           mailing_list_new,
+          open_camping,
           passcode,
           phone,
           playa_name,
           shiftboard_id,
           world_name
         )
-        VALUES (true, ?, ?, ?, 1, ?, ?, ?, ?, ?)`,
+        VALUES (?, ?, true, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?)`,
         [
+          campAddress ?? "",
+          campName ?? "",
           email,
           emergencyContact,
           location,
+          isOpenCamping === true ? 1 : 0,
           passcodeCreate,
           phone,
           playaName,

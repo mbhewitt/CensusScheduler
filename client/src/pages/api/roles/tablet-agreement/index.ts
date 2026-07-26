@@ -2,11 +2,15 @@ import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { GATE_OPEN_ISO, ROLE_TABLET_AGREEMENT_ID } from "@/constants";
+import { canManageVolunteer, isOwnerOrAdmin } from "@/lib/authz";
+import { withAuth } from "@/lib/withAuth";
 import { pool } from "lib/database";
 
-// PEERS Tablet Responsibility Agreement sign (papabear 2026-07-25). Mirrors the
-// behavioral-standards sign: upserts the self-sign role, and also saves the
-// camp name / camp address / phone captured on the form.
+// PEERS Tablet Responsibility Agreement (papabear 2026-07-25/26).
+// - GET: returns the volunteer's saved camp/phone/open-camping/landmark so the
+//   form can pre-fill (no double entry across create-account and this form).
+// - POST: upserts the self-sign role (like behavioral-standards) and saves the
+//   camp name / address / phone / open-camping / landmark captured on the form.
 interface IReqTabletAgreement {
   isSigned: boolean;
   shiftboardId: number | string;
@@ -14,11 +18,39 @@ interface IReqTabletAgreement {
   campAddress?: string;
   phone?: string;
   isOpenCamping?: boolean;
+  location?: string;
 }
 
-const tabletAgreement = async (req: NextApiRequest, res: NextApiResponse) => {
+const tabletAgreement = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  session: { shiftboardId: number }
+) => {
   switch (req.method) {
-    // post
+    // get — pre-fill data
+    // ------------------------------------------------------------
+    case "GET": {
+      const { shiftboardId } = req.query;
+      const canRead = await canManageVolunteer(session, Number(shiftboardId));
+      if (!canRead) {
+        return res.status(403).json({ statusCode: 403, message: "Forbidden" });
+      }
+      const [dbList] = await pool.query<RowDataPacket[]>(
+        `SELECT camp_name, camp_address, phone, open_camping, location
+         FROM op_volunteers WHERE shiftboard_id=?`,
+        [shiftboardId]
+      );
+      const row = dbList[0];
+      return res.status(200).json({
+        campName: row?.camp_name ?? "",
+        campAddress: row?.camp_address ?? "",
+        phone: row?.phone ?? "",
+        isOpenCamping: Boolean(row?.open_camping),
+        location: row?.location ?? "",
+      });
+    }
+
+    // post — sign
     // ------------------------------------------------------------
     case "POST": {
       const {
@@ -28,7 +60,13 @@ const tabletAgreement = async (req: NextApiRequest, res: NextApiResponse) => {
         campAddress,
         phone,
         isOpenCamping,
+        location,
       }: IReqTabletAgreement = JSON.parse(req.body);
+
+      const canWrite = await isOwnerOrAdmin(session, Number(shiftboardId));
+      if (!canWrite) {
+        return res.status(403).json({ statusCode: 403, message: "Forbidden" });
+      }
 
       // Required-field validation (papabear 2026-07-26): camp name + phone are
       // always required; camp address is required too, EXCEPT for an open camper
@@ -72,14 +110,22 @@ const tabletAgreement = async (req: NextApiRequest, res: NextApiResponse) => {
         );
       }
 
-      // Save the camp name / address / phone captured on the form (only on
-      // sign, and only fields that were provided).
+      // Save the camp name / address / phone / open-camping / landmark captured
+      // on the form (only on sign).
       if (isSigned === true) {
         await pool.query<RowDataPacket[]>(
           `UPDATE op_volunteers
-           SET camp_name=?, camp_address=?, phone=?, update_volunteer=true
+           SET camp_name=?, camp_address=?, phone=?, open_camping=?,
+               location=?, update_volunteer=true
            WHERE shiftboard_id=?`,
-          [campName ?? "", campAddress ?? "", phone ?? "", shiftboardId]
+          [
+            campName ?? "",
+            campAddress ?? "",
+            phone ?? "",
+            isOpenCamping === true ? 1 : 0,
+            location ?? "",
+            shiftboardId,
+          ]
         );
       }
 
@@ -94,4 +140,4 @@ const tabletAgreement = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default tabletAgreement;
+export default withAuth(tabletAgreement);

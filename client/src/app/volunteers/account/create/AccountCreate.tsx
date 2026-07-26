@@ -11,8 +11,10 @@ import {
   Card,
   CardActions,
   CardContent,
+  Checkbox,
   CircularProgress,
   Container,
+  FormControlLabel,
   Stack,
   TextField,
   Typography,
@@ -31,17 +33,16 @@ import { SnackbarText } from "@/components/general/SnackbarText";
 import { Hero } from "@/components/layout/Hero";
 import type { IVolunteerAccountFormValues } from "@/components/types";
 import type { IResVolunteerAccount } from "@/components/types/volunteers";
-import {
-  HELPER_TEXT_EMERGENCY_CONTACT,
-  HELPER_TEXT_LOCATION,
-  SESSION_SIGN_IN,
-} from "@/constants";
+import { HELPER_TEXT_EMERGENCY_CONTACT, SESSION_SIGN_IN } from "@/constants";
 import { SessionContext } from "@/state/session/context";
 import { fetcherTrigger } from "@/utils/fetcher";
 
 const defaultValues: IVolunteerAccountFormValues = {
+  campAddress: "",
+  campName: "",
   email: "",
   emergencyContact: "",
+  isOpenCamping: false,
   location: "",
   passcodeConfirm: "",
   passcodeCreate: "",
@@ -273,13 +274,52 @@ export const AccountCreate = () => {
                   </Stack>
                   <Controller
                     control={control}
+                    name="campName"
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        fullWidth
+                        label="Your Camp Name"
+                        variant="standard"
+                      />
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name="isOpenCamping"
+                    render={({ field }) => (
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={Boolean(field.value)}
+                            color="secondary"
+                            onChange={(e) => field.onChange(e.target.checked)}
+                          />
+                        }
+                        label="I'm in Open Camping"
+                      />
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name="campAddress"
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        fullWidth
+                        label="Your Camp Address"
+                        variant="standard"
+                      />
+                    )}
+                  />
+                  <Controller
+                    control={control}
                     name="location"
                     render={({ field }) => (
                       <TextField
                         {...field}
                         fullWidth
-                        helperText={HELPER_TEXT_LOCATION}
-                        label="Location"
+                        label="Landmark or other relevant information to help find you"
                         variant="standard"
                       />
                     )}
