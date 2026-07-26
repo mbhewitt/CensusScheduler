@@ -10,6 +10,7 @@ import type {
 import { withAuth } from "@/lib/withAuth";
 import { pool } from "lib/database";
 import { notifyAssignment } from "@/components/api/assignmentNotify";
+import { autoSetArrival } from "@/components/api/arrivalAutoSet";
 import {
   shiftVolunteerRemove,
   shiftVolunteerUpdate,
@@ -255,6 +256,18 @@ const shiftVolunteers = async (
           )
           VALUES (true, ?, ?, ?)`,
           [noShow, shiftboardId, timePositionId]
+        );
+      }
+
+      // Auto-set arrival date from this (possibly SAP-eligible) signup so the
+      // SAP fires without the volunteer having to fill the arrival form.
+      // Best-effort — a failure here must not fail the assignment.
+      try {
+        await autoSetArrival(pool, shiftboardId);
+      } catch (err) {
+        console.error(
+          `[arrival-auto-set] autoSetArrival failed for shiftboard_id=${shiftboardId}:`,
+          err
         );
       }
 

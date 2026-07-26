@@ -43,7 +43,8 @@ const volunteerInfo = async (
           world_name,
           email,
           location,
-          arrival_date_id
+          arrival_date_id,
+          arrival_auto_set
         FROM op_volunteers
         WHERE delete_volunteer=false
         AND shiftboard_id=?`,
@@ -293,6 +294,7 @@ const volunteerInfo = async (
           location: dbVolunteer.location ?? "",
         },
         arrivalDate,
+        arrivalAutoSet: Boolean(dbVolunteer.arrival_auto_set),
         sapStatus: {
           bypass,
           bypassReason,
@@ -336,9 +338,11 @@ const volunteerInfo = async (
       );
 
       if (arrivalDateId !== undefined) {
+        // Volunteer set arrival themselves → clear the auto-set flag so the
+        // "we set this for you" warning header no longer shows.
         await pool.query<RowDataPacket[]>(
           `UPDATE op_volunteers
-          SET arrival_date_id=?, update_volunteer=true
+          SET arrival_date_id=?, arrival_auto_set=0, update_volunteer=true
           WHERE shiftboard_id=?`,
           [arrivalDateId, shiftboardId]
         );

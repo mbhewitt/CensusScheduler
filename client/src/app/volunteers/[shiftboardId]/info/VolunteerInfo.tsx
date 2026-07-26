@@ -451,6 +451,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
 
   const {
     arrivalDate,
+    arrivalAutoSet,
     behavioralStandardsSigned,
     burnerProfileUpdated,
     dates,
@@ -514,6 +515,12 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
         <Typography sx={{ mb: 0.5 }} variant="subtitle2">
           Desired / Expected Arrival Date
         </Typography>
+        {arrivalAutoSet && (
+          <Alert severity="info" sx={{ mb: 1, fontWeight: "bold" }}>
+            We set your arrival to the day before your first shift so your SAP
+            can issue &mdash; change it below if you&rsquo;re arriving earlier.
+          </Alert>
+        )}
         <Select
           aria-label="Desired / Expected Arrival Date"
           displayEmpty
