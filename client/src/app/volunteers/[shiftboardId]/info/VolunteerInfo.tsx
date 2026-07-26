@@ -517,8 +517,8 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
         </Typography>
         {arrivalAutoSet && (
           <Alert severity="info" sx={{ mb: 1, fontWeight: "bold" }}>
-            We set your arrival to the day before your first shift so your SAP
-            can issue &mdash; change it below if you&rsquo;re arriving earlier.
+            We set your arrival to the day before your first shift &mdash;
+            change it below if you&rsquo;re arriving earlier.
           </Alert>
         )}
         <Select
