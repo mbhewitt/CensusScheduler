@@ -90,23 +90,47 @@ def current_burn_year(db) -> int:
 
 
 def volunteers_with_shift(db, start: dt.date, end: dt.date) -> dict[str, str]:
-    """{shiftboard_id: email} with a shift dated in [start, end]."""
-    sql = """
-        SELECT DISTINCT v.shiftboard_id AS sb, LOWER(v.email) AS email
-        FROM op_volunteer_shifts vs
-        JOIN op_volunteers v ON v.shiftboard_id = vs.shiftboard_id
-        JOIN op_shift_time_position stp ON vs.time_position_id = stp.time_position_id
-        JOIN op_shift_times st ON stp.shift_times_id = st.shift_times_id
-        JOIN op_dates d ON st.start_date_id = d.date_id
-        WHERE vs.remove_shift = 0 AND st.remove_shift_time = 0
-          AND stp.remove_time_position = 0
-          AND v.shiftboard_id > 0 AND v.delete_volunteer = 0
-          AND v.email IS NOT NULL AND v.email <> ''
-          AND d.`date` BETWEEN %s AND %s
-    """
+    """{shiftboard_id: email} with a shift dated in [start, end], from EITHER the
+    app (op_volunteer_shifts) OR Shiftboard (sb_shifts, populated by
+    etl_sb_shifts). Covers Mew's "signed up in Shiftboard OR the app"."""
+    out: dict[str, str] = {}
     with db.cursor() as cur:
-        cur.execute(sql, (start, end))
-        return {str(r["sb"]): r["email"] for r in cur.fetchall()}
+        # app signups
+        cur.execute(
+            """
+            SELECT DISTINCT v.shiftboard_id AS sb, LOWER(v.email) AS email
+            FROM op_volunteer_shifts vs
+            JOIN op_volunteers v ON v.shiftboard_id = vs.shiftboard_id
+            JOIN op_shift_time_position stp ON vs.time_position_id = stp.time_position_id
+            JOIN op_shift_times st ON stp.shift_times_id = st.shift_times_id
+            JOIN op_dates d ON st.start_date_id = d.date_id
+            WHERE vs.remove_shift = 0 AND st.remove_shift_time = 0
+              AND stp.remove_time_position = 0
+              AND v.shiftboard_id > 0 AND v.delete_volunteer = 0
+              AND v.email IS NOT NULL AND v.email <> ''
+              AND d.`date` BETWEEN %s AND %s
+            """,
+            (start, end),
+        )
+        for r in cur.fetchall():
+            out[str(r["sb"])] = r["email"]
+        # Shiftboard signups (prefer the op_volunteers email if we have one)
+        cur.execute(
+            """
+            SELECT DISTINCT s.shiftboard_id AS sb,
+                   LOWER(COALESCE(NULLIF(v.email, ''), s.email)) AS email
+            FROM sb_shifts s
+            LEFT JOIN op_volunteers v
+                   ON v.shiftboard_id = s.shiftboard_id AND v.delete_volunteer = 0
+            WHERE s.shiftboard_id > 0
+              AND s.`date` BETWEEN %s AND %s
+              AND COALESCE(NULLIF(v.email, ''), s.email) <> ''
+            """,
+            (start, end),
+        )
+        for r in cur.fetchall():
+            out.setdefault(str(r["sb"]), r["email"])  # don't clobber app email
+    return out
 
 
 def new_volunteers(db, since: dt.date) -> dict[str, str]:

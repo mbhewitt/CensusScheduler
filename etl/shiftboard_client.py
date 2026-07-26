@@ -21,6 +21,7 @@ which despite the name returns tab-delimited text.
 
 from __future__ import annotations
 
+import csv
 import io
 import logging
 from typing import Any
@@ -151,6 +152,46 @@ class ShiftboardClient:
         if not content:
             raise ShiftboardError(f"download_profiles({group_id}) returned empty content")
         return _parse_profile_xlsx(content)
+
+    def download_coverage(self, start_date: str, end_date: str) -> list[dict[str, Any]]:
+        """Download + parse the coverage report (shift signups) as TSV.
+
+        Ports geteventsfile() from censusload.php. `start_date`/`end_date` accept
+        'YYYY-MM-DD' or 'YYYYMMDD'; the report.cgi endpoint wants YYYYMMDD (the
+        legacy passes date("Ymd",...) — sending dashes silently returns 0 rows).
+        Returns one dict per shift signup row.
+        """
+        sd = start_date.replace("-", "")
+        ed = end_date.replace("-", "")
+        url = (
+            "https://www.shiftboard.com/servola/reporting/report.cgi"
+            f"?type=coverage&deleted_teams=2&ss={self._ss}"
+            f"&start_date={sd}&end_date={ed}"
+            "&format=tab_delimited&include=all_fields&download=Download"
+        )
+        content = self._get_bytes(url)
+        if content is None:
+            raise ShiftboardError("download_coverage returned empty content")
+        text = content.decode("utf-8-sig", errors="replace")
+        rows: list[dict[str, Any]] = []
+        for r in csv.DictReader(io.StringIO(text), delimiter="\t"):
+            sb = (r.get("Shiftboard ID") or "").strip()
+            date = (r.get("Date") or "").strip()
+            if not sb or not date:
+                continue
+            rows.append(
+                {
+                    "sb_shift_id": (r.get("ID") or "").strip(),
+                    "shiftboard_id": sb,
+                    "date": date,
+                    "subject": (r.get("Subject") or "").strip(),
+                    "shift": (r.get("Shift") or "").strip(),
+                    "event_code": (r.get("Event Code") or "").strip(),
+                    "email": (r.get("Email") or "").strip(),
+                    "noshow": (r.get("No Show") or "").strip(),
+                }
+            )
+        return rows
 
     # ----------------------------------------------------- group membership
 
