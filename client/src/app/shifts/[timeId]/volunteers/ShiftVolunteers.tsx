@@ -149,6 +149,15 @@ export const ShiftVolunteers = ({
     },
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  // PEERS tablet camp-address popup (papabear 2026-07-26) — declared here with
+  // the other hooks so it stays above the loading/error early returns below.
+  const [campAddressDialog, setCampAddressDialog] = useState<{
+    open: boolean;
+    shiftboardId: number;
+    playaName: string;
+    worldName: string;
+    value: string;
+  }>({ open: false, shiftboardId: 0, playaName: "", worldName: "", value: "" });
 
   // fetching, mutation, and revalidation
   // ------------------------------------------------------------
@@ -372,14 +381,6 @@ export const ShiftVolunteers = ({
   // number, flips "returned", and fills an open camper's camp address inline
   // (no navigating to the account page). All three are leadership-gated server
   // side; a refetch keeps the "Needs Address" state and values current.
-  const [campAddressDialog, setCampAddressDialog] = useState<{
-    open: boolean;
-    shiftboardId: number;
-    playaName: string;
-    worldName: string;
-    value: string;
-  }>({ open: false, shiftboardId: 0, playaName: "", worldName: "", value: "" });
-
   const handleTabletPatch = async (body: {
     shiftboardId: number;
     updateType: string;
