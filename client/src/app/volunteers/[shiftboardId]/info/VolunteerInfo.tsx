@@ -516,10 +516,9 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
           Desired / Expected Arrival Date
         </Typography>
         {arrivalAutoSet && (
-          <Alert severity="warning" sx={{ mb: 1 }}>
-            We set this to the day before your first Setup Access Pass
-            (SAP)&ndash;eligible shift so your SAP could be issued. If you&rsquo;re
-            arriving earlier, please pick your actual arrival date below.
+          <Alert severity="info" sx={{ mb: 1, fontWeight: "bold" }}>
+            We set your arrival to the day before your first shift so your SAP
+            can issue &mdash; change it below if you&rsquo;re arriving earlier.
           </Alert>
         )}
         <Select
