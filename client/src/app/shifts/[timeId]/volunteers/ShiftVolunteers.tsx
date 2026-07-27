@@ -167,6 +167,14 @@ export const ShiftVolunteers = ({
     value: "",
     location: "",
   });
+  // Volunteers-table sort. Controlled so it survives the re-render a
+  // check-in / tablet toggle triggers (mutate would otherwise snap it back
+  // to the default). Defaults to Playa name on mount; persists until the
+  // user picks another column or leaves the page (papabear 2026-07-27).
+  const [volunteerSortOrder, setVolunteerSortOrder] = useState<{
+    name: string;
+    direction: "asc" | "desc";
+  }>({ name: "Playa name", direction: "asc" });
 
   // fetching, mutation, and revalidation
   // ------------------------------------------------------------
@@ -869,10 +877,14 @@ export const ShiftVolunteers = ({
     // shifts only have one position type, so it isn't useful (per stickybeak
     // 2026-07-19).
     filter: false,
-    sortOrder: {
-      direction: "asc" as const,
-      name: "Playa name",
-    },
+    // Controlled sort (see volunteerSortOrder) so a check-in / tablet toggle
+    // doesn't reset the user's chosen column back to Playa name.
+    onColumnSortChange: (changedColumn: string, direction: string) =>
+      setVolunteerSortOrder({
+        name: changedColumn,
+        direction: direction === "desc" ? "desc" : "asc",
+      }),
+    sortOrder: volunteerSortOrder,
   };
 
   // render
