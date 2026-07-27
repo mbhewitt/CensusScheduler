@@ -43,6 +43,10 @@ export interface IResVolunteerInfo {
       datename: string;
       date: string;
     } | null;
+    // Date (YYYY-MM-DD) a SAP has been earned or assigned FOR — the assigned
+    // SAP's date if one exists (admin override), else the auto date when
+    // requirements are met, else null (earned-SAP box stays hidden).
+    earnedSapDate: string | null;
     totalCsp: number;
     requiredCsp: number;
     cspFulfilled: boolean;

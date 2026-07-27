@@ -480,29 +480,9 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     content: React.ReactNode;
   }[] = [];
 
-  // SAP Issued
-  if (sapStatus.sapFile) {
-    checklistItems.push({
-      id: "sap-issued",
-      label: "Your Setup Access Pass (SAP) is ready",
-      done: true,
-      content: (
-        <Box>
-          <Typography sx={{ mb: 1 }}>
-            Your SAP has been issued and emailed to you. You can also download it
-            here:
-          </Typography>
-          <Button
-            href={`/api/volunteers/${shiftboardId}/sap/${sapStatus.sapFile.sapId}`}
-            startIcon={<DownloadIcon />}
-            variant="contained"
-          >
-            Download SAP PDF
-          </Button>
-        </Box>
-      ),
-    });
-  }
+  // SAP display now lives in its own always-visible box near the top (the
+  // earnedSapDate Alert), not as a checklist item that hides once "done"
+  // (per Mew 2026-07-27).
 
   // On-playa plans \u2014 arrival date, early entry, and camping now live INLINE in
   // this checklist item (#461) instead of a separate section at the top of the
@@ -1127,6 +1107,35 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                 Your current total:{" "}
                 <strong>{sapStatus.totalCsp}</strong> Census Shift Points (CSP)
                 scheduled
+              </Alert>
+            )}
+
+            {/* SAP status — its own box, only once earned or assigned, never
+                buried in the completed-items accordion (per Mew 2026-07-27). */}
+            {sapStatus.earnedSapDate && (
+              <Alert severity="success" sx={{ mb: 2 }}>
+                {sapStatus.sapFile ? (
+                  <Stack spacing={1} alignItems="flex-start">
+                    <span>
+                      Your <strong>Setup Access Pass (SAP)</strong> for{" "}
+                      <strong>{formatDateDisplay(sapStatus.earnedSapDate)}</strong>{" "}
+                      is ready.
+                    </span>
+                    <Button
+                      href={`/api/volunteers/${shiftboardId}/sap/${sapStatus.sapFile.sapId}`}
+                      startIcon={<DownloadIcon />}
+                      variant="contained"
+                      size="small"
+                    >
+                      Download SAP PDF
+                    </Button>
+                  </Stack>
+                ) : (
+                  <span>
+                    You have <strong>earned a SAP</strong> for{" "}
+                    <strong>{formatDateDisplay(sapStatus.earnedSapDate)}</strong>.
+                  </span>
+                )}
               </Alert>
             )}
 
