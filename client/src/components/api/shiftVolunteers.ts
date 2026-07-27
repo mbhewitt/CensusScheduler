@@ -1,39 +1,26 @@
-import dayjs from "dayjs";
-import timezone from "dayjs/plugin/timezone";
-import utc from "dayjs/plugin/utc";
 import { RowDataPacket } from "mysql2";
 import { Pool } from "mysql2/promise";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import type { IReqReviewValues, IReqSwitchValues } from "@/components/types";
 import {
+  GATE_OPEN_ISO,
   ROLE_ADMIN_ID,
   ROLE_PEERS_COORDINATOR_ID,
   ROLE_PEERS_SHIFT_LEAD_ID,
   ROLE_SUPER_ADMIN_ID,
-  SHIFT_DURING,
-  SHIFT_PAST,
   UPDATE_TYPE_CAMP_ADDRESS,
   UPDATE_TYPE_CHECK_IN,
   UPDATE_TYPE_REVIEW,
   UPDATE_TYPE_TABLET_NUMBER,
   UPDATE_TYPE_TABLET_RETURNED,
 } from "@/constants";
-import { getCheckInType } from "@/utils/getCheckInType";
 import { enqueueEmail } from "lib/mail";
 import {
   lookupActorDisplayName,
   notifyRemoval,
   type RemovalCause,
 } from "@/components/api/assignmentNotify";
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
-
-// Shift start/end times are stored as naive playa-local strings
-// (e.g. "2026-08-31 19:00"); interpret them in this zone so the
-// window math is correct regardless of the server's own timezone.
-const PLAYA_TZ = "America/Los_Angeles";
 
 // #313 — when a volunteer (self) or admin removes someone from a
 // position with `critical=1`, notify the VC list so they can move on
@@ -134,20 +121,21 @@ async function notifyCriticalDrop(
 
 // Server-side authorization for coordinator-page check-in, mirroring the
 // UI gate in ShiftVolunteers.tsx so the restriction can't be bypassed with
-// a crafted PATCH (the toggle is only hidden client-side):
-//   - during the shift window: PEERS Shift Lead / Coordinator / Admin
-//   - after the window:        PEERS Coordinator / Admin
-//   - before the window / canceled shift: nobody
-// (papabear 2026-07-16). NOTE: this is intentionally NOT applied to the
-// volunteer self-check-in route (/api/volunteers/[id]/shifts), where a
-// volunteer may still check themselves in during their own shift.
+// a crafted PATCH (the toggle is only hidden client-side). Per papabear
+// 2026-07-27 this now matches the "Returned" tablet toggle: check-in is
+// available to leadership (PEERS Shift Lead / Coordinator / Admin) once
+// Gate is open, regardless of the shift's own time window; before Gate
+// open, or on a canceled shift, nobody may check in. NOTE: intentionally
+// NOT applied to the volunteer self-check-in route
+// (/api/volunteers/[id]/shifts), where a volunteer may still check
+// themselves in during their own shift.
 export const checkCheckInAuthorized = async (
   pool: Pool,
   session: { shiftboardId: number },
   timePositionId: number | string
 ): Promise<{ ok: true } | { ok: false; status: number; message: string }> => {
   const [dbShiftRows] = await pool.query<RowDataPacket[]>(
-    `SELECT st.start_time, st.end_time, st.canceled
+    `SELECT st.canceled
      FROM op_shift_time_position stp
      JOIN op_shift_times st ON st.shift_times_id = stp.shift_times_id
      WHERE stp.time_position_id = ?
@@ -175,33 +163,21 @@ export const checkCheckInAuthorized = async (
   // Super Admin is the strict superset of Admin — never lock it out.
   const isAdmin =
     roleIdSet.has(ROLE_ADMIN_ID) || roleIdSet.has(ROLE_SUPER_ADMIN_ID);
-  const isPeersCoordinator = roleIdSet.has(ROLE_PEERS_COORDINATOR_ID);
-  const isPeersShiftLead = roleIdSet.has(ROLE_PEERS_SHIFT_LEAD_ID);
+  const isLeadership =
+    isAdmin ||
+    roleIdSet.has(ROLE_PEERS_COORDINATOR_ID) ||
+    roleIdSet.has(ROLE_PEERS_SHIFT_LEAD_ID);
 
-  // Determine where "now" falls relative to the shift window. If the
-  // times are missing/unparseable, fall back to the DURING rule so a
-  // data hiccup can't lock out legitimate staff.
-  const startTime = dayjs.tz(dbShift.start_time, PLAYA_TZ);
-  const endTime = dayjs.tz(dbShift.end_time, PLAYA_TZ);
-  const checkInType =
-    startTime.isValid() && endTime.isValid()
-      ? getCheckInType({ dateTime: dayjs(), endTime, startTime })
-      : SHIFT_DURING;
-
-  let isCheckInAllowed = false;
-  if (checkInType === SHIFT_DURING) {
-    isCheckInAllowed = isAdmin || isPeersCoordinator || isPeersShiftLead;
-  } else if (checkInType === SHIFT_PAST) {
-    isCheckInAllowed = isAdmin || isPeersCoordinator;
-  }
-  // SHIFT_FUTURE → not allowed for anyone.
-
-  if (!isCheckInAllowed) {
+  // Check-in unlocks at Gate open (mirrors the Returned toggle), not during
+  // the shift window. Uses wall-clock, matching GATE_OPEN_ISO checks elsewhere.
+  const isBeforeGateOpen = new Date() < new Date(GATE_OPEN_ISO);
+  if (!isLeadership || isBeforeGateOpen) {
     return {
       ok: false,
       status: 403,
-      message:
-        "You don't have permission to change check-in for this shift right now.",
+      message: isBeforeGateOpen
+        ? "Check-in opens at Gate open."
+        : "You don't have permission to change check-in for this shift right now.",
     };
   }
   return { ok: true };

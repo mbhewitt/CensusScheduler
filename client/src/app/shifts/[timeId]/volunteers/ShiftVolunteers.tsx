@@ -436,7 +436,6 @@ export const ShiftVolunteers = ({
     (volunteerItem) => volunteerItem.shiftboardId === shiftboardIdSession
   );
   let isVolunteerAddAvailable = false;
-  let isCheckInAvailable = false;
 
   switch (checkInType) {
     case SHIFT_FUTURE: {
@@ -451,21 +450,21 @@ export const ShiftVolunteers = ({
     }
     case SHIFT_DURING: {
       isVolunteerAddAvailable = true;
-      // Check-in during the live shift: PEERS Shift Leads, PEERS
-      // Coordinators, and Admins (papabear 2026-07-16).
-      isCheckInAvailable = isAdmin || isPeersCoordinator || isPeersShiftLead;
       break;
     }
     case SHIFT_PAST: {
       isVolunteerAddAvailable = isAdmin;
-      // Check-in after the shift: PEERS Coordinators and Admins only.
-      isCheckInAvailable = isAdmin || isPeersCoordinator;
       break;
     }
     default: {
       throw new Error(`Unknown check-in type: ${checkInType}`);
     }
   }
+  // PEERS: Check-in unlocks at Gate open (matching the "Returned" tablet
+  // toggle), not during the shift's own time window — leadership only
+  // (papabear 2026-07-27). Server-enforced in checkCheckInAuthorized.
+  let isCheckInAvailable =
+    (isAdmin || isPeersCoordinator || isPeersShiftLead) && !isBeforeGateOpen;
   // Canceled shifts: no one (including admins) can add volunteers
   // via this page — they have to flip the canceled flag back off
   // in the Update Time dialog first. Self-removes (the DataTable's
