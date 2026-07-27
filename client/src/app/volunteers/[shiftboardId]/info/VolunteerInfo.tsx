@@ -465,6 +465,13 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     welcomeComplete,
   } = data;
 
+  // e.g. "Aug 25 (PreTue)" — date plus its event datename, for the SAP box.
+  const sapDateLabel = sapStatus.earnedSapDate
+    ? `${formatDateDisplay(sapStatus.earnedSapDate)}${
+        sapStatus.earnedSapDatename ? ` (${sapStatus.earnedSapDatename})` : ""
+      }`
+    : "";
+
   const isAdmin = checkIsAdmin(accountType, roleListSession);
   const isPreOpen = arrivalDate
     ? PRE_OPEN_DATENAMES.includes(arrivalDate.datename)
@@ -1118,8 +1125,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                   <Stack spacing={1} alignItems="flex-start">
                     <span>
                       Your <strong>Setup Access Pass (SAP)</strong> for{" "}
-                      <strong>{formatDateDisplay(sapStatus.earnedSapDate)}</strong>{" "}
-                      is ready.
+                      <strong>{sapDateLabel}</strong> is ready.
                     </span>
                     <Button
                       href={`/api/volunteers/${shiftboardId}/sap/${sapStatus.sapFile.sapId}`}
@@ -1127,13 +1133,13 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                       variant="contained"
                       size="small"
                     >
-                      Download SAP PDF
+                      Download your SAP for {sapDateLabel}
                     </Button>
                   </Stack>
                 ) : (
                   <span>
                     You have <strong>earned a SAP</strong> for{" "}
-                    <strong>{formatDateDisplay(sapStatus.earnedSapDate)}</strong>.
+                    <strong>{sapDateLabel}</strong>.
                   </span>
                 )}
               </Alert>
