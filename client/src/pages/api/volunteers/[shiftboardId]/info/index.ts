@@ -9,6 +9,7 @@ import { pool } from "lib/database";
 import { withAuth } from "@/lib/withAuth";
 import { isOwnerOrAdmin } from "@/lib/authz";
 import { buildRequiredDays, PRE_OPEN_DATENAMES } from "lib/sapStatus";
+import { autoTargetDay } from "lib/sap";
 
 // Role IDs for VIP-specific roles
 const ROLE_STAFF_ID = 2000006;
@@ -129,6 +130,23 @@ const volunteerInfo = async (
         dayCspMap[row.datename] = Number(row.day_csp);
       }
 
+      // 6b. earliest SAP-earning (CSP>0) shift date — drives the auto SAP date
+      // (day before it), the same "appropriate date" the super-admin page uses.
+      const [dbFirstCsp] = await pool.query<RowDataPacket[]>(
+        `SELECT MIN(d.\`date\`) AS first_date
+        FROM op_volunteer_shifts vs
+        JOIN op_shift_time_position stp ON vs.time_position_id=stp.time_position_id
+        JOIN op_shift_times st ON stp.shift_times_id=st.shift_times_id
+        JOIN op_dates d ON st.start_date_id=d.date_id
+        WHERE vs.shiftboard_id=? AND vs.remove_shift=false
+        AND stp.remove_time_position=false AND st.remove_shift_time=false
+        AND COALESCE(stp.sap_points,0) > 0`,
+        [shiftboardId]
+      );
+      const firstCspShiftDate: string | null = dbFirstCsp[0]?.first_date
+        ? String(dbFirstCsp[0].first_date)
+        : null;
+
       // 7. required trainings (derived from volunteer's shift positions)
       const [dbTrainingList] = await pool.query<RowDataPacket[]>(
         `SELECT DISTINCT t.training_id, t.training_name, t.url
@@ -217,6 +235,20 @@ const volunteerInfo = async (
           }
         : null;
 
+      // The date a SAP has been earned/assigned FOR. Precedence:
+      //   1. an assigned SAP's date (admin may have picked a different date on
+      //      the SAP page — that's the "override"), else
+      //   2. the auto date (day before the first SAP-earning shift) IF the
+      //      volunteer has met the SAP requirements (>=12 CSP + each required
+      //      day covered). Null otherwise -> the earned-SAP box stays hidden.
+      const sapRequirementsMet =
+        cspFulfilled && requiredDays.every((d) => d.fulfilled);
+      const earnedSapDate: string | null = sapFile
+        ? String(sapFile.date)
+        : sapRequirementsMet
+          ? autoTargetDay(firstCspShiftDate)
+          : null;
+
       // role-based thresholds
       const roleThresholds: IResVolunteerInfo["roleThresholds"] = dbRoleList
         .filter((r) => r.census_shift_points !== null)
@@ -299,6 +331,7 @@ const volunteerInfo = async (
           bypass,
           bypassReason,
           sapFile,
+          earnedSapDate,
           totalCsp,
           requiredCsp,
           cspFulfilled,
