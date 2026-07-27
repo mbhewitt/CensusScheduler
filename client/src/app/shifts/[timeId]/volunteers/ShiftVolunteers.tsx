@@ -158,7 +158,15 @@ export const ShiftVolunteers = ({
     playaName: string;
     worldName: string;
     value: string;
-  }>({ open: false, shiftboardId: 0, playaName: "", worldName: "", value: "" });
+    location: string;
+  }>({
+    open: false,
+    shiftboardId: 0,
+    playaName: "",
+    worldName: "",
+    value: "",
+    location: "",
+  });
 
   // fetching, mutation, and revalidation
   // ------------------------------------------------------------
@@ -209,6 +217,7 @@ export const ShiftVolunteers = ({
                 isCheckedIn,
                 isOpenCamping: false,
                 isWalkIn,
+                location: "",
                 notes,
                 playaName,
                 positionName,
@@ -394,6 +403,7 @@ export const ShiftVolunteers = ({
     tabletNumber?: number | null;
     tabletReturned?: boolean;
     campAddress?: string;
+    location?: string;
   }) => {
     try {
       const result = await trigger({ body, method: "PATCH" });
@@ -418,6 +428,7 @@ export const ShiftVolunteers = ({
       shiftboardId: campAddressDialog.shiftboardId,
       updateType: UPDATE_TYPE_CAMP_ADDRESS,
       campAddress: campAddressDialog.value,
+      location: campAddressDialog.location,
     });
     setCampAddressDialog((prev) => ({ ...prev, open: false }));
   };
@@ -691,6 +702,7 @@ export const ShiftVolunteers = ({
       isCheckedIn,
       isOpenCamping,
       isWalkIn,
+      location,
       notes,
       playaName,
       positionName,
@@ -744,6 +756,7 @@ export const ShiftVolunteers = ({
               playaName,
               shiftboardId,
               value: campAddress,
+              location,
               worldName,
             });
           }}
@@ -1130,6 +1143,19 @@ export const ShiftVolunteers = ({
               }
               sx={{ mt: 1 }}
               value={campAddressDialog.value}
+              variant="standard"
+            />
+            <TextField
+              fullWidth
+              label="Landmark or other relevant information to help find you (optional)"
+              onChange={(event) =>
+                setCampAddressDialog((prev) => ({
+                  ...prev,
+                  location: event.target.value,
+                }))
+              }
+              sx={{ mt: 2 }}
+              value={campAddressDialog.location}
               variant="standard"
             />
           </DialogContent>

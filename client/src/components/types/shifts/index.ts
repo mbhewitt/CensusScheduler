@@ -48,6 +48,7 @@ export interface IResShiftVolunteerRowItem {
   isCheckedIn: string;
   isOpenCamping: boolean;
   isWalkIn: boolean;
+  location: string;
   notes: string;
   playaName: string;
   positionName: string;

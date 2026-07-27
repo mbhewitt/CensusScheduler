@@ -279,15 +279,18 @@ export const shiftVolunteerUpdate = async (
     // patch - camp address (leadership fills an open camper's address from the
     // shift page; writes the volunteer, not the assignment)
     case UPDATE_TYPE_CAMP_ADDRESS: {
-      const { campAddress, shiftboardId } = JSON.parse(req.body);
+      // The Needs-Address popup edits both the camp address and the landmark
+      // (location) in one save (papabear 2026-07-27).
+      const { campAddress, location, shiftboardId } = JSON.parse(req.body);
 
       await pool.query<RowDataPacket[]>(
         `UPDATE op_volunteers
         SET
           camp_address=?,
+          location=?,
           update_volunteer=true
         WHERE shiftboard_id=?`,
-        [campAddress ?? "", shiftboardId]
+        [campAddress ?? "", location ?? "", shiftboardId]
       );
 
       return res.status(200).json({ statusCode: 200, message: "OK" });

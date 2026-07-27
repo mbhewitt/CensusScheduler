@@ -134,6 +134,7 @@ const shiftVolunteers = async (
           vs.tablet_number,
           vs.tablet_returned,
           v.camp_address,
+          v.location,
           v.open_camping,
           EXISTS(
             SELECT 1 FROM op_volunteer_roles AS ovr
@@ -196,6 +197,7 @@ const shiftVolunteers = async (
         ({
           camp_address,
           is_trained,
+          location,
           noshow,
           notes,
           open_camping,
@@ -212,6 +214,7 @@ const shiftVolunteers = async (
             campAddress: camp_address ?? "",
             isCheckedIn: noshow,
             isOpenCamping: Boolean(open_camping),
+            location: location ?? "",
             tabletNumber: tablet_number ?? null,
             tabletReturned: Boolean(tablet_returned),
             // PEERS #walkin: a walk-in is a volunteer who holds NONE of the
