@@ -248,6 +248,17 @@ const volunteerInfo = async (
         : sapRequirementsMet
           ? autoTargetDay(firstCspShiftDate)
           : null;
+      // datename that goes with earnedSapDate (e.g. "PreTue"), so the UI can
+      // show "Aug 25 (PreTue)". Assigned SAP carries its own; for the auto date
+      // look it up in the event calendar.
+      const dateToDatename = new Map<string, string>(
+        dbDateList.map((d) => [String(d.date), String(d.datename)])
+      );
+      const earnedSapDatename: string | null = sapFile
+        ? String(sapFile.datename)
+        : earnedSapDate
+          ? (dateToDatename.get(earnedSapDate) ?? null)
+          : null;
 
       // role-based thresholds
       const roleThresholds: IResVolunteerInfo["roleThresholds"] = dbRoleList
@@ -332,6 +343,7 @@ const volunteerInfo = async (
           bypassReason,
           sapFile,
           earnedSapDate,
+          earnedSapDatename,
           totalCsp,
           requiredCsp,
           cspFulfilled,

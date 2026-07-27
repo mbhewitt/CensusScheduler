@@ -47,6 +47,8 @@ export interface IResVolunteerInfo {
     // SAP's date if one exists (admin override), else the auto date when
     // requirements are met, else null (earned-SAP box stays hidden).
     earnedSapDate: string | null;
+    // datename for earnedSapDate (e.g. "PreTue"), shown alongside the date.
+    earnedSapDatename: string | null;
     totalCsp: number;
     requiredCsp: number;
     cspFulfilled: boolean;
