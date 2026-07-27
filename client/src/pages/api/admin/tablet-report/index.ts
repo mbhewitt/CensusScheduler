@@ -17,8 +17,8 @@ import { pool } from "lib/database";
 // contact info captured on the Tablet Responsibility Agreement. Coordinator
 // shifts (PCoC / PCiO) don't carry tablets and are excluded.
 //
-// Columns: Shift / Name / Playa name / Email / Camp name / Camp address /
-// Phone / Tablet # / Landmark / Open Camping.
+// Columns: Shift / Tablet # / Name / Playa name / Email / Camp name /
+// Camp address / Phone / Landmark / Open Camping.
 //
 // Guard: SuperAdmin (1), Admin (2), PEERS Coordinator, or PEERS Shift Lead —
 // "Shift Leads & up" (papabear). Returns 403 otherwise.
@@ -110,13 +110,13 @@ const tabletReport = async (
 
   const header = [
     "Shift",
+    "Tablet #",
     "Name",
     "Playa name",
     "Email",
     "Camp name",
     "Camp address",
     "Phone",
-    "Tablet #",
     "Landmark",
     "Open Camping",
   ];
@@ -125,13 +125,13 @@ const tabletReport = async (
     ...rows.map((r) =>
       [
         r.shift_label,
+        r.tablet_number,
         r.world_name,
         r.playa_name,
         r.email,
         r.camp_name,
         r.camp_address,
         r.phone,
-        r.tablet_number,
         r.location,
         r.open_camping ? "Yes" : "",
       ]

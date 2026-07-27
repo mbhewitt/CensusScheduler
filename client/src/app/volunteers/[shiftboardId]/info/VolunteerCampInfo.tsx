@@ -118,6 +118,12 @@ export const VolunteerCampInfo = ({
               }
               label="I'm in Open Camping"
             />
+            {form.openCamping && (
+              <Typography variant="body1">
+                We will collect your address when you check-in for your first
+                shift!
+              </Typography>
+            )}
             <TextField
               fullWidth
               label="Your Camp Address"
