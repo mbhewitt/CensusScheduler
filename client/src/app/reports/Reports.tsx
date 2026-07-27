@@ -129,38 +129,46 @@ export const Reports = () => {
                     <Divider sx={{ my: 3 }} />
                   </>
                 )}
-                {/* New Volunteers mailing list — admins + coordinators */}
-                <Typography component="h2" variant="h6" sx={{ mb: 1 }}>
-                  New Volunteers for Mailing List
-                </Typography>
-                <Typography color="text.secondary" sx={{ mb: 2 }}>
-                  Volunteers who signed up on the scheduler without coming
-                  through a HIVE link. They stay on this list even after they
-                  later complete training, so you don&rsquo;t lose anyone
-                  between downloads — until someone clears it. Columns:
-                  signed-up date, name, playa name, and email.
-                </Typography>
-                <Stack
-                  alignItems={{ sm: "center" }}
-                  direction={{ xs: "column", sm: "row" }}
-                  spacing={6}
-                >
-                  <Button
-                    href="/api/admin/new-volunteers-report"
-                    startIcon={<DownloadIcon />}
-                    variant="contained"
-                  >
-                    New Volunteers for Mailing List (CSV)
-                  </Button>
-                  <Button
-                    color="error"
-                    onClick={() => setIsClearDialogOpen(true)}
-                    startIcon={<DeleteSweepIcon />}
-                    variant="outlined"
-                  >
-                    Clear Mailing List Report
-                  </Button>
-                </Stack>
+                {/* New Volunteers mailing list — admins + coordinators only.
+                    A Shift Lead reaches this page (for the Tablet Report) but
+                    must NOT see this section; the CSV endpoint 403s them, but
+                    the section itself has to be gated too (papabear
+                    2026-07-27). */}
+                {(isAdmin || isCoordinator) && (
+                  <>
+                    <Typography component="h2" variant="h6" sx={{ mb: 1 }}>
+                      New Volunteers for Mailing List
+                    </Typography>
+                    <Typography color="text.secondary" sx={{ mb: 2 }}>
+                      Volunteers who signed up on the scheduler without coming
+                      through a HIVE link. They stay on this list even after
+                      they later complete training, so you don&rsquo;t lose
+                      anyone between downloads — until someone clears it.
+                      Columns: signed-up date, name, playa name, and email.
+                    </Typography>
+                    <Stack
+                      alignItems={{ sm: "center" }}
+                      direction={{ xs: "column", sm: "row" }}
+                      spacing={6}
+                    >
+                      <Button
+                        href="/api/admin/new-volunteers-report"
+                        startIcon={<DownloadIcon />}
+                        variant="contained"
+                      >
+                        New Volunteers for Mailing List (CSV)
+                      </Button>
+                      <Button
+                        color="error"
+                        onClick={() => setIsClearDialogOpen(true)}
+                        startIcon={<DeleteSweepIcon />}
+                        variant="outlined"
+                      >
+                        Clear Mailing List Report
+                      </Button>
+                    </Stack>
+                  </>
+                )}
                 {/* Tablet report — Shift Leads & up. The mailing-list section
                     above is admin/coord only, so add a divider before this only
                     when it rendered. */}
