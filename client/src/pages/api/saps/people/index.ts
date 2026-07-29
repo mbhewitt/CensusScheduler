@@ -1,6 +1,7 @@
 import type { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import { ROLE_BEHAVIORAL_STANDARDS_ID } from "@/constants";
 import { withSuperAdmin } from "@/lib/withSuperAdmin";
 import { pool } from "lib/database";
 import { autoTargetDay, pickAutoSap } from "lib/sap";
@@ -40,6 +41,8 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
     [volRows],
     [offbookRows],
     [staffRows],
+    [bsRows],
+    [trainingRows],
     [totalCspRows],
     [dayCspRows],
     [firstShiftRows],
@@ -61,6 +64,28 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
       `SELECT shiftboard_id FROM op_volunteer_roles
         WHERE role_id = ? AND remove_role = false`,
       [ROLE_STAFF_ID],
+    ),
+    pool.query<RowDataPacket[]>(
+      `SELECT shiftboard_id FROM op_volunteer_roles
+        WHERE role_id = ? AND remove_role = false`,
+      [ROLE_BEHAVIORAL_STANDARDS_ID],
+    ),
+    // Trainings required by each volunteer's signed-up positions, with
+    // completion = volunteer holds the training's role (same rule as the
+    // volunteer info endpoint).
+    pool.query<RowDataPacket[]>(
+      `SELECT DISTINCT vs.shiftboard_id, t.training_name,
+              (vr.shiftboard_id IS NOT NULL) AS completed
+         FROM op_volunteer_shifts vs
+         JOIN op_shift_time_position stp ON vs.time_position_id = stp.time_position_id
+         JOIN op_position_trainings pt ON stp.position_type_id = pt.position_type_id
+         JOIN op_trainings t ON pt.training_id = t.training_id
+         LEFT JOIN op_volunteer_roles vr
+                ON vr.shiftboard_id = vs.shiftboard_id
+               AND vr.role_id = t.role_id
+               AND vr.remove_role = false
+        WHERE vs.remove_shift = false AND stp.remove_time_position = false
+          AND pt.delete_position_training = false AND t.delete_training = false`,
     ),
     pool.query<RowDataPacket[]>(
       `SELECT vs.shiftboard_id, COALESCE(SUM(stp.sap_points), 0) AS total_csp
@@ -112,6 +137,15 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
   for (const d of dateRows) dateToDayname.set(String(d.date), d.datename);
 
   const staffSet = new Set<number>(staffRows.map((r) => r.shiftboard_id));
+  const bsSet = new Set<number>(bsRows.map((r) => r.shiftboard_id));
+
+  const missingTrainingsMap = new Map<number, string[]>();
+  for (const r of trainingRows) {
+    if (r.completed) continue;
+    const list = missingTrainingsMap.get(r.shiftboard_id) ?? [];
+    list.push(String(r.training_name));
+    missingTrainingsMap.set(r.shiftboard_id, list);
+  }
   const totalCspMap = new Map<number, number>();
   for (const r of totalCspRows)
     totalCspMap.set(r.shiftboard_id, Number(r.total_csp));
@@ -160,7 +194,12 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
       v.arrival_datename ?? "",
       dayCspMap.get(v.shiftboard_id) ?? {},
     );
+    // SAP to-do criteria: required work days + signed behavioral standards +
+    // every training their positions require.
     const missing = requiredDays.filter((d) => !d.fulfilled).map((d) => d.label);
+    if (!bsSet.has(v.shiftboard_id)) missing.push("Sign Behavioral Standards");
+    for (const t of missingTrainingsMap.get(v.shiftboard_id) ?? [])
+      missing.push(`${t} training`);
     const totalCsp = totalCspMap.get(v.shiftboard_id) ?? 0;
     return {
       kind: "volunteer" as const,
