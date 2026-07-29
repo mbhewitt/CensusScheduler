@@ -238,7 +238,8 @@ const loadSheets = async (
     FROM op_shift_times AS st
     JOIN op_shift_name AS sn
       ON sn.shift_name_id=st.shift_name_id AND sn.delete_shift=false
-    JOIN op_shift_category AS sc ON sc.shift_category_id=sn.shift_category_id
+    JOIN op_shift_category AS sc
+      ON sc.shift_category_id=sn.shift_category_id AND sc.delete_category=false
     JOIN op_dates AS d ON d.date_id=st.start_date_id
     JOIN op_shift_time_position AS stp
       ON stp.shift_times_id=st.shift_times_id AND stp.remove_time_position=false
@@ -603,14 +604,18 @@ const gatePage1 = (pdf: Pdf, sheet: Sheet, counts: Map<number, number>) => {
     .filter((e) => e.name && !e.isLead && !e.isDriver)
     .map((e) => ({ ...e, score: counts.get(e.shiftboardId ?? -1) ?? 0 }))
     .sort((a, b) => b.score - a.score);
-  const rowH = 15.5;
-  for (let i = 0; i < 31; i++) {
+  // pad to the legacy 31 rows; a fuller shift prints everyone by shrinking
+  // the rows instead of dropping names (pdf-lib has no auto page break)
+  const rowCount = Math.max(31, samplers.length);
+  const rowH = Math.min(15.5, (31 * 15.5) / rowCount);
+  for (let i = 0; i < rowCount; i++) {
     const e = samplers[i];
+    const s = rowH < 12 ? 7 : 9;
     pdf.row(
       colWs,
       [
         { t: String(i + 1), s: 7 },
-        { t: e?.name ?? "", s: 9 },
+        { t: e?.name ?? "", s },
         { t: e ? gateRoleAbbrev(e.position) : "", s: 8, align: "c" },
         { t: e ? String(e.score) : "", s: 8, align: "c" },
         {},
@@ -696,11 +701,19 @@ const rosterPage = (pdf: Pdf, sheet: Sheet) => {
   const workers = sheet.entries.filter(
     (e) => e.name && !e.isLead && !e.isDriver
   );
-  for (let i = 0; i < Math.max(11, workers.length); i++) {
+  // pad to the legacy 11 rows; a fuller shift prints everyone by shrinking
+  // the rows so the checklist below still fits on the page
+  const rowCount = Math.max(11, workers.length);
+  const rowH = Math.min(19, (11 * 19) / rowCount);
+  for (let i = 0; i < rowCount; i++) {
     pdf.row(
       colWs,
-      [{ t: String(i + 1), s: 7 }, { t: workers[i]?.name ?? "", s: 9 }, {}],
-      19
+      [
+        { t: String(i + 1), s: 7 },
+        { t: workers[i]?.name ?? "", s: rowH < 12 ? 7 : 9 },
+        {},
+      ],
+      rowH
     );
   }
   pdf.y -= 12;
@@ -875,6 +888,8 @@ const checkInSheets = async (pdf: Pdf) => {
       JOIN op_shift_times AS st
         ON st.shift_times_id=stp.shift_times_id
         AND st.remove_shift_time=false AND st.canceled=false
+      JOIN op_shift_name AS sn
+        ON sn.shift_name_id=st.shift_name_id AND sn.delete_shift=false
       JOIN op_dates AS d ON d.date_id=st.start_date_id
       WHERE vs.remove_shift=false
       GROUP BY vs.shiftboard_id
