@@ -32,15 +32,16 @@ import { ROLE_BEHAVIORAL_STANDARDS_ID } from "@/constants";
 
 const PAGE_W = 612;
 const PAGE_H = 792;
-const M = 32;
+const M = 28;
 const CONTENT_W = PAGE_W - 2 * M;
 
 const BLACK = rgb(0, 0, 0);
 const RED = rgb(1, 0, 0);
 const GREEN = rgb(0, 0.5, 0);
 
-// "Passed online RS-test-out" (op_roles 1000011) has no constants.ts entry
-const ROLE_RS_TEST_OUT_ID = 1000011;
+// op_roles ids without constants.ts entries
+const ROLE_RS_TEST_OUT_ID = 1000011; // "Passed online RS-test-out"
+const ROLE_RS_TRAINING_COMPLETE_ID = 2000002; // "TrainingRandomSamplingComplete"
 
 // a shift time whose CSP positions total at most this many slots goes on the
 // burn-wide Small Shifts page instead of getting day-page rows ("single or
@@ -339,7 +340,7 @@ interface GateEvent {
 interface ScoreData {
   history: Map<number, ScoreState>;
   events: Map<number, GateEvent[]>; // current-year gate signups, date order
-  training: Map<number, string[]>; // current-year training signup ymds
+  trained: Set<number>; // holds TrainingRandomSamplingComplete role
 }
 
 const gateWeight = (position: string, isLead: boolean): number =>
@@ -367,8 +368,7 @@ const loadScoreData = async (): Promise<ScoreData> => {
   const [eventRows] = await pool.query<RowDataPacket[]>(
     `SELECT vs.shiftboard_id, DATE_FORMAT(d.date, '%Y%m%d') AS ymd,
       COALESCE(NULLIF(stp.position_alias, ''), pt.position) AS position,
-      COALESCE(pt.lead, 0) AS is_lead,
-      sc.department
+      COALESCE(pt.lead, 0) AS is_lead
     FROM op_volunteer_shifts AS vs
     JOIN op_shift_time_position AS stp
       ON stp.time_position_id=vs.time_position_id AND stp.remove_time_position=false
@@ -380,33 +380,36 @@ const loadScoreData = async (): Promise<ScoreData> => {
       ON sn.shift_name_id=st.shift_name_id AND sn.delete_shift=false
     JOIN op_shift_category AS sc ON sc.shift_category_id=sn.shift_category_id
     JOIN op_dates AS d ON d.date_id=st.start_date_id
-    WHERE vs.remove_shift=false
-      AND (sc.shift_category = 'Gate Sampling' OR sc.department = 'Training')
+    WHERE vs.remove_shift=false AND sc.shift_category = 'Gate Sampling'
     ORDER BY vs.shiftboard_id, d.date`
   );
   const events = new Map<number, GateEvent[]>();
-  const training = new Map<number, string[]>();
   for (const row of eventRows) {
+    if (/driver/i.test(row.position as string)) continue;
     const sid = row.shiftboard_id as number;
-    if (row.department === "Training") {
-      const list = training.get(sid) ?? [];
-      list.push(row.ymd as string);
-      training.set(sid, list);
-    } else if (!/driver/i.test(row.position as string)) {
-      const list = events.get(sid) ?? [];
-      list.push({
-        ymd: row.ymd as string,
-        w: gateWeight(row.position as string, row.is_lead === 1),
-      });
-      events.set(sid, list);
-    }
+    const list = events.get(sid) ?? [];
+    list.push({
+      ymd: row.ymd as string,
+      w: gateWeight(row.position as string, row.is_lead === 1),
+    });
+    events.set(sid, list);
   }
-  return { history, events, training };
+
+  const [trainedRows] = await pool.query<RowDataPacket[]>(
+    `SELECT shiftboard_id FROM op_volunteer_roles
+    WHERE role_id = ? AND remove_role=false`,
+    [ROLE_RS_TRAINING_COMPLETE_ID]
+  );
+  const trained = new Set<number>(
+    trainedRows.map((row) => row.shiftboard_id as number)
+  );
+  return { history, events, trained };
 };
 
 // walk this year's events strictly before the sheet date, then apply the
-// legacy display bonuses: decay on a stale gap, +2/+1 recency, +2 for
-// training within 60 days, all times the review multiplier
+// legacy display bonuses: decay on a stale gap, +2/+1 recency, +2 for a
+// completed RS training (role, per Mew — so trainees are never TTo), all
+// times the review multiplier
 const gateScore = (data: ScoreData, sid: number, sheetYmd: string): number => {
   const hist = data.history.get(sid);
   let total = hist?.total ?? 0;
@@ -423,10 +426,7 @@ const gateScore = (data: ScoreData, sid: number, sheetYmd: string): number => {
     recency = gap <= 30 ? 2 : 1;
     if (gap > 30) total *= 0.7;
   }
-  const trained = (data.training.get(sid) ?? []).some((t) => {
-    const gap = daysBetween(t, sheetYmd);
-    return gap >= 0 && gap < 60;
-  });
+  const trained = data.trained.has(sid);
   const rv = hist?.rv && hist.rv > 0 ? hist.rv : 1;
   return Math.ceil((total + recency + (trained ? 2 : 0)) * rv);
 };
@@ -584,32 +584,37 @@ class Pdf {
   }
 
   footer(note?: string) {
+    // legacy sheets carry a "Last updated:" stamp; ours is generation time
+    // because the data is read live
     const now = new Date();
-    const stamp = `Printed ${now.toLocaleString("en-US", {
+    const stamp = `Last updated: ${now.toLocaleString("en-US", {
       month: "short",
       day: "numeric",
       hour: "numeric",
       minute: "2-digit",
     })}`;
-    this.text(stamp, PAGE_W - M - 90, M - 14, 7);
+    const w = this.fonts.helv.widthOfTextAtSize(stamp, 7);
+    this.text(stamp, PAGE_W - M - w, M - 14, 7);
     if (note) this.text(note, M, M - 14, 7);
   }
 
+  // legacy: "2025 Gate Sampling Shift --- Wed (Aug 20) 11:30 - 15:30 Roster"
+  // (24-hour times; we add the datename)
   title(sheet: Sheet, suffix = "Roster") {
     this.text(
-      `${sheet.yr} ${sheet.name}${suffix ? ` ${suffix}` : ""} - ${sheet.datename} (${sheet.dowMd})  ${to12h(sheet.start)}-${to12h(sheet.end)}`,
+      `${sheet.yr} ${sheet.name} Shift --- ${sheet.datename} (${sheet.dowMd}) ${sheet.start} - ${sheet.end}${suffix ? ` ${suffix}` : ""}`,
       M,
-      this.y - 12,
-      13,
+      this.y - 14,
+      15,
       this.fonts.bold,
       CONTENT_W
     );
-    this.y -= 22;
+    this.y -= 25;
   }
 
   leadsLine(sheet: Sheet) {
-    // legacy: "Shift Leads:(names bold) -- Driver: (names bold)" using playa
-    // names only, meal right-aligned
+    // legacy gate: "Shift Leads:(names bold) -- Driver: (names bold)" using
+    // playa names only, meal right-aligned
     const leads = sheet.entries
       .filter((e) => e.isLead && e.playa)
       .map((e) => e.playa)
@@ -619,26 +624,26 @@ class Pdf {
       .map((e) => e.playa)
       .join(", ");
     const segs: [string, keyof Fonts][] = [
-      ["Shift Leads: (", "helv"],
+      ["Shift Leads:(", "helv"],
       [leads || "        ", "bold"],
       [")", "helv"],
     ];
     if (sheet.entries.some((e) => e.isDriver)) {
       segs.push(
-        ["   Driver: (", "helv"],
+        [" -- Driver: (", "helv"],
         [drivers || "        ", "bold"],
         [")", "helv"]
       );
     }
     const mealW = sheet.meal
-      ? this.fonts.helv.widthOfTextAtSize(`(${sheet.meal})`, 10) + 10
+      ? this.fonts.helv.widthOfTextAtSize(`(${sheet.meal})`, 11) + 10
       : 0;
     const width = (size: number) =>
       segs.reduce(
         (w, [t, f]) => w + this.fonts[f].widthOfTextAtSize(txt(t), size),
         0
       );
-    let size = 10;
+    let size = 12;
     while (size > 6.5 && width(size) > CONTENT_W - mealW) size -= 0.5;
     const y = this.y - 10;
     let x = M;
@@ -651,16 +656,16 @@ class Pdf {
         `(${sheet.meal})`,
         PAGE_W - M - mealW + 10,
         y,
-        10
+        11
       );
     }
-    this.y -= 18;
+    this.y -= 20;
   }
 
   // legacy checklist style: bordered two-column table, empty check cell +
   // wrapped item text; returns nothing, advances the cursor
-  checkTable(x: number, width: number, items: string[], size = 7.5) {
-    const checkW = 18;
+  checkTable(x: number, width: number, items: string[], size = 9) {
+    const checkW = 22;
     const textW = width - checkW;
     const lineH = size + 2.5;
     for (const item of items) {
@@ -719,31 +724,33 @@ class Pdf {
         ["Back at Lab", end, false]
       );
     }
-    const colWs = (kind === "Gate" ? [120, 80, 110, 80] : [130, 90, 120]).map(
+    const colWs = (kind === "Gate" ? [130, 90, 120, 90] : [130, 90, 120]).map(
       (w) => w * scale
     );
+    const hs = 11 * Math.max(scale, 0.85);
     const header: Cell[] = [
-      { t: sheet.meal || "Meal", f: this.fonts.bold, s: 9 },
-      { t: "Estimate", f: this.fonts.bold, s: 9, align: "c" },
-      { t: "Actual", f: this.fonts.bold, s: 9, align: "c" },
+      { t: sheet.meal || "Meal", f: this.fonts.bold, s: hs },
+      { t: "Estimate", f: this.fonts.bold, s: hs, align: "c" },
+      { t: "Actual", f: this.fonts.bold, s: hs, align: "c" },
     ];
     if (kind === "Gate") {
-      header.push({ t: "Headcount", f: this.fonts.bold, s: 9, align: "c" });
+      header.push({ t: "Headcount", f: this.fonts.bold, s: hs, align: "c" });
     }
-    this.row(colWs, header, 16, true, x0);
+    this.row(colWs, header, 18, true, x0);
     for (const [label, min, boldTime] of rows) {
+      const rs = 10.5 * Math.max(scale, 0.85);
       const cells: Cell[] = [
-        { t: label, s: 9 },
+        { t: label, s: rs },
         {
           t: fmt12(min),
-          s: 9,
+          s: rs,
           align: "c",
           f: boldTime ? this.fonts.bold : this.fonts.helv,
         },
         {},
       ];
       if (kind === "Gate") cells.push({});
-      this.row(colWs, cells, 16, true, x0);
+      this.row(colWs, cells, 18, true, x0);
     }
   }
 }
@@ -772,18 +779,18 @@ const gatePage1 = (pdf: Pdf, sheet: Sheet, scoreData: ScoreData) => {
   pdf.title(sheet);
   pdf.leadsLine(sheet);
 
-  const colWs = [46, 178, 32, 38, 44, 210];
+  const colWs = [52, 198, 30, 40, 40, 196];
   pdf.row(
     colWs,
     [
-      { t: "P-L-C-NS", s: 7, align: "c" },
-      { t: "Name", f: pdf.fonts.bold, align: "c" },
+      { t: "P-L-C-NS", s: 8, align: "c" },
+      { t: "Name", f: pdf.fonts.bold, s: 9, align: "c" },
       { t: "", align: "c" },
-      { t: "Score", s: 7, align: "c" },
-      { t: "Lane #", s: 7, align: "c" },
-      { t: "Met/Exceeded Expectations and Other Notes", s: 7, align: "c" },
+      { t: "Score", s: 8, align: "c" },
+      { t: "Lane #", s: 8, align: "c" },
+      { t: "Met/Exceeded Expectations and Other Notes", s: 8, align: "c" },
     ],
-    15
+    16
   );
   const samplers = sheet.entries
     .filter((e) => e.name && !e.isLead && !e.isDriver)
@@ -795,17 +802,17 @@ const gatePage1 = (pdf: Pdf, sheet: Sheet, scoreData: ScoreData) => {
   // pad to the legacy 31 rows; a fuller shift prints everyone by shrinking
   // the rows instead of dropping names (pdf-lib has no auto page break)
   const rowCount = Math.max(31, samplers.length);
-  const rowH = Math.min(15.5, (31 * 15.5) / rowCount);
+  const rowH = Math.min(16.8, (31 * 16.8) / rowCount);
   for (let i = 0; i < rowCount; i++) {
     const e = samplers[i];
-    const s = rowH < 12 ? 7 : 9;
+    const s = rowH < 12 ? 7.5 : 10;
     pdf.row(
       colWs,
       [
-        { t: String(i + 1), s: 7 },
+        { t: String(i + 1), s: 8 },
         { t: e?.name ?? "", s },
-        { t: e ? gateRoleAbbrev(e.position, e.score) : "", s: 8, align: "c" },
-        { t: e ? String(e.score) : "", s: 8, align: "c" },
+        { t: e ? gateRoleAbbrev(e.position, e.score) : "", s: 9, align: "c" },
+        { t: e ? String(e.score) : "", f: pdf.fonts.bold, s: 13, align: "c" },
         {},
         {},
       ],
@@ -817,35 +824,36 @@ const gatePage1 = (pdf: Pdf, sheet: Sheet, scoreData: ScoreData) => {
   // bottom left: estimates (legacy hardcodes minsamp=10, interval=2);
   // bottom right: per-lane clicker tally grid
   const blockTop = pdf.y;
-  const estWs = [86, 44];
-  pdf.row(estWs, [{ t: "Estimated Lanes", s: 8 }, { t: "5", f: pdf.fonts.bold, s: 11, align: "c" }], 17);
-  pdf.row(estWs, [{ t: "Estimated Int#", s: 8 }, { t: "2", f: pdf.fonts.bold, s: 11, align: "c" }], 17);
-  pdf.text("Actual Interval#  (1-5) / (6-10)", M, pdf.y - 10, 7);
-  pdf.y -= 14;
-  pdf.row([65, 65], [{}, {}], 17);
+  const estWs = [100, 46];
+  pdf.row(estWs, [{ t: "Estimated Lanes", s: 9 }, { t: "5", f: pdf.fonts.bold, s: 13, align: "c" }], 19);
+  pdf.row(estWs, [{ t: "Estimated Int#", s: 9 }, { t: "2", f: pdf.fonts.bold, s: 13, align: "c" }], 19);
+  pdf.text("Actual Interval#  (1-5) / (6-10)", M + 6, pdf.y - 12, 8.5);
+  pdf.y -= 16;
+  pdf.row([73, 73], [{}, {}], 20);
 
-  const laneX = M + 160;
-  const laneW = 32;
+  const laneX = M + 180;
+  const laneW = 33;
   let y = blockTop;
   const laneCols = ["Lane", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "6-10"];
   let cx = laneX;
   for (const label of laneCols) {
-    pdf.page.drawRectangle({ x: cx, y: y - 15, width: laneW, height: 15, borderWidth: 0.6, borderColor: BLACK });
-    const tw = pdf.fonts.helv.widthOfTextAtSize(label, 8);
-    pdf.text(label, cx + (laneW - tw) / 2, y - 11, 8);
+    pdf.page.drawRectangle({ x: cx, y: y - 18, width: laneW, height: 18, borderWidth: 0.6, borderColor: BLACK });
+    const size = label.length > 4 ? 8 : 12;
+    const tw = pdf.fonts.helv.widthOfTextAtSize(label, size);
+    pdf.text(label, cx + (laneW - tw) / 2, y - 14.5, size);
     cx += laneW;
   }
-  y -= 15;
+  y -= 18;
   for (let r = 0; r < 2; r++) {
     cx = laneX;
     for (let i = 0; i < laneCols.length; i++) {
-      pdf.page.drawRectangle({ x: cx, y: y - 25, width: laneW, height: 25, borderWidth: 0.6, borderColor: BLACK });
+      pdf.page.drawRectangle({ x: cx, y: y - 26, width: laneW, height: 26, borderWidth: 0.6, borderColor: BLACK });
       cx += laneW;
     }
     if (r === 0) {
-      pdf.text("Click", laneX + 4, y - 15, 8, pdf.fonts.bold);
+      pdf.text("Click", laneX + 4, y - 16, 9, pdf.fonts.bold);
     }
-    y -= 25;
+    y -= 26;
   }
   pdf.footer("Score = sampling experience (2-yr walk x reviews); TTo = no experience");
 };
@@ -859,9 +867,9 @@ const gatePage2 = (pdf: Pdf, sheet: Sheet) => {
 
   const half = CONTENT_W / 2;
   const top = pdf.y;
-  pdf.text("Checklist (check when complete):", M, pdf.y - 12, 11, pdf.fonts.bold);
-  pdf.y -= 18;
-  pdf.checkTable(M, half, CHECKLISTS["Gate Sampling"], 8.5);
+  pdf.text("Checklist(check when complete):", M, pdf.y - 13, 13, pdf.fonts.bold);
+  pdf.y -= 20;
+  pdf.checkTable(M, half, CHECKLISTS["Gate Sampling"], 10);
   pdf.text("Notes:", M + half + 10, top - 12, 11, pdf.fonts.bold);
   pdf.footer();
 };
@@ -871,17 +879,35 @@ const gatePage2 = (pdf: Pdf, sheet: Sheet) => {
 const rosterPage = (pdf: Pdf, sheet: Sheet) => {
   pdf.newPage();
   pdf.title(sheet);
-  pdf.leadsLine(sheet);
 
-  const colWs = [46, 190, 312];
+  // legacy: "----Shift Lead: Names----Driver(Name)" italic label
+  const leads = sheet.entries
+    .filter((e) => e.isLead && e.playa)
+    .map((e) => e.playa)
+    .join(", ");
+  const driver = sheet.entries.find((e) => e.isDriver && e.playa)?.playa;
+  const y = pdf.y - 11;
+  let x = M;
+  const seg = (t: string, font: PDFFont, size = 11) => {
+    pdf.text(t, x, y, size, font);
+    x += font.widthOfTextAtSize(txt(t), size);
+  };
+  seg("----", pdf.fonts.helv);
+  seg("Shift Lead: ", pdf.fonts.ital);
+  seg(leads || "        ", pdf.fonts.helv);
+  seg("----", pdf.fonts.helv);
+  if (driver) seg(`Driver(${driver})`, pdf.fonts.helv);
+  pdf.y -= 20;
+
+  const colWs = [52, 210, 294];
   pdf.row(
     colWs,
     [
-      { t: "P-L-C-NS", s: 7, align: "c" },
-      { t: "Name", f: pdf.fonts.bold, align: "c" },
-      { t: "Met/Exceeded Expectations and Other Notes", s: 7, align: "c" },
+      { t: "P-L-C-NS", s: 8, align: "c" },
+      { t: "Name", f: pdf.fonts.bold, s: 9, align: "c" },
+      { t: "Met/Exceeded Expectations and Other Notes", s: 8, align: "c" },
     ],
-    15
+    16
   );
   const workers = sheet.entries.filter(
     (e) => e.name && !e.isLead && !e.isDriver
@@ -889,13 +915,13 @@ const rosterPage = (pdf: Pdf, sheet: Sheet) => {
   // pad to the legacy 11 rows; a fuller shift prints everyone by shrinking
   // the rows so the checklist below still fits on the page
   const rowCount = Math.max(11, workers.length);
-  const rowH = Math.min(19, (11 * 19) / rowCount);
+  const rowH = Math.min(21, (11 * 21) / rowCount);
   for (let i = 0; i < rowCount; i++) {
     pdf.row(
       colWs,
       [
-        { t: String(i + 1), s: 7 },
-        { t: workers[i]?.name ?? "", s: rowH < 12 ? 7 : 9 },
+        { t: String(i + 1), s: 8 },
+        { t: workers[i]?.name ?? "", s: rowH < 12 ? 7.5 : 10 },
         {},
       ],
       rowH
@@ -910,8 +936,8 @@ const rosterPage = (pdf: Pdf, sheet: Sheet) => {
   const rightW = CONTENT_W - half - 14;
   const top = pdf.y;
 
-  pdf.text("Checklist (check when complete):", M, pdf.y - 12, 11, pdf.fonts.bold);
-  pdf.y -= 18;
+  pdf.text("Checklist(check when complete):", M, pdf.y - 13, 13, pdf.fonts.bold);
+  pdf.y -= 20;
   const checklist =
     CHECKLISTS[sheet.category] ?? CHECKLISTS["Airport Sampling"];
   pdf.checkTable(M, half, checklist);
@@ -924,14 +950,14 @@ const rosterPage = (pdf: Pdf, sheet: Sheet) => {
     const boxW = (CONTENT_W - half - 14) / 2;
     let cx = rightX;
     for (const label of ["Clicker #", "Interval #"]) {
-      pdf.text(label, cx + 4, pdf.y - 10, 8, pdf.fonts.bold);
-      pdf.page.drawRectangle({ x: cx, y: pdf.y - 40, width: boxW - 6, height: 26, borderWidth: 0.6, borderColor: BLACK });
+      pdf.text(label, cx + 4, pdf.y - 11, 9, pdf.fonts.bold);
+      pdf.page.drawRectangle({ x: cx, y: pdf.y - 44, width: boxW - 6, height: 28, borderWidth: 0.6, borderColor: BLACK });
       cx += boxW;
     }
-    pdf.y -= 46;
-    pdf.text("# of Planes", rightX + 4, pdf.y - 10, 8, pdf.fonts.bold);
-    pdf.page.drawRectangle({ x: rightX, y: pdf.y - 40, width: boxW - 6, height: 26, borderWidth: 0.6, borderColor: BLACK });
-    pdf.y -= 52;
+    pdf.y -= 50;
+    pdf.text("# of Planes", rightX + 4, pdf.y - 11, 9, pdf.fonts.bold);
+    pdf.page.drawRectangle({ x: rightX, y: pdf.y - 44, width: boxW - 6, height: 28, borderWidth: 0.6, borderColor: BLACK });
+    pdf.y -= 56;
     pdf.mealTiming(sheet, "Airport", rightX, 0.72);
   } else {
     // legacy: a bordered capture box beside the checklist with the prompt
@@ -957,9 +983,9 @@ const rosterPage = (pdf: Pdf, sheet: Sheet) => {
     : isAirport
       ? "Interactions with Airport Personnel (briefly describe the interaction and with whom), questions, comments, or suggestions for future:"
       : ""; // lab hosts capture questions in the box beside the checklist
-  for (const line of pdf.wrap(bottomPrompt, 8.5, CONTENT_W)) {
-    pdf.text(line, M, pdf.y - 10, 8.5);
-    pdf.y -= 11;
+  for (const line of pdf.wrap(bottomPrompt, 9.5, CONTENT_W)) {
+    pdf.text(line, M, pdf.y - 11, 9.5);
+    pdf.y -= 12;
   }
   pdf.footer();
 };
@@ -1028,35 +1054,35 @@ const dailySheets = (pdf: Pdf, sheets: Sheet[], marks: Map<number, Marks>) => {
     list.push(sheet);
     byDay.set(sheet.ymd, list);
   }
-  const colWs = [160, 240, 148];
+  const colWs = [165, 245, 146];
   for (const dayList of byDay.values()) {
     pdf.newPage();
     const first = dayList[0];
     pdf.text(
       `Census ${first.yr} - ${first.datename} (${first.dowMd}) Roster`,
       M,
-      pdf.y - 12,
-      13,
+      pdf.y - 14,
+      15,
       pdf.fonts.bold
     );
-    pdf.y -= 24;
+    pdf.y -= 27;
     for (const sheet of dayList) {
-      const time = `${to12h(sheet.start)} - ${to12h(sheet.end)}`;
+      const time = `${sheet.start} - ${sheet.end}`;
       pdf.need(60);
       // full-width shift title bar, then position/name/notes rows
       pdf.row(
         [CONTENT_W],
-        [{ t: `${sheet.name}   ${time}`, f: pdf.fonts.bold, s: 10 }],
-        18
+        [{ t: `${sheet.name}   ${time}`, f: pdf.fonts.bold, s: 11 }],
+        20
       );
       pdf.row(
         colWs,
         [
-          { t: "Position", f: pdf.fonts.bold, align: "c" },
-          { t: "Name", f: pdf.fonts.bold, align: "c" },
-          { t: "Notes", f: pdf.fonts.bold, align: "c" },
+          { t: "Position", f: pdf.fonts.bold, s: 9, align: "c" },
+          { t: "Name", f: pdf.fonts.bold, s: 9, align: "c" },
+          { t: "Notes", f: pdf.fonts.bold, s: 9, align: "c" },
         ],
-        14
+        15
       );
       for (const r of slotRows(sheet, marks)) {
         const before = pdf.page;
@@ -1065,17 +1091,17 @@ const dailySheets = (pdf: Pdf, sheets: Sheet[], marks: Map<number, Marks>) => {
           // continue the shift's table on the new page with its headers
           pdf.row(
             [CONTENT_W],
-            [{ t: `${sheet.name}   ${time} (cont.)`, f: pdf.fonts.bold, s: 10 }],
-            18
+            [{ t: `${sheet.name}   ${time} (cont.)`, f: pdf.fonts.bold, s: 11 }],
+            20
           );
         }
         pdf.row(
           colWs,
-          [{ t: r.position, s: 8 }, { t: r.name, s: 9, marks: r.marks }, {}],
-          18
+          [{ t: r.position, s: 9 }, { t: r.name, s: 10, marks: r.marks }, {}],
+          19.5
         );
       }
-      pdf.y -= 14;
+      pdf.y -= 16;
     }
     pdf.footer();
   }
@@ -1088,10 +1114,10 @@ const smallSheets = (
 ) => {
   pdf.newPage();
   const yr = sheets[0]?.yr ?? new Date().getFullYear();
-  pdf.text(`Census ${yr} Small Shift Rosters`, M, pdf.y - 12, 13, pdf.fonts.bold);
-  pdf.y -= 24;
+  pdf.text(`Census ${yr} Small Shift Rosters`, M, pdf.y - 14, 15, pdf.fonts.bold);
+  pdf.y -= 27;
   // one table per category, one row per person/slot — the compact format
-  const colWs = [100, 92, 120, 148, 88];
+  const colWs = [102, 96, 122, 152, 84];
   const header: Cell[] = [
     { t: "Date", f: pdf.fonts.bold, align: "c" },
     { t: "Time", f: pdf.fonts.bold, align: "c" },
@@ -1112,26 +1138,26 @@ const smallSheets = (
     if (sheet.category !== lastCategory) {
       lastCategory = sheet.category;
       pdf.need(70);
-      pdf.y -= 8;
-      pdf.text(sheet.category, M, pdf.y - 11, 11, pdf.fonts.bold);
-      pdf.y -= 15;
-      pdf.row(colWs, header, 14);
+      pdf.y -= 9;
+      pdf.text(sheet.category, M, pdf.y - 12, 12, pdf.fonts.bold);
+      pdf.y -= 16;
+      pdf.row(colWs, header, 15);
     }
-    const time = `${to12h(sheet.start)}-${to12h(sheet.end)}`;
+    const time = `${sheet.start} - ${sheet.end}`;
     for (const r of rows) {
       const before = pdf.page;
-      pdf.need(16);
-      if (pdf.page !== before) pdf.row(colWs, header, 14); // continue table
+      pdf.need(17.5);
+      if (pdf.page !== before) pdf.row(colWs, header, 15); // continue table
       pdf.row(
         colWs,
         [
-          { t: `${sheet.datename} ${sheet.dowMd.slice(4)}`, s: 8 },
-          { t: time, s: 7.5 },
-          { t: r.position, s: 8 },
-          { t: r.name, s: 9, marks: r.marks },
+          { t: `${sheet.datename} ${sheet.dowMd.slice(4)}`, s: 9 },
+          { t: time, s: 8.5 },
+          { t: r.position, s: 9 },
+          { t: r.name, s: 10, marks: r.marks },
           {},
         ],
-        16
+        17.5
       );
     }
   }
@@ -1183,7 +1209,7 @@ const checkInSheets = async (pdf: Pdf, marks: Map<number, Marks>) => {
     list.push(row);
     byDay.set(key, list);
   }
-  const colWs = [70, 240, 238];
+  const colWs = [74, 246, 236];
   for (const [day, people] of byDay) {
     for (let start = 0; start < people.length; start += 30) {
       pdf.newPage();
@@ -1192,21 +1218,21 @@ const checkInSheets = async (pdf: Pdf, marks: Map<number, Marks>) => {
       pdf.text(
         `First Census Shift on ${day}${pages > 1 ? ` - Page ${pageNum}` : ""}`,
         M,
-        pdf.y - 12,
-        13,
+        pdf.y - 14,
+        15,
         pdf.fonts.bold
       );
-      pdf.y -= 20;
-      pdf.text("Please initial next to your name", M, pdf.y - 9, 9, pdf.fonts.ital);
-      pdf.y -= 16;
+      pdf.y -= 23;
+      pdf.text("Please initial next to your name", M, pdf.y - 10, 10, pdf.fonts.ital);
+      pdf.y -= 18;
       pdf.row(
         colWs,
         [
-          { t: "Initial", f: pdf.fonts.bold, align: "c" },
-          { t: "Name", f: pdf.fonts.bold, align: "c" },
-          { t: "Notes", f: pdf.fonts.bold, align: "c" },
+          { t: "Initial", f: pdf.fonts.bold, s: 9, align: "c" },
+          { t: "Name", f: pdf.fonts.bold, s: 9, align: "c" },
+          { t: "Notes", f: pdf.fonts.bold, s: 9, align: "c" },
         ],
-        15
+        16
       );
       for (const person of people.slice(start, start + 30)) {
         pdf.row(
@@ -1215,12 +1241,12 @@ const checkInSheets = async (pdf: Pdf, marks: Map<number, Marks>) => {
             {},
             {
               t: displayName(person.playa_name, person.world_name),
-              s: 9,
+              s: 10,
               marks: marks.get(person.shiftboard_id) ?? { bs: false, rs: false },
             },
             {},
           ],
-          19
+          20
         );
       }
       pdf.footer();
