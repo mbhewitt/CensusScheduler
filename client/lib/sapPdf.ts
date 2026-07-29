@@ -10,7 +10,9 @@ import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 
 import { burnYear } from "./sap";
 
-const RE_DATE = /Setup Access Pass \(SAP\)\s*(\d{1,2})\/(\d{1,2})\s*&\s*Later/i;
+// 2025 header: "Setup Access Pass (SAP) 8/16 & Later"; 2026 dropped "(SAP)".
+const RE_DATE =
+  /Setup Access Pass\s*(?:\(SAP\)\s*)?(\d{1,2})\/(\d{1,2})\s*&\s*Later/i;
 const RE_YEAR = /Access\s*(\d{4})/i;
 const RE_TICKET = /Ticket ID\s*(\d+)/i;
 
