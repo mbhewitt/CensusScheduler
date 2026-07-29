@@ -1,8 +1,6 @@
 import {
-  Badge as BadgeIcon,
   BarChart as BarChartIcon,
   CalendarMonth as CalendarMonthIcon,
-  EditNote as EditNoteIcon,
   EventNote as EventNoteIcon,
   Group as GroupIcon,
   Groups3 as Groups3Icon,
@@ -12,7 +10,6 @@ import {
   Print as PrintIcon,
   QuestionAnswer as QuestionAnswerIcon,
   Settings as SettingsIcon,
-  ShoppingBag as ShoppingBagIcon,
   VerifiedUser as VerifiedUserIcon,
   ViewList as ViewListIcon,
   WorkHistory as WorkHistoryIcon,
@@ -74,27 +71,10 @@ export const pageListSuperAdmin = [
     path: "/saps",
   },
   {
-    // direct PDF downloads (Avery 2x4in label sheets), not app pages
+    // label + shift-roster PDF downloads live on this page
     icon: <PrintIcon />,
-    label: "Labels",
-    path: "",
-    children: [
-      {
-        icon: <BadgeIcon />,
-        label: "User Labels",
-        path: "/api/labels",
-      },
-      {
-        icon: <ShoppingBagIcon />,
-        label: "Sampling Bags",
-        path: "/api/labels/sampling",
-      },
-      {
-        icon: <EditNoteIcon />,
-        label: "Data Wiz",
-        path: "/api/labels/data-wiz",
-      },
-    ],
+    label: "Printing",
+    path: "/printing",
   },
   {
     icon: <WorkHistoryIcon />,
