@@ -3,6 +3,9 @@ services:
     build:
       context: database
       dockerfile: Dockerfile
+      args:
+        # on-playa DB is 9.4 (ephemeral) — match it
+        MYSQL_VERSION: "9.4"
     container_name: census-database
     image: burning-man/census-database
     security_opt:
