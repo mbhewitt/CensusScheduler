@@ -12,6 +12,7 @@ import {
   Button,
   Chip,
   Container,
+  Link as MuiLink,
   MenuItem,
   Paper,
   Select,
@@ -26,6 +27,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import Link from "next/link";
 import { enqueueSnackbar } from "notistack";
 import { useRef, useState } from "react";
 import useSWR, { useSWRConfig } from "swr";
@@ -275,7 +277,16 @@ export const Saps = () => {
                         spacing={1}
                         alignItems="center"
                       >
-                        <span>{p.name}</span>
+                        {p.shiftboardId != null ? (
+                          <MuiLink
+                            component={Link}
+                            href={`/volunteers/${p.shiftboardId}/info`}
+                          >
+                            {p.name}
+                          </MuiLink>
+                        ) : (
+                          <span>{p.name}</span>
+                        )}
                         {p.kind === "offbook" && (
                           <Chip label="off-book" size="small" />
                         )}
@@ -288,11 +299,19 @@ export const Saps = () => {
                       {p.firstShiftDayname ?? p.firstShiftDate ?? "—"}
                     </TableCell>
                     <TableCell>
-                      {p.requiredDays.length === 0 ? (
-                        <Tooltip title="No arrival date set — nothing to require">
+                      {p.missing.length > 0 ? (
+                        <Tooltip title={`Missing: ${p.missing.join("; ")}`}>
+                          <span>Missing {p.missing.length} item(s)</span>
+                        </Tooltip>
+                      ) : p.kind === "offbook" ? (
+                        <Tooltip title="Off-book — no requirements tracked">
                           <span style={{ color: "#999" }}>—</span>
                         </Tooltip>
-                      ) : p.missing.length === 0 ? (
+                      ) : p.requiredDays.length === 0 ? (
+                        <Tooltip title="No arrival date set — no required days">
+                          <span style={{ color: "#999" }}>—</span>
+                        </Tooltip>
+                      ) : (
                         <Stack
                           direction="row"
                           spacing={0.5}
@@ -301,10 +320,6 @@ export const Saps = () => {
                           <CheckCircleIcon color="success" fontSize="small" />
                           <span>Complete</span>
                         </Stack>
-                      ) : (
-                        <Tooltip title={`Missing: ${p.missing.join("; ")}`}>
-                          <span>Missing {p.missing.length} day(s)</span>
-                        </Tooltip>
                       )}
                     </TableCell>
                     <TableCell>
