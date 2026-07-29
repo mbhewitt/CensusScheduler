@@ -585,13 +585,9 @@ class Pdf {
     this.y = y;
   }
 
-  // legacy write-in emphasis boxes render as double-line frames
-  doubleRect(x: number, y: number, w: number, h: number) {
-    this.page.drawRectangle({ x, y, width: w, height: h, borderWidth: 1.1, borderColor: BLACK });
-    this.page.drawRectangle({
-      x: x + 2, y: y + 2, width: w - 4, height: h - 4,
-      borderWidth: 1.1, borderColor: BLACK,
-    });
+  // legacy write-in emphasis boxes: a single double-thick border
+  thickRect(x: number, y: number, w: number, h: number) {
+    this.page.drawRectangle({ x, y, width: w, height: h, borderWidth: 2.6, borderColor: BLACK });
   }
 
   wrap(t: string, size: number, width: number, font = this.fonts.helv) {
@@ -784,7 +780,7 @@ class Pdf {
       if (thick) {
         const col = thick === "actual" ? 2 : 3;
         const cx = x0 + colWs.slice(0, col).reduce((a, b) => a + b, 0);
-        this.doubleRect(cx, this.y, colWs[col], 19);
+        this.thickRect(cx, this.y, colWs[col], 19);
       }
     }
   }
@@ -865,7 +861,7 @@ const gatePage1 = (pdf: Pdf, sheet: Sheet, scoreData: ScoreData) => {
   pdf.row(estWs, [{ t: "Estimated Int#", s: 9 }, { t: "2", f: pdf.fonts.bold, s: 13, align: "c" }], 19);
   {
     const boxW = estWs[0] + estWs[1];
-    pdf.doubleRect(M, pdf.y - 48, boxW, 48);
+    pdf.thickRect(M, pdf.y - 48, boxW, 48);
     for (const [i, line] of ["Actual Interval#", "(1-5) / (6-10)"].entries()) {
       const lw = pdf.fonts.helv.widthOfTextAtSize(line, 9.5);
       pdf.text(line, M + (boxW - lw) / 2, pdf.y - 13 - i * 11.5, 9.5);
@@ -892,7 +888,7 @@ const gatePage1 = (pdf: Pdf, sheet: Sheet, scoreData: ScoreData) => {
     pdf.text("Click", laneX + 3, y - 13, 9);
     cx = laneX + laneW;
     for (let i = 1; i < laneCols.length; i++) {
-      pdf.doubleRect(cx, y - clickH, laneW, clickH);
+      pdf.thickRect(cx, y - clickH, laneW, clickH);
       cx += laneW;
     }
     y -= clickH;
@@ -992,7 +988,7 @@ const rosterPage = (pdf: Pdf, sheet: Sheet) => {
     const boxW = (CONTENT_W - half - 14) / 2;
     let cx = rightX;
     for (const label of ["Clicker #", "Interval #"]) {
-      pdf.doubleRect(cx, pdf.y - 46, boxW - 6, 46);
+      pdf.thickRect(cx, pdf.y - 46, boxW - 6, 46);
       const lw = pdf.fonts.helv.widthOfTextAtSize(label, 10);
       pdf.text(label, cx + (boxW - 6 - lw) / 2, pdf.y - 14, 10);
       cx += boxW;
