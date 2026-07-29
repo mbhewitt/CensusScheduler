@@ -1,4 +1,4 @@
-FROM mysql
+FROM mysql:9.4
 
 COPY scheduler_schema.sql /docker-entrypoint-initdb.d
 

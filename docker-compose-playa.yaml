@@ -26,18 +26,10 @@ services:
       - "192.168.11.11:53:53"
       - "192.168.11.11:53:53/udp"
     restart: always
-  httpd:
-    build:
-      context: httpd
-      dockerfile: Dockerfile
-    container_name: census-nginx
-    image: burning-man/census-nginx
-    security_opt:
-      - apparmor:unconfined
-    ports:
-      - "80:80"
-      - "443:443"
-    restart: always
+  # nginx (census-nginx) removed 2026-07: it only served a redirect-to-:3000
+  # landing page and an unused 443. The app now serves HTTP on port 80
+  # directly (see census.ports below). Restore from git history if a reverse
+  # proxy / TLS terminator is ever needed on-playa.
   census:
     build:
       context: client
@@ -49,5 +41,8 @@ services:
     security_opt:
       - apparmor:unconfined
     ports:
+      # 80 = the standard port tablets/browsers hit; 3000 kept so tablets
+      # still pointed at http://192.168.11.11:3000/ keep working.
+      - "80:3000"
       - "3000:3000"
     restart: always
