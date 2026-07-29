@@ -4,6 +4,7 @@ import { PDFDocument, PDFFont, PDFPage, StandardFonts, rgb } from "pdf-lib";
 
 import { pool } from "lib/database";
 import { withSuperAdmin } from "@/lib/withSuperAdmin";
+import { ROLE_BEHAVIORAL_STANDARDS_ID } from "@/constants";
 
 // Shift sheets — port of the legacy VCcensus schedPrint pages
 // (censusprintsched.php): the paper rosters shift leads carry on playa.
@@ -13,10 +14,12 @@ import { withSuperAdmin } from "@/lib/withSuperAdmin";
 //   airport-sampling     one page per airport/BxB/Decom sampling shift
 //   data-entry           one page per data entry shift
 //   lab-hosts            one page per Lab Host + Pop Up Lab Host shift
-//   daily                Setup / Strike / Art rosters, one page per day
-//   compact              every other shift type with CSP positions, whole
-//                        burn in one compact list (all positions appear,
-//                        unfilled slots print as blank lines)
+//   daily                one page per day: every simple shift that day with
+//                        more than SMALL_MAX_CSP_SLOTS CSP slots (setup,
+//                        strike, trainings, big outreach shifts, ...)
+//   compact              the rest — shifts staffed by one or two people —
+//                        whole burn in one compact list (all positions
+//                        appear, unfilled slots print as blank lines)
 //   check-in             volunteers grouped by their first shift date,
 //                        "initial next to your name" sheets
 //
@@ -30,6 +33,20 @@ const M = 32;
 const CONTENT_W = PAGE_W - 2 * M;
 
 const BLACK = rgb(0, 0, 0);
+const RED = rgb(1, 0, 0);
+const GREEN = rgb(0, 0.5, 0);
+
+// "Passed online RS-test-out" (op_roles 1000011) has no constants.ts entry
+const ROLE_RS_TEST_OUT_ID = 1000011;
+
+// a shift time whose CSP positions total at most this many slots goes on the
+// burn-wide Small Shifts page instead of getting day-page rows ("single or
+// pair of people per shift" — Mew)
+const SMALL_MAX_CSP_SLOTS = 4;
+
+// open slots print as blank sign-up lines, but some positions carry huge
+// aspirational slot counts; cap the blanks per position per shift
+const MAX_BLANK_ROWS = 20;
 
 // legacy: bm_randomtext version=0 (*Checklist rows), 2025 wording
 const CHECKLISTS: Record<string, string[]> = {
@@ -134,6 +151,7 @@ interface EntryRow extends RowDataPacket {
   shift_name: string;
   yr: number;
   datename: string | null;
+  ymd: string; // "20260826"
   dow_md: string; // "Wed Aug 26"
   start_time_text: string | null;
   end_time_text: string | null;
@@ -155,6 +173,7 @@ interface Entry {
   slots: number;
   shiftboardId: number | null;
   name: string | null; // null = position row with no signups
+  playa: string | null; // playa name alone (lead/driver header lines)
 }
 
 interface Sheet {
@@ -163,6 +182,7 @@ interface Sheet {
   name: string;
   yr: number;
   datename: string;
+  ymd: string;
   dowMd: string;
   start: string;
   end: string;
@@ -182,18 +202,17 @@ const txt = (s: string | null | undefined): string =>
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^\x20-\xFF]/g, "?");
 
-const lastNameOf = (worldName: string | null) => {
-  const parts = (worldName ?? "").trim().split(/\s+/).filter(Boolean);
-  return parts.length ? parts[parts.length - 1] : "";
-};
-
-// legacy shortname: playa name, plus last name when it isn't already in it
+// legacy shortname: playa name plus the real name in quotes when they differ
+// (censuslib personupdates: compares the first 12 chars), capped at 40 chars
 const displayName = (playa: string | null, world: string | null): string => {
-  const p = (playa ?? "").trim() || (world ?? "").trim();
-  const last = lastNameOf(world);
-  return last && !p.toLowerCase().includes(last.toLowerCase())
-    ? `${p} ${last}`
-    : p;
+  const p = (playa ?? "").trim();
+  const w = (world ?? "").trim();
+  if (!p) return w;
+  const name =
+    w && w.slice(0, 12).toLowerCase() !== p.slice(0, 12).toLowerCase()
+      ? `${p} "${w}"`
+      : p;
+  return name.length > 40 ? `${name.slice(0, 20)}${name.slice(-20)}` : name;
 };
 
 const toMin = (t: string | null): number | null => {
@@ -224,6 +243,7 @@ const loadSheets = async (
       sn.shift_name,
       YEAR(d.date) AS yr,
       d.datename,
+      DATE_FORMAT(d.date, '%Y%m%d') AS ymd,
       DATE_FORMAT(d.date, '%a %b %e') AS dow_md,
       st.start_time_text,
       st.end_time_text,
@@ -267,6 +287,7 @@ const loadSheets = async (
         name: row.shift_name,
         yr: row.yr,
         datename: row.datename ?? "",
+        ymd: row.ymd,
         dowMd: row.dow_md,
         start: row.start_time_text ?? "",
         end: row.end_time_text ?? "",
@@ -286,18 +307,19 @@ const loadSheets = async (
         row.playa_name || row.world_name
           ? displayName(row.playa_name, row.world_name)
           : null,
+      playa: (row.playa_name ?? "").trim() || (row.world_name ?? "").trim() || null,
     });
   }
   return [...byShift.values()];
 };
 
-// experience proxy for the roster Score column: how many sampling shifts the
-// volunteer has this year. The legacy score mixed multi-year Shiftboard
-// history this database doesn't carry.
+// experience proxy for the roster Score column: each volunteer's sampling
+// shift dates this year; a sheet scores prior-dated ones. The legacy score
+// mixed multi-year Shiftboard history this database doesn't carry.
 // ponytail: single-year count; wire in historical data if leads miss it
-const loadSamplingCounts = async (): Promise<Map<number, number>> => {
+const loadSamplingDates = async (): Promise<Map<number, string[]>> => {
   const [rowList] = await pool.query<RowDataPacket[]>(
-    `SELECT vs.shiftboard_id, COUNT(*) AS n
+    `SELECT vs.shiftboard_id, DATE_FORMAT(d.date, '%Y%m%d') AS ymd
     FROM op_volunteer_shifts AS vs
     JOIN op_shift_time_position AS stp
       ON stp.time_position_id=vs.time_position_id AND stp.remove_time_position=false
@@ -307,15 +329,45 @@ const loadSamplingCounts = async (): Promise<Map<number, number>> => {
     JOIN op_shift_name AS sn
       ON sn.shift_name_id=st.shift_name_id AND sn.delete_shift=false
     JOIN op_shift_category AS sc ON sc.shift_category_id=sn.shift_category_id
-    WHERE vs.remove_shift=false AND sc.shift_category IN (?)
-    GROUP BY vs.shiftboard_id`,
+    JOIN op_dates AS d ON d.date_id=st.start_date_id
+    WHERE vs.remove_shift=false AND sc.shift_category IN (?)`,
     [SAMPLING_CATEGORIES]
   );
-  const counts = new Map<number, number>();
+  const dates = new Map<number, string[]>();
   for (const row of rowList) {
-    counts.set(row.shiftboard_id as number, row.n as number);
+    const list = dates.get(row.shiftboard_id as number) ?? [];
+    list.push(row.ymd as string);
+    dates.set(row.shiftboard_id as number, list);
   }
-  return counts;
+  return dates;
+};
+
+interface Marks {
+  bs: boolean; // Signed Behavioral Standards
+  rs: boolean; // Passed online RS-test-out
+}
+
+// red dot = Behavioral Standards NOT signed, green star = RS test-out passed
+// (legacy userSched/defaultOne zapfdingbats markers)
+const loadMarks = async (): Promise<Map<number, Marks>> => {
+  const [rowList] = await pool.query<RowDataPacket[]>(
+    `SELECT
+      vr.shiftboard_id,
+      MAX(CASE WHEN vr.role_id = ? THEN 1 ELSE 0 END) AS bs,
+      MAX(CASE WHEN vr.role_id = ? THEN 1 ELSE 0 END) AS rs
+    FROM op_volunteer_roles AS vr
+    WHERE vr.remove_role=false
+    GROUP BY vr.shiftboard_id`,
+    [ROLE_BEHAVIORAL_STANDARDS_ID, ROLE_RS_TEST_OUT_ID]
+  );
+  const marks = new Map<number, Marks>();
+  for (const row of rowList) {
+    marks.set(row.shiftboard_id as number, {
+      bs: row.bs === 1,
+      rs: row.rs === 1,
+    });
+  }
+  return marks;
 };
 
 interface Cell {
@@ -323,12 +375,14 @@ interface Cell {
   f?: PDFFont;
   s?: number;
   align?: "l" | "c" | "r";
+  marks?: Marks; // draws ●/★ markers before the text
 }
 
 interface Fonts {
   helv: PDFFont;
   bold: PDFFont;
   ital: PDFFont;
+  zapf: PDFFont;
 }
 
 class Pdf {
@@ -385,14 +439,27 @@ class Pdf {
         });
       }
       const cell = cells[i];
-      if (cell?.t) {
+      if (cell?.t || cell?.marks) {
         const f = cell.f ?? this.fonts.helv;
         const s = cell.s ?? 8;
-        const t = txt(cell.t);
-        let clipped = t;
+        const ty = y + (rowH - s) / 2 + 1;
+        let markW = 0;
+        if (cell.marks) {
+          let mx = cx + 3;
+          if (!cell.marks.bs) {
+            this.page.drawText("●", { x: mx, y: ty, size: s, font: this.fonts.zapf, color: RED });
+            mx += this.fonts.zapf.widthOfTextAtSize("●", s);
+          }
+          if (cell.marks.rs) {
+            this.page.drawText("★", { x: mx, y: ty, size: s, font: this.fonts.zapf, color: GREEN });
+            mx += this.fonts.zapf.widthOfTextAtSize("★", s);
+          }
+          markW = mx - (cx + 3);
+        }
+        let clipped = txt(cell.t ?? "");
         while (
           clipped.length > 1 &&
-          f.widthOfTextAtSize(clipped, s) > cw - 6
+          f.widthOfTextAtSize(clipped, s) > cw - 6 - markW
         ) {
           clipped = clipped.slice(0, -1);
         }
@@ -402,8 +469,8 @@ class Pdf {
             ? cx + (cw - tw) / 2
             : cell.align === "r"
               ? cx + cw - tw - 3
-              : cx + 3;
-        this.text(clipped, tx, y + (rowH - s) / 2 + 1, s, f);
+              : cx + 3 + markW + (markW ? 2 : 0);
+        this.text(clipped, tx, ty, s, f);
       }
       cx += cw;
     });
@@ -425,24 +492,6 @@ class Pdf {
     }
     if (line) lines.push(line);
     return lines;
-  }
-
-  // checkbox + wrapped label; advances the cursor
-  checkItem(t: string, x: number, width: number, size = 7.5) {
-    const lines = this.wrap(t, size, width - 16);
-    const lineH = size + 2.5;
-    this.page.drawRectangle({
-      x,
-      y: this.y - 9.5,
-      width: 8,
-      height: 8,
-      borderWidth: 0.8,
-      borderColor: BLACK,
-    });
-    lines.forEach((line, i) => {
-      this.text(line, x + 14, this.y - 8.5 - i * lineH, size);
-    });
-    this.y -= Math.max(lineH * lines.length, 12) + 2;
   }
 
   footer(note?: string) {
@@ -470,28 +519,72 @@ class Pdf {
   }
 
   leadsLine(sheet: Sheet) {
+    // legacy: "Shift Leads:(names bold) -- Driver: (names bold)" using playa
+    // names only, meal right-aligned
     const leads = sheet.entries
-      .filter((e) => e.isLead && e.name)
-      .map((e) => e.name)
+      .filter((e) => e.isLead && e.playa)
+      .map((e) => e.playa)
       .join(", ");
     const drivers = sheet.entries
-      .filter((e) => e.isDriver && e.name)
-      .map((e) => e.name)
+      .filter((e) => e.isDriver && e.playa)
+      .map((e) => e.playa)
       .join(", ");
-    let line = `Shift Leads: (${leads || "        "})`;
+    const segs: [string, keyof Fonts][] = [
+      ["Shift Leads: (", "helv"],
+      [leads || "        ", "bold"],
+      [")", "helv"],
+    ];
     if (sheet.entries.some((e) => e.isDriver)) {
-      line += `   Driver: (${drivers || "        "})`;
+      segs.push(
+        ["   Driver: (", "helv"],
+        [drivers || "        ", "bold"],
+        [")", "helv"]
+      );
     }
-    this.text(line, M, this.y - 10, 10);
+    const mealW = sheet.meal
+      ? this.fonts.helv.widthOfTextAtSize(`(${sheet.meal})`, 10) + 10
+      : 0;
+    const width = (size: number) =>
+      segs.reduce(
+        (w, [t, f]) => w + this.fonts[f].widthOfTextAtSize(txt(t), size),
+        0
+      );
+    let size = 10;
+    while (size > 6.5 && width(size) > CONTENT_W - mealW) size -= 0.5;
+    const y = this.y - 10;
+    let x = M;
+    for (const [t, f] of segs) {
+      this.text(t, x, y, size, this.fonts[f]);
+      x += this.fonts[f].widthOfTextAtSize(txt(t), size);
+    }
     if (sheet.meal) {
       this.text(
         `(${sheet.meal})`,
-        PAGE_W - M - this.fonts.helv.widthOfTextAtSize(`(${sheet.meal})`, 10),
-        this.y - 10,
+        PAGE_W - M - mealW + 10,
+        y,
         10
       );
     }
     this.y -= 18;
+  }
+
+  // legacy checklist style: bordered two-column table, empty check cell +
+  // wrapped item text; returns nothing, advances the cursor
+  checkTable(x: number, width: number, items: string[], size = 7.5) {
+    const checkW = 18;
+    const textW = width - checkW;
+    const lineH = size + 2.5;
+    for (const item of items) {
+      const lines = this.wrap(item, size, textW - 6);
+      const rowH = Math.max(lines.length * lineH + 4, 12);
+      const y = this.y - rowH;
+      this.page.drawRectangle({ x, y, width: checkW, height: rowH, borderWidth: 0.6, borderColor: BLACK });
+      this.page.drawRectangle({ x: x + checkW, y, width: textW, height: rowH, borderWidth: 0.6, borderColor: BLACK });
+      lines.forEach((line, i) => {
+        this.text(line, x + checkW + 3, this.y - 3.5 - (i + 1) * lineH + 2.5, size);
+      });
+      this.y = y;
+    }
   }
 
   // legacy mealtiming(): estimated timeline for sampling shifts. Offsets in
@@ -573,16 +666,23 @@ const openPdf = async (title: string) => {
     helv: await doc.embedFont(StandardFonts.Helvetica),
     bold: await doc.embedFont(StandardFonts.HelveticaBold),
     ital: await doc.embedFont(StandardFonts.HelveticaOblique),
+    zapf: await doc.embedFont(StandardFonts.ZapfDingbats),
   };
   return new Pdf(doc, fonts);
 };
 
 // --- gate sampling -------------------------------------------------------
 
-const gateRoleAbbrev = (position: string) =>
-  /traffic tamer/i.test(position) ? "TT" : "RS";
+// legacy: TTo ("traffic tamer only") flags zero-experience volunteers who
+// shouldn't be handed a clicker yet
+const gateRoleAbbrev = (position: string, score: number) =>
+  score === 0 ? "TTo" : /traffic tamer/i.test(position) ? "TT" : "RS";
 
-const gatePage1 = (pdf: Pdf, sheet: Sheet, counts: Map<number, number>) => {
+const gatePage1 = (
+  pdf: Pdf,
+  sheet: Sheet,
+  samplingDates: Map<number, string[]>
+) => {
   pdf.newPage();
   pdf.title(sheet);
   pdf.leadsLine(sheet);
@@ -602,7 +702,12 @@ const gatePage1 = (pdf: Pdf, sheet: Sheet, counts: Map<number, number>) => {
   );
   const samplers = sheet.entries
     .filter((e) => e.name && !e.isLead && !e.isDriver)
-    .map((e) => ({ ...e, score: counts.get(e.shiftboardId ?? -1) ?? 0 }))
+    .map((e) => ({
+      ...e,
+      score: (samplingDates.get(e.shiftboardId ?? -1) ?? []).filter(
+        (d) => d < sheet.ymd
+      ).length,
+    }))
     .sort((a, b) => b.score - a.score);
   // pad to the legacy 31 rows; a fuller shift prints everyone by shrinking
   // the rows instead of dropping names (pdf-lib has no auto page break)
@@ -616,7 +721,7 @@ const gatePage1 = (pdf: Pdf, sheet: Sheet, counts: Map<number, number>) => {
       [
         { t: String(i + 1), s: 7 },
         { t: e?.name ?? "", s },
-        { t: e ? gateRoleAbbrev(e.position) : "", s: 8, align: "c" },
+        { t: e ? gateRoleAbbrev(e.position, e.score) : "", s: 8, align: "c" },
         { t: e ? String(e.score) : "", s: 8, align: "c" },
         {},
         {},
@@ -659,7 +764,7 @@ const gatePage1 = (pdf: Pdf, sheet: Sheet, counts: Map<number, number>) => {
     }
     y -= 25;
   }
-  pdf.footer("Score = sampling shifts this year");
+  pdf.footer("Score = prior sampling shifts this year; TTo = first shift");
 };
 
 const gatePage2 = (pdf: Pdf, sheet: Sheet) => {
@@ -671,13 +776,10 @@ const gatePage2 = (pdf: Pdf, sheet: Sheet) => {
 
   const half = CONTENT_W / 2;
   const top = pdf.y;
-  pdf.text("Checklist (check when complete):", M, pdf.y - 10, 9, pdf.fonts.bold);
-  pdf.y -= 20;
-  for (const item of CHECKLISTS["Gate Sampling"]) {
-    pdf.checkItem(item, M + 6, half - 20, 8.5);
-    pdf.y -= 6;
-  }
-  pdf.text("Notes:", M + half + 10, top - 10, 9, pdf.fonts.bold);
+  pdf.text("Checklist (check when complete):", M, pdf.y - 12, 11, pdf.fonts.bold);
+  pdf.y -= 18;
+  pdf.checkTable(M, half, CHECKLISTS["Gate Sampling"], 8.5);
+  pdf.text("Notes:", M + half + 10, top - 12, 11, pdf.fonts.bold);
   pdf.footer();
 };
 
@@ -722,15 +824,14 @@ const rosterPage = (pdf: Pdf, sheet: Sheet) => {
   const isDataEntry = sheet.category === "Data Entry";
   const half = CONTENT_W * 0.47;
   const rightX = M + half + 14;
+  const rightW = CONTENT_W - half - 14;
   const top = pdf.y;
 
-  pdf.text("Checklist (check when complete):", M, pdf.y - 10, 9, pdf.fonts.bold);
+  pdf.text("Checklist (check when complete):", M, pdf.y - 12, 11, pdf.fonts.bold);
   pdf.y -= 18;
   const checklist =
     CHECKLISTS[sheet.category] ?? CHECKLISTS["Airport Sampling"];
-  for (const item of checklist) {
-    pdf.checkItem(item, M + 4, half - 8, 7.5);
-  }
+  pdf.checkTable(M, half, checklist);
   const checklistBottom = pdf.y;
 
   // right column
@@ -749,10 +850,22 @@ const rosterPage = (pdf: Pdf, sheet: Sheet) => {
     pdf.page.drawRectangle({ x: rightX, y: pdf.y - 40, width: boxW - 6, height: 26, borderWidth: 0.6, borderColor: BLACK });
     pdf.y -= 52;
     pdf.mealTiming(sheet, "Airport", rightX, 0.72);
-  } else if (isDataEntry) {
-    pdf.text("Pouches completed on this shift:", rightX, pdf.y - 10, 9, pdf.fonts.bold);
   } else {
-    pdf.text("Questions, comments, or suggestions:", rightX, pdf.y - 10, 9, pdf.fonts.bold);
+    // legacy: a bordered capture box beside the checklist with the prompt
+    // in its top-left corner
+    const prompt = isDataEntry
+      ? "Pouches completed on this shift:"
+      : "Questions, comments, or suggestions for future:";
+    const boxH = top - checklistBottom;
+    pdf.page.drawRectangle({
+      x: rightX,
+      y: top - boxH,
+      width: rightW,
+      height: boxH,
+      borderWidth: 0.6,
+      borderColor: BLACK,
+    });
+    pdf.text(prompt, rightX + 4, top - 12, 8, pdf.fonts.helv, rightW - 8);
   }
 
   pdf.y = Math.min(checklistBottom, pdf.y) - 10;
@@ -760,7 +873,7 @@ const rosterPage = (pdf: Pdf, sheet: Sheet) => {
     ? "Data Anomalies, questions, comments, or suggestions for future:"
     : isAirport
       ? "Interactions with Airport Personnel (briefly describe the interaction and with whom), questions, comments, or suggestions for future:"
-      : "Questions, comments, or suggestions for future:";
+      : ""; // lab hosts capture questions in the box beside the checklist
   for (const line of pdf.wrap(bottomPrompt, 8.5, CONTENT_W)) {
     pdf.text(line, M, pdf.y - 10, 8.5);
     pdf.y -= 11;
@@ -768,82 +881,133 @@ const rosterPage = (pdf: Pdf, sheet: Sheet) => {
   pdf.footer();
 };
 
-// --- daily / compact / check-in ------------------------------------------
+// --- daily / small / check-in --------------------------------------------
+
+interface SlotRow {
+  position: string;
+  name: string;
+  marks?: Marks;
+}
 
 // rows for one shift: filled entries first, then a blank line per open slot
-const slotRows = (sheet: Sheet): { position: string; name: string }[] => {
-  const byPosition = new Map<number, { position: string; slots: number; names: string[] }>();
+// (capped — some positions carry huge aspirational slot counts)
+const slotRows = (sheet: Sheet, marks: Map<number, Marks>): SlotRow[] => {
+  const byPosition = new Map<
+    number,
+    { position: string; slots: number; filled: SlotRow[] }
+  >();
   for (const e of sheet.entries) {
     let g = byPosition.get(e.timePositionId);
     if (!g) {
-      g = { position: e.position, slots: e.slots, names: [] };
+      g = { position: e.position, slots: e.slots, filled: [] };
       byPosition.set(e.timePositionId, g);
     }
-    if (e.name) g.names.push(e.name);
+    if (e.name) {
+      g.filled.push({
+        position: e.position,
+        name: e.name,
+        marks: marks.get(e.shiftboardId ?? -1) ?? { bs: false, rs: false },
+      });
+    }
   }
-  const rows: { position: string; name: string }[] = [];
+  const rows: SlotRow[] = [];
   for (const g of byPosition.values()) {
-    for (const name of g.names) rows.push({ position: g.position, name });
-    for (let i = g.names.length; i < g.slots; i++) {
+    rows.push(...g.filled);
+    const blanks = Math.min(
+      Math.max(g.slots - g.filled.length, 0),
+      MAX_BLANK_ROWS
+    );
+    for (let i = 0; i < blanks; i++) {
       rows.push({ position: g.position, name: "" });
+    }
+    const dropped = g.slots - g.filled.length - blanks;
+    if (dropped > 0) {
+      rows.push({ position: g.position, name: `... +${dropped} more open slots` });
     }
   }
   return rows;
 };
 
-const dailySheets = (pdf: Pdf, sheets: Sheet[]) => {
+// total CSP slots on a shift decides small-vs-daily ("single or pair of
+// people per shift" goes on the burn-wide page)
+const cspSlots = (sheet: Sheet): number => {
+  const seen = new Map<number, number>();
+  for (const e of sheet.entries) seen.set(e.timePositionId, e.slots);
+  return [...seen.values()].reduce((a, b) => a + b, 0);
+};
+
+// one page per day; every simple shift that day gets its own table
+// (legacy conDecon layout, position column added)
+const dailySheets = (pdf: Pdf, sheets: Sheet[], marks: Map<number, Marks>) => {
   const byDay = new Map<string, Sheet[]>();
   for (const sheet of sheets) {
-    const list = byDay.get(sheet.dowMd) ?? [];
+    const list = byDay.get(sheet.ymd) ?? [];
     list.push(sheet);
-    byDay.set(sheet.dowMd, list);
+    byDay.set(sheet.ymd, list);
   }
-  const colWs = [104, 150, 170, 124];
-  for (const [dowMd, dayList] of byDay) {
+  const colWs = [104, 140, 180, 124];
+  for (const dayList of byDay.values()) {
     pdf.newPage();
     const first = dayList[0];
     pdf.text(
-      `Census ${first.yr} Setup / Strike - ${first.datename} (${dowMd}) Roster`,
+      `Census ${first.yr} - ${first.datename} (${first.dowMd}) Roster`,
       M,
       pdf.y - 12,
       13,
       pdf.fonts.bold
     );
     pdf.y -= 24;
-    pdf.row(
-      colWs,
-      [
-        { t: "Time", f: pdf.fonts.bold, align: "c" },
-        { t: "Position", f: pdf.fonts.bold, align: "c" },
-        { t: "Name", f: pdf.fonts.bold, align: "c" },
-        { t: "Notes", f: pdf.fonts.bold, align: "c" },
-      ],
-      15
-    );
     for (const sheet of dayList) {
       const time = `${to12h(sheet.start)}-${to12h(sheet.end)}`;
-      for (const r of slotRows(sheet)) {
+      pdf.need(60);
+      pdf.row(
+        colWs,
+        [
+          { t: time, f: pdf.fonts.bold, align: "c" },
+          { t: sheet.name, f: pdf.fonts.bold },
+          { t: "Name", f: pdf.fonts.bold, align: "c" },
+          { t: "Notes", f: pdf.fonts.bold, align: "c" },
+        ],
+        15
+      );
+      for (const r of slotRows(sheet, marks)) {
         pdf.need(18);
         pdf.row(
           colWs,
-          [{ t: time, s: 8 }, { t: r.position, s: 8 }, { t: r.name, s: 9 }, {}],
+          [
+            { t: time, s: 8 },
+            { t: r.position, s: 8 },
+            { t: r.name, s: 9, marks: r.marks },
+            {},
+          ],
           18
         );
       }
+      pdf.y -= 12;
     }
     pdf.footer();
   }
 };
 
-const compactSheets = (pdf: Pdf, sheets: Sheet[]) => {
+const smallSheets = (
+  pdf: Pdf,
+  sheets: Sheet[],
+  marks: Map<number, Marks>
+) => {
   pdf.newPage();
   const yr = sheets[0]?.yr ?? new Date().getFullYear();
-  pdf.text(`Census ${yr} Shift Rosters`, M, pdf.y - 12, 13, pdf.fonts.bold);
+  pdf.text(`Census ${yr} Small Shift Rosters`, M, pdf.y - 12, 13, pdf.fonts.bold);
   pdf.y -= 24;
   const colWs = [170, 160, 218];
   let lastCategory = "";
-  for (const sheet of sheets) {
-    const rows = slotRows(sheet);
+  const ordered = [...sheets].sort(
+    (a, b) =>
+      a.category.localeCompare(b.category) ||
+      a.ymd.localeCompare(b.ymd) ||
+      a.start.localeCompare(b.start)
+  );
+  for (const sheet of ordered) {
+    const rows = slotRows(sheet, marks);
     if (!rows.length) continue;
     pdf.need(50);
     if (sheet.category !== lastCategory) {
@@ -857,7 +1021,11 @@ const compactSheets = (pdf: Pdf, sheets: Sheet[]) => {
     pdf.y -= 13;
     for (const r of rows) {
       pdf.need(15);
-      pdf.row(colWs, [{ t: r.position, s: 8 }, { t: r.name, s: 9 }, {}], 15);
+      pdf.row(
+        colWs,
+        [{ t: r.position, s: 8 }, { t: r.name, s: 9, marks: r.marks }, {}],
+        15
+      );
     }
     pdf.y -= 4;
   }
@@ -865,15 +1033,17 @@ const compactSheets = (pdf: Pdf, sheets: Sheet[]) => {
 };
 
 interface CheckInRow extends RowDataPacket {
+  shiftboard_id: number;
   playa_name: string | null;
   world_name: string | null;
   dow_md: string;
   datename: string | null;
 }
 
-const checkInSheets = async (pdf: Pdf) => {
+const checkInSheets = async (pdf: Pdf, marks: Map<number, Marks>) => {
   const [rowList] = await pool.query<CheckInRow[]>(
     `SELECT
+      v.shiftboard_id,
       v.playa_name,
       v.world_name,
       DATE_FORMAT(fs.first_date, '%a %b %e') AS dow_md,
@@ -935,7 +1105,15 @@ const checkInSheets = async (pdf: Pdf) => {
       for (const person of people.slice(start, start + 30)) {
         pdf.row(
           colWs,
-          [{}, { t: displayName(person.playa_name, person.world_name), s: 9 }, {}],
+          [
+            {},
+            {
+              t: displayName(person.playa_name, person.world_name),
+              s: 9,
+              marks: marks.get(person.shiftboard_id) ?? { bs: false, rs: false },
+            },
+            {},
+          ],
           19
         );
       }
@@ -961,10 +1139,12 @@ const shiftSheets = async (req: NextApiRequest, res: NextApiResponse) => {
       const page2 = req.query.page === "2";
       pdf = await openPdf(page2 ? "Gate Sampling p2" : "Gate Sampling");
       const sheets = await loadSheets("sc.shift_category = ?", ["Gate Sampling"]);
-      const counts = page2 ? new Map<number, number>() : await loadSamplingCounts();
+      const samplingDates = page2
+        ? new Map<number, string[]>()
+        : await loadSamplingDates();
       for (const s of sheets) {
         if (page2) gatePage2(pdf, s);
-        else gatePage1(pdf, s, counts);
+        else gatePage1(pdf, s, samplingDates);
       }
       if (!sheets.length) pdf.newPage();
       filename = page2 ? "GateSampling_p2.pdf" : "GateSampling.pdf";
@@ -998,27 +1178,39 @@ const shiftSheets = async (req: NextApiRequest, res: NextApiResponse) => {
       filename = "LabHosts.pdf";
       break;
     }
+    // daily and small split the same pool of non-dedicated shifts by size:
+    // a shift with more than SMALL_MAX_CSP_SLOTS CSP slots earns day-page
+    // rows; the rest go on the burn-wide Small Shifts page
     case "daily": {
-      pdf = await openPdf("Setup / Strike");
-      const sheets = await loadSheets("sc.department = ?", ["SetupStrike"]);
-      dailySheets(pdf, sheets);
+      pdf = await openPdf("Daily Rosters");
+      const sheets = await loadSheets("sc.shift_category NOT IN (?)", [
+        DEDICATED_CATEGORIES,
+      ]);
+      dailySheets(
+        pdf,
+        sheets.filter((s) => cspSlots(s) > SMALL_MAX_CSP_SLOTS),
+        await loadMarks()
+      );
       if (!pdf.page) pdf.newPage();
-      filename = "SetupStrike.pdf";
+      filename = "DailyRosters.pdf";
       break;
     }
     case "compact": {
-      pdf = await openPdf("Shift Rosters");
-      const sheets = await loadSheets(
-        "sc.shift_category NOT IN (?) AND sc.department != ?",
-        [DEDICATED_CATEGORIES, "SetupStrike"]
+      pdf = await openPdf("Small Shifts");
+      const sheets = await loadSheets("sc.shift_category NOT IN (?)", [
+        DEDICATED_CATEGORIES,
+      ]);
+      smallSheets(
+        pdf,
+        sheets.filter((s) => cspSlots(s) <= SMALL_MAX_CSP_SLOTS),
+        await loadMarks()
       );
-      compactSheets(pdf, sheets);
-      filename = "ShiftRosters.pdf";
+      filename = "SmallShifts.pdf";
       break;
     }
     case "check-in": {
       pdf = await openPdf("Check-In");
-      await checkInSheets(pdf);
+      await checkInSheets(pdf, await loadMarks());
       filename = "CheckIn.pdf";
       break;
     }

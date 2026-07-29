@@ -159,7 +159,7 @@ export const pageListSuperAdmin = [
       },
       {
         icon: <ConstructionIcon />,
-        label: "Setup / Strike",
+        label: "Daily Rosters",
         path: "/api/shift-sheets/daily",
       },
       {
