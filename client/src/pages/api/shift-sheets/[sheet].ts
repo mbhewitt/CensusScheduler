@@ -61,6 +61,24 @@ const CHECKLISTS: Record<string, string[]> = {
     "Verify all volunteers have Census badges (plus water, sunblock, etc.)",
     "Go over script and forms with volunteers en route",
     "Radio lighthouse at greeters",
+    "Radio Gate that samplers will be on the road for 1.5 hours",
+    "Turn light towers on (if night shift)",
+    "Deploy delineators and signs (if needed)",
+    "Calculate interval number",
+    "Pass out sampling bags by lane number",
+    "Coach volunteers, give breaks and self-care reminders",
+    "Assist in organizing data as needed at end of shift",
+    "Collect and double label data envelopes",
+    "Zero counters after recording counts on labels & page 1",
+    "Collect sampling bags (ensuring no completed forms are inside)",
+    "Turn off light towers (if night shift)",
+    "Radio lighthouse before returning to greeters",
+    "Return to Census Lab",
+    "Thank your volunteers!",
+    "Note volunteer performance on shift roster",
+    "Straighten DataBeast for next shift",
+    "Return data envelopes, and Shift Lead binder to office",
+    "Check in radios",
   ],
   "Airport Sampling": [
     "Verify sufficient supplies",
@@ -471,6 +489,7 @@ interface Fonts {
   helv: PDFFont;
   bold: PDFFont;
   ital: PDFFont;
+  boldItal: PDFFont;
   zapf: PDFFont;
 }
 
@@ -664,13 +683,13 @@ class Pdf {
 
   // legacy checklist style: bordered two-column table, empty check cell +
   // wrapped item text; returns nothing, advances the cursor
-  checkTable(x: number, width: number, items: string[], size = 9) {
-    const checkW = 22;
+  checkTable(x: number, width: number, items: string[], size = 10) {
+    const checkW = 26;
     const textW = width - checkW;
     const lineH = size + 2.5;
     for (const item of items) {
       const lines = this.wrap(item, size, textW - 6);
-      const rowH = Math.max(lines.length * lineH + 4, 12);
+      const rowH = Math.max(lines.length * lineH + 5, 17);
       const y = this.y - rowH;
       this.page.drawRectangle({ x, y, width: checkW, height: rowH, borderWidth: 0.6, borderColor: BLACK });
       this.page.drawRectangle({ x: x + checkW, y, width: textW, height: rowH, borderWidth: 0.6, borderColor: BLACK });
@@ -727,30 +746,30 @@ class Pdf {
     const colWs = (kind === "Gate" ? [130, 90, 120, 90] : [130, 90, 120]).map(
       (w) => w * scale
     );
-    const hs = 11 * Math.max(scale, 0.85);
+    // legacy meal table is full-size type even in the airport side column:
+    // bold-italic meal name, bold Estimate/Actual, bold key times
     const header: Cell[] = [
-      { t: sheet.meal || "Meal", f: this.fonts.bold, s: hs },
-      { t: "Estimate", f: this.fonts.bold, s: hs, align: "c" },
-      { t: "Actual", f: this.fonts.bold, s: hs, align: "c" },
+      { t: sheet.meal || "Meal", f: this.fonts.boldItal, s: 12.5 },
+      { t: "Estimate", f: this.fonts.bold, s: 12.5, align: "c" },
+      { t: "Actual", f: this.fonts.bold, s: 12.5, align: "c" },
     ];
     if (kind === "Gate") {
-      header.push({ t: "Headcount", f: this.fonts.bold, s: hs, align: "c" });
+      header.push({ t: "Headcount", f: this.fonts.bold, s: 12.5, align: "c" });
     }
-    this.row(colWs, header, 18, true, x0);
+    this.row(colWs, header, 19, true, x0);
     for (const [label, min, boldTime] of rows) {
-      const rs = 10.5 * Math.max(scale, 0.85);
       const cells: Cell[] = [
-        { t: label, s: rs },
+        { t: label, s: 11.5 },
         {
           t: fmt12(min),
-          s: rs,
+          s: 11.5,
           align: "c",
           f: boldTime ? this.fonts.bold : this.fonts.helv,
         },
         {},
       ];
       if (kind === "Gate") cells.push({});
-      this.row(colWs, cells, 18, true, x0);
+      this.row(colWs, cells, 19, true, x0);
     }
   }
 }
@@ -762,6 +781,7 @@ const openPdf = async (title: string) => {
     helv: await doc.embedFont(StandardFonts.Helvetica),
     bold: await doc.embedFont(StandardFonts.HelveticaBold),
     ital: await doc.embedFont(StandardFonts.HelveticaOblique),
+    boldItal: await doc.embedFont(StandardFonts.HelveticaBoldOblique),
     zapf: await doc.embedFont(StandardFonts.ZapfDingbats),
   };
   return new Pdf(doc, fonts);
@@ -783,12 +803,12 @@ const gatePage1 = (pdf: Pdf, sheet: Sheet, scoreData: ScoreData) => {
   pdf.row(
     colWs,
     [
-      { t: "P-L-C-NS", s: 8, align: "c" },
-      { t: "Name", f: pdf.fonts.bold, s: 9, align: "c" },
-      { t: "", align: "c" },
-      { t: "Score", s: 8, align: "c" },
-      { t: "Lane #", s: 8, align: "c" },
-      { t: "Met/Exceeded Expectations and Other Notes", s: 8, align: "c" },
+      { t: "P-L-C-NS", s: 9 },
+      { t: "Name", s: 9 },
+      { t: "" },
+      { t: "Score", s: 9 },
+      { t: "Lane #", s: 9 },
+      { t: "Met/Exceeded Expectations and Other Notes", s: 9 },
     ],
     16
   );
@@ -867,7 +887,7 @@ const gatePage2 = (pdf: Pdf, sheet: Sheet) => {
 
   const half = CONTENT_W / 2;
   const top = pdf.y;
-  pdf.text("Checklist(check when complete):", M, pdf.y - 13, 13, pdf.fonts.bold);
+  pdf.text("Checklist(check when complete):", M, pdf.y - 14, 14, pdf.fonts.bold);
   pdf.y -= 20;
   pdf.checkTable(M, half, CHECKLISTS["Gate Sampling"], 10);
   pdf.text("Notes:", M + half + 10, top - 12, 11, pdf.fonts.bold);
@@ -903,9 +923,9 @@ const rosterPage = (pdf: Pdf, sheet: Sheet) => {
   pdf.row(
     colWs,
     [
-      { t: "P-L-C-NS", s: 8, align: "c" },
-      { t: "Name", f: pdf.fonts.bold, s: 9, align: "c" },
-      { t: "Met/Exceeded Expectations and Other Notes", s: 8, align: "c" },
+      { t: "P-L-C-NS", s: 9 },
+      { t: "Name", s: 9 },
+      { t: "Met/Exceeded Expectations and Other Notes", s: 9 },
     ],
     16
   );
@@ -936,7 +956,7 @@ const rosterPage = (pdf: Pdf, sheet: Sheet) => {
   const rightW = CONTENT_W - half - 14;
   const top = pdf.y;
 
-  pdf.text("Checklist(check when complete):", M, pdf.y - 13, 13, pdf.fonts.bold);
+  pdf.text("Checklist(check when complete):", M, pdf.y - 14, 14, pdf.fonts.bold);
   pdf.y -= 20;
   const checklist =
     CHECKLISTS[sheet.category] ?? CHECKLISTS["Airport Sampling"];
@@ -950,15 +970,19 @@ const rosterPage = (pdf: Pdf, sheet: Sheet) => {
     const boxW = (CONTENT_W - half - 14) / 2;
     let cx = rightX;
     for (const label of ["Clicker #", "Interval #"]) {
-      pdf.text(label, cx + 4, pdf.y - 11, 9, pdf.fonts.bold);
-      pdf.page.drawRectangle({ x: cx, y: pdf.y - 44, width: boxW - 6, height: 28, borderWidth: 0.6, borderColor: BLACK });
+      pdf.page.drawRectangle({ x: cx, y: pdf.y - 42, width: boxW - 6, height: 42, borderWidth: 2.2, borderColor: BLACK });
+      const lw = pdf.fonts.helv.widthOfTextAtSize(label, 10);
+      pdf.text(label, cx + (boxW - 6 - lw) / 2, pdf.y - 13, 10);
       cx += boxW;
     }
-    pdf.y -= 50;
-    pdf.text("# of Planes", rightX + 4, pdf.y - 11, 9, pdf.fonts.bold);
-    pdf.page.drawRectangle({ x: rightX, y: pdf.y - 44, width: boxW - 6, height: 28, borderWidth: 0.6, borderColor: BLACK });
-    pdf.y -= 56;
-    pdf.mealTiming(sheet, "Airport", rightX, 0.72);
+    pdf.y -= 46;
+    {
+      const lw = pdf.fonts.helv.widthOfTextAtSize("# of Planes", 10);
+      pdf.page.drawRectangle({ x: rightX, y: pdf.y - 38, width: boxW - 6, height: 38, borderWidth: 0.8, borderColor: BLACK });
+      pdf.text("# of Planes", rightX + (boxW - 6 - lw) / 2, pdf.y - 13, 10);
+    }
+    pdf.y -= 46;
+    pdf.mealTiming(sheet, "Airport", rightX, 0.82);
   } else {
     // legacy: a bordered capture box beside the checklist with the prompt
     // in its top-left corner
