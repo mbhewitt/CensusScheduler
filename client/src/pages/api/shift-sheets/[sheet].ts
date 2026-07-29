@@ -1028,7 +1028,7 @@ const dailySheets = (pdf: Pdf, sheets: Sheet[], marks: Map<number, Marks>) => {
     list.push(sheet);
     byDay.set(sheet.ymd, list);
   }
-  const colWs = [104, 140, 180, 124];
+  const colWs = [160, 240, 148];
   for (const dayList of byDay.values()) {
     pdf.newPage();
     const first = dayList[0];
@@ -1041,32 +1041,41 @@ const dailySheets = (pdf: Pdf, sheets: Sheet[], marks: Map<number, Marks>) => {
     );
     pdf.y -= 24;
     for (const sheet of dayList) {
-      const time = `${to12h(sheet.start)}-${to12h(sheet.end)}`;
+      const time = `${to12h(sheet.start)} - ${to12h(sheet.end)}`;
       pdf.need(60);
+      // full-width shift title bar, then position/name/notes rows
+      pdf.row(
+        [CONTENT_W],
+        [{ t: `${sheet.name}   ${time}`, f: pdf.fonts.bold, s: 10 }],
+        18
+      );
       pdf.row(
         colWs,
         [
-          { t: time, f: pdf.fonts.bold, align: "c" },
-          { t: sheet.name, f: pdf.fonts.bold },
+          { t: "Position", f: pdf.fonts.bold, align: "c" },
           { t: "Name", f: pdf.fonts.bold, align: "c" },
           { t: "Notes", f: pdf.fonts.bold, align: "c" },
         ],
-        15
+        14
       );
       for (const r of slotRows(sheet, marks)) {
+        const before = pdf.page;
         pdf.need(18);
+        if (pdf.page !== before) {
+          // continue the shift's table on the new page with its headers
+          pdf.row(
+            [CONTENT_W],
+            [{ t: `${sheet.name}   ${time} (cont.)`, f: pdf.fonts.bold, s: 10 }],
+            18
+          );
+        }
         pdf.row(
           colWs,
-          [
-            { t: time, s: 8 },
-            { t: r.position, s: 8 },
-            { t: r.name, s: 9, marks: r.marks },
-            {},
-          ],
+          [{ t: r.position, s: 8 }, { t: r.name, s: 9, marks: r.marks }, {}],
           18
         );
       }
-      pdf.y -= 12;
+      pdf.y -= 14;
     }
     pdf.footer();
   }
@@ -1081,7 +1090,15 @@ const smallSheets = (
   const yr = sheets[0]?.yr ?? new Date().getFullYear();
   pdf.text(`Census ${yr} Small Shift Rosters`, M, pdf.y - 12, 13, pdf.fonts.bold);
   pdf.y -= 24;
-  const colWs = [170, 160, 218];
+  // one table per category, one row per person/slot — the compact format
+  const colWs = [100, 92, 120, 148, 88];
+  const header: Cell[] = [
+    { t: "Date", f: pdf.fonts.bold, align: "c" },
+    { t: "Time", f: pdf.fonts.bold, align: "c" },
+    { t: "Position", f: pdf.fonts.bold, align: "c" },
+    { t: "Name", f: pdf.fonts.bold, align: "c" },
+    { t: "Notes", f: pdf.fonts.bold, align: "c" },
+  ];
   let lastCategory = "";
   const ordered = [...sheets].sort(
     (a, b) =>
@@ -1092,25 +1109,31 @@ const smallSheets = (
   for (const sheet of ordered) {
     const rows = slotRows(sheet, marks);
     if (!rows.length) continue;
-    pdf.need(50);
     if (sheet.category !== lastCategory) {
       lastCategory = sheet.category;
-      pdf.y -= 6;
+      pdf.need(70);
+      pdf.y -= 8;
       pdf.text(sheet.category, M, pdf.y - 11, 11, pdf.fonts.bold);
-      pdf.y -= 16;
+      pdf.y -= 15;
+      pdf.row(colWs, header, 14);
     }
-    const heading = `${sheet.name} - ${sheet.datename} (${sheet.dowMd})  ${to12h(sheet.start)}-${to12h(sheet.end)}`;
-    pdf.text(heading, M, pdf.y - 9, 9, pdf.fonts.ital, CONTENT_W);
-    pdf.y -= 13;
+    const time = `${to12h(sheet.start)}-${to12h(sheet.end)}`;
     for (const r of rows) {
-      pdf.need(15);
+      const before = pdf.page;
+      pdf.need(16);
+      if (pdf.page !== before) pdf.row(colWs, header, 14); // continue table
       pdf.row(
         colWs,
-        [{ t: r.position, s: 8 }, { t: r.name, s: 9, marks: r.marks }, {}],
-        15
+        [
+          { t: `${sheet.datename} ${sheet.dowMd.slice(4)}`, s: 8 },
+          { t: time, s: 7.5 },
+          { t: r.position, s: 8 },
+          { t: r.name, s: 9, marks: r.marks },
+          {},
+        ],
+        16
       );
     }
-    pdf.y -= 4;
   }
   pdf.footer("All CSP-earning positions; blank line = open slot");
 };
