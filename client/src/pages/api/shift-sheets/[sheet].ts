@@ -1,3 +1,6 @@
+import fs from "node:fs/promises";
+import path from "node:path";
+
 import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { PDFDocument, PDFFont, PDFPage, StandardFonts, rgb } from "pdf-lib";
@@ -313,16 +316,63 @@ const loadSheets = async (
   return [...byShift.values()];
 };
 
-// experience proxy for the roster Score column: each volunteer's sampling
-// shift dates this year; a sheet scores prior-dated ones. The legacy score
-// mixed multi-year Shiftboard history this database doesn't carry.
-// ponytail: single-year count; wire in historical data if leads miss it
-const loadSamplingDates = async (): Promise<Map<number, string[]>> => {
-  const [rowList] = await pool.query<RowDataPacket[]>(
-    `SELECT vs.shiftboard_id, DATE_FORMAT(d.date, '%Y%m%d') AS ymd
+// --- gate score (legacy censuslib walk) ----------------------------------
+//
+// Score = (experience walk + training bonus + recency bonus) x review
+// multiplier, ceil'd — the legacy censuslib ~1300-1338 formula. The walk
+// covers the legacy 2-year window: history through last year comes
+// pre-walked from sampling-history.json (generated from the Shiftboard
+// mirror by generate-history.py — this database has no multi-year data);
+// the current year's gate signups continue the walk live.
+
+interface ScoreState {
+  total: number;
+  last: string | null; // "YYYY-MM-DD"
+  rv: number;
+}
+
+interface GateEvent {
+  ymd: string; // "YYYYMMDD"
+  w: number;
+}
+
+interface ScoreData {
+  history: Map<number, ScoreState>;
+  events: Map<number, GateEvent[]>; // current-year gate signups, date order
+  training: Map<number, string[]>; // current-year training signup ymds
+}
+
+const gateWeight = (position: string, isLead: boolean): number =>
+  isLead ? 2 : /traffic tamer/i.test(position) ? 0.75 : 1;
+
+const daysBetween = (isoOrYmd: string, ymd: string): number => {
+  const norm = (s: string) => s.replaceAll("-", "");
+  const parse = (s: string) =>
+    Date.UTC(+norm(s).slice(0, 4), +norm(s).slice(4, 6) - 1, +norm(s).slice(6, 8));
+  return Math.round((parse(ymd) - parse(isoOrYmd)) / 86400000);
+};
+
+const loadScoreData = async (): Promise<ScoreData> => {
+  const raw = JSON.parse(
+    await fs.readFile(
+      path.join(process.cwd(), "lib", "shift-sheets", "sampling-history.json"),
+      "utf8"
+    )
+  ) as { volunteers: Record<string, [number, string | null, number]> };
+  const history = new Map<number, ScoreState>();
+  for (const [sid, [total, last, rv]] of Object.entries(raw.volunteers)) {
+    history.set(Number(sid), { total, last, rv });
+  }
+
+  const [eventRows] = await pool.query<RowDataPacket[]>(
+    `SELECT vs.shiftboard_id, DATE_FORMAT(d.date, '%Y%m%d') AS ymd,
+      COALESCE(NULLIF(stp.position_alias, ''), pt.position) AS position,
+      COALESCE(pt.lead, 0) AS is_lead,
+      sc.department
     FROM op_volunteer_shifts AS vs
     JOIN op_shift_time_position AS stp
       ON stp.time_position_id=vs.time_position_id AND stp.remove_time_position=false
+    JOIN op_position_type AS pt ON pt.position_type_id=stp.position_type_id
     JOIN op_shift_times AS st
       ON st.shift_times_id=stp.shift_times_id
       AND st.remove_shift_time=false AND st.canceled=false
@@ -330,16 +380,55 @@ const loadSamplingDates = async (): Promise<Map<number, string[]>> => {
       ON sn.shift_name_id=st.shift_name_id AND sn.delete_shift=false
     JOIN op_shift_category AS sc ON sc.shift_category_id=sn.shift_category_id
     JOIN op_dates AS d ON d.date_id=st.start_date_id
-    WHERE vs.remove_shift=false AND sc.shift_category IN (?)`,
-    [SAMPLING_CATEGORIES]
+    WHERE vs.remove_shift=false
+      AND (sc.shift_category = 'Gate Sampling' OR sc.department = 'Training')
+    ORDER BY vs.shiftboard_id, d.date`
   );
-  const dates = new Map<number, string[]>();
-  for (const row of rowList) {
-    const list = dates.get(row.shiftboard_id as number) ?? [];
-    list.push(row.ymd as string);
-    dates.set(row.shiftboard_id as number, list);
+  const events = new Map<number, GateEvent[]>();
+  const training = new Map<number, string[]>();
+  for (const row of eventRows) {
+    const sid = row.shiftboard_id as number;
+    if (row.department === "Training") {
+      const list = training.get(sid) ?? [];
+      list.push(row.ymd as string);
+      training.set(sid, list);
+    } else if (!/driver/i.test(row.position as string)) {
+      const list = events.get(sid) ?? [];
+      list.push({
+        ymd: row.ymd as string,
+        w: gateWeight(row.position as string, row.is_lead === 1),
+      });
+      events.set(sid, list);
+    }
   }
-  return dates;
+  return { history, events, training };
+};
+
+// walk this year's events strictly before the sheet date, then apply the
+// legacy display bonuses: decay on a stale gap, +2/+1 recency, +2 for
+// training within 60 days, all times the review multiplier
+const gateScore = (data: ScoreData, sid: number, sheetYmd: string): number => {
+  const hist = data.history.get(sid);
+  let total = hist?.total ?? 0;
+  let last = hist?.last ?? null;
+  for (const ev of data.events.get(sid) ?? []) {
+    if (ev.ymd >= sheetYmd) break;
+    if (last !== null && daysBetween(last, ev.ymd) > 30) total *= 0.7;
+    total += ev.w;
+    last = ev.ymd;
+  }
+  let recency = 0;
+  if (last !== null) {
+    const gap = daysBetween(last, sheetYmd);
+    recency = gap <= 30 ? 2 : 1;
+    if (gap > 30) total *= 0.7;
+  }
+  const trained = (data.training.get(sid) ?? []).some((t) => {
+    const gap = daysBetween(t, sheetYmd);
+    return gap >= 0 && gap < 60;
+  });
+  const rv = hist?.rv && hist.rv > 0 ? hist.rv : 1;
+  return Math.ceil((total + recency + (trained ? 2 : 0)) * rv);
 };
 
 interface Marks {
@@ -678,11 +767,7 @@ const openPdf = async (title: string) => {
 const gateRoleAbbrev = (position: string, score: number) =>
   score === 0 ? "TTo" : /traffic tamer/i.test(position) ? "TT" : "RS";
 
-const gatePage1 = (
-  pdf: Pdf,
-  sheet: Sheet,
-  samplingDates: Map<number, string[]>
-) => {
+const gatePage1 = (pdf: Pdf, sheet: Sheet, scoreData: ScoreData) => {
   pdf.newPage();
   pdf.title(sheet);
   pdf.leadsLine(sheet);
@@ -704,9 +789,7 @@ const gatePage1 = (
     .filter((e) => e.name && !e.isLead && !e.isDriver)
     .map((e) => ({
       ...e,
-      score: (samplingDates.get(e.shiftboardId ?? -1) ?? []).filter(
-        (d) => d < sheet.ymd
-      ).length,
+      score: gateScore(scoreData, e.shiftboardId ?? -1, sheet.ymd),
     }))
     .sort((a, b) => b.score - a.score);
   // pad to the legacy 31 rows; a fuller shift prints everyone by shrinking
@@ -764,7 +847,7 @@ const gatePage1 = (
     }
     y -= 25;
   }
-  pdf.footer("Score = prior sampling shifts this year; TTo = first shift");
+  pdf.footer("Score = sampling experience (2-yr walk x reviews); TTo = no experience");
 };
 
 const gatePage2 = (pdf: Pdf, sheet: Sheet) => {
@@ -1139,12 +1222,10 @@ const shiftSheets = async (req: NextApiRequest, res: NextApiResponse) => {
       const page2 = req.query.page === "2";
       pdf = await openPdf(page2 ? "Gate Sampling p2" : "Gate Sampling");
       const sheets = await loadSheets("sc.shift_category = ?", ["Gate Sampling"]);
-      const samplingDates = page2
-        ? new Map<number, string[]>()
-        : await loadSamplingDates();
+      const scoreData = page2 ? null : await loadScoreData();
       for (const s of sheets) {
         if (page2) gatePage2(pdf, s);
-        else gatePage1(pdf, s, samplingDates);
+        else gatePage1(pdf, s, scoreData as ScoreData);
       }
       if (!sheets.length) pdf.newPage();
       filename = page2 ? "GateSampling_p2.pdf" : "GateSampling.pdf";
