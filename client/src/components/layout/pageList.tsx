@@ -1,26 +1,15 @@
 import {
-  Badge as BadgeIcon,
   BarChart as BarChartIcon,
   CalendarMonth as CalendarMonthIcon,
-  Checklist as ChecklistIcon,
-  Construction as ConstructionIcon,
-  EditNote as EditNoteIcon,
   EventNote as EventNoteIcon,
-  FactCheck as FactCheckIcon,
-  Flight as FlightIcon,
   Group as GroupIcon,
   Groups3 as Groups3Icon,
   ConfirmationNumber as ConfirmationNumberIcon,
   Help as HelpIcon,
   Home as HomeIcon,
-  Keyboard as KeyboardIcon,
-  Notes as NotesIcon,
   Print as PrintIcon,
   QuestionAnswer as QuestionAnswerIcon,
-  Science as ScienceIcon,
   Settings as SettingsIcon,
-  ShoppingBag as ShoppingBagIcon,
-  Traffic as TrafficIcon,
   VerifiedUser as VerifiedUserIcon,
   ViewList as ViewListIcon,
   WorkHistory as WorkHistoryIcon,
@@ -82,27 +71,10 @@ export const pageListSuperAdmin = [
     path: "/saps",
   },
   {
-    // direct PDF downloads (Avery 2x4in label sheets), not app pages
+    // label + shift-roster PDF downloads live on this page
     icon: <PrintIcon />,
-    label: "Labels",
-    path: "",
-    children: [
-      {
-        icon: <BadgeIcon />,
-        label: "User Labels",
-        path: "/api/labels",
-      },
-      {
-        icon: <ShoppingBagIcon />,
-        label: "Sampling Bags",
-        path: "/api/labels/sampling",
-      },
-      {
-        icon: <EditNoteIcon />,
-        label: "Data Wiz",
-        path: "/api/labels/data-wiz",
-      },
-    ],
+    label: "Printing",
+    path: "/printing",
   },
   {
     icon: <WorkHistoryIcon />,
@@ -123,54 +95,6 @@ export const pageListSuperAdmin = [
         icon: <EventNoteIcon />,
         label: "Types",
         path: "/shifts/types",
-      },
-    ],
-  },
-  {
-    // direct PDF downloads — printed shift rosters (legacy schedPrint)
-    icon: <PrintIcon />,
-    label: "Shift Sheets",
-    path: "",
-    children: [
-      {
-        icon: <TrafficIcon />,
-        label: "Gate Sampling p1",
-        path: "/api/shift-sheets/gate-sampling",
-      },
-      {
-        icon: <ChecklistIcon />,
-        label: "Gate Sampling p2",
-        path: "/api/shift-sheets/gate-sampling?page=2",
-      },
-      {
-        icon: <FlightIcon />,
-        label: "Airport Sampling",
-        path: "/api/shift-sheets/airport-sampling",
-      },
-      {
-        icon: <KeyboardIcon />,
-        label: "Data Entry",
-        path: "/api/shift-sheets/data-entry",
-      },
-      {
-        icon: <ScienceIcon />,
-        label: "Lab Hosts",
-        path: "/api/shift-sheets/lab-hosts",
-      },
-      {
-        icon: <ConstructionIcon />,
-        label: "Daily Rosters",
-        path: "/api/shift-sheets/daily",
-      },
-      {
-        icon: <NotesIcon />,
-        label: "Small Shifts",
-        path: "/api/shift-sheets/compact",
-      },
-      {
-        icon: <FactCheckIcon />,
-        label: "Check-In",
-        path: "/api/shift-sheets/check-in",
       },
     ],
   },
