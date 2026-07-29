@@ -585,6 +585,15 @@ class Pdf {
     this.y = y;
   }
 
+  // legacy write-in emphasis boxes render as double-line frames
+  doubleRect(x: number, y: number, w: number, h: number) {
+    this.page.drawRectangle({ x, y, width: w, height: h, borderWidth: 1.1, borderColor: BLACK });
+    this.page.drawRectangle({
+      x: x + 2, y: y + 2, width: w - 4, height: h - 4,
+      borderWidth: 1.1, borderColor: BLACK,
+    });
+  }
+
   wrap(t: string, size: number, width: number, font = this.fonts.helv) {
     const words = txt(t).split(/\s+/);
     const lines: string[] = [];
@@ -707,40 +716,42 @@ class Pdf {
     const end = toMin(sheet.end);
     if (start === null || end === null) return;
     const before = /before/i.test(sheet.meal);
-    const rows: [string, number, boolean][] = [];
+    // 4th field: which cell gets the legacy double-frame write-in box
+    // ("actual" col on Sampling Start; gate also frames Headcount cells)
+    const rows: [string, number, boolean, "" | "actual" | "head"][] = [];
     if (kind === "Gate") {
       if (before) {
         rows.push(
-          ["Shift Start", start, false],
-          ["Meal End", start + 55, true],
-          ["Sampling Start", start + 105, false],
-          ["Sampling End", start + 200, true],
-          ["Back at Lab", end, false]
+          ["Shift Start", start, false, "head"],
+          ["Meal End", start + 55, true, "head"],
+          ["Sampling Start", start + 105, false, "actual"],
+          ["Sampling End", start + 200, true, "head"],
+          ["Back at Lab", end, false, ""]
         );
       } else {
         rows.push(
-          ["Shift Start", start, false],
-          ["Sampling Start", start + 55, false],
-          ["Sampling End", start + 150, true],
-          ["Meal End", start + 215, true],
-          ["Back at Lab", end, false]
+          ["Shift Start", start, false, "head"],
+          ["Sampling Start", start + 55, false, "actual"],
+          ["Sampling End", start + 150, true, "head"],
+          ["Meal End", start + 215, true, "head"],
+          ["Back at Lab", end, false, ""]
         );
       }
     } else if (before) {
       rows.push(
-        ["Shift Start", start, false],
-        ["Meal End", start + 50, true],
-        ["Sampling Start", start + 90, false],
-        ["Sampling End", start + 210, true],
-        ["Back at Lab", end, false]
+        ["Shift Start", start, false, ""],
+        ["Meal End", start + 50, true, ""],
+        ["Sampling Start", start + 90, false, "actual"],
+        ["Sampling End", start + 210, true, ""],
+        ["Back at Lab", end, false, ""]
       );
     } else {
       rows.push(
-        ["Shift Start", start, false],
-        ["Sampling Start", start + 35, false],
-        ["Sampling End", start + 155, true],
-        ["Meal End", start + 220, true],
-        ["Back at Lab", end, false]
+        ["Shift Start", start, false, ""],
+        ["Sampling Start", start + 35, false, "actual"],
+        ["Sampling End", start + 155, true, ""],
+        ["Meal End", start + 220, true, ""],
+        ["Back at Lab", end, false, ""]
       );
     }
     const colWs = (kind === "Gate" ? [130, 90, 120, 90] : [130, 90, 120]).map(
@@ -757,7 +768,7 @@ class Pdf {
       header.push({ t: "Headcount", f: this.fonts.bold, s: 12.5, align: "c" });
     }
     this.row(colWs, header, 19, true, x0);
-    for (const [label, min, boldTime] of rows) {
+    for (const [label, min, boldTime, thick] of rows) {
       const cells: Cell[] = [
         { t: label, s: 11.5 },
         {
@@ -770,6 +781,11 @@ class Pdf {
       ];
       if (kind === "Gate") cells.push({});
       this.row(colWs, cells, 19, true, x0);
+      if (thick) {
+        const col = thick === "actual" ? 2 : 3;
+        const cx = x0 + colWs.slice(0, col).reduce((a, b) => a + b, 0);
+        this.doubleRect(cx, this.y, colWs[col], 19);
+      }
     }
   }
 }
@@ -847,9 +863,15 @@ const gatePage1 = (pdf: Pdf, sheet: Sheet, scoreData: ScoreData) => {
   const estWs = [100, 46];
   pdf.row(estWs, [{ t: "Estimated Lanes", s: 9 }, { t: "5", f: pdf.fonts.bold, s: 13, align: "c" }], 19);
   pdf.row(estWs, [{ t: "Estimated Int#", s: 9 }, { t: "2", f: pdf.fonts.bold, s: 13, align: "c" }], 19);
-  pdf.text("Actual Interval#  (1-5) / (6-10)", M + 6, pdf.y - 12, 8.5);
-  pdf.y -= 16;
-  pdf.row([73, 73], [{}, {}], 20);
+  {
+    const boxW = estWs[0] + estWs[1];
+    pdf.doubleRect(M, pdf.y - 48, boxW, 48);
+    for (const [i, line] of ["Actual Interval#", "(1-5) / (6-10)"].entries()) {
+      const lw = pdf.fonts.helv.widthOfTextAtSize(line, 9.5);
+      pdf.text(line, M + (boxW - lw) / 2, pdf.y - 13 - i * 11.5, 9.5);
+    }
+    pdf.y -= 48;
+  }
 
   const laneX = M + 180;
   const laneW = 33;
@@ -864,16 +886,16 @@ const gatePage1 = (pdf: Pdf, sheet: Sheet, scoreData: ScoreData) => {
     cx += laneW;
   }
   y -= 18;
-  for (let r = 0; r < 2; r++) {
-    cx = laneX;
-    for (let i = 0; i < laneCols.length; i++) {
-      pdf.page.drawRectangle({ x: cx, y: y - 26, width: laneW, height: 26, borderWidth: 0.6, borderColor: BLACK });
+  {
+    const clickH = 34;
+    pdf.page.drawRectangle({ x: laneX, y: y - clickH, width: laneW, height: clickH, borderWidth: 0.6, borderColor: BLACK });
+    pdf.text("Click", laneX + 3, y - 13, 9);
+    cx = laneX + laneW;
+    for (let i = 1; i < laneCols.length; i++) {
+      pdf.doubleRect(cx, y - clickH, laneW, clickH);
       cx += laneW;
     }
-    if (r === 0) {
-      pdf.text("Click", laneX + 4, y - 16, 9, pdf.fonts.bold);
-    }
-    y -= 26;
+    y -= clickH;
   }
   pdf.footer("Score = sampling experience (2-yr walk x reviews); TTo = no experience");
 };
@@ -970,18 +992,19 @@ const rosterPage = (pdf: Pdf, sheet: Sheet) => {
     const boxW = (CONTENT_W - half - 14) / 2;
     let cx = rightX;
     for (const label of ["Clicker #", "Interval #"]) {
-      pdf.page.drawRectangle({ x: cx, y: pdf.y - 42, width: boxW - 6, height: 42, borderWidth: 2.2, borderColor: BLACK });
+      pdf.doubleRect(cx, pdf.y - 46, boxW - 6, 46);
       const lw = pdf.fonts.helv.widthOfTextAtSize(label, 10);
-      pdf.text(label, cx + (boxW - 6 - lw) / 2, pdf.y - 13, 10);
+      pdf.text(label, cx + (boxW - 6 - lw) / 2, pdf.y - 14, 10);
       cx += boxW;
     }
-    pdf.y -= 46;
+    pdf.y -= 52;
     {
       const lw = pdf.fonts.helv.widthOfTextAtSize("# of Planes", 10);
-      pdf.page.drawRectangle({ x: rightX, y: pdf.y - 38, width: boxW - 6, height: 38, borderWidth: 0.8, borderColor: BLACK });
-      pdf.text("# of Planes", rightX + (boxW - 6 - lw) / 2, pdf.y - 13, 10);
+      pdf.page.drawRectangle({ x: rightX, y: pdf.y - 26, width: boxW - 6, height: 26, borderWidth: 0.8, borderColor: BLACK });
+      pdf.text("# of Planes", rightX + (boxW - 6 - lw) / 2, pdf.y - 16, 10);
+      pdf.page.drawRectangle({ x: rightX + boxW, y: pdf.y - 26, width: boxW - 6, height: 26, borderWidth: 0.8, borderColor: BLACK });
     }
-    pdf.y -= 46;
+    pdf.y -= 34;
     pdf.mealTiming(sheet, "Airport", rightX, 0.82);
   } else {
     // legacy: a bordered capture box beside the checklist with the prompt
