@@ -12,6 +12,7 @@ import {
   Button,
   Chip,
   Container,
+  IconButton,
   Link as MuiLink,
   MenuItem,
   Paper,
@@ -81,6 +82,9 @@ export const Saps = () => {
   const [uploading, setUploading] = useState(false);
   const [offbookEmail, setOffbookEmail] = useState("");
   const [offbookName, setOffbookName] = useState("");
+  // Rows the admin has unlocked for reassignment (received SAP burns on the
+  // next assign, server-side).
+  const [unlocked, setUnlocked] = useState<Record<string, boolean>>({});
 
   if (peopleError) return <ErrorPage />;
   if (!peopleData) return <Loading />;
@@ -121,7 +125,7 @@ export const Saps = () => {
     setRowBusy(key, true);
     try {
       if (checked) {
-        const date = dateChoice[key] ?? "auto";
+        const date = dateChoice[key] ?? p.dateOverride ?? "auto";
         const res = await fetch("/api/saps/assign", {
           method: "POST",
           body: JSON.stringify({ ...targetBody(p), date }),
@@ -140,10 +144,28 @@ export const Saps = () => {
           return;
         }
       }
+      setUnlocked((u) => ({ ...u, [key]: false }));
       refresh();
     } finally {
       setRowBusy(key, false);
     }
+  };
+
+  // Persist the SAP-date dropdown choice so it survives between sessions.
+  const handleDateChoice = async (p: ISapPerson, value: string) => {
+    const key = rowKey(p);
+    setDateChoice((d) => ({ ...d, [key]: value }));
+    const res = await fetch("/api/saps/date-choice", {
+      method: "POST",
+      body: JSON.stringify({
+        ...targetBody(p),
+        date: value === "auto" ? null : value,
+      }),
+    });
+    if (!res.ok) {
+      enqueueSnackbar(await readError(res), { variant: "error" });
+    }
+    mutate(PEOPLE_URL);
   };
 
   // download (issue) — POST flips to received + streams the PDF -----------
@@ -163,7 +185,7 @@ export const Saps = () => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `SAP_${p.assignment.sapDate}.pdf`;
+      a.download = `SAP_${p.assignment.sapDate}_${p.assignment.ticketId ?? p.assignment.sapId}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
       refresh();
@@ -204,6 +226,19 @@ export const Saps = () => {
     setOffbookEmail("");
     setOffbookName("");
     mutate(PEOPLE_URL);
+  };
+
+  // Unlock a delivered (locked) SAP row for reassignment. The old SAP stays
+  // valid until a new one is assigned; the assign endpoint then burns it.
+  const handleUnlock = (p: ISapPerson) => {
+    if (!p.assignment) return;
+    const ok = window.confirm(
+      `Unlock ${p.name}? Assigning a new SAP will permanently BURN their ` +
+        `delivered SAP (ticket ${p.assignment.ticketId ?? p.assignment.sapId}) — ` +
+        `burned SAPs can never be reassigned to anyone. ` +
+        `(To re-send the same SAP, use Re-download / Email again instead.)`,
+    );
+    if (ok) setUnlocked((u) => ({ ...u, [rowKey(p)]: true }));
   };
 
   // render ----------------------------------------------------------------
@@ -267,14 +302,15 @@ export const Saps = () => {
                 const assignment = p.assignment;
                 const isReceived = assignment?.status === "received";
                 const isAssigned = assignment?.status === "assigned";
-                const choice = dateChoice[key] ?? "auto";
+                const choice = dateChoice[key] ?? p.dateOverride ?? "auto";
                 const rowBusy = busy[key] ?? false;
+                const isUnlocked = isReceived && (unlocked[key] ?? false);
                 // Row tint: grey = not currently getting one of our SAPs
                 // (external SAP or no eligible shift), light red = missing
                 // items, light green = all requirements complete.
                 const rowBg =
                   p.standing === "external" || p.standing === "not_earning"
-                    ? "#f5f5f5"
+                    ? "#e0e0e0"
                     : p.standing === "missing"
                       ? "#ffebee"
                       : p.standing === "complete"
@@ -345,42 +381,47 @@ export const Saps = () => {
                       )}
                     </TableCell>
                     <TableCell>
-                      {assignment ? (
+                      {assignment && !isUnlocked ? (
                         <span>{assignment.sapDate}</span>
                       ) : (
                         <Select
                           size="small"
                           value={choice}
                           disabled={rowBusy}
-                          onChange={(e) =>
-                            setDateChoice((d) => ({
-                              ...d,
-                              [key]: e.target.value,
-                            }))
-                          }
+                          onChange={(e) => handleDateChoice(p, e.target.value)}
                           sx={{ minWidth: 160 }}
                         >
                           <MenuItem value="auto">
                             {p.autoLabel}
-                            {p.autoSapDayname ? ` (${p.autoSapDayname})` : ""}
+                            {p.autoLabel !== "Staff" && p.autoSapDayname
+                              ? ` (${p.autoSapDayname})`
+                              : ""}
                           </MenuItem>
                           {availableDates.map((d) => (
                             <MenuItem key={d.date} value={d.date}>
                               {(d.dayname ?? d.date) + ` (${d.count})`}
                             </MenuItem>
                           ))}
+                          {choice !== "auto" &&
+                            !availableDates.some((d) => d.date === choice) && (
+                              <MenuItem value={choice} disabled>
+                                {choice} (none left)
+                              </MenuItem>
+                            )}
                         </Select>
                       )}
                     </TableCell>
                     <TableCell align="center">
-                      {isReceived ? (
-                        <Tooltip title="Issued — locked">
-                          <LockIcon color="disabled" fontSize="small" />
+                      {isReceived && !isUnlocked ? (
+                        <Tooltip title="Issued — locked. Click to unlock and reassign.">
+                          <IconButton size="small" onClick={() => handleUnlock(p)}>
+                            <LockIcon color="disabled" fontSize="small" />
+                          </IconButton>
                         </Tooltip>
                       ) : (
                         <input
                           type="checkbox"
-                          checked={Boolean(assignment)}
+                          checked={Boolean(assignment) && !isUnlocked}
                           disabled={rowBusy}
                           onChange={(e) =>
                             handleAssignToggle(p, e.target.checked)

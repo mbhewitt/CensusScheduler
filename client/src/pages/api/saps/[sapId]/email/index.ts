@@ -29,7 +29,7 @@ const emailSap = async (req: NextApiRequest, res: NextApiResponse) => {
   // Resolve recipient + validate BEFORE locking, so we never mark a SAP
   // received that we couldn't actually send.
   const [rows] = await pool.query<RowDataPacket[]>(
-    `SELECT s.filename, s.sap_date, s.status, s.assigned_email, v.email AS vol_email
+    `SELECT s.filename, s.sap_date, s.ticket_id, s.status, s.assigned_email, v.email AS vol_email
        FROM op_saps s
        LEFT JOIN op_volunteers v ON s.shiftboard_id = v.shiftboard_id
       WHERE s.sap_id = ?`,
@@ -79,13 +79,19 @@ const emailSap = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const { id } = await enqueueEmail({
     to,
-    subject: "Your Burning Man Setup Access Pass (SAP)",
+    subject: "Your Census Setup Access Pass (SAP)",
     bodyText:
       `Your Setup Access Pass is attached.\n\n` +
       `It is valid on or after ${row.sap_date}. Print it and present it ` +
       `together with your ticket or credential at the gate.\n\n` +
+      `Yes, the pass is addressed to Matthew Hewitt — that is expected ` +
+      `(all Census SAPs are issued under one name). Rest assured it will ` +
+      `work for you. If you have any issues at the Gate, contact Census.\n\n` +
       `A SAP is not a ticket and does not grant access on its own.`,
-    attachment: { filename: `SAP_${row.sap_date}.pdf`, content },
+    attachment: {
+      filename: `SAP_${row.sap_date}_${row.ticket_id ?? sapId}.pdf`,
+      content,
+    },
     category: "sap",
   });
 

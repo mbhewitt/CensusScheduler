@@ -49,8 +49,9 @@ export interface RequiredDay {
 
 // Where a person stands on getting a SAP:
 // - external: getting a SAP from another group (role 2000007) — not ours to earn
-// - not_earning: no SAP-earning shift signed up (and not staff), so currently
-//   not on track to get one
+// - not_earning: not on track to get one by default — no CSP-earning shift
+//   before/on Open Sunday, or Staff. An explicit date (admin override or an
+//   actual assignment) lifts this back to missing/complete.
 // - missing: on track but requirements outstanding
 // - complete: all requirements met
 export type SapStanding = "external" | "not_earning" | "missing" | "complete";
@@ -62,7 +63,19 @@ export interface SapEligibilityInput {
   missingTrainings: string[]; // names of required-but-uncompleted trainings
   totalCsp: number;
   requiredDays: RequiredDay[];
-  hasEligibleShift: boolean; // has at least one CSP-earning shift
+  hasPreOpenShift: boolean; // has a CSP shift starting on/before Open Sunday
+  hasDateOverride: boolean; // admin picked a date or a SAP is assigned/issued
+}
+
+// A SAP is only relevant when the first CSP-earning shift starts on or before
+// Open Sunday — later shifts need no early entry. Dates are YYYY-MM-DD, so
+// string compare is safe. Unknown Open Sunday -> any CSP shift counts.
+export function isPreOpenShift(
+  firstCspShiftDate: string | null,
+  openSunDate: string | null,
+): boolean {
+  if (!firstCspShiftDate) return false;
+  return openSunDate === null || firstCspShiftDate <= openSunDate;
 }
 
 export interface SapEligibility {
@@ -110,7 +123,7 @@ export function evaluateSapEligibility(
 
   const standing: SapStanding = input.hasExternalSap
     ? "external"
-    : !input.hasEligibleShift && !input.isStaff
+    : (input.isStaff || !input.hasPreOpenShift) && !input.hasDateOverride
       ? "not_earning"
       : requirementsMet
         ? "complete"

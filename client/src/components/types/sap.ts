@@ -9,6 +9,7 @@ export interface ISapRequiredDay {
 export interface ISapAssignment {
   sapId: number;
   sapDate: string;
+  ticketId: string | null;
   status: "assigned" | "received";
   receivedVia: "download" | "email" | null;
 }
@@ -32,6 +33,7 @@ export interface ISapPerson {
   missingSummary: string[];
   missingDetail: string[];
   totalCsp: number;
+  dateOverride: string | null; // persisted SAP-date dropdown choice (null = Auto)
   assignment: ISapAssignment | null;
 }
 
