@@ -6,10 +6,12 @@ import { withSuperAdmin } from "@/lib/withSuperAdmin";
 import { pool } from "lib/database";
 import { autoTargetDay, pickAutoSap } from "lib/sap";
 import { getCurrentBurnYear } from "lib/sapDb";
-import { buildRequiredDays } from "lib/sapStatus";
-
-const ROLE_STAFF_ID = 2000006;
-const REQUIRED_CSP = 12;
+import {
+  buildRequiredDays,
+  evaluateSapEligibility,
+  ROLE_OTHER_SAP_ID,
+  ROLE_STAFF_ID,
+} from "lib/sapStatus";
 
 interface Assignment {
   sapId: number;
@@ -41,6 +43,7 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
     [volRows],
     [offbookRows],
     [staffRows],
+    [otherSapRows],
     [bsRows],
     [trainingRows],
     [totalCspRows],
@@ -64,6 +67,11 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
       `SELECT shiftboard_id FROM op_volunteer_roles
         WHERE role_id = ? AND remove_role = false`,
       [ROLE_STAFF_ID],
+    ),
+    pool.query<RowDataPacket[]>(
+      `SELECT shiftboard_id FROM op_volunteer_roles
+        WHERE role_id = ? AND remove_role = false`,
+      [ROLE_OTHER_SAP_ID],
     ),
     pool.query<RowDataPacket[]>(
       `SELECT shiftboard_id FROM op_volunteer_roles
@@ -137,6 +145,7 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
   for (const d of dateRows) dateToDayname.set(String(d.date), d.datename);
 
   const staffSet = new Set<number>(staffRows.map((r) => r.shiftboard_id));
+  const otherSapSet = new Set<number>(otherSapRows.map((r) => r.shiftboard_id));
   const bsSet = new Set<number>(bsRows.map((r) => r.shiftboard_id));
 
   const missingTrainingsMap = new Map<number, string[]>();
@@ -194,18 +203,24 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
       v.arrival_datename ?? "",
       dayCspMap.get(v.shiftboard_id) ?? {},
     );
-    // SAP to-do criteria: required work days + signed behavioral standards +
-    // every training their positions require.
-    const missing = requiredDays.filter((d) => !d.fulfilled).map((d) => d.label);
-    if (!bsSet.has(v.shiftboard_id)) missing.push("Sign Behavioral Standards");
-    for (const t of missingTrainingsMap.get(v.shiftboard_id) ?? [])
-      missing.push(`${t} training`);
     const totalCsp = totalCspMap.get(v.shiftboard_id) ?? 0;
+    // Parity by design: the same shared function evaluates eligibility here
+    // and on the volunteer info page.
+    const eligibility = evaluateSapEligibility({
+      isStaff,
+      hasExternalSap: otherSapSet.has(v.shiftboard_id),
+      bsSigned: bsSet.has(v.shiftboard_id),
+      missingTrainings: missingTrainingsMap.get(v.shiftboard_id) ?? [],
+      totalCsp,
+      requiredDays,
+      hasEligibleShift: firstShiftDate !== null,
+    });
     return {
       kind: "volunteer" as const,
       shiftboardId: v.shiftboard_id,
       email: v.email ?? null,
       name: v.playa_name || v.world_name || `#${v.shiftboard_id}`,
+      worldName: v.world_name || null,
       isStaff,
       autoLabel: isStaff ? "Staff" : "Auto",
       firstShiftDate,
@@ -213,9 +228,10 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
       autoSapDate,
       autoSapDayname: dayname(autoSapDate),
       requiredDays,
-      missing,
+      standing: eligibility.standing,
+      missingSummary: eligibility.missingSummary,
+      missingDetail: eligibility.missingDetail,
       totalCsp,
-      cspFulfilled: totalCsp >= REQUIRED_CSP,
       assignment: assignByVol.get(v.shiftboard_id) ?? null,
     };
   });
@@ -227,6 +243,7 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
       shiftboardId: null,
       email: String(o.email),
       name: o.name || String(o.email),
+      worldName: null,
       isStaff: false,
       autoLabel: "Auto",
       firstShiftDate: null,
@@ -234,9 +251,10 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
       autoSapDate: null,
       autoSapDayname: null,
       requiredDays: [],
-      missing: [],
+      standing: null,
+      missingSummary: [],
+      missingDetail: [],
       totalCsp: 0,
-      cspFulfilled: false,
       assignment: assignByEmail.get(String(o.email).toLowerCase()) ?? null,
     }));
 

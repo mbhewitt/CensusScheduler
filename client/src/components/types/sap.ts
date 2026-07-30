@@ -13,11 +13,14 @@ export interface ISapAssignment {
   receivedVia: "download" | "email" | null;
 }
 
+export type ISapStanding = "external" | "not_earning" | "missing" | "complete";
+
 export interface ISapPerson {
   kind: "volunteer" | "offbook";
   shiftboardId: number | null;
   email: string | null;
   name: string;
+  worldName: string | null;
   isStaff: boolean;
   autoLabel: string;
   firstShiftDate: string | null;
@@ -25,9 +28,10 @@ export interface ISapPerson {
   autoSapDate: string | null;
   autoSapDayname: string | null;
   requiredDays: ISapRequiredDay[];
-  missing: string[];
+  standing: ISapStanding | null; // null for off-book (no requirements tracked)
+  missingSummary: string[];
+  missingDetail: string[];
   totalCsp: number;
-  cspFulfilled: boolean;
   assignment: ISapAssignment | null;
 }
 

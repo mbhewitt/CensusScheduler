@@ -1,7 +1,8 @@
-// Shared SAP day-by-day requirements logic. Single source of truth for the
-// volunteer info endpoint (volunteer-facing "earn your SAP" page) and the
-// super-admin SAP page's people list. Pure helpers only — no DB — so both
-// callers feed it the day-CSP map they already query.
+// Shared SAP eligibility logic. Single source of truth for the volunteer info
+// endpoint (volunteer-facing "earn your SAP" page) and the super-admin SAP
+// page's people list — parity by design: both pages MUST evaluate eligibility
+// through evaluateSapEligibility below, never with their own rules. Pure
+// helpers only — no DB — so both callers feed it the data they already query.
 
 // SAP day-by-day requirements keyed by arrival datename. Each entry is either a
 // single datename, or an array meaning "any of these". EarlyThur/Fri/Man are
@@ -34,10 +35,88 @@ export const PRE_OPEN_DATENAMES = [
   "PreSat",
 ];
 
+// SAP-related role ids (op_roles), shared by both endpoints.
+export const ROLE_STAFF_ID = 2000006;
+export const ROLE_OTHER_SAP_ID = 2000007;
+
+export const REQUIRED_CSP = 12;
+
 export interface RequiredDay {
   datenames: string[];
   label: string;
   fulfilled: boolean;
+}
+
+// Where a person stands on getting a SAP:
+// - external: getting a SAP from another group (role 2000007) — not ours to earn
+// - not_earning: no SAP-earning shift signed up (and not staff), so currently
+//   not on track to get one
+// - missing: on track but requirements outstanding
+// - complete: all requirements met
+export type SapStanding = "external" | "not_earning" | "missing" | "complete";
+
+export interface SapEligibilityInput {
+  isStaff: boolean;
+  hasExternalSap: boolean;
+  bsSigned: boolean;
+  missingTrainings: string[]; // names of required-but-uncompleted trainings
+  totalCsp: number;
+  requiredDays: RequiredDay[];
+  hasEligibleShift: boolean; // has at least one CSP-earning shift
+}
+
+export interface SapEligibility {
+  standing: SapStanding;
+  requirementsMet: boolean;
+  missingSummary: string[]; // compact, e.g. ["BS", "2 trainings", "4 CSP", "1 day"]
+  missingDetail: string[]; // full labels for tooltips
+}
+
+// The one place SAP requirements are defined: signed Behavioral Standards,
+// every position-required training completed, >= REQUIRED_CSP points, and
+// each required work day covered.
+export function evaluateSapEligibility(
+  input: SapEligibilityInput,
+): SapEligibility {
+  const missingDays = input.requiredDays.filter((d) => !d.fulfilled);
+  const cspShort = Math.max(0, REQUIRED_CSP - input.totalCsp);
+
+  const missingSummary: string[] = [];
+  const missingDetail: string[] = [];
+  if (!input.bsSigned) {
+    missingSummary.push("BS");
+    missingDetail.push("Sign Behavioral Standards");
+  }
+  if (input.missingTrainings.length > 0) {
+    missingSummary.push(
+      `${input.missingTrainings.length} training${
+        input.missingTrainings.length > 1 ? "s" : ""
+      }`,
+    );
+    missingDetail.push(...input.missingTrainings.map((t) => `${t} training`));
+  }
+  if (cspShort > 0) {
+    missingSummary.push(`${cspShort} CSP`);
+    missingDetail.push(`CSP ${input.totalCsp}/${REQUIRED_CSP}`);
+  }
+  if (missingDays.length > 0) {
+    missingSummary.push(
+      `${missingDays.length} day${missingDays.length > 1 ? "s" : ""}`,
+    );
+    missingDetail.push(...missingDays.map((d) => d.label));
+  }
+
+  const requirementsMet = missingSummary.length === 0;
+
+  const standing: SapStanding = input.hasExternalSap
+    ? "external"
+    : !input.hasEligibleShift && !input.isStaff
+      ? "not_earning"
+      : requirementsMet
+        ? "complete"
+        : "missing";
+
+  return { standing, requirementsMet, missingSummary, missingDetail };
 }
 
 // Build the day-by-day requirement list for an arrival day. A day is fulfilled
