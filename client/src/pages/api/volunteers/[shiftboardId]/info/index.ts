@@ -8,12 +8,17 @@ import type {
 import { pool } from "lib/database";
 import { withAuth } from "@/lib/withAuth";
 import { isOwnerOrAdmin } from "@/lib/authz";
-import { buildRequiredDays, PRE_OPEN_DATENAMES } from "lib/sapStatus";
+import {
+  buildRequiredDays,
+  evaluateSapEligibility,
+  PRE_OPEN_DATENAMES,
+  REQUIRED_CSP,
+  ROLE_OTHER_SAP_ID,
+  ROLE_STAFF_ID,
+} from "lib/sapStatus";
 import { autoTargetDay } from "lib/sap";
 
 // Role IDs for VIP-specific roles
-const ROLE_STAFF_ID = 2000006;
-const ROLE_OTHER_SAP_ID = 2000007;
 const ROLE_BURNER_PROFILE_UPDATED_ID = 2000010;
 const ROLE_WELCOME_COMPLETE_ID = 174766;
 const ROLE_BEHAVIORAL_STANDARDS_ID = 1000012;
@@ -223,7 +228,7 @@ const volunteerInfo = async (
       const requiredDays: IResVolunteerInfo["sapStatus"]["requiredDays"] =
         buildRequiredDays(arrivalDatename, dayCspMap);
 
-      const requiredCsp = 12;
+      const requiredCsp = REQUIRED_CSP;
       const cspFulfilled = totalCsp >= requiredCsp;
 
       const sapFile = hasSapFile
@@ -234,31 +239,6 @@ const volunteerInfo = async (
             date: dbSapList[0].date,
           }
         : null;
-
-      // The date a SAP has been earned/assigned FOR. Precedence:
-      //   1. an assigned SAP's date (admin may have picked a different date on
-      //      the SAP page — that's the "override"), else
-      //   2. the auto date (day before the first SAP-earning shift) IF the
-      //      volunteer has met the SAP requirements (>=12 CSP + each required
-      //      day covered). Null otherwise -> the earned-SAP box stays hidden.
-      const sapRequirementsMet =
-        cspFulfilled && requiredDays.every((d) => d.fulfilled);
-      const earnedSapDate: string | null = sapFile
-        ? String(sapFile.date)
-        : sapRequirementsMet
-          ? autoTargetDay(firstCspShiftDate)
-          : null;
-      // datename that goes with earnedSapDate (e.g. "PreTue"), so the UI can
-      // show "Aug 25 (PreTue)". Assigned SAP carries its own; for the auto date
-      // look it up in the event calendar.
-      const dateToDatename = new Map<string, string>(
-        dbDateList.map((d) => [String(d.date), String(d.datename)])
-      );
-      const earnedSapDatename: string | null = sapFile
-        ? String(sapFile.datename)
-        : earnedSapDate
-          ? (dateToDatename.get(earnedSapDate) ?? null)
-          : null;
 
       // role-based thresholds
       const roleThresholds: IResVolunteerInfo["roleThresholds"] = dbRoleList
@@ -310,6 +290,42 @@ const volunteerInfo = async (
       const behavioralStandardsSigned = roleIdSet.has(
         ROLE_BEHAVIORAL_STANDARDS_ID
       );
+
+      // The date a SAP has been earned/assigned FOR. Precedence:
+      //   1. an assigned SAP's date (admin may have picked a different date on
+      //      the SAP page — that's the "override"), else
+      //   2. the auto date (day before the first SAP-earning shift) IF the
+      //      volunteer has met the SAP requirements. Null otherwise -> the
+      //      earned-SAP box stays hidden.
+      // Parity by design: eligibility comes from the same shared function the
+      // super-admin SAP page uses (BS + trainings + CSP + required days).
+      const sapRequirementsMet = evaluateSapEligibility({
+        isStaff,
+        hasExternalSap: hasOtherSap,
+        bsSigned: behavioralStandardsSigned,
+        missingTrainings: trainings
+          .filter((t) => !t.completed)
+          .map((t) => t.trainingName),
+        totalCsp,
+        requiredDays,
+        hasEligibleShift: firstCspShiftDate !== null,
+      }).requirementsMet;
+      const earnedSapDate: string | null = sapFile
+        ? String(sapFile.date)
+        : sapRequirementsMet
+          ? autoTargetDay(firstCspShiftDate)
+          : null;
+      // datename that goes with earnedSapDate (e.g. "PreTue"), so the UI can
+      // show "Aug 25 (PreTue)". Assigned SAP carries its own; for the auto date
+      // look it up in the event calendar.
+      const dateToDatename = new Map<string, string>(
+        dbDateList.map((d) => [String(d.date), String(d.datename)])
+      );
+      const earnedSapDatename: string | null = sapFile
+        ? String(sapFile.datename)
+        : earnedSapDate
+          ? (dateToDatename.get(earnedSapDate) ?? null)
+          : null;
       // Strict (add_role=true AND remove_role=false) so the checkbox state
        // matches the queue's send-time filter in client/lib/mail/queue.ts
       // exactly. The bulk role-list query above is intentionally looser to

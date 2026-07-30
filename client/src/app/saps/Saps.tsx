@@ -269,8 +269,19 @@ export const Saps = () => {
                 const isAssigned = assignment?.status === "assigned";
                 const choice = dateChoice[key] ?? "auto";
                 const rowBusy = busy[key] ?? false;
+                // Row tint: grey = not currently getting one of our SAPs
+                // (external SAP or no eligible shift), light red = missing
+                // items, light green = all requirements complete.
+                const rowBg =
+                  p.standing === "external" || p.standing === "not_earning"
+                    ? "#f5f5f5"
+                    : p.standing === "missing"
+                      ? "#ffebee"
+                      : p.standing === "complete"
+                        ? "#e8f5e9"
+                        : undefined;
                 return (
-                  <TableRow key={key} hover>
+                  <TableRow key={key} hover sx={{ bgcolor: rowBg }}>
                     <TableCell>
                       <Stack
                         direction="row"
@@ -287,6 +298,15 @@ export const Saps = () => {
                         ) : (
                           <span>{p.name}</span>
                         )}
+                        {p.worldName && p.worldName !== p.name && (
+                          <Typography
+                            component="span"
+                            variant="body2"
+                            color="text.secondary"
+                          >
+                            &quot;{p.worldName}&quot;
+                          </Typography>
+                        )}
                         {p.kind === "offbook" && (
                           <Chip label="off-book" size="small" />
                         )}
@@ -299,17 +319,19 @@ export const Saps = () => {
                       {p.firstShiftDayname ?? p.firstShiftDate ?? "—"}
                     </TableCell>
                     <TableCell>
-                      {p.missing.length > 0 ? (
-                        <Tooltip title={`Missing: ${p.missing.join("; ")}`}>
-                          <span>Missing {p.missing.length} item(s)</span>
+                      {p.standing === "external" ? (
+                        <Tooltip title="Getting a SAP from another group">
+                          <span>External SAP</span>
                         </Tooltip>
                       ) : p.kind === "offbook" ? (
                         <Tooltip title="Off-book — no requirements tracked">
                           <span style={{ color: "#999" }}>—</span>
                         </Tooltip>
-                      ) : p.requiredDays.length === 0 ? (
-                        <Tooltip title="No arrival date set — no required days">
-                          <span style={{ color: "#999" }}>—</span>
+                      ) : p.missingSummary.length > 0 ? (
+                        <Tooltip
+                          title={`Missing: ${p.missingDetail.join("; ")}`}
+                        >
+                          <span>Missing {p.missingSummary.join(", ")}</span>
                         </Tooltip>
                       ) : (
                         <Stack
