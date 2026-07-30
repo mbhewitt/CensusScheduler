@@ -259,7 +259,10 @@ export const Saps = () => {
         </Typography>
 
         {/* upload */}
-        <Box component="section" sx={{ mb: 4 }}>
+        <Box
+          component="section"
+          sx={{ mb: 4, display: "flex", alignItems: "center", gap: 2 }}
+        >
           <input
             ref={fileInputRef}
             type="file"
@@ -278,6 +281,11 @@ export const Saps = () => {
           >
             {uploading ? "Uploading…" : "Upload SAP batch PDF"}
           </Button>
+          {(poolData?.saps.length ?? 0) > 0 && (
+            <Typography component="span" sx={{ color: "error.main" }}>
+              The {burnYear} SAPs have been uploaded
+            </Typography>
+          )}
         </Box>
 
         {/* people */}
