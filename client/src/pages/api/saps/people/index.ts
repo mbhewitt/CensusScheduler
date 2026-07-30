@@ -9,6 +9,7 @@ import { getCurrentBurnYear } from "lib/sapDb";
 import {
   buildRequiredDays,
   evaluateSapEligibility,
+  isPreOpenShift,
   ROLE_OTHER_SAP_ID,
   ROLE_STAFF_ID,
 } from "lib/sapStatus";
@@ -16,6 +17,7 @@ import {
 interface Assignment {
   sapId: number;
   sapDate: string;
+  ticketId: string | null;
   status: "assigned" | "received";
   receivedVia: "download" | "email" | null;
 }
@@ -55,13 +57,14 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
   ] = await Promise.all([
     pool.query<RowDataPacket[]>(
       `SELECT v.shiftboard_id, v.playa_name, v.world_name, v.email,
-              d.datename AS arrival_datename
+              v.sap_date_override, d.datename AS arrival_datename
          FROM op_volunteers v
          LEFT JOIN op_dates d ON v.arrival_date_id = d.date_id
         WHERE v.delete_volunteer = false`,
     ),
     pool.query<RowDataPacket[]>(
-      `SELECT email, name, linked_shiftboard_id FROM op_sap_offbook`,
+      `SELECT email, name, linked_shiftboard_id, sap_date_override
+         FROM op_sap_offbook`,
     ),
     pool.query<RowDataPacket[]>(
       `SELECT shiftboard_id FROM op_volunteer_roles
@@ -132,7 +135,8 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
       [burnYear],
     ),
     pool.query<RowDataPacket[]>(
-      `SELECT sap_id, sap_date, status, received_via, shiftboard_id, assigned_email
+      `SELECT sap_id, sap_date, ticket_id, status, received_via, shiftboard_id,
+              assigned_email
          FROM op_saps
         WHERE burn_year = ? AND status IN ('assigned', 'received')`,
       [burnYear],
@@ -183,6 +187,7 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
     const a: Assignment = {
       sapId: r.sap_id,
       sapDate: String(r.sap_date),
+      ticketId: r.ticket_id ? String(r.ticket_id) : null,
       status: r.status,
       receivedVia: r.received_via,
     };
@@ -194,6 +199,9 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
   const dayname = (date: string | null) =>
     date ? (dateToDayname.get(date) ?? null) : null;
 
+  const openSunRow = dateRows.find((d) => d.datename === "OpenSun");
+  const openSunDate = openSunRow ? String(openSunRow.date) : null;
+
   const volunteers = volRows.map((v) => {
     const isStaff = staffSet.has(v.shiftboard_id);
     const firstShiftDate = firstShiftMap.get(v.shiftboard_id) ?? null;
@@ -204,6 +212,10 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
       dayCspMap.get(v.shiftboard_id) ?? {},
     );
     const totalCsp = totalCspMap.get(v.shiftboard_id) ?? 0;
+    const assignment = assignByVol.get(v.shiftboard_id) ?? null;
+    const dateOverride = v.sap_date_override
+      ? String(v.sap_date_override)
+      : null;
     // Parity by design: the same shared function evaluates eligibility here
     // and on the volunteer info page.
     const eligibility = evaluateSapEligibility({
@@ -213,7 +225,8 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
       missingTrainings: missingTrainingsMap.get(v.shiftboard_id) ?? [],
       totalCsp,
       requiredDays,
-      hasEligibleShift: firstShiftDate !== null,
+      hasPreOpenShift: isPreOpenShift(firstShiftDate, openSunDate),
+      hasDateOverride: assignment !== null || dateOverride !== null,
     });
     return {
       kind: "volunteer" as const,
@@ -232,7 +245,8 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
       missingSummary: eligibility.missingSummary,
       missingDetail: eligibility.missingDetail,
       totalCsp,
-      assignment: assignByVol.get(v.shiftboard_id) ?? null,
+      dateOverride,
+      assignment,
     };
   });
 
@@ -255,6 +269,7 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
       missingSummary: [],
       missingDetail: [],
       totalCsp: 0,
+      dateOverride: o.sap_date_override ? String(o.sap_date_override) : null,
       assignment: assignByEmail.get(String(o.email).toLowerCase()) ?? null,
     }));
 

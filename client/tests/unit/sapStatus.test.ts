@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { evaluateSapEligibility, REQUIRED_CSP } from "../../lib/sapStatus";
+import {
+  evaluateSapEligibility,
+  isPreOpenShift,
+  REQUIRED_CSP,
+} from "../../lib/sapStatus";
 
 const day = (label: string, fulfilled: boolean) => ({
   datenames: [label],
@@ -16,7 +20,8 @@ const base = {
   missingTrainings: [] as string[],
   totalCsp: REQUIRED_CSP,
   requiredDays: [day("PreThur", true)],
-  hasEligibleShift: true,
+  hasPreOpenShift: true,
+  hasDateOverride: false,
 };
 
 test("complete when everything is met", () => {
@@ -50,24 +55,42 @@ test("external SAP wins over everything else", () => {
     ...base,
     hasExternalSap: true,
     bsSigned: false,
-    hasEligibleShift: false,
+    hasPreOpenShift: false,
   });
   assert.equal(e.standing, "external");
 });
 
-test("no eligible shift -> not_earning, unless staff", () => {
+test("no pre-open shift or Staff -> not_earning, unless a date is set", () => {
   assert.equal(
-    evaluateSapEligibility({ ...base, hasEligibleShift: false, totalCsp: 0 })
+    evaluateSapEligibility({ ...base, hasPreOpenShift: false, totalCsp: 0 })
       .standing,
     "not_earning",
   );
   assert.equal(
+    evaluateSapEligibility({ ...base, isStaff: true }).standing,
+    "not_earning",
+  );
+  // An explicit date (override or assignment) lifts the grey back to normal.
+  assert.equal(
+    evaluateSapEligibility({ ...base, isStaff: true, hasDateOverride: true })
+      .standing,
+    "complete",
+  );
+  assert.equal(
     evaluateSapEligibility({
       ...base,
-      hasEligibleShift: false,
-      isStaff: true,
+      hasPreOpenShift: false,
+      hasDateOverride: true,
       totalCsp: 0,
     }).standing,
     "missing",
   );
+});
+
+test("isPreOpenShift compares against Open Sunday", () => {
+  assert.equal(isPreOpenShift(null, "2026-08-30"), false);
+  assert.equal(isPreOpenShift("2026-08-25", "2026-08-30"), true);
+  assert.equal(isPreOpenShift("2026-08-30", "2026-08-30"), true);
+  assert.equal(isPreOpenShift("2026-09-02", "2026-08-30"), false);
+  assert.equal(isPreOpenShift("2026-09-02", null), true);
 });

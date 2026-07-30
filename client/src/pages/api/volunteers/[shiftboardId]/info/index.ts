@@ -11,6 +11,7 @@ import { isOwnerOrAdmin } from "@/lib/authz";
 import {
   buildRequiredDays,
   evaluateSapEligibility,
+  isPreOpenShift,
   PRE_OPEN_DATENAMES,
   REQUIRED_CSP,
   ROLE_OTHER_SAP_ID,
@@ -299,6 +300,7 @@ const volunteerInfo = async (
       //      earned-SAP box stays hidden.
       // Parity by design: eligibility comes from the same shared function the
       // super-admin SAP page uses (BS + trainings + CSP + required days).
+      const openSunRow = dbDateList.find((d) => d.datename === "OpenSun");
       const sapRequirementsMet = evaluateSapEligibility({
         isStaff,
         hasExternalSap: hasOtherSap,
@@ -308,7 +310,11 @@ const volunteerInfo = async (
           .map((t) => t.trainingName),
         totalCsp,
         requiredDays,
-        hasEligibleShift: firstCspShiftDate !== null,
+        hasPreOpenShift: isPreOpenShift(
+          firstCspShiftDate,
+          openSunRow ? String(openSunRow.date) : null,
+        ),
+        hasDateOverride: hasSapFile,
       }).requirementsMet;
       const earnedSapDate: string | null = sapFile
         ? String(sapFile.date)

@@ -41,7 +41,7 @@ const issue = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   const [rows] = await pool.query<RowDataPacket[]>(
-    `SELECT filename, sap_date FROM op_saps WHERE sap_id=?`,
+    `SELECT filename, sap_date, ticket_id FROM op_saps WHERE sap_id=?`,
     [sapId],
   );
   const row = rows[0];
@@ -59,7 +59,7 @@ const issue = async (req: NextApiRequest, res: NextApiResponse) => {
   res.setHeader("Content-Type", "application/pdf");
   res.setHeader(
     "Content-Disposition",
-    `attachment; filename="SAP_${row.sap_date}.pdf"`,
+    `attachment; filename="SAP_${row.sap_date}_${row.ticket_id ?? sapId}.pdf"`,
   );
   return res.send(buf);
 };
