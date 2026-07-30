@@ -235,7 +235,8 @@ export const Saps = () => {
     const ok = window.confirm(
       `Unlock ${p.name}? Assigning a new SAP will permanently BURN their ` +
         `delivered SAP (ticket ${p.assignment.ticketId ?? p.assignment.sapId}) — ` +
-        `burned SAPs can never be reassigned to anyone.`,
+        `burned SAPs can never be reassigned to anyone. ` +
+        `(To re-send the same SAP, use Re-download / Email again instead.)`,
     );
     if (ok) setUnlocked((u) => ({ ...u, [rowKey(p)]: true }));
   };
@@ -401,6 +402,12 @@ export const Saps = () => {
                               {(d.dayname ?? d.date) + ` (${d.count})`}
                             </MenuItem>
                           ))}
+                          {choice !== "auto" &&
+                            !availableDates.some((d) => d.date === choice) && (
+                              <MenuItem value={choice} disabled>
+                                {choice} (none left)
+                              </MenuItem>
+                            )}
                         </Select>
                       )}
                     </TableCell>
