@@ -71,6 +71,7 @@ interface IVolunteerShiftsProps {
 interface IState {
   dialogItem: number;
   shift: {
+    critical: boolean;
     date: string;
     dateName: string;
     endTime: string;
@@ -107,6 +108,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
   const [dialogCurrent, setDialogCurrent] = useState<IState>({
     dialogItem: 0,
     shift: {
+      critical: false,
       date: "",
       dateName: "",
       endTime: "",
@@ -372,6 +374,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
       department: { name: departmentName },
       shift: {
         canceled,
+        critical,
         date,
         dateName,
         endTime,
@@ -430,6 +433,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
                   setDialogCurrent({
                     dialogItem: DialogList.Remove,
                     shift: {
+                      critical,
                       date,
                       dateName,
                       endTime,
@@ -517,6 +521,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
               setDialogCurrent({
                 dialogItem: DialogList.Review,
                 shift: {
+                  critical,
                   date,
                   dateName,
                   endTime,
@@ -600,6 +605,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
               department: { name: departmentName },
               shift: {
                 canceled,
+                critical,
                 date,
                 dateName,
                 endTime,
@@ -712,6 +718,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
                             setDialogCurrent({
                               dialogItem: DialogList.Review,
                               shift: {
+                                critical,
                                 date,
                                 dateName,
                                 endTime,
@@ -754,6 +761,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
                                 setDialogCurrent({
                                   dialogItem: DialogList.Remove,
                                   shift: {
+                                    critical,
                                     date,
                                     dateName,
                                     endTime,

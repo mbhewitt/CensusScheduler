@@ -80,6 +80,7 @@ const shiftVolunteers = async (
       const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT
           COALESCE(NULLIF(stp.position_alias, ''), pt.position) AS position,
+          pt.critical,
           stp.position_type_id,
           v.playa_name,
           v.world_name,
@@ -145,6 +146,7 @@ const shiftVolunteers = async (
       );
       const resShiftVolunteerList = dbShiftVolunteerList.map(
         ({
+          critical,
           noshow,
           notes,
           playa_name,
@@ -155,6 +157,7 @@ const shiftVolunteers = async (
           world_name,
         }) => {
           const resShiftVolunteerItem: IResShiftVolunteerRowItem = {
+            critical: Boolean(critical),
             isCheckedIn: noshow,
             notes: notes ?? "",
             playaName: playa_name,

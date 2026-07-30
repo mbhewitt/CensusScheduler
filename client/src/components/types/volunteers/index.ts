@@ -55,6 +55,8 @@ export interface IResVolunteerShiftItem {
   };
   shift: {
     canceled: boolean;
+    // position is critical=1 — drives the #308 acknowledge-the-gap warning
+    critical: boolean;
     // csp = sap_points for this signup; positionId = op_position_type id.
     // Used by the add dialog to total a volunteer's scheduled CSP and count
     // how many of a given position they hold (signup-rule warnings, #436/#429).

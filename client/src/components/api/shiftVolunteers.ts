@@ -4,6 +4,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import type { IReqReviewValues, IReqSwitchValues } from "@/components/types";
 import { UPDATE_TYPE_CHECK_IN, UPDATE_TYPE_REVIEW } from "@/constants";
+import { isOwnerOrAdmin } from "@/lib/authz";
 import { enqueueEmail } from "lib/mail";
 import {
   lookupActorDisplayName,
@@ -171,6 +172,14 @@ export const shiftVolunteerRemove = async (
   session: { shiftboardId: number }
 ) => {
   const { shiftboardId, timePositionId } = JSON.parse(req.body);
+
+  // Object-level authz: a volunteer may only remove THEMSELVES; admins can
+  // remove anyone. Guarded here (not per-route) so both mounts —
+  // /api/shifts/[timeId]/volunteers and /api/volunteers/[shiftboardId]/shifts —
+  // are covered by the one check.
+  if (!(await isOwnerOrAdmin(session, Number(shiftboardId)))) {
+    return res.status(403).json({ statusCode: 403, message: "Forbidden" });
+  }
 
   await pool.query<RowDataPacket[]>(
     `UPDATE op_volunteer_shifts
