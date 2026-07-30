@@ -3,14 +3,19 @@ import {
   EventBusy as EventBusyIcon,
 } from "@mui/icons-material";
 import {
+  Alert,
   Button,
+  Checkbox,
   CircularProgress,
   DialogActions,
   DialogContentText,
+  FormControlLabel,
   Typography,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
+import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
+import { useSWRConfig } from "swr";
 import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "@/components/general/DialogContainer";
@@ -23,6 +28,7 @@ interface IVolunteerShiftsDialogRemoveProps {
   handleDialogClose: () => void;
   isDialogOpen: boolean;
   shift: {
+    critical: boolean;
     date: string;
     dateName: string;
     endTime: string;
@@ -39,15 +45,31 @@ const socket = io();
 export const VolunteerShiftsDialogRemove = ({
   handleDialogClose,
   isDialogOpen,
-  shift: { date, dateName, endTime, positionName, startTime, timePositionId },
+  shift: {
+    critical,
+    date,
+    dateName,
+    endTime,
+    positionName,
+    startTime,
+    timePositionId,
+  },
   volunteer: { shiftboardId },
 }: IVolunteerShiftsDialogRemoveProps) => {
+  // #308 warn-then-allow: dropping a critical position requires an explicit
+  // acknowledgment before the Remove button enables. Reset on every open.
+  const [isGapAcknowledged, setIsGapAcknowledged] = useState(false);
+  useEffect(() => {
+    if (isDialogOpen) setIsGapAcknowledged(false);
+  }, [isDialogOpen]);
+
   // fetching, mutation, and revalidation
   // ------------------------------------------------------------
   const { isMutating, trigger } = useSWRMutation(
     `/api/volunteers/${shiftboardId}/shifts`,
     fetcherTrigger
   );
+  const { mutate } = useSWRConfig();
 
   // other hooks
   // ------------------------------------------------------------
@@ -67,6 +89,9 @@ export const VolunteerShiftsDialogRemove = ({
         shiftboardId,
         timePositionId,
       });
+      // the open-shift list's slot counts include this signup — revalidate it
+      // so the agenda doesn't render the dropped shift with a stale count
+      mutate("/api/shifts");
 
       enqueueSnackbar(
         <SnackbarText>
@@ -112,6 +137,23 @@ export const VolunteerShiftsDialogRemove = ({
           <strong>{positionName}</strong>?
         </Typography>
       </DialogContentText>
+      {critical && (
+        <Alert severity="warning" sx={{ mt: 2 }}>
+          <strong>{positionName}</strong> is a critical position — removing this
+          shift leaves a gap that must be refilled. The Census volunteer
+          coordinators will be notified.
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={isGapAcknowledged}
+                onChange={(event) => setIsGapAcknowledged(event.target.checked)}
+              />
+            }
+            label="I understand this leaves a critical position unfilled"
+            sx={{ display: "flex", mt: 1 }}
+          />
+        </Alert>
+      )}
       <DialogActions>
         <Button
           disabled={isMutating}
@@ -123,7 +165,7 @@ export const VolunteerShiftsDialogRemove = ({
           Cancel
         </Button>
         <Button
-          disabled={isMutating}
+          disabled={isMutating || (critical && !isGapAcknowledged)}
           onClick={handleVolunteerRemove}
           startIcon={
             isMutating ? <CircularProgress size="1rem" /> : <EventBusyIcon />

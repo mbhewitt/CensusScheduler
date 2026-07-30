@@ -3,6 +3,7 @@
 import {
   CalendarMonth as CalendarMonthIcon,
   Close as CloseIcon,
+  EventBusy as EventBusyIcon,
   FilterList as FilterListIcon,
 } from "@mui/icons-material";
 import {
@@ -29,6 +30,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import useSWR from "swr";
 
+import { VolunteerShiftsDialogRemove } from "@/app/volunteers/[shiftboardId]/account/VolunteerShiftsDialogRemove";
 import { ErrorAlert } from "@/components/general/ErrorAlert";
 import { Loading } from "@/components/general/Loading";
 import { Hero } from "@/components/layout/Hero";
@@ -56,6 +58,8 @@ interface IAgendaItem {
   department: string;
   csp: string;
   canceled: boolean;
+  // set on "mine" rows only — drives the #308 critical-drop warning
+  critical?: boolean;
   state: "mine" | "open" | "full" | "conflict" | "ineligible";
   slots?: { filled: number; total: number };
   conflictWith?: string;
@@ -75,12 +79,8 @@ const FRIENDLY_ROLE: Record<string, string> = {
 const friendlyRole = (role: string) => FRIENDLY_ROLE[role] ?? role;
 
 // Strict time overlap (touching endpoints — back-to-back shifts — are fine).
-const overlaps = (
-  aStart: string,
-  aEnd: string,
-  bStart: string,
-  bEnd: string
-) => dayjs(aStart).isBefore(dayjs(bEnd)) && dayjs(bStart).isBefore(dayjs(aEnd));
+const overlaps = (aStart: string, aEnd: string, bStart: string, bEnd: string) =>
+  dayjs(aStart).isBefore(dayjs(bEnd)) && dayjs(bStart).isBefore(dayjs(aEnd));
 
 export const Schedule = ({ shiftboardId }: IScheduleProps) => {
   const theme = useTheme();
@@ -135,6 +135,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
         department: m.department.name,
         csp: cspLabel(s.csp, s.csp),
         canceled: s.canceled,
+        critical: s.critical,
         state: "mine",
       });
     }
@@ -147,12 +148,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
       const clash = mine.find(
         (m) =>
           !m.shift.canceled &&
-          overlaps(
-            o.startTime,
-            o.endTime,
-            m.shift.startTime,
-            m.shift.endTime
-          )
+          overlaps(o.startTime, o.endTime, m.shift.startTime, m.shift.endTime)
       );
       // role-gated: every position needs a role this volunteer lacks
       const requiredRoles = dataElig?.[o.id];
@@ -213,6 +209,11 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
   const [dates, setDates] = useState<string[]>([]);
   const [availability, setAvailability] = useState<string[]>([]); // "open" | "full"
   const [myShiftsOnly, setMyShiftsOnly] = useState(false);
+
+  // "mine" card whose Remove button was clicked; null = dialog closed.
+  const [removeDialogItem, setRemoveDialogItem] = useState<IAgendaItem | null>(
+    null
+  );
 
   // Reset every filter to its default (#470 design review, item 8).
   const removeAllFilters = () => {
@@ -373,8 +374,9 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
     />
   );
 
-  // One day-grouped section of browse-only cards. Whole card links to the
-  // shift detail page; no sign-up / remove actions here (#470).
+  // One day-grouped section of cards. Whole card links to the shift detail
+  // page. Sign-up still happens there (#470), but "mine" cards carry a Remove
+  // button (Mew 2026-07-29) — self-drops shouldn't need the extra hop.
   const renderDay = (day: {
     date: string;
     dateName: string;
@@ -529,7 +531,12 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                 )}
 
                 {(item.canceled || item.state === "mine") && (
-                  <Box sx={{ mt: 1.5 }}>
+                  <Stack
+                    alignItems="center"
+                    direction="row"
+                    spacing={1}
+                    sx={{ mt: 1.5 }}
+                  >
                     {item.canceled ? (
                       <Chip
                         label="Canceled"
@@ -545,7 +552,28 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                         variant="outlined"
                       />
                     )}
-                  </Box>
+                    {/* Self-remove, future/during only (past mirrors the
+                        account page and stays admin territory). Canceled
+                        shifts stay removable so volunteers can drop them. */}
+                    {item.state === "mine" &&
+                      item.timePositionId !== undefined &&
+                      dayjs(item.endTime).isAfter(dayjs()) && (
+                        <Button
+                          color="error"
+                          onClick={(event) => {
+                            // the whole card is a Link — don't navigate
+                            event.preventDefault();
+                            event.stopPropagation();
+                            setRemoveDialogItem(item);
+                          }}
+                          size="small"
+                          startIcon={<EventBusyIcon />}
+                          variant="outlined"
+                        >
+                          Remove
+                        </Button>
+                      )}
+                  </Stack>
                 )}
               </CardContent>
             </Card>
@@ -632,7 +660,9 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
                     selected.length === 0
                       ? "All"
                       : selected
-                          .map((v) => (v === "past" ? "Past" : "Present / Future"))
+                          .map((v) =>
+                            v === "past" ? "Past" : "Present / Future"
+                          )
                           .join(", ")
                   }
                 >
@@ -857,6 +887,26 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
               mineDays.map(renderDay)
             )}
           </>
+        )}
+
+        {/* remove dialog — its mutation key is this page's own
+            /api/volunteers/[id]/shifts SWR key, so the agenda revalidates
+            (card flips back to "open") without a reload */}
+        {removeDialogItem && (
+          <VolunteerShiftsDialogRemove
+            handleDialogClose={() => setRemoveDialogItem(null)}
+            isDialogOpen
+            shift={{
+              critical: removeDialogItem.critical ?? false,
+              date: removeDialogItem.date,
+              dateName: removeDialogItem.dateName,
+              endTime: removeDialogItem.endTime,
+              positionName: removeDialogItem.title,
+              startTime: removeDialogItem.startTime,
+              timePositionId: removeDialogItem.timePositionId ?? 0,
+            }}
+            volunteer={{ shiftboardId }}
+          />
         )}
       </Container>
     </>

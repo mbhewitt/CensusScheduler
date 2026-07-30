@@ -87,6 +87,7 @@ interface IShiftVolunteersProps {
 interface IDialogCurrentState {
   dialogItem: number;
   shift: {
+    critical: boolean;
     positionName: string;
     timePositionId: number;
   };
@@ -123,6 +124,7 @@ export const ShiftVolunteers = ({
   const [dialogCurrent, setDialogCurrent] = useState<IDialogCurrentState>({
     dialogItem: 0,
     shift: {
+      critical: false,
       positionName: "",
       timePositionId: 0,
     },
@@ -182,6 +184,9 @@ export const ShiftVolunteers = ({
             if (dataShiftVolunteersItem) {
               const dataMutate = structuredClone(dataShiftVolunteersItem);
               dataMutate.volunteerList.push({
+                // socket payload has no critical flag; mutate() revalidates
+                // right after, which fills in the real value
+                critical: false,
                 isCheckedIn,
                 notes,
                 playaName,
@@ -395,6 +400,14 @@ export const ShiftVolunteers = ({
     isVolunteerAddAvailable = false;
     isCheckInAvailable = false;
   }
+  // Non-admins may remove THEMSELVES from a future/during shift — mirrors the
+  // account page (past shifts stay admin-only). Canceled shifts intentionally
+  // still allow self-removal (see the comment above). Admins keep the full
+  // remove-anyone menu.
+  const isSelfRemoveAvailable = (rowShiftboardId: number): boolean =>
+    isAuthenticated &&
+    rowShiftboardId === shiftboardId &&
+    checkInType !== SHIFT_PAST;
 
   // prepare datatable positions
   const columnListPositions = [
@@ -458,31 +471,38 @@ export const ShiftVolunteers = ({
     },
   ];
   if (isAdmin) {
-    columnListVolunteers.push(
-      {
-        name: "Admin review",
-        options: {
-          filter: false,
-          searchable: false,
-          setCellHeaderProps: setCellHeaderPropsCenter,
-          setCellProps: setCellPropsCenter,
-          sort: false,
-        },
+    columnListVolunteers.push({
+      name: "Admin review",
+      options: {
+        filter: false,
+        searchable: false,
+        setCellHeaderProps: setCellHeaderPropsCenter,
+        setCellProps: setCellPropsCenter,
+        sort: false,
       },
-      {
-        name: "Admin actions",
-        options: {
-          filter: false,
-          searchable: false,
-          setCellHeaderProps: setCellHeaderPropsCenter,
-          setCellProps: setCellPropsCenter,
-          sort: false,
-        },
-      }
-    );
+    });
+  }
+  // Actions column: admins always get it (remove anyone); a non-admin gets it
+  // only when their own removable row is on the roster. Row arrays below must
+  // stay in lockstep with the pushed columns — MUIDataTable maps cells to
+  // columns by index and silently drops extras.
+  const hasActionsColumn =
+    isAdmin || (isSignedUp && isSelfRemoveAvailable(shiftboardId));
+  if (hasActionsColumn) {
+    columnListVolunteers.push({
+      name: isAdmin ? "Admin actions" : "Actions",
+      options: {
+        filter: false,
+        searchable: false,
+        setCellHeaderProps: setCellHeaderPropsCenter,
+        setCellProps: setCellPropsCenter,
+        sort: false,
+      },
+    });
   }
   const dataTableVolunteers = dataShiftVolunteersItem.volunteerList.map(
     ({
+      critical,
       isCheckedIn,
       notes,
       playaName,
@@ -492,7 +512,10 @@ export const ShiftVolunteers = ({
       timePositionId,
       worldName,
     }: IResShiftVolunteerRowItem) => {
-      return [
+      // MUIDataTable maps cells to columns by index (extras are silently
+      // dropped), so this array must mirror the columnListVolunteers pushes:
+      // review cell only when admin, actions cell only when the column exists.
+      const row: React.ReactNode[] = [
         playaName,
         worldName,
         positionName,
@@ -520,78 +543,92 @@ export const ShiftVolunteers = ({
         ) : (
           ""
         ),
-        // if volunteer is admin AND check-in is open,
-        // then display volunteer shift review and volunteer menu
-        isAdmin && isCheckInAvailable && (
-          <IconButton
-            onClick={() => {
-              setDialogCurrent({
-                dialogItem: DialogList.Review,
-                shift: {
-                  positionName,
-                  timePositionId,
-                },
-                volunteer: {
-                  notes,
-                  playaName,
-                  rating,
-                  shiftboardId,
-                  worldName,
-                },
-              });
-              setIsDialogOpen(true);
-            }}
-          >
-            {rating ? (
-              <ChatIcon color="primary" />
-            ) : (
-              <ChatIcon color="disabled" />
-            )}
-          </IconButton>
-        ),
-        isAdmin && (
-          <MoreMenu
-            Icon={<MoreHorizIcon />}
-            key={`${shiftboardId}-menu`}
-            MenuList={
-              <MenuList>
-                <Link href={`/volunteers/${shiftboardId}/info`}>
-                  <MenuItem>
-                    <ListItemIcon>
-                      <ManageAccountsIcon />
-                    </ListItemIcon>
-                    <ListItemText>View account</ListItemText>
-                  </MenuItem>
-                </Link>
-                <MenuItem
-                  onClick={() => {
-                    setDialogCurrent({
-                      dialogItem: DialogList.Remove,
-                      shift: {
-                        positionName,
-                        timePositionId,
-                      },
-                      volunteer: {
-                        notes: "",
-                        playaName,
-                        rating: null,
-                        shiftboardId,
-                        worldName,
-                      },
-                    });
-                    setIsDialogOpen(true);
-                  }}
-                >
-                  <ListItemIcon>
-                    <PersonRemoveIcon />
-                  </ListItemIcon>
-                  <ListItemText>Remove volunteer</ListItemText>
-                </MenuItem>
-              </MenuList>
-            }
-          />
-        ),
       ];
+      if (isAdmin) {
+        // review cell appears once check-in is open
+        row.push(
+          isCheckInAvailable && (
+            <IconButton
+              onClick={() => {
+                setDialogCurrent({
+                  dialogItem: DialogList.Review,
+                  shift: {
+                    critical,
+                    positionName,
+                    timePositionId,
+                  },
+                  volunteer: {
+                    notes,
+                    playaName,
+                    rating,
+                    shiftboardId,
+                    worldName,
+                  },
+                });
+                setIsDialogOpen(true);
+              }}
+            >
+              {rating ? (
+                <ChatIcon color="primary" />
+              ) : (
+                <ChatIcon color="disabled" />
+              )}
+            </IconButton>
+          )
+        );
+      }
+      if (hasActionsColumn) {
+        row.push(
+          (isAdmin || isSelfRemoveAvailable(shiftboardId)) && (
+            <MoreMenu
+              Icon={<MoreHorizIcon />}
+              key={`${shiftboardId}-menu`}
+              MenuList={
+                <MenuList>
+                  {isAdmin && (
+                    <Link href={`/volunteers/${shiftboardId}/info`}>
+                      <MenuItem>
+                        <ListItemIcon>
+                          <ManageAccountsIcon />
+                        </ListItemIcon>
+                        <ListItemText>View account</ListItemText>
+                      </MenuItem>
+                    </Link>
+                  )}
+                  <MenuItem
+                    onClick={() => {
+                      setDialogCurrent({
+                        dialogItem: DialogList.Remove,
+                        shift: {
+                          critical,
+                          positionName,
+                          timePositionId,
+                        },
+                        volunteer: {
+                          notes: "",
+                          playaName,
+                          rating: null,
+                          shiftboardId,
+                          worldName,
+                        },
+                      });
+                      setIsDialogOpen(true);
+                    }}
+                  >
+                    <ListItemIcon>
+                      <PersonRemoveIcon />
+                    </ListItemIcon>
+                    <ListItemText>
+                      {isAdmin ? "Remove volunteer" : "Remove shift"}
+                    </ListItemText>
+                  </MenuItem>
+                </MenuList>
+              }
+            />
+          )
+        );
+      }
+      return row;
     }
   );
   const optionListCustomVolunteers = {
@@ -795,6 +832,7 @@ export const ShiftVolunteers = ({
                 setDialogCurrent({
                   dialogItem: DialogList.Add,
                   shift: {
+                    critical: false,
                     positionName: "",
                     timePositionId: 0,
                   },
@@ -819,6 +857,7 @@ export const ShiftVolunteers = ({
             <Stack spacing={1}>
               {dataShiftVolunteersItem.volunteerList.map(
                 ({
+                  critical,
                   isCheckedIn,
                   notes,
                   playaName,
@@ -890,6 +929,7 @@ export const ShiftVolunteers = ({
                               setDialogCurrent({
                                 dialogItem: DialogList.Review,
                                 shift: {
+                                  critical,
                                   positionName,
                                   timePositionId,
                                 },
@@ -911,24 +951,29 @@ export const ShiftVolunteers = ({
                             )}
                           </IconButton>
                         )}
-                        {isAdmin && (
+                        {(isAdmin || isSelfRemoveAvailable(shiftboardId)) && (
                           <MoreMenu
                             Icon={<MoreHorizIcon />}
                             MenuList={
                               <MenuList>
-                                <Link href={`/volunteers/${shiftboardId}/info`}>
-                                  <MenuItem>
-                                    <ListItemIcon>
-                                      <ManageAccountsIcon />
-                                    </ListItemIcon>
-                                    <ListItemText>View account</ListItemText>
-                                  </MenuItem>
-                                </Link>
+                                {isAdmin && (
+                                  <Link
+                                    href={`/volunteers/${shiftboardId}/info`}
+                                  >
+                                    <MenuItem>
+                                      <ListItemIcon>
+                                        <ManageAccountsIcon />
+                                      </ListItemIcon>
+                                      <ListItemText>View account</ListItemText>
+                                    </MenuItem>
+                                  </Link>
+                                )}
                                 <MenuItem
                                   onClick={() => {
                                     setDialogCurrent({
                                       dialogItem: DialogList.Remove,
                                       shift: {
+                                        critical,
                                         positionName,
                                         timePositionId,
                                       },
@@ -946,7 +991,11 @@ export const ShiftVolunteers = ({
                                   <ListItemIcon>
                                     <PersonRemoveIcon />
                                   </ListItemIcon>
-                                  <ListItemText>Remove volunteer</ListItemText>
+                                  <ListItemText>
+                                    {isAdmin
+                                      ? "Remove volunteer"
+                                      : "Remove shift"}
+                                  </ListItemText>
                                 </MenuItem>
                               </MenuList>
                             }

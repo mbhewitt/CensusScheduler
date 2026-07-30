@@ -4,6 +4,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import type { IReqReviewValues, IReqSwitchValues } from "@/components/types";
 import { UPDATE_TYPE_CHECK_IN, UPDATE_TYPE_REVIEW } from "@/constants";
+import { isAdmin, isOwnerOrAdmin } from "@/lib/authz";
 import { enqueueEmail } from "lib/mail";
 import {
   lookupActorDisplayName,
@@ -171,6 +172,37 @@ export const shiftVolunteerRemove = async (
   session: { shiftboardId: number }
 ) => {
   const { shiftboardId, timePositionId } = JSON.parse(req.body);
+
+  // Object-level authz: a volunteer may only remove THEMSELVES; admins can
+  // remove anyone. Guarded here (not per-route) so both mounts —
+  // /api/shifts/[timeId]/volunteers and /api/volunteers/[shiftboardId]/shifts —
+  // are covered by the one check.
+  if (!(await isOwnerOrAdmin(session, Number(shiftboardId)))) {
+    return res.status(403).json({ statusCode: 403, message: "Forbidden" });
+  }
+  // Past shifts are admin-only to remove — same rule every UI enforces.
+  // Backstop it server-side so a direct API call can't erase an
+  // already-worked signup from fill reports and prior-year counts.
+  // 24h grace past end_time: skew between the server clock and playa-local
+  // shift times can never block a legitimate during/just-after self-drop.
+  if (!(await isAdmin(session.shiftboardId))) {
+    const [endRows] = await pool.query<RowDataPacket[]>(
+      `SELECT st.end_time
+      FROM op_shift_time_position AS stp
+      JOIN op_shift_times AS st
+      ON st.shift_times_id=stp.shift_times_id
+      WHERE stp.time_position_id=?`,
+      [timePositionId]
+    );
+    const endTime = endRows[0]?.end_time;
+    const endMs = endTime ? new Date(endTime).getTime() : NaN;
+    if (!Number.isNaN(endMs) && Date.now() - endMs > 24 * 60 * 60 * 1000) {
+      return res.status(403).json({
+        statusCode: 403,
+        message: "Past shifts can only be removed by an admin",
+      });
+    }
+  }
 
   await pool.query<RowDataPacket[]>(
     `UPDATE op_volunteer_shifts

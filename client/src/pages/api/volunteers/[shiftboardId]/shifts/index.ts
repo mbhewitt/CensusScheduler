@@ -31,6 +31,7 @@ const volunteerShifts = async (
           d.date,
           d.datename,
           COALESCE(NULLIF(stp.position_alias, ''), pt.position) AS position,
+          pt.critical,
           stp.position_type_id,
           stp.sap_points,
           sc.department,
@@ -65,6 +66,7 @@ const volunteerShifts = async (
       const resVolunteerShiftList = dbVolunteerShiftList.map(
         ({
           canceled,
+          critical,
           date,
           datename,
           department,
@@ -87,6 +89,7 @@ const volunteerShifts = async (
             },
             shift: {
               canceled: Boolean(canceled),
+              critical: Boolean(critical),
               csp: Number(sap_points ?? 0),
               date: date,
               dateName: datename ?? "",

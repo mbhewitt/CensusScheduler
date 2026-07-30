@@ -50,6 +50,8 @@ export interface IResShiftPositionCountItem {
   timePositionId: number;
 }
 export interface IResShiftVolunteerRowItem {
+  // position is critical=1 — drives the #308 acknowledge-the-gap warning
+  critical: boolean;
   isCheckedIn: string;
   notes: string;
   playaName: string;
