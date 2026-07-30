@@ -15,6 +15,7 @@ import {
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
+import { useSWRConfig } from "swr";
 import useSWRMutation from "swr/mutation";
 
 import { DialogContainer } from "@/components/general/DialogContainer";
@@ -68,6 +69,7 @@ export const VolunteerShiftsDialogRemove = ({
     `/api/volunteers/${shiftboardId}/shifts`,
     fetcherTrigger
   );
+  const { mutate } = useSWRConfig();
 
   // other hooks
   // ------------------------------------------------------------
@@ -87,6 +89,9 @@ export const VolunteerShiftsDialogRemove = ({
         shiftboardId,
         timePositionId,
       });
+      // the open-shift list's slot counts include this signup — revalidate it
+      // so the agenda doesn't render the dropped shift with a stale count
+      mutate("/api/shifts");
 
       enqueueSnackbar(
         <SnackbarText>
