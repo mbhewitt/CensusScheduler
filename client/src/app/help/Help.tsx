@@ -15,9 +15,22 @@ import {
   Typography,
 } from "@mui/material";
 
-import type { ReactNode } from "react";
+import { type ReactNode, useContext } from "react";
 
 import { Hero } from "@/components/layout/Hero";
+import { SessionContext } from "@/state/session/context";
+
+// A bold page reference that links to that page in a new tab (so the reader
+// keeps their place in Help). Falls back to plain bold when we don't have a
+// destination (e.g. the account link needs a signed-in shiftboardId).
+const Ref = ({ href, children }: { href: string | null; children: ReactNode }) =>
+  href ? (
+    <a href={href} target="_blank" rel="noopener noreferrer">
+      <strong>{children}</strong>
+    </a>
+  ) : (
+    <strong>{children}</strong>
+  );
 
 // Bulleted list that renders naturally inside an accordion.
 const Bullets = ({ items }: { items: ReactNode[] }) => (
@@ -46,6 +59,14 @@ const Section = ({
 );
 
 export const Help = () => {
+  const {
+    sessionState: {
+      user: { shiftboardId },
+    },
+  } = useContext(SessionContext);
+  // The "Account" page is the volunteer's own info/checklist page (same target
+  // the nav uses). Only linkable when signed in.
+  const acct = shiftboardId ? `/volunteers/${shiftboardId}/info` : null;
   return (
     <>
       <Hero
@@ -76,7 +97,7 @@ export const Help = () => {
               items={[
                 <>
                   <strong>From home, on your own device:</strong> open the{" "}
-                  <strong>Home</strong> page and use{" "}
+                  <Ref href="/">Home</Ref> page and use{" "}
                   <strong>Sign in to Census</strong>. You&apos;ll sign in with
                   your Burner Profile. Don&apos;t have one yet? Create it at{" "}
                   <a
@@ -103,7 +124,7 @@ export const Help = () => {
 
           <Section title="Signing up for shifts">
             <Typography sx={{ mb: 1 }}>
-              Open <strong>Shifts</strong> from the menu. Shifts are grouped by
+              Open <Ref href="/shifts">Shifts</Ref> from the menu. Shifts are grouped by
               day, and each card shows the time, how many spots are filled, and
               the points it&apos;s worth.
             </Typography>
@@ -133,7 +154,7 @@ export const Help = () => {
             </Typography>
             <Typography sx={{ mb: 1 }}>
               <strong>To remove a shift:</strong> go to your{" "}
-              <strong>Account</strong> page, find the shift in your list, open
+              <Ref href={acct}>Account</Ref> page, find the shift in your list, open
               its menu, and choose <strong>Remove shift</strong>. (A few lead or
               critical shifts can&apos;t be dropped on your own — reach out to a
               volunteer coordinator if you need off one of those.)
@@ -147,7 +168,7 @@ export const Help = () => {
 
           <Section title="Your checklist">
             <Typography sx={{ mb: 1 }}>
-              Your <strong>Account</strong> page has a checklist of what to
+              Your <Ref href={acct}>Account</Ref> page has a checklist of what to
               complete before playa:
             </Typography>
             <Bullets
@@ -229,7 +250,7 @@ export const Help = () => {
               items={[
                 <>
                   <strong>Checking a volunteer in:</strong> open{" "}
-                  <strong>Shifts</strong>, tap the shift, find the
+                  <Ref href="/shifts">Shifts</Ref>, tap the shift, find the
                   volunteer&apos;s name, and flip their toggle. The check-in
                   toggle appears from 1 hour before the shift starts until 2
                   hours after it ends.
@@ -252,8 +273,8 @@ export const Help = () => {
             <Bullets
               items={[
                 <>
-                  Send a message from the <strong>Contact</strong> page (menu →
-                  Contact) — pick a coordinator, or choose the technology option
+                  Send a message from the <Ref href="/contact">Contact</Ref> page
+                  (menu → Contact) — pick a coordinator, or choose the technology option
                   for app issues.
                 </>,
                 <>
