@@ -34,6 +34,7 @@ export interface ISapPerson {
   missingDetail: string[];
   totalCsp: number;
   dateOverride: string | null; // persisted SAP-date dropdown choice (null = Auto)
+  notes: string | null; // super-admin free-text note (exceptions), SAP page only
   assignment: ISapAssignment | null;
 }
 

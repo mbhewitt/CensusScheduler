@@ -57,13 +57,13 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
   ] = await Promise.all([
     pool.query<RowDataPacket[]>(
       `SELECT v.shiftboard_id, v.playa_name, v.world_name, v.email,
-              v.sap_date_override, d.datename AS arrival_datename
+              v.sap_date_override, v.sap_notes, d.datename AS arrival_datename
          FROM op_volunteers v
          LEFT JOIN op_dates d ON v.arrival_date_id = d.date_id
         WHERE v.delete_volunteer = false`,
     ),
     pool.query<RowDataPacket[]>(
-      `SELECT email, name, linked_shiftboard_id, sap_date_override
+      `SELECT email, name, linked_shiftboard_id, sap_date_override, notes
          FROM op_sap_offbook`,
     ),
     pool.query<RowDataPacket[]>(
@@ -246,6 +246,7 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
       missingDetail: eligibility.missingDetail,
       totalCsp,
       dateOverride,
+      notes: v.sap_notes != null ? String(v.sap_notes) : null,
       assignment,
     };
   });
@@ -270,6 +271,7 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
       missingDetail: [],
       totalCsp: 0,
       dateOverride: o.sap_date_override ? String(o.sap_date_override) : null,
+      notes: o.notes != null ? String(o.notes) : null,
       assignment: assignByEmail.get(String(o.email).toLowerCase()) ?? null,
     }));
 
