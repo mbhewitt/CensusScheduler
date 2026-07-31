@@ -37,6 +37,10 @@ const ITEMS: IGetInvolvedItem[] = [
         label: "The Placement Process",
         href: "https://burningman.org/black-rock-city/camps/placement-process/",
       },
+      {
+        label: "Placed Camp Handbook",
+        href: "https://tinyurl.com/PlacedCampHandbook",
+      },
     ],
   },
 ];
