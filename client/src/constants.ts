@@ -80,7 +80,7 @@ export const UPDATE_TYPE_TABLET_RETURNED = "updateTypeTabletReturned";
 export const UPDATE_TYPE_CAMP_ADDRESS = "updateTypeCampAddress";
 
 // idle time
-export const IDLE_MINUTES = 5;
+export const IDLE_MINUTES = 15;
 
 // palette (PEERS badge — sampled from official logo)
 export const COLOR_PEERS_CHARCOAL = "#202020";
