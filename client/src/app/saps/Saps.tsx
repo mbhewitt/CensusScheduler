@@ -85,6 +85,10 @@ export const Saps = () => {
   // Rows the admin has unlocked for reassignment (received SAP burns on the
   // next assign, server-side).
   const [unlocked, setUnlocked] = useState<Record<string, boolean>>({});
+  // Per-row Notes: local draft (so typing isn't clobbered by SWR refetch) plus
+  // a per-row debounce timer so we save-as-you-type without a request/keystroke.
+  const [notesDraft, setNotesDraft] = useState<Record<string, string>>({});
+  const notesTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
 
   if (peopleError) return <ErrorPage />;
   if (!peopleData) return <Loading />;
@@ -166,6 +170,24 @@ export const Saps = () => {
       enqueueSnackbar(await readError(res), { variant: "error" });
     }
     mutate(PEOPLE_URL);
+  };
+
+  // Per-person note, saved as you type (debounced). No SWR refetch on save so
+  // the field keeps focus/cursor; the local draft is the source of truth while
+  // editing.
+  const handleNotesChange = (p: ISapPerson, value: string) => {
+    const key = rowKey(p);
+    setNotesDraft((d) => ({ ...d, [key]: value }));
+    clearTimeout(notesTimers.current[key]);
+    notesTimers.current[key] = setTimeout(async () => {
+      const res = await fetch("/api/saps/notes", {
+        method: "POST",
+        body: JSON.stringify({ ...targetBody(p), notes: value }),
+      });
+      if (!res.ok) {
+        enqueueSnackbar(await readError(res), { variant: "error" });
+      }
+    }, 600);
   };
 
   // download (issue) — POST flips to received + streams the PDF -----------
@@ -302,6 +324,7 @@ export const Saps = () => {
                 <TableCell>SAP date</TableCell>
                 <TableCell align="center">Assign</TableCell>
                 <TableCell>Deliver</TableCell>
+                <TableCell>Notes</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -481,6 +504,17 @@ export const Saps = () => {
                           />
                         </Stack>
                       )}
+                    </TableCell>
+                    <TableCell>
+                      <TextField
+                        size="small"
+                        multiline
+                        maxRows={4}
+                        placeholder="Note / exception…"
+                        value={notesDraft[key] ?? p.notes ?? ""}
+                        onChange={(e) => handleNotesChange(p, e.target.value)}
+                        sx={{ minWidth: 200 }}
+                      />
                     </TableCell>
                   </TableRow>
                 );
