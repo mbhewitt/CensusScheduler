@@ -1066,6 +1066,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
               >
                 Visit your Burner Profile
               </a>
+              .
             </Typography>
           </CardContent>
         </Card>
