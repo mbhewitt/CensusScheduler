@@ -53,7 +53,9 @@ Roles live in `op_roles` (read-only reference) and are assigned per volunteer in
 | TrainingWelcomeComplete | 174766 | Welcome/Hive course checklist item |
 | Staff | 2000006 | SAP bypass |
 | OtherSAP | 2000007 | SAP bypass (has a pass from another source) |
-| CensusLabCamp | 2000009 | Census-Lab-camper-only shifts (e.g. Lab Stewardship) |
+| CounterCultureCamp | 2000008 | Counter Culture camp member — 12-CSP shift-commitment threshold (checklist item) |
+| CensusLabCamp | 2000009 | Census-Lab-camper-only shifts (e.g. Lab Stewardship); 16-CSP shift-commitment threshold |
+| CensusTicket | 2000011 | Census-ticket offer — 14-CSP shift-commitment threshold (checklist item) |
 | BurnerProfileUpdated | 2000010 | Checklist item |
 | EmailUnsubscribed | 2000020 | Email opt-out |
 
@@ -61,6 +63,16 @@ A volunteer gets a role three ways: **manual** grant by an admin; **training
 completion** (visiting a Hive training link hits `/training/confirmation/[code]`,
 which adds the training's `role_id`); or **signing** the Behavioral Standards
 agreement (adds 1000012).
+
+**Role-based CSP thresholds.** Some roles carry a `census_shift_points` value in
+`op_roles` — currently **CensusTicket = 14**, **CounterCultureCamp = 12**,
+**CensusLabCamp = 16**. Any volunteer holding such a role sees a *"Meet shift
+requirements for &lt;role&gt;"* checklist item with a progress bar (their total CSP
+vs. the role's threshold; `roleThresholds` in the info API is built from every
+held role whose `census_shift_points` is non-null). This is **separate** from the
+SAP CSP threshold in §5. In particular, **who has been offered a Census ticket is
+tracked purely by holding the `CensusTicket` role** — there is no separate list;
+view it at `/roles/2000011/volunteers` (admin/super-admin only).
 
 **Positions gate on `role_id`** (the real eligibility check) and separately on
 `prerequisite_id` (a signup-time training *prompt*, not a hard gate).
@@ -102,7 +114,12 @@ stored list. Items:
 - **Check-in window:** 1h before start → 2h after end (UI-gated, not enforced
   server-side).
 - **CSP (Census Shift Points):** summed from a volunteer's active shift
-  positions; required total hardcoded at 12; also broken out per day.
+  positions, and broken out per day. The **12** (`REQUIRED_CSP` in
+  `client/lib/sapStatus.ts`) is **not** a universal volunteer requirement — it is
+  the **SAP / early-entry threshold**, and it only applies to (and is only shown
+  to) volunteers arriving **pre-open** who aren't Staff/OtherSAP. A volunteer
+  arriving after gates open has no 12-CSP requirement. (Camp/ticket roles carry
+  their own separate per-role CSP thresholds — see §2.)
 - **SAP:** a volunteer bypasses the CSP requirement if they have a SAP on
   record, hold Staff or OtherSAP, or arrive post-opening. Pre-opening arrivals
   owe ≥1 CSP on specific days keyed to their arrival date.
