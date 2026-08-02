@@ -7,11 +7,9 @@ import {
   Card,
   CardActions,
   CardContent,
-  Checkbox,
   CircularProgress,
   Container,
   FormControl,
-  FormControlLabel,
   Grid,
   InputLabel,
   MenuItem,
@@ -215,24 +213,6 @@ export const Contact = () => {
                             ))}
                           </Select>
                         </FormControl>
-                      )}
-                    />
-                  </Grid>
-                  <Grid size={6}>
-                    <Controller
-                      control={control}
-                      name="isReplyWanted"
-                      render={({ field: { value, ...field } }) => (
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              {...field}
-                              checked={value}
-                              color="secondary"
-                            />
-                          }
-                          label="Reply wanted after Burning Man"
-                        />
                       )}
                     />
                   </Grid>
