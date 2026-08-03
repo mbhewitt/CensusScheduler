@@ -209,6 +209,25 @@ export const Header = () => {
           <Box>
             {/* general nav */}
             <List>
+              {/* Account leads the nav — it's where we want volunteers to go
+                  (Chipper). Only shown when signed in (needs shiftboardId). */}
+              {isAuthenticated && (
+                <ListItem disablePadding>
+                  <Link
+                    href={`/volunteers/${shiftboardId}/info`}
+                    onClick={handleDrawerClose}
+                  >
+                    <ListItemButton
+                      selected={pathname === `/volunteers/${shiftboardId}/info`}
+                    >
+                      <ListItemIcon>
+                        <ManageAccountsIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="Account" />
+                    </ListItemButton>
+                  </Link>
+                </ListItem>
+              )}
               {pageListDefault
                 .filter(({ path }) => {
                   // Off-playa /shifts requires auth (middleware redirects
@@ -324,23 +343,6 @@ export const Header = () => {
                   </ListSubheader>
                 }
               >
-                <ListItem disablePadding>
-                  <Link
-                    href={`/volunteers/${shiftboardId}/info`}
-                    onClick={handleDrawerClose}
-                  >
-                    <ListItemButton
-                      selected={
-                        pathname === `/volunteers/${shiftboardId}/info`
-                      }
-                    >
-                      <ListItemIcon>
-                        <ManageAccountsIcon />
-                      </ListItemIcon>
-                      <ListItemText>Account</ListItemText>
-                    </ListItemButton>
-                  </Link>
-                </ListItem>
                 <ListItem disablePadding>
                   <Link href="/sign-in">
                     <ListItemButton
