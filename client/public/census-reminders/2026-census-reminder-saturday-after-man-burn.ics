@@ -1,0 +1,23 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Black Rock City Census//2026 Survey Reminders//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:2026-census-survey-20260906T050000Z@blackrockcitycensus.org
+DTSTAMP:20260803T022200Z
+DTSTART:20260906T050000Z
+DTEND:20260906T053000Z
+SUMMARY:Fill out your Census survey!
+DESCRIPTION:Click below to fill out the 2026 Black Rock City (BRC) Census o
+ nline survey.\nhttps://survey.alchemer.com/s3/8942700/newsletter-cal
+URL:https://survey.alchemer.com/s3/8942700/newsletter-cal
+LOCATION:Online
+STATUS:CONFIRMED
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT0M
+DESCRIPTION:Fill out your 2026 Black Rock City Census survey!
+END:VALARM
+END:VEVENT
+END:VCALENDAR
