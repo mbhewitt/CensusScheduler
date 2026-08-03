@@ -1,0 +1,60 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Black Rock City Census//2026 Survey Reminders//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:2026-census-survey-20260908T190000Z@blackrockcitycensus.org
+DTSTAMP:20260803T022200Z
+DTSTART:20260908T190000Z
+DTEND:20260908T193000Z
+SUMMARY:Fill out your Census survey!
+DESCRIPTION:Click below to fill out the 2026 Black Rock City (BRC) Census o
+ nline survey.\nhttps://survey.alchemer.com/s3/8942700/newsletter-cal
+URL:https://survey.alchemer.com/s3/8942700/newsletter-cal
+LOCATION:Online
+STATUS:CONFIRMED
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT0M
+DESCRIPTION:Fill out your 2026 Black Rock City Census survey!
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-census-survey-20260913T220000Z@blackrockcitycensus.org
+DTSTAMP:20260803T022200Z
+DTSTART:20260913T220000Z
+DTEND:20260913T223000Z
+SUMMARY:Fill out your Census survey!
+DESCRIPTION:Click below to fill out the 2026 Black Rock City (BRC) Census o
+ nline survey.\nhttps://survey.alchemer.com/s3/8942700/newsletter-cal
+URL:https://survey.alchemer.com/s3/8942700/newsletter-cal
+LOCATION:Online
+STATUS:CONFIRMED
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT0M
+DESCRIPTION:Fill out your 2026 Black Rock City Census survey!
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-census-survey-20261006T190000Z@blackrockcitycensus.org
+DTSTAMP:20260803T022200Z
+DTSTART:20261006T190000Z
+DTEND:20261006T193000Z
+SUMMARY:Census survey is still open. Done? Do it now!
+DESCRIPTION:Did you fill out your Census survey yet? It can't stay open for
+ ever. Practice some immediacy and click the link now!\nhttps://survey.alch
+ emer.com/s3/8942700/newsletter-cal
+URL:https://survey.alchemer.com/s3/8942700/newsletter-cal
+LOCATION:Online
+STATUS:CONFIRMED
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:PT0M
+DESCRIPTION:The Census survey is still open. Do it now!
+END:VALARM
+END:VEVENT
+END:VCALENDAR

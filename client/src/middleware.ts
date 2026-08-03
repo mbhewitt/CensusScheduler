@@ -70,6 +70,13 @@ const ALLOWLIST = [
   "/help/",
   "/reports/",
 
+  // Public survey-reminder landing page + its hosted .ics files (#589).
+  // Shareable from the newsletter; must work with no login / Burner Profile.
+  // (.ics files go through middleware — .ics isn't in the matcher's static-
+  // extension exclusion — so the asset dir needs allowlisting too.)
+  "/census-survey-reminders",
+  "/census-reminders",
+
   // On-playa only: walk-up shifts view
   ...(isOnPlaya ? ["/shifts", "/api/shifts"] : []),
 ];

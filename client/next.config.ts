@@ -23,6 +23,17 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      {
+        // Serve the hosted 2026 Census survey-reminder .ics files (#589) with
+        // the exact headers calendar apps expect: text/calendar + download.
+        // The files are static (public/census-reminders/*.ics) so byte content
+        // — CRLF line endings and iCalendar line folding — is preserved as-is.
+        source: "/census-reminders/:file(.+\\.ics)",
+        headers: [
+          { key: "Content-Type", value: "text/calendar; charset=utf-8" },
+          { key: "Content-Disposition", value: "attachment" },
+        ],
+      },
     ];
   },
   async redirects() {
