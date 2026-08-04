@@ -209,25 +209,6 @@ export const Header = () => {
           <Box>
             {/* general nav */}
             <List>
-              {/* Account leads the nav — it's where we want volunteers to go
-                  (Chipper). Only shown when signed in (needs shiftboardId). */}
-              {isAuthenticated && (
-                <ListItem disablePadding>
-                  <Link
-                    href={`/volunteers/${shiftboardId}/info`}
-                    onClick={handleDrawerClose}
-                  >
-                    <ListItemButton
-                      selected={pathname === `/volunteers/${shiftboardId}/info`}
-                    >
-                      <ListItemIcon>
-                        <ManageAccountsIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="Account" />
-                    </ListItemButton>
-                  </Link>
-                </ListItem>
-              )}
               {pageListDefault
                 .filter(({ path }) => {
                   // Off-playa /shifts requires auth (middleware redirects
@@ -241,14 +222,37 @@ export const Header = () => {
                   return true;
                 })
                 .map(({ icon, label, path }) => (
-                <ListItem disablePadding key={path}>
-                  <Link href={path} onClick={handleDrawerClose}>
-                    <ListItemButton selected={pathname === path}>
-                      <ListItemIcon>{icon}</ListItemIcon>
-                      <ListItemText primary={label} />
-                    </ListItemButton>
-                  </Link>
-                </ListItem>
+                <Fragment key={path}>
+                  <ListItem disablePadding>
+                    <Link href={path} onClick={handleDrawerClose}>
+                      <ListItemButton selected={pathname === path}>
+                        <ListItemIcon>{icon}</ListItemIcon>
+                        <ListItemText primary={label} />
+                      </ListItemButton>
+                    </Link>
+                  </ListItem>
+                  {/* Account sits directly under Home — Home is always the top
+                      (Chipper). Only shown when signed in (needs shiftboardId). */}
+                  {path === "/" && isAuthenticated && (
+                    <ListItem disablePadding>
+                      <Link
+                        href={`/volunteers/${shiftboardId}/info`}
+                        onClick={handleDrawerClose}
+                      >
+                        <ListItemButton
+                          selected={
+                            pathname === `/volunteers/${shiftboardId}/info`
+                          }
+                        >
+                          <ListItemIcon>
+                            <ManageAccountsIcon />
+                          </ListItemIcon>
+                          <ListItemText primary="Account" />
+                        </ListItemButton>
+                      </Link>
+                    </ListItem>
+                  )}
+                </Fragment>
               ))}
             </List>
             {/* admin nav */}
