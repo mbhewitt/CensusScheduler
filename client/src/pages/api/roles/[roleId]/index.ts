@@ -2,6 +2,7 @@ import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import type { IReqRoleItem, IResRoleRowItem } from "@/components/types/roles";
+import { withWriteGuard } from "@/lib/withWriteGuard";
 import { pool } from "lib/database";
 
 const roles = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -86,4 +87,4 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default roles;
+export default withWriteGuard(roles, "superadmin");

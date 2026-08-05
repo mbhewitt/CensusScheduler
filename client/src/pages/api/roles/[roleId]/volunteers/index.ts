@@ -5,6 +5,9 @@ import type {
   IReqRoleVolunteerItem,
   IResRoleVolunteerItem,
 } from "@/components/types/roles";
+import { ROLE_SUPER_ADMIN_ID } from "@/constants";
+import { isAdmin, isSuperAdmin } from "@/lib/authz";
+import { withAuth } from "@/lib/withAuth";
 import { pool } from "lib/database";
 
 const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -125,4 +128,24 @@ const roleVolunteers = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default roleVolunteers;
+// Server-side authorization (was previously unguarded — anyone logged in could
+// grant ANY role, incl. SuperAdmin, to anyone = privilege escalation, #595).
+// Rule (Mew 2026-08-05): granting/revoking the SuperAdmin role requires
+// SuperAdmin; granting/revoking any other role requires Admin. Reads (GET)
+// require Admin.
+export default withAuth(async (req, res, session) => {
+  const roleId = Number(req.query.roleId);
+  const needsSuperAdmin = roleId === ROLE_SUPER_ADMIN_ID;
+  const allowed = needsSuperAdmin
+    ? await isSuperAdmin(session.shiftboardId)
+    : await isAdmin(session.shiftboardId);
+  if (!allowed) {
+    return res.status(403).json({
+      statusCode: 403,
+      message: needsSuperAdmin
+        ? "Super admin role required"
+        : "Admin role required",
+    });
+  }
+  return roleVolunteers(req, res);
+});
