@@ -147,5 +147,29 @@ export default withAuth(async (req, res, session) => {
         : "Admin role required",
     });
   }
+  // Lockout guard (#45, Mew 2026-08-05): a super-admin may not remove the
+  // SuperAdmin role from themselves, nor remove the LAST super-admin — either
+  // would risk locking everyone out of super-admin.
+  if (needsSuperAdmin && req.method === "DELETE") {
+    const { shiftboardId: targetId } = JSON.parse(req.body);
+    if (Number(targetId) === session.shiftboardId) {
+      return res.status(403).json({
+        statusCode: 403,
+        message: "You can't remove your own Super admin role",
+      });
+    }
+    const [superAdminRows] = await pool.query<RowDataPacket[]>(
+      `SELECT COUNT(*) AS count
+       FROM op_volunteer_roles
+       WHERE role_id = ? AND remove_role = false`,
+      [ROLE_SUPER_ADMIN_ID]
+    );
+    if ((superAdminRows[0]?.count ?? 0) <= 1) {
+      return res.status(403).json({
+        statusCode: 403,
+        message: "Can't remove the last Super admin",
+      });
+    }
+  }
   return roleVolunteers(req, res);
 });
