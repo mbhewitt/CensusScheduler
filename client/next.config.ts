@@ -39,8 +39,8 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
-        source: "/reports/2026",
-        destination: "/reports/2026/index.html",
+        source: "/reports/2025",
+        destination: "/reports/2025/index.html",
         permanent: true,
       },
       {
