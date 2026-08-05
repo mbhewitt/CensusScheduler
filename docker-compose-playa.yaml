@@ -8,6 +8,8 @@ services:
         MYSQL_VERSION: "9.4"
     container_name: census-database
     image: burning-man/census-database
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
     security_opt:
       - apparmor:unconfined
     ports:
