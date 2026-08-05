@@ -218,7 +218,9 @@ export const ShiftTypesCreate = () => {
           </BreadcrumbsNav>
         </Box>
         <Box component="section">
-          <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+          {/* noValidate so react-hook-form surfaces required-field errors
+              instead of native HTML5 validation silently blocking submit (#533) */}
+          <form autoComplete="off" noValidate onSubmit={handleSubmit(onSubmit)}>
             <ShiftTypesForm
               clearErrors={clearErrors}
               control={control}
