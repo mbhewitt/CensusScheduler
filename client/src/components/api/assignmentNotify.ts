@@ -132,7 +132,11 @@ function buildIcs(args: {
   sequence?: number;
 }): string {
   const escape = (s: string) =>
-    s.replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\\;");
+    s
+      .replace(/\\/g, "\\\\")
+      .replace(/\n/g, "\\n")
+      .replace(/,/g, "\\,")
+      .replace(/;/g, "\\;");
   const status = args.method === "CANCEL" ? "CANCELLED" : "CONFIRMED";
   const lines = [
     "BEGIN:VCALENDAR",
@@ -320,7 +324,7 @@ export async function notifyAssignment(
 export type RemovalCause =
   | { kind: "self" }
   | { kind: "by-other"; actorShiftboardId: number | null }
-  | { kind: "shift-canceled" };
+  | { kind: "shift-canceled"; reason?: string };
 
 // Sends a removal email + a CANCEL .ics with the same UID as the
 // original assignment, so the volunteer's calendar matches the
@@ -376,17 +380,47 @@ export async function notifyRemoval(
       ? `Manage your shifts: ${APP_BASE_URL}/`
       : `If this was a mistake, you can re-add yourself: ${APP_BASE_URL}/`;
 
-  const bodyText = [
-    greetingFor(ctx),
-    "",
-    opener,
-    "",
-    renderShiftBody(ctx, dayLabel, timeLabel),
-    "",
-    calendarLine,
-    "",
-    closingLine,
-  ].join("\n");
+  // The whole-shift cancellation email is intentionally slimmer than a
+  // per-slot removal: no "About this shift type" / position details block —
+  // just the shift line, the admin's reason, the restore promise, the weather
+  // link, location, and the calendar note. Copy confirmed by papabear
+  // 2026-08-06.
+  let bodyText: string;
+  if (cause.kind === "shift-canceled") {
+    const reasonText = (cause.reason ?? "").trim();
+    const pinLine = `  📌 ${ctx.shift_name} — ${dayLabel}${timeLabel ? ` • ${timeLabel}` : ""}`;
+    bodyText = [
+      greetingFor(ctx),
+      "",
+      "The following PEERS shift has been canceled:",
+      "",
+      pinLine,
+      "",
+      `Reason for the cancellation: ${reasonText}`,
+      "",
+      "If things change, you'll receive an email letting you know the shift is no longer canceled.",
+      "",
+      "For weather related updates go to http://brcdashboard.burningman.org/",
+      "",
+      "Location: All PEERS shifts start and end at Placement HQ at Esplanade & 5:45.",
+      "",
+      calendarLine,
+      "",
+      `Manage your shifts: ${APP_BASE_URL}/`,
+    ].join("\n");
+  } else {
+    bodyText = [
+      greetingFor(ctx),
+      "",
+      opener,
+      "",
+      renderShiftBody(ctx, dayLabel, timeLabel),
+      "",
+      calendarLine,
+      "",
+      closingLine,
+    ].join("\n");
+  }
 
   const icsDate = dateToIcs(ctx.date);
   const icsStart = timeToIcs(ctx.start_time);
@@ -415,8 +449,7 @@ export async function notifyRemoval(
           content: Buffer.from(icsContent, "utf8"),
         }
       : undefined,
-    category:
-      cause.kind === "shift-canceled" ? "shift-canceled" : "removal",
+    category: cause.kind === "shift-canceled" ? "shift-canceled" : "removal",
   });
 }
 

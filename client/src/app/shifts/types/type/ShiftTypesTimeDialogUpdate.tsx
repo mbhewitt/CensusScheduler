@@ -121,7 +121,18 @@ export const ShiftTypesTimeDialogUpdate = ({
                 });
               }
             });
-            if (!errors.timeAdd) {
+            // A canceled shift must carry a reason — it's shown to every
+            // notified volunteer in the cancellation email.
+            const reasonMissing =
+              Boolean(getValues("timeAdd.canceled")) &&
+              (getValues("timeAdd.cancellationReason") ?? "").trim() === "";
+            if (reasonMissing) {
+              setError("timeAdd.cancellationReason", {
+                type: "required",
+                message: "Cancellation reason is required",
+              });
+            }
+            if (!errors.timeAdd && !reasonMissing) {
               handleTimeUpdate(getValues("timeAdd"));
               handleDialogClose();
             }

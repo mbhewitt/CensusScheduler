@@ -90,6 +90,9 @@ export interface IReqShiftTypeTimePositionItem {
 }
 export interface IReqShiftTypeTimeItem {
   canceled: boolean;
+  // Reason the admin typed when canceling this time; used only for the
+  // cancellation email fan-out, not stored. Absent on non-cancel updates.
+  cancellationReason?: string;
   endTime: string;
   instance: string;
   meal: string;

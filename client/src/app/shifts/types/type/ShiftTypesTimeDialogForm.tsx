@@ -21,6 +21,7 @@ import {
   UseFormClearErrors,
   UseFormGetValues,
   UseFormSetError,
+  useWatch,
 } from "react-hook-form";
 import useSWR from "swr";
 
@@ -76,6 +77,8 @@ export const ShiftTypesTimeDialogForm = ({
       name,
     }))
     .sort((a, b) => a.date.localeCompare(b.date));
+  // Reveal the required "reason" field only while the Cancel box is ticked.
+  const isCanceled = useWatch({ control, name: "timeAdd.canceled" });
 
   // render
   // ------------------------------------------------------------
@@ -316,9 +319,37 @@ export const ShiftTypesTimeDialogForm = ({
             render={({ field: { value, ...field } }) => (
               <FormControlLabel
                 control={
-                  <Checkbox {...field} checked={Boolean(value)} color="secondary" />
+                  <Checkbox
+                    {...field}
+                    checked={Boolean(value)}
+                    color="secondary"
+                  />
                 }
                 label="Cancel this shift (notifies all assigned volunteers)"
+              />
+            )}
+          />
+        </Grid>
+      )}
+      {showCanceledCheckbox && isCanceled && (
+        <Grid size={12}>
+          <Controller
+            control={control}
+            name="timeAdd.cancellationReason"
+            render={({ field: { onChange, value } }) => (
+              <TextField
+                error={Boolean(errors.timeAdd?.cancellationReason)}
+                fullWidth
+                helperText={errors.timeAdd?.cancellationReason?.message}
+                label="Enter Reason for Cancellation"
+                multiline
+                onChange={(event) => {
+                  onChange(event.target.value);
+                  clearErrors("timeAdd.cancellationReason");
+                }}
+                required
+                value={value ?? ""}
+                variant="standard"
               />
             )}
           />

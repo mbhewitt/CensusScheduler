@@ -132,6 +132,7 @@ export const processTimeList = (formValues: IFormValues) => {
   return formValues.timeList.map(
     ({
       canceled,
+      cancellationReason,
       date,
       endTime,
       instance,
@@ -143,6 +144,7 @@ export const processTimeList = (formValues: IFormValues) => {
     }) => {
       return {
         canceled: Boolean(canceled),
+        cancellationReason,
         endTime: `${dayjs(date).format("YYYY-MM-DD")} ${dayjs(endTime).format("HH:mm")}`,
         instance,
         meal,
@@ -180,6 +182,7 @@ export const defaultValues: IFormValues = {
   positionList: [],
   timeAdd: {
     canceled: false,
+    cancellationReason: "",
     date: "",
     endTime: "",
     instance: "",
@@ -233,6 +236,7 @@ export const ShiftTypesForm = ({
     },
     timeItem: {
       canceled: false,
+      cancellationReason: "",
       date: "",
       endTime: "",
       instance: "",
@@ -340,6 +344,7 @@ export const ShiftTypesForm = ({
     const startTimeNew = dayjs(startTime).format("HH:mm");
     const timeNew = {
       canceled: false,
+      cancellationReason: "",
       date: dateNew,
       endTime: `${dateNew} ${endTimeNew}`,
       id: "",

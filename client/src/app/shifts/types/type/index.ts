@@ -14,6 +14,11 @@ export interface IPositionAddValues {
 }
 export interface ITimeAddValues {
   canceled: boolean;
+  // Free-text reason captured when an admin ticks "Cancel this shift" in the
+  // Update Time dialog. Transient — not persisted; only threaded through to the
+  // cancellation email. Optional so server-loaded time rows (which never carry
+  // it) stay assignable to this shape.
+  cancellationReason?: string;
   date: string;
   endTime: string;
   instance: string;

@@ -302,7 +302,15 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
       // raced the route's response).
       await Promise.all(
         timeListUpdate.map(
-          async ({ canceled, endTime, timeId, instance, meal, notes, startTime }) => {
+          async ({
+            canceled,
+            endTime,
+            timeId,
+            instance,
+            meal,
+            notes,
+            startTime,
+          }) => {
             // Refresh start_date_id / end_date_id alongside the start_time /
             // end_time change — a date edit must update the FK or downstream
             // joins keep pointing at the old date row. See [[fix-handleTimeListAdd]].
@@ -364,12 +372,10 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           for (const v of rows) {
             try {
               if (isCanceled) {
-                await notifyRemoval(
-                  pool,
-                  v.shiftboard_id,
-                  v.time_position_id,
-                  { kind: "shift-canceled" }
-                );
+                await notifyRemoval(pool, v.shiftboard_id, v.time_position_id, {
+                  kind: "shift-canceled",
+                  reason: t.cancellationReason,
+                });
               } else {
                 await notifyRestoration(
                   pool,
@@ -588,36 +594,37 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
       // above (see the [[shift-type-patch-forEach-race]] comments).
       await Promise.all(
         timePositionListUpdate.map(
-        async ({ alias, sapPoints, slots, timePositionId }) => {
-          await pool.query<RowDataPacket[]>(
-            `UPDATE op_shift_time_position
+          async ({ alias, sapPoints, slots, timePositionId }) => {
+            await pool.query<RowDataPacket[]>(
+              `UPDATE op_shift_time_position
             SET
               position_alias=?,
               sap_points=?,
               slots=?,
               update_time_position=true
             WHERE time_position_id=?`,
-            [alias, sapPoints, slots, timePositionId]
-          );
-        }
-      ));
+              [alias, sapPoints, slots, timePositionId]
+            );
+          }
+        )
+      );
       await Promise.all(
         timePositionListAdd.map(
-        async ({ alias, positionId, sapPoints, slots, timeId }) => {
-          const [dbTimePosition] = await pool.query<RowDataPacket[]>(
-            `SELECT time_position_id
+          async ({ alias, positionId, sapPoints, slots, timeId }) => {
+            const [dbTimePosition] = await pool.query<RowDataPacket[]>(
+              `SELECT time_position_id
             FROM op_shift_time_position
             WHERE shift_times_id=?
             AND position_type_id=?`,
-            [dbTimeIdExist || timeId, positionId]
-          );
-          const [dbTimePositionFirst] = dbTimePosition;
+              [dbTimeIdExist || timeId, positionId]
+            );
+            const [dbTimePositionFirst] = dbTimePosition;
 
-          // if time position exists already
-          // then update add_time_position and remove_time_position fields
-          if (dbTimePositionFirst) {
-            await pool.query<RowDataPacket[]>(
-              `UPDATE op_shift_time_position
+            // if time position exists already
+            // then update add_time_position and remove_time_position fields
+            if (dbTimePositionFirst) {
+              await pool.query<RowDataPacket[]>(
+                `UPDATE op_shift_time_position
               SET
                 add_time_position=true,
                 position_alias=?,
@@ -625,17 +632,17 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
                 slots=?,
                 remove_time_position=false
               WHERE time_position_id=?`,
-              [alias, sapPoints, slots, dbTimePositionFirst.time_position_id]
-            );
-            // else insert them into the table
-          } else {
-            const timePositionIdNew = generateId(
-              `SELECT time_position_id
+                [alias, sapPoints, slots, dbTimePositionFirst.time_position_id]
+              );
+              // else insert them into the table
+            } else {
+              const timePositionIdNew = generateId(
+                `SELECT time_position_id
               FROM op_shift_time_position`
-            );
+              );
 
-            await pool.query(
-              `INSERT INTO op_shift_time_position (
+              await pool.query(
+                `INSERT INTO op_shift_time_position (
                 add_time_position,
                 position_alias,
                 position_type_id,
@@ -645,24 +652,26 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
                 time_position_id
               )
               VALUES (true, ?, ?, ?, ?, ?, ?)`,
-              [alias, positionId, sapPoints, timeId, slots, timePositionIdNew]
-            );
+                [alias, positionId, sapPoints, timeId, slots, timePositionIdNew]
+              );
+            }
           }
-        }
-      ));
+        )
+      );
       await Promise.all(
         timePositionListRemove.map(
-        async ({ time_position_id: timePositionId }) => {
-          await pool.query<RowDataPacket[]>(
-            `UPDATE op_shift_time_position
+          async ({ time_position_id: timePositionId }) => {
+            await pool.query<RowDataPacket[]>(
+              `UPDATE op_shift_time_position
             SET
               add_time_position=false,
               remove_time_position=true
             WHERE time_position_id=?`,
-            [timePositionId]
-          );
-        }
-      ));
+              [timePositionId]
+            );
+          }
+        )
+      );
 
       return res.status(200).json({
         statusCode: 200,
