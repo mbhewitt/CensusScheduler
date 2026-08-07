@@ -128,6 +128,25 @@ export const processInformation = (
     name: formValues.information.name,
   };
 };
+// Deep-clone form field arrays while preserving dayjs instances.
+//
+// We can't use structuredClone here: dayjs (1.11+) tags every instance with
+// an own `$isDayjsObject` marker that structuredClone copies while dropping
+// the prototype. The result looks like a dayjs to `dayjs()` (so it takes the
+// clone-and-return path) but no longer has `.clone()`, which throws
+// "e.clone is not a function" when MUI's TimePicker re-renders a row. dayjs
+// values are immutable in this form, so reusing the instance by reference is
+// safe; everything else is cloned so nested pushes don't mutate RHF state.
+function cloneFields<T>(value: T): T {
+  if (dayjs.isDayjs(value)) return value;
+  if (Array.isArray(value)) return value.map((item) => cloneFields(item)) as T;
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, val]) => [key, cloneFields(val)])
+    ) as T;
+  }
+  return value;
+}
 export const processTimeList = (formValues: IFormValues) => {
   return formValues.timeList.map(
     ({
@@ -282,9 +301,9 @@ export const ShiftTypesForm = ({
     );
 
     if (positionFound) {
-      const positionFieldsMutate = structuredClone(positionFields);
-      const timeFieldsMutate = structuredClone(timeFields);
-      const timePositionListAddNew = structuredClone(timePositionListAddFields);
+      const positionFieldsMutate = cloneFields(positionFields);
+      const timeFieldsMutate = cloneFields(timeFields);
+      const timePositionListAddNew = cloneFields(timePositionListAddFields);
 
       positionFieldsMutate.push({
         ...positionFound,
@@ -355,7 +374,7 @@ export const ShiftTypesForm = ({
       startTime: `${dateNew} ${startTimeNew}`,
       timeId: 0,
     };
-    const timeFieldsMutate = structuredClone(timeFields);
+    const timeFieldsMutate = cloneFields(timeFields);
 
     timeFieldsMutate.push(timeNew);
     timeFieldsMutate.sort((timeField1, timeField2) =>
@@ -377,7 +396,7 @@ export const ShiftTypesForm = ({
     );
   };
   const handleTimeUpdate = (timeItem: ITimeAddValues) => {
-    const timeFieldsMutate = structuredClone(timeFields);
+    const timeFieldsMutate = cloneFields(timeFields);
     const timeFieldsNew = timeFieldsMutate.map((timeFieldsItem) => {
       if (timeFieldsItem.timeId === timeItem.timeId) {
         return timeItem;
