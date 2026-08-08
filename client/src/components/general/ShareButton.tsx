@@ -1,6 +1,6 @@
 "use client";
 
-import { IosShare as ShareIcon } from "@mui/icons-material";
+import { Share as ShareIcon } from "@mui/icons-material";
 import { Button } from "@mui/material";
 import { useSnackbar } from "notistack";
 
@@ -18,6 +18,12 @@ interface IShareButtonProps {
   // at click time so it's SSR-safe and always carries the current origin.
   path: string;
   label?: string;
+  // Defaults preserve existing call sites; the shift page passes
+  // variant="text" + color="inherit" + size="small" so Share reads as a quiet
+  // secondary action beneath the filled "Add this shift" button.
+  variant?: "contained" | "outlined" | "text";
+  color?: "inherit" | "primary" | "secondary";
+  size?: "small" | "medium" | "large";
 }
 
 export const ShareButton = ({
@@ -25,6 +31,9 @@ export const ShareButton = ({
   text,
   path,
   label = "Share",
+  variant = "contained",
+  color = "primary",
+  size = "medium",
 }: IShareButtonProps) => {
   const { enqueueSnackbar } = useSnackbar();
 
@@ -59,7 +68,13 @@ export const ShareButton = ({
   };
 
   return (
-    <Button variant="contained" startIcon={<ShareIcon />} onClick={handleShare}>
+    <Button
+      variant={variant}
+      color={color}
+      size={size}
+      startIcon={<ShareIcon />}
+      onClick={handleShare}
+    >
       {label}
     </Button>
   );

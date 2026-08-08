@@ -712,7 +712,46 @@ export const ShiftVolunteers = ({
             </Typography>
           </Box>
           {!isShiftCanceled && (
-            <Box sx={{ mb: 2 }}>
+            // Add-this-shift is the primary action and sits on top (Chipper
+            // 2026-08-07): the signup button was buried down by the Volunteers
+            // table, so on mobile the only prominent button volunteers saw was
+            // Share and they couldn't find how to add themselves. Add is the big
+            // filled button; Share sits underneath as a quiet text button (with
+            // the standard Material share icon) so it reads as the lesser action.
+            <Stack
+              direction="column"
+              spacing={0.5}
+              useFlexGap
+              alignItems="flex-start"
+              sx={{ mb: 2 }}
+            >
+              <Button
+                disabled={!isVolunteerAddAvailable}
+                onClick={() => {
+                  setDialogCurrent({
+                    dialogItem: DialogList.Add,
+                    shift: {
+                      critical: false,
+                      positionName: "",
+                      timePositionId: 0,
+                    },
+                    volunteer: {
+                      notes: "",
+                      playaName: "",
+                      rating: null,
+                      shiftboardId: 0,
+                      worldName: "",
+                    },
+                  });
+                  setIsDialogOpen(true);
+                }}
+                size="large"
+                startIcon={<PersonAddAlt1Icon />}
+                type="button"
+                variant="contained"
+              >
+                {isAdmin ? "Add volunteer" : "Add this shift"}
+              </Button>
               <ShareButton
                 title="Black Rock City Census shift"
                 text={
@@ -722,8 +761,11 @@ export const ShiftVolunteers = ({
                 }
                 path={`/shifts/${timeIdParam}/volunteers`}
                 label="Share this shift"
+                variant="text"
+                color="inherit"
+                size="small"
               />
-            </Box>
+            </Stack>
           )}
           {/*
            * Suppress any row whose right-column value is empty so we
@@ -817,42 +859,11 @@ export const ShiftVolunteers = ({
           )}
         </Box>
         <Box component="section">
-          <Stack
-            alignItems="flex-end"
-            direction="row"
-            justifyContent="space-between"
-            sx={{ mb: 2 }}
-          >
-            <Typography component="h2" variant="h4">
-              Volunteers
-            </Typography>
-            <Button
-              disabled={!isVolunteerAddAvailable}
-              onClick={() => {
-                setDialogCurrent({
-                  dialogItem: DialogList.Add,
-                  shift: {
-                    critical: false,
-                    positionName: "",
-                    timePositionId: 0,
-                  },
-                  volunteer: {
-                    notes: "",
-                    playaName: "",
-                    rating: null,
-                    shiftboardId: 0,
-                    worldName: "",
-                  },
-                });
-                setIsDialogOpen(true);
-              }}
-              startIcon={<PersonAddAlt1Icon />}
-              type="button"
-              variant="contained"
-            >
-              {isAdmin ? "Add volunteer" : "Add this shift"}
-            </Button>
-          </Stack>
+          {/* Add-volunteer button moved to the top of the page (next to the
+              shift details) so it's the first thing seen; see the Stack above. */}
+          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
+            Volunteers
+          </Typography>
           {isMobile ? (
             <Stack spacing={1}>
               {dataShiftVolunteersItem.volunteerList.map(
