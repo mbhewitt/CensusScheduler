@@ -243,7 +243,8 @@ const shiftVolunteers = async (
           SET
             noshow=?,
             add_shift=true,
-            remove_shift=false
+            remove_shift=false,
+            signed_up_at=NOW()
           WHERE shiftboard_id=?
           AND time_position_id=?`,
           [noShow, shiftboardId, timePositionId]
@@ -253,11 +254,12 @@ const shiftVolunteers = async (
         await pool.query<RowDataPacket[]>(
           `INSERT INTO op_volunteer_shifts (
             add_shift,
+            signed_up_at,
             noshow,
             shiftboard_id,
             time_position_id
           )
-          VALUES (true, ?, ?, ?)`,
+          VALUES (true, NOW(), ?, ?, ?)`,
           [noShow, shiftboardId, timePositionId]
         );
       }

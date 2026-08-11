@@ -263,6 +263,7 @@ CREATE TABLE `op_volunteer_shifts` (
   `add_shift` tinyint(1) DEFAULT '0',
   `remove_shift` tinyint(1) DEFAULT '0',
   `update_shift` tinyint(1) DEFAULT '0',
+  `signed_up_at` datetime DEFAULT NULL,
   `rating` int DEFAULT NULL,
   `notes` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
   `time_position_id` bigint NOT NULL,
