@@ -135,8 +135,20 @@ const labels = async (req: NextApiRequest, res: NextApiResponse) => {
   const helvItal = await doc.embedFont(StandardFonts.HelveticaOblique);
   const zapf = await doc.embedFont(StandardFonts.ZapfDingbats);
 
+  // Format in playa/Pacific time, not the server clock (prod runs UTC — a late
+  // Pacific-evening print was stamping the next day's date).
   const now = new Date();
-  const printedAt = `Printed at ${now.toLocaleString("en-US", { month: "short" })} ${now.getDate()}${ordinal(now.getDate())} ${((now.getHours() + 11) % 12) + 1}${now.getHours() < 12 ? "am" : "pm"}`;
+  const laParts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Los_Angeles",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    hour12: true,
+  }).formatToParts(now);
+  const laPart = (type: Intl.DateTimeFormatPartTypes) =>
+    laParts.find((p) => p.type === type)?.value ?? "";
+  const printedDay = Number(laPart("day"));
+  const printedAt = `Printed at ${laPart("month")} ${printedDay}${ordinal(printedDay)} ${laPart("hour")}${laPart("dayPeriod").toLowerCase()}`;
 
   let page = doc.addPage([PAGE_W, PAGE_H]);
   const centered = (
