@@ -1,0 +1,855 @@
+{
+  "slug": "databeast",
+  "spaceId": 23489237,
+  "title": "2026 Census Course: Databeast Driver",
+  "titleFromHive": "2026 Census Course: Databeast ...",
+  "titleWasTruncatedInHive": true,
+  "summary": "Required for all Databeast Drivers.",
+  "sourceUrl": "https://hive.burningman.org/spaces/23489237/content",
+  "exportedAt": "2026-08-16T02:55:14.305Z",
+  "overview": {
+    "id": 100845597,
+    "slug": "census-course-databeast-databeast-driver-course-overview",
+    "title": "Databeast Driver Course Overview~",
+    "position": 1,
+    "image": "/training/assets/ec18ceef-da5d34819e7ffdb2.jpg",
+    "audio": [],
+    "attachments": [],
+    "blocks": [
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "Welcome to the Census DataBeast Drivers Course!"
+      },
+      {
+        "type": "paragraph",
+        "text": "We are glad you made it here! The Census Databeast Drivers Course continues where the Census Basics Course left off. Make sure to complete the Census Basics Course before starting the Census Databeast Drivers Course.",
+        "links": [
+          {
+            "text": "Census Basics Course",
+            "href": "/training/basics",
+            "kind": "course"
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "Who is this course for and what are the main goals?"
+      },
+      {
+        "type": "paragraph",
+        "text": "This course is for anyone who will be volunteering for as a Databeast Driver. Both for new and returning volunteers. By the end of this course you should be able to:"
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "Explain the essential safety protocols and procedures for the safe operation of the Databeast.",
+          "Familiarize yourself with the layout and key locations of the Census Lab, Sampling areas and the Commissary.",
+          "Review the OnPlaya Forms utilized for your DataBeast Driving Shift.",
+          "Understand and commit to your role as a representative of the department, including its mission and behavioral standards."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "Driver Qualifications~"
+      },
+      {
+        "type": "paragraph",
+        "text": "To drive the DataBeast, you must first have approval by Census Leadership. Census drivers are REQUIRED to have a Valid and Current Driver’s License from the US or Home Country for International Burners. Additionally, Drivers MUST:"
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "Carry your driver's license at all times while operating the Databeast.",
+          "Be an excellent, safe & responsible driver with a good driving record.",
+          "Have past experience successfully handling a large box truck.",
+          "Have attended a minimum of one prior Burn in Black Rock City.",
+          "Complete PrePlaya, this HIVE Driver Course.",
+          "Complete OnPlaya, Driver orientation before your first shift.",
+          "Be comfortable with Burning Man (BM) radio and procedures",
+          "Complete PrePlaya. BM Org-Wide Radio Training Video & Art of Radio Guide"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "If you need help contact our Coordinator of Volunteer Communications at: censusvolunteercoordinators@burningman.org",
+        "links": [
+          {
+            "text": "censusvolunteercoordinators@burningman.org",
+            "href": "mailto:censusvolunteercoordinators@burningman.org",
+            "kind": "email"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Let’s get started."
+      }
+    ],
+    "updatedAt": "2026-07-28T12:02:29Z"
+  },
+  "sections": [
+    {
+      "id": 100845598,
+      "slug": "census-course-databeast-brc-census-databeast-drivers-guide",
+      "title": "BRC Census DataBeast Drivers Guide",
+      "position": 1,
+      "image": "/training/assets/405507ff-IMG_8184.jpeg",
+      "audio": [],
+      "attachments": [],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "The following Lessons will provide you with the information you need to prepare for your Driving Shift onboard the DataBeast."
+        }
+      ],
+      "updatedAt": "2026-07-04T22:11:50Z",
+      "lessons": [
+        {
+          "id": 100845599,
+          "slug": "census-course-databeast-databeast-driver-regulations-job-description",
+          "title": "DataBeast Driver Regulations &amp; Job Description",
+          "position": 1,
+          "image": "/training/assets/0fc8c38d-Copy_of_RS_DataBeast_Loading_Volunteers.jpg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/c8b0e402-IMG_0449.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Drivers are REQUIRED to have a Valid and Current Driver’s License from the US or Home Country for International Burners while driving in Black Rock City.",
+                "Seat Belt use is required by BM.org for passenger & driver.",
+                "Headlights must be used after sunset.",
+                "Don’t exceed 5 mph while in the city. 10 mph between Greeters and Sampling Point."
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 5,
+              "text": "MUST BE SOBER & SAFELY drive the Census Transport Vehicle:"
+            },
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                "To and from Gate road with teams of Random Sampler & Traffic Tamer volunteers.",
+                "To Random locations on Playa & within the City with Teams of Lab Hosts on Pop-ups",
+                "To Random locations of Playa for Volunteer Art Tours"
+              ]
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "While transporting volunteers, there must be a Sampling Shift Lead or Census Lab Host Volunteer in the cab responsible for navigation and being a spotter for pedestrians, bikes, vehicles, etc. Also during transportation, they will operate the Drivers Radio, to communicate with a Shift Lead onboard the DataBeast riding with the volunteers & to Lighthouse before traveling along Gate Road.",
+                "Gate Sampling Shifts: Because the Data Beast moves outside of the flags on Gate Road, Lighthouse must be notified before the vehicle moves into this “off limits” area. The Shift Lead is responsible to ensure radio communications are made to Lighthouse after stopping at Greeters, prior to driving to the Census Sampling Point and before returning to Greeters.",
+                "Check OUT & RETURN Keys & Radio, inside the office container. Write a COMMENT if FUEL is low or you have any tire or mechanical issues"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 4,
+              "text": "From BM.org for Mutant Vechiles"
+            },
+            {
+              "type": "paragraph",
+              "text": "Here is a reminder of some of our core driving policies:."
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Be Sober: Only operate your vehicle when the driver and operational crew is/are completely sober and not impaired or under the influence of alcohol, marijuana or any other intoxicating controlled substance.",
+                "Be Respectful: Treat DMV volunteers, other Burning Man Project team members, and law enforcement personnel respectfully.",
+                "Drive Slowly: Keep your speed at 5 mph or slower and reduce speed if creating dust or in hazardous conditions.",
+                "Yield to Others: Give pedestrians, bicyclists, and emergency vehicles the right of way.",
+                "Stay on Approved Routes: you may cross but avoid driving on: Esplanade, the Promenades at 3:00, 6:00, and 9:00.",
+                "DO NOT drive within the Great Circle around The Man (check the provided map for details).",
+                "Weather Conditions: Do not drive during whiteouts, rain, on wet playa, or during other hazardous conditions.",
+                "Respond to Rangers and Staff: Stop immediately if signaled by a Black Rock Ranger, Burning Man staff, or law enforcement."
+              ]
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/c8b0e402-IMG_0449.jpeg",
+              "alt": ""
+            }
+          ],
+          "updatedAt": "2026-07-04T22:11:50Z"
+        },
+        {
+          "id": 100845600,
+          "slug": "census-course-databeast-operating-the-databeast-volunteer-assistance",
+          "title": "Operating the DataBeast &amp; Volunteer Assistance",
+          "position": 2,
+          "image": "/training/assets/cf2c85be-IMG_7928.jpeg",
+          "audio": [],
+          "attachments": [],
+          "blocks": [
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Operating the DataBeast"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Unplug DataBeast from charging cable (labeled Electric cord)",
+                "Secure any open windows or doors",
+                "Confirm back ladder is stowed in the UP/Closed position",
+                "Operate winch to Raise & Lower ladder Winch is operated by 12V battery on top deck. Be sure there is an extra battery if operation slows down",
+                "Before heading out, wait until you hear a “Clear to Go” radio call from the Shift Lead Onboard the DataBeast",
+                "Shift to Neutral",
+                "Insert key",
+                "Turn key to right. Wait for lights to stop flashing then crank engine on. Beeping will begin from the instrument panel.",
+                "Wait until until air pressure builds. Time varies based on period of inactivity. Beeping will stop when it's warmed up.",
+                "Push Yellow button to release air brakes",
+                "Shift into drive - 5mph limit"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Volunteer Assistance"
+            },
+            {
+              "type": "paragraph",
+              "text": "Shift-Leads are responsible for getting everyone situated on the DataBeast"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Make sure water container is accessible to volunteers",
+                "Assist Volunteers/Participants UP & DOWN the ladder",
+                "Assist Shift leads as needed",
+                "Assist with managing MOOP"
+              ]
+            }
+          ],
+          "updatedAt": "2026-07-04T22:11:50Z"
+        },
+        {
+          "id": 100845601,
+          "slug": "census-course-databeast-driving-routes-to-commissary-sampling-point-from-census-lab-630-a",
+          "title": "Driving Routes to Commissary &amp; Sampling Point from Census Lab @ 6:30 &amp; A",
+          "position": 3,
+          "image": "/training/assets/5ecaaf02-IMG_0472.jpeg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/e1747a96-IMG_0472.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "COMMISSARY: Commissary is located at 5:30 between E & G. The Simplest way to Commissary from Census Lab, is to travel down 6:30 to C, turn left towards 5:30, then turn right at 5:30 until you reach the fenced Commissary area at E, look for the large tented structure. From the Sampling Point, turn right when you get into the City, turn left onto 5:30 travel to E street. Park at 5:30 and E, next to the black partitions."
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Park at 5:30 and E, next to the black partitions, where space is available.",
+                "Close Door & Stairs while volunteers are having their meal."
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "SAMPLING POINT: From Census Lab, travel down 6:30 towards Gate Road. When you get to the end of the City, turn left towards Greeters. From Commissary, continue on 5:30 to the end of the City, then turn right towards Greeters. Stop at Greeters to let them know you will need to cross into the East side of the fenced line to reach our Sampling Point, then have Shift Lead radio Lighthouse."
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "During sampling runs to and from Gate or Popups, avoid getting talked into detouring to drop-off or pick-up people or missing items. They invariably take more time than it sounds. Let the Shift Leads make the ultimate decisions.",
+                "When returning from the shift, it may be okay to let people get out before getting back to the Commissary or Census Lab at end of shift. Make sure you come to a complete stop & lower the ladder before allowing people to get out.",
+                "Seat Belt use is required by BM.org for passenger & driver.",
+                "Headlights must be used after sunset.",
+                "Don’t exceed 5 mph while in the city. 10 mph between Greeters and Sampling Point."
+              ]
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/e1747a96-IMG_0472.jpeg",
+              "alt": ""
+            }
+          ],
+          "updatedAt": "2026-07-13T06:01:31Z"
+        },
+        {
+          "id": 100845602,
+          "slug": "census-course-databeast-closing-your-shift",
+          "title": "Closing Your Shift",
+          "position": 4,
+          "image": "/training/assets/bb1e3293-map2025.jpeg",
+          "audio": [],
+          "attachments": [],
+          "blocks": [
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "RETURN to Census Lab @ 6:30 & A",
+                "Secure in Designated DataBeast Parking at Census Lab",
+                "Final MOOP Sweep",
+                "Roll Up Windows",
+                "Secure Doors & Raise Stairs",
+                "Plug DataBeast into charging cable (labeled Electric cord)"
+              ]
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Check IN Keys & Radio, inside the office container. REMEMBER to write a COMMENT if FUEL is low or you have any tire or mechanical issues."
+              ]
+            }
+          ],
+          "updatedAt": "2026-07-04T22:11:50Z"
+        }
+      ],
+      "quizzes": []
+    },
+    {
+      "id": 100845610,
+      "slug": "census-course-databeast-onplaya-databeast-orientation",
+      "title": "OnPlaya DataBeast Orientation",
+      "position": 3,
+      "image": "/training/assets/2ed6a43b-IMG_7884.jpeg",
+      "audio": [],
+      "attachments": [],
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "In this Section you will find the expectations of your Critical DataBeast driving shift and preview forms utilized on Playa."
+        }
+      ],
+      "updatedAt": "2026-07-04T22:11:50Z",
+      "lessons": [
+        {
+          "id": 100845611,
+          "slug": "census-course-databeast-please-review-these-important-expectations-for-your-critical-databeast-driving-shift",
+          "title": "Please Review these Important Expectations for your Critical DataBeast Driving Shift.",
+          "position": 1,
+          "image": "/training/assets/0fed4234-IMG_7965.jpeg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/9b1a2426-IMG_0854.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/1d673b15-IMG_0481.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/ddb17a71-IMG_0445.png"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/50b10862-IMG_0471.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/e1012417-IMG_0472.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/b5647efd-IMG_0449.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "1. Please Find Miah at the Census Lab anytime prior to your first Shift to complete your OnPlaya Orientation."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "2. Please arrive 30 minutes prior to ALL your Shifts."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "3. Please Follow ALL BRC Driving Regulations you will find inside DataBeast. SPEED LIMITS: Do not Exceed 5 mph while in the City & 10 mph between Greeters and Sampling Point."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "4. Census Vehicle Agreement Review"
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/9b1a2426-IMG_0854.jpeg",
+              "alt": "IMG_0854"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "WHERE THINGS ARE AT CENSUS LAB…."
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "The Data Entry Office contains Vehicle schedules, Keys, Radios and their check In/Out forms."
+              ]
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/1d673b15-IMG_0481.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "5. Check In/Out Keys for the DataBeast found inside the data entry office container. REMEMBER to Log any Observations or Comments. Inform Miah or other Census Lead if Fuel is low."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/ddb17a71-IMG_0445.png",
+              "alt": ""
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "6. Check In/Out Radios for the DataBeast found inside the data entry office container. KEEP Radio with you & on Census Channel at all times."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/50b10862-IMG_0471.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "7. Driving Route to Commissary & Greeter to Sampling Point"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "You will find this map ONBOARD the DataBeast for your reference."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/e1012417-IMG_0472.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "8. This is a BRC Map. Please note the areas of the City where Mutant Vehicles are Not Permitted to Travel."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "You will find this map ONBOARD the DataBeast for your reference."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/b5647efd-IMG_0449.jpeg",
+              "alt": ""
+            }
+          ],
+          "updatedAt": "2026-07-28T12:19:14Z"
+        }
+      ],
+      "quizzes": []
+    },
+    {
+      "id": 100845619,
+      "slug": "census-course-databeast-databeast-course-summary-and-completion-confirmation",
+      "title": "DataBeast Course Summary and Completion Confirmation",
+      "position": 5,
+      "image": "/training/assets/9a051874-Training_completion_button.png",
+      "audio": [],
+      "attachments": [
+        {
+          "name": "",
+          "href": "/training/assets/9a051874-Training_completion_button.png"
+        }
+      ],
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 5,
+          "text": "Summary"
+        },
+        {
+          "type": "paragraph",
+          "text": "Thank you for joining the Census DataBeast Driver Course. We're excited to have you on board and appreciate your dedication. Here’s a quick recap of what you’ve learned:"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "Understand Your Role: You now have a clear picture of what your specific role involves at Census.",
+            "Explain the essential safety protocols and procedures for the safe operation of the Databeast.",
+            "Familiarize yourself with the layout and key locations of the Census Lab, Sampling areas and the Commissary.",
+            "Understand the OnPlaya Forms utilized for your DataBeast Driving Shift.",
+            "Understand and commit to your role as a representative of the department, including its mission and behavioral standards."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Finally, remember to HAVE FUN! Make friends, be silly, and let your beautiful personality shine through!"
+        },
+        {
+          "type": "heading",
+          "level": 5,
+          "text": "What's Next:"
+        },
+        {
+          "type": "paragraph",
+          "text": "Thank you for sticking with us all the way through this course!! Before you leave for Burning Man:"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "If it sounds like fun, find and decorate your own lab coat using Census team colors (hot pink and black). Please don’t use other colors, we want you to be easily identifiable as a Census volunteer!",
+            "Update your schedule if your availability changes. You can log into Shiftboard to Call Out or Unassign from a shift up to 5 days before the shift takes place. If your availability changes with less than 5 days’ notice please email censusvolunteercoordinators@burningman.org (if you are not yet on-playa) or stop by Census Lab to remove yourself using the tablet.",
+            "Read all emails from Census carefully, as they will have details about your arrival.",
+            "QUESTIONS? Contact: censusvolunteercoordinators@burningman.org"
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Thank you from all of us on the Census Team and we can't wait to see you in the dust!"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "PLEASE CLICK THE BUTTON BELOW TO RECORD YOUR COMPLETION OF THIS COURSE."
+        },
+        {
+          "type": "paragraph",
+          "text": "You will be asked to log in using the same Burner Profile information you use for Hive. You will then be taken to your Census Volunteer Information Page, where this training requirement will be checked off your personal checklist."
+        },
+        {
+          "type": "image",
+          "src": "/training/assets/9a051874-Training_completion_button.png",
+          "alt": ""
+        }
+      ],
+      "updatedAt": "2026-07-20T22:29:35Z",
+      "lessons": [],
+      "quizzes": []
+    }
+  ],
+  "ungroupedQuizzes": [
+    {
+      "id": 100845603,
+      "slug": "census-course-databeast-brc-census-drivers-quiz",
+      "title": "BRC Census Drivers Quiz",
+      "position": 2,
+      "image": "/training/assets/0fd918dc-IMG_0241.jpeg",
+      "audio": [],
+      "attachments": [],
+      "blocks": [],
+      "updatedAt": "2026-07-28T12:02:17Z",
+      "questions": [
+        {
+          "id": 100845606,
+          "text": "Where will you find the keys to the Vehicle?",
+          "image": null,
+          "choices": [
+            {
+              "id": 6407777,
+              "text": "Hidden under the floor mat on the passenger side.",
+              "correct": false
+            },
+            {
+              "id": 6407778,
+              "text": "On Top of the Front Passenger side tire.",
+              "correct": false
+            },
+            {
+              "id": 6407779,
+              "text": "Inside the Lounge underneath the couch.",
+              "correct": false
+            },
+            {
+              "id": 6407780,
+              "text": "Hanging on the DataBeast Vehicle Sign IN/OUT Sheet, Inside the Office container.",
+              "correct": true
+            }
+          ]
+        },
+        {
+          "id": 100845609,
+          "text": "What do you need to have with you when driving a Census Transport Vehicle? ",
+          "image": null,
+          "choices": [
+            {
+              "id": 6407789,
+              "text": "A Radio",
+              "correct": false
+            },
+            {
+              "id": 6407790,
+              "text": "A Valid and Current Driver’s License from the US or Home Country for International Burners",
+              "correct": false
+            },
+            {
+              "id": 6407791,
+              "text": "A passenger to help spot & communicate on the radio",
+              "correct": false
+            },
+            {
+              "id": 6407792,
+              "text": "All of the above",
+              "correct": true
+            }
+          ]
+        },
+        {
+          "id": 100845604,
+          "text": "What is the Policy on Sober Driving?",
+          "image": null,
+          "choices": [
+            {
+              "id": 6407768,
+              "text": "It’s Burning man! It’s ok to have a few drinks!",
+              "correct": false
+            },
+            {
+              "id": 6407769,
+              "text": "You must be 100% Sober when driving a Census Vehicle",
+              "correct": true
+            },
+            {
+              "id": 6407770,
+              "text": "You can be 50% Sober when driving a Census Vehicle",
+              "correct": false
+            },
+            {
+              "id": 6407771,
+              "text": "None of the Above",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "id": 100845608,
+          "text": "Do not release parking brake to move until _________?",
+          "image": null,
+          "choices": [
+            {
+              "id": 6407785,
+              "text": "After securing the steps. Shift Leads should have everyone settled by then.",
+              "correct": false
+            },
+            {
+              "id": 6407786,
+              "text": "Radio Confirmation from Shift Leads on Board the Vehicle with Volunteers saying they’re “Ready to Roll”.",
+              "correct": true
+            },
+            {
+              "id": 6407787,
+              "text": "There are no bicycles in view.",
+              "correct": false
+            },
+            {
+              "id": 6407788,
+              "text": "After I buckle up if I haven’t heard from Leads yet.",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "id": 100845605,
+          "text": "Which Task would NOT be part of Volunteer Assistance?",
+          "image": null,
+          "choices": [
+            {
+              "id": 6407772,
+              "text": "Assist Volunteers Up & Down Ladder",
+              "correct": false
+            },
+            {
+              "id": 6407773,
+              "text": "Make sure Water is accessible to volunteers",
+              "correct": false
+            },
+            {
+              "id": 6407774,
+              "text": "Assist Shift Leads",
+              "correct": false
+            },
+            {
+              "id": 6407775,
+              "text": "Assist with managing MOOP",
+              "correct": false
+            },
+            {
+              "id": 6407776,
+              "text": "Wait on the DataBeast & catch up on your phone if there’s cell service.",
+              "correct": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 100845612,
+      "slug": "census-course-databeast-expectations-forms-quiz",
+      "title": "Expectations &amp; Forms Quiz",
+      "position": 4,
+      "image": "/training/assets/4e87a90a-IMG_7968.jpeg",
+      "audio": [],
+      "attachments": [],
+      "blocks": [],
+      "updatedAt": "2026-07-28T12:02:29Z",
+      "questions": [
+        {
+          "id": 100845614,
+          "text": "What do you need to complete PRIOR to your FIRST Shift?",
+          "image": null,
+          "choices": [
+            {
+              "id": 6407797,
+              "text": "Complete your OnPlaya Driver Orientation with Miah.",
+              "correct": false
+            },
+            {
+              "id": 6407798,
+              "text": "Complete the HIVE online Basics & DataBeast Driver Training.",
+              "correct": false
+            },
+            {
+              "id": 6407799,
+              "text": "Sign the Census Vehicle Drivers Agreement",
+              "correct": false
+            },
+            {
+              "id": 6407800,
+              "text": "ALL of the above",
+              "correct": true
+            }
+          ]
+        },
+        {
+          "id": 100845615,
+          "text": "What is the SPEED Limit at Burning man?",
+          "image": null,
+          "choices": [
+            {
+              "id": 6407801,
+              "text": "There is NO speed limit at Burning man!",
+              "correct": false
+            },
+            {
+              "id": 6407802,
+              "text": "10 mph while in the City & 20 mph between Greeters and Sampling Point",
+              "correct": false
+            },
+            {
+              "id": 6407803,
+              "text": "5 mph while in the City & 10 mph between Greeters and Sampling Point",
+              "correct": true
+            },
+            {
+              "id": 6407804,
+              "text": "5 mph while in the City & 15 mph between Greeters and Sampling Point.",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "id": 100845616,
+          "text": "Where will you FIND &amp; RETURN the keys and radio to check In/Out for your Driving Shift?",
+          "image": null,
+          "choices": [
+            {
+              "id": 6407805,
+              "text": "Inside the DataBeast.",
+              "correct": false
+            },
+            {
+              "id": 6407806,
+              "text": "Inside the Census Lab Data Entry Office.",
+              "correct": true
+            },
+            {
+              "id": 6407807,
+              "text": "Inside the Census Lab Storage Container.",
+              "correct": false
+            },
+            {
+              "id": 6407808,
+              "text": "Inside Miah’s Lab Coat pocket.",
+              "correct": false
+            }
+          ]
+        },
+        {
+          "id": 100845617,
+          "text": "As a DataBeast Driver, you will NOT need to check out a RADIO.  The Shift Lead riding shotgun will be the one communicating on their radio to Leads inside the DataBeast &amp; Gate (sampling shifts) during your shift.",
+          "image": null,
+          "choices": [
+            {
+              "id": 6407809,
+              "text": "TRUE",
+              "correct": false
+            },
+            {
+              "id": 6407810,
+              "text": "FALSE",
+              "correct": true
+            }
+          ]
+        },
+        {
+          "id": 100845618,
+          "text": "Which statement is FALSE about where Mutant Vehicles should NOT drive in the City?",
+          "image": null,
+          "choices": [
+            {
+              "id": 6407811,
+              "text": "Not within the Great Circle around The Man",
+              "correct": false
+            },
+            {
+              "id": 6407812,
+              "text": "Not On the Esplanade",
+              "correct": false
+            },
+            {
+              "id": 6407813,
+              "text": "Not on the Promenades at 3:00, 6:00 and 9:00.",
+              "correct": false
+            },
+            {
+              "id": 6407814,
+              "text": "Anywhere you want inside Burning man.",
+              "correct": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "counts": {
+    "sections": 3,
+    "lessons": 5,
+    "quizzes": 2,
+    "questions": 10
+  }
+}

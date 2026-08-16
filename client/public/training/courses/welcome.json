@@ -1,0 +1,1379 @@
+{
+  "slug": "welcome",
+  "spaceId": 14264554,
+  "title": "Census Welcome and Overview",
+  "titleFromHive": "Black Rock City Census Community",
+  "titleWasTruncatedInHive": false,
+  "summary": "Start here — what Census is, the volunteer roles, and which course you need next.",
+  "sourceUrl": "https://hive.burningman.org/spaces/14264554/content",
+  "exportedAt": "2026-08-16T02:55:14.305Z",
+  "overview": {
+    "id": 55322924,
+    "slug": "black-rock-city-census-community-census-welcome-and-overview",
+    "title": "Census Welcome and Overview",
+    "position": 1,
+    "image": "/training/assets/ee4217df-Copy_of_Census_2018_Photo_by_Jeremy_D_arcy.jpg",
+    "audio": [],
+    "attachments": [
+      {
+        "name": "",
+        "href": "/training/assets/ee4217df-Copy_of_Census_2018_Photo_by_Jeremy_D_arcy.jpg"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "We are glad you made it here! The Census Welcome and Overview is the first step for orientation to the Census department and to figure out your next steps."
+      },
+      {
+        "type": "image",
+        "src": "/training/assets/ee4217df-Copy_of_Census_2018_Photo_by_Jeremy_D_arcy.jpg",
+        "alt": ""
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "What you'll get from the Black Rock City Census community"
+      },
+      {
+        "type": "paragraph",
+        "text": "As a member, you'll get a few great benefits:"
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "Learn about Black Rock City Census: What we do, why we do it, and how to get involved!",
+          "Training Classes: We've moved our training classes here so you can complete them on your own time before arriving on playa.",
+          "Meet new people. Chat with other Census volunteers, learn about upcoming events, learn about the different volunteering roles at Census and how you can participate on and off-playa."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "How to get the most out of the Black Rock City Census community"
+      },
+      {
+        "type": "paragraph",
+        "text": "We’re here to get results and we know you are too. Here’s the best way for each of us to get there:"
+      },
+      {
+        "type": "paragraph",
+        "text": "Be supportive. Encourage and support your fellow volunteers. No one here is looking for your criticism, cynicism, advice, or judgement. (We can get those things on the rest of the Internet)."
+      },
+      {
+        "type": "paragraph",
+        "text": "Share generously. Your stories and experiences may be exactly what another volunteer needs to hear today to solve a problem or seize an opportunity."
+      },
+      {
+        "type": "paragraph",
+        "text": "Be constructive. We’re here to push each other forward and lift each other up. Find ways to help each other think bigger, reframe challenges, and stay curious."
+      },
+      {
+        "type": "paragraph",
+        "text": "Don’t spam, promote, or troll.  The Black Rock City Census Community exists to help you learn. It’s not a place to spam, promote, or bully anyone else."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "You are part of something bigger"
+      },
+      {
+        "type": "paragraph",
+        "text": "By joining the Black Rock City Census community, you are also a member of Burning Man Hive, our overarching community.  You’ll be able to keep up with our Black Rock City Census community activity both here, and also in your main Burning Man Hive Activity Feed (think about it as our own Facebook newsfeed with courses and other activity all in one place)."
+      },
+      {
+        "type": "paragraph",
+        "text": "Let’s get started."
+      }
+    ],
+    "updatedAt": "2026-08-05T02:23:13Z"
+  },
+  "sections": [
+    {
+      "id": 56399313,
+      "slug": "black-rock-city-census-community-what-is-black-rock-city-census",
+      "title": "What is Black Rock City Census?",
+      "position": 1,
+      "image": "/training/assets/26bd3b82-1739577993762.png",
+      "audio": [],
+      "attachments": [
+        {
+          "name": "",
+          "href": "/training/assets/26bd3b82-1739577993762.png"
+        }
+      ],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Black Rock City Census is a volunteer-driven collaborative research project that gathers data to support Burning Man Project, academic researchers, and the broader Burner community."
+        },
+        {
+          "type": "image",
+          "src": "/training/assets/26bd3b82-1739577993762.png",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "The Census Team:"
+        },
+        {
+          "type": "paragraph",
+          "text": "The Census team includes 160+ volunteers—statisticians, academics, students, programmers, engineers, and anyone interested in being part of the team."
+        },
+        {
+          "type": "paragraph",
+          "text": "We are dedicated, methodical, accurate, detail-oriented, nerdy and adorkable!"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "We're looking for:"
+        },
+        {
+          "type": "paragraph",
+          "text": "Collaborative partners: responsive, open to feedbackCreative problem solvers: resourceful, solution-oriented, committed to continuous improvementCommunity-driven members: friendly, welcoming, team players"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Commitment to diversity:"
+        },
+        {
+          "type": "paragraph",
+          "text": "We welcome:"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "International Burners",
+            "All age groups (including kids)",
+            "People of all abilities",
+            "All gender identities and expressions",
+            "LGBTQ+ community members",
+            "People from all economic and educational backgrounds",
+            "A broad spectrum of backgrounds, beliefs, and life experiences—including different worldviews and values"
+          ]
+        }
+      ],
+      "updatedAt": "2026-04-30T19:51:58Z",
+      "lessons": [
+        {
+          "id": 79883329,
+          "slug": "black-rock-city-census-community-mission-and-vision-statements",
+          "title": "Mission and Vision Statements",
+          "position": 1,
+          "image": "/training/assets/6f0ceeaf-Copy_of_LogoNoYear.png",
+          "audio": [],
+          "attachments": [],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Mission:  To collect, analyze, and report data that accurately represents the true makeup of the BRC population in a safe and ethical manner."
+            },
+            {
+              "type": "paragraph",
+              "text": "Vision:  To establish the Census as the most trusted primary source of information about the population of BRC."
+            }
+          ],
+          "updatedAt": "2026-04-25T20:02:13Z"
+        },
+        {
+          "id": 79882892,
+          "slug": "black-rock-city-census-community-three-main-projects",
+          "title": "Three Main Projects",
+          "position": 2,
+          "image": "/training/assets/0a2dfe9e-Copy_of_Field_Notes_Journal_INTRO__3_Main_Projects_.png",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/48b2bb57-Copy_of_Person_completing_online_survey_INTRO__3_main_projects_.png"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/e0346d7c-Copy_of_Field_Notes_Journal_INTRO__3_Main_Projects_.png"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/274593e7-IMG_9789.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "1. Field Notes are a set of books found at Black Rock City in Center Camp, Census Lab and on the DataBeast during Popup lab host shifts in various locations around the city (spreading the word about Census). Each book includes a short set of questions about a particular topic, yielding qualitative data about people's experiences and feelings."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/e0346d7c-Copy_of_Field_Notes_Journal_INTRO__3_Main_Projects_.png",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "2. Random sampling of Burners arriving by vehicle, Burner Express buses, and on airplanes at the airport yields quantitative demographic data about the surveyed Burners, allowing us to generalize to the larger population."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/274593e7-IMG_9789.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "3. The online survey that burners volunteer to complete later provides a wealth of both quantitative and qualitative data. This is what most people call the census."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/48b2bb57-Copy_of_Person_completing_online_survey_INTRO__3_main_projects_.png",
+              "alt": ""
+            }
+          ],
+          "updatedAt": "2026-07-21T09:49:21Z"
+        },
+        {
+          "id": 80275565,
+          "slug": "black-rock-city-census-community-a-brief-history-of-the-brc-census",
+          "title": "A Brief History of the BRC Census",
+          "position": 3,
+          "image": "/training/assets/a6c9558b-IMG_8248.jpeg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/8a8e6441-IMG_8248.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/8a8e6441-IMG_8248.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "The Census began as a paper survey available to for participants to fill out in Center Camp, with the first archived report published in 2001. Because participation was self-selected (only people who chose to fill out the Census were included), it was unclear if respondents accurately represented the Burning Man population as a whole. For this reason, in 2012, the Census team began randomly sampling participants as they entered Black Rock City, asking a few simple demographic questions. Those random sample results are used to weight the full survey responses, making the final data more representative of the broader Black Rock City population."
+            }
+          ],
+          "updatedAt": "2026-06-17T14:46:28Z"
+        },
+        {
+          "id": 56882976,
+          "slug": "black-rock-city-census-community-census-fun",
+          "title": "Census Fun!!",
+          "position": 4,
+          "image": "/training/assets/cec3ae29-IMG_3578.jpeg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/cec3ae29-IMG_3578.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/c8abf45f-IMG_0821.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/00631d23-IMG_3799.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/fa970283-IMG_3383.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Who knew data collection could be so fun?!? Census volunteers do!  Do you get giggles from sharing interesting data collected from fellow participants?  Do you like to interact with those who want to know more about Black Rock City and the Census?  You can have all that and more as a volunteer with our team!"
+            },
+            {
+              "type": "paragraph",
+              "text": "The BRC Census has an inviting social space at our Census Lab, located in 2026 at 6:30 & A.  Come hang out and meet other volunteers and participants alike, sign up to be a Lab Host to share Census data with curious visitors who stop by the Lab, and even help host Census Data bashes!  You can even check out our ‘scenic view’ atop one of our containers."
+            },
+            {
+              "type": "paragraph",
+              "text": "Join us at our Volunteer Welcome Party on Opening Day, Sunday 3-5pm.  Meet fellow Census volunteers and the Leadership team.  We will have something yummy to drink along with activities to get your volunteer week with Census started off right!"
+            },
+            {
+              "type": "paragraph",
+              "text": "We will also have Data Bashes from 3-5pm Monday, Wednesday and Friday, including talks and tasty cold beverages.  On Friday, we will have our special Data Release party, where our lead statistician Murrs will share the preliminary results from the sampling data collected throughout the week."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/cec3ae29-IMG_3578.jpeg",
+              "alt": "IMG_3578"
+            },
+            {
+              "type": "paragraph",
+              "text": "Do you like to dress up? Do you fancy Lab Coats?  Our Census ‘Uniform’ is a Lab Coat decorated in our signature colors, hot pink, black & white.  You can borrow a coat from one of our loaners or decorate your own!  Add some Census colors to complete your look!"
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/c8abf45f-IMG_0821.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/00631d23-IMG_3799.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "What about riding on a Mutant Vehicle? Allow us to introduce… The DataBeast! She has been transformed into a beautiful ‘volunteer transport vehicle’ that we use for Gate sampling shifts, thanks to Cova Street Art!  Census volunteers can sign up for a ride on her during one of our Art Tours!  You can also be a Lab Host during one of our PopUp excursions around playa to share about Census with fellow participants.  It’s hard to beat the view from her top deck!"
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/fa970283-IMG_3383.jpeg",
+              "alt": "IMG_3383"
+            },
+            {
+              "type": "paragraph",
+              "text": "Have you ever wondered where Burning Man staff eat? You can join the crew during one of our Census meals at the Burning Man Commissary (offered when you work a four-hour shift)."
+            },
+            {
+              "type": "paragraph",
+              "text": "The photo above is the LNT (Leave No Trace) station after your yummy meal!"
+            }
+          ],
+          "updatedAt": "2026-07-21T16:51:08Z"
+        }
+      ],
+      "quizzes": []
+    },
+    {
+      "id": 56875717,
+      "slug": "black-rock-city-census-community-volunteer-roles-and-how-to-volunteer",
+      "title": "Volunteer Roles and How to Volunteer",
+      "position": 2,
+      "image": "/training/assets/default_header_8-c820fbb7814a182287963d1131e398cbf0067684847665770d155f64f069789f.jpg",
+      "audio": [],
+      "attachments": [],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "There are several positions available at the Census, and it's easy to sign up!"
+        }
+      ],
+      "updatedAt": "2026-04-25T20:02:13Z",
+      "lessons": [
+        {
+          "id": 79423975,
+          "slug": "black-rock-city-census-community-volunteer-roles-79423975",
+          "title": "Volunteer Roles",
+          "position": 1,
+          "image": "/training/assets/d26d6532-1738887373091.png",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/d26d6532-1738887373091.png"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/d26d6532-1738887373091.png",
+              "alt": "undefined"
+            },
+            {
+              "type": "paragraph",
+              "text": "There are many ways to get involved with the Census. Each role listed below calls for a different set of skills and appeals to volunteers of different personality types."
+            },
+            {
+              "type": "paragraph",
+              "text": "1. Random Samplers partake in four-hour shifts collecting preliminary data on Gate Road or at the Airport. This important information gives us a peek at the current year's population in Black Rock City, but more importantly, the data is used to weight the results from the long-form survey."
+            },
+            {
+              "type": "paragraph",
+              "text": "2. Traffic Tamers team up with Random Samplers on Gate road as a silent performer to work the lanes of traffic ahead of the sampling point, getting participants excited about filling out the brief sampling form. Mobility, punctuality, and enthusiasm are all important traits!"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Skills: Attention to detail, organization, ability to work with partner, friendly interaction.",
+                "Perks: A meal with each shift, riding on the Data Beast, interacting with arriving participants."
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "3. Lab Hosts partake in four-hour shifts at the Census lab interacting with visitors. Duties include answering questions about Census, leading activities such as games or puzzles, serving drinks, and helping out with the scheduled talks or other events."
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Skills: Having knowledge of Census and how to find information you may not know, as well as being friendly and engaging.",
+                "Perks: A meal with each shift and interacting with participants."
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "4. Pop-up Lab Hosts partake in three-hour shifts on the Data Beast traveling to a random location on playa to educate participants about Census."
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Skills: Ability to engage; being friendly and having an open personality, encouraging people to answer questions in our Field Notebooks and completing their Census online after the Burn.",
+                "Perks: A “party” environment, traveling the playa on the Data Beast, meeting fellow participants."
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "5. Data Entry consists of three-hour shifts entering the new random sampling data collected on playa."
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Skills: Attention to detail and decent typing skills.",
+                "Perks: Working in an air-conditioned office, not interacting with participants (we love introverts, too); and getting hands-on with the data."
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "6. Setup/Strike — Setup consists of four-hour shifts preparing Census infrastructure for volunteers to connect with other participants. Strike shifts pack up this infrastructure after the event. Tasks range from heavier physical work to lighter jobs, so there's something for everyone on the crew. No building experience is required. Closed-toe shoes are a good idea — it's an active build site and some tasks require them."
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Skills: Ability to arrive before the event and/or stay until Tuesday post-event"
+              ]
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Perks: A meal with each shift, working alongside experienced volunteers who are happy to show you the ropes"
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "7. Data Disseminators hand-out preliminary Census results to the community on Friday."
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Skills: Willingness to approach and engage with others, ability to be self-directed.",
+                "Perks: Lots of freedom — you may work alone or with a partner, walk or ride a bike, and choose your own destinations."
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "We hope one or more of these roles sounds right for you and we look forward to working with you!"
+            },
+            {
+              "type": "heading",
+              "level": 4,
+              "text": "Links to our Census HIVE Volunteer Training Courses, Manuals and Shift Lead resources will be available after your shift sign-ups."
+            }
+          ],
+          "updatedAt": "2026-06-28T04:18:44Z"
+        },
+        {
+          "id": 79423999,
+          "slug": "black-rock-city-census-community-how-to-volunteer-for-census-79423999",
+          "title": "How To Volunteer For Census",
+          "position": 2,
+          "image": "/training/assets/1c766992-IMG_0392.jpeg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/d8797ec5-IMG_0392.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Go to https://volunteers.census.burningman.org and sign in with your Burning Man profile user name and password. (If you don't already have a Burning Man profile, create one at profiles.burningman.org)",
+              "links": [
+                {
+                  "text": "https://volunteers.census.burningman.org",
+                  "href": "https://volunteers.census.burningman.org",
+                  "kind": "external"
+                },
+                {
+                  "text": "profiles.burningman.org",
+                  "href": "http://profiles.burningman.org",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Once there, it will have you create an account if you're a new volunteer. It will also prompt you to sign this year's Behavioral Standards agreement. You can then use the \"Shifts\" link at the bottom of the page to sign up for shifts. Your account will then update with links to any training courses you need to take before arriving on playa. The courses go live on July 1st."
+            },
+            {
+              "type": "paragraph",
+              "text": "Easy Peasy!"
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/d8797ec5-IMG_0392.jpeg",
+              "alt": ""
+            }
+          ],
+          "updatedAt": "2026-05-28T00:15:04Z"
+        },
+        {
+          "id": 81542573,
+          "slug": "black-rock-city-census-community-getting-involved-off-playa-81542573",
+          "title": "Getting Involved Off-Playa",
+          "position": 3,
+          "image": "/training/assets/8b9311e0-Screenshot_2025-04-23_at_4.57.03_PM.png",
+          "audio": [],
+          "attachments": [],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Census is a year-round project, and while we need the most volunteers during event week, there are meetings and projects which are on-going throughout the year.  If you've already signed up to volunteer with Census, you'll automatically be added to our general email list, but there are additional groups you can join if interested."
+            },
+            {
+              "type": "paragraph",
+              "text": "General Meetings: Census Leadership and anyone interested in the inner workings of the team meet monthly, bi-monthly, then weekly as the event approaches.  There are many opportunities to get involved with ongoing projects in different capacities: design, spreadsheet wizardry, lab coat decorating, interacting with volunteers through email, etc. You are also welcome to join us and listen in and learn a bit more about how we operate. We also visit the Burning Man Work Ranch (Black Rock Station) each spring to maintain our volunteer transport (the DataBeast) and do other hands-on projects. Join our Census Year Round Google Group to receive notifications about upcoming meetings.",
+              "links": [
+                {
+                  "text": "Census Year Round Google Group",
+                  "href": "https://groups.google.com/a/burningman.org/g/censusyearround",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Data Nerds: On the first Thursday of each month at 5 pm our Data Nerds meet to discuss Census findings, help with the statistical analysis, and/or help create the visualizations for our annual report. Join the Data Nerds Google Group to receive notifications about upcoming meetings.",
+              "links": [
+                {
+                  "text": "Data Nerds Google Group",
+                  "href": "https://groups.google.com/a/burningman.org/g/censusdatanerds",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Discord: We encourage you to join us on the Census Discord Server, where we talk about Census stuff all year long!",
+              "links": [
+                {
+                  "text": "Census Discord Server",
+                  "href": "https://discord.gg/ZGjSSytVY8",
+                  "kind": "external"
+                }
+              ]
+            }
+          ],
+          "updatedAt": "2026-07-06T18:13:00Z"
+        }
+      ],
+      "quizzes": []
+    },
+    {
+      "id": 56399325,
+      "slug": "black-rock-city-census-community-the-data-collection-methodology-and-uses",
+      "title": "The Data: Collection, Methodology, and Uses",
+      "position": 3,
+      "image": "/training/assets/default_header_6-83bf10e1beb19f6de0f2cf99a92a0eeafcab7362c5efd3312f5213733a044658.jpg",
+      "audio": [],
+      "attachments": [],
+      "blocks": [],
+      "updatedAt": "2026-07-16T15:59:14Z",
+      "lessons": [
+        {
+          "id": 56882293,
+          "slug": "black-rock-city-census-community-how-brc-census-data-are-used",
+          "title": "How BRC Census data are used",
+          "position": 1,
+          "image": "/training/assets/041e82d3-IMG_4353.webp",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/d913c984-index_census.png"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/041e82d3-IMG_4353.webp"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/041e82d3-IMG_4353.webp",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "Every year since 2002, BRC Census volunteers have collected and shared information that accurately describes the population of Black Rock City. Burning Man Project uses Census data to plan the event, advocate for our community, and work with local and federal agencies during the permitting process. Researchers also use Census data in a variety of research projects and publications."
+            },
+            {
+              "type": "paragraph",
+              "text": "The Black Rock City Census Population Report includes recent results and trends from past years — some extending as far back as 2013. Others cover shorter periods because the questions, response options, or methods used to collect the data have changed over time.",
+              "links": [
+                {
+                  "text": "Black Rock City Census Population Report",
+                  "href": "https://blackrockcitycensus.org/index.html",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "On playa, visitors can explore Census data on the large data displays at the Census Lab, browse printed reports, or view reports on the Lab's pink tablets."
+            },
+            {
+              "type": "paragraph",
+              "text": "In the 30-second video below, Census volunteer Autumn explains the goal of BRC Census and why it is important."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/d913c984-index_census.png",
+              "alt": ""
+            }
+          ],
+          "updatedAt": "2026-07-16T15:59:14Z"
+        },
+        {
+          "id": 56882297,
+          "slug": "black-rock-city-census-community-methodology-and-data-collection",
+          "title": "Methodology and data collection",
+          "position": 2,
+          "image": "/training/assets/e366a140-Census_Lanes_2.jpeg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/e366a140-Census_Lanes_2.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/be5bc97f-Copy_of_Person_completing_online_survey_INTRO__3_main_projects_.png"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/6e79514d-Screenshot_2026-05-20_at_2.47.02_PM.png"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Although Black Rock City (BRC) Census is technically a survey and not a literal census, where data are collected from every member of a population, our methodology allows us to report estimates representative of the entire population of Black Rock City — not just of the individuals who actively participate in our data collection efforts."
+            },
+            {
+              "type": "paragraph",
+              "text": "While BRC Census has been producing reports since 2002, it is hard to compare recent data with reports from years earlier than 2013 because of important differences in methodology, such as the shift from a convenience sample of Census Lab visitors on-playa to a weighted online survey conducted post-event. Since 2013, the BRC Census team has collected data in two phases:"
+            },
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                "A random sample of participants entering Black Rock City"
+              ]
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/e366a140-Census_Lanes_2.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                "A more comprehensive online survey that goes live at the end of the event."
+              ]
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/be5bc97f-Copy_of_Person_completing_online_survey_INTRO__3_main_projects_.png",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "Below is a preliminary result sheet based on our 2025 Random Sample data, which are entered during the event by Data Entry volunteers. These sheets are printed and disseminated at the end of the event to get participants excited about completing the online survey. These preliminary results are unweighted and are not the final Census results."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/6e79514d-Screenshot_2026-05-20_at_2.47.02_PM.png",
+              "alt": "Screenshot 2026-05-20 at 2.47.02 PM"
+            },
+            {
+              "type": "paragraph",
+              "text": "During the event in Black Rock City, Census volunteers conduct a random sample by administering a short socio-demographic survey to randomly selected participants who agree to participate. To generate this random sample, two key factors help ensure valid results:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Random data collection times to sample incoming traffic from three different ports: Black Rock City Gate, Black Rock City Airport, and Burner Express buses.",
+                "Systematic intervals to sample traffic, airline passengers, and BxB buses, such as sampling every nth vehicle, passenger, or bus."
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Using this approach, the data gathered have the lowest achievable margin of sampling error given practical limits of resources, place, and time."
+            },
+            {
+              "type": "paragraph",
+              "text": "Questions from the short on-playa survey are selected for comparison with the larger online sample to weight the data and adjust the results so that our long-form sample better reflects the true population. Weights are chosen so that the distributions of responses for questions that appear in both the random sample and the online survey are nearly the same. This process, called post-stratification or raking (Holt and Smith 1979; DeBell and Krosnick 2009), helps minimize the self-selection bias introduced by the online survey.",
+              "links": [
+                {
+                  "text": "Holt and Smith 1979",
+                  "href": "https://blackrockcitycensus.org/references#ref-holt1979post",
+                  "kind": "external"
+                },
+                {
+                  "text": "DeBell and Krosnick 2009",
+                  "href": "https://blackrockcitycensus.org/references#ref-debell2009computing",
+                  "kind": "external"
+                }
+              ]
+            }
+          ],
+          "updatedAt": "2026-05-20T21:47:46Z"
+        },
+        {
+          "id": 59280417,
+          "slug": "black-rock-city-census-community-census-citations",
+          "title": "Census Citations",
+          "position": 3,
+          "image": "/training/assets/f145af88-did-burning-man-change-you.png",
+          "audio": [],
+          "attachments": [],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "The links below are a selection of references to Black Rock City (BRC) Census data in academic publications and presentations, as well as in the popular media."
+            },
+            {
+              "type": "paragraph",
+              "text": "If you know of an article or book that should be included on this page, use this form to submit a new addition. If your suggestion meets our criteria, it will be included on this page within 2-4 weeks.",
+              "links": [
+                {
+                  "text": "use this form",
+                  "href": "https://docs.google.com/forms/d/e/1FAIpQLSfKYrbbD_OXQWIbMdHoHO8D-G_PsUqTJxdZvSS-baOkcu_ZmA/viewform",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Burning Man Journal Highlights"
+            },
+            {
+              "type": "paragraph",
+              "text": "BRC Census regularly publishes posts in our portal in the Burning Man Journal. The links below are to a few publications which may be especially interesting to anyone curious about the specific methodology and processes followed by BRC Census.",
+              "links": [
+                {
+                  "text": "our portal",
+                  "href": "http://journal.burningman.org/census",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Why Should You Fill Out Your BRC Census? Because It Matters by Laura “Dr. Daneosaur” Dane, Dana “DV8” DeVaul, Sarah “Picky” Williamson, published October 11, 2016.",
+              "links": [
+                {
+                  "text": "Why Should You Fill Out Your BRC Census? Because It Matters",
+                  "href": "http://journal.burningman.org/2016/10/black-rock-city/participate-in-brc/why-should-you-fill-out-your-brc-census-because-it-matters/",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Art From Data: The Field Notes Project by Leah Gold (“Athena”) published June 13, 2016.",
+              "links": [
+                {
+                  "text": "Art From Data: The Field Notes Project",
+                  "href": "http://journal.burningman.org/2016/06/black-rock-city/participate-in-brc/art-from-data-the-field-notes-project/",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Burners, Meet Black Rock City Census by Rebecca Mason (B^2), edited by Dominic Beaulieu-Prévost (Hunter), Dana Lilienthal DeVaul (DV8), and Rachel McKay (Chipper), published February 24, 2016.",
+              "links": [
+                {
+                  "text": "Burners, Meet Black Rock City Census",
+                  "href": "http://journal.burningman.org/2016/02/black-rock-city/participate-in-brc/burners-meet-black-rock-city-census/",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "In the Media"
+            },
+            {
+              "type": "paragraph",
+              "text": "San Francisco’s Burning Man exodus proves mostly a myth by Jessica Floum and Sarah Fritsche. San Francisco Chronicle, December 5, 2016.",
+              "links": [
+                {
+                  "text": "San Francisco’s Burning Man exodus proves mostly a myth",
+                  "href": "http://www.sfchronicle.com/business/article/San-Francisco-s-Burning-Man-exodus-proves-9193877.php",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Does Burning Man work? by Conner Smith. The Daily Californian, September 26, 2016.",
+              "links": [
+                {
+                  "text": "Does Burning Man work?",
+                  "href": "http://www.dailycal.org/2016/09/25/burning-man-work/",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Is Burning Man becoming less overwhelmingly white? by Steven W Thrasher. The Guardian, September 13, 2016.",
+              "links": [
+                {
+                  "text": "Is Burning Man becoming less overwhelmingly white?",
+                  "href": "https://www.theguardian.com/culture/2016/sep/13/burning-man-white-people-of-color-diversity-playa",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "In Dust We Trust: A Report from the Shrines and Party Showers of Burning Man 2016 by Yoonj Kim. Playboy, September 12, 2016.",
+              "links": [
+                {
+                  "text": "In Dust We Trust: A Report from the Shrines and Party Showers of Burning Man 2016",
+                  "href": "http://www.playboy.com/articles/in-dust-we-trust-burning-man-2016",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Ignore the haters—I’m a person of color and I love Burning Man by Yodassa Williams. Fusion, September 7 2016",
+              "links": [
+                {
+                  "text": "Ignore the haters—I’m a person of color and I love Burning Man",
+                  "href": "http://fusion.net/story/344791/person-of-color-love-burning-man/",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "What is Burning Man? Whatever you want it to be by Trevor Hughes. USA Today, August 31, 2016.",
+              "links": [
+                {
+                  "text": "What is Burning Man? Whatever you want it to be",
+                  "href": "http://www.usatoday.com/story/news/nation-now/2016/08/28/what-burning-man-whatever-you-want/89521842/",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Overworked America’s obsession with Burning Man is a cry for help by Olivia Goldhill. Quartz, August 28, 2016.",
+              "links": [
+                {
+                  "text": "Overworked America’s obsession with Burning Man is a cry for help",
+                  "href": "http://qz.com/768394/overworked-americas-obsession-with-burning-man-is-a-cry-for-help/",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Burning Man census: Burners spend a lot in Reno by Jenny Kane. Reno Gazette-Journal, February 29, 2016.",
+              "links": [
+                {
+                  "text": "Burning Man census: Burners spend a lot in Reno",
+                  "href": "http://www.rgj.com/story/life/arts/burning-man/2016/02/24/burning-man-money-welcomed-reno-stakeholders/80800774/",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Burning Man’s black campers explain why they are the 1% by Steven W Thrasher. The Guardian, September 27, 2015.",
+              "links": [
+                {
+                  "text": "Burning Man’s black campers explain why they are the 1%",
+                  "href": "https://www.theguardian.com/culture/2015/sep/27/black-campers-burning-man-explain-why",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Report: Burning Man population slightly richer than before by Jenny Kane. Reno Gazette-Journal, April 8, 2015.",
+              "links": [
+                {
+                  "text": "Report: Burning Man population slightly richer than before",
+                  "href": "http://www.rgj.com/story/life/arts/burning-man/2015/04/08/report-burning-man-population-slightly-richer/25449069/",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Gifts in the desert: the psychology of Burning Man by Molly Crocket. The Guardian, September 26, 2014.",
+              "links": [
+                {
+                  "text": "Gifts in the desert: the psychology of Burning Man",
+                  "href": "https://www.theguardian.com/science/head-quarters/2014/sep/26/gifts-in-the-desert-psychology-burning-man-altruism",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "The Wonderful, Weird Economy of Burning Man by Elizabeth Limbach. The Atlantic, August 18, 2014.",
+              "links": [
+                {
+                  "text": "The Wonderful, Weird Economy of Burning Man",
+                  "href": "http://www.theatlantic.com/business/archive/2014/08/the-wonderful-weird-economics-of-burning-man/376108/",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "How Burning Man Changed A 50-Year-Old Texas Institution byMallika Rao. The Huffington Post, October 1, 2013.",
+              "links": [
+                {
+                  "text": "How Burning Man Changed A 50-Year-Old Texas Institution",
+                  "href": "http://www.huffingtonpost.com/2013/10/01/burning-man-texas-pizza_n_4018795.html",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Academic Publications"
+            },
+            {
+              "type": "paragraph",
+              "text": "Most links in this section lead to an article abstract or book description, rather than to the full text of the book or article referenced. The articles listed in this section are often not available for free to members of the public. Access may require a paid journal membership, usually obtained through affiliation with a university."
+            },
+            {
+              "type": "paragraph",
+              "text": "Heller, S. M. (2016). Memories of Burning Man. In Boulanger, C.L. (Ed.), Reflecting on America: Anthropological Views of U.S. Culture, 2nd edition. New York, NY: Taylor & Francis / Routledge."
+            },
+            {
+              "type": "paragraph",
+              "text": "McRae, K., Heller, S.M., John, O.P., & Gross, J.J. (2011). Context-dependent emotion regulation: Suppression and reappraisal at the Burning Man festival. Basic and Applied Social Psychology 33, 346-50.",
+              "links": [
+                {
+                  "text": "Context-dependent emotion regulation: Suppression and reappraisal at the Burning Man festival",
+                  "href": "http://www.tandfonline.com/doi/full/10.1080/01973533.2011.614170",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Snyder, S. A., Heller, S.M., Lumian, D.S., & McRae, K. (2013). Regulation of positive and negative emotion: Effects of sociocultural context. Frontiers in Psychology 4, 259.",
+              "links": [
+                {
+                  "text": "Regulation of positive and negative emotion: Effects of sociocultural context",
+                  "href": "http://journal.frontiersin.org/article/10.3389/fpsyg.2013.00259/",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 2,
+              "text": "Academic Presentations"
+            },
+            {
+              "type": "paragraph",
+              "text": "The presentations listed in this section may not have accompanying recordings or materials. If a recording was made and/or materials were provided at the time of presentation, links will be provided if possible."
+            },
+            {
+              "type": "paragraph",
+              "text": "Prosser, A. (2017, April). “Burning Man changed my life”: An exploration of transformative experiences following ‘transformational festival’ attendance. Presentation, British Undergraduate Research Conference, Bournemouth University, UK."
+            },
+            {
+              "type": "paragraph",
+              "text": "Prosser, A. (2017, March). Exploring the content of reported transformative experiences at a ‘Transformative Festival’. Presentation, British Psychological Society South West Undergraduate Conference, University of Bristol. (Winner of Best Oral Presentation Award)"
+            }
+          ],
+          "updatedAt": "2026-07-30T06:04:39Z"
+        },
+        {
+          "id": 59280346,
+          "slug": "black-rock-city-census-community-regional-census-projects",
+          "title": "Regional Census Projects",
+          "position": 4,
+          "image": "/training/assets/20436361-Screenshot_2024-06-22_at_5.33.51_PM.png",
+          "audio": [],
+          "attachments": [],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "The primary goal of the BRC Census team is to collect data about the participants of Burning Man each year. However, as the Burning Man Regional Network continues to develop and flourish, many regional events also collect data about their participants. The list below is not a comprehensive list, and in many cases BRC Census is not directly involved in these projects. The links below represent a various events which use a wide variety of methods to learn about their participants.",
+              "links": [
+                {
+                  "text": "Burning Man Regional Network",
+                  "href": "https://regionals.burningman.org/",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "If you have questions about anything you find in the linked pages below, please reach out to the Regional Contact or project organizer. If you find a broken link or know of a Census project that should be added to this list, you can contact census@burningman.org. Projects are listed in alphabetical order by event name. When possible we have provided a link to the data archive for each event; when not possible we have provided a link to the most recent Census report posted. Please enjoy!",
+              "links": [
+                {
+                  "text": "census@burningman.org",
+                  "href": "mailto:census@burningman.org",
+                  "kind": "email"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "List last updated: June 17, 2018."
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Apogaea Census Results Archive (Colorado, USA)",
+                "Burning Seed Census 2015 (Australia)",
+                "Freezer Burn Census 2017 (Alberta, Canada)",
+                "KiwiBurn Census Results Archive (New Zealand)",
+                "MidBurn Transparency Report Archive (Israel) – Census Reports can be found within some years’ Transparency Reports",
+                "To the Moon Census Results (Tennessee, USA)",
+                "YOUtopia Dada Scientists 2017 Report (California, USA)"
+              ]
+            }
+          ],
+          "updatedAt": "2026-04-25T20:02:13Z"
+        }
+      ],
+      "quizzes": []
+    },
+    {
+      "id": 59279683,
+      "slug": "black-rock-city-census-community-training-courses-resources",
+      "title": "Training Courses &amp; Resources",
+      "position": 4,
+      "image": "/training/assets/default_header_4-de4f3d8e600083d23109949668b79ee6f45ed38bb1de63dd002c537db52671a6.jpg",
+      "audio": [],
+      "attachments": [],
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "Links to our Census HIVE Volunteer Training Courses, Manuals and Shift Lead will be available in June 2026!"
+        }
+      ],
+      "updatedAt": "2026-08-05T02:23:13Z",
+      "lessons": [
+        {
+          "id": 59279847,
+          "slug": "black-rock-city-census-community-our-training-courses",
+          "title": "Our Training Courses",
+          "position": 1,
+          "image": "/training/assets/69db8a13-what-does-the-man-mean.png",
+          "audio": [],
+          "attachments": [],
+          "blocks": [
+            {
+              "type": "heading",
+              "level": 1,
+              "text": "Census Lab Course Series:"
+            },
+            {
+              "type": "paragraph",
+              "text": "Discover training courses relevant to your position that will help you prepare for your shift on playa."
+            },
+            {
+              "type": "paragraph",
+              "text": "We've worked hard to move our training materials to this space. Click on the links below for available courses:"
+            },
+            {
+              "type": "paragraph",
+              "text": "Census Basics — START HERE!  Required for all volunteers.  This should take 20 minutes or less to finish.  Once you complete this, move on to the appropriate course(s) for the shift(s) you've signed up for.  If a position doesn't have a course listed below, it means training will be on-site during your shift(s).",
+              "links": [
+                {
+                  "text": "Census Basics",
+                  "href": "/training/basics",
+                  "kind": "course"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Random Sampling — Required for anyone doing at least one sampling shift at either Gate or Airport, including Traffic Tamers.",
+              "links": [
+                {
+                  "text": "Random Sampling",
+                  "href": "/training/random-sampling",
+                  "kind": "course"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Outreach — Required for Lab Hosts, Pop-Up Hosts, and Data Disseminators.",
+              "links": [
+                {
+                  "text": "Outreach",
+                  "href": "/training/outreach",
+                  "kind": "course"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Data Entry Wiz — Required for Data Entry Volunteers",
+              "links": [
+                {
+                  "text": "Data Entry Wiz",
+                  "href": "/training/data-entry",
+                  "kind": "course"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "DataBeast Driver — Required for Drivers of the Volunteer Transport Vehicle.",
+              "links": [
+                {
+                  "text": "DataBeast Driver",
+                  "href": "/training/databeast",
+                  "kind": "course"
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 5,
+              "text": "Training Opportunities:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Most of our training will be conducted online through this HIVE space.",
+                "For Sampling, Pop-Up, Lab Hosting, and Data Dissemination, a skills review will be provided 10 minutes before the shift starts and/or during transportation in our vehicle, the Data Beast.",
+                "Sampling and Lab Host Shift Leads will be provided information about additional on-playa Training."
+              ]
+            }
+          ],
+          "updatedAt": "2026-07-13T05:54:55Z"
+        },
+        {
+          "id": 81543329,
+          "slug": "black-rock-city-census-community-training-manuals",
+          "title": "Training Manuals",
+          "position": 2,
+          "image": "/training/assets/63d14fe0-IMG_7773.jpeg",
+          "audio": [],
+          "attachments": [],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "These manuals cover much of the same information as the on-line trainings, sometimes with more in-depth details.  They are used to train volunteers who join us on playa, and can be a great source to refresh your memory or if you are still confused about certain aspects of your role after completing the online training."
+            },
+            {
+              "type": "document",
+              "title": "2026 Random Sampling Guide",
+              "href": "/training/guides/random-sampling-guide-2026.pdf",
+              "sizeKb": 2012
+            },
+            {
+              "type": "document",
+              "title": "2026 Outreach Volunteer Guide",
+              "href": "/training/guides/outreach-volunteer-guide-2026.pdf",
+              "sizeKb": 1107
+            },
+            {
+              "type": "document",
+              "title": "2026 Data Entry Wiz Guide",
+              "href": "/training/guides/data-entry-wiz-guide-2026.pdf",
+              "sizeKb": 1368
+            }
+          ],
+          "updatedAt": "2026-07-21T08:40:05Z"
+        },
+        {
+          "id": 59280067,
+          "slug": "black-rock-city-census-community-shift-lead-resources",
+          "title": "Shift Lead Resources",
+          "position": 3,
+          "image": "/training/assets/7016ecf6-Copy_of_12877_542_407.png",
+          "audio": [],
+          "attachments": [],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "If your past experience as a Census volunteer qualifies you to join our team as a Sampling, Lab Host, or Data Entry Shift Lead, congratulations and thank you for all of your past hard work!"
+            },
+            {
+              "type": "paragraph",
+              "text": "This page contains links to the training materials for volunteers leading other volunteers during BRC Census shifts while on playa."
+            },
+            {
+              "type": "paragraph",
+              "text": "We have our Shift Lead Guides available in PDF form in the links below:"
+            },
+            {
+              "type": "document",
+              "title": "Airport Sampling 2026 Shift Lead Guide",
+              "href": "/training/guides/airport-sampling-shift-lead-guide-2026.pdf",
+              "sizeKb": 546
+            },
+            {
+              "type": "document",
+              "title": "Gate Sampling 2026 Shift Lead Guide",
+              "href": "/training/guides/gate-sampling-shift-lead-guide-2026.pdf",
+              "sizeKb": 1855
+            },
+            {
+              "type": "document",
+              "title": "Data Entry 2026 Shift Lead Guide",
+              "href": "/training/guides/data-entry-shift-lead-guide-2026.pdf",
+              "sizeKb": 1029
+            },
+            {
+              "type": "document",
+              "title": "Outreach 2026 Shift Lead Guide",
+              "href": "/training/guides/outreach-shift-lead-guide-2026.pdf",
+              "sizeKb": 2621
+            },
+            {
+              "type": "paragraph",
+              "text": "Be sure to familiarize yourself with Shift Lead responsibilities, review the training materials provided for the volunteers who will be working on the shifts you lead."
+            },
+            {
+              "type": "paragraph",
+              "text": "In addition to the resources provided by our team, Rangers and ESD have provided two resources with information about radio usage in the links provided. Please note that some details, such as exact radio makes and models and assigned zones and channels, may be out of date. 2015 ART of Radio (PDF) Radio Training Video (7 min., external Vimeo link)",
+              "links": [
+                {
+                  "text": "2015 ART of Radio",
+                  "href": "http://tinyurl.com/ArtOfRadio",
+                  "kind": "external"
+                },
+                {
+                  "text": "Radio Training Video",
+                  "href": "http://vimeo.com/101945669",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Another important part of being a Lead is giving Feedback and sometimes helping with Conflict Resolution.  We recommend all Shift Leads complete the Conflict Resolution and De-escalation Ranger training in the link provided, to help you prepare for situations that may arise while managing humans. Conflict Resolution and De-escalation",
+              "links": [
+                {
+                  "text": "Conflict Resolution and De-escalation",
+                  "href": "https://hive.burningman.org/spaces/3990631/",
+                  "kind": "hive"
+                }
+              ]
+            }
+          ],
+          "updatedAt": "2026-08-05T03:32:46Z"
+        }
+      ],
+      "quizzes": []
+    },
+    {
+      "id": 78454902,
+      "slug": "black-rock-city-census-community-camping-with-census",
+      "title": "Camping with Census",
+      "position": 5,
+      "image": "/training/assets/02c354d9-IMG_0394.jpeg",
+      "audio": [],
+      "attachments": [
+        {
+          "name": "",
+          "href": "/training/assets/2a361c01-1745967192155.png"
+        }
+      ],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Camping with CensusCensus has two areas for volunteers to camp – Census Lab and Counter Culture. The Lab is the main Census location, while Counter Culture is a placed support camp , usually close to the lab for an easy commute to shifts. Volunteers can apply to camp at either location (applications open in the spring) and will be notified of which location they’re assigned to after Census is given our lot sizes by the Placement team (usually in early June)."
+        },
+        {
+          "type": "image",
+          "src": "/training/assets/2a361c01-1745967192155.png",
+          "alt": ""
+        },
+        {
+          "type": "paragraph",
+          "text": "Census LabThe Lab is our public interactivity work camp. It houses a chill space where data talks are given, our data board display, and the office space for data entry. Amenities for campers vary from year to year, but typically include a communal kitchen, bikes, and a shower (bring your own water), and shade for tenters.  Camping space at the Lab is very limited. Counter CultureCounter Culture is our Census work support camp. Amenities for campers vary from year to year but usually include a chill space shade structure and access to the shower in the Census Lab (bring your own water). There is space for RV’s, however scheduled pump outs are not available.  Counter Culture has more space for campers and is a quieter camp.  Camper ResponsibilitiesAll campers are expected to sign up for shifts with Census totaling a minimum of 12 Census Shift Points (CSPs) for Counter Culture campers and 16 CSPs for Lab campers. (A Census Shift Point is equal to approximately 1 hour of work). In addition, if Census requires additional support to fill critical volunteer shifts on playa, they will call on Census campers to lend assistance. As a camper you are also expected to welcome all visitors to our camps and discuss Census (who we are and what we do, encourage them to fill out the online survey, etc)."
+        },
+        {
+          "type": "paragraph",
+          "text": "Campers in the lab sign up for duties within the camp (mooping the public areas, keeping the communal kitchen area clean, set up and strike of camper amenities, etc). Campers in Counter Culture sign up for duties within the camp (set up and strike of the communal shade area, mooping public areas, etc). There are no dues for either camp (Census Lab or Counter Culture)."
+        },
+        {
+          "type": "paragraph",
+          "text": "If you have any questions or need further information, please contact Rescue at ann.norton@burningman.org",
+          "links": [
+            {
+              "text": "ann.norton@burningman.org",
+              "href": "mailto:ann.norton@burningman.org",
+              "kind": "email"
+            }
+          ]
+        }
+      ],
+      "updatedAt": "2026-07-13T05:58:51Z",
+      "lessons": [],
+      "quizzes": []
+    },
+    {
+      "id": 104484290,
+      "slug": "black-rock-city-census-community-welcome-info-summary-and-completion-confirmation-104484290",
+      "title": "Welcome Info Summary and Completion Confirmation",
+      "position": 6,
+      "image": "/training/assets/569840d7-6d4fa35875b4b9c8.png",
+      "audio": [],
+      "attachments": [
+        {
+          "name": "",
+          "href": "/training/assets/569840d7-6d4fa35875b4b9c8.png"
+        }
+      ],
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "PLEASE CLICK THIS BUTTON TO RECORD YOUR COMPLETION OF THIS COURSE:"
+        },
+        {
+          "type": "image",
+          "src": "/training/assets/569840d7-6d4fa35875b4b9c8.png",
+          "alt": ""
+        }
+      ],
+      "updatedAt": "2026-08-10T16:46:59Z",
+      "lessons": [],
+      "quizzes": []
+    }
+  ],
+  "counts": {
+    "sections": 6,
+    "lessons": 14,
+    "quizzes": 0,
+    "questions": 0
+  }
+}

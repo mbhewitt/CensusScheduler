@@ -1,0 +1,11 @@
+# Offline training bundle (client/public/training) — the exported Hive courses.
+# Images, audio and guide PDFs are large binaries that never diff usefully, so
+# they live in Git LFS. Scoped deliberately to the training folder: the rest of
+# client/public (banners, help screenshots) stays in normal git history.
+#
+# IMPORTANT: git-lfs must be installed anywhere this repo is built or deployed,
+# including the on-playa server. Without it, checkout leaves ~130-byte pointer
+# files in place of the real assets and the app ships blank images / broken
+# PDFs. `git lfs pull` must be run while still on a network.
+client/public/training/assets/** filter=lfs diff=lfs merge=lfs -text
+client/public/training/guides/** filter=lfs diff=lfs merge=lfs -text

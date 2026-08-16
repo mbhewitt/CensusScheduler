@@ -37,6 +37,8 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import Link from "next/link";
+
+import { trainingMaterialHref, WELCOME_HIVE_URL } from "@/lib/training";
 import { useSnackbar } from "notistack";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
@@ -846,8 +848,9 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
       content: (
         <Box>
           <Typography sx={{ mb: 1 }}>
-            Complete each required training course in the Census Community on
-            Hive. Click a course name below to open it.
+            {isOnPlaya
+              ? "Complete each required training course below. Click a course name to open it."
+              : "Complete each required training course in the Census Community on Hive. Click a course name below to open it."}
           </Typography>
           {trainings.map((t) => (
             <Stack
@@ -865,24 +868,30 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                   fontSize="small"
                 />
               )}
-              {!t.url ? (
-                <Typography variant="body2">{t.trainingName}</Typography>
-              ) : (
-                <Typography
-                  component="a"
-                  href={t.url}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  variant="body2"
-                  sx={{
-                    color: theme.palette.secondary.main,
-                    fontWeight: 500,
-                    textDecoration: "underline",
-                  }}
-                >
-                  {t.trainingName}
-                </Typography>
-              )}
+              {(() => {
+                // On-playa the Hive URL can't load, so point at the bundled
+                // copy of the course instead. Off-playa nothing changes.
+                const href = trainingMaterialHref(t.code, t.url || null);
+                if (!href) {
+                  return <Typography variant="body2">{t.trainingName}</Typography>;
+                }
+                const isLocal = href.startsWith("/");
+                return (
+                  <Typography
+                    component={isLocal ? Link : "a"}
+                    href={href}
+                    variant="body2"
+                    {...(isLocal ? {} : { rel: "noopener noreferrer", target: "_blank" })}
+                    sx={{
+                      color: theme.palette.secondary.main,
+                      fontWeight: 500,
+                      textDecoration: "underline",
+                    }}
+                  >
+                    {t.trainingName}
+                  </Typography>
+                );
+              })()}
               <Typography
                 color="text.secondary"
                 variant="body2"
@@ -912,13 +921,15 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
           Get to know Census and what your volunteering makes possible.
         </Typography>
         <Typography sx={{ mb: 1 }}>
-          <a
-            href="https://hive.burningman.org/spaces/14264554"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Review the Census community on Hive
-          </a>
+          {isOnPlaya ? (
+            <Link href="/training/welcome">
+              Review the Census Welcome and Overview course
+            </Link>
+          ) : (
+            <a href={WELCOME_HIVE_URL} rel="noopener noreferrer" target="_blank">
+              Review the Census community on Hive
+            </a>
+          )}
         </Typography>
         {!welcomeComplete && (
           <Link

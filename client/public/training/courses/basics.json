@@ -1,0 +1,559 @@
+{
+  "slug": "basics",
+  "spaceId": 23489224,
+  "title": "2026 Census Course: Basics",
+  "titleFromHive": "2026 Census Course: Basics",
+  "titleWasTruncatedInHive": false,
+  "summary": "Required course for ALL Census volunteer positions.",
+  "sourceUrl": "https://hive.burningman.org/spaces/23489224/content",
+  "exportedAt": "2026-08-16T02:55:14.305Z",
+  "overview": {
+    "id": 100845452,
+    "slug": "census-course-basics-basics-course-overview",
+    "title": "BASICS Course Overview~",
+    "position": 1,
+    "image": "/training/assets/default_header_3-268b66a85721efdf8a53ad2dea20ca2f6c6f252491a7c3f60aa140a6d9b7cce0.jpg",
+    "audio": [],
+    "attachments": [],
+    "blocks": [
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "Welcome to the Census Basics Course!"
+      },
+      {
+        "type": "paragraph",
+        "text": "We are glad you made it here! The Census Basis Course continues where the Census Welcome and Overview left off. If you are New to Census or want a refresher, be sure to review the Census Welcome and Overview before starting the Census Basics Course.",
+        "links": [
+          {
+            "text": "Census Welcome and Overview",
+            "href": "/training/welcome",
+            "kind": "course"
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "Who is this course for and what are the main goals?"
+      },
+      {
+        "type": "paragraph",
+        "text": "This course is for anyone who will be volunteering for the Census Department. Both for new and returning volunteers. By the end of this course you should be able to:"
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "Comprehend the importance of timely arrival and the check-in process.",
+          "Recognize the essential items and attire needed for your shift.",
+          "Familiarize yourself with the layout and key locations of the Census Lab.",
+          "Understand and commit to your role as a representative of the department, including its mission and behavioral standards."
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "If you need help contact our Coordinator of Volunteer Communications at censusvolunteercoordinators@burningman.org",
+        "links": [
+          {
+            "text": "censusvolunteercoordinators@burningman.org",
+            "href": "mailto:censusvolunteercoordinators@burningman.org",
+            "kind": "email"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Let’s get started."
+      }
+    ],
+    "updatedAt": "2026-07-28T12:05:37Z"
+  },
+  "sections": [
+    {
+      "id": 100845453,
+      "slug": "census-course-basics-ready-set-go-preparing-and-arriving-for-your-shift-100845453",
+      "title": "Ready, Set, Go: Preparing and Arriving for your Shift",
+      "position": 1,
+      "image": "/training/assets/e0332995-censuslogo_top__1_.webp",
+      "audio": [],
+      "attachments": [],
+      "blocks": [],
+      "updatedAt": "2026-07-08T16:44:27Z",
+      "lessons": [
+        {
+          "id": 100845454,
+          "slug": "census-course-basics-gear-up-for-your-shift-100845454",
+          "title": "Gear Up for Your Shift",
+          "position": 1,
+          "image": "/training/assets/e883f294-Copy_of_68252_307_273.png",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/e883f294-Copy_of_68252_307_273.png"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/e883f294-Copy_of_68252_307_273.png",
+              "alt": ""
+            },
+            {
+              "type": "heading",
+              "level": 4,
+              "text": "What to Wear"
+            },
+            {
+              "type": "paragraph",
+              "text": "These must-have items identify you as an official part of the Census team."
+            },
+            {
+              "type": "heading",
+              "level": 5,
+              "text": "Lab Coat:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Bring from home: If you wish, we encourage you to bring your own decorated white lab coat in our team colors: hot pink, black & white.",
+                "Loaner: If needed, loaner lab coats are available hanging at Census Lab when you arrive for your shift.",
+                "Everyone must wear a lab coat during their shift (except data entry and set up/strike crew).",
+                "You can wear as much (or as little!) as you want under your lab coat, as long as you will remain comfortable and safe throughout the duration of your shift. If you want to add Census-y embellishments to your ensemble, feel free! Just stay within our color scheme (hot pink, black & white) and avoid anything MOOP-y. NOTE: Your outfit doesn't have to be these colors, but your lab coat does."
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 5,
+              "text": "Patch:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "A Census patch will be provided and are available at Census Lab."
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 5,
+              "text": "Badge:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Your Census volunteer badge and shift label will be provided and are available when you check in prior to your first shift at Census Lab."
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 4,
+              "text": "Equipment/Day Bag"
+            },
+            {
+              "type": "paragraph",
+              "text": "These must-have items will ensure you are taken care of and radically self-reliant for several hours in open playa:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "A water bottle with water (we provide refills)",
+                "Goggles",
+                "A dust mask",
+                "Closed-toed shoes or boots for Gate Road Sampling shifts (remember, we work around moving vehicles!)",
+                "For day shifts: sunscreen, lip protection, and a hat with a strap",
+                "For night shifts: warm clothing and personal safety lights",
+                "Optional: an umbrella for Pop-up Lab and Lab Hosts"
+              ]
+            }
+          ],
+          "updatedAt": "2026-07-08T16:44:27Z"
+        },
+        {
+          "id": 100845455,
+          "slug": "census-course-basics-what-census-provides-100845455",
+          "title": "What Census Provides",
+          "position": 2,
+          "image": "/training/assets/b6e71d3d-Copy_of_22750_400_299.png",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/b6e71d3d-Copy_of_22750_400_299.png"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "You are encouraged to check in at our Volunteer Welcome Party on Opening Sunday to get your name badge & shift label. If you chose to decorate your own lab coat, you will also receive a Census patch. If you cannot attend the Welcome Party, we recommend you stop by the Census Lab prior to your first shift to receive these items. It helps save time during shift check-in if you already have them. If you find yourself without these items as you're about to start your first shift, ask a shift lead for help.",
+                "Shifts of 4 hours or over include a meal at the staff commissary (see the shift description for details).",
+                "A limited number of lab coats are available to borrow.",
+                "For Pop-Up Labs, a few umbrellas are available but participants are encouraged to bring their own."
+              ]
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/b6e71d3d-Copy_of_22750_400_299.png",
+              "alt": ""
+            }
+          ],
+          "updatedAt": "2026-07-08T16:44:27Z"
+        },
+        {
+          "id": 100845456,
+          "slug": "census-course-basics-census-lab-arrival-and-location-100845456",
+          "title": "Census Lab Arrival and Location",
+          "position": 3,
+          "image": "/training/assets/ba625af8-Screenshot_2025-05-07_at_5.44.56_PM.png",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/ba625af8-Screenshot_2025-05-07_at_5.44.56_PM.png"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "heading",
+              "level": 4,
+              "text": "Upon Arrival"
+            },
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                "ALL shifts meet at the Census Lab.",
+                "Arrive 10 minutes early for your shift. Shift Leads should arrive 30 minutes early.",
+                "Check in at Census Lab with a Shift Lead. They will have a tablet to make sure you are credited for your shift.",
+                "Gather your wardrobe and any equipment furnished by Census and meet your team members!"
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 4,
+              "text": "Location"
+            },
+            {
+              "type": "paragraph",
+              "text": "For 2026, Census Lab will be at the corner of 6:30 & A, next to Media Mecca."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/ba625af8-Screenshot_2025-05-07_at_5.44.56_PM.png",
+              "alt": ""
+            }
+          ],
+          "updatedAt": "2026-07-08T16:44:27Z"
+        },
+        {
+          "id": 101259688,
+          "slug": "census-course-basics-shift-cancelations",
+          "title": "Shift Cancelations",
+          "position": 4,
+          "image": "/training/assets/663fa3f6-IMG_3961.jpeg",
+          "audio": [],
+          "attachments": [],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "If a shift is canceled before arrival on playa, anyone signed up for that shift will be notified by email."
+            },
+            {
+              "type": "paragraph",
+              "text": "Once we are on playa, we normally only cancel shifts if there is a threat to volunteer safety, usually weather (heavy rain, thunderstorms, or very high winds). The rule of thumb is that if Gate Road is closed, shifts will be canceled as it is not safe to travel on playa. In the case of a brief whiteout dust storm or light rain unlikely to change playa conditions, Gate may pause operations, but not close."
+            },
+            {
+              "type": "paragraph",
+              "text": "If it is time for you to head to your shift and there is a whiteout dust storm, or it is raining lightly, you should check the forecast to see if heavier rain or continued high winds are predicted. If not, wait until it is safe to travel before heading to your shift. If it is already raining heavier than a sprinkle, or if there is thunder/lightning, chances are it will not be safe to travel and the shift will be canceled."
+            },
+            {
+              "type": "paragraph",
+              "text": "Once we are aware of current or predicted weather likely to result in a shift cancelation, we will immediately notify volunteers via email. However, we are aware that most participants do not have access to internet/cell service once on playa. Here are the best ways to find out if the shift is canceled:"
+            },
+            {
+              "type": "paragraph",
+              "text": "Many camps have internet access and you can ask a neighboring camp if they'll let you check on the status of your shift. If they don't want to share their password so you can check email, you can ask them to check the Burning Man Dashboard for you. It's at https://burningman.org/black-rock-city/preparation/brc-dashboard/ and has the latest weather forecasts and info about Gate Road closures. Playa Info has information about camps which offer public internet access as part of their theme camp, but you'll need to check if there's one near you in advance.",
+              "links": [
+                {
+                  "text": "https://burningman.org/black-rock-city/preparation/brc-dashboard/",
+                  "href": "https://burningman.org/black-rock-city/preparation/brc-dashboard/",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "The easiest option may be to listen to BMIR radio at 94.5 FM or Gate Radio at 95.1, both of which will have updates about Gate Road closures and/or predicted bad weather. You can bring a battery operated radio or use a vehicle to tune in."
+            },
+            {
+              "type": "paragraph",
+              "text": "For the technologically inclined, there is also a mesh network available which allows you to send and receive messages without the internet. You'll need to set this up before arriving on playa, and you can find information at https://www.burningmesh.org.",
+              "links": [
+                {
+                  "text": "https://www.burningmesh.org.",
+                  "href": "https://www.burningmesh.org",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Finally, in some situations, you may arrive at Census Lab only to be told that your shift has been canceled. We apologize in advance if this happens, but we simply don't have a 100% foolproof way to contact everyone once on playa. Hopefully, the weather will cooperate this year and none of this will matter."
+            },
+            {
+              "type": "paragraph",
+              "text": "NOTE: In some instances of high winds, the airport could close while Gate Road remains open. In this case, airport sampling shifts would be canceled while other shifts may be decided on a case-by-case basis, depending on the safety risk to volunteers."
+            },
+            {
+              "type": "paragraph",
+              "text": "NOTE: If your canceled shift included a commissary meal, we will not be able to offer you a meal at a later date, as the meal tickets we receive are tied to a specific meal (i.e., lunch on Tuesday)."
+            }
+          ],
+          "updatedAt": "2026-07-21T15:55:44Z"
+        }
+      ],
+      "quizzes": []
+    },
+    {
+      "id": 100845457,
+      "slug": "census-course-basics-representing-brc-census-100845457",
+      "title": "Representing BRC Census",
+      "position": 2,
+      "image": "/training/assets/add02cbb-censuslogo_top__1_.webp",
+      "audio": [],
+      "attachments": [],
+      "blocks": [],
+      "updatedAt": "2026-07-08T16:44:27Z",
+      "lessons": [
+        {
+          "id": 100845459,
+          "slug": "census-course-basics-interacting-with-participants-100845459",
+          "title": "Interacting with Participants",
+          "position": 1,
+          "image": "/training/assets/8c11f89c-Copy_RS_working_as_Team_shows_form___bags.jpg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/8c11f89c-Copy_RS_working_as_Team_shows_form___bags.jpg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "When interacting with other participants, people respond to your energy. Be upbeat, excited, respectful, and polite. A positive interaction makes people more likely to participate in the random sampling process, field notes project, and the online survey after the Burn. Remember, one of the best ways to provide a positive interaction is to refrain from making assumptions about the people with whom you are interacting. Use gender-neutral language and avoid assumptions about prior Burn experience or anything else that might lead to someone feeling misunderstood or singled out."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/8c11f89c-Copy_RS_working_as_Team_shows_form___bags.jpg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "Remember that the participants you encounter may not know that BRC Census exists at all! It is also very common for participants to know who we are, but to be surprised to find out the main Census is now online. We collected paper forms at Center Camp for years, and not everyone knows about our current methodology."
+            },
+            {
+              "type": "paragraph",
+              "text": "When talking to others about Census it is important to stick to the scripts and recommendations you'll learn in training. Don't answer questions if you're not sure of the answer, but (unless you're on a sampling shift) you can and should direct the person on how to find the answer (Would it be in the results from a previous population analysis? Should they email our statistician?, etc.)."
+            }
+          ],
+          "updatedAt": "2026-07-08T16:44:27Z"
+        },
+        {
+          "id": 100845460,
+          "slug": "census-course-basics-interacting-with-other-departments-100845460",
+          "title": "Interacting with Other Departments",
+          "position": 2,
+          "image": "/training/assets/d5baf82f-Copy_of_23152_576_432.png",
+          "audio": [],
+          "attachments": [],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Census volunteers work in many locations, and may interact with other departments (e.g., Gate, Greeters, and Airport crew on sampling shifts), and may encounter law enforcement or Black Rock City Rangers. If someone has questions about Census or our activities, it's best to politely refer them to a shift lead, especially if they're in uniform."
+            }
+          ],
+          "updatedAt": "2026-07-08T16:44:27Z"
+        },
+        {
+          "id": 100845461,
+          "slug": "census-course-basics-interacting-with-other-volunteers-100845461",
+          "title": "Interacting with Other Volunteers",
+          "position": 3,
+          "image": "/training/assets/01ebc839-Copy_of_RS_Selfie_Census_Volunteers_Fun_Gate.jpeg",
+          "audio": [],
+          "attachments": [],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "We hope this guide and our other training materials will provide you and your fellow volunteers with sufficient guidelines to go through a volunteer shift without unanticipated and/or frustrating situations arising, but this is Burning Man! It is not unheard of for Census volunteers to have differing recollections on how to handle an obscure point of methodology, or to encounter the occasional personality mismatch. In these cases, do your best to handle the situation calmly and appropriately until a Shift Lead can be flagged down for assistance. That Shift Lead will do their very best to find the answer to your question, or to provide a solution to the challenge presented."
+            },
+            {
+              "type": "paragraph",
+              "text": "If a Shift Lead gives you a direct instruction, either due to one of the above situations or for any other reason during your shift, please follow their instructions - even if you don’t understand the reason for the request. Remember, your Shift Lead may have information about a situation that you do not have. Whenever possible, give your fellow volunteers (including the Shift Leads!) the benefit of the doubt and assume there is good reason for their instructions."
+            },
+            {
+              "type": "paragraph",
+              "text": "If you truly feel that a Shift Lead’s instruction is inappropriate, unfair, or unsafe, consider asking the Shift Lead to step aside to resolve the issue. These conversations are typically better held with some degree of privacy. Keep in mind that Shift Leads will be monitoring several aspects of the shift and will have limited time to resolve issues mid-shift. Complex issues may need to wait until after the shift has ended."
+            }
+          ],
+          "updatedAt": "2026-07-08T16:44:27Z"
+        },
+        {
+          "id": 100845462,
+          "slug": "census-course-basics-conflict-resolution-100845462",
+          "title": "Conflict Resolution",
+          "position": 4,
+          "image": "/training/assets/beddcfbe-Copy_of_12877_542_407.png",
+          "audio": [],
+          "attachments": [],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Whether or not the situation is resolved during the shift, you may always request a conversation with one or more members of Census Leadership when your shift is over. This means a Census Volunteer Coordinator, or the Manager or Assistant Manager. In the event that one of these individuals is present during your shift you may be able to request this during the shift, but that is not always the case. We always want to know if an issue is causing concern for a Census volunteer! Please do not hesitate to notify us if you are uncomfortable with anything you saw or heard during your shift."
+            },
+            {
+              "type": "paragraph",
+              "text": "If you aren’t sure how to identify or locate a member of Census Leadership, a Shift Lead can help you to do so. You can also ask around or check the “Who’s Who” board posted at the Census Lab, which includes information for each Volunteer Coordinator and each member of Census Management. Each volunteer’s “Who’s Who” entry includes a picture, plus some information about when and where you might be able to find them on playa. Or, as a short-cut, any Census volunteer wearing an event radio can probably point you in the right direction."
+            },
+            {
+              "type": "paragraph",
+              "text": "To contact Census Leadership off-playa, refer to the “Methods and Expectations of Communication” section of the Behavioral Standards Agreement. You will also receive an email after the Burn inviting you to complete a BRC Census Volunteer Feedback Form, which will include questions about your experience with your fellow volunteers."
+            }
+          ],
+          "updatedAt": "2026-07-08T16:44:27Z"
+        }
+      ],
+      "quizzes": []
+    },
+    {
+      "id": 100845464,
+      "slug": "census-course-basics-basics-course-summary-and-completion-confirmation",
+      "title": "Basics Course Summary and Completion Confirmation",
+      "position": 3,
+      "image": "/training/assets/c6bfe373-censuslogo_top__1_.webp",
+      "audio": [],
+      "attachments": [
+        {
+          "name": "",
+          "href": "/training/assets/cb81fb58-Training_completion_button.png"
+        }
+      ],
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 5,
+          "text": "Summary"
+        },
+        {
+          "type": "paragraph",
+          "text": "Thank you for joining the Census Basics Course. We're excited to have you on board and appreciate your dedication. Here’s a quick recap of what you’ve learned:"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "Arriving on Time: Why it's crucial and how to check in smoothly.",
+            "Gear Up: The essential items and attire you need for your shift.",
+            "Find Your Way: Getting familiar with the Census Lab layout.",
+            "Be the Face of the Census: Understanding your role, our mission, and sticking to our guidelines."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "We’re thrilled to have you with us and can't wait to see you on playa."
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "NEXT STEP: Census Course Series:"
+        },
+        {
+          "type": "paragraph",
+          "text": "Discover the training courses relevant to your position that will help you prepare for your shift on playa."
+        },
+        {
+          "type": "paragraph",
+          "text": "We've worked hard to move our training materials to this space. Available courses are:"
+        },
+        {
+          "type": "paragraph",
+          "text": "Random Sampling: required for anyone doing at least one sampling shift at either Gate or Airport, including Traffic Tamers.",
+          "links": [
+            {
+              "text": "Random Sampling:",
+              "href": "/training/random-sampling",
+              "kind": "course"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Outreach: Required for Lab and Pop-Up Hosts, as well as Data Disseminators.",
+          "links": [
+            {
+              "text": "Outreach:",
+              "href": "/training/outreach",
+              "kind": "course"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Data Beast Drivers: Required for anyone driving the Data Beast",
+          "links": [
+            {
+              "text": "Data Beast Drivers",
+              "href": "/training/databeast",
+              "kind": "course"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Data Entry: Required for Data entry Volunteers",
+          "links": [
+            {
+              "text": "Data Entry",
+              "href": "/training/data-entry",
+              "kind": "course"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Shift Leads will be provided information about on-playa Training."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "PLEASE CLICK THE BUTTON BELOW TO RECORD YOUR COMPLETION OF THIS COURSE."
+        },
+        {
+          "type": "paragraph",
+          "text": "You will be asked to log in using the same Burner Profile information you use for Hive. You will then be taken to your Census Volunteer Information Page, where this training requirement will be checked off your personal checklist."
+        },
+        {
+          "type": "image",
+          "src": "/training/assets/cb81fb58-Training_completion_button.png",
+          "alt": ""
+        }
+      ],
+      "updatedAt": "2026-07-28T12:05:37Z",
+      "lessons": [],
+      "quizzes": []
+    }
+  ],
+  "counts": {
+    "sections": 3,
+    "lessons": 8,
+    "quizzes": 0,
+    "questions": 0
+  }
+}

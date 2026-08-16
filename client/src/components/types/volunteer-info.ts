@@ -68,6 +68,8 @@ export interface IResVolunteerInfo {
     trainingId: number;
     trainingName: string;
     url: string;
+    /** op_trainings.code — maps to the offline course bundle on-playa. */
+    code: string;
     completed: boolean;
   }[];
   roles: string[];

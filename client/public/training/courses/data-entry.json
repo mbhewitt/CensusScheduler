@@ -1,0 +1,456 @@
+{
+  "slug": "data-entry",
+  "spaceId": 23489241,
+  "title": "2026 Census Course: Data Entry Wiz",
+  "titleFromHive": "2026 Census Course: Data Entry...",
+  "titleWasTruncatedInHive": true,
+  "summary": "For Data Entry Wiz volunteers.",
+  "sourceUrl": "https://hive.burningman.org/spaces/23489241/content",
+  "exportedAt": "2026-08-16T02:55:14.305Z",
+  "overview": {
+    "id": 100845621,
+    "slug": "census-course-data-entry-data-entry-wiz-overview",
+    "title": "Data Entry Wiz Overview",
+    "position": 1,
+    "image": "/training/assets/default_header_2-b21b4bc82a7b9ce22d87f6130c94965ea67a9ff44e4e3a3157f7ebc7948b9270.jpg",
+    "audio": [],
+    "attachments": [],
+    "blocks": [
+      {
+        "type": "paragraph",
+        "text": "Thank you for volunteering your time as a Data Entry Wiz while on playa this year. We really appreciate your help!"
+      },
+      {
+        "type": "paragraph",
+        "text": "Please arrive 10-15 minutes before your shift starts to allow time to check in and get settled so Data Entry can start on time. The shift will start with introductions. We know there’s no time to socialize during Data Entry but we want everyone to know who their co-workers are."
+      },
+      {
+        "type": "paragraph",
+        "text": "Your Shift Lead will be there to help you do your best possible work. They will briefly go over some of the information here and will check your work during the shift. Our goal is to get the most accurate data possible. If your shift lead asks you to correct an error please know that it’s not personal – it’s all about the data."
+      },
+      {
+        "type": "paragraph",
+        "text": "Your Shift Lead will check your work after you’ve completed a few entries. Feeling watched over can make some people feel anxious but remember your Shift Lead is only making sure our data is accurate. We’re all human and mistakes are sometimes made but they can be corrected and no one is judging you."
+      },
+      {
+        "type": "paragraph",
+        "text": "If multiple Wizzes are making the same mistake your Shift Lead may stop everyone to review instructions."
+      }
+    ],
+    "updatedAt": "2026-07-04T22:12:03Z"
+  },
+  "sections": [
+    {
+      "id": 101259371,
+      "slug": "census-course-data-entry-data-entry",
+      "title": "Data Entry",
+      "position": 1,
+      "image": "/training/assets/default_header_2-b21b4bc82a7b9ce22d87f6130c94965ea67a9ff44e4e3a3157f7ebc7948b9270.jpg",
+      "audio": [],
+      "attachments": [],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "In this section you'll find all the info you need to compete a successful data entry shift."
+        }
+      ],
+      "updatedAt": "2026-07-04T22:12:03Z",
+      "lessons": [
+        {
+          "id": 101264307,
+          "slug": "census-course-data-entry-four-critical-rules-101264307",
+          "title": "Four Critical Rules",
+          "position": 1,
+          "image": "/training/assets/default_header_8-c820fbb7814a182287963d1131e398cbf0067684847665770d155f64f069789f.jpg",
+          "audio": [],
+          "attachments": [],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "These rules are critical for accurate, consistent data entry. Your Shift Lead will go over them at the beginning of your shift."
+            },
+            {
+              "type": "paragraph",
+              "text": "1. Do not guess. Ask questions anytime! The Shift Lead and fellow Wizzes are excellent sources of information and expertise; rely on them. We must be able to ensure data reliability or nothing we do here at Census matters."
+            },
+            {
+              "type": "paragraph",
+              "text": "2. Accuracy is more important than speed. It is vital that the data on a sampling form be entered accurately and carefully. The focus should be on accurate data entry and frequent double-checking, not on maximizing typing speed and efficiency."
+            },
+            {
+              "type": "paragraph",
+              "text": "3. Save early and often. Power can be unreliable on playa, and crashing computers can cause problems. Regular file saves prevent frustration and data loss!"
+            },
+            {
+              "type": "paragraph",
+              "text": "4. Self-care is non-negotiable. This is still the desert, and both Wizzes and the Shift Lead have signed up for several hours of sitting. Drink water, stretch, have a snack, take a bio break if needed. The Census Lab has water and snacks available, too."
+            }
+          ],
+          "updatedAt": "2026-07-04T22:12:03Z"
+        },
+        {
+          "id": 101264308,
+          "slug": "census-course-data-entry-preparing-to-enter-data",
+          "title": "Preparing to Enter Data",
+          "position": 2,
+          "image": "/training/assets/default_header_9-526c01a8bc9398cff8c25e2432d3b3836bf0d1a6ecf75c71a802f10919117bcb.jpg",
+          "audio": [],
+          "attachments": [],
+          "blocks": [
+            {
+              "type": "heading",
+              "level": 1,
+              "text": "Creating Data Files"
+            },
+            {
+              "type": "paragraph",
+              "text": "A new data file needs to be created by each Wiz on each shift."
+            },
+            {
+              "type": "paragraph",
+              "text": "1. Find the Excel file on the desktop called “YOURNAME_DAY_SHIFT”"
+            },
+            {
+              "type": "paragraph",
+              "text": "2. Right click and copy the file"
+            },
+            {
+              "type": "paragraph",
+              "text": "3. Right click on the desktop and paste the copy"
+            },
+            {
+              "type": "paragraph",
+              "text": "4. Rename the file to reflect your first name or playa name, the day, and the shift. For example, if Sonder entered data on Tuesday morning, the file should be named, “Sonder_Tuesday_AM.” (Sometimes we have multiple shifts in one day, and it is critical to know which Wiz worked when! [That’s a tongue-twister right there…])"
+            },
+            {
+              "type": "heading",
+              "level": 1,
+              "text": "Data Collection Envelopes and Random Sampling Forms"
+            },
+            {
+              "type": "paragraph",
+              "text": "You’ll receive an envelope of data from your Shift Lead. Wait to start processing the data until you have received basic instructions, even if you have done data entry before. Each envelope contains all the forms collected in one lane on one shift (or on one BxB or one Airport shift). You’ll work on one open envelope at a time to avoid confusion and data contamination."
+            },
+            {
+              "type": "paragraph",
+              "text": "1. Observe the label affixed to the envelope. The label will tell you the:"
+            },
+            {
+              "type": "paragraph",
+              "text": "Shift date/time"
+            },
+            {
+              "type": "paragraph",
+              "text": "Lane number (on Gate shifts)"
+            },
+            {
+              "type": "paragraph",
+              "text": "Final clicker count (on Gate and Airport shifts)"
+            },
+            {
+              "type": "paragraph",
+              "text": "2. Open the envelope, being sure to leave 1 label intact, and sort the forms by clicker number. As you sort, observe the following:"
+            },
+            {
+              "type": "paragraph",
+              "text": "Shift and lane information on each form should match the envelope label"
+            },
+            {
+              "type": "paragraph",
+              "text": "Clicker number on each form should be a multiple of the shift’s interval number"
+            },
+            {
+              "type": "paragraph",
+              "text": "There should be one form for each person in every vehicle (except in the case of a full vehicle veto)"
+            },
+            {
+              "type": "paragraph",
+              "text": "The clicker number on the last form should match the final clicker count on the envelope label"
+            },
+            {
+              "type": "paragraph",
+              "text": "If any errors occurred during sampling, it’s important to know that before beginning data entry. Any questions or inconsistencies should be reported to the Shift Lead, as you review forms, before data entry begins."
+            }
+          ],
+          "updatedAt": "2026-07-04T22:12:03Z"
+        },
+        {
+          "id": 101264907,
+          "slug": "census-course-data-entry-random-sampling-form-101264907",
+          "title": "Random Sampling Form",
+          "position": 3,
+          "image": "/training/assets/9efd8a48-2025_Random_Sample_Form_v7_-_Print.1.jpeg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/9efd8a48-2025_Random_Sample_Form_v7_-_Print.1.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/ae1ede74-2025_Random_Sample_Form_v7_-_Print.2.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "This is the 2025 Form. The 2026 form may have different/modified questions but the other information will remain the same."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/9efd8a48-2025_Random_Sample_Form_v7_-_Print.1.jpeg",
+              "alt": "2025 Random Sample Form v7 - Print.1"
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/ae1ede74-2025_Random_Sample_Form_v7_-_Print.2.jpeg",
+              "alt": "2025 Random Sample Form v7 - Print.2"
+            }
+          ],
+          "updatedAt": "2026-07-04T22:12:03Z"
+        },
+        {
+          "id": 101264923,
+          "slug": "census-course-data-entry-how-to-enter-the-data",
+          "title": "How to Enter the Data",
+          "position": 4,
+          "image": "/training/assets/default_header_4-de4f3d8e600083d23109949668b79ee6f45ed38bb1de63dd002c537db52671a6.jpg",
+          "audio": [],
+          "attachments": [],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Data Entry Spreadsheet"
+            },
+            {
+              "type": "paragraph",
+              "text": "● Each column you add to the spreadsheet represents one random sampling form."
+            },
+            {
+              "type": "paragraph",
+              "text": "○ There are two exceptions to this: Columns A and B, which provide instructions about what data to enter and how to enter it. You will start your data entry in Column C."
+            },
+            {
+              "type": "paragraph",
+              "text": "● Missing information should always be represented with a single period, so it is clear to anyone looking at the spreadsheet that you checked for data and didn’t find any. (Otherwise, it is impossible to tell at a glance whether there was no data in the form, or whether you simply overlooked a question.)"
+            },
+            {
+              "type": "paragraph",
+              "text": "● Color coding:"
+            },
+            {
+              "type": "paragraph",
+              "text": "○ The data entry template has some permanent color coding:"
+            },
+            {
+              "type": "paragraph",
+              "text": "■ Cells with a pale orange background correspond to information in the box on the sampling form labeled, “A Census Volunteer Will Complete This Section”"
+            },
+            {
+              "type": "paragraph",
+              "text": "■ Cells with a white background correspond to a participant’s demographic data"
+            },
+            {
+              "type": "paragraph",
+              "text": "■ Cells with a bright green background contain general instructions for the document"
+            },
+            {
+              "type": "paragraph",
+              "text": "○ Data entry cells also have some conditional color coding programmed into the template:"
+            },
+            {
+              "type": "paragraph",
+              "text": "■ Cells that turn yellow are unusual situations that should be double-checked, just to make sure the entry was not an error."
+            },
+            {
+              "type": "paragraph",
+              "text": "■ Cells that turn dark orange are almost certainly errors (entries that do not make logical sense). If you are 100% sure that the entry is not an error show the Shift Lead and have the issue reported so the template can be fixed."
+            },
+            {
+              "type": "paragraph",
+              "text": "● Multiple choice questions are represented with one number for each option selected, with each option’s number corresponding to its position in the list of options. Numerical options should be listed from largest to smallest."
+            },
+            {
+              "type": "paragraph",
+              "text": "○ For example, for the question “How many times have you attended a Regional Burning Man gathering?” the answer options are Never (1, because it’s the first option), Once (2), and Multiple times (3)"
+            },
+            {
+              "type": "paragraph",
+              "text": "○ If a participant selects more than one option, list all corresponding numbers in order - e.g., “31” if the respondent selected both Never and Multiple times."
+            },
+            {
+              "type": "paragraph",
+              "text": "○ There is one important exception to this, see the next item:"
+            },
+            {
+              "type": "paragraph",
+              "text": "● Many questions include an “Other” option, plus a line to write in an answer not provided in the multiple choice list. Most of the time if “other” is selected, you should type in the entry that was written rather than the number that corresponds to “Other” on the form. However, a few steps should be taken first:"
+            },
+            {
+              "type": "paragraph",
+              "text": "○ Check to see if “other” was selected in error. Occasionally, it happens when someone didn’t read the options carefully."
+            },
+            {
+              "type": "paragraph",
+              "text": "■ For example, people sometimes write “Nevada” under “Other States” in the question about current residence, even though “Nevada” is provided as option 1. In this case, type “1” instead of typing “Nevada.”"
+            },
+            {
+              "type": "paragraph",
+              "text": "■ Be very careful with this sort of correction! It is easy to make incorrect assumptions that could skew our data. If you are not absolutely certain what the participant meant by their write-in entry, they should type in the answer exactly as written."
+            },
+            {
+              "type": "paragraph",
+              "text": "○ Check to see if other options were selected in addition to “other.” For example, if someone answers the race/ethnicity question by selecting both Asian (2) and Other (8) and writes in “Slavic” you should type “2slavic.”"
+            },
+            {
+              "type": "paragraph",
+              "text": "○ If you are working on Question 2 (place of residence), the process is slightly different. The points above still apply, but also see Tricky Questions below for detailed instructions."
+            },
+            {
+              "type": "paragraph",
+              "text": "When you finish entering all of the data from one envelope, put the forms back into that envelope and ask your Shift Lead for a completion label. You will need to fill out the required information on the label before giving the envelope to your Shift Lead."
+            },
+            {
+              "type": "paragraph",
+              "text": "Your Shift Lead will give you a new envelope of data. If the shift is almost over, you should not open a new envelope - it is important that each envelope be processed during a single data entry shift, to prevent confusion. In this case your Shift Lead may ask you to take some forms from another Data Entry Wiz. If this happens, you enter the data on your own spreadsheet and both Wizzes names go on the completion label."
+            }
+          ],
+          "updatedAt": "2026-07-04T22:12:03Z"
+        },
+        {
+          "id": 101265184,
+          "slug": "census-course-data-entry-additional-important-considerations",
+          "title": "Additional Important Considerations",
+          "position": 5,
+          "image": "/training/assets/default_header_5-c2b477a36512c3a4627ed52ccbc0e62f4fb4a5e010a2da6c65979aa5b4c816ac.jpg",
+          "audio": [],
+          "attachments": [],
+          "blocks": [
+            {
+              "type": "heading",
+              "level": 1,
+              "text": "Troubleshooting"
+            },
+            {
+              "type": "paragraph",
+              "text": "Beware of “Wiz Autopilot Syndrome,” especially with Shift Numbers:"
+            },
+            {
+              "type": "paragraph",
+              "text": "It can be easy to go on “autopilot,” since each shift collects a lot of data and each envelope contains forms from the same shift. When you get a new envelope, be careful to enter the new shift number and/or lane number instead of the old one. It may be helpful to get up and stretch for a minute to clear your head."
+            },
+            {
+              "type": "heading",
+              "level": 1,
+              "text": "Tricky Questions"
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Question 2 - Where do you usually reside?"
+            },
+            {
+              "type": "paragraph",
+              "text": "○ Because there are two different “Other” options in this question, you need to specify where the write-in answer was provided. For write-in answers, include both the number and the write-in answer (e.g., “3oregon” or “5france”). If they chose 3 or 5 but didn't write in an answer, type 3x or 5x."
+            },
+            {
+              "type": "paragraph",
+              "text": "○ Some participants select 5, “Outside of the US - Other” when they should have selected 3, “US - Other State.” If there is absolutely zero ambiguity, you should make the correction."
+            },
+            {
+              "type": "paragraph",
+              "text": "○ You must be very conservative about this, because most of us are not geography experts. Remember, “Georgia” is both a country and a US state. In this case, a correction would only be appropriate if the participant wrote “Atlanta, Georgia, US” or something similar."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Question 6 - Race/Ethnicity"
+            },
+            {
+              "type": "paragraph",
+              "text": "○ Some participants may select more than one option. If so, list all numbers checked in numerical order highest to lowest. If they select “Other”, you don’t need to type the number 8 but type in the answer they wrote in (if they chose 8 and didn’t write an answer, type 8x)."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Question 10 - Ticket source"
+            },
+            {
+              "type": "paragraph",
+              "text": "○ The ticket source question confuses some participants. Enter their answers just as they have been written, even if they seem contradictory."
+            },
+            {
+              "type": "heading",
+              "level": 1,
+              "text": "Wrapping up a Shift"
+            },
+            {
+              "type": "paragraph",
+              "text": "Your Shift Lead will give you a warning about 30 minutes before the shift ends. Another warning will be given 10-15 minutes before the shift ends. If you feel you won’t be able to finish the envelope you’re working on in that time let the Shift Lead know so some forms can be given to another Wiz."
+            },
+            {
+              "type": "paragraph",
+              "text": "When you’ve completed your data entry, save your data one last time and close the spreadsheet. Make sure the file name is correct (your name_day_AM or PM)."
+            },
+            {
+              "type": "paragraph",
+              "text": "If you have any questions after reviewing this guide, we will be happy to help you find the answers – please email censusvolunteercoordinators@burningman.org for assistance.",
+              "links": [
+                {
+                  "text": "censusvolunteercoordinators@burningman.org",
+                  "href": "mailto:censusvolunteercoordinators@burningman.org",
+                  "kind": "email"
+                }
+              ]
+            }
+          ],
+          "updatedAt": "2026-07-04T22:12:03Z"
+        }
+      ],
+      "quizzes": []
+    },
+    {
+      "id": 101264259,
+      "slug": "census-course-data-entry-data-entry-wiz-course-completion-confirmation",
+      "title": "Data Entry Wiz Course Completion Confirmation",
+      "position": 2,
+      "image": "/training/assets/c448cde0-Training_completion_button.png",
+      "audio": [],
+      "attachments": [
+        {
+          "name": "",
+          "href": "/training/assets/c448cde0-Training_completion_button.png"
+        }
+      ],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Thanks for volunteering with Census and completing this training. We can't wait to see you on playa and don't forget to have fun!"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "PLEASE CLICK THE BUTTON BELOW TO RECORD YOUR COMPLETION OF THIS COURSE."
+        },
+        {
+          "type": "paragraph",
+          "text": "You will be asked to log in using the same Burner Profile information you use for Hive. You will then be taken to your Census Volunteer Information Page, where this training requirement will be checked off your personal checklist."
+        },
+        {
+          "type": "image",
+          "src": "/training/assets/c448cde0-Training_completion_button.png",
+          "alt": ""
+        }
+      ],
+      "updatedAt": "2026-07-20T22:30:05Z",
+      "lessons": [],
+      "quizzes": []
+    }
+  ],
+  "counts": {
+    "sections": 2,
+    "lessons": 5,
+    "quizzes": 0,
+    "questions": 0
+  }
+}

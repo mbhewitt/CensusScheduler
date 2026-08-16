@@ -1,0 +1,2690 @@
+{
+  "slug": "random-sampling",
+  "spaceId": 23489231,
+  "title": "2026 Census Course: Random Sampling",
+  "titleFromHive": "2026 Census Course: Random Sam...",
+  "titleWasTruncatedInHive": true,
+  "summary": "For Random Samplers working Gate Road and the Airport.",
+  "sourceUrl": "https://hive.burningman.org/spaces/23489231/content",
+  "exportedAt": "2026-08-16T02:55:14.305Z",
+  "overview": {
+    "id": 100845508,
+    "slug": "census-course-random-sam-random-sampling-course-overview",
+    "title": "Random Sampling Course Overview",
+    "position": 1,
+    "image": "/training/assets/5bd00429-0007-Census-BRYearbook2022.jpg",
+    "audio": [],
+    "attachments": [
+      {
+        "name": "",
+        "href": "/training/assets/5bd00429-0007-Census-BRYearbook2022.jpg"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "heading",
+        "level": 4,
+        "text": "Welcome to the Census Random Sampling Course!"
+      },
+      {
+        "type": "paragraph",
+        "text": "We are glad you made it here! The Census Random Sampling Course continues where the Census Basics Course left off. Make sure to review the Census Basics Course before starting the Census Random Sampling Course.",
+        "links": [
+          {
+            "text": "Census Basics Course",
+            "href": "/training/basics",
+            "kind": "course"
+          }
+        ]
+      },
+      {
+        "type": "image",
+        "src": "/training/assets/5bd00429-0007-Census-BRYearbook2022.jpg",
+        "alt": ""
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "What You'll Get From Random Sampling Training"
+      },
+      {
+        "type": "paragraph",
+        "text": "Learn how to do Random Sampling (on Gate Road and at the Airport) on your own time and in the comfort of your home. Once you complete this class, you'll have all the information you need to take on this challenging and rewarding role!"
+      },
+      {
+        "type": "paragraph",
+        "text": "Test Your Skills: Each section ends with a quiz so you can see what areas you need to spend more time reviewing."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "How to Get the Most Out of Random Sampling Training"
+      },
+      {
+        "type": "paragraph",
+        "text": "We’re here to get results and we know you are too. Here’s the best way for each of us to get there:"
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "Read the material carefully, write down anything that you're unsure of or want to remember. You may want to review some sections more than once.",
+          "Ask Questions. Write down any questions you have as you go through the training. They may be answered in a later part of the training, and if not, you'll have a chance to ask them at the end. Your questions will be answered as soon as possible.",
+          "Take the quizzes seriously! If you get something wrong, consider re-reading that section before re-taking the quiz."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "You're a Part of Something Bigger"
+      },
+      {
+        "type": "paragraph",
+        "text": "By joining our Census Community, you’re also a member of the Burning Man Hive, our overarching community. You’ll be able to keep up with our activity both here and also in your main Burning Man Hive Activity Feed. Think about it as our own Facebook newsfeed with Course work and other activities all in one place!"
+      },
+      {
+        "type": "paragraph",
+        "text": "Let’s get started."
+      }
+    ],
+    "updatedAt": "2026-07-04T22:11:30Z"
+  },
+  "sections": [
+    {
+      "id": 100845509,
+      "slug": "census-course-random-sam-sampling-basics-roles-timeline-and-safety",
+      "title": "Sampling Basics: Roles, Timeline and Safety",
+      "position": 1,
+      "image": "/training/assets/default_header_10-890fb563acf29a72599952197f03937504db0f59f25b84895b429a363ddaa9ac.jpg",
+      "audio": [
+        {
+          "name": "Audio",
+          "src": "/training/assets/58c3a581-_course_overview.mp3"
+        }
+      ],
+      "attachments": [],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Use the link below to listen to an overview of this course:"
+        },
+        {
+          "type": "paragraph",
+          "text": "course overview.mp3",
+          "links": [
+            {
+              "text": "course overview.mp3",
+              "href": "/training/assets/58c3a581-_course_overview.mp3",
+              "kind": "asset"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "In this first section, we'll introduce you to the various sampling roles, give you a timeline of shifts, and go over important safety procedures."
+        },
+        {
+          "type": "paragraph",
+          "text": "NOTE: Most of this information is specific to sampling at Gate Road; however, at the end of each Lesson, we'll let you know what, if anything, is different for Airport Shifts."
+        }
+      ],
+      "updatedAt": "2026-07-04T22:11:30Z",
+      "lessons": [
+        {
+          "id": 100845510,
+          "slug": "census-course-random-sam-sampling-roles",
+          "title": "Sampling Roles",
+          "position": 1,
+          "image": "/training/assets/08f70be6-20230826_200250.jpg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/08f70be6-20230826_200250.jpg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/08f70be6-20230826_200250.jpg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "There are several key roles involved in each Gate Sampling Shift:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Data Beast Driver - Gets us where we need to go and supports Samplers and Traffic Tamers during sampling as needed.",
+                "Traffic Tamers (formerly Fun Interactors) - Silent performers who slow down and direct vehicles before the sampling point.",
+                "Random Samplers - Samplers interact directly with participants to collect data, asking those randomly selected to fill out our short sampling form.",
+                "Shift Leads - oversee all aspects of the shift making sure it runs smoothly. They are available for questions and to help with any issues which may arise. (NOTE: The FAQ at the end of this course has information on becoming a shift lead)."
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Airport: Airport samplers work individually one on one, with the randomly selected passenger directed to their desk. Traffic Tamers are only on Gate Shifts and the Data Beast is rarely used as transportation to your airport shift (there is a different transportation vehicle)."
+            }
+          ],
+          "updatedAt": "2026-07-04T22:11:30Z"
+        },
+        {
+          "id": 100845511,
+          "slug": "census-course-random-sam-shift-timeline",
+          "title": "Shift Timeline",
+          "position": 2,
+          "image": "/training/assets/b57fed83-IMG_4398.jpeg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/b57fed83-IMG_4398.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/b57fed83-IMG_4398.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Shifts last four hours including transportation to and from the Census Lab, to your sampling location, and your commissary meal.",
+                "Remember: please arrive to the Census Lab 10 minutes before the official start of your shift.",
+                "Everyone is transported together from the Census Lab, so it will not work for you to meet us at the sampling site or commissary.",
+                "When you arrive, check in with a Shift Lead who has a tablet to be sure you are credited for your shift.",
+                "Make sure you bring everything you will need for the whole shift. Some shifts span changes in temperature and daylight, be prepared!",
+                "Shift leads will announce when it is time to load up, please stay near the Census Lab lounge so you don’t miss this announcement.",
+                "Shift leads will run Skills Practice on the way to the sampling site.",
+                "Once you arrive at the sampling location, your shift lead will give you specific information about where to go and what to do.",
+                "We will spend approximately 90-105 minutes sampling.",
+                "Shift Leads are there to help you throughout your shift. Let them know if you have a question, are confused about anything, or if you need a break (to use the portos, refill water, or just get out of the sun & sit for a bit).",
+                "Shift Leads will let you know when sampling is done and it is time to load back up.",
+                "We will spend 10-15 minutes after sampling to organize the data, and ensure we leave no trace (more on this later).",
+                "Shifts also include a meal at the staff commissary. This may be at the start of the shift or the end, depending on the time of day. You must stay with the team and keep your lab coat on during meals to identify you are with BRC Census. There is no nudity permitted in Commissary (Nevada law), and nipples must be covered regardless of gender. This can be easily achieved by buttoning your lab coat while in Commissary.",
+                "All shifts end back at Census Lab. Please make sure you turn in all supplies to be used for future shifts, (check your lab coat pockets)."
+              ]
+            }
+          ],
+          "updatedAt": "2026-07-04T22:11:30Z"
+        },
+        {
+          "id": 100845513,
+          "slug": "census-course-random-sam-safety",
+          "title": "Safety",
+          "position": 3,
+          "image": "/training/assets/2a970a62-1718315329426.png",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/2a970a62-1718315329426.png"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Sampling on Gate Road means working among moving vehicles, which is dangerous work! The speed limit may be 10 mph, but not everybody obeys that, and many people coming in are exhausted, distracted, or not used to driving large vehicles/towing trailers, etc. Plus, the weather can be harsh, with fast-approaching dust storms reducing visibility sometimes to near-zero, you must stay vigilant and watch out for each other."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/2a970a62-1718315329426.png",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "Look at the picture above (click to enlarge if needed). You can see the ten lanes on Gate Road with a flag-line separating lanes 1-5 from 6-10. Due to traffic patterns we sample lanes 1-5 only (although this could change if traffic patterns do). The DataBeast is the vehicle parked outside the lanes, closest to Lane #1. You can see five teams of two standing in between the lanes by traffic cones, and a shift lead (with umbrella) watching from the side. Further down the lanes, you can see three Traffic Tamers also standing between the lanes near cones. This is the general set-up for a Gate Road Shift. Please read the following Safety Guidelines carefully, and refer to this picture as needed."
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Stay out of the flow of traffic! Stay to the sides of your lane, in front of the traffic cones whenever possible. If you must pass in front of a vehicle, always make eye contact with the driver before you cross and put a hand up to signal them to stop until you are clear. If you can talk to the driver before you move, tell them clearly what you plan to do and why.",
+                "Always cross the road at the point where the cones are, lane by lane, and always toward the side where the DataBeast is parked. There is no need to travel to the other side of Gate Road (by Lane #10) unless instructed to by a shift lead.",
+                "Let vehicles come to you! Vehicles should stop at the traffic cone closest to you at the sampling point, not before. Wave vehicles up to this point, and wait until they are stopped in the proper location before approaching. (If you walk forward to meet a vehicle, you will be out of sight of your Shift Lead.) Ask drivers to confirm that their vehicle is in “park” before approaching.",
+                "It is not safe to move forward or backward along Gate Road while in or between the lanes. If you need to get to a different part of Gate Road (for example, where the Traffic Tamers are standing), cross out of the traffic lanes (as described above) to the side of the road where the DataBeast is parked, then walk down to where the Traffic Tamers are, and then carefully walk back out into the lanes, following the same safety procedures,",
+                "Stay visible! We provide reflective gear and light towers for night shifts, but you must have your own personal lighting as well. If conditions impede visibility too much, your Shift Leads may ask you to move to the side of the road.",
+                "Eyes front! While drivers sometimes do unexpected things, traffic will generally move from Gate toward Greeters. That means you should always face toward Gate, toward oncoming traffic. This sounds simple, but if a dust storm is blowing in your face, it is natural to turn away. Remember to not do this, and instead put on your goggles and dust mask!",
+                "Look out for protrusions! Many vehicles have equipment and/or decorations protruding from the sides or tops: mirrors, RV steps, etc., and things may protrude from any side of the vehicle, at any height. Never step across the tow hitch between a tow vehicle and its trailer.",
+                "Expect erratic driving! If a car refuses to stop, let them pass. Many oversized vehicles are operated by drivers who only do this once a year! Do not rely on drivers to know how large their rigs are or where you are in relation to the vehicle...also, don’t count on them to be attentive or well-rested.",
+                "Stay with your team members! Do not get into anyone’s vehicle. Stay close to the sampling point if you are a Random Sampler, or your assigned area if you are a Traffic Tamer.",
+                "Look out for each other! If you see something unsafe, warn nearby volunteers. Be as clear as possible (“on your right!,” “door opening!,” etc.) instead of words like “duck” or “move”. Please don’t use words like “duck” or “move” in conversation or as a joke, and take them seriously if you hear them!",
+                "Be thoughtful about physical contact! This one’s just good manners. Also, if you startle your partner while trying to pull them away from a moving vehicle, they could move toward the vehicle instead.",
+                "No distractions! It is prohibited to use any personal devices such as cell phones during your sampling shift, especially within the lanes.",
+                "Finally, it is obviously not ok to show up drunk or otherwise altered to any Census shift, but on a Gate Sampling shift you would be putting your and other people's safety in direct jeopardy. If you appear unable to function in a safe manner, you will be removed from the shift and potentially banned from volunteering with Census in the future."
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Airport: Most of the above does not apply. Airport shifts are not in the path of vehicle traffic. We sample people after they have disembarked and are moving through the airport."
+            }
+          ],
+          "updatedAt": "2026-07-19T21:31:44Z"
+        }
+      ],
+      "quizzes": [
+        {
+          "id": 100845515,
+          "slug": "census-course-random-sam-quiz-1",
+          "title": "Quiz #1",
+          "position": 4,
+          "image": "/training/assets/486468b4-IMG_4476.jpeg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/486468b4-IMG_4476.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/486468b4-IMG_4476.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "You must answer all questions correctly to move on to the next section; however, you can take the quiz as many times as you need to,"
+            }
+          ],
+          "updatedAt": "2026-07-04T22:11:30Z",
+          "questions": [
+            {
+              "id": 100845516,
+              "text": "In which of the following location(s) does BRC Census NOT conduct random sampling?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407601,
+                  "text": "At Census Lab",
+                  "correct": true
+                },
+                {
+                  "id": 6407602,
+                  "text": "On Gate Road",
+                  "correct": false
+                },
+                {
+                  "id": 6407603,
+                  "text": "At Black Rock City Airport",
+                  "correct": false
+                },
+                {
+                  "id": 6407604,
+                  "text": "On some Burner Express Buses",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845520,
+              "text": "How do you get to the Sampling Point where data will be collected?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407616,
+                  "text": "Ride your bike or walk",
+                  "correct": false
+                },
+                {
+                  "id": 6407617,
+                  "text": "Report to the Census Lab, where a transport vehicle will be waiting",
+                  "correct": true
+                },
+                {
+                  "id": 6407618,
+                  "text": "Get a ride out with DPW (for Airport sampling) or Gate (for Gate sampling)",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845521,
+              "text": "When should you arrive for a Random Sampling shift?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407619,
+                  "text": "At the start time of the shift",
+                  "correct": false
+                },
+                {
+                  "id": 6407620,
+                  "text": "10 minutes before the start time",
+                  "correct": true
+                },
+                {
+                  "id": 6407621,
+                  "text": "30 minutes before the start time",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845517,
+              "text": "Why is it important to face toward Gate at all times during a sampling shift on Gate Road?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407605,
+                  "text": "So you can see what Gate is doing",
+                  "correct": false
+                },
+                {
+                  "id": 6407606,
+                  "text": "So you can see the shift leads at all times",
+                  "correct": false
+                },
+                {
+                  "id": 6407607,
+                  "text": "So you can keep your eyes on moving traffic",
+                  "correct": true
+                },
+                {
+                  "id": 6407608,
+                  "text": "So you aren't looking into a dust storm",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845522,
+              "text": "Shift Leads check in with sampling volunteers regularly throughout the shift. Which ONE thing will they NOT do during those check-ins?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407622,
+                  "text": "Arrange water or bathroom breaks for volunteers",
+                  "correct": false
+                },
+                {
+                  "id": 6407623,
+                  "text": "Answer questions as needed",
+                  "correct": false
+                },
+                {
+                  "id": 6407624,
+                  "text": "Make sure volunteers are staying safe",
+                  "correct": false
+                },
+                {
+                  "id": 6407625,
+                  "text": "Have you radio the Census Lab",
+                  "correct": true
+                },
+                {
+                  "id": 6407626,
+                  "text": "Replenish supplies as needed",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845518,
+              "text": "Which of the following is true about clothing at the Staff Commissary?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407609,
+                  "text": "Men can be topless, but women must keep their nipples covered",
+                  "correct": false
+                },
+                {
+                  "id": 6407610,
+                  "text": "There is no nudity permitted, and everyone must have nipples covered, regardless of gender",
+                  "correct": true
+                },
+                {
+                  "id": 6407611,
+                  "text": "You can take your lab coat off while at Commissary",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845519,
+              "text": "Which item below is NOT  included in the list of guidelines for safe behavior around vehicles on Gate Road:",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407612,
+                  "text": "Ask drivers to put their vehicle is in \"park\"",
+                  "correct": false
+                },
+                {
+                  "id": 6407613,
+                  "text": "Stay in the \"safe zone\" near the traffic cones between lanes",
+                  "correct": false
+                },
+                {
+                  "id": 6407614,
+                  "text": "Try to make eye contact with drivers when crossing lanes",
+                  "correct": false
+                },
+                {
+                  "id": 6407615,
+                  "text": "Have my cell phone on me at all times",
+                  "correct": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 100845523,
+      "slug": "census-course-random-sam-sampling-procedure",
+      "title": "Sampling Procedure",
+      "position": 2,
+      "image": "/training/assets/default_header_4-de4f3d8e600083d23109949668b79ee6f45ed38bb1de63dd002c537db52671a6.jpg",
+      "audio": [],
+      "attachments": [],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "This is the heart of what we do -- collecting data! It can seem confusing at first, but remember you'll have a partner and several shift leads on hand to answer any questions or help with any issues that might arrive."
+        }
+      ],
+      "updatedAt": "2026-07-04T22:11:30Z",
+      "lessons": [
+        {
+          "id": 100845526,
+          "slug": "census-course-random-sam-your-sample-team-and-materials",
+          "title": "Your Sample Team and Materials",
+          "position": 1,
+          "image": "/training/assets/c4ceceea-1715815824806.png",
+          "audio": [
+            {
+              "name": "Audio",
+              "src": "/training/assets/2596875d-bagmaterials.mp3"
+            }
+          ],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/c4ceceea-1715815824806.png"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Samplers work in pairs:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Each team is assigned to a numbered traffic lane",
+                "Newer samplers are paired with more experienced ones so if you're new, your partner can help.",
+                "You can divide the work as you want, but generally, it works best if one person is in charge of talking to the participants, while handing them forms and pencils. The other is filling out the tops of the forms and keeping them organized. Either person can also be in charge of the clicker, based on the samplers preference. You can switch roles during the shift or not. This should be worked out between teammates. Work together to cross check the accuracy of the forms.",
+                "The sampling location has portos, shade (not in the lanes, but available on breaks), and water refills."
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Sampling bags:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Each team of two will be provided with bags marked with their lane number (example: 2a and 2b). Each bag contains the following:",
+                "A clicker: used to count and keep track of the vehicles sampled. Test your clicker ahead of time, and request a replacement if it does not work well. DO NOT reset your clicker at the end of your shift, until after you have reported your clicker number to your Shift Leads.",
+                "Sampling forms and pencils: Random Samplers fill out the top part of each form, and the Burners selected for sampling fill out the rest. The informed consent statement for our research is included on the top of the form.",
+                "Interval card: to help with vehicle counting.",
+                "A card with an example of the sampling script.",
+                "Stickers for participants.",
+                "Data Sheets from the previous year if available.",
+                "Extra supplies are kept on the Data Beast; let your shift lead know if you're running low on anything (pencils, forms. stickers) and they can bring you more.",
+                "Use the link below if you'd like to listen to an audio clip of this information",
+                "bagmaterials.mp3"
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Airport: Working in pairs does not apply; you may share a desk space with another sampler but you will work independently. Additionally, your Shift Lead will count the passengers, so you will not be using a clicker."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/c4ceceea-1715815824806.png",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "What to bring yourself was covered under the Basics Course. Remember, for Gate Road Shifts, closed-toed shoes are essential."
+            }
+          ],
+          "updatedAt": "2026-07-04T22:11:30Z"
+        },
+        {
+          "id": 100845527,
+          "slug": "census-course-random-sam-sampler-script",
+          "title": "Sampler Script",
+          "position": 2,
+          "image": "/training/assets/5e1a3151-Census_Lanes_Sunrise.jpg",
+          "audio": [
+            {
+              "name": "Audio",
+              "src": "/training/assets/f8b95d1b-script.mp3"
+            }
+          ],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/5e1a3151-Census_Lanes_Sunrise.jpg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/5e1a3151-Census_Lanes_Sunrise.jpg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "This is a brief \"speech\" you (or your partner) will give to every vehicle or airport passenger that is being sampled. An example is below (and included in the sampling bag) but you are encouraged to make it your own so it sounds more natural. Shift leads will have you practice while being transported to Gate Road or Airport. You should take a few minutes to read it aloud and give some thought on how to personalize it. A well-rehearsed and informative script has a strong effect on how many people will agree to participate!"
+            },
+            {
+              "type": "paragraph",
+              "text": "NOTE: At the end of this training we will ask you to upload a short video of yourself reciting your sampling script. Details on how to do this and a form to use are in the very last section (Summary and What's Next)."
+            },
+            {
+              "type": "paragraph",
+              "text": "There are a few KEY words and phrases that MUST be included:"
+            },
+            {
+              "type": "paragraph",
+              "text": "1. Please put your vehicle in PARK. (This is for everyone's safety.)"
+            },
+            {
+              "type": "paragraph",
+              "text": "2. The words VOLUNTARY and CONFIDENTIAL (This is part of the informed consent, which is vital in any research involving human subjects)."
+            },
+            {
+              "type": "quote",
+              "text": "Hello, welcome home! Please put your vehicle in PARK. We are the Black Rock City Census. Your vehicle has been randomly selected to participate in our voluntary and confidential nine-question survey. Isn't that exciting? Participation is voluntary, and you may choose to skip any question you do not want to answer. No identifying information will be collected. Are you willing to participate?"
+            },
+            {
+              "type": "paragraph",
+              "text": "You will then hand a form and pencil to each person who has agreed to be sampled. Confirm the number of people in the vehicle to be sure no one is left out, especially if it's a large vehicle such as an RV."
+            },
+            {
+              "type": "quote",
+              "text": "How many of you are in the car? <Hand them the forms and pencils> Please fill out this questionnaire front and back, starting with the question “what is the year of your birth.” Your participation is crucial to creating an accurate description of the people who attend Burning Man."
+            },
+            {
+              "type": "paragraph",
+              "text": "When they're done, collect the forms and pencils, and give them stickers and thank them for their participation."
+            },
+            {
+              "type": "quote",
+              "text": "<collect forms and pencils> <hand them stickers > Thank you, but this is just the beginning! Please go online after the burn to complete the full Census Survey. This sticker will remind you. The Greeters are next. Have a great Burn!"
+            },
+            {
+              "type": "paragraph",
+              "text": "Here is an audio file of a volunteer reading the script. ( NOTE: this is from a few years back, and it doesn't include putting the vehicle in PARK)."
+            },
+            {
+              "type": "paragraph",
+              "text": "script.mp3"
+            },
+            {
+              "type": "paragraph",
+              "text": "Once you have the forms back, fold them in half (to assist the data entry team, multiple forms from the same vehicle should be folded together) and place them back in your bag. Folding the forms also makes it easy to tell just by touch which forms in your bag are blank and which have been completed."
+            },
+            {
+              "type": "paragraph",
+              "text": "Airport: The first part is the same (minus put your vehicle in \"PARK\") and since you will be sampling only one individual at a time, you don't need to ask how many people to hand out forms."
+            }
+          ],
+          "updatedAt": "2026-07-08T08:03:36Z"
+        },
+        {
+          "id": 100845528,
+          "slug": "census-course-random-sam-three-essential-numbers",
+          "title": "Three Essential Numbers",
+          "position": 3,
+          "image": "/training/assets/7bb88710-Copy_RS_working_as_Team_shows_form___bags.jpg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/7bb88710-Copy_RS_working_as_Team_shows_form___bags.jpg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "There are three numbers you will need in order to be an effective sampler:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Lane Number: Your Shift Leads assign each sampling team a lane number at the beginning of the shift. Memorize your lane number when it is assigned so you know where your team will be working. Your sampling bag number should correspond with your lane assignment.",
+                "Interval Number: The sampling interval of vehicles for each lane used by every sampling team for the duration of the shift (For example, if the interval number is 2, you will sample every second car (2,4,6,8 etc). This number will be announced after arrival at the sampling location.",
+                "Clicker Number: Used to maintain vehicle count for the duration of sampling. Click every vehicle, whether they will be sampled or not, unless they are to be ignored. (More on that in the following section.)",
+                "NOTE: If you sampled before 2023, the Skip Number is no longer in use."
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Airport -- There is still an interval number, but the shift leads do the clicking, and there is no lane number."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/7bb88710-Copy_RS_working_as_Team_shows_form___bags.jpg",
+              "alt": ""
+            }
+          ],
+          "updatedAt": "2026-07-04T22:11:30Z"
+        },
+        {
+          "id": 100845530,
+          "slug": "census-course-random-sam-counting-vehicles",
+          "title": "Counting Vehicles",
+          "position": 4,
+          "image": "/training/assets/00de5328-Census_Lanes_2.jpg",
+          "audio": [
+            {
+              "name": "Audio",
+              "src": "/training/assets/e573ed3c-Non-Sampled_Vehicles.mp3"
+            }
+          ],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/00de5328-Census_Lanes_2.jpg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "One team member will have a clicker to count vehicles as they pass the sampling point. Advance the clicker for every car that passes. If they aren’t supposed to be sampled, wave them through (but still click that clicker). Never sample a non-sampled vehicle or passenger, even if they ask! If they stop anyway, briefly explain that they haven't been selected for sampling, and feel free to give out stickers and a data sheet to those interested. Here is an audio file with more information:"
+            },
+            {
+              "type": "paragraph",
+              "text": "Non-Sampled Vehicles.mp3If a vehicle's clicker number matches a multiple of the interval number, have them stop at the cone where you are standing, ask them to put their vehicle in “park” and proceed with the script.",
+              "links": [
+                {
+                  "text": "Non-Sampled Vehicles.mp3",
+                  "href": "/training/assets/e573ed3c-Non-Sampled_Vehicles.mp3",
+                  "kind": "asset"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Example: You and your sampling partner are assigned lane 4 and the interval number for the shift is 3. When you and your partner arrive in lane 4, you begin to advance your clicker as the 1st vehicle passes, so the 2nd vehicle you see brings you to clicker number 2, and so on. You do not sample either of these vehicles, even though they are counted on your clicker. The 3rd vehicle you see brings your clicker to 3, which is your shift’s interval number. This is the first vehicle you sample on your shift. After that, you continue to sample the vehicles corresponding to clicker number 6, 9, 12, etc. (all the multiples of 3) until your shift is over."
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "THE EXCEPTIONS:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Vehicles to Ignore: There are a few vehicles which we neither sample nor count on the clicker. Instead, act as though these vehicles DON’T EXIST.\nBurner Expresses buses (almost never on gate road; they use another entrance)\nLaw Enforcement Vehicles\nWater Trucks",
+                "Passengers to Ignore: These are people who should not be sampled. If the entire vehicle contains people to ignore, then you should ignore the entire vehicle; however, you may have already clicked your clicker, since it will not be apparent from looking at the vehicle. In this case, wave the vehicle through and sample the next vehicle without advancing the clicker (so that the sampled vehicle matches a multiple of the interval number). Passengers to ignore will likely tell you that they belong to one of these categories, but if they do not, it is not necessary to ask. Simply sample them as you normally would. \nVendors (people driving in materials for others and who are not attending the event). \nGate or Box Office crew returning from shift \nReturnees (people who have already entered Back Rock City previously this year, then left, and are now entering again).",
+                "NOTE: Burning Man staff and volunteers arriving for the first time ARE eligible for sampling, and should be treated the same as every other participant."
+              ]
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/00de5328-Census_Lanes_2.jpg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "Airport: The next section covers the procedure when sampling at the airport."
+            }
+          ],
+          "updatedAt": "2026-07-04T22:11:30Z"
+        },
+        {
+          "id": 100845531,
+          "slug": "census-course-random-sam-airport-sampling",
+          "title": "Airport Sampling",
+          "position": 5,
+          "image": "/training/assets/b84b2f8b-IMG_3024.jpeg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/b84b2f8b-IMG_3024.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/3cec91a7-1716806352335.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/8fc3f1ad-1717272251206.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/b84b2f8b-IMG_3024.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "As passengers exit the aircraft and get past the Box Office & Customs, the shift leads will count them and hand those who have been selected to be sampled a numbered card (interval card). They will then direct those passengers to one of the volunteers stationed at a desk like the one pictured above. When a passenger arrives at your desk, they'll give you their interval card. Keep the card to be put back in numerical order for future shifts."
+            },
+            {
+              "type": "paragraph",
+              "text": "You will then give them your sampling speech, and if they agree to participate you'll hand them a form to fill out. (NOTE: There are 2 additional questions Airport passengers are asked to complete on the survey.) When they are done you'll take the form back from them and place it in your materials bag. Finally, give them a sticker, remind them to fill out the online Census after the burn, and send them on their way to Greeters!"
+            },
+            {
+              "type": "paragraph",
+              "text": "There are also passengers to ignore, just like there are vehicles to ignore. Generally it will be up to shift leads to ignore these people and not hand them an interval card. However, it may not be apparent that they fall into one of the categories we ignore, so they could wind up at your desk, and either let you know or you could notice something the shift lead missed. In this case don't sample them but save the interval card separately to give to a shift lead when it slows down or at the end of your shift, (More on this situation will be in the next section on filling out the forms)."
+            },
+            {
+              "type": "paragraph",
+              "text": "Airport Passengers to Ignore:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Pilots not entering Burning man",
+                "Returnees (already entered once during this burn)",
+                "vendors",
+                "law enforcement officers",
+                "airport & box office crew"
+              ]
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/3cec91a7-1716806352335.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/8fc3f1ad-1717272251206.jpeg",
+              "alt": ""
+            }
+          ],
+          "updatedAt": "2026-07-04T22:11:30Z"
+        },
+        {
+          "id": 100845544,
+          "slug": "census-course-random-sam-summary",
+          "title": "Summary",
+          "position": 7,
+          "image": "/training/assets/3581e389-IMG_3947.jpeg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/3581e389-IMG_3947.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/3581e389-IMG_3947.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "In this section, we reviewed the basics of Random Sampling. You learned what to bring to your shift, the important information you need to include in your script to each participant, and how to use the clicker to keep track of vehicles."
+            },
+            {
+              "type": "paragraph",
+              "text": "Next up, we're going to cover the Sampling form, including how to fill out the top section, and how to keep the forms organized."
+            }
+          ],
+          "updatedAt": "2026-07-04T22:11:30Z"
+        }
+      ],
+      "quizzes": [
+        {
+          "id": 100845532,
+          "slug": "census-course-random-sam-quiz-2",
+          "title": "Quiz #2",
+          "position": 6,
+          "image": "/training/assets/b3c03713-IMG_3910.jpeg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/b3c03713-IMG_3910.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/b3c03713-IMG_3910.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "You must answer all questions correctly to move on to the next section; however, you can take the quiz as many times as you need to,"
+            }
+          ],
+          "updatedAt": "2026-07-04T22:11:30Z",
+          "questions": [
+            {
+              "id": 100845542,
+              "text": "Which of the following do you NOT need to have for your sampling shift?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407661,
+                  "text": "Lab Coat",
+                  "correct": false
+                },
+                {
+                  "id": 6407662,
+                  "text": "Close-toed shoes",
+                  "correct": false
+                },
+                {
+                  "id": 6407663,
+                  "text": "Census badge",
+                  "correct": false
+                },
+                {
+                  "id": 6407664,
+                  "text": "Water bottle with water",
+                  "correct": false
+                },
+                {
+                  "id": 6407665,
+                  "text": "A pink and black outfit",
+                  "correct": true
+                }
+              ]
+            },
+            {
+              "id": 100845537,
+              "text": " When you interact with incoming participants selected for random sampling, you should:",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407642,
+                  "text": "Smile and ask them all about where they come from and how their trip was",
+                  "correct": false
+                },
+                {
+                  "id": 6407643,
+                  "text": "Smile, let them know who we are, why they’ve been stopped and ask if they’d be willing to participate",
+                  "correct": true
+                },
+                {
+                  "id": 6407644,
+                  "text": "Smile and just hand them the surveys, because the form is self-explanatory and we need to keep traffic moving",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845535,
+              "text": "What material(s) are NOT provided to Random Sampling teams at GATE for use during their shifts?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407633,
+                  "text": "A clicker to count vehicles",
+                  "correct": false
+                },
+                {
+                  "id": 6407634,
+                  "text": "A copy of the Random Sampling Guide",
+                  "correct": true
+                },
+                {
+                  "id": 6407635,
+                  "text": "Random Sampling Forms and pencils",
+                  "correct": false
+                },
+                {
+                  "id": 6407636,
+                  "text": "Stickers",
+                  "correct": false
+                },
+                {
+                  "id": 6407637,
+                  "text": "A copy of the sampling script",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845543,
+              "text": "Which of the following is NOT a vehicle to ignore (neither sample or click)",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407666,
+                  "text": "One with only Burning Man staff members inside arriving for the first time",
+                  "correct": true
+                },
+                {
+                  "id": 6407667,
+                  "text": "Law Enforcement Vehicles",
+                  "correct": false
+                },
+                {
+                  "id": 6407668,
+                  "text": "Water Trucks",
+                  "correct": false
+                },
+                {
+                  "id": 6407669,
+                  "text": "Burner Express Buses",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845540,
+              "text": "Which of the following is FALSE:",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407653,
+                  "text": "A lane number will be assigned to you at the start of the shift",
+                  "correct": false
+                },
+                {
+                  "id": 6407654,
+                  "text": "The interval number is determined by a Shift Lead and changes several times during each shift.",
+                  "correct": true
+                },
+                {
+                  "id": 6407655,
+                  "text": "The only vehicles that should be sampled are vehicles with a clicker number that is a multiple of your interval number.",
+                  "correct": false
+                },
+                {
+                  "id": 6407656,
+                  "text": "You should click vehicles even if they have not been selected for sampling (unless it's a vehicle to ignore)",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845536,
+              "text": "Which is a phrase that MUST be said when reciting your sampling script",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407638,
+                  "text": "\"voluntary and confidential\"",
+                  "correct": true
+                },
+                {
+                  "id": 6407639,
+                  "text": "There are questions on both sides of the page",
+                  "correct": false
+                },
+                {
+                  "id": 6407640,
+                  "text": "Every question has to be answered in order for the data to be usable",
+                  "correct": false
+                },
+                {
+                  "id": 6407641,
+                  "text": "Completed surveys can be dropped off later at Census Lab",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845538,
+              "text": "Which of the following is FALSE for Airport shifts?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407645,
+                  "text": "There is no lane number",
+                  "correct": false
+                },
+                {
+                  "id": 6407646,
+                  "text": "Shift Leads will do the counting / clicking",
+                  "correct": false
+                },
+                {
+                  "id": 6407647,
+                  "text": "Participants will hand you their interval card",
+                  "correct": false
+                },
+                {
+                  "id": 6407648,
+                  "text": "You don't need to use the sampling script",
+                  "correct": true
+                }
+              ]
+            },
+            {
+              "id": 100845539,
+              "text": "The interval number is three. Assuming vehicles not mentioned are clicked, which Vehicle would you click on, but not sample?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407649,
+                  "text": "The 9th vehicle to pass: An SUV with one passenger",
+                  "correct": false
+                },
+                {
+                  "id": 6407650,
+                  "text": "The 13th vehicle to pass: A car with parents and two children",
+                  "correct": true
+                },
+                {
+                  "id": 6407651,
+                  "text": "The 20th vehicle to pass: A law enforcement vehicle",
+                  "correct": false
+                },
+                {
+                  "id": 6407652,
+                  "text": "The 21st vehicle to pass: An RV full of fire performers",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845534,
+              "text": "If your interval number is 4, and you have just sampled vehicle number 16, what would the clicker number be for the next sampled vehicle?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407629,
+                  "text": "17",
+                  "correct": false
+                },
+                {
+                  "id": 6407630,
+                  "text": "18",
+                  "correct": false
+                },
+                {
+                  "id": 6407631,
+                  "text": "19",
+                  "correct": false
+                },
+                {
+                  "id": 6407632,
+                  "text": "20",
+                  "correct": true
+                }
+              ]
+            },
+            {
+              "id": 100845533,
+              "text": "True or false: each sampling team should clear their clicker as soon as the last vehicle goes by at the end of a shift",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407627,
+                  "text": "True",
+                  "correct": false
+                },
+                {
+                  "id": 6407628,
+                  "text": "False",
+                  "correct": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 100845545,
+      "slug": "census-course-random-sam-filling-out-the-sampling-form",
+      "title": "Filling out the Sampling Form",
+      "position": 3,
+      "image": "/training/assets/default_header_6-83bf10e1beb19f6de0f2cf99a92a0eeafcab7362c5efd3312f5213733a044658.jpg",
+      "audio": [],
+      "attachments": [],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "The top part of each sampling form will be filled out by a Census Volunteer (you or your partner). This section covers how to do that."
+        }
+      ],
+      "updatedAt": "2026-07-04T22:11:30Z",
+      "lessons": [
+        {
+          "id": 100845546,
+          "slug": "census-course-random-sam-form-entries-gate-part-1",
+          "title": "Form Entries, Gate - Part 1",
+          "position": 1,
+          "image": "/training/assets/83f8f96b-Screenshot_2024-05-15_at_8.08.32_PM.png",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/83f8f96b-Screenshot_2024-05-15_at_8.08.32_PM.png"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/2a788098-form_2.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/8bed20d5-form_2_2.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/d5d53781-form_2_3.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/83f8f96b-Screenshot_2024-05-15_at_8.08.32_PM.png",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "This is the top portion of the Random Sampling Form. It is from a prior year so the days/dates may not match with the current year. You or your teammate will fill out this portion for EACH passenger in every sampled vehicle. There a few sections you can fill out in advance (before a sampled car arrives) because it will be the same throughout that shift. These are covered in this lesson."
+            },
+            {
+              "type": "paragraph",
+              "text": "1. On the top row, circle \"Gate\":"
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/2a788098-form_2.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "2. Below that circle the date of the shift. The top row of numbers has the build week shifts and the second row has the event week shifts. Because so many people arrive on opening Sunday and Monday, there are two shifts on those days; an early one and a late one. Ask your shift lead if you aren't sure of the date or time."
+            },
+            {
+              "type": "paragraph",
+              "text": "Let's say you're working the Sunday August 25th 4-8am shift:"
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/8bed20d5-form_2_2.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "3. Next, circle the number of the lane to which you and your partner have been assigned. Let's say it was Lane 4:"
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/d5d53781-form_2_3.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "These items will remain the same throughout your shift (unless you are re-assigned to a new lane)."
+            },
+            {
+              "type": "paragraph",
+              "text": "Next, we'll review filling out the right side of the form."
+            }
+          ],
+          "updatedAt": "2026-07-04T22:11:30Z"
+        },
+        {
+          "id": 100845547,
+          "slug": "census-course-random-sam-form-entries-gate-part-2",
+          "title": "Form Entries, Gate - Part 2",
+          "position": 2,
+          "image": "/training/assets/a05cf9b3-form_2_4.jpeg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/a05cf9b3-form_2_4.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/0dc27405-form_2.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/db84bb82-form_2_2.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/ecebae04-form_2_3.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "The right side of the form is somewhat more complicated, and where most errors occur, so let's take it piece by piece."
+            },
+            {
+              "type": "paragraph",
+              "text": "1. Clicker #: this is where you enter the current clicker number for each sampled vehicle. If the interval number is 2, at the end of a shift you should have one or more forms for each multiple of two: 2,4,6,8, etc. up until the last car sampled. You should not have any forms with clicker numbers for unsampled cars (in this case 1,3,5, etc). Since you give a form to EACH passenger, you will have multiple forms for any vehicle with more than one occupant, which is why the next entry is important."
+            },
+            {
+              "type": "paragraph",
+              "text": "2. Person #: Here is where we keep track of how many passengers are in a specific vehicle. Let's say we have an interval of 2, and we are currently sampling vehicle #6, which has only one occupant. Your form should look like this:"
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/a05cf9b3-form_2_4.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "If there were three people in the vehicle, you would have three forms, which would look like this:"
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/0dc27405-form_2.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/db84bb82-form_2_2.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/ecebae04-form_2_3.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "This information makes it easy to ensure that no forms are missing when data entry begins. Since the data entry volunteer knows the interval number and the final car sampled, they'll know how many vehicles were sampled and will be expecting to find at least one form for each. And when they get to a specific clicker number they can see from your entry how many people were in that vehicle, and will be expecting to find a form for each person, labeled sequentially and folded together. If the forms don't match those expectations, it will be unclear whether there is data missing or if an error was made."
+            },
+            {
+              "type": "paragraph",
+              "text": "But what about those words in parentheses underneath? That's next."
+            }
+          ],
+          "updatedAt": "2026-07-04T22:11:30Z"
+        },
+        {
+          "id": 100845549,
+          "slug": "census-course-random-sam-form-entries-gate-part-3",
+          "title": "Form Entries, Gate - Part 3",
+          "position": 3,
+          "image": "/training/assets/b39595e5-form_2.jpeg",
+          "audio": [
+            {
+              "name": "Audio",
+              "src": "/training/assets/be82fd32-car_veto.mp3"
+            },
+            {
+              "name": "Audio",
+              "src": "/training/assets/df4dc99d-adult_veto.mp3"
+            },
+            {
+              "name": "Audio",
+              "src": "/training/assets/9d9add22-child_vetol.mp3"
+            },
+            {
+              "name": "Audio",
+              "src": "/training/assets/bdc53940-skip_car.mp3"
+            }
+          ],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/b39595e5-form_2.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/aefe257a-form_2_3_6.58.41_PM.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/194cb873-form_2_2.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/ea487e0c-form_2.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/06735536-form_2_2.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Now we're going to talk about Vetoes and Skipped Vehicles. There are some audio files included if you want to hear the information aloud."
+            },
+            {
+              "type": "paragraph",
+              "text": "A veto occurs when someone declines to be sampled. If there is only one person in a vehicle, or if everyone in a vehicle declines to be sampled, this is considered a \"Vehicle Veto,\" You only need to fill out one form for a Vehicle Veto, regardless of the number of passengers or whether they are adults or children. Your completed form will look like this:"
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/b39595e5-form_2.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "car veto.mp3",
+              "links": [
+                {
+                  "text": "car veto.mp3",
+                  "href": "/training/assets/be82fd32-car_veto.mp3",
+                  "kind": "asset"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "If there are multiple people on board and only some decline to be sampled, then you need to fill out a form for each person. There's nothing special you need to do for those that agree to be sampled, but for each person who declines, you must indicate that they were a veto by circling either \"Adult\" if they are over 18, or \"Child\" if they are 17 or younger. If you are uncertain of their age, it must be treated as an “Adult” Veto. We can not ask their age, since they have refused to complete the Survey. (More information about sampling children will be in a future lesson.)"
+            },
+            {
+              "type": "paragraph",
+              "text": "For example, if there are three people in a vehicle, and one adult declines to be sampled, your forms should look like this:"
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/194cb873-form_2_2.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/ea487e0c-form_2.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/aefe257a-form_2_3_6.58.41_PM.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "*NOTE: It doesn’t matter which of the 3 persons you circle Adult, as long as one of the sampling forms shows one of the 3 persons Vetoed."
+            },
+            {
+              "type": "paragraph",
+              "text": "Also, unless there is a veto, you will not circle whether a person is an adult or child as the first question on the form asks for year of birth."
+            },
+            {
+              "type": "paragraph",
+              "text": "adult veto.mp3",
+              "links": [
+                {
+                  "text": "adult veto.mp3",
+                  "href": "/training/assets/df4dc99d-adult_veto.mp3",
+                  "kind": "asset"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "child vetol.mp3",
+              "links": [
+                {
+                  "text": "child vetol.mp3",
+                  "href": "/training/assets/9d9add22-child_vetol.mp3",
+                  "kind": "asset"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Finally, there are skipped cars."
+            },
+            {
+              "type": "paragraph",
+              "text": "You may occasionally have to let a vehicle pass, even if you are supposed to sample it. This may happen if a vehicle passes you and you cannot stop them, if you accidentally miss one, or if traffic is heavily backed up on gate road, your Shift Lead may instruct you to skip one or more vehicles."
+            },
+            {
+              "type": "paragraph",
+              "text": "In all of these cases, advance your clicker as usual and do not disrupt your sampling interval. This is the cause of a common sampling error: sampling teams sometimes sample the vehicle directly after the one that was skipped, but this causes a discrepancy between the clicker number and the interval number. Instead, advance your clicker for the skipped car and continue clicking vehicles as usual and sample the next vehicle whose clicker number matches the multiple of your interval number."
+            },
+            {
+              "type": "paragraph",
+              "text": "For example, if the interval number is 2, and you have already sampled vehicles 2 and 4, and your shift lead tells you to skip the next car, you would proceed as follows: click for vehicles 5, 6, and 7, but wave them through. Continue sampling with vehicle 8. However, so it is clear to data entry volunteers that no forms are missing, you would still complete a form for vehicle 6, like this:"
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/06735536-form_2_2.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "NOTE: Ignoring a vehicle and skipping a vehicle are different things. Vehicles that are ignored are always ignored and you don't need to click or fill out a form. Skips are almost always at the discretion of shift leads and you need to both click and fill out a form."
+            },
+            {
+              "type": "paragraph",
+              "text": "skip car.mp3",
+              "links": [
+                {
+                  "text": "skip car.mp3",
+                  "href": "/training/assets/bdc53940-skip_car.mp3",
+                  "kind": "asset"
+                }
+              ]
+            }
+          ],
+          "updatedAt": "2026-07-04T22:11:30Z"
+        },
+        {
+          "id": 100845550,
+          "slug": "census-course-random-sam-form-entries-airport",
+          "title": "Form Entries: Airport",
+          "position": 4,
+          "image": "/training/assets/a2a7a9bd-form_2.jpeg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/a2a7a9bd-form_2.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/a2a7a9bd-form_2.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "For Airport Shifts, you will circle Airport at the top, the shift date (am/pm if applicable), and ignore the lane number."
+            },
+            {
+              "type": "paragraph",
+              "text": "For the Clicker #, you will enter the number on the interval card, which the participant will hand you when they arrive at the desk. Since people will be sent to different desks, you won't be sampling every person selected so there will be gaps in your Clicker number entries. For example, if the interval number is 2, you may get 2, followed by 8, followed by 12, etc."
+            },
+            {
+              "type": "paragraph",
+              "text": "You do not need to fill out the Person # section, as there will only be one person being sampled at a time. If the person agrees to be sampled, the card above has all the information you need to fill in."
+            },
+            {
+              "type": "paragraph",
+              "text": "If they decline to participate, you would also circle either Adult or Child under Person #. You will never need to use the Vehicle Veto."
+            },
+            {
+              "type": "paragraph",
+              "text": "Skips do occur at Airport, but most off the time, the shift leads will hold onto those interval cards, and assist you in filling out the Skip section when it slows down or at the end of your shift."
+            },
+            {
+              "type": "paragraph",
+              "text": "One exception is passengers to ignore, which we covered in a previous section. If a passenger to ignore does end up at your desk, they would be a \"skip.\" (This differs from Gate sampling procedure, which would be an “ignore” due to Airport Shift Leads handing out cards versus Gate Sampling Teams having their own clickers). If this happens, just hold on to their interval card separately from the others, and fill out a form for them as a skip whenever you have a chance. It will look just like the form above, with \"skip\" also circled."
+            },
+            {
+              "type": "paragraph",
+              "text": "Ready for a quiz?"
+            }
+          ],
+          "updatedAt": "2026-07-04T22:11:30Z"
+        },
+        {
+          "id": 100845568,
+          "slug": "census-course-random-sam-summary-100845568",
+          "title": "Summary",
+          "position": 6,
+          "image": "/training/assets/c7276754-IMG_3967.jpeg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/c7276754-IMG_3967.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/c7276754-IMG_3967.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "In this section you learned how to fill out the top section of the sampling form, including vetos and skips. Next we'll cover closing the shift."
+            }
+          ],
+          "updatedAt": "2026-07-04T22:11:30Z"
+        }
+      ],
+      "quizzes": [
+        {
+          "id": 100845551,
+          "slug": "census-course-random-sam-quiz-3",
+          "title": "Quiz #3",
+          "position": 5,
+          "image": "/training/assets/b462d464-20230826_200250.jpg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/b462d464-20230826_200250.jpg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/b462d464-20230826_200250.jpg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "You must answer all questions correctly to move on to the next section; however, you can take the quiz as many times as you need to."
+            },
+            {
+              "type": "paragraph",
+              "text": "Answer with the \"most correct\" answer. Some of the images have \"errors\" which won't affect the accuracy of the data, but do have unnecessary extra information added, and could be confusing."
+            }
+          ],
+          "updatedAt": "2026-07-16T00:10:03Z",
+          "questions": [
+            {
+              "id": 104631256,
+              "text": "Which of the pictured images has the correct form entires for a Gate Shift on the Tuesday of Event Week, for which you've been assigned to lane 5?  Google Form",
+              "image": "/training/assets/8ece76c1-Q3-1v2.PNG",
+              "choices": [
+                {
+                  "id": 6782089,
+                  "text": "A",
+                  "correct": false
+                },
+                {
+                  "id": 6782090,
+                  "text": "B",
+                  "correct": false
+                },
+                {
+                  "id": 6782091,
+                  "text": "C",
+                  "correct": true
+                }
+              ]
+            },
+            {
+              "id": 100845564,
+              "text": "If the interval number is 2 and the last car you sampled was #32, how many forms should you have at the end of your shift?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407711,
+                  "text": "32",
+                  "correct": false
+                },
+                {
+                  "id": 6407712,
+                  "text": "16",
+                  "correct": false
+                },
+                {
+                  "id": 6407713,
+                  "text": "There's no way to know in advance",
+                  "correct": true
+                },
+                {
+                  "id": 6407714,
+                  "text": "None",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 104631257,
+              "text": "Which of the pictured images has the correct form entires for a sampled car (vehicle # 16) with only one passenger, an adult male, who agrees to participate? Google Form",
+              "image": "/training/assets/3b40b6f3-Q3-2v2.PNG",
+              "choices": [
+                {
+                  "id": 6782092,
+                  "text": "A",
+                  "correct": false
+                },
+                {
+                  "id": 6782093,
+                  "text": "B",
+                  "correct": true
+                },
+                {
+                  "id": 6782094,
+                  "text": "C",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845562,
+              "text": "Imagine a scenario in which a vehicle has been selected for sampling and 3 of 4 occupants (all adults) have agreed to participate. How would you indicate the decision of the participant who declined?",
+              "image": "/training/assets/5b641139-IMG_0163.jpeg",
+              "choices": [
+                {
+                  "id": 6407705,
+                  "text": "One sampling form with Clicker #, Person # __ of __, for this participant, with \"Adult\" circled next to \"Veto\"",
+                  "correct": true
+                },
+                {
+                  "id": 6407706,
+                  "text": "No sampling form is necessary for a participant who has declined to participate",
+                  "correct": false
+                },
+                {
+                  "id": 6407707,
+                  "text": "One sampling form with clicker number, to represent the entire vehicle, with \"Vehicle Veto\" circled",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845558,
+              "text": "Imagine a scenario in which a vehicle has been selected for sampling and 2 of 3 occupants (all adults) have agreed to participate. For the person counter -- Person # _x_ of _y_, what number would you put in place of \"y?\"",
+              "image": "/training/assets/28c3efa7-IMG_0163.jpeg",
+              "choices": [
+                {
+                  "id": 6407692,
+                  "text": "0",
+                  "correct": false
+                },
+                {
+                  "id": 6407693,
+                  "text": "2",
+                  "correct": false
+                },
+                {
+                  "id": 6407694,
+                  "text": "3",
+                  "correct": true
+                }
+              ]
+            },
+            {
+              "id": 104631258,
+              "text": "Which of the pictured images does NOT belong in your form entries for a sampled car (#16) in which there were three adults, two of whom agreed to be sampled, and one declined? Google Form",
+              "image": "/training/assets/842bac4d-Q3-3v2.PNG",
+              "choices": [
+                {
+                  "id": 6782095,
+                  "text": "A",
+                  "correct": false
+                },
+                {
+                  "id": 6782096,
+                  "text": "B",
+                  "correct": false
+                },
+                {
+                  "id": 6782097,
+                  "text": "C",
+                  "correct": true
+                }
+              ]
+            },
+            {
+              "id": 100845554,
+              "text": "Imagine a scenario in which a vehicle has been selected for sampling, but ALL of the occupants have declined to participate. How would you indicate their decision?",
+              "image": "/training/assets/087cd174-IMG_0163.jpeg",
+              "choices": [
+                {
+                  "id": 6407678,
+                  "text": "Sampling forms are not necessary if participants decline to participate",
+                  "correct": false
+                },
+                {
+                  "id": 6407679,
+                  "text": "One sampling form with the clicker number to represent the entire vehicle, with \"Skip\" circled",
+                  "correct": false
+                },
+                {
+                  "id": 6407680,
+                  "text": "One sampling form with the clicker number to represent the entire vehicle, with \"Vehicle Veto\" circled",
+                  "correct": true
+                },
+                {
+                  "id": 6407681,
+                  "text": "One sampling form with the clicker number per participant, with \"Adult\" or \"Child\" circled next to \"Veto\"",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 104631259,
+              "text": "You've just finished working an Airport shift where the interval number was 2, when a shift lead tells you that person #20 (an adult) rushed by them without taking an interval card.  What should you do?",
+              "image": "/training/assets/8a7d1ce7-IMG_0163.jpeg",
+              "choices": [
+                {
+                  "id": 6782098,
+                  "text": "Nothing, because they weren't sampled.",
+                  "correct": false
+                },
+                {
+                  "id": 6782099,
+                  "text": "Fill out a form for Clicker # 20, and circle \"adult\" next to “Veto”",
+                  "correct": false
+                },
+                {
+                  "id": 6782100,
+                  "text": "Fill out a form for Clicker # 20 and circle \"skip\"",
+                  "correct": true
+                },
+                {
+                  "id": 6782101,
+                  "text": "Fill out a form for Clicker # 20 and circle \"vehicle veto\"",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 104631260,
+              "text": "Imagine a scenario in which a vehicle has been selected for sampling. There are 4 occupants, 2 who appear to be adults and 2 who are obviously children. Both adults and one child agree to participate. You give the participating occupants the forms labeled \"1 of 4,\"  \"2 of 4,\" and \"3 of 4\" in the People # section.  What would you put in that section for the non-participating child?",
+              "image": "/training/assets/b88f7345-IMG_0163.jpeg",
+              "choices": [
+                {
+                  "id": 6782102,
+                  "text": "\"0 of 4\" in the person counter, with \"Child\" circled next to \"Veto\"",
+                  "correct": false
+                },
+                {
+                  "id": 6782103,
+                  "text": "\"4 of 4\" in the person counter, with \"Child\" circled next to \"Veto\"",
+                  "correct": true
+                },
+                {
+                  "id": 6782104,
+                  "text": "\"0 of 4\" in the person counter, with \"Veto\" circled",
+                  "correct": false
+                },
+                {
+                  "id": 6782105,
+                  "text": "\"4 of 4\" in the person counter, with \"Veto\" circled",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 104631261,
+              "text": "The interval number is 2.  You have just sampled vehicle #12.  Your shift lead tells you to skip the next car.  What should you do for vehicle #15?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6782106,
+                  "text": "Don't click, don't sample, don't fill out a form",
+                  "correct": false
+                },
+                {
+                  "id": 6782107,
+                  "text": "Click, don't sample, don't fill out a form",
+                  "correct": true
+                },
+                {
+                  "id": 6782108,
+                  "text": "Click, don't sample, fill out a form",
+                  "correct": false
+                },
+                {
+                  "id": 6782109,
+                  "text": "Click, sample, fill out a form",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 104631262,
+              "text": "The interval number is 2.  You have just sampled vehicle #12.  Your shift lead tells you to skip the next car.  What should you do for vehicle #14?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6782110,
+                  "text": "Don't click, don't sample, don't fill out a form",
+                  "correct": false
+                },
+                {
+                  "id": 6782111,
+                  "text": "Click, don't sample, don't fill out a form",
+                  "correct": false
+                },
+                {
+                  "id": 6782112,
+                  "text": "Click, don't sample, fill out a form",
+                  "correct": true
+                },
+                {
+                  "id": 6782113,
+                  "text": "Click, sample, fill out a form",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 104631263,
+              "text": "The interval number is 2.  You have just sampled vehicle #12.  Your shift lead tells you to skip the next car.  What should you do for vehicle #16?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6782114,
+                  "text": "Don't click, don't sample, don't fill out a form",
+                  "correct": false
+                },
+                {
+                  "id": 6782115,
+                  "text": "Click, don't sample, don't fill out a form",
+                  "correct": false
+                },
+                {
+                  "id": 6782116,
+                  "text": "Click, don't sample, fill out a form",
+                  "correct": false
+                },
+                {
+                  "id": 6782117,
+                  "text": "Click, sample, fill out a form",
+                  "correct": true
+                }
+              ]
+            },
+            {
+              "id": 104631264,
+              "text": "The interval number is 2.  You have just sampled vehicle #12.  Your shift lead tells you to skip the next car.  What should you do for vehicle #13?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6782118,
+                  "text": "Don't click, don't sample, don't fill out a form",
+                  "correct": false
+                },
+                {
+                  "id": 6782119,
+                  "text": "Click, don't sample, don't fill out a form",
+                  "correct": true
+                },
+                {
+                  "id": 6782120,
+                  "text": "Click, don't sample, fill out a form",
+                  "correct": false
+                },
+                {
+                  "id": 6782121,
+                  "text": "Click, sample, fill out a form",
+                  "correct": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 100845569,
+      "slug": "census-course-random-sam-closing-the-shift",
+      "title": "Closing the Shift",
+      "position": 4,
+      "image": "/training/assets/24983337-oar2.jpg",
+      "audio": [],
+      "attachments": [
+        {
+          "name": "",
+          "href": "/training/assets/24983337-oar2.jpg"
+        }
+      ],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "A shift lead will tell you that the shift is about to end, and let you know if you should sample any more vehicles before safely crossing out of the traffic lanes and back to the DataBeast."
+        },
+        {
+          "type": "paragraph",
+          "text": "Once there, we will take some time to make sure all forms are filled out correctly and put in numerical order by clicker number, and if there was more than one passenger, the forms for that clicker number should also be placed in numerical order (e.g., 1 of 3, 2 of 3, 3 of 3.) To assist the Data Entry Team, Gate Sampling Forms from the same vehicle should be folded in half together. Like this:"
+        },
+        {
+          "type": "image",
+          "src": "/training/assets/24983337-oar2.jpg",
+          "alt": ""
+        },
+        {
+          "type": "paragraph",
+          "text": "Finally, we will put everything back where we found it at the site, and do a MOOP check to ensure we leave no trace."
+        },
+        {
+          "type": "paragraph",
+          "text": "If we didn't stop at commissary prior to sampling, we will head there next, and all shifts end back at the Census Lab. Please do not leave commissary on your own at the end of a shift (if you must for some reason, TELL A SHIFT LEAD so they don't waste everyone's time looking for you, and make sure you have all your possessions and have returned anything that belongs to Census)."
+        },
+        {
+          "type": "paragraph",
+          "text": "Once we arrive back at Census Lab, the shift is over and you are free to go. Again, make sure you don't leave any personal items behind, and return your lab coat if you borrowed one. If you brought your own, check the pockets to make sure you aren't leaving with any Census materials."
+        },
+        {
+          "type": "paragraph",
+          "text": "In the next section, we're going to cover some special circumstances and other miscellaneous (but important) topics."
+        }
+      ],
+      "updatedAt": "2026-07-14T14:23:34Z",
+      "lessons": [],
+      "quizzes": []
+    },
+    {
+      "id": 100845570,
+      "slug": "census-course-random-sam-special-circumstances",
+      "title": "Special Circumstances",
+      "position": 5,
+      "image": "/training/assets/default_header_1-e0875725cde0d3d24874c1666d012cac81ada10a679929dc22588c9a8d304839.jpg",
+      "audio": [],
+      "attachments": [],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Here is some information that didn't quite fit anywhere else, but it's important!"
+        }
+      ],
+      "updatedAt": "2026-07-04T22:11:30Z",
+      "lessons": [
+        {
+          "id": 100845571,
+          "slug": "census-course-random-sam-burners-who-decline",
+          "title": "Burners Who Decline",
+          "position": 1,
+          "image": "/training/assets/90007df8-IMG_3905.jpeg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/90007df8-IMG_3905.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/c9456d3a-Screenshot_2024-05-29_at_4.47.13_PM.png"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/90007df8-IMG_3905.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "We talked before about how to fill out the form when a person or persons decline to be sampled, but let's talk about how to handle that situation before marking a veto."
+            },
+            {
+              "type": "paragraph",
+              "text": "First of all, participation is strictly voluntary. It is NEVER appropriate to tease, pressure, or otherwise cause potential discomfort to a Burner who does not want to fill out the sampling form. However, if you think they might be receptive you can encourage them a bit:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Remind them that some data is better than no data, and they can leave any question blank.",
+                "Remind them that Census data plays a role in enabling Burning Man to receive permits each year and “participation” and “civic responsibility” are two of the Ten Principles.",
+                "Ask them to “give the gift” of their data, again referencing the Ten Principles (some people use this in their script, asking participants if they would like to \"gift\" us with their participation/data/time).",
+                "Many people are simply in a hurry to get to their camp (they may have been waiting hours at this point), so you can mention that it only takes 1-2 minutes to fill out, and/or add that there will be a wait at Greeters too and they aren't giving up their place in line.",
+                "If you think there may be a language/writing/visual/too tired challenge at the root of the refusal and you feel capable of assisting, you can offer to read the questions out loud and write their answers for them. It is also fine for people in the vehicle to help one another, so long as you feel confident that the information in the informed consent section is understood by everyone participating."
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "If they still say no after some gentle encouragement, let them go with a smile and some stickers!"
+            },
+            {
+              "type": "paragraph",
+              "text": "Here's a video of one our past volunteers going over this information:"
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/c9456d3a-Screenshot_2024-05-29_at_4.47.13_PM.png",
+              "alt": ""
+            }
+          ],
+          "updatedAt": "2026-07-04T22:11:30Z"
+        },
+        {
+          "id": 100845572,
+          "slug": "census-course-random-sam-sampling-children",
+          "title": "Sampling Children",
+          "position": 2,
+          "image": "/training/assets/1e5aeb2c-IMG_3934.jpeg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/1e5aeb2c-IMG_3934.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/1e5aeb2c-IMG_3934.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "If there are children in a vehicle, they need a parent or guardian's consent to participate. There is no minimum age limit on who can be sampled, although with younger children, a parent or guardian will need to fill out their form for them."
+            },
+            {
+              "type": "paragraph",
+              "text": "We can't ask people their ages, so if you're not sure, don't worry. If they agree to fill out the survey we'll have that information from the first question. If they decline, only mark a “child veto” if it's obvious they're under 18, or if someone else volunteers the info that they are a minor, otherwise mark it as an \"adult veto.\" (We can not ask their age, since they have refused to complete the Survey.)"
+            },
+            {
+              "type": "paragraph",
+              "text": "If a parent wishes to decline on behalf of their child, remind them that children are underrepresented in our sample and that children’s data is some of the most important data we collect. If they still choose not to answer, politely acknowledge their decision and continue to collect data from the other people in the vehicle or wave the vehicle through if the entire vehicle has declined."
+            },
+            {
+              "type": "paragraph",
+              "text": "Airport: If a minor is selected for sampling, their parent/guardian will likely accompany them to the desk and they must be the one to consent. If someone who could possibly still be a minor approaches alone, proceed as normal, and circle \"Adult\" if they decline to participate."
+            }
+          ],
+          "updatedAt": "2026-07-04T22:11:30Z"
+        },
+        {
+          "id": 100845573,
+          "slug": "census-course-random-sam-traffic-tamers",
+          "title": "Traffic Tamers",
+          "position": 3,
+          "image": "/training/assets/6d81d158-IMG_4471.jpeg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/6d81d158-IMG_4471.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/6d81d158-IMG_4471.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "Traffic Tamers (known as Fun Interactors prior to 2023) play an important role in keeping the shift running smoothly and safely. They have two main goals:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "To be highly visible and slow down approaching vehicles.",
+                "When possible and safe to do so; to direct traffic so that the lanes are evenly distributed at the sampling points. There is no need to make sure every lane has exactly the same number of cars."
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Traffic Tamers are silent performers who interact with vehicles, but not with the people in the vehicle. They operate in the lanes out in front of the samplers to generate curiosity and interest. This slows drivers down, making them more receptive to interacting with samplers and filling out our sampling form."
+            },
+            {
+              "type": "paragraph",
+              "text": "Traffic Tamers should be well-lit at night and are given props they can use to draw attention to themselves. This is a SILENT position, but one that rewards creativity and performance. Many Traffic Tamers like to dance or use the props in silly ways."
+            },
+            {
+              "type": "paragraph",
+              "text": "If a vehicle tries to stop to talk to you, do your best to wave them on, but if they insist, try to keep any interaction as brief as possible; and if they have questions not about Census, refer them to Greeters: \"Census has questions, Greeters have answers.\""
+            },
+            {
+              "type": "paragraph",
+              "text": "Safety Considerations:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Operate within the approved Traffic Tamer area.",
+                "Face oncoming traffic (towards Gate) at all times - even if you are talking to someone next to you or moving within your lane, you should be facing towards Gate (away from Greeters).",
+                "If you cannot see traffic 3+ cones ahead of you due to dust, move to the safe zone until conditions improve. The “safe zone” for Traffic Tamers is outside the Gate Road flags, on the same side of the road as the DataBeast vehicle. If conditions suddenly become so bad that you cannot safely move from your lane, stay between lanes near a sign (best), delineator (good), or traffic cone (okay).",
+                "Stay out of the path of vehicles exiting BRC! Exiting traffic sometimes moves in the last lane of Gate (pre-burn) and it sometimes moves outside the flag zone."
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "NOTE: It is important that traffic tamers know how to sample and vice versa, because if there is a shortage of volunteers we may need some people to switch roles."
+            },
+            {
+              "type": "paragraph",
+              "text": "Airport: there are no Traffic Tamers."
+            }
+          ],
+          "updatedAt": "2026-07-14T14:00:09Z"
+        },
+        {
+          "id": 100845574,
+          "slug": "census-course-random-sam-burners-with-additional-questions",
+          "title": "Burners with Additional Questions",
+          "position": 4,
+          "image": "/training/assets/172d53a2-0003-Census-BRYearbook2022.jpg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/172d53a2-0003-Census-BRYearbook2022.jpg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/172d53a2-0003-Census-BRYearbook2022.jpg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "The people you talk to may have questions for you, either about Census or about other things. Be polite, but remember that traffic needs to keep moving in order for our shift to run smoothly! If a participant has questions about BRC Census and/or the sampling process, you will need to try to find a good balance between being friendly and being efficient. Do your best to avoid holding up the line and delaying other participants. If they have concerns about the sampling form, flag down a Shift Lead for help, if needed."
+            },
+            {
+              "type": "paragraph",
+              "text": "As a general rule, you should avoid answering about anything other than the Census project - even if you are positive you know the answer to a question, please refer the questioner to the Greeters instead. For participants with a lot of questions, you can provide an additional resource by telling them how to find Census Lab once they’re in BRC. It is sometimes helpful to say something like, “That wasn’t covered in our training for this shift. I don’t want to give you an incorrect answer, but I can tell you where to go to find the answer to your question.”"
+            },
+            {
+              "type": "paragraph",
+              "text": "Remember, it is not the role of Census volunteers to give directions, give warnings about nearby law enforcement, or answer questions that are not pertinent to the sampling process. In some cases, you may choose to give a polite, appropriate safety reminder as a vehicle drives away (“remember the speed limit!,” “drive safely,” etc.). Outside of that, be polite, but stay on-topic - politely explain that you wouldn’t want to provide incorrect information by mistake, and emphasize the need to keep traffic moving and the presence of Greeters just ahead."
+            },
+            {
+              "type": "paragraph",
+              "text": "Airport: this all applies, minus references to traffic, driving safely, etc."
+            }
+          ],
+          "updatedAt": "2026-07-04T22:11:30Z"
+        },
+        {
+          "id": 100845575,
+          "slug": "census-course-random-sam-conflicts-during-a-shift",
+          "title": "Conflicts During a Shift",
+          "position": 5,
+          "image": "/training/assets/13bb2201-Copy_of_RS_working_with_vehicles.jpg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/13bb2201-Copy_of_RS_working_with_vehicles.jpg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "If you and your partner are having a disagreement that you can't resolve between yourselves, or if it is simply a personality mismatch, please let a shift lead know. They have training in conflict resolution, and can re-assign you to a new partner if needed. Sometimes one or both of you may just need a break."
+            },
+            {
+              "type": "paragraph",
+              "text": "If a Shift Lead gives you a direct instruction for any reason during your shift, please follow their instructions - even if you don’t understand the reason for the request. Remember, your Shift Lead may have information about a situation that you do not have. You may not feel that you need a break, but they may need to rotate samplers between positions in order to smooth out an issue or add a more experienced sampler to a pair. You may not see a safety hazard yourself, but they may have been alerted to one via the radio. Whenever possible, give your fellow volunteers (including the Shift Leads!) the benefit of the doubt and assume that there is good reason for their instructions."
+            },
+            {
+              "type": "paragraph",
+              "text": "If you truly feel that a Shift Lead’s instruction is inappropriate, unfair, or unsafe, consider asking to have your post covered while you and the Shift Lead go to the side to resolve the issue. These conversations are typically better held with some degree of privacy, not to mention the safety concerns of engaging in prolonged conversations while in between the lanes of Gate Road! Keep in mind that Shift Leads will be monitoring several aspects of the sampling process and will have limited time to resolve issues mid-shift. Complex issues may need to wait until the shift has returned to Census Lab, so that the sampling process can continue without interruption."
+            },
+            {
+              "type": "paragraph",
+              "text": "Please refer to the Interacting with Other Volunteers section of the Basics Course for more information about how to locate a member of Census Leadership if you don't feel comfortable or don't have time to discuss the issue with a Shift Lead."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/13bb2201-Copy_of_RS_working_with_vehicles.jpg",
+              "alt": ""
+            }
+          ],
+          "updatedAt": "2026-07-04T22:11:30Z"
+        }
+      ],
+      "quizzes": [
+        {
+          "id": 100845578,
+          "slug": "census-course-random-sam-quiz-4",
+          "title": "Quiz #4",
+          "position": 6,
+          "image": "/training/assets/d525818f-tempImageoE7nlq.jpg",
+          "audio": [],
+          "attachments": [],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "You must answer all questions correctly to move on to the next section; however, you can take the quiz as many times as you need to,"
+            }
+          ],
+          "updatedAt": "2026-07-20T23:33:13Z",
+          "questions": [
+            {
+              "id": 100845580,
+              "text": "What should you do if you and your sampling partner disagree about some aspect of the sampling process during a shift?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407730,
+                  "text": "Stop traffic in your lane while you work it out",
+                  "correct": false
+                },
+                {
+                  "id": 6407731,
+                  "text": "Ask the sampling team next you to stop sampling so they can answer the question/switch places with you, etc.",
+                  "correct": false
+                },
+                {
+                  "id": 6407732,
+                  "text": "Find a compromise that works for the two of you, even if it isn't consistent with your recollection of the sampling process",
+                  "correct": false
+                },
+                {
+                  "id": 6407733,
+                  "text": "Agree to do your best together until you can safely request help from a Shift Lead",
+                  "correct": true
+                }
+              ]
+            },
+            {
+              "id": 104828644,
+              "text": "Imagine a situation in which you are in the middle of a shift when a Shift Lead tells you and your sampling partner(s) to stop working and go back to the DataBeast as quickly as is safe to do so.  However, a vehicle is approaching in your lane and you haven't collected much data so far today. You should:",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6793709,
+                  "text": "Ask your Shift Lead if you can remain in place to collect the data",
+                  "correct": false
+                },
+                {
+                  "id": 6793710,
+                  "text": "Sample the vehicle first, then move to the side of Gate Road",
+                  "correct": false
+                },
+                {
+                  "id": 6793711,
+                  "text": "Comply with the instructions; your Shift Lead may have information you don't have",
+                  "correct": true
+                },
+                {
+                  "id": 6793712,
+                  "text": "Discuss the situation with your fellow sampler(s), then decide how best to proceed",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845589,
+              "text": "Outside of an emergency situation, when is it acceptable for a Random Sampler or Traffic Tamer to leave their assigned post before the end of a shift?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407759,
+                  "text": "If someone spots a celebrity entering BRC",
+                  "correct": false
+                },
+                {
+                  "id": 6407760,
+                  "text": "Anytime someone needs to use the portos",
+                  "correct": false
+                },
+                {
+                  "id": 6407761,
+                  "text": "Anytime there is no work to do",
+                  "correct": false
+                },
+                {
+                  "id": 6407762,
+                  "text": "When a Shift Lead has made arrangements for another volunteer to fill in",
+                  "correct": true
+                },
+                {
+                  "id": 6407763,
+                  "text": "When a volunteer in an adjacent lane has offered to fill in (without Shift Lead arrangement)",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845582,
+              "text": "Which of the following is NOT a key responsibility of a Traffic Tamer?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407737,
+                  "text": "Creating interest and curiosity about what we are doing",
+                  "correct": false
+                },
+                {
+                  "id": 6407738,
+                  "text": "Talking directly to the drivers as they come from Gate to Greeters",
+                  "correct": true
+                },
+                {
+                  "id": 6407739,
+                  "text": "Slowing traffic towards the Sampling Point",
+                  "correct": false
+                },
+                {
+                  "id": 6407740,
+                  "text": "Subbing in as needed for Random Samplers",
+                  "correct": false
+                },
+                {
+                  "id": 6407741,
+                  "text": "When safe to do so, directing drivers into less crowded lanes",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845587,
+              "text": "At the end of a sampling shift, what should sampling teams do before they return to the DataBeast?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407754,
+                  "text": "Stuff sampling forms into the bag and rush to the DataBeast so no one gets left behind",
+                  "correct": false
+                },
+                {
+                  "id": 6407755,
+                  "text": "Leave all materials by the stop sign on Gate Road for a Shift Lead to collect later",
+                  "correct": false
+                },
+                {
+                  "id": 6407756,
+                  "text": "Double-check that the top of all sampling forms are complete, then put all materials back in the bag and check the area for MOOP or forgotten belongings.",
+                  "correct": true
+                }
+              ]
+            },
+            {
+              "id": 100845590,
+              "text": "Which of the following is NOT a resource to help you find a member of Census Leadership if you have any questions/concerns you’d like to discuss?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407764,
+                  "text": "Anyone I have seen teaching during volunteer training or leading any Census shifts",
+                  "correct": false
+                },
+                {
+                  "id": 6407765,
+                  "text": "Playa Info",
+                  "correct": true
+                },
+                {
+                  "id": 6407766,
+                  "text": "Any Census volunteer with an event radio.",
+                  "correct": false
+                },
+                {
+                  "id": 6407767,
+                  "text": "The “Who’s Who” board at Census Lab, with pictures and availability info for Census Leadership volunteers.",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845584,
+              "text": "Which of the following is NOT something you should say if someone seems disinclined to be sampled?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407746,
+                  "text": "It won't take long and they can skip any question they want.",
+                  "correct": false
+                },
+                {
+                  "id": 6407747,
+                  "text": "They're a big party pooper if they don't do it",
+                  "correct": true
+                },
+                {
+                  "id": 6407748,
+                  "text": "It can be their first playa \"gift\".",
+                  "correct": false
+                },
+                {
+                  "id": 6407749,
+                  "text": "“Participation” and “civic responsibility” are two of the Ten Principle.",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 104828645,
+              "text": "True or false:  If someone explains to you that they are willing to participate, but cannot read the sampling form because they are too tired, do not have their glasses, cannot read English, etc. it is acceptable for you to read the questions out loud and write down the answers they provide.",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6793713,
+                  "text": "True",
+                  "correct": true
+                },
+                {
+                  "id": 6793714,
+                  "text": "False",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845581,
+              "text": "If you're not sure if a participant is an adult or child, you should:",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407734,
+                  "text": "Ask them or an adult with them.",
+                  "correct": false
+                },
+                {
+                  "id": 6407735,
+                  "text": "Proceed as if they are an adult unless told otherwise.",
+                  "correct": true
+                },
+                {
+                  "id": 6407736,
+                  "text": "Proceed as if they are a child unless told otherwise.",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845579,
+              "text": "If a person you are sampling asks you for directions to their camp, you should:",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407726,
+                  "text": "Ask them the location and do your best to gove them directions.",
+                  "correct": false
+                },
+                {
+                  "id": 6407727,
+                  "text": "Get out a map on your phone and show them.",
+                  "correct": false
+                },
+                {
+                  "id": 6407728,
+                  "text": "Refer them to Greeters or Placement.",
+                  "correct": true
+                },
+                {
+                  "id": 6407729,
+                  "text": "Ask around to see if anyone knows.",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 104828646,
+              "text": "What should you NOT do at the end of the shift? ",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6793715,
+                  "text": "Hand over all of your forms at once, double checking to make sure no data is left in your bag.",
+                  "correct": false
+                },
+                {
+                  "id": 6793716,
+                  "text": "Leave the data in your sampling bag until you get back to Census Lab.",
+                  "correct": true
+                },
+                {
+                  "id": 6793717,
+                  "text": "Sort the data by clicker number and passenger number folding the forms together for each vehicle.",
+                  "correct": false
+                },
+                {
+                  "id": 6793718,
+                  "text": "Report the final clicker number to the shift lead.",
+                  "correct": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 100845592,
+      "slug": "census-course-random-sam-random-sampling-course-summary-and-completion-confirmation",
+      "title": "Random Sampling Course Summary and Completion Confirmation",
+      "position": 7,
+      "image": "/training/assets/93afd831-Training_completion_button.png",
+      "audio": [],
+      "attachments": [
+        {
+          "name": "",
+          "href": "/training/assets/93afd831-Training_completion_button.png"
+        }
+      ],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "There was a lot of information presented here. If you've sampled before, this is likely just a refresher as it can be hard to remember these details after a year or more. If you're new, it may seem overwhelming and/or confusing. It will get easier once you're out there and sampling; and remember, you'll be assigned an experienced partner and there are always shift leads present who are happy to answer your questions or review any information you've forgotten. Leads also do skills review on the way to the sampling site. However, you are expected to have an overall familiarity with this material prior to arrival so please read all this material carefully, more than once if possible."
+        },
+        {
+          "type": "paragraph",
+          "text": "Here are some important take-away points, that are essential for safety and the preservation of accurate data:"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "Tell drivers of every vehicle sampled to put it in PARK",
+            "Never turn away from oncoming traffic, even in a dust storm",
+            "Participation is VOLUNTARY and CONFIDENTIAL",
+            "Don’t zero out your clicker until the number has been recorded and you are directed to do so"
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Finally, remember to HAVE FUN! Make friends, be silly, and let your beautiful personality shine through!"
+        },
+        {
+          "type": "paragraph",
+          "text": "What's Next:"
+        },
+        {
+          "type": "paragraph",
+          "text": "Thank you for sticking with us all the way through this course!! Before you leave for Burning Man:"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "Please upload a short video of yourself reciting your sampling script. We request you do this if you are scheduled for at least one sampling shift at either Gate or Airport. You won't be graded, we just want to make sure you spend some time learning and practicing the script. Details and instructions are on this form: https://forms.gle/GntfQNMsnp3k54Yc6 Those who have been a sampler BOTH of the last two years are exempt.",
+            "If it sounds like fun, find and decorate your own lab coat using Census team colors (hot pink and black). Please don’t use other colors, we want you to be easily identifiable as a Census volunteer!",
+            "Update your schedule if your availability changes through your Volunteer Information Page (VIP). You can log on to Call Out or Unassign yourself from a shift up to a week before the shift takes place. If your availability changes with less than a week's notice, please email censusvolunteercoordinators@burningman.org (if you are not yet on-playa) or stop by Census Lab to remove yourself using the tablet.",
+            "Read all emails from Census carefully, as they will have details about your arrival and on-playa training (if applicable).",
+            "That's it!"
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Thank you so much for volunteering with BRC Census. We know that there is a lot to learn about doing random sampling correctly and we appreciate your efforts to prepare for your shift!"
+        },
+        {
+          "type": "paragraph",
+          "text": "Thank you from all of us on the Census Team and we can't wait to see you in the dust!"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "PLEASE CLICK THE BUTTON BELOW TO RECORD YOUR COMPLETION OF THIS COURSE."
+        },
+        {
+          "type": "paragraph",
+          "text": "You will be asked to log in using the same Burner Profile information you use for Hive. You will then be taken to your Census Volunteer Information Page, where this training requirement will be checked off your personal checklist."
+        },
+        {
+          "type": "image",
+          "src": "/training/assets/93afd831-Training_completion_button.png",
+          "alt": ""
+        }
+      ],
+      "updatedAt": "2026-07-20T23:31:50Z",
+      "lessons": [],
+      "quizzes": []
+    }
+  ],
+  "ungroupedLessons": [
+    {
+      "id": 100845591,
+      "slug": "census-course-random-sam-random-sampling-frequently-asked-questions",
+      "title": "Random Sampling Frequently Asked Questions",
+      "position": 6,
+      "image": "/training/assets/70b90a53-0004-Census-BRYearbook2022.jpg",
+      "audio": [],
+      "attachments": [
+        {
+          "name": "",
+          "href": "/training/assets/70b90a53-0004-Census-BRYearbook2022.jpg"
+        }
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "src": "/training/assets/70b90a53-0004-Census-BRYearbook2022.jpg",
+          "alt": ""
+        },
+        {
+          "type": "paragraph",
+          "text": "This section is an on-going project, and we will continue to add frequently asked questions (not already covered in the material you just learned) as they come up."
+        },
+        {
+          "type": "paragraph",
+          "text": "Q. How do I become a Shift Lead?"
+        },
+        {
+          "type": "paragraph",
+          "text": "A. We're glad you asked! We're always looking for new shift leads. The requirements are simple: you must have worked at least one sampling shift in each location (gate or airport) where you wish to be a lead, you need to take the Hive course on Conflict Resolution (open to anyone and very informative), read the Shift Lead Manual, and you need to be able to arrive on playa on the Thursday prior to the gate opening in order to take the Friday Shift Lead Training (we may make exceptions to this on a case-by-case basis, especially for very exprienced leads, but this must be arranged before you accept any shifts as a lead). The time to let us know you're officially interested is when you receive the Volunteer Feedback form after the Burn, which asks about this. However, if you already know it's something you're interested in, feel free to mention it to a lead this year prior to one of your shifts."
+        },
+        {
+          "type": "paragraph",
+          "text": "Q. How do I ask a question?"
+        },
+        {
+          "type": "paragraph",
+          "text": "A. The comments for the this section are open, so if you want, you can ask a question there, and we will respond as soon as we are able."
+        },
+        {
+          "type": "paragraph",
+          "text": "You can also ask your shift leads any questions that come up before, during, or after a shift. They're there to help, and want everyone to have the information they need to do a good job."
+        },
+        {
+          "type": "paragraph",
+          "text": "You can also email:"
+        },
+        {
+          "type": "paragraph",
+          "text": "censusvolunteercoordinators@burningman.org questions about anything Census",
+          "links": [
+            {
+              "text": "censusvolunteercoordinators@burningman.org",
+              "href": "mailto:censusvolunteercoordinators@burningman.org",
+              "kind": "email"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "jaimee.nix@burningman.org Cali Green, Volunteer Coordinator for Sampling Shifts",
+          "links": [
+            {
+              "text": "jaimee.nix@burningman.org",
+              "href": "mailto:jaimee.nix@burningman.org",
+              "kind": "email"
+            }
+          ]
+        }
+      ],
+      "updatedAt": "2026-07-04T22:11:30Z"
+    }
+  ],
+  "counts": {
+    "sections": 6,
+    "lessons": 20,
+    "quizzes": 4,
+    "questions": 41
+  }
+}

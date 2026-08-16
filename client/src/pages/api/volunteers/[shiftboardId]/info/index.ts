@@ -155,7 +155,7 @@ const volunteerInfo = async (
 
       // 7. required trainings (derived from volunteer's shift positions)
       const [dbTrainingList] = await pool.query<RowDataPacket[]>(
-        `SELECT DISTINCT t.training_id, t.training_name, t.url
+        `SELECT DISTINCT t.training_id, t.training_name, t.url, t.code
         FROM op_volunteer_shifts vs
         JOIN op_shift_time_position stp ON vs.time_position_id=stp.time_position_id
         JOIN op_position_trainings pt ON stp.position_type_id=pt.position_type_id
@@ -260,6 +260,8 @@ const volunteerInfo = async (
             trainingId: t.training_id,
             trainingName: t.training_name,
             url: t.url ?? "",
+            // Lets the client swap in the offline course route on-playa.
+            code: t.code ?? "",
             completed: false, // will be set below
           };
         }
