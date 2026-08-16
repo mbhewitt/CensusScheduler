@@ -31,8 +31,8 @@ const download = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.send(svg);
   }
 
-  const sizeKey = String(req.query.size ?? "flyer");
-  const preset = SIZE_PRESETS[sizeKey] ?? SIZE_PRESETS.flyer;
+  const sizeKey = String(req.query.size ?? "web");
+  const preset = SIZE_PRESETS[sizeKey] ?? SIZE_PRESETS.web;
   const png = await renderPng(row.payload, row.settings, preset.px);
   res.setHeader("Content-Type", "image/png");
   res.setHeader("Content-Disposition", `attachment; filename="${safeName}.png"`);

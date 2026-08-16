@@ -77,6 +77,9 @@ const ALLOWLIST = [
   "/census-survey-reminders",
   "/census-reminders",
 
+  // Public perm-link to QR images (/api/qr/<id>.png) — embeddable anywhere.
+  "/api/qr",
+
   // On-playa only: walk-up shifts view
   ...(isOnPlaya ? ["/shifts", "/api/shifts"] : []),
 

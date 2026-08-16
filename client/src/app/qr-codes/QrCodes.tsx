@@ -6,6 +6,7 @@ import {
   Download as DownloadIcon,
   Edit as EditIcon,
   Home as HomeIcon,
+  Link as LinkIcon,
 } from "@mui/icons-material";
 import {
   Button,
@@ -184,6 +185,19 @@ export const QrCodes = () => {
                     <IconButton size="small" onClick={(e) => openDownloadMenu(e, row)}>
                       <DownloadIcon fontSize="small" />
                     </IconButton>
+                    <Tooltip title="Copy public image link">
+                      <IconButton
+                        size="small"
+                        onClick={() => {
+                          navigator.clipboard.writeText(
+                            `${window.location.origin}/api/qr/${row.qrId}.png`,
+                          );
+                          enqueueSnackbar("Link copied", { variant: "success" });
+                        }}
+                      >
+                        <LinkIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
                     <IconButton size="small" onClick={() => openEdit(row)}>
                       <EditIcon fontSize="small" />
                     </IconButton>

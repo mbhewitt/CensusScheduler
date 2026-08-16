@@ -40,15 +40,12 @@ export interface QrSettings {
   };
 }
 
-// Output size presets. Physical target -> pixel width. 600dpi drives the
-// XL-banner: a 24in banner at 600dpi would be enormous, so we cap the raster
-// at a scannable-yet-huge 6000px and note it; SVG is the lossless option for
-// truly large print. Values chosen so even the sticker stays crisp.
+// Output size presets. Physical target -> pixel width. Only web + two print
+// sizes as raster; anything bigger should use the lossless SVG download.
 export const SIZE_PRESETS: Record<string, { px: number; label: string }> = {
-  sticker: { px: 600, label: 'Sticker (~2in)' },
-  flyer: { px: 1200, label: 'Flyer (~4in)' },
-  "large-banner": { px: 3000, label: "Large banner (~10in)" },
-  "xl-banner": { px: 6000, label: "XL banner (600 dpi)" },
+  web: { px: 512, label: "Web (512 px)" },
+  in2: { px: 1200, label: "2 in (600 dpi)" },
+  in6: { px: 3600, label: "6 in (600 dpi)" },
 };
 
 export const CENSUS_URL = "https://census.burningman.org";
@@ -169,9 +166,8 @@ export async function renderSvg(payload: string, s: QrSettings): Promise<string>
     const logoSide = side * 0.22;
     const pad = logoSide * 1.15;
     const c = (side - logoSide) / 2;
-    const pc = (side - pad) / 2;
     const overlay =
-      `<rect x="${pc}" y="${pc}" width="${pad}" height="${pad}" fill="${s.bgColor}"/>` +
+      `<circle cx="${side / 2}" cy="${side / 2}" r="${pad / 2}" fill="${s.bgColor}"/>` +
       `<image x="${c}" y="${c}" width="${logoSide}" height="${logoSide}" href="${dataUri}"/>`;
     svg = svg.replace("</svg>", `${overlay}</svg>`);
   }
@@ -200,15 +196,12 @@ export async function renderPng(
     .resize(logoSide, logoSide, { fit: "contain", background: s.bgColor })
     .png()
     .toBuffer();
-  // A background pad so the logo sits on clean bg, not on modules.
-  const padImg = await sharp({
-    create: {
-      width: pad,
-      height: pad,
-      channels: 4,
-      background: s.bgColor,
-    },
-  })
+  // A circular background disc so the round logo sits on clean bg, not on modules.
+  const padImg = await sharp(
+    Buffer.from(
+      `<svg width="${pad}" height="${pad}"><circle cx="${pad / 2}" cy="${pad / 2}" r="${pad / 2}" fill="${s.bgColor}"/></svg>`,
+    ),
+  )
     .png()
     .toBuffer();
   return sharp(base)

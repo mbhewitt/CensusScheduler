@@ -26,10 +26,9 @@ export interface QrSettings {
 }
 
 export const SIZE_OPTIONS = [
-  { key: "sticker", label: "Sticker (~2in)" },
-  { key: "flyer", label: "Flyer (~4in)" },
-  { key: "large-banner", label: "Large banner (~10in)" },
-  { key: "xl-banner", label: "XL banner (600 dpi)" },
+  { key: "web", label: "Web (512 px)" },
+  { key: "in2", label: "2 in (600 dpi)" },
+  { key: "in6", label: "6 in (600 dpi)" },
 ];
 
 export const CENSUS_URL = "https://census.burningman.org";
