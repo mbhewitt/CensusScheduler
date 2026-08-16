@@ -1,0 +1,84 @@
+{
+  "exportedAt": "2026-08-16T02:55:14.305Z",
+  "source": "Burning Man Hive",
+  "courses": [
+    {
+      "slug": "welcome",
+      "title": "Census Welcome and Overview",
+      "summary": "Start here — what Census is, the volunteer roles, and which course you need next.",
+      "image": "/training/assets/ee4217df-Copy_of_Census_2018_Photo_by_Jeremy_D_arcy.jpg",
+      "counts": {
+        "sections": 6,
+        "lessons": 14,
+        "quizzes": 0,
+        "questions": 0
+      },
+      "file": "/training/courses/welcome.json"
+    },
+    {
+      "slug": "basics",
+      "title": "2026 Census Course: Basics",
+      "summary": "Required course for ALL Census volunteer positions.",
+      "image": "/training/assets/default_header_3-268b66a85721efdf8a53ad2dea20ca2f6c6f252491a7c3f60aa140a6d9b7cce0.jpg",
+      "counts": {
+        "sections": 3,
+        "lessons": 8,
+        "quizzes": 0,
+        "questions": 0
+      },
+      "file": "/training/courses/basics.json"
+    },
+    {
+      "slug": "outreach",
+      "title": "2026 Census Course: Outreach",
+      "summary": "For Lab Host, Pop-Up Lab Host and Data Dissemination volunteers.",
+      "image": "/training/assets/3a53bcb0-IMG_3578.jpeg",
+      "counts": {
+        "sections": 4,
+        "lessons": 8,
+        "quizzes": 2,
+        "questions": 13
+      },
+      "file": "/training/courses/outreach.json"
+    },
+    {
+      "slug": "random-sampling",
+      "title": "2026 Census Course: Random Sampling",
+      "summary": "For Random Samplers working Gate Road and the Airport.",
+      "image": "/training/assets/5bd00429-0007-Census-BRYearbook2022.jpg",
+      "counts": {
+        "sections": 6,
+        "lessons": 20,
+        "quizzes": 4,
+        "questions": 41
+      },
+      "file": "/training/courses/random-sampling.json"
+    },
+    {
+      "slug": "databeast",
+      "title": "2026 Census Course: Databeast Driver",
+      "summary": "Required for all Databeast Drivers.",
+      "image": "/training/assets/ec18ceef-da5d34819e7ffdb2.jpg",
+      "counts": {
+        "sections": 3,
+        "lessons": 5,
+        "quizzes": 2,
+        "questions": 10
+      },
+      "file": "/training/courses/databeast.json"
+    },
+    {
+      "slug": "data-entry",
+      "title": "2026 Census Course: Data Entry Wiz",
+      "summary": "For Data Entry Wiz volunteers.",
+      "image": "/training/assets/default_header_2-b21b4bc82a7b9ce22d87f6130c94965ea67a9ff44e4e3a3157f7ebc7948b9270.jpg",
+      "counts": {
+        "sections": 2,
+        "lessons": 5,
+        "quizzes": 0,
+        "questions": 0
+      },
+      "file": "/training/courses/data-entry.json"
+    }
+  ]
+}

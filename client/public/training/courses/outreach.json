@@ -1,0 +1,1413 @@
+{
+  "slug": "outreach",
+  "spaceId": 23489230,
+  "title": "2026 Census Course: Outreach",
+  "titleFromHive": "2026 Census Course: Outreach",
+  "titleWasTruncatedInHive": false,
+  "summary": "For Lab Host, Pop-Up Lab Host and Data Dissemination volunteers.",
+  "sourceUrl": "https://hive.burningman.org/spaces/23489230/content",
+  "exportedAt": "2026-08-16T02:55:14.305Z",
+  "overview": {
+    "id": 100845467,
+    "slug": "census-course-outreach-outreach-course-overview",
+    "title": "Outreach Course Overview~",
+    "position": 1,
+    "image": "/training/assets/3a53bcb0-IMG_3578.jpeg",
+    "audio": [],
+    "attachments": [
+      {
+        "name": "",
+        "href": "/training/assets/5bd00429-0007-Census-BRYearbook2022.jpg"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "Welcome to the Census Outreach Course!"
+      },
+      {
+        "type": "paragraph",
+        "text": "We are glad you made it here! The Census Outreach Course continues where the Census Basics Course left off. Make sure to complete the Census Basics Course before starting the Census Outreach Course.",
+        "links": [
+          {
+            "text": "Census Basics Course",
+            "href": "/training/basics",
+            "kind": "course"
+          }
+        ]
+      },
+      {
+        "type": "image",
+        "src": "/training/assets/5bd00429-0007-Census-BRYearbook2022.jpg",
+        "alt": ""
+      },
+      {
+        "type": "heading",
+        "level": 4,
+        "text": "Who is this course for and what are the main goals?"
+      },
+      {
+        "type": "paragraph",
+        "text": "This course is required training for all Lab Hosts, Pop-Up Lab Hosts & Data Disseminators who will be volunteering for the Census Department. Both for new and returning volunteers. By the end of this course you should be able to:"
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "Explain the key responsibilities of your specific role within the Census",
+          "Recall general safety precautions and the protocols for serving alcohol",
+          "Describe the purpose of the Field Notebook, Who’s Who, Data Displays, and other key materials at the Census Lab",
+          "Identify the types of visitors who commonly enter the Lab and describe an appropriate response to a visitor who wants to complete the Census Survey or has a question the host can’t answer",
+          "Suggest a Census data fact that will interest visitors to the lab & pop-ups along with and articulating an appropriate response"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "If you need help contact our Coordinator of Volunteer Communications at: censusvolunteercoordinators@burningman.org",
+        "links": [
+          {
+            "text": "censusvolunteercoordinators@burningman.org",
+            "href": "mailto:censusvolunteercoordinators@burningman.org",
+            "kind": "email"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Let’s get started."
+      }
+    ],
+    "updatedAt": "2026-07-04T22:12:27Z"
+  },
+  "sections": [
+    {
+      "id": 100845468,
+      "slug": "census-course-outreach-lab-host-basics-roles-timeline-and-safety-100845468",
+      "title": "Lab Host Basics: Roles, Timeline and Safety",
+      "position": 1,
+      "image": "/training/assets/default_header_9-526c01a8bc9398cff8c25e2432d3b3836bf0d1a6ecf75c71a802f10919117bcb.jpg",
+      "audio": [],
+      "attachments": [],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "In this first section, we'll introduce you to the various outreach roles, give you a timeline of shifts, and go over important safety procedures."
+        }
+      ],
+      "updatedAt": "2026-07-04T22:12:27Z",
+      "lessons": [
+        {
+          "id": 100845469,
+          "slug": "census-course-outreach-outreach-roles-100845469",
+          "title": "Outreach Roles",
+          "position": 1,
+          "image": "/training/assets/1c71215d-Copy_of_22861_474_426.png",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/1c71215d-Copy_of_22861_474_426.png"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/1c71215d-Copy_of_22861_474_426.png",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "Outreach Roles are crucial in creating a welcoming and inclusive environment for participants to share their data. Providing a positive and supportive experience for all participants, they are friendly, social, and willing to approach strangers. Clear communication is also important. Our Outreach Teams often interact with participants who have limited knowledge about Census and it is their aim to get these participants excited about the Census project, so they remember to go home and complete their online survey."
+            },
+            {
+              "type": "paragraph",
+              "text": "They generate excitement by:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Offering interesting pieces of Census data",
+                "Inviting Burners to complete questions in our on-playa Field Note Journals",
+                "Explaining the Census Lab's purpose and data collection process",
+                "Providing survey reminder stickers"
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Lab Hosting is a vital role within the Census Lab, responsible for hosting daily activities and ensuring a welcoming and engaging environment for participants with Data and supporting Daily Data Bashes, parties, games, and other events."
+            },
+            {
+              "type": "paragraph",
+              "text": "Pop Up Lab Hosts play a critical role in Census outreach efforts. They travel on the DataBeast to a random location on playa to set up a Pop-Up Census Lab, inviting Burners to learn more about Census by exploring past years' results and participating in on-playa data collection by answering question sets in our Field Note Journals."
+            },
+            {
+              "type": "paragraph",
+              "text": "Data Dissemination is the process of sharing and distributing preliminary Census results to the Burning Man community across the playa and survey reminder stickers. Disseminators can do their work anywhere people can be found in BRC. A bike or other personal conveyance may be useful for this shift, but isn't required - volunteers willing to disseminate data on foot are also welcome! You may also choose the option of traveling on the DataBeast to random locations on playa."
+            }
+          ],
+          "updatedAt": "2026-07-13T05:36:34Z"
+        },
+        {
+          "id": 100845470,
+          "slug": "census-course-outreach-shift-timeline-100845470",
+          "title": "Shift Timeline",
+          "position": 2,
+          "image": "/training/assets/79d94edb-Copy_of_23523_420_459.png",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/69b6f4df-IMG_4054.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/79d94edb-Copy_of_23523_420_459.png"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/c22b9894-unnamed__1_.jpg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/79d94edb-Copy_of_23523_420_459.png",
+              "alt": ""
+            },
+            {
+              "type": "heading",
+              "level": 5,
+              "text": "Lab Hosts"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Shifts last four hours.",
+                "Arrive to Census Lab 10 minutes before the official start of your shift.",
+                "Check in with a Shift Lead who has a tablet to be sure you are credited for your shift.",
+                "Shift leads will run Skills Practice and Orientation along with helping you determine what role to play and how best to interact with Burners.",
+                "We will spend approximately 3 to 3.5 hours at the lab, engaging in activities such as running games, giving talks, hosting events, and leading Daily Data Bashes.",
+                "Shift Leads are there to help you throughout your shift. Let them know if you have a question, are confused about anything, or if you need a break (to use the portos, refill water, or just get out of the sun & sit for a bit).",
+                "Shift Leads will let you know when lab hosting is complete and it is time to clean up.",
+                "We will spend 10-15 minutes organizing and cleaning up the Census Lab, to ensure we leave no trace (more on this later).",
+                "Shift also includes a dinner meal at the staff commissary at the end of the shift. You must stay with the team and keep your lab coat on during meals to identify you are with BRC Census. Commissary is located at 5:30 between E & G. There will be no Census transportation to the Commissary. There is no nudity permitted in Commissary (Nevada law), and nipples must be covered regardless of gender. If you have a lab coat that can be used to cover yourself.",
+                "Please make sure you turn in all supplies to be used for future shifts, (check your lab coat pockets)."
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 4,
+              "text": "Pop-Up Lab Hosts"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Shifts last three hours including transportation to and from the Census Lab.",
+                "Arrive at Census Lab ten minutes before the official start of your shift.",
+                "Everyone is transported together from Census Lab, so it will not work for you to meet us in the field.",
+                "Check in with a Shift Lead who will have a tablet to be sure you are credited for your shift.",
+                "Shift leads will announce when it is time to load up, please stay near the Census Lab lounge so you don’t miss this announcement.",
+                "Shift leads will run Skills Practice and Orientation.",
+                "Once you arrive at the playa location, your shift lead will help you determine what role to play and how best to interact with Burners.",
+                "We will spend approximately 2.5 hours on playa.",
+                "Shift Leads are there to help you throughout your shift. Let them know if you have a question, are confused about anything, or if you need a break (to use the portos, refill water, or just get out of the sun & sit for a bit)."
+              ]
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/c22b9894-unnamed__1_.jpg",
+              "alt": ""
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Shift Leads will let you know when it is time to load back up.",
+                "We will spend 10-15 minutes organizing and cleaning up the Databeast, to ensure we leave no trace.",
+                "This shift does not include a commissary meal.",
+                "All shifts end back at the Census Lab. Please make sure you turn in all supplies to be used for future shifts, (check your lab coat pockets)."
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 5,
+              "text": "Data Disseminators"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Shifts last three hours.",
+                "Arrive to Census Lab 10 minutes before the official start of your shift.",
+                "Check in with a Shift Lead or someone who has a tablet to be sure you are credited for your shift.",
+                "This shift does not include a commissary meal.",
+                "If you borrow a lab coat please return it to the Census Lab. Make sure you turn in all supplies to be used for future shifts, (check your lab coat pockets)."
+              ]
+            }
+          ],
+          "updatedAt": "2026-07-04T22:12:27Z"
+        },
+        {
+          "id": 100845471,
+          "slug": "census-course-outreach-safety-serving-guidelines-100845471",
+          "title": "Safety &amp; Serving Guidelines",
+          "position": 3,
+          "image": "/training/assets/1d67c2b9-IMG_4265.jpeg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/1d67c2b9-IMG_4265.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "heading",
+              "level": 4,
+              "text": "Safety"
+            },
+            {
+              "type": "paragraph",
+              "text": "Lab Hosting & Data Dissemination are generally safe, however, if you step out onto the road or open Playa, watch out for Bikes and Vehicles. The speed limit may be 5 mph, but not everybody obeys."
+            },
+            {
+              "type": "paragraph",
+              "text": "Be thoughtful about physical contact! This one’s just good manners. If you feel unsafe during an interaction with a participant, excuse yourself to find a Shift Lead or member of Census Leadership to report the incident."
+            },
+            {
+              "type": "paragraph",
+              "text": "Do not leave in anyone’s vehicle or wander off, stay with your team members."
+            },
+            {
+              "type": "paragraph",
+              "text": "Also, the weather can be harsh, hot in the open sun and with fast-approaching dust storms reducing visibility sometimes to near-zero, you must stay vigilant and watch out for each other as you retreat to shelter."
+            },
+            {
+              "type": "paragraph",
+              "text": "Finally, please inform your Shift Lead if you need a break to rest or use the porto potty so they will know of your whereabouts."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/1d67c2b9-IMG_4265.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "heading",
+              "level": 4,
+              "text": "Serving Guidelines"
+            },
+            {
+              "type": "paragraph",
+              "text": "When serving alcohol at parties or on the Databeast - all ID’s must be checked. Stamp hands once ID has been checked, for refills."
+            }
+          ],
+          "updatedAt": "2026-07-04T22:12:27Z"
+        }
+      ],
+      "quizzes": [
+        {
+          "id": 100845472,
+          "slug": "census-course-outreach-quiz-1-100845472",
+          "title": "Quiz #1",
+          "position": 4,
+          "image": "/training/assets/486468b4-IMG_4476.jpeg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/486468b4-IMG_4476.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/486468b4-IMG_4476.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "You must answer all questions correctly to move on to the next section; however, you can take the quiz as many times as you need to,"
+            }
+          ],
+          "updatedAt": "2026-07-04T22:12:27Z",
+          "questions": [
+            {
+              "id": 100845476,
+              "text": "In which of the following location(s) does BRC Census NOT share our Data Results?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407550,
+                  "text": "At Census Lab",
+                  "correct": false
+                },
+                {
+                  "id": 6407551,
+                  "text": "Random Locations on Playa",
+                  "correct": false
+                },
+                {
+                  "id": 6407552,
+                  "text": "Center Camp",
+                  "correct": false
+                },
+                {
+                  "id": 6407553,
+                  "text": "None of the above",
+                  "correct": true
+                }
+              ]
+            },
+            {
+              "id": 100845478,
+              "text": "When should you arrive for an Outreach shift?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407558,
+                  "text": "At the start time of the shift",
+                  "correct": false
+                },
+                {
+                  "id": 6407559,
+                  "text": "10 minutes before the start time",
+                  "correct": true
+                },
+                {
+                  "id": 6407560,
+                  "text": "30 minutes before the start time",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845477,
+              "text": "How do you get around BRC to share preliminary results as a Data Disseminator?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407554,
+                  "text": "Take a Burner Taxi",
+                  "correct": false
+                },
+                {
+                  "id": 6407555,
+                  "text": "Take the Burner Express Shuttle",
+                  "correct": false
+                },
+                {
+                  "id": 6407556,
+                  "text": "Ride your bike or walk",
+                  "correct": true
+                },
+                {
+                  "id": 6407557,
+                  "text": "Get a ride with DPW",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845474,
+              "text": "Why is it important to watch out for Bikes and Vehicles when you step into the street or onto Open Playa?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407542,
+                  "text": "So you can see how they are decorated",
+                  "correct": false
+                },
+                {
+                  "id": 6407543,
+                  "text": "So you can count how many pass by during your shift",
+                  "correct": false
+                },
+                {
+                  "id": 6407544,
+                  "text": "To avoid being hit! (They may not be following the 5 mph speed limit)",
+                  "correct": true
+                },
+                {
+                  "id": 6407545,
+                  "text": "So you know where you are on Playa",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845475,
+              "text": "Whose IDs should we check when serving alcohol?🍸🍻",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407546,
+                  "text": "A. If they look under 21",
+                  "correct": false
+                },
+                {
+                  "id": 6407547,
+                  "text": "B. Check everyone's ID",
+                  "correct": true
+                },
+                {
+                  "id": 6407548,
+                  "text": "C. If they have a stamp from any other event or camp indicating that they have had their ID checked previously.",
+                  "correct": false
+                },
+                {
+                  "id": 6407549,
+                  "text": "D. Both A and C",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845473,
+              "text": "Check the response that is NOT a goal of Census Outreach.",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407538,
+                  "text": "Providing a positive and supportive experience for all participants",
+                  "correct": false
+                },
+                {
+                  "id": 6407539,
+                  "text": "To get participants excited about the Census project, so they remember to go home and complete their online survey",
+                  "correct": false
+                },
+                {
+                  "id": 6407540,
+                  "text": "Showing off your colorful Census outfit",
+                  "correct": true
+                },
+                {
+                  "id": 6407541,
+                  "text": "Creating a welcoming and inclusive environment for participants to share their data",
+                  "correct": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 100845479,
+      "slug": "census-course-outreach-the-shift-experience-101-100845479",
+      "title": "The Shift Experience 101",
+      "position": 2,
+      "image": "/training/assets/e7870f71-BM77430_Camp-Census-2015-scr-665x375.jpg",
+      "audio": [],
+      "attachments": [],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "This is the heart of what we do -- creating awareness around Census data and engaging with Burners!"
+        }
+      ],
+      "updatedAt": "2026-07-04T22:12:27Z",
+      "lessons": [
+        {
+          "id": 100845480,
+          "slug": "census-course-outreach-the-census-lab-100845480",
+          "title": "The Census Lab",
+          "position": 1,
+          "image": "/training/assets/c3ed900b-1751563433788.jpeg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/de81d571-IMG_4154.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/c3ed900b-1751563433788.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/c3ed900b-1751563433788.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "WHERE THINGS ARE…."
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "The Data Entry Office contains completed sampling forms and computers used for data entry. It also stores Census binders, radios and their check In/Out forms, tablets, office supplies, Airport sampling bags, including extra blank sampling forms, Vehicles schedules, Vehicle Keys and their check In/Out forms.",
+                "The Lounge is an open, shaded space with couches, tables & chairs. Data Bashes (on-playa outreach events) will be held daily, Monday-Friday. The Data Bash schedule, Who’s Who poster, and other useful reference material can be found in the lounge area. Volunteers and visitors can relax here to review printed Census reports, fill out Field Notes journal questions, send a reminder email or an unanswered question through the Census tablet, and chat with Lab Hosts, etc. Water refills & (some days, the Census Bar) will be available for visitors, which will be provided by the Lab Hosts on duty. You will also find Census stickers, data sheets, loaner lab coats, Lab Host umbrellas, and other equipment used by Census volunteers.",
+                "The Living Area is a private space for team members who camp at the Census Lab. Avoid entering this area if possible. Check with your Shift Lead if you are looking for a Leadership member to help you with something during your shift.",
+                "Large Data Displays are found around Census Lab usually built as a “Wall of Data” with highlights of the data collected during past years. Lab hosts use these visual tools to help engage with BRC participants."
+              ]
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/de81d571-IMG_4154.jpeg",
+              "alt": ""
+            }
+          ],
+          "updatedAt": "2026-07-04T22:12:27Z"
+        },
+        {
+          "id": 100845484,
+          "slug": "census-course-outreach-your-team-and-materials-100845484",
+          "title": "Your Team and Materials",
+          "position": 2,
+          "image": "/training/assets/ac0a9dab-Copy_of_23876_799_374.png",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/ac0a9dab-Copy_of_23876_799_374.png"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/61304140-Copy_of_23128_376_282.png"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/c5ee50e0-Copy_of_2012_Census_Display__Final__.jpg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/05fa75f9-IMG_0488.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/c55df169-IMG_0214.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/bb844273-IMG_0215.jpeg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/cb3dc27e-Copy_of_23152_576_432.png"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/1f892d7d-Copy_of_Field_Notes_Journal_INTRO__3_Main_Projects_.png"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/a55cfad9-Copy_of_23158_576_432.png"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/61f5347a-Copy_of_23178_576_432.png"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/60c66634-IMG_3857.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Your Team"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "There will be a Shift Lead and other Lab Hosts on duty Monday, Wednesday and Friday at the Census Lab.",
+                "On the Databeast Pop-Up there will be a Shift Lead and other Pop-Up Lab Hosts.",
+                "We try to pair newer volunteers with more experienced ones so if you're new, your partner can help."
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Materials"
+            },
+            {
+              "type": "heading",
+              "level": 4,
+              "text": "Data Wall"
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/ac0a9dab-Copy_of_23876_799_374.png",
+              "alt": ""
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/61304140-Copy_of_23128_376_282.png",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "Large Data Displays are found around Census Lab usually built as a “Wall of Data” with highlights of the data collected during past years. Lab hosts use these visual tools to help engage with BRC participants."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/c5ee50e0-Copy_of_2012_Census_Display__Final__.jpg",
+              "alt": ""
+            },
+            {
+              "type": "heading",
+              "level": 4,
+              "text": "Data Sheets"
+            },
+            {
+              "type": "paragraph",
+              "text": "Below is an example of a data sheet we have used in the past. These flyers are useful to carry with you while walking around outside the lab or on playa. The sheets contain useful quick facts about who Census is, events Census is hosting and a data teaser."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/05fa75f9-IMG_0488.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/c55df169-IMG_0214.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/bb844273-IMG_0215.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "heading",
+              "level": 4,
+              "text": "Archive Reports"
+            },
+            {
+              "type": "paragraph",
+              "text": "This is a notebook with the full Census reports from the previous years. This is useful on shift to answer more specific questions people might have that are not shown on the data displays."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/cb3dc27e-Copy_of_23152_576_432.png",
+              "alt": ""
+            },
+            {
+              "type": "heading",
+              "level": 4,
+              "text": "Field Note Journals"
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/1f892d7d-Copy_of_Field_Notes_Journal_INTRO__3_Main_Projects_.png",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "Field Note Journals are a set of books found at Census Lab, Central Plaza and onboard the DataBeast during our Outreach Lab Popups. Each Book has a unique question set, based on a particular topic. There are a variety of short sets of questions. The Field Note Project yields mostly qualitative data about people's experiences and feelings."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/a55cfad9-Copy_of_23158_576_432.png",
+              "alt": ""
+            },
+            {
+              "type": "heading",
+              "level": 4,
+              "text": "Reminder Stickers"
+            },
+            {
+              "type": "paragraph",
+              "text": "We give these stickers out to Burners to help them remember to fill out the online survey after the Burn!"
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/61f5347a-Copy_of_23178_576_432.png",
+              "alt": ""
+            },
+            {
+              "type": "heading",
+              "level": 4,
+              "text": "Who's Who Display"
+            },
+            {
+              "type": "paragraph",
+              "text": "If someone is looking for a member of the Census Leadership, check the Who’s Who display in the Lounge area - it includes information for each Volunteer Coordinator and member of Census Management. Each volunteer’s “Who’s Who” entry includes a picture, plus some information about when and where you might be able to find them on-playa."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/60c66634-IMG_3857.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "heading",
+              "level": 4,
+              "text": "Supplies"
+            },
+            {
+              "type": "paragraph",
+              "text": "Personal supplies were covered under the Basics Course. Please review that information as needed."
+            },
+            {
+              "type": "paragraph",
+              "text": "Extra supplies are kept on the Data Beast and at Census Lab."
+            }
+          ],
+          "updatedAt": "2026-07-04T22:12:27Z"
+        },
+        {
+          "id": 100845488,
+          "slug": "census-course-outreach-what-happens-on-shift-100845488",
+          "title": "What Happens On Shift",
+          "position": 3,
+          "image": "/training/assets/633e35a9-Copy_of_RS_DataBeast_Loading_Volunteers.jpg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/5f7b49bf-Copy_of_23134_377_283.png"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/ad66ccf7-e39f65d054acc60e.jpg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/25441119-unnamed__1_.jpg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/9b9cdfc3-IMG_0488.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Lab Host Shift at Census Lab"
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/5f7b49bf-Copy_of_23134_377_283.png",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "Lab Hosts will spread out to cover different areas of the Lab and the daily Data Bash activities. They will stand outside the lab to engage people who stop to read the data displays and invite them inside the Lab. They will stay inside to welcome people who enter the Lab. They will prepare the lounge and serve drinks, for Talks, Games & Socials."
+            },
+            {
+              "type": "paragraph",
+              "text": "It makes sense to spend some time out in the sun, then spend time inside the Lab where you can cool off and get a break from the heat."
+            },
+            {
+              "type": "paragraph",
+              "text": "Hosts may also go to Center Camp to check on Field Note Journals. Your Shift Lead will coordinate with all Lab Hosts on duty to decide which position you will work and when you will switch places. (Be sure to share your strengths & preferences with your Shift Lead.)"
+            },
+            {
+              "type": "paragraph",
+              "text": "An additional Lab Host could be a drop-in volunteer referred by the Volunteer Resource Team at the V-Spot. If someone arrives during your shift and says they are a volunteer from the V-Spot, refer them to the Shift Lead on duty. You may be asked to have them stay within hearing range of you so they can ask for help as needed."
+            },
+            {
+              "type": "heading",
+              "level": 4,
+              "text": "Types of Visitors"
+            },
+            {
+              "type": "paragraph",
+              "text": "Some visitors to Census Lab may be volunteers who are reporting for a shift, want to see the schedule, or have other questions. Try to help them find who or what they are looking for - or refer them to your Shift Lead."
+            },
+            {
+              "type": "paragraph",
+              "text": "Other visitors stop by Census Lab because they are curious about the Census or because they want to complete the Census survey. Greet every visitor with a smile and make them feel welcome. Offer them water and the shade of the lounge. A big part of your role is being a welcoming face to generate positive feelings about the BRC Census. We want them to leave the Lab feeling eager to participate and complete their online survey after the Burn!"
+            },
+            {
+              "type": "paragraph",
+              "text": "There may be researchers present at the Lab collecting data for their own academic projects. If researchers arrive at the Lab to collect data during your shift, introduce yourself and ask for some information about their research. Introduce them to your Shift Lead with the information they have shared & they can discuss recommendations about how to incorporate the research project with the other activities at the Lab. If a researcher makes any request of you that makes you uncomfortable or seems excessive (for example, if someone asked you to clear everyone out of the lounge or asks you to stop Lab Host duties in order to assist them), don’t hesitate to refer to your Shift Lead right away so they can help resolve the issue."
+            },
+            {
+              "type": "paragraph",
+              "text": "It’s common for people to stop by intending to fill out their Census form - this is because the Census survey used to be a paper form filled out on-playa prior to 2013. Some people also think of our On-Playa Field Note Journals are the Census. You may have to explain that the survey is only available online now, but we would love for them to complete it after the event. Offer them a sticker as a reminder for when they get home. Ask if they would like to answer a question set in a Field Notes journal (you can learn more here), and offer them a seat in our lounge area. Show them information in the Lab, the Who’s Who posters, our Data Bash schedule and try to answer their questions.",
+              "links": [
+                {
+                  "text": "here",
+                  "href": "http://journal.burningman.org/2016/06/black-rock-city/participate-in-brc/art-from-data-the-field-notes-project/",
+                  "kind": "external"
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 4,
+              "text": "Hosting at Center Camp"
+            },
+            {
+              "type": "paragraph",
+              "text": "If there are extra Lab Hosts on a shift at the Lab, we may send you to Host at Center Camp to maximize our outreach efforts. Before you head to Center Camp, be sure to gather a few items:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Anything you need for an hour or two of self-care: water, sunglasses, a snack, etc.",
+                "A stack of Census stickers",
+                "Mechanical pencils & ribbon to attach them, as backup for the Field Note Journals",
+                "If available\n\nOne hard copy of Last year’s Population Analysis\nMaterials for any interactive activities available to bring with you"
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "At Center Camp, you will find 2 Census stations with several Field Note Journals. This is a great chance to make sure the Field Note Journals are still there and interact-able: check to see if the pencils are still attached, and fix any issues if necessary. After that, you can Lab Host from the Census table, or you can choose to move around Center Camp."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Pop-Up Lab Host Shift on the DataBeast"
+            },
+            {
+              "type": "paragraph",
+              "text": "The DataBeast will leave from the Census Lab for our PopUp events around Black Rock City. We will travel to a city plaza or popular art installation on playa. During our stops, we will engage with BRC citizens."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/25441119-unnamed__1_.jpg",
+              "alt": ""
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/ad66ccf7-e39f65d054acc60e.jpg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "We will share Census Data, give out stickers and encourage people to complete questions in our Field Note Journals to collective qualitative data. Depending on the location of your excursions, you may serve drinks."
+            },
+            {
+              "type": "paragraph",
+              "text": "A Lab Host’s first and foremost goal is to get people excited about the Census, so they remember to go home and complete their online survey after the Burn."
+            },
+            {
+              "type": "heading",
+              "level": 3,
+              "text": "Data Dissemination Shift"
+            },
+            {
+              "type": "paragraph",
+              "text": "The Data Disseminator role has a lot of room for personalization. Your goal is to make contact with BRC participants and get them excited about completing the online survey when they get home. You can do this in any way that is safe for you and fun for everyone involved! Some Data Disseminators go out in groups; others go out alone. You could walk, ride a bicycle, or hop onto a mutant vehicle to disseminate our preliminary results."
+            },
+            {
+              "type": "paragraph",
+              "text": "You will have stickers and data sheets to hand out, and you may also be provided with other outreach tools - games to play with participants, information sheets about the Census team, or other similar items."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/9b9cdfc3-IMG_0488.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "The Data Dissemination shift is scheduled to last for (3) three hours, but practically speaking when you are out of data sheets, stickers, etc., you can consider yourself done. If you borrowed a lab coat or other equipment, please return it to Census Lab! If you don’t have anything to return to the Lab, you do not need to come back at the end of your shift."
+            }
+          ],
+          "updatedAt": "2026-07-04T22:12:27Z"
+        },
+        {
+          "id": 100845489,
+          "slug": "census-course-outreach-how-to-engage-participants-100845489",
+          "title": "How to Engage Participants",
+          "position": 4,
+          "image": "/training/assets/94935bd3-Copy_of_23134_377_283.png",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/c39a537c-maxresdefault.jpg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/e69225dc-maxresdefault.jpg"
+            },
+            {
+              "name": "",
+              "href": "/training/assets/f31be6bf-maxresdefault.jpg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Be respectful of where you go and what participants are doing, Be attentive to the other activities taking place during your shift. Avoid walking through performances or distracting participants who are already engaged in other activities. If there are performances or music, be careful not to “upstage” or interrupt them. Additionally, steering clear of areas like the Temple or any ongoing performance or class where your presence might be considered an interruption."
+            },
+            {
+              "type": "paragraph",
+              "text": "Here are some tips for interacting with Burners:"
+            },
+            {
+              "type": "paragraph",
+              "text": "The easiest way to engage visitors is to entice them with a piece of data. Everyone loves to hear a juicy Census statistic! There are tons of Census data from which to choose. Find two or three statistics you think are interesting and keep those handy in your mind. Or, locate them on the data displays to show visitors. We’ll also provide data summaries for your reference."
+            },
+            {
+              "type": "paragraph",
+              "text": "Examples:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Do you know what percent of last year’s Burners considered themselves to be religious?",
+                "Do you know what percent of last year’s Burners traveled from outside the United States?",
+                "Do you know what percent of last year’s Burners were attending for the first time?",
+                "Is there anything you wonder about the Burning Man population, last year or in previous years?",
+                "Have you completed the Online Census survey in past years?",
+                "Do you have any questions about the methods we use to collect data?",
+                "Do you have any questions about why we do the Census and how Census data are used?"
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "In addition to discussions about data and methodology, there may be other participatory opportunities. These activities vary every year and will be discussed in more detail with your Shift Lead at the beginning of your shift."
+            },
+            {
+              "type": "paragraph",
+              "text": "Review these videos below for Examples of ways to Engage Burners with our Census data, How to participate in the Burning man Census and How to answer the question about the ways in which we use their data."
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/c39a537c-maxresdefault.jpg",
+              "alt": ""
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/f31be6bf-maxresdefault.jpg",
+              "alt": ""
+            },
+            {
+              "type": "image",
+              "src": "/training/assets/e69225dc-maxresdefault.jpg",
+              "alt": ""
+            }
+          ],
+          "updatedAt": "2026-07-04T22:12:27Z"
+        },
+        {
+          "id": 100845490,
+          "slug": "census-course-outreach-faqs-and-how-to-answer-questions-100845490",
+          "title": "FAQ's and How to Answer Questions",
+          "position": 5,
+          "image": "/training/assets/70b90a53-0004-Census-BRYearbook2022.jpg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/70b90a53-0004-Census-BRYearbook2022.jpg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/70b90a53-0004-Census-BRYearbook2022.jpg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "The people you talk to may have questions for you, either about Census or about other things. Here are a few tips:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "If someone asks a question you don’t know the answer to, don’t try to guess - be honest and tell them that you don’t know the answer, but that you can help them to discover it.",
+                "It is sometimes helpful to say something like, “That wasn’t covered in our training for this shift. I don’t want to give you an incorrect answer, but I can tell you where to go to find the answer to your question.”",
+                "You can ask your shift leads any questions that come up before, during, or after a shift. They are there to help, and want everyone to have the information they need to do a good job."
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Visitors ask a lot of questions when they visit the Census Lab or encounter a Census volunteer. Some of the most common questions and answers are included below:"
+            },
+            {
+              "type": "paragraph",
+              "text": "Q: “How do I participate in the Census?”"
+            },
+            {
+              "type": "paragraph",
+              "text": "A: After the Burn, we would love to have you complete our online survey. Here is a sticker to remind you! [Hand the visitor a sticker] Here on the playa, you can participate in the Field Notes project. Each journal contains a short set of open-ended questions about a particular topic. There are some here in the Lab or for Pop-ups, on the DataBeast you can answer."
+            },
+            {
+              "type": "paragraph",
+              "text": "Q: “What do you do with the Census information?” This question may be phrased more aggressively, such as “Who do you give all this information to?” or “Are you selling our personal information to the man?”"
+            },
+            {
+              "type": "paragraph",
+              "text": "A: The Census is completely voluntary and confidential and no personal identifying information is collected. The data are used in three main ways:"
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Our results are shared with Burners and the wider world through our blog to give everyone an accurate picture of what the BRC population is like each year.",
+                "Our data are used by collaborating academic researchers, who contribute questions for their own research interests. Past inquiries have looked at gender, sexuality, play, transformation, and emotions.",
+                "The Burning Man organization uses our data in their negotiations and advocacy for the event. When it comes down to it, the event might not even happen without the data we collect."
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 4,
+              "text": "After Burn Follow-up"
+            },
+            {
+              "type": "paragraph",
+              "text": "If no one is available to answer their question, invite the visitor to leave their question & email address using a tablet, and someone from Census leadership will get back to them after Burning Man."
+            },
+            {
+              "type": "paragraph",
+              "text": "Alternatively, they can email census@burningman.org directly after the Burn.",
+              "links": [
+                {
+                  "text": "census@burningman.org",
+                  "href": "mailto:census@burningman.org",
+                  "kind": "email"
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "level": 4,
+              "text": "Volunteer FAQ's"
+            },
+            {
+              "type": "paragraph",
+              "text": "If you have general volunteering questions about Census, you can email: censusvolunteercoordinators@burningman.org",
+              "links": [
+                {
+                  "text": "censusvolunteercoordinators@burningman.org",
+                  "href": "mailto:censusvolunteercoordinators@burningman.org",
+                  "kind": "email"
+                }
+              ]
+            }
+          ],
+          "updatedAt": "2026-07-04T22:12:27Z"
+        }
+      ],
+      "quizzes": [
+        {
+          "id": 100845491,
+          "slug": "census-course-outreach-quiz-2-100845491",
+          "title": "Quiz #2",
+          "position": 6,
+          "image": "/training/assets/b3c03713-IMG_3910.jpeg",
+          "audio": [],
+          "attachments": [
+            {
+              "name": "",
+              "href": "/training/assets/b3c03713-IMG_3910.jpeg"
+            }
+          ],
+          "blocks": [
+            {
+              "type": "image",
+              "src": "/training/assets/b3c03713-IMG_3910.jpeg",
+              "alt": ""
+            },
+            {
+              "type": "paragraph",
+              "text": "You must answer all questions correctly to move on to the next section; however, you can take the quiz as many times as you need to,"
+            }
+          ],
+          "updatedAt": "2026-07-04T22:12:27Z",
+          "questions": [
+            {
+              "id": 100845492,
+              "text": "What is the main reason Census gives out stickers?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407561,
+                  "text": "To remind people that the Census colors are pink and black",
+                  "correct": false
+                },
+                {
+                  "id": 6407562,
+                  "text": "To get people to interact with Census volunteers",
+                  "correct": false
+                },
+                {
+                  "id": 6407563,
+                  "text": "To remind people to fill out the online Census when they return home",
+                  "correct": true
+                },
+                {
+                  "id": 6407564,
+                  "text": "So people remember to come to the Census Data Bashes",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845501,
+              "text": "This material tool is helpful for volunteers on shift to collect qualitative data about participant's feelings.",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407592,
+                  "text": "A. The data wall",
+                  "correct": false
+                },
+                {
+                  "id": 6407593,
+                  "text": "B. Data sheets",
+                  "correct": false
+                },
+                {
+                  "id": 6407594,
+                  "text": "C. Who's Who",
+                  "correct": false
+                },
+                {
+                  "id": 6407595,
+                  "text": "D. Field note journals",
+                  "correct": true
+                },
+                {
+                  "id": 6407596,
+                  "text": "E. Both A and D",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845495,
+              "text": "The Pop-Up Lab host is responsible for getting people to fill out the online Census survey on their tablets.",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407574,
+                  "text": "True",
+                  "correct": false
+                },
+                {
+                  "id": 6407575,
+                  "text": "False",
+                  "correct": true
+                }
+              ]
+            },
+            {
+              "id": 100845499,
+              "text": "A good place to engage Burners is at the temple or when there is already a large crowd gathered to watch a performance. This way volunteers find plenty of people to interact with at the same time.",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407585,
+                  "text": "True",
+                  "correct": false
+                },
+                {
+                  "id": 6407586,
+                  "text": "False",
+                  "correct": true
+                }
+              ]
+            },
+            {
+              "id": 100845500,
+              "text": "Which of the following data questions is NOT a question Census volunteer would ask when engaging with a Burner?",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407587,
+                  "text": "Have you completed the Online Census survey in past years?",
+                  "correct": false
+                },
+                {
+                  "id": 6407588,
+                  "text": "Do you know what percent of last year’s Burners traveled from outside the United States?",
+                  "correct": false
+                },
+                {
+                  "id": 6407589,
+                  "text": "Do you know what percent of last year’s Burners were attending for the first time?",
+                  "correct": false
+                },
+                {
+                  "id": 6407590,
+                  "text": "How many hours a day do you spend participating in Burning Man activities?",
+                  "correct": true
+                },
+                {
+                  "id": 6407591,
+                  "text": "Do you have any questions about why we do the Census and how Census data are used?",
+                  "correct": false
+                }
+              ]
+            },
+            {
+              "id": 100845496,
+              "text": "Data is used in all the following ways except:",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407576,
+                  "text": "Burning Man organization uses our data in their negotiations and advocacy for the event.",
+                  "correct": false
+                },
+                {
+                  "id": 6407577,
+                  "text": "Results are shared with local tribes and communities to help determine how MOOP and trash can be reduced",
+                  "correct": false
+                },
+                {
+                  "id": 6407578,
+                  "text": "Our data is used by researchers who inquire about gender, sexuality, play, transformation, and emotions.",
+                  "correct": false
+                },
+                {
+                  "id": 6407579,
+                  "text": "Burners can access results through the Census blog.",
+                  "correct": false
+                },
+                {
+                  "id": 6407580,
+                  "text": "None of the above.",
+                  "correct": true
+                }
+              ]
+            },
+            {
+              "id": 100845498,
+              "text": "Data Disseminators can walk, ride a bicycle, or hop onto a mutant vehicle to give out preliminary survey results to Burners.",
+              "image": null,
+              "choices": [
+                {
+                  "id": 6407583,
+                  "text": "True",
+                  "correct": true
+                },
+                {
+                  "id": 6407584,
+                  "text": "False",
+                  "correct": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 100845502,
+      "slug": "census-course-outreach-closing-the-shift-100845502",
+      "title": "Closing the Shift",
+      "position": 3,
+      "image": "/training/assets/d1d059f7-Copy_of_12877_542_407.png",
+      "audio": [],
+      "attachments": [],
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "A shift lead will tell you when the shift is about to end. You will organize the space, put away drinks or supplies needed to be stored for future shifts and complete a MOOP Sweep, to ensure we leave no trace."
+        },
+        {
+          "type": "paragraph",
+          "text": "POP-Up Lab Hosts will load onto the DataBeast to be transported back to Census Lab."
+        },
+        {
+          "type": "paragraph",
+          "text": "Remember to return any Loaner Lab coats to the rack @ Census Lab. Empty your pockets of extra stickers or pencils."
+        },
+        {
+          "type": "paragraph",
+          "text": "Lab Hosts that have been stationed at the Census Lab will travel to Commissary located at 5:30 between E & G to have their Dinner meal together either by bike or on foot. There will be no Census transportation to the Commissary."
+        }
+      ],
+      "updatedAt": "2026-07-04T22:12:27Z",
+      "lessons": [],
+      "quizzes": []
+    },
+    {
+      "id": 100845503,
+      "slug": "census-course-outreach-outreach-course-summary-and-completion-confirmation",
+      "title": "Outreach Course Summary and Completion Confirmation",
+      "position": 4,
+      "image": "/training/assets/a78c1cd2-censuslogo_top__1_.webp",
+      "audio": [],
+      "attachments": [
+        {
+          "name": "",
+          "href": "/training/assets/8c32309d-Training_completion_button.png"
+        }
+      ],
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 5,
+          "text": "Summary"
+        },
+        {
+          "type": "paragraph",
+          "text": "Thank you for joining the Census Outreach Course. We're excited to have you on board and appreciate your dedication. Here’s a quick recap of what you’ve learned:"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "Understand Your Role: You now have a clear picture of what your specific role involves at Census.",
+            "Safety and Serving Alcohol: You’ve got the basics of safety and how to handle alcohol service down pat.",
+            "Know the Key Materials: You’re familiar with the Field Notebook, Who’s Who, Data Displays, and other essential resources.",
+            "Engage with Visitors: You can now identify the types of visitors you’ll meet and handle their questions or requests effectively.",
+            "Share Interesting Facts: You know how to find a cool Census data fact and communicate it in an engaging way."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Finally, remember to HAVE FUN! Make friends, be silly, and let your beautiful personality shine through!"
+        },
+        {
+          "type": "heading",
+          "level": 5,
+          "text": "What's Next:"
+        },
+        {
+          "type": "paragraph",
+          "text": "Thank you for sticking with us all the way through this course!! Before you leave for Burning Man:"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "If it sounds like fun, find and decorate your own lab coat using Census team colors (hot pink and black). Please don’t use other colors, we want you to be easily identifiable as a Census volunteer!",
+            "Update your schedule if your availability changes. You can log into Shiftboard to Call Out or Unassign from a shift up to 5 days before the shift takes place. If your availability changes with less than 5 days’ notice please email censusvolunteercoordinators@burningman.org (if you are not yet on-playa) or stop by Census Lab to remove yourself using the tablet.",
+            "Read all emails from Census carefully, as they will have details about your arrival."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Thank you from all of us on the Census Team and we can't wait to see you in the dust!"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "PLEASE CLICK THE BUTTON BELOW TO RECORD YOUR COMPLETION OF THIS COURSE."
+        },
+        {
+          "type": "paragraph",
+          "text": "You will be asked to log in using the same Burner Profile information you use for Hive. You will then be taken to your Census Volunteer Information Page, where this training requirement will be checked off your personal checklist."
+        },
+        {
+          "type": "image",
+          "src": "/training/assets/8c32309d-Training_completion_button.png",
+          "alt": ""
+        }
+      ],
+      "updatedAt": "2026-07-20T22:31:09Z",
+      "lessons": [],
+      "quizzes": []
+    }
+  ],
+  "counts": {
+    "sections": 4,
+    "lessons": 8,
+    "quizzes": 2,
+    "questions": 13
+  }
+}

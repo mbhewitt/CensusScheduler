@@ -79,6 +79,13 @@ const ALLOWLIST = [
 
   // On-playa only: walk-up shifts view
   ...(isOnPlaya ? ["/shifts", "/api/shifts"] : []),
+
+  // On-playa only: the bundled training course files. These are served out of
+  // public/ but .json/.pdf/.mp3 aren't in the matcher's static-extension
+  // exclusion, so they come through middleware and need allowlisting.
+  ...(isOnPlaya
+    ? ["/training/index.json", "/training/courses", "/training/assets", "/training/guides"]
+    : []),
 ];
 
 // Home is public again as of 2026-05-25 — the page now hosts the
@@ -88,8 +95,18 @@ const ALLOWLIST = [
 // PUBLIC_PATHS purge that came in with PR #337 / closed-#306.
 const PUBLIC_PATHS = new Set(["/"]);
 
+// On-playa the offline course pages are readable without a session, so a
+// walk-up volunteer at the Lab can study before signing in. Deliberately NOT
+// a plain "/training" allowlist prefix: /training/confirmation/[code] records
+// completion against the signed-in volunteer and must stay gated.
+const isPublicTrainingPage = (pathname: string) =>
+  isOnPlaya &&
+  /^\/training(\/[a-z0-9-]+)?$/.test(pathname) &&
+  !pathname.startsWith("/training/confirmation");
+
 function isAllowlisted(pathname: string): boolean {
   if (PUBLIC_PATHS.has(pathname)) return true;
+  if (isPublicTrainingPage(pathname)) return true;
   for (const prefix of ALLOWLIST) {
     if (pathname === prefix || pathname.startsWith(prefix + "/")) return true;
   }
