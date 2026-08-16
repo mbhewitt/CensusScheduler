@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import NextLink from "next/link";
+import { useRouter } from "next/navigation";
 import { useSnackbar } from "notistack";
 import { useContext, useEffect, useRef } from "react";
 import useSWR from "swr";
@@ -37,9 +38,40 @@ export const TrainingConfirmation = ({ code }: ITrainingConfirmationProps) => {
   const {
     sessionDispatch,
     sessionState: {
+      settings: { isAuthenticated },
       user: { shiftboardId },
     },
   } = useContext(SessionContext);
+  const router = useRouter();
+
+  // #649: without a live session the confirmation used to render an infinite
+  // spinner and record NOTHING (no error, no prompt) — silently losing the
+  // completion. Instead, send the volunteer to sign-in and return them here so
+  // the completion is credited to the right account. Race-safe: fall back to
+  // reading the persisted session directly, since the context's sessionStorage
+  // hydration effect may not have run on this first render yet.
+  const redirectedRef = useRef(false);
+  const returnTo = `/training/confirmation/${code}`;
+  const goSignIn = () => {
+    if (redirectedRef.current) return;
+    redirectedRef.current = true;
+    router.replace(`/sign-in?returnTo=${encodeURIComponent(returnTo)}`);
+  };
+  useEffect(() => {
+    let authed = isAuthenticated;
+    if (!authed) {
+      try {
+        authed = Boolean(
+          JSON.parse(sessionStorage.getItem("sessionState") ?? "{}")?.settings
+            ?.isAuthenticated
+        );
+      } catch {
+        /* sessionStorage unavailable — treat as unauthenticated */
+      }
+    }
+    if (!authed) goSignIn();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
 
   // fetching, mutation, revalidation
   // ------------------------------------------------------------
@@ -119,9 +151,16 @@ export const TrainingConfirmation = ({ code }: ITrainingConfirmationProps) => {
     mutate,
   ]);
 
+  // #649: a fetch error here is almost always an expired/invalid session
+  // (server 401) — resume via sign-in rather than a dead-end error page.
+  useEffect(() => {
+    if (error) goSignIn();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error]);
+
   // logic
   // ------------------------------------------------------------
-  if (error) return <ErrorPage />;
+  if (error) return <Loading />;
   if (!data) return <Loading />;
   // GET returns { statusCode, message } shaped objects on 404 / 400 — treat
   // those as the error page rather than rendering the success layout.
