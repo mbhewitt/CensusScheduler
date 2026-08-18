@@ -73,18 +73,21 @@ test.describe("Admin Volunteer Management", () => {
   }) => {
     await signInAsBuiltinAdmin(page);
 
+    // /account is a legacy URL that server-side redirects to the canonical
+    // /info page (per @mbhewitt 2026-05-23). The info page shows the
+    // volunteer's playa/world name as read-only text, not editable fields.
     await page.goto(
       `/volunteers/${managedVolunteer.shiftboardId}/account`
     );
-
-    // Verify the account page shows the volunteer's data in form fields
-    await expect(page.getByLabel("Playa / preferred name")).toHaveValue(
-      "E2E Managed",
+    await page.waitForURL(
+      new RegExp(`/volunteers/${managedVolunteer.shiftboardId}/info`),
       { timeout: 10_000 }
     );
-    await expect(page.getByLabel("Default world name")).toHaveValue(
-      "Managed Tester"
-    );
+
+    await expect(page.getByText("E2E Managed").first()).toBeVisible({
+      timeout: 10_000,
+    });
+    await expect(page.getByText("Managed Tester").first()).toBeVisible();
   });
 
   test("admin should see volunteer shift counts", async ({ page }) => {
@@ -105,6 +108,11 @@ test.describe("Admin Volunteer Management", () => {
 
     await page.goto("/volunteers");
 
-    await expect(page).not.toHaveURL(/\/volunteers$/);
+    // A logged-in non-admin keeps the URL but AuthGate renders a
+    // permission-denied fallback instead of the volunteer list/table.
+    await expect(
+      page.getByText(/have permission to view this page/i)
+    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator("table")).toHaveCount(0);
   });
 });

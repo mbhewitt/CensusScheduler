@@ -116,7 +116,7 @@ test.describe("Admin Role Management", () => {
       await toggle.click();
 
       await expect(
-        page.getByText(/updated/i)
+        page.getByText(/display has been set to/i)
       ).toBeVisible({ timeout: 5_000 });
     }
   });
@@ -126,6 +126,11 @@ test.describe("Admin Role Management", () => {
 
     await page.goto("/roles");
 
-    await expect(page).not.toHaveURL(/\/roles$/);
+    // A logged-in non-admin keeps the URL but AuthGate renders a
+    // permission-denied fallback instead of the roles table.
+    await expect(
+      page.getByText(/have permission to view this page/i)
+    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator("table")).toHaveCount(0);
   });
 });

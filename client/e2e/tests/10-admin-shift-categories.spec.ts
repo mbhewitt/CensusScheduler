@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import {
   insertVolunteer,
+  insertFullShift,
   assignRole,
   closePool,
   cleanupAllTestData,
@@ -8,6 +9,7 @@ import {
 import {
   IDS,
   ADMIN_VOLUNTEER,
+  FUTURE_SHIFT,
   ROLE_ADMIN_ID,
   ROLE_SUPER_ADMIN_ID,
   signInAsBuiltinAdmin,
@@ -19,6 +21,10 @@ test.describe("Admin Shift Categories", () => {
     await insertVolunteer(ADMIN_VOLUNTEER);
     await assignRole(ADMIN_VOLUNTEER.shiftboardId, ROLE_ADMIN_ID);
     await assignRole(ADMIN_VOLUNTEER.shiftboardId, ROLE_SUPER_ADMIN_ID);
+    // Seed a shift so the list has a category to display AND the create
+    // dialog's Department <Select> has an existing department to choose
+    // (the field now picks from existing departments, not free text).
+    await insertFullShift(FUTURE_SHIFT);
   });
 
   test.afterAll(async () => {
