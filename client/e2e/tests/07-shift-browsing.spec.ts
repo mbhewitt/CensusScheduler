@@ -20,22 +20,22 @@ test.describe("Shift Browsing", () => {
   test("should load shifts page", async ({ page }) => {
     await page.goto("/shifts");
 
-    // The page should load with a table/list of shifts
-    await expect(page.locator("table").first()).toBeVisible({
-      timeout: 10_000,
-    });
+    // /shifts is now an agenda/card view (no <table>). Its toolbar always
+    // renders the Filter control, so use that as the "page loaded" signal.
+    await expect(
+      page.getByRole("button", { name: "Filter" })
+    ).toBeVisible({ timeout: 10_000 });
   });
 
   test("should display test shift in the list", async ({ page }) => {
     await page.goto("/shifts");
 
-    // Wait for table to load
-    await expect(page.locator("table").first()).toBeVisible({
-      timeout: 10_000,
-    });
+    // Wait for the agenda toolbar to render
+    await expect(
+      page.getByRole("button", { name: "Filter" })
+    ).toBeVisible({ timeout: 10_000 });
 
-    // The shift name appears as a Chip in the "Type" column
-    // It may also appear as text in filters; use broad search
+    // Each shift renders as a card whose heading is the shift name
     await expect(
       page.getByText("E2E Future Shift").first()
     ).toBeVisible({ timeout: 10_000 });
