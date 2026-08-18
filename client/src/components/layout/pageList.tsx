@@ -8,6 +8,7 @@ import {
   Help as HelpIcon,
   Home as HomeIcon,
   Print as PrintIcon,
+  QrCode2 as QrCode2Icon,
   QuestionAnswer as QuestionAnswerIcon,
   Settings as SettingsIcon,
   VerifiedUser as VerifiedUserIcon,
@@ -75,6 +76,11 @@ export const pageListSuperAdmin = [
     icon: <PrintIcon />,
     label: "Printing",
     path: "/printing",
+  },
+  {
+    icon: <QrCode2Icon />,
+    label: "QR Codes",
+    path: "/qr-codes",
   },
   {
     icon: <WorkHistoryIcon />,

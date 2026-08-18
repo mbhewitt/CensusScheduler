@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   // pdf-lib / pdfjs-dist / formidable are used only server-side (SAP upload +
   // split). Keep them out of the bundler so pdfjs's ESM worker/eval and
   // formidable's native bits load from node_modules at runtime intact.
-  serverExternalPackages: ["pdfjs-dist", "pdf-lib", "formidable"],
+  serverExternalPackages: ["pdfjs-dist", "pdf-lib", "formidable", "sharp"],
   async headers() {
     return [
       {
