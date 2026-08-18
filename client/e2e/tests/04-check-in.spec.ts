@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import dayjs from "dayjs";
 import {
   insertVolunteer,
   insertFullShift,
@@ -124,6 +125,46 @@ test.describe("Check-In", () => {
 
     // Check-in switch should be disabled for future shifts
     await expect(checkInSwitch).toBeDisabled();
+  });
+
+  // Regression for Chipper's report ("check-in isn't valid even if I spoof to a
+  // time when it should be"): check-in availability is computed client-side from
+  // the developer-mode clock (getCheckInType(dayjs(dateTimeValue), ...)). Moving
+  // the dev-mode clock into a future shift's window must flip the switch on.
+  test("check-in becomes available when the dev-mode clock is spoofed into the shift window", async ({
+    page,
+  }) => {
+    await signInAsBuiltinAdmin(page);
+
+    // FUTURE_SHIFT runs 10:00–14:00 in +7 days; the window is [−1h, +2h], so
+    // 11:00 that day lands inside it (SHIFT_DURING). Developer mode hydrates from
+    // sessionStorage on mount, so seed it before navigating to the shift.
+    const spoof = dayjs(FUTURE_SHIFT.startTime)
+      .add(1, "hour")
+      .format("YYYY-MM-DD HH:mm");
+    await page.addInitScript((value) => {
+      sessionStorage.setItem(
+        "developerModeState",
+        JSON.stringify({
+          accountType: { isEnabled: false, value: "" },
+          dateTime: { isEnabled: true, value },
+          disableIdle: { isEnabled: false },
+        })
+      );
+    }, spoof);
+
+    await page.goto(`/shifts/${FUTURE_SHIFT.shiftTimesId}/volunteers`);
+
+    await expect(page.getByText("E2E Shifty")).toBeVisible({
+      timeout: 15_000,
+    });
+
+    const row = page.getByRole("row").filter({ hasText: "E2E Shifty" });
+    const checkInSwitch = row.getByRole("switch");
+
+    // Same shift that was disabled above — now enabled purely because the
+    // spoofed clock is inside the check-in window.
+    await expect(checkInSwitch).toBeEnabled({ timeout: 10_000 });
   });
 
   test("volunteer can see their shifts on account page", async ({
