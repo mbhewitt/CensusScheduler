@@ -4,7 +4,7 @@ import {
   closePool,
   cleanupAllTestData,
 } from "../helpers/db";
-import { FUTURE_SHIFT } from "../fixtures/test-data";
+import { FUTURE_SHIFT, signInAsBuiltinAdmin } from "../fixtures/test-data";
 
 test.describe("Shift Browsing", () => {
   test.beforeAll(async () => {
@@ -42,6 +42,9 @@ test.describe("Shift Browsing", () => {
   });
 
   test("should show shift details on volunteer page", async ({ page }) => {
+    // The shift-volunteers page + its /api/shifts/{id}/volunteers feed require
+    // a session (401 otherwise), so sign in before viewing details.
+    await signInAsBuiltinAdmin(page);
     await page.goto(`/shifts/${FUTURE_SHIFT.shiftTimesId}/volunteers`);
 
     // Should show the shift name somewhere on the page
@@ -56,6 +59,7 @@ test.describe("Shift Browsing", () => {
   });
 
   test("should show slot availability", async ({ page }) => {
+    await signInAsBuiltinAdmin(page);
     await page.goto(`/shifts/${FUTURE_SHIFT.shiftTimesId}/volunteers`);
 
     // Should show slots like "0 / 3" (0 filled, 3 total)
