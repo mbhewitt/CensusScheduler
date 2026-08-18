@@ -38,6 +38,10 @@ export const reportList = [
   },
 ];
 export const Reports = () => {
+  // The report files below are bundled locally (/reports/...), so they work
+  // offline on playa. The external blackrockcitycensus.org pointer is dead
+  // offline, so hide it there (#629, Chipper).
+  const isOnPlaya = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
   // render
   // ------------------------------------------------------------
   return (
@@ -51,17 +55,19 @@ export const Reports = () => {
       <Container component="main" sx={{ flex: 1 }}>
         <Card>
           <CardContent>
-            <Typography sx={{ mb: 2 }}>
-              For the complete Black Rock City Census reports, visit{" "}
-              <Link
-                href="https://blackrockcitycensus.org"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                blackrockcitycensus.org
-              </Link>
-              .
-            </Typography>
+            {!isOnPlaya && (
+              <Typography sx={{ mb: 2 }}>
+                For the complete Black Rock City Census reports, visit{" "}
+                <Link
+                  href="https://blackrockcitycensus.org"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  blackrockcitycensus.org
+                </Link>
+                .
+              </Typography>
+            )}
             <List disablePadding>
               {reportList.map(({ id, text, url }) => {
                 return (
