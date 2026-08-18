@@ -16,6 +16,7 @@ import {
 import Link from "next/link";
 import { useContext } from "react";
 
+import { OfflineLink } from "@/components/general/OfflineLink";
 import { Hero } from "@/components/layout/Hero";
 import { SessionContext } from "@/state/session/context";
 import { checkIsAuthenticated } from "@/utils/checkIsRoleExist";
@@ -40,11 +41,13 @@ export const Home = () => {
   );
   const isOAuthConfigured = process.env.NEXT_PUBLIC_OKTA_ENABLED === "true";
   const isPinEnabled = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
-  // On the offline on-playa build the external links (Hive, Burner Profile, the
-  // data site, Discord) are dead and the online-recruitment copy doesn't apply —
-  // volunteers are already here and sign in with a passcode. PIN sign-in is the
-  // on-playa signal (same convention as ShareButton/VolunteerInfo). Show a
-  // stripped-down homepage there. Off-playa is unchanged (#629, Chipper).
+  // PIN sign-in is the on-playa signal (same convention as
+  // ShareButton/VolunteerInfo). On-playa the recruitment-oriented "How to
+  // Volunteer" / "Volunteer Roles" copy doesn't apply (volunteers are already
+  // here and sign in with a passcode), so that block stays gated off-playa.
+  // The Hive "Learn More" section, however, now shows on-playa too: its links
+  // are wired through OfflineLink so volunteers can email themselves the Hive
+  // link to follow up from home (#643, folds in #630).
   const isOnPlaya = isPinEnabled;
 
   // render
@@ -164,13 +167,9 @@ export const Home = () => {
           </Card>
         </Box>
 
-        {/* Online-only sections below: every one relies on external links
-            (Hive, Burner Profile, the data site, Discord) that don't load on
-            the offline on-playa tablets, and the copy targets prospective
-            volunteers rather than people already on playa. Hidden on-playa
-            (#629, Chipper); unchanged off-playa. */}
-        {!isOnPlaya && (
-          <>
+        {/* Learn More (Hive) — shown on-playa too. Its links are dead offline,
+            so OfflineLink turns them into "email this to me" actions (#643,
+            #630). Off-playa they render as normal external links. */}
         <Box component="section">
           <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
             Learn More about BRC Census
@@ -179,13 +178,10 @@ export const Home = () => {
             <CardContent>
               <Typography>
                 The{" "}
-                <a
+                <OfflineLink
                   href="https://hive.burningman.org/spaces/14264554/content"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Black Rock City Census Community on Hive
-                </a>{" "}
+                  label="Black Rock City Census Community on Hive"
+                />{" "}
                 is the best place to get all the information you need about who
                 we are and what we do. You will also get the most up-to-date
                 information about volunteering. On Hive, you can learn about how
@@ -194,27 +190,29 @@ export const Home = () => {
                 upcoming events, and complete the training you need to volunteer
                 (this varies by role). If you do not yet have a Burner Profile,
                 create one at{" "}
-                <a
+                <OfflineLink
                   href="https://profiles.burningman.org"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  profiles.burningman.org
-                </a>
+                  label="profiles.burningman.org"
+                />
                 . Once that&apos;s done, return here and{" "}
-                <a
+                <OfflineLink
                   href="https://hive.burningman.org/spaces/14264554/"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  label="log in and view our Census community on Hive"
                 >
                   click this link
-                </a>{" "}
+                </OfflineLink>{" "}
                 to log in and view our Census community on Hive.
               </Typography>
             </CardContent>
           </Card>
         </Box>
 
+        {/* Recruitment-oriented sections: aimed at prospective volunteers
+            rather than people already on playa. Hidden on-playa (#629);
+            unchanged off-playa. Discord + Hive links are wired through
+            OfflineLink so behavior is identical off-playa. */}
+        {!isOnPlaya && (
+          <>
         <Box component="section">
           <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
             How to Volunteer
@@ -253,13 +251,10 @@ export const Home = () => {
                 </a>{" "}
                 and let us know how you want to participate! You&apos;re also more
                 than welcome to meet and chat with the team on our{" "}
-                <a
+                <OfflineLink
                   href="https://discord.gg/jcWuyYDGcn"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Census Discord server
-                </a>
+                  label="Census Discord server"
+                />
                 .
               </Typography>
             </CardContent>
@@ -327,13 +322,10 @@ export const Home = () => {
                 </a>{" "}
                 and let us know how you want to participate! We suggest reading
                 through the{" "}
-                <a
+                <OfflineLink
                   href="https://hive.burningman.org/spaces/14264554/content"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Black Rock City Census Community on Hive
-                </a>{" "}
+                  label="Black Rock City Census Community on Hive"
+                />{" "}
                 first.
               </Typography>
             </CardContent>
