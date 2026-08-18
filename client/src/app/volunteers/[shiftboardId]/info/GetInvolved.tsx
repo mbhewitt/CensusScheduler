@@ -1,13 +1,16 @@
-import { OpenInNew as OpenInNewIcon } from "@mui/icons-material";
-import { Box, Card, CardContent, Link, Stack, Typography } from "@mui/material";
+import { Box, Card, CardContent, Stack, Typography } from "@mui/material";
+
+import { OfflineLink } from "@/components/general/OfflineLink";
 
 // "Optional: Get more involved with Census" sidebar on the account/info page.
-// Off-playa only (gated by the parent) — the links don't work on the offline
-// on-playa tablets, and volunteers aren't signed into Discord/Google/Hive
-// there anyway (#335). Plain link-cards, not checklist items: these are
-// optional, open-ended ways to stay connected, not tasks with a done state.
-// The Discord invite is a per-page invite that tracks joins on the Discord
-// side, so no in-app tracking is needed.
+// Plain link-cards, not checklist items: these are optional, open-ended ways
+// to stay connected, not tasks with a done state. The Discord invite is a
+// per-page invite that tracks joins on the Discord side, so no in-app
+// tracking is needed.
+//
+// #643: these links are dead on the offline on-playa tablets. Rather than
+// hide the section there (its previous behavior), OfflineLink turns each into
+// an "email this to me" action so volunteers can follow up from home.
 
 interface IGetInvolvedItem {
   title: string;
@@ -76,15 +79,12 @@ export const GetInvolved = () => {
               >
                 {item.description}
               </Typography>
-              <Link
+              <OfflineLink
+                asMuiLink
                 href={item.href}
-                target="_blank"
-                rel="noopener noreferrer"
+                label={item.linkLabel}
                 sx={{ alignItems: "center", display: "inline-flex", gap: 0.5 }}
-              >
-                {item.linkLabel}
-                <OpenInNewIcon fontSize="inherit" />
-              </Link>
+              />
             </Box>
           ))}
         </Stack>
