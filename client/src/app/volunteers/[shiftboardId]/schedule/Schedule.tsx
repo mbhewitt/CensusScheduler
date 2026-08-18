@@ -837,7 +837,10 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
             </Typography>
           )}
           <Typography color="text.secondary" variant="body2">
-            {swatch(theme.palette.secondary.main)}You can sign up
+            {/* State label, not a promise: an "open" shift isn't sign-up-able by
+                everyone (unauth users / wrong-role). Describe the shift, not the
+                viewer's ability (#624 follow-up, Chipper). */}
+            {swatch(theme.palette.secondary.main)}Open
           </Typography>
           <Typography color="text.secondary" variant="body2">
             {swatch(theme.palette.divider)}Unavailable
