@@ -132,6 +132,12 @@ export function evaluateSapEligibility(
   return { standing, requirementsMet, missingSummary, missingDetail };
 }
 
+// A Mon/Tue shift may substitute for a SAP-seeker's LAST remaining required day
+// (Mew/Chipper 2026-08-08). The pre-open days book up early, so someone who is one
+// shift from their SAP — or stuck on a fully-booked required day — can finish it
+// with a Monday or Tuesday shift, which also helps our thin early-week coverage.
+export const SUBSTITUTE_DAYS = ["Mon", "Tue"];
+
 // Build the day-by-day requirement list for an arrival day. A day is fulfilled
 // when the volunteer earned >= 1 CSP that day — which inherently excludes
 // 0-CSP shifts (they sum to 0 and never satisfy a day).
@@ -140,16 +146,24 @@ export function buildRequiredDays(
   dayCspMap: Record<string, number>,
 ): RequiredDay[] {
   const reqs = DAY_REQS[arrivalDatename] ?? [];
-  return reqs.map((r) => {
-    if (Array.isArray(r)) {
-      const label = r.join(", ").replace(/, ([^,]+)$/, ", or $1");
-      const fulfilled = r.some((d) => (dayCspMap[d] ?? 0) >= 1);
-      return { datenames: r, label, fulfilled };
-    }
+  const days: RequiredDay[] = reqs.map((r) => {
+    const datenames = Array.isArray(r) ? r : [r];
+    const label = datenames.join(", ").replace(/, ([^,]+)$/, ", or $1");
     return {
-      datenames: [r],
-      label: r,
-      fulfilled: (dayCspMap[r] ?? 0) >= 1,
+      datenames,
+      label,
+      fulfilled: datenames.some((d) => (dayCspMap[d] ?? 0) >= 1),
     };
   });
+  // Only ONE day left → a Mon/Tue shift also completes it. Two-or-more days
+  // missing still require real pre-open coverage (no substitution).
+  const unmet = days.filter((d) => !d.fulfilled);
+  if (unmet.length === 1) {
+    if (SUBSTITUTE_DAYS.some((d) => (dayCspMap[d] ?? 0) >= 1)) {
+      unmet[0].fulfilled = true;
+    } else {
+      unmet[0].label += ", or a Monday/Tuesday shift";
+    }
+  }
+  return days;
 }

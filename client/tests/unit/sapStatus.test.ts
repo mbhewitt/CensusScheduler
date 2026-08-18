@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import {
+  buildRequiredDays,
   evaluateSapEligibility,
   isPreOpenShift,
   REQUIRED_CSP,
@@ -85,6 +86,27 @@ test("no pre-open shift or Staff -> not_earning, unless a date is set", () => {
     }).standing,
     "missing",
   );
+});
+
+test("Mon/Tue substitutes only for the LAST remaining required day", () => {
+  // PreSat needs exactly one day: OpenSun.
+  // No CSP anywhere -> unmet, and the label nudges toward Mon/Tue.
+  const none = buildRequiredDays("PreSat", {});
+  assert.equal(none[0].fulfilled, false);
+  assert.equal(none[0].label, "OpenSun, or a Monday/Tuesday shift");
+
+  // A burn-week Mon CSP completes that last day.
+  assert.equal(buildRequiredDays("PreSat", { Mon: 1 })[0].fulfilled, true);
+  assert.equal(buildRequiredDays("PreSat", { Tue: 2 })[0].fulfilled, true);
+
+  // The real day still counts on its own (no substitution needed).
+  assert.equal(buildRequiredDays("PreSat", { OpenSun: 1 })[0].fulfilled, true);
+
+  // Two days outstanding -> no substitution; Mon does not rescue either day,
+  // and no nudge label is appended.
+  const two = buildRequiredDays("PreThur", { Mon: 1 });
+  assert.equal(two.filter((d) => d.fulfilled).length, 0);
+  assert.ok(!two.some((d) => d.label.includes("Monday/Tuesday")));
 });
 
 test("isPreOpenShift compares against Open Sunday", () => {
