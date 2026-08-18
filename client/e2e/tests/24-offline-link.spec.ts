@@ -1,13 +1,18 @@
 import { test, expect } from "@playwright/test";
 
 import {
+  assignRole,
   cleanupAllTestData,
   closePool,
   countQueuedOfflineLinks,
   deleteOfflineLinkEmails,
   insertVolunteer,
 } from "../helpers/db";
-import { makeTestVolunteer, signInAs } from "../fixtures/test-data";
+import {
+  makeTestVolunteer,
+  ROLE_BEHAVIORAL_STANDARDS_ID,
+  signInAs,
+} from "../fixtures/test-data";
 
 // #643 (folds in #630): on the offline on-playa build, external links become
 // an "email this to me" action instead of a dead link. The dev server used by
@@ -28,6 +33,9 @@ test.describe("Offline link (email this to me)", () => {
     await cleanupAllTestData();
     await deleteOfflineLinkEmails(volunteer.email);
     await insertVolunteer(volunteer);
+    // On-playa mode force-redirects volunteers who haven't signed behavioral
+    // standards to the BS page, which would hide the /info GetInvolved links.
+    await assignRole(volunteer.shiftboardId, ROLE_BEHAVIORAL_STANDARDS_ID);
   });
 
   test.afterAll(async () => {

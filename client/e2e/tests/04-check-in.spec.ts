@@ -174,13 +174,15 @@ test.describe("Check-In", () => {
     // Sign in as the volunteer
     await signInAs(page, SHIFT_VOLUNTEER);
 
-    // Should be on the account page showing shifts section
-    await expect(page.getByRole("heading", { name: "Shifts" })).toBeVisible({
-      timeout: 10_000,
-    });
+    // The info page always renders the VolunteerShifts section (its "Shifts"
+    // heading); a nav link named "Shifts" also exists, so scope to the heading
+    // and take the first match.
+    await expect(
+      page.getByRole("heading", { name: "Shifts" }).first()
+    ).toBeVisible({ timeout: 10_000 });
 
     // Look for the current shift position in the volunteer's shift list
-    await expect(page.getByText("E2E Tester Position")).toBeVisible({
+    await expect(page.getByText("E2E Tester Position").first()).toBeVisible({
       timeout: 10_000,
     });
   });

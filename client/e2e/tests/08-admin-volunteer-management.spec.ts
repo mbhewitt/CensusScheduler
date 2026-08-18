@@ -58,8 +58,10 @@ test.describe("Admin Volunteer Management", () => {
     // than a bare `table` match — on desktop, resizableColumns renders an
     // extra hidden helper `<table>` that `.first()` can grab and that never
     // becomes visible.
+    // mui-datatables wraps the header text in a "Sort" button, so the
+    // columnheader's accessible name is "Sort" — match by its text instead.
     await expect(
-      page.getByRole("columnheader", { name: /Playa name/i })
+      page.getByRole("columnheader").filter({ hasText: /Playa name/i }).first()
     ).toBeVisible({ timeout: 10_000 });
   });
 
