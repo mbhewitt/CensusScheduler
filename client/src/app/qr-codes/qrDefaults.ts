@@ -1,7 +1,7 @@
 // Client-safe QR defaults + types. Deliberately NO import from lib/qr — that
 // module pulls in sharp/qrcode (server-only). The QrSettings shape here must
 // stay in sync with lib/qr's QrSettings.
-export type QrType = "calendar" | "link" | "wifi";
+export type QrType = "calendar" | "link" | "wifi" | "text";
 
 export interface QrSettings {
   fgColor: string;
@@ -15,8 +15,10 @@ export interface QrSettings {
     time: string;
     durationMinutes: number;
     reminderMinutes: number;
-    location: string;
+    location: string; // plain text or a URL (#662)
+    description?: string; // free text, may hold a URL (#662)
   };
+  text?: string; // plain-text payload (#661)
   wifi?: {
     ssid: string;
     password: string;
@@ -57,11 +59,15 @@ export function defaultSettings(type: QrType, year: number): QrSettings {
         durationMinutes: 30,
         reminderMinutes: 5,
         location: CENSUS_URL,
+        description: "",
       },
     };
   }
   if (type === "wifi") {
     return { ...base, wifi: { ssid: "", password: "", encryption: "WPA", hidden: false } };
+  }
+  if (type === "text") {
+    return { ...base, text: "" };
   }
   return { ...base, link: CENSUS_URL };
 }
@@ -70,5 +76,6 @@ export function defaultSettings(type: QrType, year: number): QrSettings {
 export function defaultFilename(type: QrType, year: number, s: QrSettings): string {
   if (type === "calendar") return `${year}-census-calendar`;
   if (type === "wifi") return `${year}-wifi-${(s.wifi?.ssid || "network").replace(/\s+/g, "-")}`;
+  if (type === "text") return `${year}-census-text`;
   return `${year}-census-link`;
 }

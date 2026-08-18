@@ -58,6 +58,9 @@ export function deriveListFields(type: QrType, settings: QrSettings) {
   if (type === "wifi" && settings.wifi) {
     return { subject: `WiFi: ${settings.wifi.ssid}`, burnYear: null, eventDate: null, eventTime: null };
   }
+  if (type === "text") {
+    return { subject: settings.text ?? "Text", burnYear: null, eventDate: null, eventTime: null };
+  }
   return { subject: settings.link ?? "Link", burnYear: null, eventDate: null, eventTime: null };
 }
 

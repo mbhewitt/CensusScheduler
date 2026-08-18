@@ -37,50 +37,34 @@ const account = async (req: NextApiRequest, res: NextApiResponse) => {
     // ------------------------------------------------------------
     case "POST": {
       // create volunteer account
-      const {
-        email,
-        emergencyContact,
-        location,
-        passcodeCreate,
-        phone,
-        playaName,
-        worldName,
-      } = JSON.parse(req.body);
+      const { email, location, passcodeCreate, playaName, worldName } =
+        JSON.parse(req.body);
       const shiftboardIdNew = await generateNewUserShiftboardId();
 
       // insert new account row
+      // phone / emergency_contact intentionally not collected at create time
+      // (#627); columns stay nullable and are editable later on the info page.
       await pool.query<RowDataPacket[]>(
         `INSERT INTO op_volunteers (
           create_volunteer,
           email,
-          emergency_contact,
           location,
           passcode,
-          phone,
           playa_name,
           shiftboard_id,
           world_name
         )
-        VALUES (true, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          email,
-          emergencyContact,
-          location,
-          passcodeCreate,
-          phone,
-          playaName,
-          shiftboardIdNew,
-          worldName,
-        ]
+        VALUES (true, ?, ?, ?, ?, ?, ?)`,
+        [email, location, passcodeCreate, playaName, shiftboardIdNew, worldName]
       );
 
       const resAccount: IResVolunteerAccount = {
         email,
-        emergencyContact,
+        emergencyContact: "",
         isCreated: true,
         location,
         notes: "",
-        phone,
+        phone: "",
         playaName,
         roleList: [],
         shiftboardId: shiftboardIdNew,
