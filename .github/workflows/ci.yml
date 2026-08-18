@@ -22,18 +22,20 @@ jobs:
     timeout-minutes: 45
 
     services:
+      # MariaDB 11.8 to match prod/on-playa (prevents MySQL-vs-MariaDB dialect &
+      # collation drift; prod-dumped schema loads natively).
       mysql:
-        image: mysql:8.0
+        image: mariadb:11.8
         env:
-          MYSQL_ROOT_PASSWORD: ci-root-password
-          MYSQL_DATABASE: census
+          MARIADB_ROOT_PASSWORD: ci-root-password
+          MARIADB_DATABASE: census
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -pci-root-password"
+          --health-cmd="mariadb-admin ping -h 127.0.0.1 -uroot -pci-root-password"
           --health-interval=5s
           --health-timeout=5s
-          --health-retries=10
+          --health-retries=15
 
     env:
       # App pool config — what the running Next.js dev server reads.
