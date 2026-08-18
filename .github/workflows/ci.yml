@@ -48,6 +48,9 @@ jobs:
       TEST_MYSQL_DATABASE: census
       TEST_MYSQL_USER: root
       TEST_MYSQL_PASSWORD: ci-root-password
+      # Required to sign the session cookie — passcode sign-in throws without it
+      # (lib/session.ts), which silently broke every authenticated spec. CI-only dummy.
+      SESSION_SECRET: ci0000000000000000000000000000000000000000000000000000000000000000
       # Okta config — dummy issuer; tests assert /api/auth/okta builds the
       # right 302 against whatever issuer is configured, no real network call.
       NEXT_PUBLIC_OKTA_ENABLED: "true"
