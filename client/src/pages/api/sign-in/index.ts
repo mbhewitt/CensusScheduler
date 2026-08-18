@@ -24,7 +24,6 @@ const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
         `SELECT
           core_crew,
           email,
-          emergency_contact,
           playa_name,
           shiftboard_id,
           world_name
@@ -62,11 +61,9 @@ const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
       }));
       const resAccount: IResVolunteerAccount = {
         email: volunteerFirst.email,
-        emergencyContact: volunteerFirst.emergency_contact,
         isCreated: volunteerFirst.create_volunteer,
         location: volunteerFirst.location,
         notes: volunteerFirst.notes,
-        phone: volunteerFirst.phone,
         playaName: volunteerFirst.playa_name,
         roleList: resRoleList,
         shiftboardId: volunteerFirst.shiftboard_id,

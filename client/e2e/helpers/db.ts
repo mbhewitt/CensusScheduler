@@ -44,27 +44,23 @@ export interface TestVolunteer {
   playaName: string;
   worldName: string;
   email: string;
-  phone?: string;
   passcode: string;
   location?: string;
-  emergencyContact?: string;
 }
 
 export async function insertVolunteer(v: TestVolunteer): Promise<void> {
   const db = getPool();
   await db.execute(
     `INSERT INTO op_volunteers
-       (shiftboard_id, playa_name, world_name, email, phone, passcode, location, emergency_contact, create_volunteer)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)`,
+       (shiftboard_id, playa_name, world_name, email, passcode, location, create_volunteer)
+     VALUES (?, ?, ?, ?, ?, ?, 1)`,
     [
       v.shiftboardId,
       v.playaName,
       v.worldName,
       v.email,
-      v.phone ?? "",
       v.passcode,
       v.location ?? "",
-      v.emergencyContact ?? "",
     ]
   );
 }

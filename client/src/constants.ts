@@ -1,6 +1,4 @@
 // account page form
-export const HELPER_TEXT_EMERGENCY_CONTACT =
-  "How to reach your emergency contact on or off playa";
 export const HELPER_TEXT_LOCATION =
   "How to find you on playa and any other relevant info";
 

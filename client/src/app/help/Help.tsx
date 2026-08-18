@@ -234,7 +234,7 @@ export const Help = () => {
           <Section title="Your account">
             <Bullets
               items={[
-                "Update your playa name, world name, email, phone, location, and emergency contact.",
+                "Update your playa name, world name, email, and location.",
                 "Set your arrival date (this drives your early-entry requirements).",
                 "Manage your email preferences.",
                 "View or reset your passcode.",

@@ -44,10 +44,7 @@ import type {
   IResVolunteerAccount,
   IResVolunteerRoleItem,
 } from "@/components/types/volunteers";
-import {
-  HELPER_TEXT_EMERGENCY_CONTACT,
-  HELPER_TEXT_LOCATION,
-} from "@/constants";
+import { HELPER_TEXT_LOCATION } from "@/constants";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
 import { checkIsAdmin } from "@/utils/checkIsRoleExist";
@@ -58,20 +55,16 @@ interface IAccountProps {
 }
 interface IFormValues {
   email: string;
-  emergencyContact: string;
   location: string;
   notes: string;
-  phone: string;
   playaName: string;
   worldName: string;
 }
 
 const defaultValues: IFormValues = {
   email: "",
-  emergencyContact: "",
   location: "",
   notes: "",
-  phone: "",
   playaName: "",
   worldName: "",
 };
@@ -116,22 +109,12 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
   // ------------------------------------------------------------
   useEffect(() => {
     if (data) {
-      const {
-        email,
-        emergencyContact,
-        location,
-        notes,
-        phone,
-        playaName,
-        worldName,
-      } = data;
+      const { email, location, notes, playaName, worldName } = data;
 
       reset({
         email,
-        emergencyContact,
         location,
         notes,
-        phone,
         playaName,
         worldName,
       });
@@ -228,8 +211,8 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
             <Card>
               <CardContent>
                 <Typography>
-                  World name, email, and phone number fields are displayed for
-                  reference only. You can update your playa name below for this
+                  World name and email fields are displayed for reference only.
+                  You can update your playa name below for this
                   Census season, but it won&apos;t affect your Burner profile or
                   carry over to future seasons.
                 </Typography>
@@ -312,22 +295,6 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
                   <Grid size={6}>
                     <Controller
                       control={control}
-                      name="phone"
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          disabled={!isCreated}
-                          fullWidth
-                          label="Phone"
-                          type="phone"
-                          variant="standard"
-                        />
-                      )}
-                    />
-                  </Grid>
-                  <Grid size={6}>
-                    <Controller
-                      control={control}
                       name="location"
                       render={({ field }) => (
                         <TextField
@@ -335,21 +302,6 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
                           fullWidth
                           helperText={HELPER_TEXT_LOCATION}
                           label="Location"
-                          variant="standard"
-                        />
-                      )}
-                    />
-                  </Grid>
-                  <Grid size={6}>
-                    <Controller
-                      control={control}
-                      name="emergencyContact"
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          fullWidth
-                          helperText={HELPER_TEXT_EMERGENCY_CONTACT}
-                          label="Emergency contact"
                           variant="standard"
                         />
                       )}
