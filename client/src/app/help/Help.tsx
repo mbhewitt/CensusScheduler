@@ -67,6 +67,10 @@ export const Help = () => {
   // The "Account" page is the volunteer's own info/checklist page (same target
   // the nav uses). Only linkable when signed in.
   const acct = shiftboardId ? `/volunteers/${shiftboardId}/info` : null;
+  // On the offline on-playa build, external links (Burner Profile, Discord)
+  // are dead. Render them as plain text there so the instructions still read
+  // but there's no broken link to tap (#629, Chipper).
+  const isOnPlaya = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
   return (
     <>
       <Hero
@@ -100,13 +104,17 @@ export const Help = () => {
                   <Ref href="/">Home</Ref> page and use{" "}
                   <strong>Sign in to Census</strong>. You&apos;ll sign in with
                   your Burner Profile. Don&apos;t have one yet? Create it at{" "}
-                  <a
-                    href="https://profiles.burningman.org"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    profiles.burningman.org
-                  </a>
+                  {isOnPlaya ? (
+                    <strong>profiles.burningman.org</strong>
+                  ) : (
+                    <a
+                      href="https://profiles.burningman.org"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      profiles.burningman.org
+                    </a>
+                  )}
                   .
                 </>,
                 <>
@@ -279,13 +287,17 @@ export const Help = () => {
                 </>,
                 <>
                   Join the conversation on the{" "}
-                  <a
-                    href="https://discord.com/invite/NNheeaPQRY"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Census Discord server
-                  </a>
+                  {isOnPlaya ? (
+                    <strong>Census Discord server</strong>
+                  ) : (
+                    <a
+                      href="https://discord.com/invite/NNheeaPQRY"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Census Discord server
+                    </a>
+                  )}
                   .
                 </>,
               ]}
