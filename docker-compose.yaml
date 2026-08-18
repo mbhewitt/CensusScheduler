@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
       args:
         # cloud/test has a persistent 9.7 data volume — match it (no downgrade)
-        MYSQL_VERSION: "9.7"
+        MYSQL_VERSION: "11.8"
     container_name: census-database
     image: burning-man/census-database
     environment:

@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
       args:
         # on-playa DB is 9.4 (ephemeral) — match it
-        MYSQL_VERSION: "9.4"
+        MYSQL_VERSION: "11.8"
     container_name: census-database
     image: burning-man/census-database
     environment:
