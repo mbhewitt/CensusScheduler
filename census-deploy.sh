@@ -141,7 +141,7 @@ refresh_database() {
     local db_pass
     db_pass=$(get_db_password)
     local retries=0
-    while ! sudo docker exec "$db_container" mysqladmin ping -uroot -p"$db_pass" --silent 2>/dev/null; do
+    while ! sudo docker exec "$db_container" mariadb-admin ping -uroot -p"$db_pass" --silent 2>/dev/null; do
         retries=$((retries + 1))
         if [ "$retries" -ge 30 ]; then
             log "DB refresh: MySQL not ready after 30 attempts. Skipping."
@@ -151,17 +151,16 @@ refresh_database() {
         sleep 2
     done
 
-    # Load: normalize prod MariaDB-11 collations (uca1400 -> general_ci) the
-    # on-playa MySQL can't parse, and drop op_email_queue data (real-email PII +
-    # oversized INSERTs that abort the load) before importing.
-    sed -E 's/utf8mb4_uca1400[a-z0-9_]*/utf8mb4_general_ci/g' "$sql_file" | awk '/^INSERT INTO `op_email_queue` VALUES/{skip=1} skip{if(/;[[:space:]]*$/)skip=0; next} {print}' > "$sql_file.compat"
-    sudo docker exec -i "$db_container" mysql -uroot -p"$db_pass" census < "$sql_file.compat"
-    rm -f "$sql_file.compat"
+    # On-playa DB is MariaDB 11 (matches prod) — the dump loads natively, no
+    # collation translation needed. Still drop op_email_queue data (real-email
+    # PII) on the test server before importing.
+    awk '/^INSERT INTO `op_email_queue` VALUES/{skip=1} skip{if(/;[[:space:]]*$/)skip=0; next} {print}' "$sql_file" \
+      | sudo docker exec -i "$db_container" mariadb -uroot -p"$db_pass" census
 
 
     # Blank PII - test server should not contain real names, emails, phones
     log "DB refresh: blanking PII..."
-    sudo docker exec -i "$db_container" mysql -uroot -p"$db_pass" census < "$CENSUS_DIR/blank_pii.sql"
+    sudo docker exec -i "$db_container" mariadb -uroot -p"$db_pass" census < "$CENSUS_DIR/blank_pii.sql"
     log "DB refresh: PII blanked."
     date +%Y-%m-%d > "$DB_REFRESH_MARKER"
     log "DB refresh: complete."
