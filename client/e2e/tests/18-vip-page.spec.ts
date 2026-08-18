@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, request } from "@playwright/test";
 import dayjs from "dayjs";
 import {
   insertVolunteer,
@@ -20,22 +20,27 @@ import {
   signInAs,
   signInAsBuiltinAdmin,
 } from "../fixtures/test-data";
+import { buildSessionCookieHeader } from "../helpers/session";
 
 // Role IDs matching the app
 const ROLE_STAFF_ID = 2000006;
 const ROLE_OTHER_SAP_ID = 2000007;
-const ROLE_BURNER_PROFILE_UPDATED_ID = 2000010;
 
 // op_dates date_id values (from database seed)
 const DATE_ID_PRE_WED = 8;
 const DATE_ID_MON = 13; // post-opening
 
+// Blank location so the "on-playa plans" checklist item stays INCOMPLETE and
+// therefore expanded by default (plansDone = arrivalDate && location). That
+// keeps the arrival-date / early-entry fields visible without having to open
+// the "completed items" accordion in every UI test.
 const vipVolunteer = makeTestVolunteer({
   shiftboardId: IDS.vipVolunteer,
   playaName: "E2E VipVol",
   worldName: "VIP Tester",
   email: "e2e-vip@test.local",
   passcode: "7777",
+  location: "",
 });
 
 function makeVipShift() {
@@ -66,6 +71,31 @@ function makeVipShift() {
 }
 
 const VIP_SHIFT = makeVipShift();
+
+// Authenticated request contexts for the API tests. The info/* endpoints are
+// behind withAuth + isOwnerOrAdmin, so a bare `request` fixture (no cookie)
+// gets 401 and body.sapStatus is undefined. We sign a session cookie the same
+// way the dev server verifies it (see e2e/helpers/session.ts).
+async function vipContext() {
+  return request.newContext({
+    baseURL: "http://localhost:3000",
+    extraHTTPHeaders: {
+      Cookie: buildSessionCookieHeader(vipVolunteer.shiftboardId),
+    },
+  });
+}
+
+// Admin session — needed to read a record that isn't the caller's own (the
+// 404 test hits a nonexistent volunteer; isOwnerOrAdmin would 403 a
+// non-admin before the handler can 404).
+async function adminContext() {
+  return request.newContext({
+    baseURL: "http://localhost:3000",
+    extraHTTPHeaders: {
+      Cookie: buildSessionCookieHeader(ADMIN_VOLUNTEER.shiftboardId),
+    },
+  });
+}
 
 test.describe("VIP Page", () => {
   // VIP page UI tests need extra time due to sign-in + page load
@@ -115,14 +145,20 @@ test.describe("VIP Page", () => {
     ).toBeVisible({ timeout: 20_000 });
   });
 
-  test("VIP page shows On-Playa Information section", async ({ page }) => {
+  test("VIP page shows on-playa plans (arrival + early entry)", async ({
+    page,
+  }) => {
     await signInAs(page, vipVolunteer);
 
     await page.goto(`/volunteers/${vipVolunteer.shiftboardId}/info`);
 
+    // On-playa arrival/early-entry now live INLINE in the checklist (#461),
+    // not under a separate "On-Playa Information" heading. The plans item is
+    // incomplete (blank location) so it's expanded by default.
     await expect(
-      page.getByRole("heading", { name: /on-playa information and early entry/i })
+      page.getByText(/Desired \/ Expected Arrival Date/i).first()
     ).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText(/Early Entry/i).first()).toBeVisible();
   });
 
   // ── Arrival date ─────────────────────────────────────────
@@ -133,7 +169,9 @@ test.describe("VIP Page", () => {
     await page.goto(`/volunteers/${vipVolunteer.shiftboardId}/info`);
 
     // PreWed should be visible in the dropdown (value = date_id 8)
-    await expect(page.getByText(/PreWed/)).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText(/PreWed/).first()).toBeVisible({
+      timeout: 10_000,
+    });
   });
 
   // ── Checklist ────────────────────────────────────────────
@@ -145,15 +183,14 @@ test.describe("VIP Page", () => {
 
     await page.goto(`/volunteers/${vipVolunteer.shiftboardId}/info`);
 
-    // Behavioral standards role was assigned, so it should show as completed
-    // Click "View completed items" to expand
-    const completedAccordion = page.getByText(/view completed items/i);
-    if (await completedAccordion.isVisible({ timeout: 5_000 })) {
-      await completedAccordion.click();
-      await expect(
-        page.getByText(/behavioral standards/i)
-      ).toBeVisible();
-    }
+    // Behavioral standards role was assigned, so it shows in the completed
+    // accordion, labelled "View N completed item(s)".
+    const completedAccordion = page.getByText(/view \d+ completed item/i);
+    await expect(completedAccordion).toBeVisible({ timeout: 10_000 });
+    await completedAccordion.click();
+    await expect(
+      page.getByText(/behavioral standards/i).first()
+    ).toBeVisible();
   });
 
   test("checklist shows SAP requirements for pre-event arrival", async ({
@@ -283,21 +320,20 @@ test.describe("VIP Page", () => {
 
     // Find an inactive role and click to add it
     const coreCrewText = page.getByText("Core Crew");
-    if (await coreCrewText.isVisible({ timeout: 5_000 })) {
-      await coreCrewText.click();
+    await expect(coreCrewText.first()).toBeVisible({ timeout: 10_000 });
+    await coreCrewText.first().click();
 
-      // Should see success snackbar
-      await expect(
-        page.getByText(/has been added/i)
-      ).toBeVisible({ timeout: 5_000 });
+    // Should see success snackbar
+    await expect(
+      page.getByText(/has been added/i)
+    ).toBeVisible({ timeout: 5_000 });
 
-      // Now remove it
-      await page.getByText("Core Crew").click();
+    // Now remove it
+    await page.getByText("Core Crew").first().click();
 
-      await expect(
-        page.getByText(/has been removed/i)
-      ).toBeVisible({ timeout: 5_000 });
-    }
+    await expect(
+      page.getByText(/has been removed/i)
+    ).toBeVisible({ timeout: 5_000 });
   });
 
   test("admin cannot remove Admin or SuperAdmin roles", async ({ page }) => {
@@ -337,13 +373,16 @@ test.describe("VIP Page", () => {
 
   // ── API: VIP info endpoint ───────────────────────────────
 
-  test("VIP API returns volunteer data", async ({ request }) => {
-    const res = await request.get(
+  test("VIP API returns volunteer data", async () => {
+    const ctx = await vipContext();
+    const res = await ctx.get(
       `/api/volunteers/${vipVolunteer.shiftboardId}/info`
     );
     expect(res.ok()).toBeTruthy();
 
     const body = await res.json();
+    await ctx.dispose();
+
     expect(body.volunteer.shiftboardId).toBe(vipVolunteer.shiftboardId);
     expect(body.volunteer.playaName).toBe(vipVolunteer.playaName);
     expect(body.arrivalDate).not.toBeNull();
@@ -354,15 +393,19 @@ test.describe("VIP Page", () => {
     expect(body.roles).toContain("Signed Behavioral Standards");
   });
 
-  test("VIP API returns 404 for nonexistent volunteer", async ({
-    request,
-  }) => {
-    const res = await request.get("/api/volunteers/999999999/info");
-    expect(res.status()).toBe(404);
+  test("VIP API returns 404 for nonexistent volunteer", async () => {
+    // Use an admin session: isOwnerOrAdmin would 403 a non-admin before the
+    // handler reaches its 404 branch.
+    const ctx = await adminContext();
+    const res = await ctx.get("/api/volunteers/999999999/info");
+    const status = res.status();
+    await ctx.dispose();
+    expect(status).toBe(404);
   });
 
-  test("VIP API PATCH updates arrival date", async ({ request }) => {
-    const res = await request.patch(
+  test("VIP API PATCH updates arrival date", async () => {
+    const ctx = await vipContext();
+    const res = await ctx.patch(
       `/api/volunteers/${vipVolunteer.shiftboardId}/info`,
       {
         data: JSON.stringify({ arrivalDateId: DATE_ID_MON }),
@@ -371,7 +414,7 @@ test.describe("VIP Page", () => {
     expect(res.ok()).toBeTruthy();
 
     // Verify the change
-    const getRes = await request.get(
+    const getRes = await ctx.get(
       `/api/volunteers/${vipVolunteer.shiftboardId}/info`
     );
     const body = await getRes.json();
@@ -382,36 +425,41 @@ test.describe("VIP Page", () => {
     expect(body.sapStatus.bypassReason).toBe("post_opening");
 
     // Reset arrival date back
-    await request.patch(
+    await ctx.patch(
       `/api/volunteers/${vipVolunteer.shiftboardId}/info`,
       {
         data: JSON.stringify({ arrivalDateId: DATE_ID_PRE_WED }),
       }
     );
+    await ctx.dispose();
   });
 
   // ── SAP bypass states ────────────────────────────────────
 
-  test("Staff role triggers SAP bypass", async ({ request }) => {
+  test("Staff role triggers SAP bypass", async () => {
     await assignRole(vipVolunteer.shiftboardId, ROLE_STAFF_ID);
 
-    const res = await request.get(
+    const ctx = await vipContext();
+    const res = await ctx.get(
       `/api/volunteers/${vipVolunteer.shiftboardId}/info`
     );
     const body = await res.json();
+    await ctx.dispose();
     expect(body.sapStatus.bypass).toBe(true);
     expect(body.sapStatus.bypassReason).toBe("staff");
 
     await removeRole(vipVolunteer.shiftboardId, ROLE_STAFF_ID);
   });
 
-  test("OtherSAP role triggers SAP bypass", async ({ request }) => {
+  test("OtherSAP role triggers SAP bypass", async () => {
     await assignRole(vipVolunteer.shiftboardId, ROLE_OTHER_SAP_ID);
 
-    const res = await request.get(
+    const ctx = await vipContext();
+    const res = await ctx.get(
       `/api/volunteers/${vipVolunteer.shiftboardId}/info`
     );
     const body = await res.json();
+    await ctx.dispose();
     expect(body.sapStatus.bypass).toBe(true);
     expect(body.sapStatus.bypassReason).toBe("other_sap");
 
@@ -420,45 +468,52 @@ test.describe("VIP Page", () => {
 
   // ── Profile updated toggle ───────────────────────────────
 
-  test("profile-updated API toggles role", async ({ request }) => {
+  test("profile-updated API toggles role", async () => {
+    const ctx = await vipContext();
+
     // Enable
-    const onRes = await request.post(
+    const onRes = await ctx.post(
       `/api/volunteers/${vipVolunteer.shiftboardId}/info/profile-updated`,
       { data: JSON.stringify({ updated: true }) }
     );
     expect(onRes.status()).toBe(201);
 
-    let getRes = await request.get(
+    let getRes = await ctx.get(
       `/api/volunteers/${vipVolunteer.shiftboardId}/info`
     );
     let body = await getRes.json();
     expect(body.burnerProfileUpdated).toBe(true);
 
     // Disable
-    const offRes = await request.post(
+    const offRes = await ctx.post(
       `/api/volunteers/${vipVolunteer.shiftboardId}/info/profile-updated`,
       { data: JSON.stringify({ updated: false }) }
     );
-    expect(offRes.status()).toBe(201);
+    // updated:false DELETEs the role row and returns 200 (not 201).
+    expect(offRes.status()).toBe(200);
 
-    getRes = await request.get(
+    getRes = await ctx.get(
       `/api/volunteers/${vipVolunteer.shiftboardId}/info`
     );
     body = await getRes.json();
     expect(body.burnerProfileUpdated).toBe(false);
+
+    await ctx.dispose();
   });
 
   // ── Other SAP toggle API ─────────────────────────────────
 
-  test("other-sap API toggles role", async ({ request }) => {
+  test("other-sap API toggles role", async () => {
+    const ctx = await vipContext();
+
     // Enable
-    const onRes = await request.post(
+    const onRes = await ctx.post(
       `/api/volunteers/${vipVolunteer.shiftboardId}/info/other-sap`,
       { data: JSON.stringify({ hasOtherSap: true }) }
     );
     expect(onRes.status()).toBe(201);
 
-    let getRes = await request.get(
+    let getRes = await ctx.get(
       `/api/volunteers/${vipVolunteer.shiftboardId}/info`
     );
     let body = await getRes.json();
@@ -466,26 +521,29 @@ test.describe("VIP Page", () => {
     expect(body.sapStatus.bypassReason).toBe("other_sap");
 
     // Disable
-    await request.post(
+    await ctx.post(
       `/api/volunteers/${vipVolunteer.shiftboardId}/info/other-sap`,
       { data: JSON.stringify({ hasOtherSap: false }) }
     );
 
-    getRes = await request.get(
+    getRes = await ctx.get(
       `/api/volunteers/${vipVolunteer.shiftboardId}/info`
     );
     body = await getRes.json();
     expect(body.sapStatus.bypass).toBe(false);
+
+    await ctx.dispose();
   });
 
   // ── SAP download endpoint ────────────────────────────────
 
-  test("SAP download returns 404 for nonexistent SAP", async ({
-    request,
-  }) => {
-    const res = await request.get(
+  test("SAP download returns 404 for nonexistent SAP", async () => {
+    const ctx = await vipContext();
+    const res = await ctx.get(
       `/api/volunteers/${vipVolunteer.shiftboardId}/sap/999999`
     );
-    expect(res.status()).toBe(404);
+    const status = res.status();
+    await ctx.dispose();
+    expect(status).toBe(404);
   });
 });
