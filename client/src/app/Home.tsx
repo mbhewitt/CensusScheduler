@@ -40,6 +40,12 @@ export const Home = () => {
   );
   const isOAuthConfigured = process.env.NEXT_PUBLIC_OKTA_ENABLED === "true";
   const isPinEnabled = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
+  // On the offline on-playa build the external links (Hive, Burner Profile, the
+  // data site, Discord) are dead and the online-recruitment copy doesn't apply —
+  // volunteers are already here and sign in with a passcode. PIN sign-in is the
+  // on-playa signal (same convention as ShareButton/VolunteerInfo). Show a
+  // stripped-down homepage there. Off-playa is unchanged (#629, Chipper).
+  const isOnPlaya = isPinEnabled;
 
   // render
   // ------------------------------------------------------------
@@ -63,6 +69,11 @@ export const Home = () => {
               You&apos;re signed in. View your account below, or head to the{" "}
               <Link href="/shifts">Shifts</Link> page to see requirements and sign
               up.
+            </Typography>
+          ) : isOnPlaya ? (
+            <Typography sx={{ mb: 2 }}>
+              Welcome to the Census Lab! Sign in below with your passcode to view
+              your shifts and schedule.
             </Typography>
           ) : (
             <Typography sx={{ mb: 2 }}>
@@ -135,21 +146,31 @@ export const Home = () => {
                 statistically accurate data about the people who attended Burning
                 Man that year.
               </Typography>
-              <Typography>
-                Check out the{" "}
-                <a
-                  href="https://blackrockcitycensus.org/index.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Black Rock City Census Population Analysis
-                </a>{" "}
-                to explore our data.
-              </Typography>
+              {/* External data site — dead offline (#629). */}
+              {!isOnPlaya && (
+                <Typography>
+                  Check out the{" "}
+                  <a
+                    href="https://blackrockcitycensus.org/index.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Black Rock City Census Population Analysis
+                  </a>{" "}
+                  to explore our data.
+                </Typography>
+              )}
             </CardContent>
           </Card>
         </Box>
 
+        {/* Online-only sections below: every one relies on external links
+            (Hive, Burner Profile, the data site, Discord) that don't load on
+            the offline on-playa tablets, and the copy targets prospective
+            volunteers rather than people already on playa. Hidden on-playa
+            (#629, Chipper); unchanged off-playa. */}
+        {!isOnPlaya && (
+          <>
         <Box component="section">
           <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
             Learn More about BRC Census
@@ -318,6 +339,8 @@ export const Home = () => {
             </CardContent>
           </Card>
         </Box>
+          </>
+        )}
       </Container>
     </>
   );

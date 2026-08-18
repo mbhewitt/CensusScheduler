@@ -634,8 +634,11 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     ),
   });
 
-  // Burner Profile
-  checklistItems.push({
+  // Burner Profile — hidden on the offline on-playa build: this step is "visit
+  // profiles.burningman.org", which is dead without internet and meaningless on
+  // shared tablets where volunteers aren't in their own account (#628, Chipper).
+  if (!isOnPlaya)
+    checklistItems.push({
     id: "burner-profile",
     label: burnerProfileUpdated
       ? "Burner Profile \u2014 Updated"
@@ -1059,26 +1062,30 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                 <Typography>{volunteer.email || "\u2014"}</Typography>
               </Box>
             </Stack>
-            <Typography color="text.secondary" sx={{ mt: 1 }} variant="body2">
-              Need to update your info?{" "}
-              {/* De-emphasized on purpose (Chipper 2026-07-02): reads as
-                  supporting subtext, not a primary action — the primary
-                  "update your Burner Profile" step lives in the checklist
-                  below. Still a working link, just not blue/underlined. */}
-              <a
-                href="https://profiles.burningman.org/my-profile"
-                rel="noopener noreferrer"
-                target="_blank"
-                style={{
-                  color: "inherit",
-                  textDecoration: "none",
-                  fontStyle: "italic",
-                }}
-              >
-                Visit your Burner Profile
-              </a>
-              .
-            </Typography>
+            {/* Burner Profile link — hidden offline on playa; dead without
+                internet (#628, Chipper). */}
+            {!isOnPlaya && (
+              <Typography color="text.secondary" sx={{ mt: 1 }} variant="body2">
+                Need to update your info?{" "}
+                {/* De-emphasized on purpose (Chipper 2026-07-02): reads as
+                    supporting subtext, not a primary action — the primary
+                    "update your Burner Profile" step lives in the checklist
+                    below. Still a working link, just not blue/underlined. */}
+                <a
+                  href="https://profiles.burningman.org/my-profile"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  style={{
+                    color: "inherit",
+                    textDecoration: "none",
+                    fontStyle: "italic",
+                  }}
+                >
+                  Visit your Burner Profile
+                </a>
+                .
+              </Typography>
+            )}
           </CardContent>
         </Card>
 
