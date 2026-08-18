@@ -624,7 +624,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
               <Typography sx={{ fontWeight: 800 }}>Filters</Typography>
               <Stack direction="row" alignItems="center" spacing={0.5}>
                 <Button size="small" onClick={removeAllFilters}>
-                  Remove all filters
+                  Reset all filters
                 </Button>
                 <IconButton
                   aria-label="Close filters"

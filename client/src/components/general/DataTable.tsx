@@ -86,11 +86,12 @@ export const DataTable = ({
     rowHover: false,
     rowsPerPage: 100,
     selectableRows: undefined,
-    // "Reset" clears every active filter (incl. the default ones), so label it
-    // for what it actually does (#143). mui-datatables deep-merges textLabels.
+    // Filter-clear control. On the Shifts list the Present/Future default
+    // persists through this, so "Reset all filters" is more accurate than
+    // "Remove" (Chipper, #624). mui-datatables deep-merges textLabels.
     textLabels: {
       filter: {
-        reset: "Remove all filters",
+        reset: "Reset all filters",
       },
     },
     viewColumns: false,
