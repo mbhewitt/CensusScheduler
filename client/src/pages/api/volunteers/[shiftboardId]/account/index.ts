@@ -42,10 +42,8 @@ const volunteers = async (
         `SELECT
           create_volunteer,
           email,
-          emergency_contact,
           location,
           notes,
-          phone,
           playa_name,
           shiftboard_id,
           world_name
@@ -68,11 +66,9 @@ const volunteers = async (
       }
       const resVolunteerItem: IResVolunteerAccount = {
         email: dbVolunteerFirst.email ?? "",
-        emergencyContact: dbVolunteerFirst.emergency_contact ?? "",
         isCreated: Boolean(dbVolunteerFirst.create_volunteer),
         location: dbVolunteerFirst.location ?? "",
         notes: dbVolunteerFirst.notes ?? "",
-        phone: dbVolunteerFirst.phone ?? "",
         playaName: dbVolunteerFirst.playa_name ?? "",
         shiftboardId: dbVolunteerFirst.shiftboard_id ?? 0,
         roleList: resRoleList,
@@ -86,38 +82,20 @@ const volunteers = async (
     // ------------------------------------------------------------
     case "PATCH": {
       // update volunteer account
-      const {
-        email,
-        emergencyContact,
-        location,
-        notes,
-        phone,
-        playaName,
-        worldName,
-      }: IReqVolunteerAccount = JSON.parse(req.body);
+      const { email, location, notes, playaName, worldName }: IReqVolunteerAccount =
+        JSON.parse(req.body);
 
       await pool.query<RowDataPacket[]>(
         `UPDATE op_volunteers
         SET
           email=?,
-          emergency_contact=?,
           location=?,
           notes=?,
-          phone=?,
           playa_name=?,
           update_volunteer=true,
           world_name=?
         WHERE shiftboard_id=?`,
-        [
-          email,
-          emergencyContact,
-          location,
-          notes,
-          phone,
-          playaName,
-          worldName,
-          shiftboardId,
-        ]
+        [email, location, notes, playaName, worldName, shiftboardId]
       );
 
       return res.status(200).json({

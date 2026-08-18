@@ -66,11 +66,9 @@ export const sessionReducer = (
         },
         user: {
           email: "",
-          emergencyContact: "",
           isCreated: false,
           location: "",
           notes: "",
-          phone: "",
           playaName: "",
           roleList: [],
           shiftboardId: 0,

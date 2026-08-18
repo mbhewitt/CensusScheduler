@@ -31,11 +31,9 @@ export interface IVolunteerOption {
 }
 export interface IVolunteerAccountFormValues {
   email?: string;
-  emergencyContact?: string;
   location?: string;
   passcodeConfirm?: string;
   passcodeCreate?: string;
-  phone?: string;
   playaName?: string;
   worldName?: string;
 }

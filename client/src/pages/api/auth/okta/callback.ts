@@ -146,11 +146,9 @@ async function buildAccountResponse(shiftboardId: number) {
   const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
     `SELECT
       email,
-      emergency_contact,
       create_volunteer,
       location,
       notes,
-      phone,
       playa_name,
       shiftboard_id,
       world_name
@@ -175,11 +173,9 @@ async function buildAccountResponse(shiftboardId: number) {
 
   return {
     email: volunteer.email,
-    emergencyContact: volunteer.emergency_contact ?? "",
     isCreated: volunteer.create_volunteer,
     location: volunteer.location ?? "",
     notes: volunteer.notes ?? "",
-    phone: volunteer.phone ?? "",
     playaName: volunteer.playa_name,
     roleList,
     shiftboardId: volunteer.shiftboard_id,

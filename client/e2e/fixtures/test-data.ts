@@ -70,9 +70,7 @@ export function makeTestVolunteer(
     worldName: `Test World ${overrides.shiftboardId}`,
     email: `e2e-${overrides.shiftboardId}@test.local`,
     passcode: "1234",
-    phone: "555-0100",
     location: "Test Camp",
-    emergencyContact: "Test Contact 555-0199",
     ...overrides,
   };
 }

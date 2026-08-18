@@ -286,7 +286,6 @@ CREATE TABLE `op_volunteers` (
   `playa_name` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `world_name` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
   `email` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
-  `phone` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
   `passcode` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `account_id` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `core_crew` int NOT NULL DEFAULT '0',
@@ -299,7 +298,6 @@ CREATE TABLE `op_volunteers` (
   `delete_volunteer` tinyint(1) DEFAULT '0',
   `notes` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
   `location` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
-  `emergency_contact` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
   PRIMARY KEY (`shiftboard_id`),
   KEY `passcode` (`passcode`,`shiftboard_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
