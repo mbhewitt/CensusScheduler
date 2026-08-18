@@ -119,7 +119,7 @@ db_refreshed_today() {
 
 # Refresh database from OnPlayaData SQL dump
 refresh_database() {
-    local sql_file="$ONPLAYA_DIR/server/${YEAR}_on_playa_server_data.sql"
+    local sql_file="$ONPLAYA_DIR/server/${YEAR}_on_playa_server_data_v2.sql"
 
     if [ ! -f "$sql_file" ]; then
         log "DB refresh: SQL file not found: $sql_file"
@@ -151,8 +151,12 @@ refresh_database() {
         sleep 2
     done
 
-    # Load the SQL file - this wipes and reloads the op_* tables
-    sudo docker exec -i "$db_container" mysql -uroot -p"$db_pass" census < "$sql_file"
+    # Load: normalize prod MariaDB-11 collations (uca1400 -> general_ci) the
+    # on-playa MySQL can't parse, and drop op_email_queue data (real-email PII +
+    # oversized INSERTs that abort the load) before importing.
+    sed -E 's/utf8mb4_uca1400[a-z0-9_]*/utf8mb4_general_ci/g' "$sql_file" | awk '/^INSERT INTO `op_email_queue` VALUES/{skip=1} skip{if(/;[[:space:]]*$/)skip=0; next} {print}' > "$sql_file.compat"
+    sudo docker exec -i "$db_container" mysql -uroot -p"$db_pass" census < "$sql_file.compat"
+    rm -f "$sql_file.compat"
 
 
     # Blank PII - test server should not contain real names, emails, phones
