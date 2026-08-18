@@ -23,3 +23,18 @@ INSERT IGNORE INTO op_dates (date_id, datename, date) VALUES
 
 -- Doodle canvas row
 INSERT IGNORE INTO op_doodles (id, image_url) VALUES (1, '');
+
+-- Minimal shift type id=3 ("Gate Sampling") for the shift-type editor specs
+-- (11-shift-type-add-position, 11b-shift-type-validation reference TYPE_ID=3).
+-- Without a seeded type the editor page loads empty and the Add/Update buttons
+-- never render. Mirrors e2e/helpers/db.ts insertFullShift.
+INSERT IGNORE INTO op_shift_category (shift_category_id, shift_category, department, create_category) VALUES (3,'Gate Sampling','Census',1);
+INSERT IGNORE INTO op_position_type (position_type_id, position, create_position) VALUES (3,'Sampler',1);
+INSERT IGNORE INTO op_shift_name (shift_name_id, shift_name, shift_category_id, off_playa, delete_shift, create_shift) VALUES (3,'Gate Sampling',3,0,0,1);
+INSERT IGNORE INTO op_shift_times (shift_times_id, shift_name_id, start_time, end_time, remove_shift_time, add_shift_time) VALUES (3,3,'2026-08-31 10:00:00','2026-08-31 14:00:00',0,1);
+INSERT IGNORE INTO op_shift_time_position (time_position_id, shift_times_id, position_type_id, slots, remove_time_position, add_time_position) VALUES (3,3,3,3,0,1);
+
+-- Shift type id=15 ("Setup") with a BLANK category, for 11b-shift-type-validation
+-- (TYPE_EMPTY_CATEGORY=15): clicking Update must surface "Category is required".
+INSERT IGNORE INTO op_shift_name (shift_name_id, shift_name, shift_category_id, off_playa, delete_shift, create_shift) VALUES (15,'Setup',NULL,0,0,1);
+INSERT IGNORE INTO op_shift_times (shift_times_id, shift_name_id, start_time, end_time, remove_shift_time, add_shift_time) VALUES (15,15,'2026-08-29 08:00:00','2026-08-29 12:00:00',0,1);
