@@ -99,6 +99,16 @@ jobs:
             mysql -h 127.0.0.1 -P 3306 -uroot -pci-root-password --force census < "$f" || true
           done
 
+      # Seed the standard reference rows the e2e helpers assume already exist
+      # (op_roles like SuperAdmin/Admin/Core Crew/Behavioral Standards, and a
+      # doodle canvas row). Without these, assignRole() hits FK failures and the
+      # admin/role specs cascade. Tests only clean up IDs >= 9,000,000, so these
+      # persist across the suite.
+      - name: Seed reference data
+        run: |
+          mysql -h 127.0.0.1 -P 3306 -uroot -pci-root-password census \
+            < client/e2e/fixtures/reference-seed.sql
+
       - name: Install client dependencies
         working-directory: client
         run: yarn install --frozen-lockfile
