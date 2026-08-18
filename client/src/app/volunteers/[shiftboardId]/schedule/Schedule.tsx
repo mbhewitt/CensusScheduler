@@ -837,10 +837,15 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
             </Typography>
           )}
           <Typography color="text.secondary" variant="body2">
-            {/* State label, not a promise: an "open" shift isn't sign-up-able by
-                everyone (unauth users / wrong-role). Describe the shift, not the
-                viewer's ability (#624 follow-up, Chipper). */}
-            {swatch(theme.palette.secondary.main)}Open
+            {/* For signed-in volunteers this swatch only marks shifts they can
+                actually take — role-ineligible ones render as Unavailable (the
+                eligibility check runs only when signed in). Unauthenticated
+                viewers (e.g. on-playa walk-ups) have no eligibility computed, so
+                role-gated shifts also show here; for them label the state
+                ("Open") instead of "You can sign up", which would overpromise.
+                (Chipper) */}
+            {swatch(theme.palette.secondary.main)}
+            {isSignedIn ? "You can sign up" : "Open"}
           </Typography>
           <Typography color="text.secondary" variant="body2">
             {swatch(theme.palette.divider)}Unavailable
