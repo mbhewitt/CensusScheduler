@@ -8,20 +8,16 @@ export interface IReqPasscode {
 // ------------------------------------------------------------
 export interface IReqVolunteerAccount {
   email: string;
-  emergencyContact: string;
   location: string;
   notes: string;
-  phone: string;
   playaName: string;
   worldName: string;
 }
 export interface IResVolunteerAccount {
   email: string;
-  emergencyContact: string;
   isCreated: boolean;
   location: string;
   notes: string;
-  phone: string;
   playaName: string;
   roleList: IResVolunteerRoleItem[];
   shiftboardId: number;

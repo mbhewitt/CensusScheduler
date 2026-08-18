@@ -77,21 +77,4 @@ test.describe("Volunteer Account Update", () => {
       page.getByText(/updated/i)
     ).toBeVisible({ timeout: 5_000 });
   });
-
-  test("should update emergency contact field", async ({ page }) => {
-    await signInAs(page, volunteer);
-
-    const emergencyField = page.getByLabel("Emergency contact");
-    await expect(emergencyField).toBeVisible({ timeout: 10_000 });
-    await emergencyField.clear();
-    await emergencyField.fill("Dad 555-1111");
-
-    await page
-      .getByRole("button", { name: /update profile/i })
-      .click();
-
-    await expect(
-      page.getByText(/updated/i)
-    ).toBeVisible({ timeout: 5_000 });
-  });
 });

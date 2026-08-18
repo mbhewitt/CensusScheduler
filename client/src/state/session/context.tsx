@@ -27,11 +27,9 @@ export const SessionContext = createContext({} as ISessionProviderValue);
 const sessionInitial: ISessionState = {
   user: {
     email: "",
-    emergencyContact: "",
     isCreated: false,
     location: "",
     notes: "",
-    phone: "",
     playaName: "",
     roleList: [],
     shiftboardId: 0,
