@@ -7,7 +7,7 @@ import { buildPayload, type QrSettings, type QrType } from "lib/qr";
 import { deriveListFields, mapQrRow, type QrRow } from "lib/qrDb";
 import { getCurrentBurnYear } from "lib/sapDb";
 
-const VALID_TYPES: QrType[] = ["calendar", "link", "wifi"];
+const VALID_TYPES: QrType[] = ["calendar", "link", "wifi", "text"];
 
 // GET  /api/qr-codes         — the registry list.
 // POST /api/qr-codes         — create a new QR (validates payload builds).

@@ -157,6 +157,7 @@ export const QrEditor = ({ open, burnYear, editing, onClose, onSaved }: Props) =
               <ToggleButton value="calendar">Calendar</ToggleButton>
               <ToggleButton value="link">Link</ToggleButton>
               <ToggleButton value="wifi">WiFi</ToggleButton>
+              <ToggleButton value="text">Text</ToggleButton>
             </ToggleButtonGroup>
 
             {qrType === "calendar" && cal && (
@@ -206,10 +207,19 @@ export const QrEditor = ({ open, burnYear, editing, onClose, onSaved }: Props) =
                   />
                 </Stack>
                 <TextField
-                  label="Link / location"
+                  label="Location (plain text or URL)"
                   size="small"
                   value={cal.location}
                   onChange={(e) => patch({ calendar: { ...cal, location: e.target.value } })}
+                />
+                <TextField
+                  label="Description"
+                  size="small"
+                  multiline
+                  minRows={2}
+                  helperText="Optional. A URL can go here."
+                  value={cal.description ?? ""}
+                  onChange={(e) => patch({ calendar: { ...cal, description: e.target.value } })}
                 />
               </>
             )}
@@ -220,6 +230,17 @@ export const QrEditor = ({ open, burnYear, editing, onClose, onSaved }: Props) =
                 size="small"
                 value={settings.link ?? ""}
                 onChange={(e) => patch({ link: e.target.value })}
+              />
+            )}
+
+            {qrType === "text" && (
+              <TextField
+                label="Text"
+                size="small"
+                multiline
+                minRows={3}
+                value={settings.text ?? ""}
+                onChange={(e) => patch({ text: e.target.value })}
               />
             )}
 
