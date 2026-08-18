@@ -31,21 +31,15 @@ import { SnackbarText } from "@/components/general/SnackbarText";
 import { Hero } from "@/components/layout/Hero";
 import type { IVolunteerAccountFormValues } from "@/components/types";
 import type { IResVolunteerAccount } from "@/components/types/volunteers";
-import {
-  HELPER_TEXT_EMERGENCY_CONTACT,
-  HELPER_TEXT_LOCATION,
-  SESSION_SIGN_IN,
-} from "@/constants";
+import { HELPER_TEXT_LOCATION, SESSION_SIGN_IN } from "@/constants";
 import { SessionContext } from "@/state/session/context";
 import { fetcherTrigger } from "@/utils/fetcher";
 
 const defaultValues: IVolunteerAccountFormValues = {
   email: "",
-  emergencyContact: "",
   location: "",
   passcodeConfirm: "",
   passcodeCreate: "",
-  phone: "",
   playaName: "",
   worldName: "",
 };
@@ -226,45 +220,30 @@ export const AccountCreate = () => {
                       },
                     }}
                   />
-                  <Stack direction="row" gap={2}>
-                    <Controller
-                      control={control}
-                      name="email"
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          error={Object.hasOwn(errors, "email")}
-                          fullWidth
-                          helperText={errors.email?.message}
-                          label="Email"
-                          required
-                          type="email"
-                          variant="standard"
-                        />
-                      )}
-                      rules={{
-                        required: "Email is required",
-                        validate: (value) => {
-                          return (
-                            Boolean(value?.trim()) || "Email name is required"
-                          );
-                        },
-                      }}
-                    />
-                    <Controller
-                      control={control}
-                      name="phone"
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          fullWidth
-                          label="Phone"
-                          type="tel"
-                          variant="standard"
-                        />
-                      )}
-                    />
-                  </Stack>
+                  <Controller
+                    control={control}
+                    name="email"
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        error={Object.hasOwn(errors, "email")}
+                        fullWidth
+                        helperText={errors.email?.message}
+                        label="Email"
+                        required
+                        type="email"
+                        variant="standard"
+                      />
+                    )}
+                    rules={{
+                      required: "Email is required",
+                      validate: (value) => {
+                        return (
+                          Boolean(value?.trim()) || "Email name is required"
+                        );
+                      },
+                    }}
+                  />
                   <Controller
                     control={control}
                     name="location"
@@ -274,19 +253,6 @@ export const AccountCreate = () => {
                         fullWidth
                         helperText={HELPER_TEXT_LOCATION}
                         label="Location"
-                        variant="standard"
-                      />
-                    )}
-                  />
-                  <Controller
-                    control={control}
-                    name="emergencyContact"
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        fullWidth
-                        helperText={HELPER_TEXT_EMERGENCY_CONTACT}
-                        label="Emergency contact"
                         variant="standard"
                       />
                     )}

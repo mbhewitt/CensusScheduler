@@ -39,9 +39,7 @@ test.describe("Account Creation", () => {
     await page.getByLabel("Playa / preferred name").fill("E2E FullInfo");
     await page.getByLabel("Default world name").fill("John Smith");
     await page.getByLabel("Email").fill("e2e-fullinfo@test.local");
-    await page.getByLabel("Phone").fill("555-0123");
     await page.getByLabel("Location").fill("Camp E2E at 3:00 & Esplanade");
-    await page.getByLabel("Emergency contact").fill("Mom 555-0199");
     await page.locator('input[name="passcodeCreate"]').fill("9012");
     await page.locator('input[name="passcodeConfirm"]').fill("9012");
 
