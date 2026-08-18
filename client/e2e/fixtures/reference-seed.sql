@@ -8,8 +8,13 @@ INSERT IGNORE INTO op_roles (role_id, role) VALUES
 ;
 
 -- Built-in Admin account (signInAsBuiltinAdmin: name "Admin", passcode 123456) + roles
+-- Admin(2) + SuperAdmin(1) + Signed Behavioral Standards(1000012). The BS role
+-- is required because Header.tsx force-redirects any signed-in volunteer who
+-- hasn't signed the agreement to /roles/behavioral-standards when PIN_ENABLED
+-- (on-playa mode, which CI runs with). Without it, every admin spec races the
+-- redirect against the sign-in helper's waitForURL(/info) and flakes.
 INSERT IGNORE INTO op_volunteers (shiftboard_id, playa_name, world_name, passcode) VALUES (1,'Admin','Admin','123456');
-INSERT IGNORE INTO op_volunteer_roles (shiftboard_id, role_id) VALUES (1,1),(1,2);
+INSERT IGNORE INTO op_volunteer_roles (shiftboard_id, role_id) VALUES (1,1),(1,2),(1,1000012);
 
 -- Event calendar (VIP/SAP/shift specs reference date_id, e.g. PreWed=8)
 INSERT IGNORE INTO op_dates (date_id, datename, date) VALUES
