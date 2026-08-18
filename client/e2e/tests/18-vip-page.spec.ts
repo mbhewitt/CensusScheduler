@@ -267,14 +267,24 @@ test.describe("VIP Page", () => {
 
     await page.goto(`/volunteers/${vipVolunteer.shiftboardId}/info`);
 
-    const link = page.getByRole("link", {
+    // On the offline on-playa build (NEXT_PUBLIC_PIN_ENABLED="true", the mode
+    // these e2e tests run in), external links become an OfflineLink — a button
+    // that opens the "email this to me" dialog instead of a dead <a href>
+    // (#643, #630). So the Burner Profile step is a button, not a link.
+    const burnerProfile = page.getByRole("button", {
       name: /burner profile/i,
     });
-    await expect(link.first()).toBeVisible({ timeout: 10_000 });
-    await expect(link.first()).toHaveAttribute(
-      "href",
-      /profiles\.burningman\.org/
-    );
+    await expect(burnerProfile.first()).toBeVisible({ timeout: 10_000 });
+
+    // Clicking it surfaces the offline dialog carrying the real destination URL
+    // (profiles.burningman.org) — the address volunteers copy to visit later.
+    await burnerProfile.first().click();
+    await expect(
+      page.getByText("These tablets have no internet")
+    ).toBeVisible();
+    await expect(
+      page.getByText(/profiles\.burningman\.org/)
+    ).toBeVisible();
   });
 
   // ── Shifts section ───────────────────────────────────────

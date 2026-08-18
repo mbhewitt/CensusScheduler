@@ -65,10 +65,13 @@ test.describe("Admin Shift Categories", () => {
       .getByLabel("Name")
       .fill("E2E Test Category");
 
-    // Department is an MUI Select (combobox) - click to open and select first option
+    // Department is an MUI Select (combobox) - click to open and select first
+    // option. The field is a standardized required Select, so its accessible
+    // name carries the required asterisk ("Department *"); match with a regex
+    // like the sibling shift-type specs do.
     const departmentSelect = page
       .getByRole("dialog")
-      .getByRole("combobox", { name: "Department" });
+      .getByRole("combobox", { name: /Department/ });
     await departmentSelect.click();
     await page.getByRole("option").first().click();
 

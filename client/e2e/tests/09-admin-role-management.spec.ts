@@ -97,7 +97,11 @@ test.describe("Admin Role Management", () => {
       page.getByText(/has been created/i)
     ).toBeVisible({ timeout: 5_000 });
 
-    await expect(page.getByText("E2E Test Role")).toBeVisible();
+    // Scope to a table cell: the plain getByText also matches the success
+    // snackbar's <strong>E2E Test Role</strong>, which trips strict mode.
+    await expect(
+      page.locator("td").filter({ hasText: "E2E Test Role" }).first()
+    ).toBeVisible({ timeout: 5_000 });
   });
 
   test("admin should toggle role display", async ({ page }) => {

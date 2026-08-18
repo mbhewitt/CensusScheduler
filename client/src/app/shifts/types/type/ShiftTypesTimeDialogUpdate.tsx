@@ -86,29 +86,37 @@ export const ShiftTypesTimeDialogUpdate = ({
         <Button
           disabled={Boolean(errors.timeAdd)}
           onClick={() => {
+            // `errors` is a stale render-time closure that doesn't see the
+            // setError() calls below, so track validity locally (#533).
+            let hasError = false;
+
             if (getValues("timeAdd.date") === "") {
               setError("timeAdd.date", {
                 type: "required",
                 message: "Day is required",
               });
+              hasError = true;
             }
             if (getValues("timeAdd.startTime") === "") {
               setError("timeAdd.startTime", {
                 type: "required",
                 message: "Start time is required",
               });
+              hasError = true;
             }
             if (getValues("timeAdd.endTime") === "") {
               setError("timeAdd.endTime", {
                 type: "required",
                 message: "End time is required",
               });
+              hasError = true;
             }
             if (getValues("timeAdd.instance") === "") {
               setError("timeAdd.instance", {
                 type: "required",
                 message: "Instance is required",
               });
+              hasError = true;
             }
             timeFields.forEach((timeFieldItem) => {
               if (
@@ -119,9 +127,10 @@ export const ShiftTypesTimeDialogUpdate = ({
                   type: "required",
                   message: "Instance must be unique",
                 });
+                hasError = true;
               }
             });
-            if (!errors.timeAdd) {
+            if (!hasError && !errors.timeAdd) {
               handleTimeUpdate(getValues("timeAdd"));
               handleDialogClose();
             }

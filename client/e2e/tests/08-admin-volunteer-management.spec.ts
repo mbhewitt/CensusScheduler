@@ -53,9 +53,14 @@ test.describe("Admin Volunteer Management", () => {
 
     await page.goto("/volunteers");
 
-    await expect(page.locator("table, [role='table']").first()).toBeVisible({
-      timeout: 10_000,
-    });
+    // The volunteer list renders a mui-datatables grid. Assert against a
+    // stable column header from the current component (Volunteers.tsx) rather
+    // than a bare `table` match — on desktop, resizableColumns renders an
+    // extra hidden helper `<table>` that `.first()` can grab and that never
+    // becomes visible.
+    await expect(
+      page.getByRole("columnheader", { name: /Playa name/i })
+    ).toBeVisible({ timeout: 10_000 });
   });
 
   test("admin should see test volunteer in the list", async ({ page }) => {

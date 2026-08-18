@@ -12,6 +12,13 @@ import {
   signInAs,
 } from "../fixtures/test-data";
 
+// Sign-in now lands on /volunteers/{id}/info (the canonical VIP page); the
+// legacy /account URL server-redirects there (see 21-account-redirects-to-info).
+// In-app playa-name editing was removed with that move — name changes go to the
+// external Burner Profile — so the old "update playa name" test is gone. Camping
+// location is still editable inline (auto-saves on blur), so that test remains,
+// retargeted to the current info-page UI.
+
 const volunteer = makeTestVolunteer({
   shiftboardId: IDS.updateVolunteer,
   playaName: "E2E UpdateMe",
@@ -37,44 +44,24 @@ test.describe("Volunteer Account Update", () => {
   }) => {
     await signInAs(page, volunteer);
 
-    // The account page should show the volunteer's info in form fields
-    await expect(page.getByLabel("Playa / preferred name")).toHaveValue(
-      "E2E UpdateMe",
-      { timeout: 10_000 }
-    );
-  });
-
-  test("should update playa name", async ({ page }) => {
-    await signInAs(page, volunteer);
-
-    const playaNameField = page.getByLabel("Playa / preferred name");
-    await expect(playaNameField).toBeVisible({ timeout: 10_000 });
-    await playaNameField.clear();
-    await playaNameField.fill("E2E Updated Name");
-
-    await page
-      .getByRole("button", { name: /update profile/i })
-      .click();
-
+    // The info page greets the signed-in volunteer by their playa name.
     await expect(
-      page.getByText(/updated/i)
-    ).toBeVisible({ timeout: 5_000 });
+      page.getByRole("heading", { name: "Welcome, E2E UpdateMe!" })
+    ).toBeVisible({ timeout: 10_000 });
   });
 
   test("should update location field", async ({ page }) => {
     await signInAs(page, volunteer);
 
-    const locationField = page.getByLabel("Location");
+    // Camping location is an inline field on the info page (no label; targeted
+    // by its placeholder). It auto-saves on blur — no submit button.
+    const locationField = page.getByPlaceholder(/camp at/i);
     await expect(locationField).toBeVisible({ timeout: 10_000 });
-    await locationField.clear();
     await locationField.fill("New Camp at 7:00 & G");
-
-    await page
-      .getByRole("button", { name: /update profile/i })
-      .click();
+    await locationField.blur();
 
     await expect(
-      page.getByText(/updated/i)
+      page.getByText(/camping location.*updated/i)
     ).toBeVisible({ timeout: 5_000 });
   });
 });

@@ -45,7 +45,7 @@ test.describe("Admin Shift Types", () => {
     await page.goto("/shifts/types");
 
     await expect(
-      page.getByText("E2E Future Shift")
+      page.getByText("E2E Future Shift").first()
     ).toBeVisible({ timeout: 10_000 });
   });
 
