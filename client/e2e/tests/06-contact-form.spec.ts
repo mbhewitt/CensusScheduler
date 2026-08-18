@@ -53,7 +53,7 @@ test.describe("Contact Form", () => {
 
     // MUI Select: click the combobox trigger to open the dropdown
     await page.getByRole("combobox", { name: /^To/i }).click();
-    await page.getByRole("option", { name: "Send me a reminder" }).click();
+    await page.getByRole("option", { name: "Volunteer Coordinator" }).click();
 
     await page.getByLabel("Message").fill("This is an automated E2E test message.");
 
@@ -88,7 +88,7 @@ test.describe("Contact Form", () => {
     await expect(page).toHaveURL(/\/contact/);
   });
 
-  test("should allow checking wants reply checkbox", async ({ page }) => {
+  test("should submit to a different recipient category", async ({ page }) => {
     await page.goto("/contact");
 
     await page.getByLabel("Name").fill("E2E Test Sender");
@@ -96,16 +96,9 @@ test.describe("Contact Form", () => {
 
     // MUI Select: click the combobox trigger to open the dropdown
     await page.getByRole("combobox", { name: /^To/i }).click();
-    await page.getByRole("option", { name: "Send me a reminder" }).click();
+    await page.getByRole("option", { name: "App Help/Feedback" }).click();
 
-    // Check the reply checkbox
-    const replyCheckbox = page.getByLabel(/Reply wanted/i);
-    if (await replyCheckbox.isVisible()) {
-      await replyCheckbox.check();
-      await expect(replyCheckbox).toBeChecked();
-    }
-
-    await page.getByLabel("Message").fill("E2E test with reply wanted.");
+    await page.getByLabel("Message").fill("E2E test to a second recipient.");
 
     await page.getByRole("button", { name: "Send message" }).click();
 
