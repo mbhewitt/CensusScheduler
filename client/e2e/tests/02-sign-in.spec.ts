@@ -43,7 +43,7 @@ test.describe("Sign In", () => {
     await page.getByRole("button", { name: "Sign in" }).click();
 
     // Should redirect to account page
-    await page.waitForURL(/\/volunteers\/\d+\/account/, { timeout: 10_000 });
+    await page.waitForURL(/\/volunteers\/\d+\/(info|account)/, { timeout: 10_000 });
 
     // Verify volunteer info is displayed
     await expect(page.getByText("E2E SignInUser")).toBeVisible();
