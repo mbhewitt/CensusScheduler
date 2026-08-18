@@ -4,7 +4,7 @@ import {
   closePool,
   cleanupAllTestData,
 } from "../helpers/db";
-import { FUTURE_SHIFT } from "../fixtures/test-data";
+import { FUTURE_SHIFT, signInAsBuiltinAdmin } from "../fixtures/test-data";
 
 test.describe("Shift Browsing", () => {
   test.beforeAll(async () => {
@@ -20,28 +20,31 @@ test.describe("Shift Browsing", () => {
   test("should load shifts page", async ({ page }) => {
     await page.goto("/shifts");
 
-    // The page should load with a table/list of shifts
-    await expect(page.locator("table").first()).toBeVisible({
-      timeout: 10_000,
-    });
+    // /shifts is now an agenda/card view (no <table>). Its toolbar always
+    // renders the Filter control, so use that as the "page loaded" signal.
+    await expect(
+      page.getByRole("button", { name: "Filter" })
+    ).toBeVisible({ timeout: 10_000 });
   });
 
   test("should display test shift in the list", async ({ page }) => {
     await page.goto("/shifts");
 
-    // Wait for table to load
-    await expect(page.locator("table").first()).toBeVisible({
-      timeout: 10_000,
-    });
+    // Wait for the agenda toolbar to render
+    await expect(
+      page.getByRole("button", { name: "Filter" })
+    ).toBeVisible({ timeout: 10_000 });
 
-    // The shift name appears as a Chip in the "Type" column
-    // It may also appear as text in filters; use broad search
+    // Each shift renders as a card whose heading is the shift name
     await expect(
       page.getByText("E2E Future Shift").first()
     ).toBeVisible({ timeout: 10_000 });
   });
 
   test("should show shift details on volunteer page", async ({ page }) => {
+    // The shift-volunteers page + its /api/shifts/{id}/volunteers feed require
+    // a session (401 otherwise), so sign in before viewing details.
+    await signInAsBuiltinAdmin(page);
     await page.goto(`/shifts/${FUTURE_SHIFT.shiftTimesId}/volunteers`);
 
     // Should show the shift name somewhere on the page
@@ -56,6 +59,7 @@ test.describe("Shift Browsing", () => {
   });
 
   test("should show slot availability", async ({ page }) => {
+    await signInAsBuiltinAdmin(page);
     await page.goto(`/shifts/${FUTURE_SHIFT.shiftTimesId}/volunteers`);
 
     // Should show slots like "0 / 3" (0 filled, 3 total)

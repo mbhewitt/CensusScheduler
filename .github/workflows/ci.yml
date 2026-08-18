@@ -6,6 +6,9 @@ on:
     branches:
       - main
       - deploy/test-bundle
+  # Run the full suite regularly even without a push (catches env/data drift).
+  schedule:
+    - cron: "0 13 * * *" # daily 13:00 UTC (~6am PT)
 
 # Cancel any in-flight run for the same ref when a new commit lands.
 concurrency:
@@ -16,21 +19,23 @@ jobs:
   e2e:
     name: Playwright (chromium)
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 45
 
     services:
+      # MariaDB 11.8 to match prod/on-playa (prevents MySQL-vs-MariaDB dialect &
+      # collation drift; prod-dumped schema loads natively).
       mysql:
-        image: mysql:8.0
+        image: mariadb:11.8
         env:
-          MYSQL_ROOT_PASSWORD: ci-root-password
-          MYSQL_DATABASE: census
+          MARIADB_ROOT_PASSWORD: ci-root-password
+          MARIADB_DATABASE: census
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -pci-root-password"
+          --health-cmd="mariadb-admin ping -h 127.0.0.1 -uroot -pci-root-password"
           --health-interval=5s
           --health-timeout=5s
-          --health-retries=10
+          --health-retries=15
 
     env:
       # App pool config — what the running Next.js dev server reads.
@@ -43,6 +48,9 @@ jobs:
       TEST_MYSQL_DATABASE: census
       TEST_MYSQL_USER: root
       TEST_MYSQL_PASSWORD: ci-root-password
+      # Required to sign the session cookie — passcode sign-in throws without it
+      # (lib/session.ts), which silently broke every authenticated spec. CI-only dummy.
+      SESSION_SECRET: ci0000000000000000000000000000000000000000000000000000000000000000
       # Okta config — dummy issuer; tests assert /api/auth/okta builds the
       # right 302 against whatever issuer is configured, no real network call.
       NEXT_PUBLIC_OKTA_ENABLED: "true"
@@ -86,6 +94,26 @@ jobs:
           mysql -h 127.0.0.1 -P 3306 -uroot -pci-root-password census \
             < database/scheduler_schema.sql
 
+      # scheduler_schema.sql is a base snapshot; apply migrations so the CI DB
+      # matches current app expectations (arrival_auto_set, max_per_volunteer,
+      # op_qr_codes, …). --force skips columns already present in the snapshot.
+      - name: Apply migrations
+        run: |
+          for f in $(ls migrations/*.sql | sort); do
+            echo "== applying $f =="
+            mysql -h 127.0.0.1 -P 3306 -uroot -pci-root-password --force census < "$f" || true
+          done
+
+      # Seed the standard reference rows the e2e helpers assume already exist
+      # (op_roles like SuperAdmin/Admin/Core Crew/Behavioral Standards, and a
+      # doodle canvas row). Without these, assignRole() hits FK failures and the
+      # admin/role specs cascade. Tests only clean up IDs >= 9,000,000, so these
+      # persist across the suite.
+      - name: Seed reference data
+        run: |
+          mysql -h 127.0.0.1 -P 3306 -uroot -pci-root-password census \
+            < client/e2e/fixtures/reference-seed.sql
+
       - name: Install client dependencies
         working-directory: client
         run: yarn install --frozen-lockfile
@@ -98,12 +126,11 @@ jobs:
         working-directory: client
         run: npx playwright install --with-deps chromium
 
-      # First CI gate: just the sign-in regression spec (issue #294).
-      # Expanding to the full suite is a follow-up — some specs depend on
-      # data shapes we haven't validated against a fresh schema-only seed.
-      - name: Run sign-in regression spec
+      # Full e2e suite. The DB is schema + migrations (see steps above), so specs
+      # that seed their own data via e2e/helpers/db.ts run against current schema.
+      - name: Run e2e suite
         working-directory: client
-        run: npx playwright test --config=e2e/playwright.config.ts e2e/tests/19-okta-signin-regression.spec.ts
+        run: npx playwright test --config=e2e/playwright.config.ts
 
       - name: Upload Playwright report on failure
         if: failure()

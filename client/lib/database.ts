@@ -78,6 +78,9 @@ const basePool = mysql
     keepAliveInitialDelay: 10_000,
     maxIdle: 5,
     password: process.env.MYSQL_PASSWORD,
+    // Optional — defaults to 3306 when unset (prod/CI). Lets local e2e point at
+    // a MariaDB container on a non-default port.
+    ...(process.env.MYSQL_PORT ? { port: Number(process.env.MYSQL_PORT) } : {}),
     user: process.env.MYSQL_USER,
     ...sslOption,
   })

@@ -27,11 +27,16 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "npx next dev",
+    // Use a production build, not `next dev`. Dev compiles each route on its
+    // first request, and under full-suite load those cold-compiles routinely
+    // blow the per-action timeouts (a route's first test flakes while a later
+    // one on the same route passes). `next build && next start` serves
+    // pre-compiled routes so timing is stable across the whole suite.
+    command: "npx next build && npx next start",
     cwd: clientDir,
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
+    timeout: 300_000,
     // Defaults let the Okta sign-in regression tests run without external
     // setup. Real deployments override these via .env.production. Tests
     // never hit a real Okta tenant — they only assert that /api/auth/okta

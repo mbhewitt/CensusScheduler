@@ -21,6 +21,11 @@ export function getPool(): mysql.Pool {
       connectionLimit: 5,
       database: process.env.TEST_MYSQL_DATABASE ?? "census",
       host: process.env.TEST_MYSQL_HOST ?? "127.0.0.1",
+      // Optional — defaults to 3306 when unset (CI). Local e2e can target a
+      // MariaDB container on another port.
+      ...(process.env.TEST_MYSQL_PORT
+        ? { port: Number(process.env.TEST_MYSQL_PORT) }
+        : {}),
       password:
         process.env.TEST_MYSQL_PASSWORD ??
         "8WlkGLQSxHzndVE92EeLwKBaNllw000N3zBDWnapGk8=",
@@ -331,6 +336,24 @@ export async function cleanupAllTestData(): Promise<void> {
   await db.execute(
     "DELETE FROM op_shift_category WHERE shift_category_id >= ?",
     [base]
+  );
+  // Shift metadata created through the admin UI (e.g. spec 10's "create
+  // category") gets a DB-assigned ID *below* TEST_ID_BASE, so the id-based
+  // deletes above miss it. op_shift_category/op_position_type/op_shift_name have
+  // UNIQUE name columns, so a leftover 'E2E %' row silently makes a later
+  // INSERT IGNORE skip (dup-name) and FK-cascades the whole shift fixture away —
+  // breaking a downstream spec (e.g. 14 seeing an empty CURRENT_SHIFT). Delete
+  // by the test-name prefix too, children before parents.
+  await db.execute(
+    "DELETE stp FROM op_shift_time_position stp JOIN op_shift_times st ON st.shift_times_id = stp.shift_times_id JOIN op_shift_name sn ON sn.shift_name_id = st.shift_name_id WHERE sn.shift_name LIKE 'E2E %'"
+  );
+  await db.execute(
+    "DELETE st FROM op_shift_times st JOIN op_shift_name sn ON sn.shift_name_id = st.shift_name_id WHERE sn.shift_name LIKE 'E2E %'"
+  );
+  await db.execute("DELETE FROM op_shift_name WHERE shift_name LIKE 'E2E %'");
+  await db.execute("DELETE FROM op_position_type WHERE position LIKE 'E2E %'");
+  await db.execute(
+    "DELETE FROM op_shift_category WHERE shift_category LIKE 'E2E %'"
   );
   await db.execute("DELETE FROM op_roles WHERE role_id >= ?", [base]);
   // Clean up roles created through the UI (have DB-assigned IDs, not test IDs)

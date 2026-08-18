@@ -88,29 +88,40 @@ export const ShiftTypesTimeDialogAdd = ({
         <Button
           disabled={Boolean(errors.timeAdd)}
           onClick={() => {
+            // Track validation locally: the `errors` prop is a stale closure
+            // snapshot from render and does NOT reflect the setError() calls
+            // made in this same handler, so the old `if (!errors.timeAdd)`
+            // guard let a blank/duplicate Instance through and closed the
+            // dialog anyway (#533).
+            let hasError = false;
+
             if (getValues("timeAdd.date") === "") {
               setError("timeAdd.date", {
                 type: "required",
                 message: "Day is required",
               });
+              hasError = true;
             }
             if (getValues("timeAdd.startTime") === "") {
               setError("timeAdd.startTime", {
                 type: "required",
                 message: "Start time is required",
               });
+              hasError = true;
             }
             if (getValues("timeAdd.endTime") === "") {
               setError("timeAdd.endTime", {
                 type: "required",
                 message: "End time is required",
               });
+              hasError = true;
             }
             if (getValues("timeAdd.instance") === "") {
               setError("timeAdd.instance", {
                 type: "required",
                 message: "Instance is required",
               });
+              hasError = true;
             }
             timeFields.forEach((timeFieldItem) => {
               if (timeFieldItem.instance === getValues("timeAdd.instance")) {
@@ -118,9 +129,10 @@ export const ShiftTypesTimeDialogAdd = ({
                   type: "required",
                   message: "Instance must be unique",
                 });
+                hasError = true;
               }
             });
-            if (!errors.timeAdd) {
+            if (!hasError && !errors.timeAdd) {
               const positionListNew = getValues("timeAdd.positionList").map(
                 ({ alias, name, positionId, sapPoints, slots }) => {
                   return {

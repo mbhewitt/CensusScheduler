@@ -185,7 +185,7 @@ export async function signInAs(
   await page.getByRole("button", { name: "Sign in" }).click();
 
   // Wait for navigation away from sign-in
-  await page.waitForURL(/\/volunteers\/\d+\/account/, { timeout: 10_000 });
+  await page.waitForURL(/\/volunteers\/\d+\/(info|account)/, { timeout: 10_000 });
 }
 
 /**
@@ -199,7 +199,7 @@ export async function signInAsBuiltinAdmin(page: Page): Promise<void> {
   await page.locator('input[name="passcode"]').fill("123456");
 
   await page.getByRole("button", { name: "Sign in" }).click();
-  await page.waitForURL(/\/volunteers\/\d+\/account/, { timeout: 10_000 });
+  await page.waitForURL(/\/volunteers\/\d+\/(info|account)/, { timeout: 10_000 });
 }
 
 /**

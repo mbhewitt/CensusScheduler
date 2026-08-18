@@ -109,7 +109,7 @@ test.describe("Check-In", () => {
     ).toBeVisible({ timeout: 5_000 });
   });
 
-  test("check-in should be disabled for future shifts", async ({ page }) => {
+  test("check-in should be unavailable for future shifts", async ({ page }) => {
     await signInAsBuiltinAdmin(page);
 
     await page.goto(
@@ -120,11 +120,12 @@ test.describe("Check-In", () => {
       timeout: 15_000,
     });
 
+    // The check-in control is no longer rendered as a disabled switch for
+    // future shifts — it's omitted entirely until the check-in window opens
+    // (getCheckInType === SHIFT_FUTURE => the cell renders empty). So there is
+    // no switch in the volunteer's row.
     const row = page.getByRole("row").filter({ hasText: "E2E Shifty" });
-    const checkInSwitch = row.getByRole("switch");
-
-    // Check-in switch should be disabled for future shifts
-    await expect(checkInSwitch).toBeDisabled();
+    await expect(row.getByRole("switch")).toHaveCount(0);
   });
 
   // Regression for Chipper's report ("check-in isn't valid even if I spoof to a
@@ -173,13 +174,15 @@ test.describe("Check-In", () => {
     // Sign in as the volunteer
     await signInAs(page, SHIFT_VOLUNTEER);
 
-    // Should be on the account page showing shifts section
-    await expect(page.getByRole("heading", { name: "Shifts" })).toBeVisible({
-      timeout: 10_000,
-    });
+    // The info page always renders the VolunteerShifts section (its "Shifts"
+    // heading); a nav link named "Shifts" also exists, so scope to the heading
+    // and take the first match.
+    await expect(
+      page.getByRole("heading", { name: "Shifts" }).first()
+    ).toBeVisible({ timeout: 10_000 });
 
     // Look for the current shift position in the volunteer's shift list
-    await expect(page.getByText("E2E Tester Position")).toBeVisible({
+    await expect(page.getByText("E2E Tester Position").first()).toBeVisible({
       timeout: 10_000,
     });
   });

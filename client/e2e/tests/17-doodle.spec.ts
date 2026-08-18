@@ -1,6 +1,14 @@
 import { test, expect } from "@playwright/test";
 
+import { signInAsBuiltinAdmin } from "../fixtures/test-data";
+
 test.describe("Doodle Page", () => {
+  // /doodle is auth-gated — it redirects unauthenticated visitors to sign-in,
+  // so the canvas never renders. Sign in (as the seeded built-in Admin) first.
+  test.beforeEach(async ({ page }) => {
+    await signInAsBuiltinAdmin(page);
+  });
+
   test("should load the doodle canvas", async ({ page }) => {
     await page.goto("/doodle");
 

@@ -112,6 +112,13 @@ const shiftVolunteers = async (
         [timeId]
       );
       const [resShiftPositionFirst] = dbShiftPositionList;
+      // A shift with no position rows (unknown/removed timeId) has no metadata
+      // to return — respond 404 rather than dereferencing undefined and 500ing.
+      if (!resShiftPositionFirst) {
+        return res
+          .status(404)
+          .json({ statusCode: 404, message: "Shift not found." });
+      }
       const resShiftPositionList = dbShiftPositionList.map(
         ({
           max_per_volunteer,

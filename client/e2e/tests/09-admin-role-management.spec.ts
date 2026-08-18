@@ -97,7 +97,11 @@ test.describe("Admin Role Management", () => {
       page.getByText(/has been created/i)
     ).toBeVisible({ timeout: 5_000 });
 
-    await expect(page.getByText("E2E Test Role")).toBeVisible();
+    // Scope to a table cell: the plain getByText also matches the success
+    // snackbar's <strong>E2E Test Role</strong>, which trips strict mode.
+    await expect(
+      page.locator("td").filter({ hasText: "E2E Test Role" }).first()
+    ).toBeVisible({ timeout: 5_000 });
   });
 
   test("admin should toggle role display", async ({ page }) => {
@@ -116,7 +120,7 @@ test.describe("Admin Role Management", () => {
       await toggle.click();
 
       await expect(
-        page.getByText(/updated/i)
+        page.getByText(/display has been set to/i)
       ).toBeVisible({ timeout: 5_000 });
     }
   });
@@ -126,6 +130,11 @@ test.describe("Admin Role Management", () => {
 
     await page.goto("/roles");
 
-    await expect(page).not.toHaveURL(/\/roles$/);
+    // A logged-in non-admin keeps the URL but AuthGate renders a
+    // permission-denied fallback instead of the roles table.
+    await expect(
+      page.getByText(/have permission to view this page/i)
+    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator("table")).toHaveCount(0);
   });
 });

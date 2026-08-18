@@ -53,9 +53,16 @@ test.describe("Admin Volunteer Management", () => {
 
     await page.goto("/volunteers");
 
-    await expect(page.locator("table, [role='table']").first()).toBeVisible({
-      timeout: 10_000,
-    });
+    // The volunteer list renders a mui-datatables grid. Assert against a
+    // stable column header from the current component (Volunteers.tsx) rather
+    // than a bare `table` match — on desktop, resizableColumns renders an
+    // extra hidden helper `<table>` that `.first()` can grab and that never
+    // becomes visible.
+    // mui-datatables wraps the header text in a "Sort" button, so the
+    // columnheader's accessible name is "Sort" — match by its text instead.
+    await expect(
+      page.getByRole("columnheader").filter({ hasText: /Playa name/i }).first()
+    ).toBeVisible({ timeout: 10_000 });
   });
 
   test("admin should see test volunteer in the list", async ({ page }) => {
@@ -73,18 +80,21 @@ test.describe("Admin Volunteer Management", () => {
   }) => {
     await signInAsBuiltinAdmin(page);
 
+    // /account is a legacy URL that server-side redirects to the canonical
+    // /info page (per @mbhewitt 2026-05-23). The info page shows the
+    // volunteer's playa/world name as read-only text, not editable fields.
     await page.goto(
       `/volunteers/${managedVolunteer.shiftboardId}/account`
     );
-
-    // Verify the account page shows the volunteer's data in form fields
-    await expect(page.getByLabel("Playa / preferred name")).toHaveValue(
-      "E2E Managed",
+    await page.waitForURL(
+      new RegExp(`/volunteers/${managedVolunteer.shiftboardId}/info`),
       { timeout: 10_000 }
     );
-    await expect(page.getByLabel("Default world name")).toHaveValue(
-      "Managed Tester"
-    );
+
+    await expect(page.getByText("E2E Managed").first()).toBeVisible({
+      timeout: 10_000,
+    });
+    await expect(page.getByText("Managed Tester").first()).toBeVisible();
   });
 
   test("admin should see volunteer shift counts", async ({ page }) => {
@@ -105,6 +115,11 @@ test.describe("Admin Volunteer Management", () => {
 
     await page.goto("/volunteers");
 
-    await expect(page).not.toHaveURL(/\/volunteers$/);
+    // A logged-in non-admin keeps the URL but AuthGate renders a
+    // permission-denied fallback instead of the volunteer list/table.
+    await expect(
+      page.getByText(/have permission to view this page/i)
+    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator("table")).toHaveCount(0);
   });
 });
