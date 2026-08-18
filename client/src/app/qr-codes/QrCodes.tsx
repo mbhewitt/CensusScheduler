@@ -119,7 +119,7 @@ export const QrCodes = () => {
       <Container component="main" sx={{ mb: 6 }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
           <Typography>
-            Create QR codes for calendar events, links, and WiFi. Designate one for the
+            Create QR codes for calendar events, links, WiFi, and plain text. Designate one for the
             home page or the downloadable slot.
           </Typography>
           <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>
