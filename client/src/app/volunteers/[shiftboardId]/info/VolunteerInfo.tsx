@@ -49,6 +49,7 @@ import { PasscodeDialogUpdate } from "@/app/volunteers/[shiftboardId]/account/Pa
 import { PasscodeReveal } from "@/app/volunteers/[shiftboardId]/account/PasscodeReveal";
 import { VolunteerShifts } from "@/app/volunteers/[shiftboardId]/account/VolunteerShifts";
 import { GetInvolved } from "@/app/volunteers/[shiftboardId]/info/GetInvolved";
+import { OfflineLink } from "@/components/general/OfflineLink";
 import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
 import { ErrorPage } from "@/components/general/ErrorPage";
 import { Loading } from "@/components/general/Loading";
@@ -634,11 +635,11 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     ),
   });
 
-  // Burner Profile — hidden on the offline on-playa build: this step is "visit
-  // profiles.burningman.org", which is dead without internet and meaningless on
-  // shared tablets where volunteers aren't in their own account (#628, Chipper).
-  if (!isOnPlaya)
-    checklistItems.push({
+  // Burner Profile — the step is "visit profiles.burningman.org", which is
+  // dead without internet on the offline on-playa tablets. OfflineLink lets
+  // the volunteer email themselves the link to do it from home instead of
+  // hiding the step (#643, folds in #630; was #628 hide-behavior).
+  checklistItems.push({
     id: "burner-profile",
     label: burnerProfileUpdated
       ? "Burner Profile \u2014 Updated"
@@ -648,13 +649,10 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
       <Box>
         <Typography sx={{ mb: 1 }}>
           Please visit your{" "}
-          <a
+          <OfflineLink
             href="https://profiles.burningman.org/my-profile"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Burner Profile
-          </a>
+            label="Burner Profile"
+          />
           . Once logged in, click <strong>SETTINGS</strong> in the top right,
           then <strong>My Profile</strong> to edit your information. Update any
           fields that have changed since last year, then check the box below to
@@ -1062,37 +1060,33 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                 <Typography>{volunteer.email || "\u2014"}</Typography>
               </Box>
             </Stack>
-            {/* Burner Profile link — hidden offline on playa; dead without
-                internet (#628, Chipper). */}
-            {!isOnPlaya && (
-              <Typography color="text.secondary" sx={{ mt: 1 }} variant="body2">
-                Need to update your info?{" "}
-                {/* De-emphasized on purpose (Chipper 2026-07-02): reads as
-                    supporting subtext, not a primary action — the primary
-                    "update your Burner Profile" step lives in the checklist
-                    below. Still a working link, just not blue/underlined. */}
-                <a
-                  href="https://profiles.burningman.org/my-profile"
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  style={{
-                    color: "inherit",
-                    textDecoration: "none",
-                    fontStyle: "italic",
-                  }}
-                >
-                  Visit your Burner Profile
-                </a>
-                .
-              </Typography>
-            )}
+            {/* Burner Profile link — dead offline on playa, so OfflineLink
+                offers to email it instead of hiding it (#643, #630; was #628
+                hide-behavior). */}
+            <Typography color="text.secondary" sx={{ mt: 1 }} variant="body2">
+              Need to update your info?{" "}
+              {/* De-emphasized on purpose (Chipper 2026-07-02): reads as
+                  supporting subtext, not a primary action — the primary
+                  "update your Burner Profile" step lives in the checklist
+                  below. Still a working link, just not blue/underlined. */}
+              <OfflineLink
+                href="https://profiles.burningman.org/my-profile"
+                label="Visit your Burner Profile"
+                style={{
+                  color: "inherit",
+                  textDecoration: "none",
+                  fontStyle: "italic",
+                }}
+              />
+              .
+            </Typography>
           </CardContent>
         </Card>
 
         {/* main content (checklist and everything below) shares a row with
             the get-involved sidebar, so the sidebar starts at the checklist */}
         <Grid container spacing={3}>
-          <Grid size={{ xs: 12, md: isOnPlaya ? 12 : 8 }}>
+          <Grid size={{ xs: 12, md: 8 }}>
         {/* checklist */}
         <Card sx={{ mb: 3 }}>
           <CardContent>
@@ -1503,11 +1497,12 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
           </Box>
         )}
           </Grid>
-          {!isOnPlaya && (
-            <Grid size={{ xs: 12, md: 4 }}>
-              <GetInvolved />
-            </Grid>
-          )}
+          {/* GetInvolved links are dead offline, but OfflineLink turns them
+              into "email this to me" actions, so the sidebar now shows
+              on-playa too (#643, #630). */}
+          <Grid size={{ xs: 12, md: 4 }}>
+            <GetInvolved />
+          </Grid>
         </Grid>
       </Container>
 

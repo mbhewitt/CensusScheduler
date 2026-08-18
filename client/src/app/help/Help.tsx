@@ -17,6 +17,7 @@ import {
 
 import { type ReactNode, useContext } from "react";
 
+import { OfflineLink } from "@/components/general/OfflineLink";
 import { Hero } from "@/components/layout/Hero";
 import { SessionContext } from "@/state/session/context";
 
@@ -67,10 +68,9 @@ export const Help = () => {
   // The "Account" page is the volunteer's own info/checklist page (same target
   // the nav uses). Only linkable when signed in.
   const acct = shiftboardId ? `/volunteers/${shiftboardId}/info` : null;
-  // On the offline on-playa build, external links (Burner Profile, Discord)
-  // are dead. Render them as plain text there so the instructions still read
-  // but there's no broken link to tap (#629, Chipper).
-  const isOnPlaya = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
+  // External links (Burner Profile, Discord) are dead on the offline on-playa
+  // build; OfflineLink handles that per-link by offering to email them (#643,
+  // #630), so no page-level on-playa branch is needed here.
   return (
     <>
       <Hero
@@ -104,17 +104,10 @@ export const Help = () => {
                   <Ref href="/">Home</Ref> page and use{" "}
                   <strong>Sign in to Census</strong>. You&apos;ll sign in with
                   your Burner Profile. Don&apos;t have one yet? Create it at{" "}
-                  {isOnPlaya ? (
-                    <strong>profiles.burningman.org</strong>
-                  ) : (
-                    <a
-                      href="https://profiles.burningman.org"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      profiles.burningman.org
-                    </a>
-                  )}
+                  <OfflineLink
+                    href="https://profiles.burningman.org"
+                    label="profiles.burningman.org"
+                  />
                   .
                 </>,
                 <>
@@ -287,17 +280,10 @@ export const Help = () => {
                 </>,
                 <>
                   Join the conversation on the{" "}
-                  {isOnPlaya ? (
-                    <strong>Census Discord server</strong>
-                  ) : (
-                    <a
-                      href="https://discord.com/invite/NNheeaPQRY"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Census Discord server
-                    </a>
-                  )}
+                  <OfflineLink
+                    href="https://discord.com/invite/NNheeaPQRY"
+                    label="Census Discord server"
+                  />
                   .
                 </>,
               ]}

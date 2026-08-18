@@ -274,6 +274,26 @@ export async function deleteTestMessages(name: string): Promise<void> {
   await db.execute("DELETE FROM op_messages WHERE name = ?", [name]);
 }
 
+// ── Email queue (offline-link, #643) ────────────────────────
+
+export async function countQueuedOfflineLinks(to: string): Promise<number> {
+  const db = getPool();
+  const [rows] = await db.query(
+    "SELECT COUNT(*) AS n FROM op_email_queue WHERE category = 'offline-link' AND `to` = ?",
+    [to]
+  );
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return Number((rows as any[])[0]?.n ?? 0);
+}
+
+export async function deleteOfflineLinkEmails(to: string): Promise<void> {
+  const db = getPool();
+  await db.execute(
+    "DELETE FROM op_email_queue WHERE category = 'offline-link' AND `to` = ?",
+    [to]
+  );
+}
+
 // ── Generic cleanup by high IDs ─────────────────────────────
 
 export async function cleanupAllTestData(): Promise<void> {
