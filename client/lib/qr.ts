@@ -12,7 +12,7 @@ import jsQR from "jsqr";
 import QRCode from "qrcode";
 import sharp from "sharp";
 
-export type QrType = "calendar" | "link" | "wifi";
+export type QrType = "calendar" | "link" | "wifi" | "text";
 
 // Design knobs stored in op_qr_codes.settings (JSON). Everything needed to
 // re-render or re-open a QR for editing lives here.
@@ -30,8 +30,10 @@ export interface QrSettings {
     time: string; // "HH:mm" 24h local Pacific
     durationMinutes: number;
     reminderMinutes: number;
-    location: string; // also the event URL
+    location: string; // plain text or a URL; emitted as VEVENT LOCATION (#662)
+    description?: string; // free text, may hold a URL; emitted as VEVENT DESCRIPTION (#662)
   };
+  text?: string; // plain-text payload for the "text" type (#661)
   wifi?: {
     ssid: string;
     password: string;
@@ -96,6 +98,11 @@ export function buildPayload(type: QrType, s: QrSettings): string {
     if (!url) throw new Error("Link is required");
     return url;
   }
+  if (type === "text") {
+    const t = (s.text ?? "").trim();
+    if (!t) throw new Error("Text is required");
+    return t; // arbitrary text, encoded verbatim
+  }
   if (type === "wifi") {
     const w = s.wifi;
     if (!w?.ssid) throw new Error("WiFi SSID is required");
@@ -111,6 +118,15 @@ export function buildPayload(type: QrType, s: QrSettings): string {
   }
   const [y, mo, d] = c.date.split("-").map(Number);
   const [hh, mm] = c.time.split(":").map(Number);
+  // #662: LOCATION is free text (e.g. "Census Lab at 6:30 & A"); a URL, if any,
+  // lives in the location or the description. Only emit VEVENT URL when we
+  // actually have one, so plain-text locations no longer require a hyperlink.
+  const isUrl = (v?: string) => /^https?:\/\//i.test((v ?? "").trim());
+  const eventUrl = isUrl(c.location)
+    ? c.location.trim()
+    : isUrl(c.description)
+      ? (c.description ?? "").trim()
+      : undefined;
   const attrs: EventAttributes = {
     title: c.title,
     // ics treats a bare [Y,M,D,h,m] array as local (floating) time — exactly
@@ -119,8 +135,9 @@ export function buildPayload(type: QrType, s: QrSettings): string {
     start: [y, mo, d, hh, mm],
     startInputType: "local",
     duration: { minutes: c.durationMinutes },
-    location: c.location,
-    url: c.location,
+    ...(c.location ? { location: c.location } : {}),
+    ...(c.description ? { description: c.description } : {}),
+    ...(eventUrl ? { url: eventUrl } : {}),
     alarms: [
       {
         action: "display",
@@ -278,10 +295,15 @@ export function payloadToSettings(payload: string): {
           time,
           durationMinutes: 30,
           reminderMinutes: 5,
-          location: field("URL") || field("LOCATION") || CENSUS_URL,
+          location: field("LOCATION") || field("URL") || CENSUS_URL,
+          description: field("DESCRIPTION") || undefined,
         },
       },
     };
   }
-  return { type: "link", settings: { ...base, link: payload } };
+  if (/^https?:\/\//i.test(payload)) {
+    return { type: "link", settings: { ...base, link: payload } };
+  }
+  // Anything else is arbitrary text (#661), not a link.
+  return { type: "text", settings: { ...base, text: payload } };
 }

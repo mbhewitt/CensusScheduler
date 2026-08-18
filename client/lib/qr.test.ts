@@ -47,5 +47,37 @@ assert.equal(calBack.settings.calendar?.time, "11:00");
 assert.equal(buildPayload("link", { ...base, link: "https://x.io" }), "https://x.io");
 assert.equal(payloadToSettings("https://x.io").type, "link");
 
+// text passthrough (#661) — arbitrary text, no scheme required.
+assert.equal(buildPayload("text", { ...base, text: "Census Lab open now" }), "Census Lab open now");
+assert.throws(() => buildPayload("text", { ...base, text: "  " }), /Text is required/);
+// a non-URL payload round-trips to the text type, a URL stays a link.
+const textBack = payloadToSettings("Census Lab at 6:30 & A");
+assert.equal(textBack.type, "text");
+assert.equal(textBack.settings.text, "Census Lab at 6:30 & A");
+
+// calendar with a PLAIN-TEXT location + a DESCRIPTION carrying a URL (#662).
+const calText = buildPayload("calendar", {
+  ...base,
+  calendar: {
+    ...defaultCalendar(2026),
+    location: "Census Lab at 6:30 & A",
+    description: "Come find us: https://census.burningman.org",
+  },
+});
+// LOCATION is the plain text verbatim; DESCRIPTION carries the URL for the scanner.
+assert.match(calText, /LOCATION:Census Lab at 6:30 & A/);
+assert.match(calText, /DESCRIPTION:.*census\.burningman\.org/);
+// A plain-text location does NOT force a VEVENT URL line (no bare-URL field).
+assert.ok(!/\r?\nURL[^:]*:/.test(calText), "plain-text location emits no URL line");
+// description round-trips back into editable settings.
+const calTextBack = payloadToSettings(calText);
+assert.equal(calTextBack.type, "calendar");
+assert.equal(calTextBack.settings.calendar?.location, "Census Lab at 6:30 & A");
+assert.match(calTextBack.settings.calendar?.description ?? "", /census\.burningman\.org/);
+
+// Preserve behavior for events whose LOCATION *is* a URL: it still emits URL.
+const calUrlLoc = buildPayload("calendar", { ...base, calendar: defaultCalendar(2026) });
+assert.match(calUrlLoc, /URL[^:]*:https:\/\/census\.burningman\.org/);
+
 // eslint-disable-next-line no-console
 console.log("qr.test.ts OK");
