@@ -89,8 +89,15 @@ test.describe("Shift Signup", () => {
       .getByRole("button", { name: "Add volunteer" })
       .click();
 
+    // Wait for the dialog to close first — otherwise its autocomplete still
+    // shows the selected "E2E Shifty" and matches alongside the new roster row
+    // (strict-mode violation).
+    await expect(page.getByRole("dialog")).toBeHidden({ timeout: 10_000 });
+
     // Verify volunteer appears in the shift volunteer list
-    await expect(page.getByText("E2E Shifty")).toBeVisible({ timeout: 10_000 });
+    await expect(
+      page.getByText("E2E Shifty").first()
+    ).toBeVisible({ timeout: 10_000 });
   });
 
   test("non-authenticated user should not see add volunteer button", async ({
