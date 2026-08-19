@@ -256,10 +256,14 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
     const userInfo = await fetchUserInfo(tokens.access_token);
     const oktaId = userInfo.sub;
     const email = userInfo.email;
+    // Default when Okta hasn't set an explicit playa name: the volunteer's
+    // FIRST name. Do NOT fall back to preferred_username — in Okta/OIDC that's
+    // the login identifier and is almost always the email, which is how emails
+    // were leaking in as playa names.
     const playaName =
       userInfo.playaname ||
-      userInfo.preferred_username ||
       userInfo.given_name ||
+      userInfo.nickname ||
       "";
     const worldName = userInfo.name || `${userInfo.given_name || ""} ${userInfo.family_name || ""}`.trim() || email;
 
