@@ -290,6 +290,9 @@ export const ShiftVolunteers = ({
     isAuthenticatedSession
   );
   const isAdmin = checkIsAdmin(accountType, roleList);
+  // On-playa (walk-up) mode lets non-admins check people in / add during a shift;
+  // off-playa those are admin-only. Mirrors the server gate in the API route.
+  const isOnPlaya = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
 
   const handleCheckInToggle = async ({
     shift: { positionName, timePositionId },
@@ -375,10 +378,11 @@ export const ShiftVolunteers = ({
       break;
     }
     case SHIFT_DURING: {
-      // Admins add others; a non-admin can still self-add during the shift
-      // unless they're already on it.
-      isVolunteerAddAvailable = isAdmin || !isSignedUp;
-      isCheckInAvailable = true;
+      // On-playa: whoever is running the shift can check people in and a
+      // non-admin can still self-add unless already on it. Off-playa both are
+      // admin-only (enforced server-side in the API route too).
+      isVolunteerAddAvailable = isAdmin || (isOnPlaya && !isSignedUp);
+      isCheckInAvailable = isOnPlaya || isAdmin;
       break;
     }
     case SHIFT_PAST: {
