@@ -118,15 +118,26 @@ const labels = async (req: NextApiRequest, res: NextApiResponse) => {
     shiftsById.set(row.shiftboard_id, list);
   }
 
-  // legacy sort: volunteers without a last name first (by playa name), then by
-  // last name + playa name, byte order
+  // Two blocks: volunteers whose label lists shifts on top, those without any
+  // shifts below — each block alphabetically by last name (legacy within-block
+  // order: no-last-name first by playa name, then last name + playa, byte order).
   const sorted = [...volunteerList]
     .map((v) => {
       const last = lastNameOf(v.world_name);
       const playa = v.playa_name ?? "";
-      return { key: (last === "" ? "A" : `Z${last}`) + playa, last, playa, v };
+      const hasShifts = shiftsById.has(v.shiftboard_id);
+      return {
+        key: (last === "" ? "A" : `Z${last}`) + playa,
+        last,
+        playa,
+        v,
+        hasShifts,
+      };
     })
-    .sort((a, b) => (a.key < b.key ? -1 : a.key > b.key ? 1 : 0));
+    .sort((a, b) => {
+      if (a.hasShifts !== b.hasShifts) return a.hasShifts ? -1 : 1;
+      return a.key < b.key ? -1 : a.key > b.key ? 1 : 0;
+    });
 
   const doc = await PDFDocument.create();
   doc.setTitle("Census Shifts");
