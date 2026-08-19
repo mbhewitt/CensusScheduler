@@ -7,6 +7,7 @@ import type {
   IResShiftVolunteerInformation,
   IResShiftVolunteerRowItem,
 } from "@/components/types/shifts";
+import { isAdmin } from "@/lib/authz";
 import { withAuth } from "@/lib/withAuth";
 import { pool } from "lib/database";
 import { notifyAssignment } from "@/components/api/assignmentNotify";
@@ -15,6 +16,11 @@ import {
   shiftVolunteerRemove,
   shiftVolunteerUpdate,
 } from "@/components/api/shiftVolunteers";
+
+// On-playa (walk-up) mode lets whoever is running the shift check people in and
+// add volunteers without an admin login. Off-playa (cloud) those are admin-only.
+// NEXT_PUBLIC_PIN_ENABLED is "false" only on off-playa deploys.
+const IS_ON_PLAYA = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
 
 const shiftVolunteers = async (
   req: NextApiRequest,
@@ -213,6 +219,19 @@ const shiftVolunteers = async (
       const { noShow, shiftboardId, timePositionId }: IReqShiftVolunteerItem =
         JSON.parse(req.body);
 
+      // Off-playa: adding *another* volunteer is admin-only (walk-up adds are
+      // an on-playa affordance). Authenticated self-signup stays open.
+      if (
+        !IS_ON_PLAYA &&
+        shiftboardId !== session.shiftboardId &&
+        !(await isAdmin(session.shiftboardId))
+      ) {
+        return res.status(403).json({
+          statusCode: 403,
+          message: "Adding another volunteer is restricted to admins.",
+        });
+      }
+
       // Block adds on canceled shifts. Server-side enforcement —
       // the UI hides the Add button but a stale tab / forged request
       // would still reach this handler. Self-removes (DELETE) are
@@ -309,6 +328,13 @@ const shiftVolunteers = async (
     // patch
     // ------------------------------------------------------------
     case "PATCH": {
+      // Off-playa: checking a volunteer in (and review) is admin-only.
+      if (!IS_ON_PLAYA && !(await isAdmin(session.shiftboardId))) {
+        return res.status(403).json({
+          statusCode: 403,
+          message: "Check-in is restricted to admins.",
+        });
+      }
       // check volunteer into shift
       return shiftVolunteerUpdate(pool, req, res);
     }
