@@ -6,6 +6,7 @@ import { withSuperAdmin } from "@/lib/withSuperAdmin";
 import { pool } from "lib/database";
 import { autoTargetDay, pickAutoSap } from "lib/sap";
 import { getCurrentBurnYear, getFirstCspShiftDate } from "lib/sapDb";
+import { isPreOpenShift, ROLE_OTHER_SAP_ID } from "lib/sapStatus";
 
 interface AssignBody {
   shiftboardId?: number;
@@ -104,6 +105,25 @@ async function doAssign(
       });
     }
     const firstShift = await getFirstCspShiftDate(target.value as number);
+    // Auto = None for volunteers who need no Census SAP: first CSP shift is
+    // Mon-or-later (no early access needed) or they hold an external SAP. A
+    // specific date still overrides (handled above — this only gates Auto).
+    const [openSunRows] = await pool.query<RowDataPacket[]>(
+      `SELECT \`date\` FROM op_dates WHERE datename='OpenSun' AND delete_date=false LIMIT 1`,
+    );
+    const openSunDate = openSunRows[0]?.date ? String(openSunRows[0].date) : null;
+    const [externalSapRows] = await pool.query<RowDataPacket[]>(
+      `SELECT 1 FROM op_volunteer_roles
+        WHERE shiftboard_id=? AND role_id=? AND remove_role=false LIMIT 1`,
+      [target.value, ROLE_OTHER_SAP_ID],
+    );
+    if (!isPreOpenShift(firstShift, openSunDate) || externalSapRows.length > 0) {
+      return res.status(409).json({
+        statusCode: 409,
+        message:
+          "Not SAP-eligible for Auto (first shift Mon-or-later or external SAP). Choose a specific date to override.",
+      });
+    }
     const [availRows] = await pool.query<RowDataPacket[]>(
       `SELECT DISTINCT sap_date FROM op_saps WHERE burn_year=? AND status='available'`,
       [burnYear],
