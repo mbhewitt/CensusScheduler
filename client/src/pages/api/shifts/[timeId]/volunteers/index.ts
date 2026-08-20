@@ -270,6 +270,7 @@ const shiftVolunteers = async (
             noshow=?,
             add_shift=true,
             remove_shift=false,
+            removed_at=NULL,
             signed_up_at=NOW()
           WHERE shiftboard_id=?
           AND time_position_id=?`,
