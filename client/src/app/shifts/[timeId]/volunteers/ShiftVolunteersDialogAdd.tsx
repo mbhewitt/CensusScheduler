@@ -375,6 +375,15 @@ export const ShiftVolunteersDialogAdd = ({
   // evaluate check-in type and available shifts and positions
   let volunteerListDisplay: IVolunteerOption[] = [];
   let positionListDisplay: React.JSX.Element[] = [];
+  // Order the position dropdown (Mew 2026-08-20): most open slots first, then
+  // most total slots, then position (alias) A→Z.
+  const positionListByOpen = [...positionList].sort((a, b) => {
+    const openDiff =
+      b.slotsTotal - b.slotsFilled - (a.slotsTotal - a.slotsFilled);
+    if (openDiff !== 0) return openDiff;
+    if (b.slotsTotal !== a.slotsTotal) return b.slotsTotal - a.slotsTotal;
+    return a.positionName.localeCompare(b.positionName);
+  });
   const trainingListFiltered = dataTrainingList.filter(
     ({ category: { id: categoryId }, startTime: startTimeTraining }) =>
       // include trainings that match the prerequisite ID
@@ -427,7 +436,7 @@ export const ShiftVolunteersDialogAdd = ({
       }
 
       // display position list
-      positionListDisplay = positionList.map(
+      positionListDisplay = positionListByOpen.map(
         ({
           positionName,
           roleRequiredId,
@@ -535,7 +544,7 @@ export const ShiftVolunteersDialogAdd = ({
       );
 
       // display position list
-      positionListDisplay = positionList.map(
+      positionListDisplay = positionListByOpen.map(
         ({ positionName, slotsFilled, slotsTotal, timePositionId }) => (
           <MenuItem key={`${timePositionId}-position`} value={timePositionId}>
             {positionName}: {slotsFilled} / {slotsTotal}
