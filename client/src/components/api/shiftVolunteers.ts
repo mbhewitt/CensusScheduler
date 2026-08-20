@@ -208,7 +208,8 @@ export const shiftVolunteerRemove = async (
     `UPDATE op_volunteer_shifts
     SET
       add_shift=false,
-      remove_shift=true
+      remove_shift=true,
+      removed_at=NOW()
     WHERE shiftboard_id=?
     AND time_position_id=?`,
     [shiftboardId, timePositionId]
