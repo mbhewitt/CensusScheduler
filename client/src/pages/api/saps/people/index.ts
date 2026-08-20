@@ -205,8 +205,16 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
   const volunteers = volRows.map((v) => {
     const isStaff = staffSet.has(v.shiftboard_id);
     const firstShiftDate = firstShiftMap.get(v.shiftboard_id) ?? null;
-    const targetDay = autoTargetDay(firstShiftDate);
-    const autoSapDate = pickAutoSap(targetDay, availablePool)?.sapDate ?? null;
+    const hasExternalSap = otherSapSet.has(v.shiftboard_id);
+    const hasPreOpenShift = isPreOpenShift(firstShiftDate, openSunDate);
+    // A Census SAP is early-access only. Non-staff volunteers whose first CSP
+    // shift is Mon-or-later (no early access needed) or who already hold an
+    // external SAP need none → auto resolves to None (null date + "None" label).
+    const needsNoCensusSap = !isStaff && (!hasPreOpenShift || hasExternalSap);
+    const autoSapDate = needsNoCensusSap
+      ? null
+      : (pickAutoSap(autoTargetDay(firstShiftDate), availablePool)?.sapDate ??
+        null);
     const requiredDays = buildRequiredDays(
       v.arrival_datename ?? "",
       dayCspMap.get(v.shiftboard_id) ?? {},
@@ -220,12 +228,12 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
     // and on the volunteer info page.
     const eligibility = evaluateSapEligibility({
       isStaff,
-      hasExternalSap: otherSapSet.has(v.shiftboard_id),
+      hasExternalSap,
       bsSigned: bsSet.has(v.shiftboard_id),
       missingTrainings: missingTrainingsMap.get(v.shiftboard_id) ?? [],
       totalCsp,
       requiredDays,
-      hasPreOpenShift: isPreOpenShift(firstShiftDate, openSunDate),
+      hasPreOpenShift,
       hasDateOverride: assignment !== null || dateOverride !== null,
     });
     return {
@@ -235,7 +243,7 @@ const sapsPeople = async (req: NextApiRequest, res: NextApiResponse) => {
       name: v.playa_name || v.world_name || `#${v.shiftboard_id}`,
       worldName: v.world_name || null,
       isStaff,
-      autoLabel: isStaff ? "Staff" : "Auto",
+      autoLabel: isStaff ? "Staff" : needsNoCensusSap ? "None" : "Auto",
       firstShiftDate,
       firstShiftDayname: dayname(firstShiftDate),
       autoSapDate,
