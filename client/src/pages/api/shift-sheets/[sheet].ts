@@ -502,7 +502,8 @@ const loadTrainingReq = async (): Promise<TrainingReq> => {
     JOIN op_trainings AS t ON t.training_id=pt.training_id
     WHERE pt.delete_position_training=false
       AND t.delete_training=false
-      AND t.role_id IS NOT NULL`
+      AND t.role_id IS NOT NULL
+      AND t.code <> 'XQDDG'` /* Census Basics is general, not role-specific */
   );
   const posRoles = new Map<number, number[]>();
   const trainingRoleIds = new Set<number>();

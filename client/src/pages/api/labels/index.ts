@@ -140,6 +140,7 @@ const labels = async (req: NextApiRequest, res: NextApiResponse) => {
       ON pt.position_type_id=stp.position_type_id AND pt.delete_position_training=false
     JOIN op_trainings AS t
       ON t.training_id=pt.training_id AND t.delete_training=false AND t.role_id IS NOT NULL
+      AND t.code <> 'XQDDG' /* Census Basics is general, not role-specific */
     LEFT JOIN op_volunteer_roles AS vr
       ON vr.shiftboard_id=vs.shiftboard_id AND vr.role_id=t.role_id AND vr.remove_role=false
     WHERE vs.remove_shift=false
