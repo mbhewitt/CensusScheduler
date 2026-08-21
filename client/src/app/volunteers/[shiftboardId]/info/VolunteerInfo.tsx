@@ -950,15 +950,13 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   });
 
   // Permanent CTA (per Chipper 2026-07-01): always present, always the FIRST
-  // item, and intentionally never checks off — a standing prompt to view/add
-  // shifts no matter the volunteer's role, dates, or how many shifts they
-  // already hold. unshift() so it leads the list. Supersedes the old #430
-  // "all set" fallback nudge — since this item is always incomplete, the
-  // checklist is guaranteed non-empty on its own.
+  // item — a standing prompt to view/add shifts no matter the volunteer's
+  // role or dates. Checks off once they've signed up for 6+ CSP (per Mew
+  // 2026-08-21). unshift() so it leads the list.
   checklistItems.unshift({
     id: "view-add-census-shifts",
     label: "View/Add Census shifts",
-    done: false,
+    done: sapStatus.totalCsp >= 6,
     content: (
       <Box>
         <Typography sx={{ mb: 1 }}>
