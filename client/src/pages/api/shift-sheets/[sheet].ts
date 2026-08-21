@@ -8,6 +8,7 @@ import { PDFDocument, PDFFont, PDFPage, StandardFonts, rgb } from "pdf-lib";
 import { pool } from "lib/database";
 import { withSuperAdmin } from "@/lib/withSuperAdmin";
 import { ROLE_BEHAVIORAL_STANDARDS_ID } from "@/constants";
+import { drawBusMarker } from "@/utils/pdfMarkers";
 
 // Shift sheets — port of the legacy VCcensus schedPrint pages
 // (censusprintsched.php): the paper rosters shift leads carry on playa.
@@ -179,6 +180,7 @@ interface EntryRow extends RowDataPacket {
   end_time_text: string | null;
   meal: string | null;
   time_position_id: number;
+  position_type_id: number;
   position: string;
   is_lead: number;
   slots: number;
@@ -189,6 +191,7 @@ interface EntryRow extends RowDataPacket {
 
 interface Entry {
   position: string;
+  positionTypeId: number;
   isLead: boolean;
   isDriver: boolean;
   timePositionId: number;
@@ -271,6 +274,7 @@ const loadSheets = async (
       st.end_time_text,
       st.meal,
       stp.time_position_id,
+      stp.position_type_id,
       COALESCE(NULLIF(stp.position_alias, ''), pt.position) AS position,
       COALESCE(pt.lead, 0) AS is_lead,
       COALESCE(stp.slots, 0) AS slots,
@@ -320,6 +324,7 @@ const loadSheets = async (
     }
     sheet.entries.push({
       position: row.position,
+      positionTypeId: row.position_type_id,
       isLead: row.is_lead === 1,
       isDriver: /driver/i.test(row.position),
       timePositionId: row.time_position_id,
@@ -452,10 +457,13 @@ const gateScore = (data: ScoreData, sid: number, sheetYmd: string): number => {
 interface Marks {
   bs: boolean; // Signed Behavioral Standards
   rs: boolean; // Passed online RS-test-out
+  bus?: boolean; // still needs a role-specific training (drawn as a bus)
 }
 
-// red dot = Behavioral Standards NOT signed, green star = RS test-out passed
-// (legacy userSched/defaultOne zapfdingbats markers)
+// red pointing finger = Behavioral Standards NOT signed, amber bus = still
+// needs a role-specific training, green star = RS test-out passed. On rosters
+// the bus is position-specific (missing the training for THAT function); see
+// slotRows / loadTrainingReq.
 const loadMarks = async (): Promise<Map<number, Marks>> => {
   const [rowList] = await pool.query<RowDataPacket[]>(
     `SELECT
@@ -475,6 +483,66 @@ const loadMarks = async (): Promise<Map<number, Marks>> => {
     });
   }
   return marks;
+};
+
+// Role-specific training requirements for the roster bus marker. Mirrors the
+// volunteer-info API: a position requires the trainings mapped to its
+// position_type, and a volunteer has "completed" a training when they hold its
+// role. Returns per-position required training roles and each volunteer's held
+// training roles so slotRows can flag, per function, whoever is still missing
+// the training for THAT position.
+interface TrainingReq {
+  posRoles: Map<number, number[]>; // position_type_id -> required training role_ids
+  heldByVol: Map<number, Set<number>>; // shiftboard_id -> held training role_ids
+}
+const loadTrainingReq = async (): Promise<TrainingReq> => {
+  const [posRows] = await pool.query<RowDataPacket[]>(
+    `SELECT DISTINCT pt.position_type_id, t.role_id
+    FROM op_position_trainings AS pt
+    JOIN op_trainings AS t ON t.training_id=pt.training_id
+    WHERE pt.delete_position_training=false
+      AND t.delete_training=false
+      AND t.role_id IS NOT NULL`
+  );
+  const posRoles = new Map<number, number[]>();
+  const trainingRoleIds = new Set<number>();
+  for (const r of posRows) {
+    const roles = posRoles.get(r.position_type_id) ?? [];
+    roles.push(r.role_id as number);
+    posRoles.set(r.position_type_id as number, roles);
+    trainingRoleIds.add(r.role_id as number);
+  }
+
+  const heldByVol = new Map<number, Set<number>>();
+  if (trainingRoleIds.size > 0) {
+    const ids = [...trainingRoleIds];
+    const [heldRows] = await pool.query<RowDataPacket[]>(
+      `SELECT shiftboard_id, role_id
+      FROM op_volunteer_roles
+      WHERE remove_role=false
+        AND role_id IN (${ids.map(() => "?").join(",")})`,
+      ids
+    );
+    for (const r of heldRows) {
+      const set = heldByVol.get(r.shiftboard_id) ?? new Set<number>();
+      set.add(r.role_id as number);
+      heldByVol.set(r.shiftboard_id as number, set);
+    }
+  }
+  return { posRoles, heldByVol };
+};
+
+// True when this volunteer is missing any training required for this position.
+const needsPositionTraining = (
+  train: TrainingReq | undefined,
+  positionTypeId: number,
+  shiftboardId: number | null
+): boolean => {
+  if (!train || shiftboardId == null) return false;
+  const roles = train.posRoles.get(positionTypeId);
+  if (!roles?.length) return false;
+  const held = train.heldByVol.get(shiftboardId);
+  return roles.some((r) => !held?.has(r));
 };
 
 interface Cell {
@@ -555,8 +623,11 @@ class Pdf {
         if (cell.marks) {
           let mx = cx + 3;
           if (!cell.marks.bs) {
-            this.page.drawText("●", { x: mx, y: ty, size: s, font: this.fonts.zapf, color: RED });
-            mx += this.fonts.zapf.widthOfTextAtSize("●", s);
+            this.page.drawText("☛", { x: mx, y: ty, size: s, font: this.fonts.zapf, color: RED });
+            mx += this.fonts.zapf.widthOfTextAtSize("☛", s) + 1;
+          }
+          if (cell.marks.bus) {
+            mx += drawBusMarker(this.page, mx, ty, s);
           }
           if (cell.marks.rs) {
             this.page.drawText("★", { x: mx, y: ty, size: s, font: this.fonts.zapf, color: GREEN });
@@ -1043,7 +1114,11 @@ interface SlotRow {
 
 // rows for one shift: filled entries first, then a blank line per open slot
 // (capped — some positions carry huge aspirational slot counts)
-const slotRows = (sheet: Sheet, marks: Map<number, Marks>): SlotRow[] => {
+const slotRows = (
+  sheet: Sheet,
+  marks: Map<number, Marks>,
+  train?: TrainingReq
+): SlotRow[] => {
   const byPosition = new Map<
     number,
     { position: string; slots: number; filled: SlotRow[] }
@@ -1055,10 +1130,15 @@ const slotRows = (sheet: Sheet, marks: Map<number, Marks>): SlotRow[] => {
       byPosition.set(e.timePositionId, g);
     }
     if (e.name) {
+      const base = marks.get(e.shiftboardId ?? -1) ?? { bs: false, rs: false };
       g.filled.push({
         position: e.position,
         name: e.name,
-        marks: marks.get(e.shiftboardId ?? -1) ?? { bs: false, rs: false },
+        // roster bus is position-specific: missing the training for THIS function
+        marks: {
+          ...base,
+          bus: needsPositionTraining(train, e.positionTypeId, e.shiftboardId),
+        },
       });
     }
   }
@@ -1090,7 +1170,12 @@ const cspSlots = (sheet: Sheet): number => {
 
 // one page per day; every simple shift that day gets its own table
 // (legacy conDecon layout, position column added)
-const dailySheets = (pdf: Pdf, sheets: Sheet[], marks: Map<number, Marks>) => {
+const dailySheets = (
+  pdf: Pdf,
+  sheets: Sheet[],
+  marks: Map<number, Marks>,
+  train?: TrainingReq
+) => {
   const byDay = new Map<string, Sheet[]>();
   for (const sheet of sheets) {
     const list = byDay.get(sheet.ymd) ?? [];
@@ -1127,7 +1212,7 @@ const dailySheets = (pdf: Pdf, sheets: Sheet[], marks: Map<number, Marks>) => {
         ],
         15
       );
-      for (const r of slotRows(sheet, marks)) {
+      for (const r of slotRows(sheet, marks, train)) {
         const before = pdf.page;
         pdf.need(18);
         if (pdf.page !== before) {
@@ -1153,7 +1238,8 @@ const dailySheets = (pdf: Pdf, sheets: Sheet[], marks: Map<number, Marks>) => {
 const smallSheets = (
   pdf: Pdf,
   sheets: Sheet[],
-  marks: Map<number, Marks>
+  marks: Map<number, Marks>,
+  train?: TrainingReq
 ) => {
   pdf.newPage();
   const yr = sheets[0]?.yr ?? new Date().getFullYear();
@@ -1176,7 +1262,7 @@ const smallSheets = (
       a.start.localeCompare(b.start)
   );
   for (const sheet of ordered) {
-    const rows = slotRows(sheet, marks);
+    const rows = slotRows(sheet, marks, train);
     if (!rows.length) continue;
     if (sheet.category !== lastCategory) {
       lastCategory = sheet.category;
@@ -1362,7 +1448,8 @@ const shiftSheets = async (req: NextApiRequest, res: NextApiResponse) => {
       dailySheets(
         pdf,
         sheets.filter((s) => cspSlots(s) > SMALL_MAX_CSP_SLOTS),
-        await loadMarks()
+        await loadMarks(),
+        await loadTrainingReq()
       );
       if (!pdf.page) pdf.newPage();
       filename = "DailyRosters.pdf";
@@ -1376,7 +1463,8 @@ const shiftSheets = async (req: NextApiRequest, res: NextApiResponse) => {
       smallSheets(
         pdf,
         sheets.filter((s) => cspSlots(s) <= SMALL_MAX_CSP_SLOTS),
-        await loadMarks()
+        await loadMarks(),
+        await loadTrainingReq()
       );
       filename = "SmallShifts.pdf";
       break;

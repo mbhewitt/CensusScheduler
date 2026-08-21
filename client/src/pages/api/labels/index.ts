@@ -5,6 +5,7 @@ import { PDFDocument, PDFFont, StandardFonts, rgb } from "pdf-lib";
 import { pool } from "lib/database";
 import { withSuperAdmin } from "@/lib/withSuperAdmin";
 import { ROLE_BEHAVIORAL_STANDARDS_ID } from "@/constants";
+import { drawBusMarker } from "@/utils/pdfMarkers";
 
 // Port of the legacy VCcensus label sheet (censusprintsched.php userSched()).
 // Prints one 2"x4" label per volunteer — schedule + passcode — onto Avery 5523
@@ -122,6 +123,33 @@ const labels = async (req: NextApiRequest, res: NextApiResponse) => {
     shiftsById.set(row.shiftboard_id, list);
   }
 
+  // Volunteers still missing ANY role-specific training required by a position
+  // they're signed up for (label bus marker). A position requires the trainings
+  // mapped to its position_type; "completed" = the volunteer holds that
+  // training's role. Left-join the held role; role_id IS NULL => still needed.
+  const [trainingRows] = await pool.query<RowDataPacket[]>(
+    `SELECT vs.shiftboard_id,
+      MAX(CASE WHEN vr.role_id IS NULL THEN 1 ELSE 0 END) AS needs_training
+    FROM op_volunteer_shifts AS vs
+    JOIN op_shift_time_position AS stp
+      ON stp.time_position_id=vs.time_position_id AND stp.remove_time_position=false
+    JOIN op_shift_times AS st
+      ON st.shift_times_id=stp.shift_times_id
+      AND st.remove_shift_time=false AND st.canceled=false
+    JOIN op_position_trainings AS pt
+      ON pt.position_type_id=stp.position_type_id AND pt.delete_position_training=false
+    JOIN op_trainings AS t
+      ON t.training_id=pt.training_id AND t.delete_training=false AND t.role_id IS NOT NULL
+    LEFT JOIN op_volunteer_roles AS vr
+      ON vr.shiftboard_id=vs.shiftboard_id AND vr.role_id=t.role_id AND vr.remove_role=false
+    WHERE vs.remove_shift=false
+    GROUP BY vs.shiftboard_id`
+  );
+  const needsTrainingById = new Map<number, boolean>();
+  for (const row of trainingRows) {
+    needsTrainingById.set(row.shiftboard_id, row.needs_training === 1);
+  }
+
   // Two blocks: volunteers whose label lists shifts on top, those without any
   // shifts below — each block alphabetically by last name (legacy within-block
   // order: no-last-name first by playa name, then last name + playa, byte order).
@@ -171,13 +199,17 @@ const labels = async (req: NextApiRequest, res: NextApiResponse) => {
     const x0 = COL_X[slot % 2];
     const top = ROW_TOP0 - Math.floor(slot / 2) * ROW_PITCH;
 
-    // header: optional red dot (BS unsigned) + green star (RS test-out passed),
-    // playa name, italic last name when the playa name doesn't contain it
+    // header: optional red pointing finger (BS unsigned) + amber bus (still
+    // needs a role-specific training) + green star (RS test-out passed), playa
+    // name, italic last name when the playa name doesn't contain it
     let x = x0 - 13.45;
     const nameY = top - 17.3;
     if (!v.bs) {
-      page.drawText("●", { x, y: top - 20.2, size: 11, font: zapf, color: RED });
-      x += zapf.widthOfTextAtSize("●", 11);
+      page.drawText("☛", { x, y: top - 20.2, size: 11, font: zapf, color: RED });
+      x += zapf.widthOfTextAtSize("☛", 11) + 1;
+    }
+    if (needsTrainingById.get(v.shiftboard_id)) {
+      x += drawBusMarker(page, x, top - 20.2, 11);
     }
     if (v.rs) {
       page.drawText("★", { x, y: top - 20.2, size: 11, font: zapf, color: GREEN });
