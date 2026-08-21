@@ -25,7 +25,11 @@ const PAGE_W = 612;
 const PAGE_H = 792;
 const ROW_TOP0 = PAGE_H - 36; // top edge of label row 1
 const ROW_PITCH = 144;
-const COL_X = [44.64, 315.56];
+// Column x-origins (points). Avery 5523 is 2"x4" 10-up: 0.15625" side margins,
+// a 0.1875" center gutter → a 4.1875" (301.5pt) pitch between the two columns.
+// The right column had been ~30pt short of that pitch, so its content bled off
+// the label's left edge into the gutter (Rescue 2026-08-21). 44.64 + 301.5.
+const COL_X = [44.64, 346.14];
 const TABLE_W = 265.3; // content width used for centered lines
 
 const RED = rgb(1, 0, 0);
