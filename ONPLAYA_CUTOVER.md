@@ -81,14 +81,19 @@ written to** (so nobody makes changes that the next sync would silently discard)
    |---|---|---|
    | **Prod** (`volunteers.census.burningman.org`) | `0,15,30,45` | dump DB → commit/push to `OnPlayaData` |
    | **peers** (`volunteers.peers.burningman.org`) | `5,20,35,50` | peers' DB backup / its own git op |
-   | **On-playa box** (CensusLab) | `10,25,40,55` | `git pull OnPlayaData` → restore mysqldump (runs *last*, so it gets the freshest push) |
+   | **On-playa box** (CensusLab) | `2,17,32,47` | `git pull OnPlayaData` → restore mysqldump (runs just after prod's :00 push) |
+
+   On-playa box crontab (per Mew 2026-08-21):
+   ```
+   2,17,32,47 * * * * /home/mew/Census/CensusScheduler/census-deploy.sh >> /home/mew/Census/CensusScheduler/deploy.log 2>&1
+   ```
 
    The box's pull runs *after* the upstream pushes so it restores current data.
    Sync only runs while the box has uplink — it just no-ops offline. Keep it
    running from now until the end of Burning Man so the box is never >15 min stale.
 
-   > **CONFIRM the exact minutes** against peers' actual schedule; the point is
-   > only that the three are offset and the box pulls after the pushes.
+   > **CONFIRM** prod's & peers' exact minutes against their real schedules; the
+   > box is fixed at `2,17,32,47` and they just need to not collide with it.
 
 5. **Box stays read-only** the whole time it's a mirror, so nobody makes a local
    change that the next `git pull` + restore would silently overwrite.
