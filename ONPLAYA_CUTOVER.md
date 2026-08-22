@@ -10,10 +10,9 @@ cutover it points at the *true* AWS IP; after cutover it points at the local
 box. The installed PWA and passcode sign-in follow the DNS, so the same app
 "is" cloud before cutover and local after, with no reinstall.
 
-> ⚠️ **Blocking prerequisite — read-only mode is NOT built yet.** The app has no
-> maintenance/read-only capability today (verified 2026-08-21). Phases 1 and 2
-> below assume a read-only mode with a banner exists. **It must be built before
-> this runbook is executable.** See [§Read-only mode](#read-only-mode-must-be-built).
+> ✅ **Read-only mode is built** (PR #693): flip `CENSUS_READ_ONLY=true` +
+> `CENSUS_READ_ONLY_MESSAGE=...` and restart the container. See
+> [§Read-only mode](#read-only-mode-built--pr-693).
 
 ---
 
@@ -67,28 +66,32 @@ written to** (so nobody makes changes that the next sync would silently discard)
 3. **Box in READ-ONLY mode** (banner: *"Running at CensusLab — read-only mirror.
    Changes are made on the live site."*). See §Read-only mode.
 
-4. **DB sync cron: pull the live prod DB every 15 min → load into the box.**
-   New mechanism (the existing `census-deploy.sh` loads a *committed* dump, not a
-   live pull). Sketch (`onplaya-db-sync.sh`, runs on the box):
-   ```bash
-   mysqldump -h <AWS_RDS_HOST> -u census -p<pw> \
-     --single-transaction --no-tablespaces --set-gtid-purged=OFF census \
-     | gzip > /tmp/census-sync.sql.gz
-   gunzip -c /tmp/census-sync.sql.gz \
-     | sudo docker exec -i census-database mariadb -uroot -p<localpw> census
-   ```
-   Cron, offset to finish BEFORE peers' ops cron (which runs `*/15` on the
-   `:00/:15/:30/:45` boundaries):
-   ```
-   2,17,32,47 * * * * /home/.../onplaya-db-sync.sh >> /var/log/census-sync.log 2>&1
-   ```
-   > **CONFIRM:** the `2,17,32,47` offset assumes peers' ops cron is at
-   > `0,15,30,45`. Adjust so the DB is fresh *before* peers' job reads it, and
-   > confirm which host owns which cron. Sync only runs while the box has uplink;
-   > that's fine — it just no-ops when prod is unreachable.
+4. **DB sync: box pulls the `OnPlayaData` git repo and restores the mysqldump,
+   every 15 min.** This is the existing `census-deploy.sh` mechanism — the box
+   does NOT dump prod RDS directly. Upstream, prod (and peers) periodically dump
+   their DB and commit the fresh mysqldump to the `OnPlayaData` repo; the box
+   `git pull`s it and restores it into the local `census-database` container
+   (see `refresh_database()` in `census-deploy.sh`, which loads
+   `OnPlayaData/server/${YEAR}_on_playa_server_data_v2.sql`).
 
-5. **Keep the prod→box sync running from now until the end of Burning Man**, so
-   the box is never more than ~15 min stale and can take over at any moment.
+   **Stagger the three machines' crons so no two hit GitHub (or dump) on the same
+   minute** (per Mew — the *test box* `census-ops-test` is NOT in this set):
+
+   | Machine | Cron minutes | Job |
+   |---|---|---|
+   | **Prod** (`volunteers.census.burningman.org`) | `0,15,30,45` | dump DB → commit/push to `OnPlayaData` |
+   | **peers** (`volunteers.peers.burningman.org`) | `5,20,35,50` | peers' DB backup / its own git op |
+   | **On-playa box** (CensusLab) | `10,25,40,55` | `git pull OnPlayaData` → restore mysqldump (runs *last*, so it gets the freshest push) |
+
+   The box's pull runs *after* the upstream pushes so it restores current data.
+   Sync only runs while the box has uplink — it just no-ops offline. Keep it
+   running from now until the end of Burning Man so the box is never >15 min stale.
+
+   > **CONFIRM the exact minutes** against peers' actual schedule; the point is
+   > only that the three are offset and the box pulls after the pushes.
+
+5. **Box stays read-only** the whole time it's a mirror, so nobody makes a local
+   change that the next `git pull` + restore would silently overwrite.
 
 ---
 
@@ -103,9 +106,10 @@ DNS flip.
    > and view your schedule, but changes are paused until then."*
    People can still log in and read; all writes are blocked. See §Read-only mode.
 
-2. **Final DB sync** prod → box (run `onplaya-db-sync.sh` once manually) so the
-   box has prod's last state, then **stop the sync cron** (the box is about to be
-   the source of truth — further prod pulls would clobber local writes).
+2. **Final DB sync:** ensure prod's last dump is committed to `OnPlayaData`, then
+   run the box's `git pull` + restore once manually so the box has prod's final
+   state. Then **stop the box's sync cron** (the box is about to be the source of
+   truth — a further pull+restore would clobber local writes).
 
 3. **Flip dnsmasq to local.** Remove the `volunteers.census.../<AWS_IP>` override
    so the name falls through the catch-all to the box:
@@ -131,25 +135,28 @@ flip + unfreeze.
 
 ---
 
-## Read-only mode (MUST BE BUILT)
+## Read-only mode (BUILT — PR #693)
 
-There is **no read-only/maintenance mode in the app today.** Both phases need it.
-Minimal design (small feature, one PR):
+Read-only mode exists (PR #693). How to use it:
 
-- **Toggle:** a runtime signal (env var read at request time, e.g.
-  `CENSUS_READ_ONLY=true`, or a `op_settings` row) so it flips with a container
-  restart — no rebuild. Runtime, not `NEXT_PUBLIC_*` (those are build-time).
-- **Enforcement (server):** a guard on all mutating API routes (POST/PATCH/PUT/
-  DELETE) — reuse the `withWriteGuard`/`withAuth` wrapper pattern — returns
-  **423 Locked** (or 403) with the banner message when read-only is on. This is
-  the real enforcement; belt-and-suspenders like the passcode gate.
-- **Banner (client):** a top-of-page `<Alert>` with the configurable message,
-  shown when a `/api/settings` (or similar) reports read-only. Reuse the header
-  area.
-- **Configurable message + "changes at 6:30a"** so the same mechanism serves both
-  the box ("read-only mirror") and prod-at-cutover ("changes only at CensusLab").
+- **Turn ON:** set two runtime env vars and restart the container (no rebuild):
+  ```
+  CENSUS_READ_ONLY=true
+  CENSUS_READ_ONLY_MESSAGE=Schedule changes can only be made at CensusLab (6:30a). You can sign in and view, but changes are paused.
+  ```
+  `docker compose --file docker-compose-prod.yaml up -d --force-recreate`
+- **Turn OFF:** remove the vars (or set `CENSUS_READ_ONLY=false`) and restart.
+- **Enforcement:** `middleware.ts` returns **423 Locked** (with the message) for
+  every mutating `/api/*` request (POST/PUT/PATCH/DELETE), for everyone including
+  admins. Exceptions so people can still sign in: `/api/sign-in`,
+  `/api/auth/sign-out`, `/api/provision/claim`.
+- **Banner:** a site-wide `<Alert>` shows the message on every page (driven by
+  `GET /api/read-only` → `useReadOnly` → `ReadOnlyBanner`).
+- Prod runs `next start`, so the env is read at runtime — the flip is a restart,
+  verified. Default (unset) = writes work as normal.
 
-**~1 PR. Not built. Want me to build it?** It's a prerequisite for this runbook.
+Same mechanism serves both the box ("read-only mirror" message) and prod at
+cutover ("changes only at CensusLab").
 
 ---
 
@@ -204,8 +211,9 @@ word and I'll do it as its own PR.
 ---
 
 ## Open items to confirm with Mew
-1. Read-only mode — build it? (blocking prerequisite)
-2. DB-sync cron: exact host (box vs a prod-side dumper) and the offset vs peers'
-   ops cron.
-3. Move captive-portal check + NTP local? (recommended)
+1. ~~Read-only mode — build it?~~ **DONE** (PR #693).
+2. ~~DB-sync mechanism/host~~ **RESOLVED:** box `git pull`s `OnPlayaData` + restores
+   the mysqldump; three machines (prod / peers / on-playa box, NOT the test box)
+   staggered `0/5/10`-style. Confirm the exact minutes vs peers' real schedule.
+3. Move captive-portal check + NTP local? (recommended — own PR)
 4. Cert refresh cadence / DNS-01 for a longer cert.
