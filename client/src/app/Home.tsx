@@ -14,12 +14,13 @@ import {
   Typography,
 } from "@mui/material";
 import Link from "next/link";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { OfflineLink } from "@/components/general/OfflineLink";
 import { Hero } from "@/components/layout/Hero";
 import { SessionContext } from "@/state/session/context";
 import { checkIsAuthenticated } from "@/utils/checkIsRoleExist";
+import { isPwaStandalone } from "@/utils/isPwa";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 
 export const Home = () => {
@@ -41,6 +42,11 @@ export const Home = () => {
   );
   const isOAuthConfigured = process.env.NEXT_PUBLIC_OKTA_ENABLED === "true";
   const isPinEnabled = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
+  // Installed-PWA sign-ins get a long-lived session (see /api/auth/okta).
+  // Detected after mount, so SSR renders the plain href.
+  const [isPwa, setIsPwa] = useState(false);
+  useEffect(() => setIsPwa(isPwaStandalone()), []);
+  const oktaHref = isPwa ? "/api/auth/okta?pwa=1" : "/api/auth/okta";
   // PIN sign-in is the on-playa signal (same convention as
   // ShareButton/VolunteerInfo). On-playa the recruitment-oriented "How to
   // Volunteer" / "Volunteer Roles" copy doesn't apply (volunteers are already
@@ -115,7 +121,7 @@ export const Home = () => {
             ) : isOAuthConfigured ? (
               <Button
                 component="a"
-                href="/api/auth/okta"
+                href={oktaHref}
                 size="large"
                 startIcon={<LoginIcon />}
                 variant="contained"
@@ -236,7 +242,7 @@ export const Home = () => {
                 ) : (
                   <>
                     Are you ready to become a Census volunteer?{" "}
-                    <a href={isOAuthConfigured ? "/api/auth/okta" : "/sign-in"}>
+                    <a href={isOAuthConfigured ? oktaHref : "/sign-in"}>
                       Sign in
                     </a>{" "}
                     above with your Burner Profile to view shift requirements and
