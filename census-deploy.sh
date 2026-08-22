@@ -119,7 +119,7 @@ db_refreshed_today() {
 
 # Refresh database from OnPlayaData SQL dump
 refresh_database() {
-    local sql_file="$ONPLAYA_DIR/server/${YEAR}_on_playa_server_data_v2.sql"
+    local sql_file="$ONPLAYA_DIR/server/${YEAR}_on_playa_server_data.sql"
 
     if [ ! -f "$sql_file" ]; then
         log "DB refresh: SQL file not found: $sql_file"

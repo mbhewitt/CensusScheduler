@@ -15,7 +15,7 @@ Python scripts that run on the prod EC2 box (under `mew` user) to keep the prod 
 `crontab -l` (mew):
 ```
 # Census prod RDS -> OnPlayaData snapshot (every 4 hours)
-0 */4 * * * cd $HOME/Census/OnPlayaData && server/update_server_v2.sh >> $HOME/onplayadata-dump.log 2>&1
+0,15,30,45 * * * * cd $HOME/Census/OnPlayaData && server/update_server.sh >> $HOME/onplayadata-dump.log 2>&1
 
 # Census prod RDS sb_pinfo upsert from Shiftboard (every 4h, offset 2h)
 0 2-22/4 * * * cd $HOME/census-etl && venv/bin/python etl_sb_pinfo.py >> $HOME/etl-sb-pinfo.log 2>&1
