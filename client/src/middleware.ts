@@ -30,6 +30,15 @@ const ALLOWLIST = [
   "/api/sign-in",
   "/api/auth/okta",
   "/api/auth/okta/callback",
+
+  // Tablet device provisioning (#015): the tablet scanning the QR is NOT logged
+  // in, so the landing page and its claim endpoint must be reachable
+  // unauthenticated. /api/auth/device reports provisioned-state for the sign-in
+  // UI (also pre-login). NOTE: /api/provision/token is deliberately NOT here —
+  // minting is super-admin only and goes through withSuperAdmin (needs session).
+  "/provision",
+  "/api/provision/claim",
+  "/api/auth/device",
   "/api/auth/sign-out",
   // /api/auth/session is the cookie-validity probe used by
   // useSessionValidation to keep client SessionContext in sync with

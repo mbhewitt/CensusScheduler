@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import type { IReqSignIn } from "@/components/types/sign-in";
 import type { IResVolunteerAccount } from "@/components/types/volunteers";
+import { isProvisionedDevice } from "@/lib/device";
 import { buildSessionCookie } from "@/lib/session";
 import { pool } from "lib/database";
 
@@ -11,6 +12,17 @@ const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(403).json({
       statusCode: 403,
       message: "Passcode sign-in is not enabled for this deployment",
+    });
+  }
+
+  // Trusted-device gate: passcode is only allowed on provisioned tablets. This
+  // is the real server-side enforcement (the SignIn UI also hides the form, but
+  // that's advisory). Without it, anyone on the shared origin — participants on
+  // the same network/egress-IP — could passcode-login. See lib/device.ts / #015.
+  if (!isProvisionedDevice(req.cookies)) {
+    return res.status(403).json({
+      statusCode: 403,
+      message: "This device is not authorized for passcode sign-in.",
     });
   }
 

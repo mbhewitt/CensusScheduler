@@ -34,6 +34,7 @@ import type { IVolunteerOption } from "@/components/types";
 import type { IReqSignIn } from "@/components/types/sign-in";
 import type { IResVolunteerDefaultItem } from "@/components/types/volunteers";
 import { SESSION_SIGN_IN } from "@/constants";
+import { useDeviceProvisioned } from "@/hooks/useDeviceProvisioned";
 import { SessionContext } from "@/state/session/context";
 import { ensure } from "@/utils/ensure";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
@@ -90,6 +91,12 @@ export const SignIn = () => {
   const oauthError = searchParams?.get("error");
   const isOAuthConfigured = process.env.NEXT_PUBLIC_OKTA_ENABLED === "true";
   const isPinEnabled = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
+  // Passcode is only offered on provisioned tablets (device cookie), even when
+  // the build has PIN enabled — so participants on the shared origin never see
+  // it. The server gate in /api/sign-in enforces this regardless; this just
+  // hides the form. See useDeviceProvisioned / lib/device.ts.
+  const isProvisionedTablet = useDeviceProvisioned();
+  const showPasscode = isPinEnabled && isProvisionedTablet;
 
   // Forward returnTo through the Okta init so the callback can land the user
   // back where they started (e.g. /training/confirmation/[code] after clicking
@@ -225,7 +232,7 @@ export const SignIn = () => {
               >
                 Sign in to Census
               </Button>
-              {isPinEnabled && (
+              {showPasscode && (
                 <Divider sx={{ mt: 2 }}>
                   <Typography color="text.secondary" variant="body2">
                     or use passcode
@@ -234,7 +241,7 @@ export const SignIn = () => {
               )}
             </CardContent>
           )}
-          {isPinEnabled && (
+          {showPasscode && (
           <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
             <CardContent>
               <Stack spacing={2}>

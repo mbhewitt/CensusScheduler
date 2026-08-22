@@ -36,6 +36,7 @@ import {
   pageListSuperAdmin,
 } from "@/components/layout/pageList";
 import { IDLE_MINUTES } from "@/constants";
+import { useDeviceProvisioned } from "@/hooks/useDeviceProvisioned";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
 import {
@@ -96,12 +97,23 @@ export const Header = () => {
     );
   };
 
-  // On-playa (shared tablets) keeps the short idle auto-logout so a walk-up
-  // doesn't leave someone else signed in. Off-playa (personal devices) the
-  // idle timeout matches the ~24h session, so people aren't kicked out for
-  // stepping away for a few minutes. Per Mew 2026-07-06.
+  // Short idle auto-logout for shared tablets: the timer resets on activity, so
+  // "logged out 5 min after activity stops," and a walk-up doesn't leave someone
+  // else signed in. Two ways a device qualifies as shared:
+  //   - It's a provisioned tablet (has the census-device cookie), OR
+  //   - This is a passcode-ONLY build (PIN on, Okta off) — the dedicated
+  //     on-playa box, where EVERY device is a shared tablet. Keeping the short
+  //     window here is the fail-safe: unprovisioned tablets still auto-logout,
+  //     rather than silently getting 24h until each is provisioned.
+  // On the mixed volunteers.census origin (PIN + Okta), Okta volunteers on their
+  // own phones are unprovisioned → 24h, so they aren't kicked out for stepping
+  // away. Per Mew 2026-07-06 / 2026-08-21.
+  const isProvisionedTablet = useDeviceProvisioned();
+  const isPasscodeOnlyBuild =
+    process.env.NEXT_PUBLIC_PIN_ENABLED !== "false" &&
+    process.env.NEXT_PUBLIC_OKTA_ENABLED !== "true";
   const idleTimeoutMs =
-    process.env.NEXT_PUBLIC_PIN_ENABLED !== "false"
+    isProvisionedTablet || isPasscodeOnlyBuild
       ? IDLE_MINUTES * 60 * 1000
       : 24 * 60 * 60 * 1000;
   useIdleTimer({
