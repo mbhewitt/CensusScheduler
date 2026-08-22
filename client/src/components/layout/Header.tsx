@@ -99,23 +99,16 @@ export const Header = () => {
 
   // Short idle auto-logout for shared tablets: the timer resets on activity, so
   // "logged out 5 min after activity stops," and a walk-up doesn't leave someone
-  // else signed in. Two ways a device qualifies as shared:
-  //   - It's a provisioned tablet (has the census-device cookie), OR
-  //   - This is a passcode-ONLY build (PIN on, Okta off) — the dedicated
-  //     on-playa box, where EVERY device is a shared tablet. Keeping the short
-  //     window here is the fail-safe: unprovisioned tablets still auto-logout,
-  //     rather than silently getting 24h until each is provisioned.
-  // On the mixed volunteers.census origin (PIN + Okta), Okta volunteers on their
-  // own phones are unprovisioned → 24h, so they aren't kicked out for stepping
-  // away. Per Mew 2026-07-06 / 2026-08-21.
+  // else signed in. Keyed purely on whether this browser is an authed tablet (has
+  // the census-device cookie) — per Mew 2026-08-21, same signal as passcode. A
+  // provisioned tablet gets the short window; everyone else (Okta volunteers on
+  // their own phones) gets ~24h so they aren't kicked out for stepping away. An
+  // unprovisioned device can't passcode in anyway, so it never holds a shared
+  // session that needs the short timer.
   const isProvisionedTablet = useDeviceProvisioned();
-  const isPasscodeOnlyBuild =
-    process.env.NEXT_PUBLIC_PIN_ENABLED !== "false" &&
-    process.env.NEXT_PUBLIC_OKTA_ENABLED !== "true";
-  const idleTimeoutMs =
-    isProvisionedTablet || isPasscodeOnlyBuild
-      ? IDLE_MINUTES * 60 * 1000
-      : 24 * 60 * 60 * 1000;
+  const idleTimeoutMs = isProvisionedTablet
+    ? IDLE_MINUTES * 60 * 1000
+    : 24 * 60 * 60 * 1000;
   useIdleTimer({
     onIdle: handleSignOut,
     timeout: isDisableIdleEnabled ? undefined : idleTimeoutMs,

@@ -8,17 +8,12 @@ import { buildSessionCookie } from "@/lib/session";
 import { pool } from "lib/database";
 
 const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (process.env.NEXT_PUBLIC_PIN_ENABLED === "false") {
-    return res.status(403).json({
-      statusCode: 403,
-      message: "Passcode sign-in is not enabled for this deployment",
-    });
-  }
-
-  // Trusted-device gate: passcode is only allowed on provisioned tablets. This
-  // is the real server-side enforcement (the SignIn UI also hides the form, but
-  // that's advisory). Without it, anyone on the shared origin — participants on
-  // the same network/egress-IP — could passcode-login. See lib/device.ts / #015.
+  // Passcode availability is based purely on whether this browser is an authed
+  // tablet (the trusted-device cookie), NOT on the build's NEXT_PUBLIC_PIN_ENABLED
+  // flag (per Mew 2026-08-21). That decouples passcode from the on-playa build
+  // signal: the off-playa origin (PIN_ENABLED=false) still lets a *provisioned
+  // tablet* passcode in, while everyone else can't. The device cookie is minted
+  // only via the super-admin QR flow, so this is the real gate. See lib/device.ts.
   if (!isProvisionedDevice(req.cookies)) {
     return res.status(403).json({
       statusCode: 403,
