@@ -11,6 +11,7 @@ import {
   QrCode2 as QrCode2Icon,
   QuestionAnswer as QuestionAnswerIcon,
   Settings as SettingsIcon,
+  TabletAndroid as TabletAndroidIcon,
   VerifiedUser as VerifiedUserIcon,
   ViewList as ViewListIcon,
   WorkHistory as WorkHistoryIcon,
@@ -81,6 +82,11 @@ export const pageListSuperAdmin = [
     icon: <QrCode2Icon />,
     label: "QR Codes",
     path: "/qr-codes",
+  },
+  {
+    icon: <TabletAndroidIcon />,
+    label: "Provision Tablet",
+    path: "/provision-tablet",
   },
   {
     icon: <WorkHistoryIcon />,
