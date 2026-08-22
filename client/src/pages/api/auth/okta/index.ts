@@ -35,8 +35,13 @@ const oktaAuthorize = async (req: NextApiRequest, res: NextApiResponse) => {
     .update(codeVerifier)
     .digest("base64url");
 
-  // store state + code verifier in a secure httpOnly cookie
-  const oauthData = JSON.stringify({ state, codeVerifier });
+  // store state + code verifier in a secure httpOnly cookie. `pwa` records
+  // whether sign-in was initiated from an installed PWA (display-mode:
+  // standalone) so the callback can issue a long-lived session. It rides the
+  // oauth cookie rather than the state param so it survives the Okta round-trip
+  // without being reflected in a user-visible URL.
+  const isPwa = req.query.pwa === "1";
+  const oauthData = JSON.stringify({ state, codeVerifier, pwa: isPwa });
   res.setHeader("Set-Cookie", [
     `oauth_state=${encodeURIComponent(oauthData)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=600`,
   ]);

@@ -13,6 +13,13 @@ const SESSION_DURATION_MS =
     ? 24 * 60 * 60 * 1000 // 24 hours off-playa (web)
     : 60 * 60 * 1000; // 1 hour on-playa (shared tablets)
 
+// "Stay signed in until I log out" for installed PWAs (per Mew 2026-08-21).
+// A volunteer who installs the app on their own phone and signs in via Okta
+// gets a long-lived session so they aren't logged out mid-event. Passcode
+// sign-in NEVER gets this (shared tablets) — only the Okta path passes
+// persistent=true. 400 days is the max cookie lifetime Chrome will honor.
+const PERSISTENT_SESSION_DURATION_MS = 400 * 24 * 60 * 60 * 1000;
+
 interface SessionPayload {
   shiftboardId: number;
   expires: number;
@@ -64,12 +71,18 @@ function verify(value: string): SessionPayload | null {
   return payload;
 }
 
-export function buildSessionCookie(shiftboardId: number): string {
+export function buildSessionCookie(
+  shiftboardId: number,
+  persistent = false
+): string {
+  const durationMs = persistent
+    ? PERSISTENT_SESSION_DURATION_MS
+    : SESSION_DURATION_MS;
   const value = sign({
     shiftboardId,
-    expires: Date.now() + SESSION_DURATION_MS,
+    expires: Date.now() + durationMs,
   });
-  const maxAgeSeconds = Math.floor(SESSION_DURATION_MS / 1000);
+  const maxAgeSeconds = Math.floor(durationMs / 1000);
   return `${COOKIE_NAME}=${value}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAgeSeconds}; Secure`;
 }
 

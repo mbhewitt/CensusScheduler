@@ -217,10 +217,12 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
 
   let storedState: string;
   let codeVerifier: string;
+  let isPwa = false;
   try {
     const parsed = JSON.parse(decodeURIComponent(oauthCookie));
     storedState = parsed.state;
     codeVerifier = parsed.codeVerifier;
+    isPwa = parsed.pwa === true;
   } catch (err) {
     // Log the raw cookie value (truncated) so we can diagnose the
     // intermittent "[object Object]" SyntaxError seen in prod.
@@ -461,7 +463,10 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // hotfix 2026-05-06: set the server-side session cookie so the
     // middleware (and API guards) recognize this user as authenticated.
-    res.setHeader("Set-Cookie", buildSessionCookie(shiftboardId));
+    // Installed-PWA logins get a long-lived session ("stay signed in until I
+    // log out"). Passcode sign-in never reaches this path, so shared tablets
+    // keep their short session.
+    res.setHeader("Set-Cookie", buildSessionCookie(shiftboardId, isPwa));
 
     // encode account data for client-side session hydration
     const accountData = encodeURIComponent(JSON.stringify(account));

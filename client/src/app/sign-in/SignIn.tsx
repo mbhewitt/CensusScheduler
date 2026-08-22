@@ -22,7 +22,7 @@ import {
 import { useTheme } from "@mui/material/styles";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSnackbar } from "notistack";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
@@ -37,6 +37,7 @@ import { SESSION_SIGN_IN } from "@/constants";
 import { SessionContext } from "@/state/session/context";
 import { ensure } from "@/utils/ensure";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
+import { isPwaStandalone } from "@/utils/isPwa";
 import { resetFilterList } from "@/utils/resetFilterList";
 
 interface IFormValues {
@@ -96,9 +97,16 @@ export const SignIn = () => {
   // /api/auth/okta/callback falls back to /volunteers/{id}/info, and the
   // user loses their place in the training-confirmation flow.
   const returnToParam = searchParams?.get("returnTo");
-  const oktaHref = returnToParam
-    ? `/api/auth/okta?returnTo=${encodeURIComponent(returnToParam)}`
-    : "/api/auth/okta";
+  // Signed in from an installed PWA? Tell the Okta init so the callback issues a
+  // long-lived session ("stay signed in until logout"). Detected client-side
+  // after mount, so first render (SSR) is the non-PWA href.
+  const [isPwa, setIsPwa] = useState(false);
+  useEffect(() => setIsPwa(isPwaStandalone()), []);
+  const oktaParams = new URLSearchParams();
+  if (returnToParam) oktaParams.set("returnTo", returnToParam);
+  if (isPwa) oktaParams.set("pwa", "1");
+  const oktaQuery = oktaParams.toString();
+  const oktaHref = oktaQuery ? `/api/auth/okta?${oktaQuery}` : "/api/auth/okta";
 
   // logic
   // ------------------------------------------------------------
