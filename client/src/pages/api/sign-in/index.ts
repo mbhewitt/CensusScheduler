@@ -72,7 +72,10 @@ const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
 
       // hotfix 2026-05-06: set the server-side session cookie so the
       // middleware (and API guards) recognize this user as authenticated.
-      res.setHeader("Set-Cookie", buildSessionCookie(resAccount.shiftboardId));
+      res.setHeader(
+        "Set-Cookie",
+        buildSessionCookie(resAccount.shiftboardId, { passcode: true })
+      );
 
       return res.status(200).json(resAccount);
     }
