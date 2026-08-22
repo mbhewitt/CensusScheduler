@@ -67,12 +67,23 @@ written to** (so nobody makes changes that the next sync would silently discard)
    Changes are made on the live site."*). See §Read-only mode.
 
 4. **DB sync: box pulls the `OnPlayaData` git repo and restores the mysqldump,
-   every 15 min.** This is the existing `census-deploy.sh` mechanism — the box
-   does NOT dump prod RDS directly. Upstream, prod (and peers) periodically dump
-   their DB and commit the fresh mysqldump to the `OnPlayaData` repo; the box
-   `git pull`s it and restores it into the local `census-database` container
-   (see `refresh_database()` in `census-deploy.sh`, which loads
-   `OnPlayaData/server/${YEAR}_on_playa_server_data_v2.sql`).
+   every 15 min.** The box does NOT dump prod RDS directly. Upstream, prod (and
+   peers) periodically dump their DB and commit the fresh mysqldump to the
+   `OnPlayaData` repo; the box `git pull`s it and restores it. Use the EXISTING
+   scripts (don't reinvent):
+   - `OnPlayaData/playa/update_db_from_server.sh` — `git pull`, restore
+     `OnPlayaData/server/${YEAR}_on_playa_server_data.sql`, then call
+     `update_playa.sh` (dump the playa DB back out to `playa/…`).
+   - `census-deploy.sh` — the fuller auto-deploy: polls both repos, **rebuilds
+     Docker on code changes**, and refreshes the DB. Use this if the box also
+     needs code/app updates on-playa, not just data.
+
+   > **CONFIRM (v1/v2 filename mismatch):** `census-deploy.sh` loads
+   > `…_on_playa_server_data_v2.sql` while `update_db_from_server.sh` loads
+   > `…_on_playa_server_data.sql` (no `_v2`). There are `feat/prod-dump-v2` /
+   > `feat/peers-git-dumps` branches in `OnPlayaData` — reconcile which filename
+   > prod actually pushes and which script the box runs, so the pull restores the
+   > file that's actually being written.
 
    **Stagger the three machines' crons so no two hit GitHub (or dump) on the same
    minute** (per Mew — the *test box* `census-ops-test` is NOT in this set):
@@ -132,31 +143,26 @@ DNS flip.
 4. **Take the box OUT of read-only** — it's now the writable primary. Drop its
    read-only banner.
 
-5. **Start the on-playa DB dump cron.** Once the box is primary it holds changes
-   that exist NOWHERE else, so back its DB up on a schedule — this both survives a
-   box failure and produces the dump we restore back to the cloud at cutback.
-   Offset from the (now-stopped) pull slot. `onplaya-db-dump.sh` on the box:
-   ```bash
-   #!/usr/bin/bash
-   set -euo pipefail
-   STAMP=$(date +%Y%m%d-%H%M)
-   OUT=/home/mew/Census/OnPlayaData/server/${YEAR}_on_playa_server_data_v2.sql
-   sudo docker exec census-database mysqldump -uroot -p"$LOCALPW" \
-     --single-transaction --no-tablespaces --routines --triggers census > "$OUT"
-   cp "$OUT" "/home/mew/db-backups/census-$STAMP.sql"   # rolling local backups
-   # Push to OnPlayaData when there's uplink, so the cloud can pull it at cutback:
-   cd /home/mew/Census/OnPlayaData && git add -A \
-     && git commit -m "on-playa db dump $STAMP" && git push || true
-   find /home/mew/db-backups -name 'census-*.sql' -mtime +2 -delete  # prune
-   ```
+5. **Start the on-playa DB dump cron** so the box's now-unique data is backed up
+   and can be restored to the cloud at cutback. **Use the EXISTING script — do
+   not write a new one, and do NOT overwrite the prod dump:**
+   `OnPlayaData/playa/update_playa.sh` already does this — it `mysqldump`s the
+   playa `census` DB to **`OnPlayaData/playa/${YEAR}_on_playa_data.sql`** (the
+   playa file) and `git push`es it. That is a **different file** from the prod
+   dump `OnPlayaData/server/${YEAR}_on_playa_server_data.sql` (which the box
+   restores *from*) — the two never collide, so a dump never clobbers the prod
+   data.
+
    Crontab (offset from prod `:00`, peers `:05`, and the box's own pull `:02`):
    ```
-   8,23,38,53 * * * * /home/mew/Census/CensusScheduler/onplaya-db-dump.sh >> /home/mew/Census/CensusScheduler/db-dump.log 2>&1
+   8,23,38,53 * * * * ~/OnPlayaData/playa/update_playa.sh >> ~/OnPlayaData/playa/update_playa.log 2>&1
    ```
-   > Writing the dump to the same `OnPlayaData/server/…_v2.sql` path the pull
-   > restores from means a post-event cloud restore is the same git-pull +
-   > load step, just in the other direction. The push is best-effort (`|| true`)
-   > so an offline cycle doesn't wedge the cron.
+   > Post-event cutback is then the mirror image: the cloud pulls
+   > `OnPlayaData/playa/${YEAR}_on_playa_data.sql` and restores it. (Note:
+   > `update_db_from_server.sh` restores the prod dump AND then calls
+   > `update_playa.sh` — that combined form is fine for the *mirror* phase, but
+   > once the box is PRIMARY run `update_playa.sh` **alone** so nothing re-restores
+   > the stale prod dump over local changes.)
 
 6. **Leave prod read-only** (it's now a stale replica). Optionally show a banner
    pointing users to CensusLab.
