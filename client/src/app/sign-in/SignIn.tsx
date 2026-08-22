@@ -91,12 +91,13 @@ export const SignIn = () => {
   const oauthError = searchParams?.get("error");
   const isOAuthConfigured = process.env.NEXT_PUBLIC_OKTA_ENABLED === "true";
   const isPinEnabled = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
-  // Passcode is only offered on provisioned tablets (device cookie), even when
-  // the build has PIN enabled — so participants on the shared origin never see
-  // it. The server gate in /api/sign-in enforces this regardless; this just
-  // hides the form. See useDeviceProvisioned / lib/device.ts.
+  // Passcode is offered iff this browser is an authed tablet (has the trusted
+  // device cookie) — decoupled from the NEXT_PUBLIC_PIN_ENABLED build flag (per
+  // Mew 2026-08-21), so the off-playa origin still offers passcode to a
+  // provisioned tablet while participants never see it. The server gate in
+  // /api/sign-in enforces this regardless; this just hides the form.
   const isProvisionedTablet = useDeviceProvisioned();
-  const showPasscode = isPinEnabled && isProvisionedTablet;
+  const showPasscode = isProvisionedTablet;
 
   // Forward returnTo through the Okta init so the callback can land the user
   // back where they started (e.g. /training/confirmation/[code] after clicking
