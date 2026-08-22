@@ -78,19 +78,17 @@ written to** (so nobody makes changes that the next sync would silently discard)
      Docker on code changes**, and refreshes the DB. Use this if the box also
      needs code/app updates on-playa, not just data.
 
-   > **CONFIRM (v1/v2 filename mismatch):** `census-deploy.sh` loads
-   > `…_on_playa_server_data_v2.sql` while `update_db_from_server.sh` loads
-   > `…_on_playa_server_data.sql` (no `_v2`). There are `feat/prod-dump-v2` /
-   > `feat/peers-git-dumps` branches in `OnPlayaData` — reconcile which filename
-   > prod actually pushes and which script the box runs, so the pull restores the
-   > file that's actually being written.
+   > The old `_v2` filename fork is **resolved** (2026-08-21): there is now ONE
+   > canonical filename `${YEAR}_on_playa_server_data.sql` — prod's
+   > `update_server.sh` writes it, and both `update_db_from_server.sh` and
+   > `census-deploy.sh` read it. No `_v2` anywhere.
 
    **Stagger the three machines' crons so no two hit GitHub (or dump) on the same
    minute** (per Mew — the *test box* `census-ops-test` is NOT in this set):
 
    | Machine | Cron minutes | Job |
    |---|---|---|
-   | **Prod** (`volunteers.census.burningman.org`) | `0,15,30,45` | dump DB → commit/push to `OnPlayaData` |
+   | **Prod** (`volunteers.census.burningman.org`) | `0,15,30,45` | dump DB → commit/push to `OnPlayaData` (**LIVE** as of 2026-08-21) |
    | **peers** (`volunteers.peers.burningman.org`) | `5,20,35,50` | peers' DB backup / its own git op |
    | **On-playa box** (CensusLab) | `2,17,32,47` | `git pull OnPlayaData` → restore mysqldump (runs just after prod's :00 push) |
 
@@ -106,8 +104,11 @@ written to** (so nobody makes changes that the next sync would silently discard)
    Sync only runs while the box has uplink — it just no-ops offline. Keep it
    running from now until the end of Burning Man so the box is never >15 min stale.
 
-   > **CONFIRM** prod's & peers' exact minutes against their real schedules; the
-   > box is fixed at `2,17,32,47` and they just need to not collide with it.
+   > Prod is **already live** at `0,15,30,45` running `server/update_server.sh`
+   > (set 2026-08-21 in prod's crontab, verified). The box at `2,17,32,47` pulls
+   > 2 min after prod's `:00` push. **Still to CONFIRM:** peers' exact minutes,
+   > and reconcile the stale reference `OnPlayaData/server/server_crontab.txt`
+   > (it still shows the old `5,35` event-window schedule).
 
 5. **Box stays read-only** the whole time it's a mirror, so nobody makes a local
    change that the next `git pull` + restore would silently overwrite.
@@ -168,10 +169,14 @@ DNS flip.
    pointing users to CensusLab.
 
 ### Rollback (if the box misbehaves at cutover)
-Re-add the dnsmasq `volunteers.census.../<AWS_IP>` override + restart dnsmasq
-(origin points back at AWS), take prod OUT of read-only. You're back to
-Phase 1. Because prod was only frozen — never torn down — rollback is just a DNS
-flip + unfreeze.
+1. Re-add the dnsmasq `volunteers.census.../<AWS_IP>` override and **restart
+   dnsmasq** (origin points back at AWS).
+2. Take **prod OUT of read-only** (unset the env vars + restart) so it's writable
+   again.
+3. Put the **box back INTO read-only** and **re-enable its sync cron** (the
+   `2,17,32,47` pull you stopped in Phase 2 step 2) so it resumes mirroring prod.
+Because prod was only frozen — never torn down — rollback is just a DNS flip +
+unfreeze + resume-mirror.
 
 ---
 
@@ -179,12 +184,19 @@ flip + unfreeze.
 
 Read-only mode exists (PR #693). How to use it:
 
-- **Turn ON:** set two runtime env vars and restart the container (no rebuild):
-  ```
-  CENSUS_READ_ONLY=true
-  CENSUS_READ_ONLY_MESSAGE=Schedule changes can only be made at CensusLab (6:30a). You can sign in and view, but changes are paused.
-  ```
-  `docker compose --file docker-compose-prod.yaml up -d --force-recreate`
+- **Turn ON:** the container reads env from its compose `env_file`, so shell
+  exports won't reach it — add the two vars to that file, then restart (no rebuild).
+  - **Prod** (`volunteers.census`): append to `client/.env.production` (the
+    `env_file` in `docker-compose-prod.yaml`, which lives on the prod box per
+    `PROD_DEPLOY.md`, not in the repo):
+    ```
+    CENSUS_READ_ONLY=true
+    CENSUS_READ_ONLY_MESSAGE=Schedule changes can only be made at CensusLab (6:30a). You can sign in and view, but changes are paused.
+    ```
+    then `sudo -u census docker compose --file docker-compose-prod.yaml up -d --force-recreate`
+  - **On-playa box**: same two vars in the env the **`docker-compose-playa.yaml`**
+    `census` service reads (add an `environment:`/`env_file` entry if none), then
+    `docker compose --file docker-compose-playa.yaml up -d --force-recreate`.
 - **Turn OFF:** remove the vars (or set `CENSUS_READ_ONLY=false`) and restart.
 - **Enforcement:** `middleware.ts` returns **423 Locked** (with the message) for
   every mutating `/api/*` request (POST/PUT/PATCH/DELETE), for everyone including
@@ -223,12 +235,26 @@ PWA/SW; httpOnly cookies).
    `/etc/letsencrypt/live/volunteers.census.burningman.org/`. Copy `fullchain.pem`
    + `privkey.pem` to the box **before playa** (they're valid ~90 days — refresh
    right before the event, or issue a longer cert via DNS-01).
-2. Restore an **nginx TLS terminator** in front of the app on the box (the
-   `census-nginx` service was removed 2026-07 when the box went HTTP-only; restore
-   from git history). nginx listens 443 with the copied cert, proxies to the app
-   on `:3000`. Keep `:80` too (redirect to 443).
+2. Restore an **nginx TLS terminator** in front of the app on the box. The
+   `census-nginx` service was removed in commit **`cc1f41d`** (2026-07). Recover
+   the service block + its config:
+   ```
+   git show cc1f41d^:docker-compose-playa.yaml   # has the census-nginx service
+   git show cc1f41d^ -- httpd/                    # and its nginx conf, if any
+   ```
+   Re-add it to `docker-compose-playa.yaml`: nginx listens 443 with the copied
+   cert (mount `fullchain.pem`/`privkey.pem`), proxies to the app on `:3000`, keep
+   `:80` (redirect to 443). Update the mysql/base-schema pins that also changed in
+   `cc1f41d` are NOT needed — only pull back the nginx service.
 3. dnsmasq already resolves the hostname to the box; with a real cert the origin
    is trusted offline.
+4. **Smoke test** (from a tablet on the playa network, once dnsmasq points the
+   name at the box):
+   ```
+   curl -sI https://volunteers.census.burningman.org/    # 200, trusted cert, no -k
+   ```
+   In a browser the address bar shows the lock with no warning, and the PWA
+   install prompt appears — that confirms the secure context works offline.
 
 > Cert is public-CA, so it's valid regardless of which box serves it — the same
 > cert works on AWS and on the copy on the local box (same hostname).
