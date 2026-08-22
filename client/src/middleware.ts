@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { isBlockedWrite, isReadOnly, readOnlyMessage } from "@/lib/readOnly";
+
 // Inlined deliberately — Next.js middleware runs in the Edge runtime which
 // does not have access to Node's `crypto` module. The session module uses
 // `import crypto from "crypto"` so importing from it would break the build.
@@ -46,6 +48,8 @@ const ALLOWLIST = [
   // missing/bad cookie) — middleware can't 401 first or the client
   // can't distinguish stale state from genuinely-no-cookie.
   "/api/auth/session",
+  // Read-only status for the site-wide banner — public, pre-login.
+  "/api/read-only",
   "/auth/complete",
 
   // Public information pages (per Mew, 2026-05-06)
@@ -133,6 +137,17 @@ function isAllowlisted(pathname: string): boolean {
 
 export function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
+
+  // Read-only mode: freeze data mutations site-wide (even for admins), but let
+  // people sign in and read. Checked first so it applies regardless of auth or
+  // allowlist. The client also shows a banner (see useReadOnly), but this is
+  // the enforcement. Runtime env — flips with a restart. See ONPLAYA_CUTOVER.md.
+  if (isReadOnly() && isBlockedWrite(req.method, pathname)) {
+    return new NextResponse(
+      JSON.stringify({ statusCode: 423, message: readOnlyMessage() }),
+      { status: 423, headers: { "content-type": "application/json" } }
+    );
+  }
 
   if (isAllowlisted(pathname)) {
     return NextResponse.next();

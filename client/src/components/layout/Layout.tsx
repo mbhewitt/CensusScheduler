@@ -3,6 +3,7 @@ import { ReactNode, useContext } from "react";
 import { DeveloperCard } from "@/components/layout/developer-card";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
+import { ReadOnlyBanner } from "@/components/layout/ReadOnlyBanner";
 import { useSessionValidation } from "@/hooks/useSessionValidation";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 
@@ -29,6 +30,7 @@ export const Layout = ({ children }: ILayoutProps) => {
   return (
     <>
       <Header />
+      <ReadOnlyBanner />
       {children}
       <Footer />
       {(isAccountTypeEnabled || isDateTimeEnabled) && <DeveloperCard />}
