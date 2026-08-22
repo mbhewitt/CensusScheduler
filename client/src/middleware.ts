@@ -96,7 +96,13 @@ const ALLOWLIST = [
 // passcode" link on-playa for the PIN form), so there's no longer a
 // reason to redirect unauth visitors away from it. Reverts the
 // PUBLIC_PATHS purge that came in with PR #337 / closed-#306.
-const PUBLIC_PATHS = new Set(["/"]);
+// Exact-match public paths. /manifest.webmanifest is deliberately allowlisted
+// here (exact match) rather than added to the matcher's static-extension
+// exclusion: a broad `*.webmanifest` exclusion would let crafted API URLs like
+// /api/shifts/types/1.webmanifest skip auth and reach unguarded dynamic
+// handlers. The exact allowlist serves the one static file without opening that
+// hole. The PWA icons/sw.js are safe via the extension exclusion (.png/.js).
+const PUBLIC_PATHS = new Set(["/", "/manifest.webmanifest"]);
 
 // On-playa the offline course pages are readable without a session, so a
 // walk-up volunteer at the Lab can study before signing in. Deliberately NOT
