@@ -20,13 +20,6 @@ const SESSION_DURATION_MS =
 // persistent=true. 400 days is the max cookie lifetime Chrome will honor.
 const PERSISTENT_SESSION_DURATION_MS = 400 * 24 * 60 * 60 * 1000;
 
-// Passcode sign-in is for SHARED tablets — a set-down tablet must not stay
-// logged in as the previous person for long. 5 minutes (per Mew 2026-08-21,
-// replacing the old 1h). Keyed to the login METHOD, not the build flag: passcode
-// and Okta now coexist on the single volunteers.census origin, so the timeout
-// must follow how you signed in, not which build served the page.
-const PASSCODE_SESSION_DURATION_MS = 5 * 60 * 1000;
-
 interface SessionPayload {
   shiftboardId: number;
   expires: number;
@@ -80,16 +73,11 @@ function verify(value: string): SessionPayload | null {
 
 export function buildSessionCookie(
   shiftboardId: number,
-  opts: { persistent?: boolean; passcode?: boolean } = {}
+  persistent = false
 ): string {
-  const { persistent = false, passcode = false } = opts;
-  // Precedence: a persistent PWA login wins; passcode is the short shared-tablet
-  // window; everything else uses the per-build default.
   const durationMs = persistent
     ? PERSISTENT_SESSION_DURATION_MS
-    : passcode
-      ? PASSCODE_SESSION_DURATION_MS
-      : SESSION_DURATION_MS;
+    : SESSION_DURATION_MS;
   const value = sign({
     shiftboardId,
     expires: Date.now() + durationMs,

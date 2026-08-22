@@ -466,10 +466,7 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
     // Installed-PWA logins get a long-lived session ("stay signed in until I
     // log out"). Passcode sign-in never reaches this path, so shared tablets
     // keep their short session.
-    res.setHeader(
-      "Set-Cookie",
-      buildSessionCookie(shiftboardId, { persistent: isPwa })
-    );
+    res.setHeader("Set-Cookie", buildSessionCookie(shiftboardId, isPwa));
 
     // encode account data for client-side session hydration
     const accountData = encodeURIComponent(JSON.stringify(account));
