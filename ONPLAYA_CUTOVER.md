@@ -83,7 +83,10 @@ written to** (so nobody makes changes that the next sync would silently discard)
    | **peers** (`volunteers.peers.burningman.org`) | `5,20,35,50` | peers' DB backup / its own git op |
    | **On-playa box** (CensusLab) | `2,17,32,47` | `git pull OnPlayaData` → restore mysqldump (runs just after prod's :00 push) |
 
-   On-playa box crontab (per Mew 2026-08-21):
+   On-playa box crontab (per Mew 2026-08-21). The box is a **separate machine**
+   at CensusLab (NOT the NucBox dev host); it's normally **off**, reachable via
+   the **NordVPN meshnet** when powered on — `ssh census-ops` (alias in
+   `~/.ssh/config`, meshnet `100.127.209.214`, user `mew`). Install in its crontab:
    ```
    2,17,32,47 * * * * /home/mew/Census/CensusScheduler/census-deploy.sh >> /home/mew/Census/CensusScheduler/deploy.log 2>&1
    ```
@@ -129,7 +132,33 @@ DNS flip.
 4. **Take the box OUT of read-only** — it's now the writable primary. Drop its
    read-only banner.
 
-5. **Leave prod read-only** (it's now a stale replica). Optionally show a banner
+5. **Start the on-playa DB dump cron.** Once the box is primary it holds changes
+   that exist NOWHERE else, so back its DB up on a schedule — this both survives a
+   box failure and produces the dump we restore back to the cloud at cutback.
+   Offset from the (now-stopped) pull slot. `onplaya-db-dump.sh` on the box:
+   ```bash
+   #!/usr/bin/bash
+   set -euo pipefail
+   STAMP=$(date +%Y%m%d-%H%M)
+   OUT=/home/mew/Census/OnPlayaData/server/${YEAR}_on_playa_server_data_v2.sql
+   sudo docker exec census-database mysqldump -uroot -p"$LOCALPW" \
+     --single-transaction --no-tablespaces --routines --triggers census > "$OUT"
+   cp "$OUT" "/home/mew/db-backups/census-$STAMP.sql"   # rolling local backups
+   # Push to OnPlayaData when there's uplink, so the cloud can pull it at cutback:
+   cd /home/mew/Census/OnPlayaData && git add -A \
+     && git commit -m "on-playa db dump $STAMP" && git push || true
+   find /home/mew/db-backups -name 'census-*.sql' -mtime +2 -delete  # prune
+   ```
+   Crontab (offset from prod `:00`, peers `:05`, and the box's own pull `:02`):
+   ```
+   8,23,38,53 * * * * /home/mew/Census/CensusScheduler/onplaya-db-dump.sh >> /home/mew/Census/CensusScheduler/db-dump.log 2>&1
+   ```
+   > Writing the dump to the same `OnPlayaData/server/…_v2.sql` path the pull
+   > restores from means a post-event cloud restore is the same git-pull +
+   > load step, just in the other direction. The push is best-effort (`|| true`)
+   > so an offline cycle doesn't wedge the cron.
+
+6. **Leave prod read-only** (it's now a stale replica). Optionally show a banner
    pointing users to CensusLab.
 
 ### Rollback (if the box misbehaves at cutover)
