@@ -1,6 +1,6 @@
 -- CI reference seed: base data the e2e helpers assume pre-exist.
 -- Tests only clean up IDs >= 9,000,000, so these persist across specs.
--- Regenerate from prod: op_roles, op_dates; built-in Admin per v2 pipeline.
+-- Regenerate from prod: op_roles, op_dates; built-in Admin per the prod dump pipeline.
 
 -- Roles (assignRole FK target)
 INSERT IGNORE INTO op_roles (role_id, role) VALUES
