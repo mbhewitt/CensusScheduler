@@ -48,7 +48,7 @@ export const TrainingConfirmation = ({ code }: ITrainingConfirmationProps) => {
   // spinner and record NOTHING (no error, no prompt) — silently losing the
   // completion. Instead, send the volunteer to sign-in and return them here so
   // the completion is credited to the right account. Race-safe: fall back to
-  // reading the persisted session directly, since the context's sessionStorage
+  // reading the persisted session directly, since the context's localStorage
   // hydration effect may not have run on this first render yet.
   const redirectedRef = useRef(false);
   const returnTo = `/training/confirmation/${code}`;
@@ -62,11 +62,11 @@ export const TrainingConfirmation = ({ code }: ITrainingConfirmationProps) => {
     if (!authed) {
       try {
         authed = Boolean(
-          JSON.parse(sessionStorage.getItem("sessionState") ?? "{}")?.settings
+          JSON.parse(localStorage.getItem("sessionState") ?? "{}")?.settings
             ?.isAuthenticated
         );
       } catch {
-        /* sessionStorage unavailable — treat as unauthenticated */
+        /* localStorage unavailable — treat as unauthenticated */
       }
     }
     if (!authed) goSignIn();
