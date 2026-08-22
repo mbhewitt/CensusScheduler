@@ -158,6 +158,19 @@ Read-only mode exists (PR #693). How to use it:
 Same mechanism serves both the box ("read-only mirror" message) and prod at
 cutover ("changes only at CensusLab").
 
+> **Smoke-test after every flip.** Enforcement lives in middleware, and Next 16
+> logs a deprecation ("`middleware` convention → `proxy`") — it runs through a
+> compat shim today, so verify the flag actually took after the restart:
+> ```
+> curl -s https://<host>/api/read-only            # → {"readOnly":true,...}
+> curl -s -o /dev/null -w "%{http_code}\n" \
+>   -X POST https://<host>/api/dates -d '{}'       # → 423
+> ```
+> If enforcement ever regresses (a future Next drops the runtime env in
+> middleware), move the write-guard into a Node-runtime wrapper (`withAuth`);
+> the banner (`/api/read-only`, a Node page handler) already reads the flag
+> correctly, so it stays accurate regardless.
+
 ---
 
 ## On-playa HTTPS + cert
