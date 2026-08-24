@@ -31,10 +31,6 @@ services:
       - "192.168.11.11:53:53"
       - "192.168.11.11:53:53/udp"
     restart: always
-  # nginx (census-nginx) removed 2026-07: it only served a redirect-to-:3000
-  # landing page and an unused 443. The app now serves HTTP on port 80
-  # directly (see census.ports below). Restore from git history if a reverse
-  # proxy / TLS terminator is ever needed on-playa.
   census:
     build:
       context: client
@@ -46,8 +42,28 @@ services:
     security_opt:
       - apparmor:unconfined
     ports:
-      # 80 = the standard port tablets/browsers hit; 3000 kept so tablets
-      # still pointed at http://192.168.11.11:3000/ keep working.
-      - "80:3000"
+      # 3000 kept so tablets pointed at http://192.168.11.11:3000/ still work.
+      # Ports 80/443 are owned by census-nginx (TLS terminator) below.
       - "3000:3000"
+    restart: always
+  # TLS terminator (2026-08-24): serves https://volunteers.census.burningman.org
+  # on the LAN with the copied Let's Encrypt cert so PWA install / service
+  # workers / httpOnly device+session cookies get a secure context. Proxies to
+  # census:3000. Cert lives OUTSIDE the repo at /home/mew/census-certs on the box
+  # (copied from prod; never committed) — refresh it before the cert's Oct 2026
+  # expiry / whenever prod renews.
+  nginx:
+    image: nginx:alpine
+    container_name: census-nginx
+    depends_on:
+      - census
+    volumes:
+      - ./nginx/census.conf:/etc/nginx/conf.d/default.conf:ro
+      - /home/mew/census-certs/fullchain.pem:/etc/nginx/certs/fullchain.pem:ro
+      - /home/mew/census-certs/privkey.pem:/etc/nginx/certs/privkey.pem:ro
+    security_opt:
+      - apparmor:unconfined
+    ports:
+      - "80:80"
+      - "443:443"
     restart: always
