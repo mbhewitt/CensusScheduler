@@ -29,6 +29,9 @@ export const ProvisionTablet = () => {
   const [qrDataUrl, setQrDataUrl] = useState("");
   const [expiresAt, setExpiresAt] = useState<number | null>(null);
   const [secondsLeft, setSecondsLeft] = useState(0);
+  // Trusted state of the device the admin is currently on (for the self control).
+  const [thisProvisioned, setThisProvisioned] = useState<boolean | null>(null);
+  const [selfLoading, setSelfLoading] = useState(false);
 
   const generate = useCallback(async () => {
     setLoading(true);
@@ -64,6 +67,37 @@ export const ProvisionTablet = () => {
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
   }, [expiresAt]);
+
+  // Current device's trusted state (for provision/unprovision-this-device).
+  useEffect(() => {
+    fetch("/api/auth/device", { credentials: "same-origin" })
+      .then((res) => res.json())
+      .then((data) => setThisProvisioned(Boolean(data?.provisioned)))
+      .catch(() => setThisProvisioned(false));
+  }, []);
+
+  const toggleSelf = async () => {
+    setSelfLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/provision/self", {
+        method: thisProvisioned ? "DELETE" : "POST",
+        credentials: "same-origin",
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.message ?? `Failed (${res.status})`);
+      }
+      const data = await res.json();
+      setThisProvisioned(Boolean(data?.provisioned));
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Could not update this device."
+      );
+    } finally {
+      setSelfLoading(false);
+    }
+  };
 
   const expired = expiresAt !== null && secondsLeft === 0;
   const mmss = `${Math.floor(secondsLeft / 60)}:${String(secondsLeft % 60).padStart(2, "0")}`;
@@ -106,6 +140,34 @@ export const ProvisionTablet = () => {
               variant="contained"
             >
               {qrDataUrl ? "Generate new code" : "Generate code"}
+            </Button>
+          </Stack>
+        </CardContent>
+      </Card>
+
+      <Card sx={{ maxWidth: 520, mx: "auto", mt: 2 }}>
+        <CardContent>
+          <Stack spacing={2}>
+            <Typography variant="h6">This device</Typography>
+            <Typography color="text.secondary" variant="body2">
+              {thisProvisioned
+                ? "This device is a trusted tablet — it can use passcode sign-in."
+                : "Make the device you're on right now a trusted tablet — no QR scan needed."}
+            </Typography>
+            <Button
+              color={thisProvisioned ? "error" : "primary"}
+              disabled={selfLoading || thisProvisioned === null}
+              onClick={toggleSelf}
+              startIcon={
+                selfLoading ? <CircularProgress size={18} /> : undefined
+              }
+              variant={thisProvisioned ? "outlined" : "contained"}
+            >
+              {thisProvisioned === null
+                ? "Checking…"
+                : thisProvisioned
+                  ? "Unprovision this device"
+                  : "Provision this device"}
             </Button>
           </Stack>
         </CardContent>
