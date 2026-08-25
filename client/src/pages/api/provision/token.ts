@@ -1,9 +1,8 @@
 import crypto from "crypto";
 
-import type { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { ROLE_SUPER_ADMIN_ID } from "@/constants";
+import { isSuperAdmin } from "@/lib/authz";
 import { withAuth } from "@/lib/withAuth";
 import { pool } from "lib/database";
 
@@ -32,14 +31,7 @@ const mintToken = async (
 
   // Super-admin only — provisioning a trusted device is a security-sensitive
   // action, so it's gated tighter than the "Shift Leads & up" reports.
-  const [roleRows] = await pool.query<RowDataPacket[]>(
-    `SELECT role_id FROM op_volunteer_roles
-     WHERE shiftboard_id = ?
-       AND role_id = ?
-       AND remove_role = false`,
-    [session.shiftboardId, ROLE_SUPER_ADMIN_ID]
-  );
-  if (roleRows.length === 0) {
+  if (!(await isSuperAdmin(session.shiftboardId))) {
     return res.status(403).json({
       statusCode: 403,
       message: "Super-admin access is required to provision a tablet.",
