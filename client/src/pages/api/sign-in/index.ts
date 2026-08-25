@@ -3,23 +3,22 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import type { IReqSignIn } from "@/components/types/sign-in";
 import type { IResVolunteerAccount } from "@/components/types/volunteers";
-import { isOnPlaya } from "@/lib/onPlaya";
+import { isProvisionedDevice } from "@/lib/device";
 import { buildSessionCookie } from "@/lib/session";
 import { pool } from "lib/database";
 
 const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
-  // Passcode sign-in is only honored from the on-playa gateway network. This
-  // is re-verified server-side off the unspoofable X-Real-IP (nginx-set), not
-  // just the UI cookie — so a forged cookie can't unlock passcode login from
-  // off-playa. (per Mew 2026-07-17)
-  const onPlaya = isOnPlaya((name) => {
-    const value = req.headers[name.toLowerCase()];
-    return Array.isArray(value) ? value[0] : value ?? null;
-  });
-  if (!onPlaya) {
+  // Passcode sign-in is only honored from a provisioned tablet — a device that
+  // holds a valid, HMAC-signed peers-device cookie minted via the super-admin
+  // QR flow (see lib/device.ts, migration 012). This replaces the old
+  // on-playa-IP gate: peers is cloud-only this year, so a tablet's egress IP
+  // over playa internet isn't a reliable signal, whereas the device cookie is
+  // topology-independent and unforgeable. Participants on their own devices
+  // (no cookie) are refused here regardless of network. (per Mew 2026-08-24)
+  if (!isProvisionedDevice(req.cookies)) {
     return res.status(403).json({
       statusCode: 403,
-      message: "Passcode sign-in is only available on-playa",
+      message: "This device is not authorized for passcode sign-in.",
     });
   }
 

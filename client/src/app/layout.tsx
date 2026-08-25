@@ -11,6 +11,7 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import localFont from "next/font/local";
 import { SnackbarProvider } from "notistack";
 
+import { PwaSetup } from "@/components/general/PwaSetup";
 import SnackbarButtonClose from "@/components/general/SnackbarButtonClose";
 import { Layout } from "@/components/layout/Layout";
 import { COLOR_PEERS_CHARCOAL, COLOR_PEERS_GOLD } from "@/constants";
@@ -230,6 +231,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">
       <body>
+        <PwaSetup />
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
             <CssBaseline />

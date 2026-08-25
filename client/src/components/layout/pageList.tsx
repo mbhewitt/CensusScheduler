@@ -8,6 +8,7 @@ import {
   Home as HomeIcon,
   QuestionAnswer as QuestionAnswerIcon,
   Settings as SettingsIcon,
+  Tablet as TabletIcon,
   VerifiedUser as VerifiedUserIcon,
   ViewList as ViewListIcon,
   WorkHistory as WorkHistoryIcon,
@@ -72,6 +73,11 @@ export const pageListSuperAdmin = [
     icon: <CalendarMonthIcon />,
     label: "Dates",
     path: "/dates",
+  },
+  {
+    icon: <TabletIcon />,
+    label: "Provision Tablet",
+    path: "/provision-tablet",
   },
   {
     icon: <WorkHistoryIcon />,

@@ -57,6 +57,21 @@ const ALLOWLIST = [
   // passcode UI. Off-playa Okta-only mode will gate this via PR #275.
   "/api/volunteers/dropdown",
 
+  // Tablet device provisioning (migration 012). The tablet scans a super-admin
+  // QR while logged OUT — the one-time token in the URL fragment is the
+  // credential — so the claim page + its API must be reachable unauthenticated.
+  // /api/auth/device is the httpOnly-cookie probe SignIn uses to decide whether
+  // to show the passcode form. (/provision-tablet, the super-admin QR
+  // generator, is intentionally NOT here — it stays session-gated.)
+  "/provision",
+  "/api/provision/claim",
+  "/api/auth/device",
+
+  // PWA install surface — the manifest + service worker must load for the
+  // browser's "Install app" affordance to appear on a provisioned tablet.
+  "/manifest.webmanifest",
+  "/sw.js",
+
   // Health / static
   "/_next",
   "/favicon.ico",

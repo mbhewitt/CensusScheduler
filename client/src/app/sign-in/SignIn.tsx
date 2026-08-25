@@ -34,10 +34,10 @@ import type { IVolunteerOption } from "@/components/types";
 import type { IReqSignIn } from "@/components/types/sign-in";
 import type { IResVolunteerDefaultItem } from "@/components/types/volunteers";
 import { SESSION_SIGN_IN } from "@/constants";
+import { useDeviceProvisioned } from "@/hooks/useDeviceProvisioned";
 import { SessionContext } from "@/state/session/context";
 import { ensure } from "@/utils/ensure";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
-import { useIsOnPlaya } from "@/utils/useIsOnPlaya";
 import { resetFilterList } from "@/utils/resetFilterList";
 
 interface IFormValues {
@@ -89,9 +89,11 @@ export const SignIn = () => {
 
   const oauthError = searchParams?.get("error");
   const isOAuthConfigured = process.env.NEXT_PUBLIC_OKTA_ENABLED === "true";
-  // Passcode is offered only when the request is from the on-playa network
-  // (runtime, via the middleware-set cookie) — replaces the old build-time flag.
-  const isPinEnabled = useIsOnPlaya();
+  // Passcode is offered only on a provisioned tablet (the httpOnly peers-device
+  // cookie, checked via /api/auth/device). Replaces the old on-playa-IP hint:
+  // participants on their own devices never see the passcode form; the server
+  // independently re-checks the device cookie before honoring a passcode.
+  const isPinEnabled = useDeviceProvisioned();
 
   // Forward returnTo through the Okta init so the callback can land the user
   // back where they started (e.g. /training/confirmation/[code] after clicking
@@ -203,14 +205,15 @@ export const SignIn = () => {
         >
           {oauthError && (
             <Alert severity="error" sx={{ m: 2, mb: 0 }}>
-              Sign in failed: {decodeURIComponent(oauthError).replace(/_/g, " ")}
+              Sign in failed:{" "}
+              {decodeURIComponent(oauthError).replace(/_/g, " ")}
             </Alert>
           )}
           {!isOAuthConfigured && !isPinEnabled && (
             <CardContent>
               <Alert severity="warning">
-                Sign-in is not configured for this deployment. Please contact
-                an administrator.
+                Sign-in is not configured for this deployment. Please contact an
+                administrator.
               </Alert>
             </CardContent>
           )}
@@ -235,105 +238,110 @@ export const SignIn = () => {
             </CardContent>
           )}
           {isPinEnabled && (
-          <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-            <CardContent>
-              <Stack spacing={2}>
-                <Controller
-                  control={control}
-                  name="volunteer"
-                  render={({ field }) => (
-                    <Autocomplete
-                      {...field}
-                      fullWidth
-                      isOptionEqualToValue={(option, value: IVolunteerOption) =>
-                        option.shiftboardId === value.shiftboardId
-                      }
-                      onChange={(_event, value) => field.onChange(value)}
-                      options={data.map(
-                        ({ playaName, shiftboardId, worldName }) => ({
-                          label: `${playaName} "${worldName}"`,
-                          shiftboardId,
-                        })
-                      )}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          error={Boolean(errors.volunteer)}
-                          helperText={errors.volunteer?.message}
-                          label="Volunteer"
-                          required
-                          variant="standard"
-                        />
-                      )}
-                    />
-                  )}
-                  rules={{
-                    required: "Volunteer is required",
-                  }}
-                />
-                <Stack alignItems="center" direction="row">
+            <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+              <CardContent>
+                <Stack spacing={2}>
                   <Controller
                     control={control}
-                    name="passcode"
+                    name="volunteer"
                     render={({ field }) => (
-                      <TextField
+                      <Autocomplete
                         {...field}
-                        error={Boolean(errors.passcode)}
-                        helperText={errors.passcode?.message}
                         fullWidth
-                        label="Passcode"
-                        required
-                        type={isPasscodeVisible ? "text" : "password"}
-                        variant="standard"
+                        isOptionEqualToValue={(
+                          option,
+                          value: IVolunteerOption
+                        ) => option.shiftboardId === value.shiftboardId}
+                        onChange={(_event, value) => field.onChange(value)}
+                        options={data.map(
+                          ({ playaName, shiftboardId, worldName }) => ({
+                            label: `${playaName} "${worldName}"`,
+                            shiftboardId,
+                          })
+                        )}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            error={Boolean(errors.volunteer)}
+                            helperText={errors.volunteer?.message}
+                            label="Volunteer"
+                            required
+                            variant="standard"
+                          />
+                        )}
                       />
                     )}
                     rules={{
-                      required: "Passcode is required",
+                      required: "Volunteer is required",
                     }}
                   />
-                  <IconButton
-                    onClick={() => setIsPasscodeVisible((prev) => !prev)}
-                  >
-                    {isPasscodeVisible ? (
-                      <VisibilityOffIcon color="secondary" />
-                    ) : (
-                      <VisibilityIcon color="secondary" />
-                    )}
-                  </IconButton>
+                  <Stack alignItems="center" direction="row">
+                    <Controller
+                      control={control}
+                      name="passcode"
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          error={Boolean(errors.passcode)}
+                          helperText={errors.passcode?.message}
+                          fullWidth
+                          label="Passcode"
+                          required
+                          type={isPasscodeVisible ? "text" : "password"}
+                          variant="standard"
+                        />
+                      )}
+                      rules={{
+                        required: "Passcode is required",
+                      }}
+                    />
+                    <IconButton
+                      onClick={() => setIsPasscodeVisible((prev) => !prev)}
+                    >
+                      {isPasscodeVisible ? (
+                        <VisibilityOffIcon color="secondary" />
+                      ) : (
+                        <VisibilityIcon color="secondary" />
+                      )}
+                    </IconButton>
+                  </Stack>
                 </Stack>
-              </Stack>
-            </CardContent>
-            <CardActions
-              sx={{
-                justifyContent: "flex-end",
-                pb: 2,
-                pt: 0,
-                pr: 2,
-              }}
-            >
-              <Button
-                disabled={isMutating}
-                onClick={() => {
-                  router.push("/volunteers/account/create");
+              </CardContent>
+              <CardActions
+                sx={{
+                  justifyContent: "flex-end",
+                  pb: 2,
+                  pt: 0,
+                  pr: 2,
                 }}
-                startIcon={<PersonAddAlt1Icon />}
-                type="button"
-                variant="outlined"
               >
-                Create account
-              </Button>
-              <Button
-                disabled={isMutating}
-                startIcon={
-                  isMutating ? <CircularProgress size="1rem" /> : <LoginIcon />
-                }
-                type="submit"
-                variant="contained"
-              >
-                Sign in
-              </Button>
-            </CardActions>
-          </form>
+                <Button
+                  disabled={isMutating}
+                  onClick={() => {
+                    router.push("/volunteers/account/create");
+                  }}
+                  startIcon={<PersonAddAlt1Icon />}
+                  type="button"
+                  variant="outlined"
+                >
+                  Create account
+                </Button>
+                <Button
+                  disabled={isMutating}
+                  startIcon={
+                    isMutating ? (
+                      <CircularProgress size="1rem" />
+                    ) : (
+                      <LoginIcon />
+                    )
+                  }
+                  type="submit"
+                  variant="contained"
+                >
+                  Sign in
+                </Button>
+              </CardActions>
+            </form>
           )}
         </Card>
       </Container>
