@@ -61,7 +61,9 @@ export const Home = () => {
   // The Hive "Learn More" section, however, now shows on-playa too: its links
   // are wired through OfflineLink so volunteers can email themselves the Hive
   // link to follow up from home (#643, folds in #630).
-  const isOnPlaya = isPinEnabled;
+  // Build flag OR a provisioned tablet — a lab tablet gets the on-playa welcome
+  // copy ("sign in with your passcode") even on the cloud/prod origin.
+  const isOnPlaya = isPinEnabled || isProvisionedTablet === true;
 
   // render
   // ------------------------------------------------------------

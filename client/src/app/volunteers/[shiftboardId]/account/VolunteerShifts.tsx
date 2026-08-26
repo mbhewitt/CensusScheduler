@@ -49,6 +49,7 @@ import {
   UPDATE_REVIEW_RES,
   UPDATE_TYPE_CHECK_IN,
 } from "@/constants";
+import { useIsOnPlaya } from "@/hooks/useIsOnPlaya";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
 import { checkIsAdmin } from "@/utils/checkIsRoleExist";
@@ -102,6 +103,10 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
       user: { roleList, playaName, worldName },
     },
   } = useContext(SessionContext);
+  // Check-in is a walk-up (on-playa) feature; a provisioned tablet counts as
+  // on-playa so the lab tablet shows the check-in column + toggle. Hook must be
+  // above the early return below.
+  const isOnPlaya = useIsOnPlaya() === true;
 
   // state
   // ------------------------------------------------------------
@@ -259,9 +264,6 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
     );
 
   const isAdmin = checkIsAdmin(accountType, roleList);
-  // Check-in is an on-playa feature; hide the column off-playa (#491) — kept
-  // as a real column (data alignment intact) but excluded from display.
-  const isOnPlaya = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
   const handleCheckInToggle = async ({
     shift: { positionName, timePositionId },
     volunteer: { isCheckedIn, playaName, shiftboardId, worldName },
