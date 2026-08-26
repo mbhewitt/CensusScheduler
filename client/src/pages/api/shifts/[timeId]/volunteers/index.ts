@@ -10,6 +10,7 @@ import type {
 import {
   CHECK_IN_WINDOW_AFTER_MIN,
   CHECK_IN_WINDOW_BEFORE_MIN,
+  UPDATE_TYPE_CHECK_IN,
 } from "@/constants";
 import { isAdmin } from "@/lib/authz";
 import { isProvisionedDevice } from "@/lib/device";
@@ -368,20 +369,28 @@ const shiftVolunteers = async (
 };
 
 // No-login walk-up check-in is only allowed inside [start - BEFORE, start +
-// AFTER] of the shift START. Evaluated in the DB (NOW() vs start_time) so it's
-// consistent with however shift times are stored — no app-vs-DB timezone skew.
-const isCheckInWindowOpen = async (
-  timeId: string | string[] | undefined
+// AFTER] of the shift START. Keyed to the time-position actually being mutated
+// (the request body's timePositionId), NOT the URL timeId — otherwise a device
+// could point the URL at any in-window shift and flip check-in on an unrelated
+// position. Evaluated in the DB (NOW() vs start_time) so it's consistent with
+// however shift times are stored — no app-vs-DB timezone skew.
+const isCheckInWindowOpenForPosition = async (
+  timePositionId: number | undefined
 ): Promise<boolean> => {
-  if (timeId === undefined) return false;
+  if (typeof timePositionId !== "number" || !Number.isFinite(timePositionId)) {
+    return false;
+  }
   const [rows] = await pool.query<RowDataPacket[]>(
     `SELECT (NOW() BETWEEN
-        DATE_SUB(start_time, INTERVAL ? MINUTE)
-        AND DATE_ADD(start_time, INTERVAL ? MINUTE)) AS is_open
-     FROM op_shift_times
-     WHERE shift_times_id = ? AND remove_shift_time = false
+        DATE_SUB(st.start_time, INTERVAL ? MINUTE)
+        AND DATE_ADD(st.start_time, INTERVAL ? MINUTE)) AS is_open
+     FROM op_shift_time_position AS stp
+     JOIN op_shift_times AS st
+       ON st.shift_times_id = stp.shift_times_id
+       AND st.remove_shift_time = false
+     WHERE stp.time_position_id = ? AND stp.remove_time_position = false
      LIMIT 1`,
-    [CHECK_IN_WINDOW_BEFORE_MIN, CHECK_IN_WINDOW_AFTER_MIN, timeId]
+    [CHECK_IN_WINDOW_BEFORE_MIN, CHECK_IN_WINDOW_AFTER_MIN, timePositionId]
   );
   return Boolean(rows[0]?.is_open);
 };
@@ -393,7 +402,9 @@ const isCheckInWindowOpen = async (
 //     walk-up window above. POST/DELETE still require a real login. This is the
 //     "no-login walk-up check-in" per Mew 2026-08-26 (option B). Both the
 //     session and the device cookie are HMAC-verified, so forged cookies fail.
-const GUEST_SESSION = { shiftboardId: 0 };
+// Non-positive so it can never collide with a real shiftboard_id or the
+// "unfilled" sentinel (0) — a guest actor must never pass an owner/admin check.
+const GUEST_SESSION = { shiftboardId: -1 };
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = readSessionFromCookies(req.cookies);
@@ -409,7 +420,23 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return shiftVolunteers(req, res, GUEST_SESSION);
   }
   if (req.method === "PATCH") {
-    if (!(await isCheckInWindowOpen(req.query.timeId))) {
+    // Parse the body ourselves so the guest gate keys off the ACTUAL mutation
+    // target/type, not the URL. (shiftVolunteerUpdate re-parses req.body.)
+    let body: { updateType?: string; timePositionId?: number } = {};
+    try {
+      body = JSON.parse(req.body);
+    } catch {
+      /* malformed body → treated as not-a-check-in below */
+    }
+    // A no-login device may ONLY check people in — not write admin reviews
+    // (ratings/notes), which share this PATCH route via updateType.
+    if (body.updateType !== UPDATE_TYPE_CHECK_IN) {
+      return res.status(403).json({
+        statusCode: 403,
+        message: "Only check-in is allowed without signing in.",
+      });
+    }
+    if (!(await isCheckInWindowOpenForPosition(body.timePositionId))) {
       return res.status(403).json({
         statusCode: 403,
         message: `Check-in is open from ${CHECK_IN_WINDOW_BEFORE_MIN} minutes before to ${CHECK_IN_WINDOW_AFTER_MIN} minutes after the shift starts.`,
