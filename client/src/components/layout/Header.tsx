@@ -126,8 +126,12 @@ export const Header = () => {
   // landed on — the BS page is still accessible via /info if they want
   // to sign it. Per @mbhewitt 2026-05-24: on-playa walk-ups still need
   // the gate; off-playa it's friction we don't want.
-  // NEXT_PUBLIC_* inlines at build time so this is a static decision.
-  const isOnPlaya = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
+  // Build flag OR a provisioned tablet — a cloud/prod tablet gets the on-playa
+  // behavior (e.g. the behavioral-standards gate) too. Reuses the device signal
+  // already fetched above rather than calling useIsOnPlaya (one fewer fetch).
+  const isOnPlaya =
+    process.env.NEXT_PUBLIC_PIN_ENABLED !== "false" ||
+    isProvisionedTablet === true;
 
   useEffect(() => {
     if (
