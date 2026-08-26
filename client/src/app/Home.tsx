@@ -9,6 +9,7 @@ import {
   Button,
   Card,
   CardContent,
+  CircularProgress,
   Container,
   Stack,
   Typography,
@@ -18,6 +19,7 @@ import { useContext, useEffect, useState } from "react";
 
 import { OfflineLink } from "@/components/general/OfflineLink";
 import { Hero } from "@/components/layout/Hero";
+import { useDeviceProvisioned } from "@/hooks/useDeviceProvisioned";
 import { SessionContext } from "@/state/session/context";
 import { checkIsAuthenticated } from "@/utils/checkIsRoleExist";
 import { isPwaStandalone } from "@/utils/isPwa";
@@ -47,6 +49,11 @@ export const Home = () => {
   const [isPwa, setIsPwa] = useState(false);
   useEffect(() => setIsPwa(isPwaStandalone()), []);
   const oktaHref = isPwa ? "/api/auth/okta?pwa=1" : "/api/auth/okta";
+  // On a provisioned tablet the sign-in CTA must route to /sign-in (passcode),
+  // not straight to Okta — the tablet is passcode-only (matches SignIn, per
+  // Mew 2026-08-26). `undefined` while the device check is in flight, so we
+  // show a disabled placeholder for that brief window (no Okta flash).
+  const isProvisionedTablet = useDeviceProvisioned();
   // PIN sign-in is the on-playa signal (same convention as
   // ShareButton/VolunteerInfo). On-playa the recruitment-oriented "How to
   // Volunteer" / "Volunteer Roles" copy doesn't apply (volunteers are already
@@ -117,6 +124,25 @@ export const Home = () => {
                 variant="contained"
               >
                 Welcome, {playaName} &quot;{worldName}&quot; — view your account
+              </Button>
+            ) : isProvisionedTablet === undefined ? (
+              <Button
+                disabled
+                size="large"
+                startIcon={<CircularProgress size="1rem" />}
+                variant="contained"
+              >
+                Sign in to Census
+              </Button>
+            ) : isProvisionedTablet ? (
+              <Button
+                component={Link}
+                href="/sign-in"
+                size="large"
+                startIcon={<LoginIcon />}
+                variant="contained"
+              >
+                Sign in to Census
               </Button>
             ) : isOAuthConfigured ? (
               <Button
