@@ -69,6 +69,14 @@ export const SESSION_STATE_STORAGE = "sessionStateStorage";
 export const CHECK_IN_BEFORE_HOURS = 1;
 export const CHECK_OUT_AFTER_HOURS = 2;
 
+// No-login (walk-up) check-in window on a provisioned tablet: a shift can be
+// checked into with no session from this many minutes before the shift START to
+// this many minutes after the shift START. Enforced server-side in
+// /api/shifts/[timeId]/volunteers; mirrored in the UI. (Per Mew 2026-08-26 —
+// intentionally start-relative, unlike the broader authed SHIFT_DURING window.)
+export const CHECK_IN_WINDOW_BEFORE_MIN = 30;
+export const CHECK_IN_WINDOW_AFTER_MIN = 30;
+
 // check-in types
 export const SHIFT_FUTURE = "shiftFuture";
 export const SHIFT_DURING = "shiftDuring";
