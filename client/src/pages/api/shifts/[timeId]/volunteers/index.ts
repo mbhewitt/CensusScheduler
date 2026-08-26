@@ -8,6 +8,7 @@ import type {
   IResShiftVolunteerRowItem,
 } from "@/components/types/shifts";
 import { isAdmin } from "@/lib/authz";
+import { isOnPlayaRequest } from "@/lib/onPlaya";
 import { withAuth } from "@/lib/withAuth";
 import { pool } from "lib/database";
 import { notifyAssignment } from "@/components/api/assignmentNotify";
@@ -19,14 +20,16 @@ import {
 
 // On-playa (walk-up) mode lets whoever is running the shift check people in and
 // add volunteers without an admin login. Off-playa (cloud) those are admin-only.
-// NEXT_PUBLIC_PIN_ENABLED is "false" only on off-playa deploys.
-const IS_ON_PLAYA = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
+// On-playa is the build flag OR a request from a provisioned tablet — so a
+// cloud/prod tablet at the lab gets the walk-up behavior (isOnPlayaRequest).
 
 const shiftVolunteers = async (
   req: NextApiRequest,
   res: NextApiResponse,
   session: { shiftboardId: number }
 ) => {
+  const isOnPlaya = isOnPlayaRequest(req.cookies);
+
   switch (req.method) {
     // get
     // ------------------------------------------------------------
@@ -222,7 +225,7 @@ const shiftVolunteers = async (
       // Off-playa: adding *another* volunteer is admin-only (walk-up adds are
       // an on-playa affordance). Authenticated self-signup stays open.
       if (
-        !IS_ON_PLAYA &&
+        !isOnPlaya &&
         shiftboardId !== session.shiftboardId &&
         !(await isAdmin(session.shiftboardId))
       ) {
@@ -330,7 +333,7 @@ const shiftVolunteers = async (
     // ------------------------------------------------------------
     case "PATCH": {
       // Off-playa: checking a volunteer in (and review) is admin-only.
-      if (!IS_ON_PLAYA && !(await isAdmin(session.shiftboardId))) {
+      if (!isOnPlaya && !(await isAdmin(session.shiftboardId))) {
         return res.status(403).json({
           statusCode: 403,
           message: "Check-in is restricted to admins.",

@@ -65,6 +65,7 @@ import {
   UPDATE_REVIEW_RES,
   UPDATE_TYPE_CHECK_IN,
 } from "@/constants";
+import { useIsOnPlaya } from "@/hooks/useIsOnPlaya";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
 import { checkIsAdmin, checkIsAuthenticated } from "@/utils/checkIsRoleExist";
@@ -118,6 +119,12 @@ export const ShiftVolunteers = ({
       user: { roleList, shiftboardId },
     },
   } = useContext(SessionContext);
+  // On-playa (walk-up) mode lets non-admins check people in / add during a
+  // shift; off-playa those are admin-only. A provisioned tablet counts as
+  // on-playa (matches the server gate isOnPlayaRequest). undefined→false while
+  // the device check resolves, so the walk-up affordances just appear a beat
+  // later on a tablet rather than flashing wrong.
+  const isOnPlaya = useIsOnPlaya() === true;
 
   // state
   // ------------------------------------------------------------
@@ -290,9 +297,6 @@ export const ShiftVolunteers = ({
     isAuthenticatedSession
   );
   const isAdmin = checkIsAdmin(accountType, roleList);
-  // On-playa (walk-up) mode lets non-admins check people in / add during a shift;
-  // off-playa those are admin-only. Mirrors the server gate in the API route.
-  const isOnPlaya = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
 
   const handleCheckInToggle = async ({
     shift: { positionName, timePositionId },
