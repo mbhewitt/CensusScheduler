@@ -7,6 +7,14 @@ import { isBlockedWrite, isReadOnly, readOnlyMessage } from "@/lib/readOnly";
 // `import crypto from "crypto"` so importing from it would break the build.
 // Cryptographic verification happens at the API layer (Node runtime).
 const SESSION_COOKIE_NAME = "census-session";
+// Same reasoning: inline the device-cookie name rather than import lib/device
+// (which pulls in node crypto). A provisioned tablet carries this cookie; we
+// treat its PRESENCE as "on-playa" so a walk-up on a lab tablet gets the same
+// unauthenticated /shifts + training access the on-playa build grants. We only
+// check presence here (edge can't HMAC-verify) — that's fine because it only
+// opens the non-PII shift LIST + bundled training; the volunteer-detail
+// endpoint stays withAuth (HMAC-verified) at the API layer regardless.
+const DEVICE_COOKIE_NAME = "census-device";
 
 // HOTFIX 2026-05-06: gate everything-except-allowlist on the census-session
 // cookie. Public routes that volunteers (or new prospective volunteers) must
@@ -92,16 +100,19 @@ const ALLOWLIST = [
 
   // Public perm-link to QR images (/api/qr/<id>.png) — embeddable anywhere.
   "/api/qr",
+];
 
-  // On-playa only: walk-up shifts view
-  ...(isOnPlaya ? ["/shifts", "/api/shifts"] : []),
-
-  // On-playa only: the bundled training course files. These are served out of
-  // public/ but .json/.pdf/.mp3 aren't in the matcher's static-extension
-  // exclusion, so they come through middleware and need allowlisting.
-  ...(isOnPlaya
-    ? ["/training/index.json", "/training/courses", "/training/assets", "/training/guides"]
-    : []),
+// On-playa-only allowlist — applied when effective-on-playa (build flag OR a
+// provisioned-tablet cookie). Walk-up shifts view + the bundled training course
+// files (.json/.pdf/.mp3 aren't in the matcher's static-extension exclusion, so
+// they come through middleware and need allowlisting).
+const ON_PLAYA_ALLOWLIST = [
+  "/shifts",
+  "/api/shifts",
+  "/training/index.json",
+  "/training/courses",
+  "/training/assets",
+  "/training/guides",
 ];
 
 // Home is public again as of 2026-05-25 — the page now hosts the
@@ -121,15 +132,16 @@ const PUBLIC_PATHS = new Set(["/", "/manifest.webmanifest"]);
 // walk-up volunteer at the Lab can study before signing in. Deliberately NOT
 // a plain "/training" allowlist prefix: /training/confirmation/[code] records
 // completion against the signed-in volunteer and must stay gated.
-const isPublicTrainingPage = (pathname: string) =>
-  isOnPlaya &&
+const isPublicTrainingPage = (pathname: string, onPlaya: boolean) =>
+  onPlaya &&
   /^\/training(\/[a-z0-9-]+)?$/.test(pathname) &&
   !pathname.startsWith("/training/confirmation");
 
-function isAllowlisted(pathname: string): boolean {
+function isAllowlisted(pathname: string, onPlaya: boolean): boolean {
   if (PUBLIC_PATHS.has(pathname)) return true;
-  if (isPublicTrainingPage(pathname)) return true;
-  for (const prefix of ALLOWLIST) {
+  if (isPublicTrainingPage(pathname, onPlaya)) return true;
+  const lists = onPlaya ? [...ALLOWLIST, ...ON_PLAYA_ALLOWLIST] : ALLOWLIST;
+  for (const prefix of lists) {
     if (pathname === prefix || pathname.startsWith(prefix + "/")) return true;
   }
   return false;
@@ -149,7 +161,12 @@ export function middleware(req: NextRequest) {
     );
   }
 
-  if (isAllowlisted(pathname)) {
+  // Effective on-playa: build flag OR a provisioned-tablet cookie (presence
+  // only — see DEVICE_COOKIE_NAME note). Opens walk-up /shifts + training on a
+  // lab tablet without a login, same as an on-playa deploy.
+  const onPlaya =
+    isOnPlaya || Boolean(req.cookies.get(DEVICE_COOKIE_NAME)?.value);
+  if (isAllowlisted(pathname, onPlaya)) {
     return NextResponse.next();
   }
 

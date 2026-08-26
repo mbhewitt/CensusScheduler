@@ -71,7 +71,7 @@ import { SessionContext } from "@/state/session/context";
 import { checkIsAdmin, checkIsAuthenticated } from "@/utils/checkIsRoleExist";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
-import { getCheckInType } from "@/utils/getCheckInType";
+import { getCheckInType, isCheckInWindowOpen } from "@/utils/getCheckInType";
 import {
   setCellHeaderPropsCenter,
   setCellPropsCenter,
@@ -407,6 +407,20 @@ export const ShiftVolunteers = ({
   if (isShiftCanceled) {
     isVolunteerAddAvailable = false;
     isCheckInAvailable = false;
+  }
+  // Walk-up, NO-login check-in on a provisioned tablet: allowed only inside the
+  // ±30-min-of-start window (the server enforces the same window). Authed users
+  // keep the broader availability set above. Per Mew 2026-08-26 (option B).
+  if (
+    isOnPlaya &&
+    !isAuthenticated &&
+    !isShiftCanceled &&
+    isCheckInWindowOpen(
+      dayjs(dataShiftVolunteersItem.shift.startTime),
+      dayjs(dateTimeValue)
+    )
+  ) {
+    isCheckInAvailable = true;
   }
   // Non-admins may remove THEMSELVES from a future/during shift — mirrors the
   // account page (past shifts stay admin-only). Canceled shifts intentionally

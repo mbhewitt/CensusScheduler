@@ -7,9 +7,14 @@ import type {
   IResShiftVolunteerInformation,
   IResShiftVolunteerRowItem,
 } from "@/components/types/shifts";
+import {
+  CHECK_IN_WINDOW_AFTER_MIN,
+  CHECK_IN_WINDOW_BEFORE_MIN,
+} from "@/constants";
 import { isAdmin } from "@/lib/authz";
+import { isProvisionedDevice } from "@/lib/device";
 import { isOnPlayaRequest } from "@/lib/onPlaya";
-import { withAuth } from "@/lib/withAuth";
+import { readSessionFromCookies } from "@/lib/session";
 import { pool } from "lib/database";
 import { notifyAssignment } from "@/components/api/assignmentNotify";
 import { autoSetArrival } from "@/components/api/arrivalAutoSet";
@@ -362,7 +367,59 @@ const shiftVolunteers = async (
   }
 };
 
-// Hotfix 2026-05-06: this endpoint exposes volunteer playa + world names
-// per shift. Wrapped in withAuth so unauth requests get 401 and forged
-// cookies are rejected by HMAC verification.
-export default withAuth(shiftVolunteers);
+// No-login walk-up check-in is only allowed inside [start - BEFORE, start +
+// AFTER] of the shift START. Evaluated in the DB (NOW() vs start_time) so it's
+// consistent with however shift times are stored — no app-vs-DB timezone skew.
+const isCheckInWindowOpen = async (
+  timeId: string | string[] | undefined
+): Promise<boolean> => {
+  if (timeId === undefined) return false;
+  const [rows] = await pool.query<RowDataPacket[]>(
+    `SELECT (NOW() BETWEEN
+        DATE_SUB(start_time, INTERVAL ? MINUTE)
+        AND DATE_ADD(start_time, INTERVAL ? MINUTE)) AS is_open
+     FROM op_shift_times
+     WHERE shift_times_id = ? AND remove_shift_time = false
+     LIMIT 1`,
+    [CHECK_IN_WINDOW_BEFORE_MIN, CHECK_IN_WINDOW_AFTER_MIN, timeId]
+  );
+  return Boolean(rows[0]?.is_open);
+};
+
+// Auth for this endpoint (exposes volunteer playa + world names per shift):
+//   - a valid session → full behavior (all methods).
+//   - NO session but a valid provisioned-device cookie (a lab tablet) → may
+//     VIEW a shift (GET) and CHECK PEOPLE IN (PATCH), the latter only inside the
+//     walk-up window above. POST/DELETE still require a real login. This is the
+//     "no-login walk-up check-in" per Mew 2026-08-26 (option B). Both the
+//     session and the device cookie are HMAC-verified, so forged cookies fail.
+const GUEST_SESSION = { shiftboardId: 0 };
+
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  const session = readSessionFromCookies(req.cookies);
+  if (session) {
+    return shiftVolunteers(req, res, session);
+  }
+  if (!isProvisionedDevice(req.cookies)) {
+    return res
+      .status(401)
+      .json({ statusCode: 401, message: "Authentication required" });
+  }
+  if (req.method === "GET") {
+    return shiftVolunteers(req, res, GUEST_SESSION);
+  }
+  if (req.method === "PATCH") {
+    if (!(await isCheckInWindowOpen(req.query.timeId))) {
+      return res.status(403).json({
+        statusCode: 403,
+        message: `Check-in is open from ${CHECK_IN_WINDOW_BEFORE_MIN} minutes before to ${CHECK_IN_WINDOW_AFTER_MIN} minutes after the shift starts.`,
+      });
+    }
+    return shiftVolunteers(req, res, GUEST_SESSION);
+  }
+  return res
+    .status(401)
+    .json({ statusCode: 401, message: "Please sign in to do that." });
+};
+
+export default handler;
