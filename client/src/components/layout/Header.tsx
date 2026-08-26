@@ -30,7 +30,6 @@ import { useSnackbar } from "notistack";
 import { Fragment, useContext, useEffect, useState } from "react";
 import { useIdleTimer } from "react-idle-timer";
 
-import { InstallAppMenuItem } from "@/components/layout/InstallAppMenuItem";
 import {
   pageListAdmin,
   pageListDefault,
@@ -260,8 +259,6 @@ export const Header = () => {
                   )}
                 </Fragment>
               ))}
-              {/* Install-as-PWA affordance (hidden once installed). */}
-              <InstallAppMenuItem onNavigate={handleDrawerClose} />
             </List>
             {/* admin nav */}
             {isAdmin && (
