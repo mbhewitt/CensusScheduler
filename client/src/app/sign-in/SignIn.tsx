@@ -13,11 +13,9 @@ import {
   CardContent,
   CircularProgress,
   Container,
-  Divider,
   IconButton,
   Stack,
   TextField,
-  Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -96,8 +94,11 @@ export const SignIn = () => {
   // Mew 2026-08-21), so the off-playa origin still offers passcode to a
   // provisioned tablet while participants never see it. The server gate in
   // /api/sign-in enforces this regardless; this just hides the form.
+  // On a provisioned tablet (passcode mode) we also HIDE Okta — a shared tablet
+  // should only offer passcode, not OAuth (per Chipper + Mew 2026-08-25).
   const isProvisionedTablet = useDeviceProvisioned();
-  const showPasscode = isProvisionedTablet;
+  const showPasscode = isProvisionedTablet === true;
+  const showOkta = isOAuthConfigured && !showPasscode;
 
   // Forward returnTo through the Okta init so the callback can land the user
   // back where they started (e.g. /training/confirmation/[code] after clicking
@@ -119,7 +120,9 @@ export const SignIn = () => {
   // logic
   // ------------------------------------------------------------
   if (error) return <ErrorPage />;
-  if (!data) return <Loading />;
+  // Wait for the device check too, so we render the right auth options once
+  // (no Okta button flashing in before it's hidden on a provisioned tablet).
+  if (!data || isProvisionedTablet === undefined) return <Loading />;
 
   // form submission
   // ------------------------------------------------------------
@@ -222,7 +225,7 @@ export const SignIn = () => {
               </Alert>
             </CardContent>
           )}
-          {isOAuthConfigured && (
+          {showOkta && (
             <CardContent>
               <Button
                 fullWidth
@@ -233,13 +236,6 @@ export const SignIn = () => {
               >
                 Sign in to Census
               </Button>
-              {showPasscode && (
-                <Divider sx={{ mt: 2 }}>
-                  <Typography color="text.secondary" variant="body2">
-                    or use passcode
-                  </Typography>
-                </Divider>
-              )}
             </CardContent>
           )}
           {showPasscode && (
