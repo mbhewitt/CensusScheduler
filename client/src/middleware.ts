@@ -100,6 +100,11 @@ const ALLOWLIST = [
 
   // Public perm-link to QR images (/api/qr/<id>.png) — embeddable anywhere.
   "/api/qr",
+
+  // Scheduled machine-to-machine jobs (e.g. the shift-lead nudge). These
+  // self-authenticate with CRON_SECRET at the handler, so they bypass the
+  // session gate here rather than getting redirected to /sign-in.
+  "/api/cron",
 ];
 
 // On-playa-only allowlist — applied when effective-on-playa (build flag OR a
