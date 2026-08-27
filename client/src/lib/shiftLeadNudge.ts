@@ -11,9 +11,10 @@ import {
 } from "./shiftLeadNudge.logic";
 
 // Shift-lead nudge I/O runner: ~1h after a shift ends, email its leads (or the
-// coordinator list for a leadless shift) if it qualifies, finalize still-pending
-// non-leads to no-show, and mark the shift so it's nudged only once. Pure
-// decision/content logic lives in shiftLeadNudge.logic.ts. See migration 016.
+// coordinator list for a leadless shift) if it qualifies, finalize every
+// still-pending volunteer (leads included) to no-show, and mark the shift so
+// it's nudged only once. Pure decision/content logic lives in
+// shiftLeadNudge.logic.ts. See migration 016.
 
 // Only nudge shifts that ended within this many hours (upper bound) so a first
 // run / recovered outage doesn't blast nudges for ancient shifts. Lower bound is
@@ -145,18 +146,19 @@ export async function runShiftLeadNudge(
       } catch (err) {
         console.error(`[shift-lead-nudge] enqueue failed for #${agg.id}:`, err);
       }
-      // Finalize: pending ('X'/NULL) non-leads -> 'Yes' (no-show).
+      // Finalize: every still-pending ('X'/NULL) volunteer on the shift ->
+      // 'Yes' (no-show). Includes LEADS who never checked in (per Mew) — the
+      // A/B conditions above only measure non-leads, but a no-show lead is still
+      // a no-show. Leaves '' (checked in) and existing 'Yes' untouched.
       const [res] = await pool.query(
         `UPDATE op_volunteer_shifts vs
            JOIN op_shift_time_position stp
              ON stp.time_position_id = vs.time_position_id
-           JOIN op_position_type pt
-             ON pt.position_type_id = stp.position_type_id
+            AND stp.remove_time_position = false
             SET vs.noshow = 'Yes', vs.update_shift = true
           WHERE stp.shift_times_id = ?
             AND vs.remove_shift = false
-            AND (vs.noshow IS NULL OR vs.noshow = 'X')
-            AND (pt.\`lead\` IS NULL OR pt.\`lead\` = 0)`,
+            AND (vs.noshow IS NULL OR vs.noshow = 'X')`,
         [agg.id]
       );
       finalized = (res as { affectedRows?: number }).affectedRows ?? 0;
