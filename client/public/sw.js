@@ -11,20 +11,18 @@
 // app's Socket.IO check-in broadcasts keep the live bits current.
 // ponytail: scoped to the two shift-read endpoints; widen only if measured.
 
-const SHIFTS_CACHE = "census-shifts-v1";
+const SHIFTS_CACHE = "census-shifts-v2";
 
-// Only same-origin GETs to the shift-read endpoints are cached:
-//   GET /api/shifts                     (the agenda; may carry ?filter=...)
-//   GET /api/shifts/<id>/volunteers     (a shift's roster)
-// Deliberately NOT the admin sub-resources (/api/shifts/categories|positions|
-// types) or any per-user endpoint.
+// Only the big agenda LIST is cached (that's the ~200KB slow payload):
+//   GET /api/shifts   (the agenda; may carry ?filter=...)
+// Deliberately NOT the per-shift roster (/api/shifts/<id>/volunteers): that page
+// is interactive (check-in toggles), and caching it made check-ins appear to not
+// update live as a re-read served a stale roster. Also NOT the admin
+// sub-resources (/api/shifts/categories|positions|types) or per-user endpoints.
 function isShiftRead(request, url) {
   if (request.method !== "GET") return false;
   if (url.origin !== self.location.origin) return false;
-  return (
-    url.pathname === "/api/shifts" ||
-    /^\/api\/shifts\/\d+\/volunteers$/.test(url.pathname)
-  );
+  return url.pathname === "/api/shifts";
 }
 
 self.addEventListener("install", () => self.skipWaiting());
