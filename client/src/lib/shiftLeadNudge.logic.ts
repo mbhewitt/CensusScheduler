@@ -113,3 +113,40 @@ export function buildNudgeEmail(agg: ShiftAgg, ev: ShiftEval) {
 
   return { subject, bodyText: textLines.join("\n"), bodyHtml: htmlParts.join("") };
 }
+
+export interface ShiftLine {
+  agg: ShiftAgg;
+  ev: ShiftEval;
+}
+
+// One-time catch-up: a single email summarizing every shift that needs wrap-up
+// for one recipient (a lead across their shifts, or coordinators for the
+// leadless pile). One line per shift with its reason + link.
+export function buildConsolidatedEmail(
+  isCoordinator: boolean,
+  lines: ShiftLine[]
+) {
+  const subject = `Census · ${lines.length} shift${lines.length === 1 ? "" : "s"} need wrap-up`;
+  const intro = isCoordinator
+    ? "These shifts (no assigned lead) need wrapping up while it's fresh:"
+    : "These shifts you led need wrapping up while it's fresh:";
+
+  const textLines: string[] = [intro, ""];
+  const htmlItems: string[] = [];
+  for (const { agg, ev } of lines) {
+    const when = `${agg.date ?? ""} ${agg.time}`.trim();
+    const link = `${APP_BASE_URL}/shifts/${agg.id}/volunteers`;
+    const reasons: string[] = [];
+    if (ev.condA) reasons.push(`${ev.unreviewed.length} not reviewed`);
+    if (ev.condB) reasons.push(`${ev.pctCheckedIn}% checked in`);
+    const reasonStr = reasons.join(", ");
+    textLines.push(`- ${agg.name} (${when}) — ${reasonStr}`, `    ${link}`);
+    htmlItems.push(
+      `<li><strong>${esc(agg.name)}</strong> (${esc(when)}) — ${esc(reasonStr)} · <a href="${link}">open</a></li>`
+    );
+  }
+  textLines.push("", "Thanks! — BRC Census");
+  const bodyHtml =
+    `<p>${esc(intro)}</p><ul>${htmlItems.join("")}</ul><p>Thanks!<br/>— BRC Census</p>`;
+  return { subject, bodyText: textLines.join("\n"), bodyHtml };
+}

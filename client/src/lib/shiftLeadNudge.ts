@@ -6,6 +6,8 @@ import { enqueueEmail } from "lib/mail";
 import {
   COORDINATOR_EMAIL,
   ShiftAgg,
+  ShiftLine,
+  buildConsolidatedEmail,
   buildNudgeEmail,
   evaluateShift,
 } from "./shiftLeadNudge.logic";
@@ -35,9 +37,19 @@ interface VolRow extends RowDataPacket {
   rating: number | null;
 }
 
-// Fetch every not-yet-nudged shift that ended between 1h and MAX_AGE_HOURS ago
-// (playa time), one row per assigned volunteer, and group into ShiftAgg.
-async function loadCandidateShifts(pool: Pool): Promise<ShiftAgg[]> {
+// Fetch every not-yet-nudged shift that ended >1h ago (playa time), optionally
+// capped to shifts that ended within maxAgeHours (null = no cap, used by the
+// one-time catch-up), one row per assigned volunteer, grouped into ShiftAgg.
+async function loadCandidateShifts(
+  pool: Pool,
+  maxAgeHours: number | null
+): Promise<ShiftAgg[]> {
+  // maxAgeHours is a trusted numeric config value; coerce before interpolating.
+  const upperBound =
+    maxAgeHours != null
+      ? `AND DATE_ADD(st.end_time, INTERVAL ${Number(maxAgeHours)} HOUR)
+             > CONVERT_TZ(NOW(), 'UTC', 'America/Los_Angeles')`
+      : "";
   const [rows] = await pool.query<VolRow[]>(
     `SELECT st.shift_times_id AS id, sn.shift_name, d.date,
             st.start_time_text AS stt, st.end_time_text AS ett,
@@ -60,10 +72,8 @@ async function loadCandidateShifts(pool: Pool): Promise<ShiftAgg[]> {
         AND n.shift_times_id IS NULL
         AND DATE_ADD(st.end_time, INTERVAL 1 HOUR)
               < CONVERT_TZ(NOW(), 'UTC', 'America/Los_Angeles')
-        AND DATE_ADD(st.end_time, INTERVAL ? HOUR)
-              > CONVERT_TZ(NOW(), 'UTC', 'America/Los_Angeles')
-      ORDER BY st.shift_times_id`,
-    [MAX_AGE_HOURS]
+        ${upperBound}
+      ORDER BY st.shift_times_id`
   );
 
   const byShift = new Map<number, ShiftAgg>();
@@ -108,14 +118,42 @@ export interface NudgeRunResult {
   dryRun: boolean;
 }
 
-// Main entry: evaluate candidate shifts, then email + finalize + mark the ones
-// that qualify. dryRun reports what it WOULD do without sending or writing.
+// Finalize a shift (every still-pending 'X'/NULL volunteer, leads included, ->
+// 'Yes' no-show) and mark it nudged so it never repeats. Returns rows finalized.
+async function finalizeAndMark(pool: Pool, shiftId: number): Promise<number> {
+  const [res] = await pool.query(
+    `UPDATE op_volunteer_shifts vs
+       JOIN op_shift_time_position stp
+         ON stp.time_position_id = vs.time_position_id
+        AND stp.remove_time_position = false
+        SET vs.noshow = 'Yes', vs.update_shift = true
+      WHERE stp.shift_times_id = ?
+        AND vs.remove_shift = false
+        AND (vs.noshow IS NULL OR vs.noshow = 'X')`,
+    [shiftId]
+  );
+  await pool.query(
+    `INSERT IGNORE INTO op_shift_lead_nudge (shift_times_id) VALUES (?)`,
+    [shiftId]
+  );
+  return (res as { affectedRows?: number }).affectedRows ?? 0;
+}
+
+function reasonsOf(ev: ReturnType<typeof evaluateShift>): string[] {
+  return [
+    ev.condA ? `${ev.unreviewed.length} unreviewed` : null,
+    ev.condB ? `${ev.pctCheckedIn}% checked in` : null,
+  ].filter(Boolean) as string[];
+}
+
+// Steady-state (every ~15 min): one email PER qualifying shift that ended within
+// the 24h window. dryRun reports what it WOULD do without sending or writing.
 export async function runShiftLeadNudge(
   pool: Pool,
   opts: { dryRun?: boolean } = {}
 ): Promise<NudgeRunResult> {
   const dryRun = Boolean(opts.dryRun);
-  const shifts = await loadCandidateShifts(pool);
+  const shifts = await loadCandidateShifts(pool, MAX_AGE_HOURS);
   const nudged: NudgeRunResult["nudged"] = [];
 
   for (const agg of shifts) {
@@ -123,54 +161,87 @@ export async function runShiftLeadNudge(
     if (!ev.shouldNudge) continue;
 
     const to = agg.leadEmails.length ? agg.leadEmails : [COORDINATOR_EMAIL];
-    // Every email CCs the coordinator list — unless it's already the TO.
     const cc = agg.leadEmails.length ? [COORDINATOR_EMAIL] : undefined;
-    const reasons = [
-      ev.condA ? `${ev.unreviewed.length} unreviewed` : null,
-      ev.condB ? `${ev.pctCheckedIn}% checked in` : null,
-    ].filter(Boolean) as string[];
 
     let finalized = 0;
     if (!dryRun) {
       const { subject, bodyText, bodyHtml } = buildNudgeEmail(agg, ev);
-      // Best-effort enqueue (the mail queue handles delivery + retries).
       try {
-        await enqueueEmail({
-          to,
-          cc,
-          subject,
-          bodyText,
-          bodyHtml,
-          category: "shift-lead-nudge",
-        });
+        await enqueueEmail({ to, cc, subject, bodyText, bodyHtml, category: "shift-lead-nudge" });
       } catch (err) {
         console.error(`[shift-lead-nudge] enqueue failed for #${agg.id}:`, err);
       }
-      // Finalize: every still-pending ('X'/NULL) volunteer on the shift ->
-      // 'Yes' (no-show). Includes LEADS who never checked in (per Mew) — the
-      // A/B conditions above only measure non-leads, but a no-show lead is still
-      // a no-show. Leaves '' (checked in) and existing 'Yes' untouched.
-      const [res] = await pool.query(
-        `UPDATE op_volunteer_shifts vs
-           JOIN op_shift_time_position stp
-             ON stp.time_position_id = vs.time_position_id
-            AND stp.remove_time_position = false
-            SET vs.noshow = 'Yes', vs.update_shift = true
-          WHERE stp.shift_times_id = ?
-            AND vs.remove_shift = false
-            AND (vs.noshow IS NULL OR vs.noshow = 'X')`,
-        [agg.id]
-      );
-      finalized = (res as { affectedRows?: number }).affectedRows ?? 0;
-      // Mark nudged so it never repeats.
-      await pool.query(
-        `INSERT IGNORE INTO op_shift_lead_nudge (shift_times_id) VALUES (?)`,
-        [agg.id]
-      );
+      finalized = await finalizeAndMark(pool, agg.id);
     }
+    nudged.push({ id: agg.id, name: agg.name, to, reasons: reasonsOf(ev), finalized });
+  }
+  return { scanned: shifts.length, nudged, dryRun };
+}
 
-    nudged.push({ id: agg.id, name: agg.name, to, reasons, finalized });
+export interface CatchupRunResult {
+  scannedShifts: number;
+  emails: Array<{ to: string; shiftCount: number; shiftIds: number[] }>;
+  shiftsNudged: number;
+  finalized: number;
+  dryRun: boolean;
+}
+
+// One-time catch-up: no age cap. Groups every qualifying shift by recipient and
+// sends ONE consolidated email per lead (each of their shifts) — leadless shifts
+// go to the coordinator list. Every email CCs coordinators. Each shift is
+// finalized + marked exactly once even if it has multiple leads.
+export async function runShiftLeadNudgeCatchup(
+  pool: Pool,
+  opts: { dryRun?: boolean } = {}
+): Promise<CatchupRunResult> {
+  const dryRun = Boolean(opts.dryRun);
+  const shifts = await loadCandidateShifts(pool, null);
+
+  // recipient email -> lines; leadless shifts collect under COORDINATOR_EMAIL.
+  const byRecipient = new Map<string, ShiftLine[]>();
+  const qualifying: ShiftAgg[] = [];
+  for (const agg of shifts) {
+    const ev = evaluateShift(agg);
+    if (!ev.shouldNudge) continue;
+    qualifying.push(agg);
+    const recipients = agg.leadEmails.length ? agg.leadEmails : [COORDINATOR_EMAIL];
+    for (const r of recipients) {
+      if (!byRecipient.has(r)) byRecipient.set(r, []);
+      byRecipient.get(r)!.push({ agg, ev });
+    }
   }
 
-  return { scanned: shifts.length, nudged, dryRun };
+  const emails: CatchupRunResult["emails"] = [];
+  for (const [recipient, lines] of byRecipient) {
+    emails.push({ to: recipient, shiftCount: lines.length, shiftIds: lines.map((l) => l.agg.id) });
+    if (!dryRun) {
+      const isCoord = recipient === COORDINATOR_EMAIL;
+      const { subject, bodyText, bodyHtml } = buildConsolidatedEmail(isCoord, lines);
+      try {
+        await enqueueEmail({
+          to: recipient,
+          cc: isCoord ? undefined : [COORDINATOR_EMAIL],
+          subject,
+          bodyText,
+          bodyHtml,
+          category: "shift-lead-nudge-catchup",
+        });
+      } catch (err) {
+        console.error(`[shift-lead-nudge] catch-up enqueue failed for ${recipient}:`, err);
+      }
+    }
+  }
+
+  let finalized = 0;
+  if (!dryRun) {
+    for (const agg of qualifying) finalized += await finalizeAndMark(pool, agg.id);
+  }
+
+  return {
+    scannedShifts: shifts.length,
+    emails,
+    shiftsNudged: qualifying.length,
+    finalized,
+    dryRun,
+  };
 }

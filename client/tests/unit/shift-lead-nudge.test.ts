@@ -3,6 +3,7 @@ import { test } from "node:test";
 
 import {
   ShiftAgg,
+  buildConsolidatedEmail,
   buildNudgeEmail,
   evaluateShift,
 } from "../../src/lib/shiftLeadNudge.logic";
@@ -68,4 +69,18 @@ test("email includes both sections + shift link when A and B fire", () => {
   assert.match(email.bodyText, /not reviewed yet/);
   assert.match(email.bodyText, /% were checked in/);
   assert.match(email.bodyText, /\/shifts\/1\/volunteers/);
+});
+
+test("consolidated catch-up email lists every shift for the recipient", () => {
+  const a = { id: 1, name: "Setup", date: "8/23", time: "14-18", leadEmails: [], nonLeads: [v(true, false)] };
+  const b = { id: 2, name: "Setup", date: "8/24", time: "09-13", leadEmails: [], nonLeads: [v(false, false)] };
+  const lines = [
+    { agg: a, ev: evaluateShift(a) },
+    { agg: b, ev: evaluateShift(b) },
+  ];
+  const email = buildConsolidatedEmail(false, lines);
+  assert.match(email.subject, /2 shifts need wrap-up/);
+  assert.match(email.bodyText, /\/shifts\/1\/volunteers/);
+  assert.match(email.bodyText, /\/shifts\/2\/volunteers/);
+  assert.match(email.bodyText, /you led/);
 });
