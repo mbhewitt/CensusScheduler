@@ -372,8 +372,9 @@ const shiftVolunteers = async (
 // AFTER] of the shift START. Keyed to the time-position actually being mutated
 // (the request body's timePositionId), NOT the URL timeId — otherwise a device
 // could point the URL at any in-window shift and flip check-in on an unrelated
-// position. Evaluated in the DB (NOW() vs start_time) so it's consistent with
-// however shift times are stored — no app-vs-DB timezone skew.
+// position. Shift times are stored playa-local (America/Los_Angeles) but the DB
+// runs in UTC, so compare against CONVERT_TZ(NOW(),...) — a raw NOW() would skew
+// the window by the UTC offset (~7h) and reject valid check-ins.
 const isCheckInWindowOpenForPosition = async (
   timePositionId: number | undefined
 ): Promise<boolean> => {
@@ -381,7 +382,7 @@ const isCheckInWindowOpenForPosition = async (
     return false;
   }
   const [rows] = await pool.query<RowDataPacket[]>(
-    `SELECT (NOW() BETWEEN
+    `SELECT (CONVERT_TZ(NOW(), 'UTC', 'America/Los_Angeles') BETWEEN
         DATE_SUB(st.start_time, INTERVAL ? MINUTE)
         AND DATE_ADD(st.start_time, INTERVAL ? MINUTE)) AS is_open
      FROM op_shift_time_position AS stp
