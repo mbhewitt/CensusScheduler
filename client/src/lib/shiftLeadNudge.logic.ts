@@ -98,11 +98,11 @@ export function buildNudgeEmail(agg: ShiftAgg, ev: ShiftEval) {
   if (ev.condB) {
     const checkedIn = ev.total - ev.notCheckedInCount;
     textLines.push(
-      `Only ${ev.pctCheckedIn}% were checked in (${checkedIn} of ${ev.total}). If more people showed up, mark them in.`,
+      `Only ${ev.pctCheckedIn}% were checked in (${checkedIn} of ${ev.total}). Please check people in and review them.`,
       ""
     );
     htmlParts.push(
-      `<p><strong>Only ${ev.pctCheckedIn}% were checked in</strong> (${checkedIn} of ${ev.total}). If more people showed up, mark them in.</p>`
+      `<p><strong>Only ${ev.pctCheckedIn}% were checked in</strong> (${checkedIn} of ${ev.total}). Please check people in and review them.</p>`
     );
   }
 
