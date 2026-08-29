@@ -108,12 +108,16 @@ const ALLOWLIST = [
 ];
 
 // On-playa-only allowlist — applied when effective-on-playa (build flag OR a
-// provisioned-tablet cookie). Walk-up shifts view + the bundled training course
-// files (.json/.pdf/.mp3 aren't in the matcher's static-extension exclusion, so
-// they come through middleware and need allowlisting).
-const ON_PLAYA_ALLOWLIST = [
-  "/shifts",
-  "/api/shifts",
+// provisioned-tablet cookie). Walk-up shifts view.
+const ON_PLAYA_ALLOWLIST = ["/shifts", "/api/shifts"];
+
+// Training is public everywhere now (per Chipper 2026-08-29): anyone can review
+// the courses signed-out. The bundled content files (.json/.pdf/.mp3 aren't in
+// the matcher's static-extension exclusion, so they come through middleware) are
+// allowlisted unconditionally alongside the course pages. Only the completion
+// step (/training/confirmation/[code]) stays gated — it credits a signed-in
+// volunteer (see isPublicTrainingPage).
+const TRAINING_ALLOWLIST = [
   "/training/index.json",
   "/training/courses",
   "/training/assets",
@@ -137,15 +141,16 @@ const PUBLIC_PATHS = new Set(["/", "/manifest.webmanifest"]);
 // walk-up volunteer at the Lab can study before signing in. Deliberately NOT
 // a plain "/training" allowlist prefix: /training/confirmation/[code] records
 // completion against the signed-in volunteer and must stay gated.
-const isPublicTrainingPage = (pathname: string, onPlaya: boolean) =>
-  onPlaya &&
+const isPublicTrainingPage = (pathname: string) =>
   /^\/training(\/[a-z0-9-]+)?$/.test(pathname) &&
   !pathname.startsWith("/training/confirmation");
 
 function isAllowlisted(pathname: string, onPlaya: boolean): boolean {
   if (PUBLIC_PATHS.has(pathname)) return true;
-  if (isPublicTrainingPage(pathname, onPlaya)) return true;
-  const lists = onPlaya ? [...ALLOWLIST, ...ON_PLAYA_ALLOWLIST] : ALLOWLIST;
+  if (isPublicTrainingPage(pathname)) return true;
+  const lists = onPlaya
+    ? [...ALLOWLIST, ...TRAINING_ALLOWLIST, ...ON_PLAYA_ALLOWLIST]
+    : [...ALLOWLIST, ...TRAINING_ALLOWLIST];
   for (const prefix of lists) {
     if (pathname === prefix || pathname.startsWith(prefix + "/")) return true;
   }
