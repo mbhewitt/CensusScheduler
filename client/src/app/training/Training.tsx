@@ -34,11 +34,17 @@ export const Training = ({ courses }: ITrainingProps) => (
       <Box component="section" sx={{ mb: 3 }}>
         <Card>
           <CardContent>
-            <Typography>
+            <Typography sx={{ mb: 1 }}>
               Census training courses, available offline at the Lab. Start with{" "}
               <strong>Census Welcome and Overview</strong>, then{" "}
               <strong>Basics</strong>, then the course for the shifts you signed
               up for. Your account page lists which ones you need.
+            </Typography>
+            <Typography color="text.secondary">
+              Anyone can review these — no login required.{" "}
+              <strong>Sign in first</strong> if a course is required for a shift
+              you&apos;re doing this season, so your completion is recorded toward
+              that role.
             </Typography>
           </CardContent>
         </Card>

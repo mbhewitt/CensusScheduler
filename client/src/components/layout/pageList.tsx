@@ -10,6 +10,7 @@ import {
   Print as PrintIcon,
   QrCode2 as QrCode2Icon,
   QuestionAnswer as QuestionAnswerIcon,
+  School as SchoolIcon,
   Settings as SettingsIcon,
   TabletAndroid as TabletAndroidIcon,
   VerifiedUser as VerifiedUserIcon,
@@ -27,6 +28,11 @@ export const pageListDefault = [
     icon: <WorkHistoryIcon />,
     label: "Shifts",
     path: "/shifts",
+  },
+  {
+    icon: <SchoolIcon />,
+    label: "Training",
+    path: "/training",
   },
   {
     icon: <BarChartIcon />,

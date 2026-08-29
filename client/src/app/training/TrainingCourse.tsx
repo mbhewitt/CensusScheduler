@@ -320,7 +320,7 @@ export const TrainingCourse = ({
 
       <Box component="section" sx={{ mb: 4 }}>
         {course.sections.map((section) => (
-          <Accordion key={section.id} disableGutters>
+          <Accordion key={section.id} disableGutters defaultExpanded>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Stack direction="row" spacing={1} alignItems="center">
                 <Typography sx={{ fontWeight: 700 }}>{section.title}</Typography>
@@ -341,7 +341,7 @@ export const TrainingCourse = ({
         ))}
 
         {course.ungroupedLessons?.map((lesson) => (
-          <Accordion key={lesson.id} disableGutters>
+          <Accordion key={lesson.id} disableGutters defaultExpanded>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography sx={{ fontWeight: 700 }}>{lesson.title}</Typography>
             </AccordionSummary>
