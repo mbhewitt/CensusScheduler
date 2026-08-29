@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 
 import { Training } from "@/app/training/Training";
-import { isOnPlaya } from "@/lib/training";
 import { getCourseIndex } from "@/lib/trainingContent";
 
 export const metadata = {
@@ -9,10 +8,8 @@ export const metadata = {
 };
 
 const TrainingPage = async () => {
-  // Off-playa this route does not exist — volunteers go to Hive, which stays
-  // the authoritative copy. The offline bundle is only for the Lab tablets.
-  if (!isOnPlaya()) notFound();
-
+  // Public everywhere now (per Chipper 2026-08-29): anyone can review the
+  // bundled courses, on or off playa. Only the completion step stays gated.
   const courses = await getCourseIndex();
   if (courses.length === 0) notFound();
 

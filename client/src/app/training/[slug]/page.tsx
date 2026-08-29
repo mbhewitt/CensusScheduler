@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { TrainingCourse } from "@/app/training/TrainingCourse";
-import { isOnPlaya, slugToTrainingCode } from "@/lib/training";
+import { slugToTrainingCode } from "@/lib/training";
 import { getCourse } from "@/lib/trainingContent";
 
 interface ITrainingCoursePageProps {
@@ -16,9 +16,8 @@ export const generateMetadata = async ({ params }: ITrainingCoursePageProps) => 
 };
 
 const TrainingCoursePage = async ({ params }: ITrainingCoursePageProps) => {
-  // See /training — the offline courses are on-playa only.
-  if (!isOnPlaya()) notFound();
-
+  // Public everywhere now (per Chipper 2026-08-29). The completion step
+  // (/training/confirmation/[code]) stays gated to credit a signed-in volunteer.
   const { slug } = await params;
   const course = await getCourse(slug);
 
