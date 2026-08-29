@@ -7,6 +7,7 @@ import {
   MoreHoriz as MoreHorizIcon,
   PersonAddAlt1 as PersonAddAlt1Icon,
   PersonRemove as PersonRemoveIcon,
+  PhotoCamera as PhotoCameraIcon,
   WorkHistory as WorkHistoryIcon,
 } from "@mui/icons-material";
 import {
@@ -37,6 +38,7 @@ import useSWR, { KeyedMutator } from "swr";
 import useSWRMutation from "swr/mutation";
 
 import { FormattedText } from "@/components/general/FormattedText";
+import { ShiftNotesPhotoDialog } from "@/app/shifts/[timeId]/volunteers/ShiftNotesPhotoDialog";
 import { ShiftVolunteersDialogAdd } from "@/app/shifts/[timeId]/volunteers/ShiftVolunteersDialogAdd";
 import { ShiftVolunteersDialogRemove } from "@/app/shifts/[timeId]/volunteers/ShiftVolunteersDialogRemove";
 import { ShiftVolunteersDialogReview } from "@/app/shifts/[timeId]/volunteers/ShiftVolunteersDialogReview";
@@ -144,6 +146,7 @@ export const ShiftVolunteers = ({
     },
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isNotesPhotoOpen, setIsNotesPhotoOpen] = useState(false);
 
   // fetching, mutation, and revalidation
   // ------------------------------------------------------------
@@ -774,6 +777,17 @@ export const ShiftVolunteers = ({
               >
                 {isAdmin ? "Add volunteer" : "Add this shift"}
               </Button>
+              {isAdmin && (
+                <Button
+                  onClick={() => setIsNotesPhotoOpen(true)}
+                  size="large"
+                  startIcon={<PhotoCameraIcon />}
+                  type="button"
+                  variant="outlined"
+                >
+                  Scan paper notes
+                </Button>
+              )}
               <ShareButton
                 title="Black Rock City Census shift"
                 text={
@@ -1061,6 +1075,22 @@ export const ShiftVolunteers = ({
             timeId: timeIdParam,
           }}
         />
+
+        {/* scan paper notes (admin) */}
+        {isAdmin && (
+          <ShiftNotesPhotoDialog
+            timeId={timeIdParam}
+            volunteerList={dataShiftVolunteersItem.volunteerList.map((v) => ({
+              shiftboardId: v.shiftboardId,
+              timePositionId: v.timePositionId,
+              playaName: v.playaName,
+              worldName: v.worldName,
+            }))}
+            open={isNotesPhotoOpen}
+            onClose={() => setIsNotesPhotoOpen(false)}
+            onSaved={() => mutateShiftVolunteersItem()}
+          />
+        )}
 
         {/* remove dialog */}
         <ShiftVolunteersDialogRemove
