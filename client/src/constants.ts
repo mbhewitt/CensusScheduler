@@ -14,6 +14,9 @@ export const CONTACT_RECIPIENTS: Record<string, string> = {
   "App Help/Feedback": "mu@burningman.org, chipper@burningman.org, rqreyes@gmail.com",
 };
 export const CONTACT_RECIPIENT_LABELS = Object.keys(CONTACT_RECIPIENTS).sort();
+// The contact category whose submissions also post to the #app-feedback Discord
+// webhook + get a "Tablet app feedback ID". Must match a CONTACT_RECIPIENTS key.
+export const CONTACT_APP_FEEDBACK_LABEL = "App Help/Feedback";
 
 // review dialog - radio options
 export const legendList = [
