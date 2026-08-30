@@ -35,6 +35,7 @@ import {
   pageListAdmin,
   pageListCoordinator,
   pageListDefault,
+  pageListLeadership,
   pageListSuperAdmin,
 } from "@/components/layout/pageList";
 import { IDLE_MINUTES } from "@/constants";
@@ -325,6 +326,27 @@ export const Header = () => {
                 </List>
               </>
             )}
+            {/* leadership nav — on-playa-only kiosk tools shared by Shift
+                Leads, Coordinators, and Admins (e.g. Reset Volly Passcode).
+                Gated on isOnPlaya so it never shows off-playa. */}
+            {(isPeersShiftLead || isPeersCoordinator || isAdmin) &&
+              isOnPlaya && (
+                <>
+                  <Divider />
+                  <List subheader={<ListSubheader>Leadership</ListSubheader>}>
+                    {pageListLeadership.map(({ icon, label, path }) => (
+                      <ListItem disablePadding key={path}>
+                        <Link href={path} onClick={handleDrawerClose}>
+                          <ListItemButton selected={pathname === path}>
+                            <ListItemIcon>{icon}</ListItemIcon>
+                            <ListItemText primary={label} />
+                          </ListItemButton>
+                        </Link>
+                      </ListItem>
+                    ))}
+                  </List>
+                </>
+              )}
             {/* admin nav */}
             {isAdmin && (
               <>

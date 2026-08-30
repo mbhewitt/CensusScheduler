@@ -6,6 +6,7 @@ import {
   Groups3 as Groups3Icon,
   Help as HelpIcon,
   Home as HomeIcon,
+  LockReset as LockResetIcon,
   QuestionAnswer as QuestionAnswerIcon,
   Settings as SettingsIcon,
   Tablet as TabletIcon,
@@ -66,6 +67,17 @@ export const pageListCoordinator = [
     icon: <BarChartIcon />,
     label: "Reports",
     path: "/reports",
+  },
+];
+// PEERS "Reset Volly Passcode": shown to any leader (Shift Lead / Coordinator /
+// Admin) but ON-PLAYA ONLY — it's a kiosk helper for resetting a forgetful
+// subordinate's passcode (papabear 2026-08-30). The target scoping + write are
+// enforced server-side (see /api/volunteers/manageable + the passcode route).
+export const pageListLeadership = [
+  {
+    icon: <LockResetIcon />,
+    label: "Reset Volly Passcode",
+    path: "/reset-passcode",
   },
 ];
 export const pageListSuperAdmin = [

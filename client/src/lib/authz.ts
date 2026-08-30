@@ -64,6 +64,18 @@ const RANK_COORDINATOR = 2;
 const RANK_SHIFT_LEAD = 1;
 const RANK_NONE = 0;
 
+// The leadership rank implied by a set of (non-removed) role ids. Shared by
+// getLeadershipRank (one volunteer) and listManageableVolunteers (whole roster
+// in one query) so both agree on the hierarchy.
+function rankFromRoleIds(roleIds: Set<number>): number {
+  if (roleIds.has(ROLE_ADMIN_ID) || roleIds.has(ROLE_SUPER_ADMIN_ID)) {
+    return RANK_ADMIN;
+  }
+  if (roleIds.has(ROLE_PEERS_COORDINATOR_ID)) return RANK_COORDINATOR;
+  if (roleIds.has(ROLE_PEERS_SHIFT_LEAD_ID)) return RANK_SHIFT_LEAD;
+  return RANK_NONE;
+}
+
 async function getLeadershipRank(shiftboardId: number): Promise<number> {
   const [rows] = await pool.query<RowDataPacket[]>(
     `SELECT role_id
@@ -72,13 +84,7 @@ async function getLeadershipRank(shiftboardId: number): Promise<number> {
        AND remove_role = false`,
     [shiftboardId]
   );
-  const roleIds = new Set(rows.map((row) => Number(row.role_id)));
-  if (roleIds.has(ROLE_ADMIN_ID) || roleIds.has(ROLE_SUPER_ADMIN_ID)) {
-    return RANK_ADMIN;
-  }
-  if (roleIds.has(ROLE_PEERS_COORDINATOR_ID)) return RANK_COORDINATOR;
-  if (roleIds.has(ROLE_PEERS_SHIFT_LEAD_ID)) return RANK_SHIFT_LEAD;
-  return RANK_NONE;
+  return rankFromRoleIds(new Set(rows.map((row) => Number(row.role_id))));
 }
 
 // True if the session may manage `requestedShiftboardId` under the leadership
@@ -97,4 +103,74 @@ export async function canManageVolunteer(
   if (requesterRank === RANK_NONE) return false;
   const targetRank = await getLeadershipRank(requestedShiftboardId);
   return requesterRank > targetRank;
+}
+
+export interface IManageableVolunteer {
+  playaName: string;
+  shiftboardId: number;
+  worldName: string;
+}
+
+// PEERS "Reset Volly Passcode": the roster a leader may act on, i.e. everyone
+// `canManageVolunteer` would say yes to (self excluded — you don't reset your
+// own passcode from this tool). Computed in ONE roster query rather than N
+// per-volunteer rank lookups. Returns [] for a non-leader (RANK_NONE) so the
+// server never hands a squaddie an enumerable roster. Ordered by playa name to
+// match the sign-in name picker. The passcode-reset endpoint still re-checks
+// canManageVolunteer per target — this only decides who is offered.
+export async function listManageableVolunteers(session: {
+  shiftboardId: number;
+}): Promise<IManageableVolunteer[]> {
+  const requesterRank = await getLeadershipRank(session.shiftboardId);
+  if (requesterRank === RANK_NONE) return [];
+
+  const [rows] = await pool.query<RowDataPacket[]>(
+    `SELECT
+       v.shiftboard_id,
+       v.playa_name,
+       v.world_name,
+       vr.role_id
+     FROM op_volunteers AS v
+     LEFT JOIN op_volunteer_roles AS vr
+       ON vr.shiftboard_id = v.shiftboard_id
+       AND vr.remove_role = false
+     ORDER BY v.playa_name COLLATE utf8mb4_general_ci`
+  );
+
+  // Collapse the role-per-row join into one entry per volunteer, preserving the
+  // playa-name ordering from the query (Map keeps insertion order).
+  const byId = new Map<
+    number,
+    { playaName: string; worldName: string; roleIds: Set<number> }
+  >();
+  for (const row of rows) {
+    const shiftboardId = Number(row.shiftboard_id);
+    let entry = byId.get(shiftboardId);
+    if (!entry) {
+      entry = {
+        playaName: row.playa_name,
+        worldName: row.world_name ?? "",
+        roleIds: new Set<number>(),
+      };
+      byId.set(shiftboardId, entry);
+    }
+    if (row.role_id) entry.roleIds.add(Number(row.role_id));
+  }
+
+  const manageable: IManageableVolunteer[] = [];
+  for (const [shiftboardId, entry] of byId) {
+    // Skip self, then mirror canManageVolunteer: admins manage anyone; others
+    // manage anyone STRICTLY below their rank.
+    if (shiftboardId !== session.shiftboardId) {
+      const targetRank = rankFromRoleIds(entry.roleIds);
+      if (requesterRank === RANK_ADMIN || requesterRank > targetRank) {
+        manageable.push({
+          playaName: entry.playaName,
+          shiftboardId,
+          worldName: entry.worldName,
+        });
+      }
+    }
+  }
+  return manageable;
 }
