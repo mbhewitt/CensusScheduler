@@ -105,19 +105,39 @@ export async function canManageVolunteer(
   return requesterRank > targetRank;
 }
 
+// PEERS "Reset Volly Passcode": the passcode-reset scope is WIDER than
+// canManageVolunteer — a leader may reset a SAME-RANK peer's passcode too
+// (lead↔lead, coordinator↔coordinator), not just people strictly below
+// (papabear 2026-08-30). Rule: your rank or below, never above. Self and admins
+// always allowed; squaddies (RANK_NONE) never. This deliberately does NOT widen
+// the read/info gate (that stays canManageVolunteer, strict-below) so a leader
+// still can't browse a peer's account details — only reset their code.
+export async function canResetPasscode(
+  session: { shiftboardId: number },
+  requestedShiftboardId: number
+): Promise<boolean> {
+  if (session.shiftboardId === requestedShiftboardId) return true;
+  const requesterRank = await getLeadershipRank(session.shiftboardId);
+  if (requesterRank === RANK_ADMIN) return true;
+  if (requesterRank === RANK_NONE) return false;
+  const targetRank = await getLeadershipRank(requestedShiftboardId);
+  return requesterRank >= targetRank;
+}
+
 export interface IManageableVolunteer {
   playaName: string;
   shiftboardId: number;
   worldName: string;
 }
 
-// PEERS "Reset Volly Passcode": the roster a leader may act on, i.e. everyone
-// `canManageVolunteer` would say yes to (self excluded — you don't reset your
-// own passcode from this tool). Computed in ONE roster query rather than N
-// per-volunteer rank lookups. Returns [] for a non-leader (RANK_NONE) so the
-// server never hands a squaddie an enumerable roster. Ordered by playa name to
-// match the sign-in name picker. The passcode-reset endpoint still re-checks
-// canManageVolunteer per target — this only decides who is offered.
+// PEERS "Reset Volly Passcode": the roster a leader may reset passcodes for,
+// i.e. everyone `canResetPasscode` would say yes to — their rank or below, self
+// excluded (you don't reset your own from this tool). Computed in ONE roster
+// query rather than N per-volunteer rank lookups. Returns [] for a non-leader
+// (RANK_NONE) so the server never hands a squaddie an enumerable roster.
+// Ordered by playa name to match the sign-in name picker. The passcode-reset
+// endpoint still re-checks canResetPasscode per target — this only decides who
+// is offered.
 export async function listManageableVolunteers(session: {
   shiftboardId: number;
 }): Promise<IManageableVolunteer[]> {
@@ -159,11 +179,11 @@ export async function listManageableVolunteers(session: {
 
   const manageable: IManageableVolunteer[] = [];
   for (const [shiftboardId, entry] of byId) {
-    // Skip self, then mirror canManageVolunteer: admins manage anyone; others
-    // manage anyone STRICTLY below their rank.
+    // Skip self, then mirror canResetPasscode: admins reset anyone; other
+    // leaders reset anyone at their rank or below (peers included).
     if (shiftboardId !== session.shiftboardId) {
       const targetRank = rankFromRoleIds(entry.roleIds);
-      if (requesterRank === RANK_ADMIN || requesterRank > targetRank) {
+      if (requesterRank === RANK_ADMIN || requesterRank >= targetRank) {
         manageable.push({
           playaName: entry.playaName,
           shiftboardId,

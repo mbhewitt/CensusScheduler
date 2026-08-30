@@ -4,7 +4,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import type { IReqPasscode } from "@/components/types/volunteers";
 import { pool } from "lib/database";
 import { withAuth } from "@/lib/withAuth";
-import { canManageVolunteer } from "@/lib/authz";
+import { canResetPasscode } from "@/lib/authz";
 
 const volunteers = async (
   req: NextApiRequest,
@@ -51,12 +51,14 @@ const volunteers = async (
     // ------------------------------------------------------------
     case "PATCH": {
       // PEERS #walkin: leadership-hierarchy gate. A volunteer may set their
-      // own passcode; admins may reset anyone's; and (new) a Coordinator or
-      // Shift Lead may reset the passcode of anyone STRICTLY below them
-      // (coordinator > shift lead > squaddie) so they can help a forgetful
-      // walk-in at the kiosk. Reset-only is inherent: this route only SETS a
-      // new code (the target types it), and reveal (GET above) is self-only.
-      if (!(await canManageVolunteer(session, Number(shiftboardId)))) {
+      // own passcode; admins may reset anyone's; and a Coordinator or Shift
+      // Lead may reset the passcode of anyone at their rank or below
+      // (peers included — papabear 2026-08-30: leads reset other leads) so
+      // they can help a forgetful volunteer at the kiosk. Reset-only is
+      // inherent: this route only SETS a new code (the target types it), and
+      // reveal (GET above) is self-only. Uses canResetPasscode, which is wider
+      // than the strict-below canManageVolunteer read gate on the info page.
+      if (!(await canResetPasscode(session, Number(shiftboardId)))) {
         return res.status(403).json({ statusCode: 403, message: "Forbidden" });
       }
 
