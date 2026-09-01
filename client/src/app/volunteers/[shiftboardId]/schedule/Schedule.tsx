@@ -27,7 +27,7 @@ import {
 import { useTheme } from "@mui/material/styles";
 import dayjs from "dayjs";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import useSWR from "swr";
 
 import { VolunteerShiftsDialogRemove } from "@/app/volunteers/[shiftboardId]/account/VolunteerShiftsDialogRemove";
@@ -223,6 +223,42 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
     setAvailability([]);
     setMyShiftsOnly(false);
   };
+
+  // Persist the filter across navigation so the back button doesn't wipe it
+  // (reported via Contact form #33, Inani). Session-scoped: survives Shifts ->
+  // detail -> back, cleared when the tab closes. Restore once on mount, then
+  // write on every change (skipping the initial mount pass so we don't clobber
+  // the restored values with defaults).
+  const FILTER_KEY = "shiftsAgendaFilter";
+  const persistReady = useRef(false);
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(sessionStorage.getItem(FILTER_KEY) ?? "null");
+      if (saved && typeof saved === "object") {
+        if (Array.isArray(saved.timeline)) setTimeline(saved.timeline);
+        if (Array.isArray(saved.types)) setTypes(saved.types);
+        if (Array.isArray(saved.dates)) setDates(saved.dates);
+        if (Array.isArray(saved.availability)) setAvailability(saved.availability);
+        if (typeof saved.myShiftsOnly === "boolean") setMyShiftsOnly(saved.myShiftsOnly);
+      }
+    } catch {
+      /* ignore malformed / storage disabled */
+    }
+  }, []);
+  useEffect(() => {
+    if (!persistReady.current) {
+      persistReady.current = true;
+      return;
+    }
+    try {
+      sessionStorage.setItem(
+        FILTER_KEY,
+        JSON.stringify({ timeline, types, dates, availability, myShiftsOnly })
+      );
+    } catch {
+      /* ignore storage disabled */
+    }
+  }, [timeline, types, dates, availability, myShiftsOnly]);
 
   // Sentinel value for the "Select all" menu item. It's routed through the
   // Select's onChange (below) rather than a plain onClick — an onClick fights
