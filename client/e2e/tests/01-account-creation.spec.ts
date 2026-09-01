@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { closePool, cleanupAllTestData } from "../helpers/db";
+import { provisionTabletDevice } from "../helpers/device";
 
 test.describe("Account Creation", () => {
   test.afterAll(async () => {
@@ -104,7 +105,11 @@ test.describe("Account Creation", () => {
 
   test("should navigate to create account from sign-in page", async ({
     page,
+    context,
   }) => {
+    // The "Create account" button lives in the passcode block, which only
+    // renders on a provisioned tablet.
+    await provisionTabletDevice(context);
     await page.goto("/sign-in");
 
     await page.getByRole("button", { name: "Create account" }).click();

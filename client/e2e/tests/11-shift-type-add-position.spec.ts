@@ -1,5 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 
+import { provisionTabletDevice } from "../helpers/device";
+
 // #533 regression: adding a position in the shift-type editor must reach the
 // save. Drives the real editor, adds a position, and asserts the added position
 // is in the PATCH payload. (Set REAL_SAVE=1 to let the save hit the DB instead
@@ -12,6 +14,7 @@ const TYPE_ID = 3; // "Gate Sampling" — has a category set + 10 times/position
 // NOTE: post-login lands on /volunteers/{id}/info (default since 2026-05-25);
 // the shared fixture still waits for /account and is stale.
 async function signIn(page: Page) {
+  await provisionTabletDevice(page.context());
   await page.goto("/sign-in");
   const volunteerInput = page.getByRole("combobox", { name: "Volunteer" });
   await volunteerInput.click();
