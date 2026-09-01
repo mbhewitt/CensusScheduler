@@ -6,19 +6,24 @@ import { CONTACT_APP_FEEDBACK_LABEL, CONTACT_RECIPIENTS } from "@/constants";
 import { enqueueEmail } from "lib/mail";
 import { pool } from "lib/database";
 
-// #app-feedback: App Help/Feedback submissions also post to a Discord channel
-// webhook (URL is a secret — env only, never committed) so the app-feedback
-// group sees them live. Redacted: header + a "Tablet app feedback ID"
-// (= op_messages.id) + the message only — never the sender's name/contact.
-const APP_FEEDBACK_WEBHOOK = process.env.APP_FEEDBACK_DISCORD_WEBHOOK;
+// App Help/Feedback submissions post to Discord channel webhook(s) (URLs are
+// secrets — env only, never committed): #app-feedback so the app-feedback group
+// sees them live, and CENSUS_FEEDBACK_PING_WEBHOOK — a triage channel so the dev
+// bot is prompted to triage each one (per Chipper 2026-09-01). Redacted: header
+// + a "Tablet app feedback ID" (= op_messages.id) + the message only — never the
+// sender's name/contact.
+const FEEDBACK_WEBHOOKS = [
+  process.env.APP_FEEDBACK_DISCORD_WEBHOOK,
+  process.env.CENSUS_FEEDBACK_PING_WEBHOOK,
+].filter((w): w is string => Boolean(w));
 
 const postAppFeedbackToDiscord = async (
   feedbackId: number,
   message: string
 ): Promise<void> => {
-  if (!APP_FEEDBACK_WEBHOOK) {
+  if (FEEDBACK_WEBHOOKS.length === 0) {
     console.warn(
-      `[contact] APP_FEEDBACK_DISCORD_WEBHOOK unset; skipping Discord post for feedback #${feedbackId}`
+      `[contact] no feedback webhook configured; skipping Discord post for feedback #${feedbackId}`
     );
     return;
   }
@@ -35,23 +40,28 @@ const postAppFeedbackToDiscord = async (
   // Discord hard-caps content at 2000 chars — truncate the message if needed.
   const room = 2000 - header.length - 3;
   const body = message.length > room ? `${message.slice(0, room)}...` : message;
-  try {
-    const res = await fetch(APP_FEEDBACK_WEBHOOK, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ content: header + body }),
-    });
-    if (!res.ok) {
-      console.error(
-        `[contact] Discord webhook ${res.status} for feedback #${feedbackId}`
-      );
-    }
-  } catch (err) {
-    console.error(
-      `[contact] Discord webhook post failed for feedback #${feedbackId}:`,
-      err
-    );
-  }
+  const content = header + body;
+  await Promise.all(
+    FEEDBACK_WEBHOOKS.map(async (url) => {
+      try {
+        const res = await fetch(url, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ content }),
+        });
+        if (!res.ok) {
+          console.error(
+            `[contact] Discord webhook ${res.status} for feedback #${feedbackId}`
+          );
+        }
+      } catch (err) {
+        console.error(
+          `[contact] Discord webhook post failed for feedback #${feedbackId}:`,
+          err
+        );
+      }
+    })
+  );
 };
 
 // #312: the form was a black hole — `op_messages` row written, no email
