@@ -4,6 +4,7 @@ import {
   closePool,
   cleanupAllTestData,
 } from "../helpers/db";
+import { provisionTabletDevice } from "../helpers/device";
 import { IDS, makeTestVolunteer } from "../fixtures/test-data";
 
 const volunteer = makeTestVolunteer({
@@ -23,6 +24,11 @@ test.describe("Sign In", () => {
   test.afterAll(async () => {
     await cleanupAllTestData();
     await closePool();
+  });
+
+  // The passcode/volunteer form only renders on a provisioned tablet.
+  test.beforeEach(async ({ context }) => {
+    await provisionTabletDevice(context);
   });
 
   test("should sign in with valid credentials", async ({ page }) => {

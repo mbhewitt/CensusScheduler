@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import type { Page } from "@playwright/test";
 import type { TestVolunteer, TestShiftSetup } from "../helpers/db";
+import { provisionTabletDevice } from "../helpers/device";
 
 // ── Role IDs (must match app constants) ─────────────────────
 export const ROLE_SUPER_ADMIN_ID = 1;
@@ -174,6 +175,9 @@ export async function signInAs(
   page: Page,
   volunteer: TestVolunteer
 ): Promise<void> {
+  // The passcode form only renders on a provisioned tablet — plant the
+  // trusted-device cookie before the page loads so the form is present.
+  await provisionTabletDevice(page.context());
   await page.goto("/sign-in");
 
   await fillVolunteerAutocomplete(page, volunteer.playaName);
@@ -192,6 +196,7 @@ export async function signInAs(
  * Sign in as admin (uses the built-in Admin account from schema seed).
  */
 export async function signInAsBuiltinAdmin(page: Page): Promise<void> {
+  await provisionTabletDevice(page.context());
   await page.goto("/sign-in");
 
   await fillVolunteerAutocomplete(page, "Admin");

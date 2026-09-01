@@ -42,11 +42,13 @@ const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
       const [volunteerFirst] = dbVolunteerList;
 
       // if credentials do not exist
-      // then send error message
+      // then send error message. fetcherTrigger throws on non-2xx and SignIn's
+      // catch surfaces this message verbatim as the error toast, so make it the
+      // friendly, user-facing text (not a generic "Not found").
       if (!volunteerFirst) {
         return res.status(404).json({
           statusCode: 404,
-          message: "Not found",
+          message: "Name / passcode combination is incorrect",
         });
       }
 
