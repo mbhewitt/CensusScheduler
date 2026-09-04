@@ -255,7 +255,7 @@ export const Footer = () => {
               color: theme.palette.common.white,
             }}
           >
-            2026.E.00728.C
+            2026.F.00721.C
           </Typography>
         </Stack>
       </Container>
