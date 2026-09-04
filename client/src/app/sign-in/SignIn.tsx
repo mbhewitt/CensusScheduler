@@ -38,6 +38,7 @@ import { ensure } from "@/utils/ensure";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 import { isPwaStandalone } from "@/utils/isPwa";
 import { resetFilterList } from "@/utils/resetFilterList";
+import { safeReturnTo } from "@/utils/safeReturnTo";
 
 interface IFormValues {
   volunteer: null | IVolunteerOption;
@@ -174,15 +175,12 @@ export const SignIn = () => {
           }
         );
 
-        // Land them somewhere useful: a returnTo if present (e.g. they
-        // came from a training-confirmation link), otherwise their
-        // account page. Matches the Okta callback default in
-        // pages/api/auth/okta/callback.ts. Per Mew 2026-05-25.
-        const returnTo =
-          returnToParam && returnToParam.startsWith("/")
-            ? returnToParam
-            : `/volunteers/${dataVolunteerItem.shiftboardId}/info`;
-        router.push(returnTo);
+        // Land them somewhere useful: a returnTo if present (e.g. they came
+        // from a training-confirmation link), otherwise their own account.
+        // safeReturnTo rejects a returnTo pointing at ANOTHER volunteer's
+        // page — on a shared tablet the pre-login page is often the previous
+        // user's account (Miah landed on Lizard King's, 2026-09-03).
+        router.push(safeReturnTo(returnToParam, dataVolunteerItem.shiftboardId));
       }
     } catch (error) {
       if (error instanceof Error) {
