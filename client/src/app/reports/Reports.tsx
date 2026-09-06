@@ -24,6 +24,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { Hero } from "@/components/layout/Hero";
+import { useIsOnPlaya } from "@/hooks/useIsOnPlaya";
 
 export const reportList = [
   {
@@ -50,8 +51,10 @@ export const reportList = [
 export const Reports = () => {
   // The report files below are bundled locally (/reports/...), so they work
   // offline on playa. The external blackrockcitycensus.org pointer is dead
-  // offline, so hide it there (#629, Chipper).
-  const isOnPlaya = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
+  // offline, so show it ONLY when definitively off-playa. Uses useIsOnPlaya (not
+  // the build flag) so provisioned prod tablets don't show the dead link
+  // (Chipper 2026-09-05, #629).
+  const onPlaya = useIsOnPlaya();
 
   // Reports open IN-APP in a full-screen dialog (iframe), not a new tab. The
   // provisioned tablets block pop-ups / new tabs, so target="_blank" links did
@@ -75,7 +78,7 @@ export const Reports = () => {
       <Container component="main" sx={{ flex: 1 }}>
         <Card>
           <CardContent>
-            {!isOnPlaya && (
+            {onPlaya === false && (
               <Typography sx={{ mb: 2 }}>
                 For the complete Black Rock City Census reports, visit{" "}
                 <Link
