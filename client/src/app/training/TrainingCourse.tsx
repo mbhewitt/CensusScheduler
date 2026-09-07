@@ -350,6 +350,23 @@ export const TrainingCourse = ({
             </AccordionDetails>
           </Accordion>
         ))}
+
+        {/* Quizzes hung off the course overview rather than a section — both
+            DataBeast quizzes are authored that way in Hive. Without this they
+            sit in the JSON and never reach the page. */}
+        {course.ungroupedQuizzes?.map((quiz) => (
+          <Accordion key={quiz.id} disableGutters>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Typography sx={{ fontWeight: 700 }}>{quiz.title}</Typography>
+                <Chip size="small" label={`${quiz.questions.length} questions`} />
+              </Stack>
+            </AccordionSummary>
+            <AccordionDetails>
+              <QuizView quiz={quiz} />
+            </AccordionDetails>
+          </Accordion>
+        ))}
       </Box>
 
       {confirmationCode && (
