@@ -66,6 +66,7 @@ import {
   UPDATE_TYPE_CHECK_IN,
 } from "@/constants";
 import { useIsOnPlaya } from "@/hooks/useIsOnPlaya";
+import { useNow } from "@/hooks/useNow";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
 import { checkIsAdmin, checkIsAuthenticated } from "@/utils/checkIsRoleExist";
@@ -108,11 +109,12 @@ export const ShiftVolunteers = ({
   // context
   // ------------------------------------------------------------
   const {
-    developerModeState: {
-      accountType,
-      dateTime: { value: dateTimeValue },
-    },
+    developerModeState: { accountType },
   } = useContext(DeveloperModeContext);
+  // Live, ticking "now" (respects the dev-mode clock override). Reading the
+  // frozen developer-mode dateTime directly left the check-in window stuck at
+  // page-load time, so boxes never appeared until a reload (Chipper 2026-09-08).
+  const now = useNow();
   const {
     sessionState: {
       settings: { isAuthenticated: isAuthenticatedSession },
@@ -351,7 +353,7 @@ export const ShiftVolunteers = ({
 
   // evaluate the check-in type and available features
   const checkInType = getCheckInType({
-    dateTime: dayjs(dateTimeValue),
+    dateTime: now,
     endTime: dayjs(dataShiftVolunteersItem.shift.endTime),
     startTime: dayjs(dataShiftVolunteersItem.shift.startTime),
   });
@@ -417,7 +419,7 @@ export const ShiftVolunteers = ({
     !isShiftCanceled &&
     isCheckInWindowOpen(
       dayjs(dataShiftVolunteersItem.shift.startTime),
-      dayjs(dateTimeValue)
+      now
     )
   ) {
     isCheckInAvailable = true;
