@@ -567,36 +567,38 @@ export const ShiftVolunteers = ({
         ),
       ];
       if (isAdmin) {
-        // review cell appears once check-in is open
+        // Reviews are available to admins/leads AT ANY TIME — especially AFTER
+        // the shift, which is exactly when the lead nudge email asks for them.
+        // NOT tied to isCheckInAvailable / the check-in clock: a stale or frozen
+        // clock (#739) must never hide the review control, and reviewing has no
+        // walk-up window the way check-in does. See #749.
         row.push(
-          isCheckInAvailable && (
-            <IconButton
-              onClick={() => {
-                setDialogCurrent({
-                  dialogItem: DialogList.Review,
-                  shift: {
-                    critical,
-                    positionName,
-                    timePositionId,
-                  },
-                  volunteer: {
-                    notes,
-                    playaName,
-                    rating,
-                    shiftboardId,
-                    worldName,
-                  },
-                });
-                setIsDialogOpen(true);
-              }}
-            >
-              {rating ? (
-                <ChatIcon color="primary" />
-              ) : (
-                <ChatIcon color="disabled" />
-              )}
-            </IconButton>
-          )
+          <IconButton
+            onClick={() => {
+              setDialogCurrent({
+                dialogItem: DialogList.Review,
+                shift: {
+                  critical,
+                  positionName,
+                  timePositionId,
+                },
+                volunteer: {
+                  notes,
+                  playaName,
+                  rating,
+                  shiftboardId,
+                  worldName,
+                },
+              });
+              setIsDialogOpen(true);
+            }}
+          >
+            {rating ? (
+              <ChatIcon color="primary" />
+            ) : (
+              <ChatIcon color="disabled" />
+            )}
+          </IconButton>
         );
       }
       if (hasActionsColumn) {
@@ -956,7 +958,10 @@ export const ShiftVolunteers = ({
                             }
                           />
                         )}
-                        {isAdmin && isCheckInAvailable && (
+                        {/* Reviews available any time (see #749) — not gated on
+                            the check-in clock, so tablets can review after a
+                            shift / when the clock is stale. */}
+                        {isAdmin && (
                           <IconButton
                             onClick={() => {
                               setDialogCurrent({
