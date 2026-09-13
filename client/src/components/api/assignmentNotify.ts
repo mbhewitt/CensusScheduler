@@ -207,7 +207,7 @@ function renderShiftBody(
     );
   }
   if (notBlank(ctx.shift_details)) {
-    lines.push("", "About this shift type:", `  ${ctx.shift_details.trim()}`);
+    lines.push("", "About this shift:", `  ${ctx.shift_details.trim()}`);
   }
   if (notBlank(ctx.position_details)) {
     lines.push("", "About this position:", `  ${ctx.position_details.trim()}`);
