@@ -248,7 +248,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
     return (
       <>
         <Typography component="h2" sx={{ mb: 1 }} variant="h4">
-          Shifts
+          My Shifts
         </Typography>
         <ErrorAlert />
       </>
@@ -257,7 +257,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
     return (
       <>
         <Typography component="h2" sx={{ mb: 1 }} variant="h4">
-          Shifts
+          My Shifts
         </Typography>
         <Loading />
       </>
@@ -587,7 +587,7 @@ export const VolunteerShifts = ({ shiftboardId }: IVolunteerShiftsProps) => {
         sx={{ mb: 2 }}
       >
         <Typography component="h2" variant="h4">
-          Shifts
+          My Shifts
         </Typography>
         <Button
           onClick={() => {
