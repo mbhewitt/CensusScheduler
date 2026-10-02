@@ -21,7 +21,7 @@ export const CONTACT_APP_FEEDBACK_LABEL = "App Help/Feedback";
 // review dialog - radio options
 export const legendList = [
   "Consider for leadership",
-  "Exceeds expections",
+  "Exceeds expectations",
   "Meets expectations",
   "Needs coaching",
   "Not a good fit",
