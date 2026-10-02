@@ -120,8 +120,16 @@ export interface NudgeRunResult {
   dryRun: boolean;
 }
 
-// Finalize a shift (every still-pending 'X'/NULL volunteer, leads included, ->
-// 'Yes' no-show) and mark it nudged so it never repeats. Returns rows finalized.
+// Finalize a shift (every still-pending 'X'/NULL volunteer in a csp>0 position,
+// leads included, -> 'Yes' no-show) and mark it nudged so it never repeats.
+// Returns rows finalized.
+//
+// The sap_points>0 scope MUST match evaluateShift's: a 0-point signup no longer
+// appears in the lead's email, so auto-marking them absent would record a false
+// no-show nobody was ever asked to check in. Hours for ticket tiers are computed
+// downstream from the check-in, not from sap_points (Chipper 2026-10-02), so a
+// bogus 'Yes' costs a real volunteer real credit. Pending stays 'X' = "nobody
+// recorded it", which is the honest state and still fixable by hand.
 async function finalizeAndMark(pool: Pool, shiftId: number): Promise<number> {
   const [res] = await pool.query(
     `UPDATE op_volunteer_shifts vs
@@ -130,6 +138,7 @@ async function finalizeAndMark(pool: Pool, shiftId: number): Promise<number> {
         AND stp.remove_time_position = false
         SET vs.noshow = 'Yes', vs.update_shift = true
       WHERE stp.shift_times_id = ?
+        AND stp.sap_points > 0
         AND vs.remove_shift = false
         AND (vs.noshow IS NULL OR vs.noshow = 'X')`,
     [shiftId]
