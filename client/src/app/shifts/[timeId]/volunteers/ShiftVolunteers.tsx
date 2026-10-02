@@ -404,9 +404,17 @@ export const ShiftVolunteers = ({
   // row-level remove buttons) are intentionally still available so
   // already-assigned volunteers can drop themselves, which fires
   // the cancellation .ics if they hadn't already gotten one.
+  //
+  // Check-in is NOT blocked here (Mew 2026-10-02: a canceled shift earns CSP
+  // for ticket purposes only if the volunteer is marked as having shown up).
+  // A shift can be canceled after people have already travelled to it, and the
+  // lead still needs to record who turned up before sending them home —
+  // otherwise that credit can never be awarded. The server already permits it:
+  // the PATCH check-in path never consults st.canceled, only the POST add path
+  // does (api/shifts/[timeId]/volunteers/index.ts: "Block adds on canceled
+  // shifts"). Walk-up NO-login check-in stays blocked below.
   if (isShiftCanceled) {
     isVolunteerAddAvailable = false;
-    isCheckInAvailable = false;
   }
   // Walk-up, NO-login check-in on a provisioned tablet: allowed only inside the
   // ±30-min-of-start window (the server enforces the same window). Authed users
@@ -705,7 +713,7 @@ export const ShiftVolunteers = ({
             >
               CANCELED — this shift has been canceled. New assignments are
               disabled. Volunteers already on the shift can still remove
-              themselves.
+              themselves, and leads can still check in anyone who turned up.
             </Alert>
           )}
           <Box>
