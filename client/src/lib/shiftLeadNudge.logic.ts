@@ -19,6 +19,7 @@ export interface NonLead {
   worldName: string;
   checkedIn: boolean;
   reviewed: boolean;
+  csp: number; // sap_points of the position they signed up for
 }
 
 export interface ShiftAgg {
@@ -41,10 +42,20 @@ export interface ShiftEval {
 }
 
 // checked in = noshow '' only; not checked in = anything else.
+//
+// Only non-leads in a csp>0 position count (Mew 2026-10-01: "this email should
+// only apply to csp>0"). A 0-point position earns nothing, so chasing its
+// check-in/review is pure noise: off-playa meetings and trainings, and the big
+// public positions on real shifts (Art Tour 28 slots, Welcome Party 50, DataBash
+// 50) which otherwise pad "N unreviewed" and drag the check-in % down.
+// Deliberately filtered HERE and not in the runner's SQL: lead positions can
+// themselves be csp=0 (Gate Sampling Lead), so filtering rows in the query would
+// drop the lead and silently redirect the nudge to the coordinator list.
 export function evaluateShift(agg: ShiftAgg): ShiftEval {
-  const total = agg.nonLeads.length;
-  const unreviewed = agg.nonLeads.filter((v) => v.checkedIn && !v.reviewed);
-  const notCheckedInCount = agg.nonLeads.filter((v) => !v.checkedIn).length;
+  const scored = agg.nonLeads.filter((v) => v.csp > 0);
+  const total = scored.length;
+  const unreviewed = scored.filter((v) => v.checkedIn && !v.reviewed);
+  const notCheckedInCount = scored.filter((v) => !v.checkedIn).length;
   const condA = unreviewed.length > 0;
   const notRate = total > 0 ? notCheckedInCount / total : 0;
   const condB = total > 0 && notRate > NOT_CHECKED_IN_RATE;

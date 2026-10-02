@@ -11,8 +11,8 @@ import {
 function shift(nonLeads: ShiftAgg["nonLeads"], leadEmails: string[] = []): ShiftAgg {
   return { id: 1, name: "Setup", date: "2026-08-27", time: "09:00-13:00", leadEmails, nonLeads };
 }
-const v = (checkedIn: boolean, reviewed: boolean) => ({
-  playaName: "P", worldName: "W", checkedIn, reviewed,
+const v = (checkedIn: boolean, reviewed: boolean, csp = 4) => ({
+  playaName: "P", worldName: "W", checkedIn, reviewed, csp,
 });
 
 test("A fires: checked in but not reviewed", () => {
@@ -83,4 +83,30 @@ test("consolidated catch-up email lists every shift for the recipient", () => {
   assert.match(email.bodyText, /\/shifts\/1\/volunteers/);
   assert.match(email.bodyText, /\/shifts\/2\/volunteers/);
   assert.match(email.bodyText, /you led/);
+});
+
+// csp>0 gating (Mew 2026-10-01): a 0-point position earns nothing, so it must not
+// drive the nudge. Lead positions can themselves be csp=0, which is why the filter
+// lives here on non-leads and not in the runner's SQL.
+test("csp=0 non-leads are ignored entirely (off-playa meeting, party guests)", () => {
+  const ev = evaluateShift(shift([v(true, false, 0), v(false, false, 0)]));
+  assert.equal(ev.total, 0);
+  assert.equal(ev.condA, false);
+  assert.equal(ev.condB, false);
+  assert.equal(ev.shouldNudge, false);
+});
+
+test("csp=0 non-leads don't pad unreviewed or drag the check-in %", () => {
+  // 1 scored volunteer, checked in + reviewed; 9 unreviewed 0-point party guests.
+  const nl = [v(true, true), ...Array.from({ length: 9 }, () => v(false, false, 0))];
+  const ev = evaluateShift(shift(nl));
+  assert.equal(ev.total, 1);
+  assert.equal(ev.pctCheckedIn, 100);
+  assert.equal(ev.shouldNudge, false);
+});
+
+test("a csp>0 volunteer still fires alongside csp=0 ones", () => {
+  const ev = evaluateShift(shift([v(true, false), v(true, false, 0)]));
+  assert.equal(ev.condA, true);
+  assert.equal(ev.unreviewed.length, 1);
 });

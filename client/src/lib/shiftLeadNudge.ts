@@ -35,6 +35,7 @@ interface VolRow extends RowDataPacket {
   email: string | null;
   noshow: string | null;
   rating: number | null;
+  sap_points: number | null;
 }
 
 // Fetch every not-yet-nudged shift that ended >1h ago (playa time), optionally
@@ -54,7 +55,7 @@ async function loadCandidateShifts(
     `SELECT st.shift_times_id AS id, sn.shift_name, d.date,
             st.start_time_text AS stt, st.end_time_text AS ett,
             pt.\`lead\` AS is_lead, v.playa_name, v.world_name, v.email,
-            vs.noshow, vs.rating
+            vs.noshow, vs.rating, stp.sap_points
        FROM op_shift_times st
        JOIN op_shift_name sn
          ON sn.shift_name_id = st.shift_name_id AND sn.delete_shift = false
@@ -99,6 +100,7 @@ async function loadCandidateShifts(
         worldName: r.world_name ?? "",
         checkedIn: r.noshow === "",
         reviewed: r.rating != null && r.rating > 0,
+        csp: Number(r.sap_points ?? 0),
       });
     }
   }
