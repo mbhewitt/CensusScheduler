@@ -35,6 +35,7 @@ interface VolRow extends RowDataPacket {
   email: string | null;
   noshow: string | null;
   rating: number | null;
+  sap_points: number | null;
 }
 
 // Fetch every not-yet-nudged shift that ended >1h ago (playa time), optionally
@@ -54,7 +55,7 @@ async function loadCandidateShifts(
     `SELECT st.shift_times_id AS id, sn.shift_name, d.date,
             st.start_time_text AS stt, st.end_time_text AS ett,
             pt.\`lead\` AS is_lead, v.playa_name, v.world_name, v.email,
-            vs.noshow, vs.rating
+            vs.noshow, vs.rating, stp.sap_points
        FROM op_shift_times st
        JOIN op_shift_name sn
          ON sn.shift_name_id = st.shift_name_id AND sn.delete_shift = false
@@ -99,6 +100,7 @@ async function loadCandidateShifts(
         worldName: r.world_name ?? "",
         checkedIn: r.noshow === "",
         reviewed: r.rating != null && r.rating > 0,
+        csp: Number(r.sap_points ?? 0),
       });
     }
   }
@@ -113,30 +115,76 @@ export interface NudgeRunResult {
     name: string;
     to: string[];
     reasons: string[];
-    finalized: number;
+    finalized: number; // rows auto-marked no-show
+    promoted: number; // rows a review proved present, set to checked-in
   }>;
   dryRun: boolean;
 }
 
-// Finalize a shift (every still-pending 'X'/NULL volunteer, leads included, ->
-// 'Yes' no-show) and mark it nudged so it never repeats. Returns rows finalized.
-async function finalizeAndMark(pool: Pool, shiftId: number): Promise<number> {
-  const [res] = await pool.query(
+// Reconcile a shift's still-pending 'X'/NULL rows and mark it nudged so it never
+// repeats. Two passes, in this order:
+//
+//   1. PROMOTE  — a row carrying a rating or notes becomes '' (checked in). You
+//      cannot review someone who did not show up (Mew 2026-10-02), so a review
+//      IS evidence of attendance, and the reconcile should record what the
+//      lead's own review already proves rather than absenting them.
+//      Deliberately NOT sap_points-scoped: evidence of presence is evidence
+//      regardless of how many points the position carries.
+//   2. ABSENT   — everything still pending with NO such evidence -> 'Yes'.
+//
+// The sap_points>0 scope on pass 2 MUST match evaluateShift's: a 0-point signup
+// no longer appears in the lead's email, so auto-marking them absent would
+// record a false no-show nobody was ever asked to check in. Hours for ticket
+// tiers are computed downstream from the check-in, not from sap_points (Chipper
+// 2026-10-02), so a bogus 'Yes' costs a real volunteer real credit. Pending
+// stays 'X' = "nobody recorded it", the honest state, still fixable by hand.
+//
+// Auto-absenting is intentional overall — without it "never checked in" and
+// "fine" are indistinguishable (Mew 2026-10-02) — so pass 2 stays. Pass 1 only
+// stops it overruling a human who did record something. Four such rows had to be
+// repaired by hand on 2026-10-02; see #764.
+async function finalizeAndMark(
+  pool: Pool,
+  shiftId: number
+): Promise<{ absented: number; promoted: number }> {
+  const hasEvidence = `((vs.rating IS NOT NULL AND vs.rating > 0)
+          OR (vs.notes IS NOT NULL AND vs.notes <> ''))`;
+
+  const [promotedRes] = await pool.query(
+    `UPDATE op_volunteer_shifts vs
+       JOIN op_shift_time_position stp
+         ON stp.time_position_id = vs.time_position_id
+        AND stp.remove_time_position = false
+        SET vs.noshow = '', vs.update_shift = true
+      WHERE stp.shift_times_id = ?
+        AND vs.remove_shift = false
+        AND (vs.noshow IS NULL OR vs.noshow = 'X')
+        AND ${hasEvidence}`,
+    [shiftId]
+  );
+
+  const [absentedRes] = await pool.query(
     `UPDATE op_volunteer_shifts vs
        JOIN op_shift_time_position stp
          ON stp.time_position_id = vs.time_position_id
         AND stp.remove_time_position = false
         SET vs.noshow = 'Yes', vs.update_shift = true
       WHERE stp.shift_times_id = ?
+        AND stp.sap_points > 0
         AND vs.remove_shift = false
-        AND (vs.noshow IS NULL OR vs.noshow = 'X')`,
+        AND (vs.noshow IS NULL OR vs.noshow = 'X')
+        AND NOT ${hasEvidence}`,
     [shiftId]
   );
+
   await pool.query(
     `INSERT IGNORE INTO op_shift_lead_nudge (shift_times_id) VALUES (?)`,
     [shiftId]
   );
-  return (res as { affectedRows?: number }).affectedRows ?? 0;
+  return {
+    absented: (absentedRes as { affectedRows?: number }).affectedRows ?? 0,
+    promoted: (promotedRes as { affectedRows?: number }).affectedRows ?? 0,
+  };
 }
 
 function reasonsOf(ev: ReturnType<typeof evaluateShift>): string[] {
@@ -164,6 +212,7 @@ export async function runShiftLeadNudge(
     const cc = agg.leadEmails.length ? [COORDINATOR_EMAIL] : undefined;
 
     let finalized = 0;
+    let promoted = 0;
     if (!dryRun) {
       const { subject, bodyText, bodyHtml } = buildNudgeEmail(agg, ev);
       try {
@@ -171,9 +220,16 @@ export async function runShiftLeadNudge(
       } catch (err) {
         console.error(`[shift-lead-nudge] enqueue failed for #${agg.id}:`, err);
       }
-      finalized = await finalizeAndMark(pool, agg.id);
+      ({ absented: finalized, promoted } = await finalizeAndMark(pool, agg.id));
     }
-    nudged.push({ id: agg.id, name: agg.name, to, reasons: reasonsOf(ev), finalized });
+    nudged.push({
+      id: agg.id,
+      name: agg.name,
+      to,
+      reasons: reasonsOf(ev),
+      finalized,
+      promoted,
+    });
   }
   return { scanned: shifts.length, nudged, dryRun };
 }
@@ -183,6 +239,7 @@ export interface CatchupRunResult {
   emails: Array<{ to: string; shiftCount: number; shiftIds: number[] }>;
   shiftsNudged: number;
   finalized: number;
+  promoted: number;
   dryRun: boolean;
 }
 
@@ -233,8 +290,13 @@ export async function runShiftLeadNudgeCatchup(
   }
 
   let finalized = 0;
+  let promoted = 0;
   if (!dryRun) {
-    for (const agg of qualifying) finalized += await finalizeAndMark(pool, agg.id);
+    for (const agg of qualifying) {
+      const r = await finalizeAndMark(pool, agg.id);
+      finalized += r.absented;
+      promoted += r.promoted;
+    }
   }
 
   return {
@@ -242,6 +304,7 @@ export async function runShiftLeadNudgeCatchup(
     emails,
     shiftsNudged: qualifying.length,
     finalized,
+    promoted,
     dryRun,
   };
 }
