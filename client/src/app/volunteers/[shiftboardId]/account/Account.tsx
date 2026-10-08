@@ -14,8 +14,10 @@ import {
   Card,
   CardActions,
   CardContent,
+  Checkbox,
   CircularProgress,
   Container,
+  FormControlLabel,
   Grid,
   List,
   ListItem,
@@ -55,6 +57,7 @@ interface IAccountProps {
 }
 interface IFormValues {
   email: string;
+  emailBounced: boolean;
   location: string;
   notes: string;
   playaName: string;
@@ -63,6 +66,7 @@ interface IFormValues {
 
 const defaultValues: IFormValues = {
   email: "",
+  emailBounced: false,
   location: "",
   notes: "",
   playaName: "",
@@ -109,10 +113,12 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
   // ------------------------------------------------------------
   useEffect(() => {
     if (data) {
-      const { email, location, notes, playaName, worldName } = data;
+      const { email, emailBouncedAt, location, notes, playaName, worldName } =
+        data;
 
       reset({
         email,
+        emailBounced: Boolean(emailBouncedAt),
         location,
         notes,
         playaName,
@@ -291,6 +297,18 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
                         />
                       )}
                     />
+                    {isAdmin && (
+                      <Controller
+                        control={control}
+                        name="emailBounced"
+                        render={({ field: { value, ...field } }) => (
+                          <FormControlLabel
+                            control={<Checkbox {...field} checked={value} />}
+                            label="Email bounced (stop sending)"
+                          />
+                        )}
+                      />
+                    )}
                   </Grid>
                   <Grid size={6}>
                     <Controller

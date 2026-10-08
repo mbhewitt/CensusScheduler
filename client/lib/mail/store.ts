@@ -2,6 +2,7 @@ import type { Pool } from "mysql2/promise";
 
 import {
   claimNextDue,
+  isBounced,
   markDead,
   markSent,
   markTransientFailure,
@@ -19,6 +20,7 @@ export function createMysqlStore(pool: Pool): QueueStore {
     markTransientFailure: (id, attempts, reason) =>
       markTransientFailure(pool, id, attempts, reason),
     markDead: (id, reason) => markDead(pool, id, reason),
+    isBounced: (to) => isBounced(pool, to),
     recentSentCount: (s) => recentSentCount(pool, s),
   };
 }
