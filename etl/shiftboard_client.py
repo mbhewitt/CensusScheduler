@@ -256,6 +256,7 @@ def _parse_profile_xlsx(content: bytes) -> list[dict[str, Any]]:
             "playaname": playaname,
             "first": _to_str(row.get("First Name")),
             "last": _to_str(row.get("Last Name")),
+            "bpguid": _to_str(row.get("BPGUID")),
             "standing": _to_str(row.get("Standing")),
             "email": email,
             "phone_mobile": _to_str(row.get("Mobile Phone")),
