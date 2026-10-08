@@ -1,5 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 
+import { provisionTabletDevice } from "../helpers/device";
+
 // #533 investigation — shift-type editor validation:
 //  (FIX) Save silently no-op'd when a required field is empty, because native
 //        HTML5 constraint validation blocked submit before RHF ran. Fixed with
@@ -13,6 +15,7 @@ const TYPE_EMPTY_CATEGORY = 15; // "Setup" — has a blank category in the data
 const TYPE_OK = 3; // "Gate Sampling" — has a category + times
 
 async function signIn(page: Page) {
+  await provisionTabletDevice(page.context());
   await page.goto("/sign-in");
   const volunteerInput = page.getByRole("combobox", { name: "Volunteer" });
   await volunteerInput.click();
