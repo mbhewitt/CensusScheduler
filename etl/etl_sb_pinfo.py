@@ -136,6 +136,21 @@ def upsert_sb_pinfo(
         counts.closed_then_inserted += 1
 
 
+def set_names(db: pymysql.connections.Connection, p: dict) -> None:
+    """Refresh name fields on the current row.
+
+    ponytail: updated in place, not versioned -- the SCD2 history here tracks
+    email only. Version these too if a name-change audit is ever needed.
+    """
+    with db.cursor() as cur:
+        cur.execute(
+            "UPDATE sb_pinfo SET first_name=%s, last_name=%s, playa_name=%s, bpguid=%s "
+            "WHERE shiftboard_id=%s AND valid_to IS NULL",
+            tuple((p.get(k) or "").strip() or None for k in ("first", "last", "playaname", "bpguid"))
+            + (p["shiftboard_id"],),
+        )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Shiftboard -> sb_pinfo ETL")
     parser.add_argument(
@@ -171,7 +186,7 @@ def main() -> int:
     # Collect first, dedupe by shiftboard_id (last write wins, so a person
     # who appears in both Census Team and Intake takes the Intake row --
     # intake tends to have the newer profile data).
-    pairs: dict[int, str] = {}
+    pairs: dict[int, dict] = {}
     for gid in group_ids:
         log.info("downloading profiles for group %s", gid)
         try:
@@ -186,14 +201,17 @@ def main() -> int:
             if not p.get("email"):
                 counts.skipped_no_email += 1
                 continue
-            pairs[p["shiftboard_id"]] = p["email"]
+            pairs[p["shiftboard_id"]] = p
     log.info("after dedupe: %d distinct shiftboard_ids to upsert", len(pairs))
 
     db = get_db()
     try:
-        for sb_id, email in pairs.items():
+        for sb_id, p in pairs.items():
+            email = p["email"]
             try:
                 upsert_sb_pinfo(db, sb_id, email, args.dry_run, counts)
+                if not args.dry_run:
+                    set_names(db, p)
             except Exception as e:
                 log.exception(
                     "upsert failed for shiftboard_id=%s email=%s: %s",
