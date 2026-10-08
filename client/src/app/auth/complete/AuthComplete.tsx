@@ -8,6 +8,7 @@ import { Loading } from "@/components/general/Loading";
 import { SnackbarText } from "@/components/general/SnackbarText";
 import { SESSION_SIGN_IN } from "@/constants";
 import { SessionContext } from "@/state/session/context";
+import { safeReturnTo } from "@/utils/safeReturnTo";
 
 export const AuthComplete = () => {
   // context
@@ -55,11 +56,8 @@ export const AuthComplete = () => {
         }
       );
 
-      const redirectPath =
-        returnTo && returnTo.startsWith("/")
-          ? returnTo
-          : `/volunteers/${account.shiftboardId}/info`;
-      router.replace(redirectPath);
+      // Guard against landing on another volunteer's page (see safeReturnTo).
+      router.replace(safeReturnTo(returnTo, account.shiftboardId));
     } catch {
       router.replace("/sign-in?error=invalid_data");
     }

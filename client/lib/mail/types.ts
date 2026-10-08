@@ -58,6 +58,8 @@ export interface QueueStore {
     reason: string
   ): Promise<void>;
   markDead(id: number, reason: string): Promise<void>;
+  // True if `to` is the address of a volunteer flagged email_bounced_at (#785).
+  isBounced(to: string): Promise<boolean>;
   recentSentCount(withinSeconds: number): Promise<number>;
 }
 

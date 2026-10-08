@@ -8,6 +8,7 @@ export interface IReqPasscode {
 // ------------------------------------------------------------
 export interface IReqVolunteerAccount {
   email: string;
+  emailBounced?: boolean;
   location: string;
   notes: string;
   playaName: string;
@@ -15,6 +16,7 @@ export interface IReqVolunteerAccount {
 }
 export interface IResVolunteerAccount {
   email: string;
+  emailBouncedAt?: string | null;
   isCreated: boolean;
   location: string;
   notes: string;

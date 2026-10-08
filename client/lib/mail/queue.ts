@@ -212,6 +212,28 @@ export async function markDead(
   );
 }
 
+// True if `to` is the address of a volunteer whose email is flagged as
+// bouncing (op_volunteers.email_bounced_at, #785). Fails open: a DB error
+// (e.g. a box where migration 017 hasn't run) must not strand the claimed row.
+// ponytail: exact single-address match only; a multi-recipient `to` is never
+// blocked. Strip the bad address out of the list if that ever matters.
+export async function isBounced(pool: Pool, to: string): Promise<boolean> {
+  try {
+    const [rows] = await pool.execute<RowDataPacket[]>(
+      `SELECT 1
+         FROM op_volunteers
+        WHERE email_bounced_at IS NOT NULL
+          AND LOWER(email) = LOWER(?)
+        LIMIT 1`,
+      [to.trim()]
+    );
+    return rows.length > 0;
+  } catch (err) {
+    console.error("[mail:queue] isBounced check failed, sending anyway:", err);
+    return false;
+  }
+}
+
 interface CountPacket extends RowDataPacket {
   n: number;
 }

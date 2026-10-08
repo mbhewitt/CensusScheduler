@@ -287,9 +287,10 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
       // sync profile data from Okta
       await pool.query(
         `UPDATE op_volunteers
-        SET playa_name=?, world_name=?, email=?
+        SET playa_name=?, world_name=?,
+            email_bounced_at=IF(email <=> ?, email_bounced_at, NULL), email=?
         WHERE shiftboard_id=?`,
-        [playaName, worldName, email, shiftboardId]
+        [playaName, worldName, email, email, shiftboardId]
       );
     }
 
@@ -344,9 +345,10 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
             shiftboardId = canonicalId;
             await pool.query(
               `UPDATE op_volunteers
-              SET okta_id=?, playa_name=?, world_name=?, email=?
+              SET okta_id=?, playa_name=?, world_name=?,
+                  email_bounced_at=IF(email <=> ?, email_bounced_at, NULL), email=?
               WHERE shiftboard_id=?`,
-              [oktaId, playaName, worldName, email, shiftboardId]
+              [oktaId, playaName, worldName, email, email, shiftboardId]
             );
           } else {
             // Canonical id known from Shiftboard history but no row exists

@@ -7,6 +7,7 @@ import type { MailConfig, QueueStore, Transport } from "./types";
 // Behavior:
 //   - Rate-limit check first; if exceeded, no-op.
 //   - Atomically claim the oldest due row (transitions to `sending`).
+//   - Recipient flagged as bouncing (#785): mark dead, don't send.
 //   - Hand to transport.
 //   - On success: mark sent.
 //   - On transient failure: requeue with backoff.
@@ -27,6 +28,13 @@ export async function tickOnce(
 
   const row = await store.claimNextDue();
   if (!row) return false;
+
+  // #785: never send to an address an admin has flagged as bouncing. The
+  // dead row is the log of what was suppressed.
+  if (await store.isBounced(row.to)) {
+    await store.markDead(row.id, "recipient email bounced (#785)");
+    return true;
+  }
 
   const result = await transport.send(row);
   if (result.ok) {

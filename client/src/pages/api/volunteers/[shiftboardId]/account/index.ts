@@ -7,7 +7,7 @@ import type {
 } from "@/components/types/volunteers";
 import { pool } from "lib/database";
 import { withAuth } from "@/lib/withAuth";
-import { isOwnerOrAdmin } from "@/lib/authz";
+import { isAdmin, isOwnerOrAdmin } from "@/lib/authz";
 
 const volunteers = async (
   req: NextApiRequest,
@@ -42,6 +42,7 @@ const volunteers = async (
         `SELECT
           create_volunteer,
           email,
+          email_bounced_at,
           location,
           notes,
           playa_name,
@@ -66,6 +67,7 @@ const volunteers = async (
       }
       const resVolunteerItem: IResVolunteerAccount = {
         email: dbVolunteerFirst.email ?? "",
+        emailBouncedAt: dbVolunteerFirst.email_bounced_at ?? null,
         isCreated: Boolean(dbVolunteerFirst.create_volunteer),
         location: dbVolunteerFirst.location ?? "",
         notes: dbVolunteerFirst.notes ?? "",
@@ -82,12 +84,31 @@ const volunteers = async (
     // ------------------------------------------------------------
     case "PATCH": {
       // update volunteer account
-      const { email, location, notes, playaName, worldName }: IReqVolunteerAccount =
-        JSON.parse(req.body);
+      const {
+        email,
+        emailBounced,
+        location,
+        notes,
+        playaName,
+        worldName,
+      }: IReqVolunteerAccount = JSON.parse(req.body);
+      // #785: only an admin may set/clear the bounced flag; null = leave as is.
+      const bounced =
+        typeof emailBounced === "boolean" && (await isAdmin(session.shiftboardId))
+          ? emailBounced
+          : null;
 
       await pool.query<RowDataPacket[]>(
         `UPDATE op_volunteers
         SET
+          -- must precede email=? (MySQL assigns left to right): a changed
+          -- email always clears the flag, otherwise the admin's choice applies
+          email_bounced_at=CASE
+            WHEN NOT (email <=> ?) THEN NULL
+            WHEN ? IS NULL THEN email_bounced_at
+            WHEN ? THEN COALESCE(email_bounced_at, NOW())
+            ELSE NULL
+          END,
           email=?,
           location=?,
           notes=?,
@@ -95,7 +116,7 @@ const volunteers = async (
           update_volunteer=true,
           world_name=?
         WHERE shiftboard_id=?`,
-        [email, location, notes, playaName, worldName, shiftboardId]
+        [email, bounced, bounced, email, location, notes, playaName, worldName, shiftboardId]
       );
 
       return res.status(200).json({

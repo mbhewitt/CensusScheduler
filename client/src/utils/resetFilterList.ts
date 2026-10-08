@@ -13,4 +13,9 @@ export const resetFilterList = () => {
       )
     );
   }
+
+  // #723 agenda filters (Schedule.tsx). Cleared on sign-in AND sign-out — both
+  // call this — so a new user on a shared tablet never inherits the previous
+  // user's Shifts filters (incl. "my shifts only").
+  sessionStorage.removeItem("shiftsAgendaFilter");
 };
