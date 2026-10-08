@@ -49,6 +49,7 @@ function makeStore(opts: {
   row?: EmailRow | null;
   sentInLastMinute?: number;
   sentInLastDay?: number;
+  bounced?: boolean;
 }): QueueStore & {
   calls: { sent: number[]; dead: Array<[number, string]>; failed: Array<[number, number, string]> };
 } {
@@ -73,6 +74,9 @@ function makeStore(opts: {
     async markDead(id, reason) {
       calls.dead.push([id, reason]);
     },
+    async isBounced() {
+      return opts.bounced ?? false;
+    },
     async recentSentCount(within) {
       return within <= 60 ? (opts.sentInLastMinute ?? 0) : (opts.sentInLastDay ?? 0);
     },
@@ -96,6 +100,20 @@ test("tickOnce: success path marks sent", async () => {
   assert.deepEqual(store.calls.sent, [1]);
   assert.equal(store.calls.failed.length, 0);
   assert.equal(store.calls.dead.length, 0);
+});
+
+test("tickOnce: bounced recipient is marked dead without sending (#785)", async () => {
+  const store = makeStore({ row: makeRow(), bounced: true });
+  let sends = 0;
+  const t = makeTransport(() => {
+    sends++;
+    return { ok: true };
+  });
+  const did = await tickOnce(store, baseConfig, t);
+  assert.equal(did, true);
+  assert.equal(sends, 0);
+  assert.equal(store.calls.sent.length, 0);
+  assert.deepEqual(store.calls.dead, [[1, "recipient email bounced (#785)"]]);
 });
 
 test("tickOnce: transient failure requeues", async () => {
