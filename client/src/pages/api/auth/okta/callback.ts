@@ -256,6 +256,23 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // fetch user profile
     const userInfo = await fetchUserInfo(tokens.access_token);
+    // Temporary (#788 follow-up): find out whether Okta sends a BPGUID claim.
+    // Logs claim NAMES only (plus which ones hold a UUID-shaped value) -- never values.
+    try {
+      const idClaims = JSON.parse(
+        Buffer.from(tokens.id_token.split(".")[1], "base64url").toString()
+      ) as Record<string, unknown>;
+      const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      const all = { ...idClaims, ...(userInfo as unknown as Record<string, unknown>) };
+      console.log(
+        "[okta:claims] userinfo=%s id_token=%s uuid_valued=%s",
+        Object.keys(userInfo).sort().join(","),
+        Object.keys(idClaims).sort().join(","),
+        Object.keys(all).filter((k) => uuid.test(String(all[k]))).join(",") || "none"
+      );
+    } catch {
+      // diagnostic only; never block a login
+    }
     const oktaId = userInfo.sub;
     const email = userInfo.email;
     // Default when Okta hasn't set an explicit playa name: the volunteer's
