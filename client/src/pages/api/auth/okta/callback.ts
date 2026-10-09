@@ -26,6 +26,9 @@ interface OktaUserInfo {
   playaname?: string;
   // Burner Profile GUID (UUID) -- BM custom claim, also in the id_token
   bpguid?: string;
+  // BM custom duplicates of given_name / family_name
+  firstName?: string;
+  lastName?: string;
 }
 
 // fetch with retries that ride through transient outages without the user
@@ -400,17 +403,23 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
       shiftboardId = newId;
     }
 
-    // Burner Profile GUID: one write here covers every branch above. Wrapped
-    // so a box without the column (migration 019) never blocks a login.
-    if (userInfo.bpguid) {
-      try {
-        await pool.query("UPDATE op_volunteers SET bpguid=? WHERE shiftboard_id=?", [
-          userInfo.bpguid,
+    // Burner Profile GUID + separate first/last name: one write here covers
+    // every branch above. COALESCE keeps what we have when Okta omits a claim.
+    // Wrapped so a box without the columns (migrations 019/020) never blocks a login.
+    try {
+      await pool.query(
+        `UPDATE op_volunteers
+        SET bpguid=COALESCE(?, bpguid), first_name=COALESCE(?, first_name), last_name=COALESCE(?, last_name)
+        WHERE shiftboard_id=?`,
+        [
+          userInfo.bpguid || null,
+          (userInfo.given_name || userInfo.firstName || "").trim() || null,
+          (userInfo.family_name || userInfo.lastName || "").trim() || null,
           shiftboardId,
-        ]);
-      } catch (bpErr) {
-        console.warn("bpguid save skipped:", bpErr instanceof Error ? bpErr.message : bpErr);
-      }
+        ]
+      );
+    } catch (bpErr) {
+      console.warn("bpguid/name save skipped:", bpErr instanceof Error ? bpErr.message : bpErr);
     }
 
     // Roles-on-login: grant any camp/staff roles the roster (migration 007)
