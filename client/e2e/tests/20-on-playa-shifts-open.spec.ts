@@ -1,5 +1,6 @@
 // On-playa walk-up volunteers need to see /shifts without a session.
-// Off-playa keeps it gated by the hotfix #288 middleware.
+// Off-playa it is public too since 2026-10-16, but the API narrows the list for
+// signed-out visitors (no-role, CSP>0, open slots); see api/shifts/index.ts.
 // The test dev server runs with NEXT_PUBLIC_PIN_ENABLED="true" (on-playa
 // default in client/e2e/playwright.config.ts), so this exercises the
 // on-playa branch of the conditional allowlist.
