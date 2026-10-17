@@ -78,6 +78,27 @@ export const Home = () => {
       />
       <Container component="main">
         <Box component="section">
+          {/* ponytail: remove when the 2026 survey closes. Off-playa only — the survey is online.
+              Top of the page per Chipper: shifts are 8 months out, the survey is now. */}
+          {!isOnPlaya && (
+            <>
+              <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
+                Were you at Burning Man 2026? The Census survey is open.
+              </Typography>
+              <Stack alignItems="center" sx={{ mb: 4 }}>
+                <Button
+                  component="a"
+                  href="https://survey.alchemer.com/s3/8942700/d3a1cd3fde6a"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="large"
+                  variant="contained"
+                >
+                  Take the 2026 Census survey
+                </Button>
+              </Stack>
+            </>
+          )}
           <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
             2027 Black Rock City Census volunteer shifts will be released in June.
           </Typography>
@@ -169,21 +190,6 @@ export const Home = () => {
             ) : null}
           </Stack>
 
-          {/* ponytail: remove when the 2026 survey closes. Off-playa only — the survey is online. */}
-          {!isOnPlaya && (
-            <Stack alignItems="center" sx={{ mb: 3 }}>
-              <Button
-                component="a"
-                href="https://survey.alchemer.com/s3/8942700/d3a1cd3fde6a"
-                target="_blank"
-                rel="noopener noreferrer"
-                size="large"
-                variant="outlined"
-              >
-                Were you at Burning Man 2026? Take the Census survey
-              </Button>
-            </Stack>
-          )}
 
           <Card>
             <CardContent>
