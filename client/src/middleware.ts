@@ -105,6 +105,10 @@ const ALLOWLIST = [
   // self-authenticate with CRON_SECRET at the handler, so they bypass the
   // session gate here rather than getting redirected to /sign-in.
   "/api/cron",
+
+  // Dust app integration (#798): /api/dust does its own session check and
+  // Okta redirect; /api/dust/shift_data.json authenticates by Bearer token.
+  "/api/dust",
 ];
 
 // On-playa-only allowlist — applied when effective-on-playa (build flag OR a
