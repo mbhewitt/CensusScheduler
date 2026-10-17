@@ -169,6 +169,22 @@ export const Home = () => {
             ) : null}
           </Stack>
 
+          {/* ponytail: remove when the 2026 survey closes. Off-playa only — the survey is online. */}
+          {!isOnPlaya && (
+            <Stack alignItems="center" sx={{ mb: 3 }}>
+              <Button
+                component="a"
+                href="https://survey.alchemer.com/s3/8942700/d3a1cd3fde6a"
+                target="_blank"
+                rel="noopener noreferrer"
+                size="large"
+                variant="outlined"
+              >
+                Were you at Burning Man 2026? Take the Census survey
+              </Button>
+            </Stack>
+          )}
+
           <Card>
             <CardContent>
               <Typography component="h3" variant="h5" sx={{ mb: 1 }}>
