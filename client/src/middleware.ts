@@ -135,7 +135,17 @@ const TRAINING_ALLOWLIST = [
 // /api/shifts/types/1.webmanifest skip auth and reach unguarded dynamic
 // handlers. The exact allowlist serves the one static file without opening that
 // hole. The PWA icons/sw.js are safe via the extension exclusion (.png/.js).
-const PUBLIC_PATHS = new Set(["/", "/manifest.webmanifest"]);
+//
+// /shifts + /api/shifts (exact, NOT prefixes) are public off-playa as of
+// 2026-10-16 (per Mew): the list is counts-only and the API narrows it for
+// signed-out visitors (see api/shifts/index.ts). /shifts/[timeId] and the
+// /api/shifts/* detail + admin routes stay gated.
+const PUBLIC_PATHS = new Set([
+  "/",
+  "/manifest.webmanifest",
+  "/shifts",
+  "/api/shifts",
+]);
 
 // On-playa the offline course pages are readable without a session, so a
 // walk-up volunteer at the Lab can study before signing in. Deliberately NOT
