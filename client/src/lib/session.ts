@@ -35,22 +35,28 @@ function getSecret(): string {
   return secret;
 }
 
-function sign(payload: SessionPayload): string {
+// `purpose` domain-separates the HMAC key so a token minted for one purpose
+// (e.g. "dust") can never be replayed as a session cookie, or vice versa.
+function getKey(purpose: string): string {
+  return purpose ? `${getSecret()}:${purpose}` : getSecret();
+}
+
+function sign(payload: SessionPayload, purpose = ""): string {
   const json = JSON.stringify(payload);
   const b64 = Buffer.from(json, "utf8").toString("base64url");
   const hmac = crypto
-    .createHmac("sha256", getSecret())
+    .createHmac("sha256", getKey(purpose))
     .update(b64)
     .digest("base64url");
   return `${b64}.${hmac}`;
 }
 
-function verify(value: string): SessionPayload | null {
+function verify(value: string, purpose = ""): SessionPayload | null {
   const [b64, hmac] = value.split(".");
   if (!b64 || !hmac) return null;
 
   const expected = crypto
-    .createHmac("sha256", getSecret())
+    .createHmac("sha256", getKey(purpose))
     .update(b64)
     .digest("base64url");
 
@@ -109,6 +115,23 @@ export function readSessionFromCookies(
   const value = cookies[COOKIE_NAME];
   if (!value) return null;
   return verify(value);
+}
+
+// Short-lived bearer token for a third-party integration (see api/dust).
+// Same signed format as the session cookie, but under a purpose-scoped key.
+export function buildScopedToken(
+  purpose: string,
+  shiftboardId: number,
+  ttlMs: number
+): string {
+  return sign({ shiftboardId, expires: Date.now() + ttlMs }, purpose);
+}
+
+export function readScopedToken(
+  purpose: string,
+  value: string | undefined
+): SessionPayload | null {
+  return value ? verify(value, purpose) : null;
 }
 
 export const SESSION_COOKIE_NAME = COOKIE_NAME;
