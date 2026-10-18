@@ -366,6 +366,16 @@ export const ShiftVolunteersDialogAdd = ({
   }
 
   const isAdmin = checkIsAdmin(accountType, roleList);
+  // Non-admins don't see positions that need a role the volunteer lacks
+  // (Chipper 2026-10-18: no point showing them). Admins can assign anyone.
+  const isPositionShown = (roleRequiredId: number) =>
+    isAdmin ||
+    roleRequiredId === 0 ||
+    Boolean(
+      volunteerSelected?.roleList?.some(
+        ({ id: roleId }: { id: number }) => roleId === roleRequiredId
+      )
+    );
   const prerequisiteIdWatch = positionList.find(
     (shiftPositionItem) =>
       shiftPositionItem.timePositionId === timePositionIdShiftWatch
@@ -436,21 +446,11 @@ export const ShiftVolunteersDialogAdd = ({
       }
 
       // display position list
-      positionListDisplay = positionListByOpen.map(
-        ({
-          positionName,
-          roleRequiredId,
-          slotsFilled,
-          slotsTotal,
-          timePositionId,
-        }) => {
+      positionListDisplay = positionListByOpen
+        .filter(({ roleRequiredId }) => isPositionShown(roleRequiredId))
+        .map(({ positionName, slotsFilled, slotsTotal, timePositionId }) => {
           const isShiftPositionAvailable =
-            isAdmin ||
-            (slotsTotal - slotsFilled > 0 &&
-              (roleRequiredId === 0 ||
-                volunteerSelected?.roleList?.some(
-                  ({ id: roleId }: { id: number }) => roleId === roleRequiredId
-                )));
+            isAdmin || slotsTotal - slotsFilled > 0;
 
           return (
             <MenuItem
@@ -461,8 +461,7 @@ export const ShiftVolunteersDialogAdd = ({
               {positionName}: {slotsFilled} / {slotsTotal}
             </MenuItem>
           );
-        }
-      );
+        });
 
       // display training list
       trainingListDisplay = trainingListFiltered.map(
@@ -498,35 +497,22 @@ export const ShiftVolunteersDialogAdd = ({
 
       // display training position list
       if (dataTrainingVolunteerDetails) {
-        trainingPositionListDisplay =
-          dataTrainingVolunteerDetails.positionList.map(
-            ({
-              positionName,
-              roleRequiredId,
-              slotsFilled,
-              slotsTotal,
-              timePositionId,
-            }) => {
-              const isShiftPositionAvailable =
-                isAdmin ||
-                (slotsTotal - slotsFilled > 0 &&
-                  (roleRequiredId === 0 ||
-                    volunteerSelected?.roleList?.some(
-                      ({ id: roleId }: { id: number }) =>
-                        roleId === roleRequiredId
-                    )));
+        trainingPositionListDisplay = dataTrainingVolunteerDetails.positionList
+          .filter(({ roleRequiredId }) => isPositionShown(roleRequiredId))
+          .map(({ positionName, slotsFilled, slotsTotal, timePositionId }) => {
+            const isShiftPositionAvailable =
+              isAdmin || slotsTotal - slotsFilled > 0;
 
-              return (
-                <MenuItem
-                  disabled={!isShiftPositionAvailable}
-                  key={`${timePositionId}-position`}
-                  value={timePositionId}
-                >
-                  {positionName}: {slotsFilled} / {slotsTotal}
-                </MenuItem>
-              );
-            }
-          );
+            return (
+              <MenuItem
+                disabled={!isShiftPositionAvailable}
+                key={`${timePositionId}-position`}
+                value={timePositionId}
+              >
+                {positionName}: {slotsFilled} / {slotsTotal}
+              </MenuItem>
+            );
+          });
       }
       break;
     }
