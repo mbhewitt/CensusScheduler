@@ -92,3 +92,10 @@ python etl_sb_pinfo.py --dry-run    # report changes, don't write
 python etl_sb_pinfo.py              # apply
 python etl_sb_pinfo.py --group 597584   # single-group only
 ```
+
+## Shift history (`shift_history.py`, #759)
+Loads `op_shift_history` (migration 022), the permanent read-only record of
+every Census shift each volunteer worked. Manual, not cron. Idempotent upserts:
+`legacy` (legacy `shiftboard2` + `review_notes` ratings, via `LEGACY_MYSQL_*`),
+`sb-shifts` (prod `sb_shifts` rows shiftboard2 lacks), `app --year Y` (one
+season of the op_ tables, run before rolling over to the next season).
