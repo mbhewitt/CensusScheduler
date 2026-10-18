@@ -23,6 +23,7 @@ const g = (over: Partial<Grant>): Grant => ({
 const facts = (over: Partial<Facts> = {}): Facts => ({
   signedIn: true,
   roleIds: new Set(),
+  positionIds: new Set(),
   onPlaya: false,
   isSelf: false,
   onShift: false,
@@ -70,6 +71,40 @@ test("own-record grants only match self", () => {
   assert.equal(isAllowed(record, facts({ isSelf: true })), true);
   assert.equal(isAllowed(record, facts()), false);
   assert.equal(isAllowed(record, facts({ roleIds: new Set([ADMIN]) })), true);
+});
+
+test("lead access from the position held (Mew): Gate Sampling Lead → Sampling", () => {
+  const GATE_SAMPLING_LEAD = 700;
+  const leadView = [
+    g({
+      granteeType: "position",
+      granteeId: GATE_SAMPLING_LEAD,
+      relationship: "department",
+      department: "Sampling",
+    }),
+  ];
+  const inSampling = { subjectDepartments: new Set(["Sampling"]) };
+  assert.equal(
+    isAllowed(
+      leadView,
+      facts({ ...inSampling, positionIds: new Set([GATE_SAMPLING_LEAD]) })
+    ),
+    true
+  );
+  // Not signed up for the lead position: no.
+  assert.equal(isAllowed(leadView, facts(inSampling)), false);
+  // Signed out never counts, even with stale facts.
+  assert.equal(
+    isAllowed(
+      leadView,
+      facts({
+        ...inSampling,
+        signedIn: false,
+        positionIds: new Set([GATE_SAMPLING_LEAD]),
+      })
+    ),
+    false
+  );
 });
 
 test("department comes from the grant: a role sees its own department", () => {

@@ -28,16 +28,18 @@ INSERT INTO op_time_window
   ('self_drop',      NULL,          0,    'shift_end',   1440);
 
 -- One row = one grant. A user may do `permission` if ANY row matches.
---   grantee:      anyone (signed out too) · signed_in · role (op_roles).
---                 Never a sign-up: a position may hand out a role (separate
---                 issue), and the role carries the privileges (Chipper).
+--   grantee:      anyone (signed out too) · signed_in · role (op_roles) ·
+--                 position (actor is signed up for that op_position_type this
+--                 season). Leads get access from the lead position they hold
+--                 (Mew); VCs / area roles from a role (Chipper). Who may be
+--                 assigned to a lead position is a separate question (#807).
 --   relationship: everyone · self · shift (actor is on the shift) ·
 --                 department (subject/shift is in `department`, an
 --                 op_shift_category.department value; set it from the role,
 --                 never from sign-ups, so access survives a year off — Chipper)
 CREATE TABLE op_permission_grant (
   grant_id BIGINT NOT NULL AUTO_INCREMENT,
-  grantee_type ENUM('anyone','signed_in','role') NOT NULL,
+  grantee_type ENUM('anyone','signed_in','role','position') NOT NULL,
   grantee_id BIGINT NULL,
   permission VARCHAR(64) NOT NULL,
   relationship ENUM('everyone','self','shift','department') NOT NULL DEFAULT 'everyone',

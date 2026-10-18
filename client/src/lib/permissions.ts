@@ -92,7 +92,7 @@ export async function can(
   // Non-positive ids (the walk-up GUEST_SESSION, unfilled 0) are never a user.
   const actorId =
     session && session.shiftboardId > 0 ? session.shiftboardId : null;
-  const [[grantRows], roleIds] = await Promise.all([
+  const [[grantRows], roleIds, positionIds] = await Promise.all([
     pool.query<RowDataPacket[]>(
       `SELECT grantee_type, grantee_id, relationship, department, window_key, place
       FROM op_permission_grant
@@ -107,11 +107,24 @@ export async function can(
           [actorId]
         )
       : new Set<number>(),
+    // ponytail: op_ tables hold one season, so "signed up" = this year.
+    actorId
+      ? idSet(
+          `SELECT DISTINCT stp.position_type_id AS id
+          FROM op_volunteer_shifts AS vs
+          JOIN op_shift_time_position AS stp
+            ON stp.time_position_id = vs.time_position_id
+            AND stp.remove_time_position = false
+          WHERE vs.shiftboard_id = ? AND vs.remove_shift = false`,
+          [actorId]
+        )
+      : new Set<number>(),
   ]);
 
   const base = {
     signedIn: actorId !== null,
     roleIds,
+    positionIds,
     onPlaya: ctx.onPlaya,
   };
   const grants: Grant[] = grantRows

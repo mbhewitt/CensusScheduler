@@ -23,7 +23,7 @@ export const PERMISSIONS = [
 ] as const;
 export type Permission = (typeof PERMISSIONS)[number];
 
-export type GranteeType = "anyone" | "signed_in" | "role";
+export type GranteeType = "anyone" | "signed_in" | "role" | "position";
 export type Relationship = "everyone" | "self" | "shift" | "department";
 export type Place = "any" | "on_playa" | "off_playa";
 
@@ -40,6 +40,7 @@ export interface Grant {
 export interface Facts {
   signedIn: boolean;
   roleIds: ReadonlySet<number>;
+  positionIds: ReadonlySet<number>; // positions the actor is signed up for
   onPlaya: boolean;
   isSelf: boolean; // the subject volunteer is the actor
   onShift: boolean; // the actor is signed up for the shift acted on
@@ -51,7 +52,7 @@ export interface Facts {
 // queries on relationship/window facts.
 export const grantMayApply = (
   g: Grant,
-  f: Pick<Facts, "signedIn" | "roleIds" | "onPlaya">
+  f: Pick<Facts, "signedIn" | "roleIds" | "positionIds" | "onPlaya">
 ): boolean => {
   const grantee =
     g.granteeType === "anyone" ||
@@ -59,7 +60,11 @@ export const grantMayApply = (
     (f.signedIn &&
       g.granteeType === "role" &&
       g.granteeId !== null &&
-      f.roleIds.has(g.granteeId));
+      f.roleIds.has(g.granteeId)) ||
+    (f.signedIn &&
+      g.granteeType === "position" &&
+      g.granteeId !== null &&
+      f.positionIds.has(g.granteeId));
   const place = g.place === "any" || (g.place === "on_playa") === f.onPlaya;
   return grantee && place;
 };
