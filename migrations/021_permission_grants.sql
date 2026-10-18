@@ -29,13 +29,13 @@ INSERT INTO op_time_window
 
 -- One row = one grant. A user may do `permission` if ANY row matches.
 --   grantee:      anyone (signed out too) · signed_in · role (op_roles).
---                 Never a sign-up: positions hand out roles (below), and the
---                 role carries the privileges (Chipper).
+--                 Never a sign-up: a position may hand out a role (separate
+--                 issue), and the role carries the privileges (Chipper).
 --   relationship: everyone · self · shift (actor is on the shift) ·
 --                 department (subject/shift is in `department`, an
 --                 op_shift_category.department value; set it from the role,
 --                 never from sign-ups, so access survives a year off — Chipper)
-CREATE TABLE op_role_grant (
+CREATE TABLE op_permission_grant (
   grant_id BIGINT NOT NULL AUTO_INCREMENT,
   grantee_type ENUM('anyone','signed_in','role') NOT NULL,
   grantee_id BIGINT NULL,
@@ -48,17 +48,8 @@ CREATE TABLE op_role_grant (
   KEY permission (permission)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
--- Being assigned to a position (e.g. a lead position) automatically gives the
--- volunteer this role, which they keep until it's removed by hand. Empty until
--- configured. The sign-up hook lands with the setup page (#804 step 5).
-CREATE TABLE op_position_auto_role (
-  position_type_id BIGINT NOT NULL,
-  role_id BIGINT NOT NULL,
-  PRIMARY KEY (position_type_id, role_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-
 -- SuperAdmin-only today.
-INSERT INTO op_role_grant (grantee_type, grantee_id, permission)
+INSERT INTO op_permission_grant (grantee_type, grantee_id, permission)
 SELECT 'role', 1, p FROM (
   SELECT 'shift_setup:update' AS p UNION ALL SELECT 'roles:update'
   UNION ALL SELECT 'superadmin_role:manage' UNION ALL SELECT 'saps:manage'
@@ -67,7 +58,7 @@ SELECT 'role', 1, p FROM (
 ) AS t;
 
 -- Admin or SuperAdmin today (isAdmin() accepts either role).
-INSERT INTO op_role_grant (grantee_type, grantee_id, permission)
+INSERT INTO op_permission_grant (grantee_type, grantee_id, permission)
 SELECT 'role', r, p FROM (SELECT 1 AS r UNION ALL SELECT 2) AS roles
 CROSS JOIN (
   SELECT 'role_members:manage' AS p UNION ALL SELECT 'volunteers:list'
@@ -78,7 +69,7 @@ CROSS JOIN (
 
 -- Baseline for everyone signed in (isOwnerOrAdmin's "own record" half, the
 -- on-playa walk-up rules in api/shifts/[timeId]/volunteers).
-INSERT INTO op_role_grant
+INSERT INTO op_permission_grant
   (grantee_type, permission, relationship, window_key, place) VALUES
   ('signed_in', 'volunteer_record:manage',   'self',     NULL,        'any'),
   ('signed_in', 'shift_volunteers:add',      'self',     NULL,        'any'),
@@ -89,6 +80,6 @@ INSERT INTO op_role_grant
 
 -- Signed-out walk-up check-in on a lab tablet. The route still requires the
 -- provisioned-device cookie before it asks; this grant adds the time window.
-INSERT INTO op_role_grant
+INSERT INTO op_permission_grant
   (grantee_type, permission, relationship, window_key, place) VALUES
   ('anyone', 'shift_volunteers:check_in', 'everyone', 'walkup_checkin', 'on_playa');

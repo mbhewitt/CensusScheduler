@@ -9,7 +9,7 @@ import {
 import { pool } from "lib/database";
 
 // can(): the single server-side permission check for the configurable
-// permissions module (#804). Grants live in op_role_grant, windows in
+// permissions module (#804). Grants live in op_permission_grant, windows in
 // op_time_window (migration 021). Matching is in permissions.logic.ts. This
 // file only loads the facts it needs. Not called by any route yet (step 3).
 
@@ -95,7 +95,7 @@ export async function can(
   const [[grantRows], roleIds] = await Promise.all([
     pool.query<RowDataPacket[]>(
       `SELECT grantee_type, grantee_id, relationship, department, window_key, place
-      FROM op_role_grant
+      FROM op_permission_grant
       WHERE permission = ?`,
       [permission]
     ),

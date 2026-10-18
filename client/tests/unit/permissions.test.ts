@@ -31,7 +31,7 @@ const facts = (over: Partial<Facts> = {}): Facts => ({
   ...over,
 });
 
-// Mirrors the shift_volunteers:check_in seed in migrations/021_role_grants.sql.
+// Mirrors the shift_volunteers:check_in seed in migrations/021_permission_grants.sql.
 const CHECK_IN: Grant[] = [
   g({ granteeId: SUPER_ADMIN }),
   g({ granteeId: ADMIN }),
