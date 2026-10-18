@@ -8,6 +8,7 @@ import {
   IResShiftTypePositionItem,
   IResShiftTypeTimeItem,
 } from "@/components/types/shifts/types";
+import { withWriteGuard } from "@/lib/withWriteGuard";
 import { generateId } from "@/utils/generateId";
 import { pool } from "lib/database";
 import {
@@ -604,4 +605,4 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default shiftTypeUpdate;
+export default withWriteGuard(shiftTypeUpdate, "superadmin");

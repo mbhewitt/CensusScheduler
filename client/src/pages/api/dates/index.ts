@@ -2,6 +2,7 @@ import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import type { IResDateRowItem } from "@/components/types/dates";
+import { withWriteGuard } from "@/lib/withWriteGuard";
 import { generateId } from "@/utils/generateId";
 import { pool } from "lib/database";
 
@@ -74,4 +75,4 @@ const calendar = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default calendar;
+export default withWriteGuard(calendar, "superadmin");

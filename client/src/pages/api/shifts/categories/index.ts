@@ -5,6 +5,7 @@ import type {
   IReqShiftCategoryItem,
   IResShiftCategoryItem,
 } from "@/components/types/shifts/categories";
+import { withWriteGuard } from "@/lib/withWriteGuard";
 import { generateId } from "@/utils/generateId";
 import { pool } from "lib/database";
 
@@ -81,4 +82,4 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default shiftCategories;
+export default withWriteGuard(shiftCategories, "superadmin");
