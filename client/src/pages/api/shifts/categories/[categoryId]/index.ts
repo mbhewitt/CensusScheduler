@@ -2,6 +2,7 @@ import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import type { IReqShiftCategoryItem } from "@/components/types/shifts/categories";
+import { withWriteGuard } from "@/lib/withWriteGuard";
 import { pool } from "lib/database";
 
 const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -62,4 +63,4 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default shiftCategories;
+export default withWriteGuard(shiftCategories, "superadmin");

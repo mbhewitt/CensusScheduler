@@ -2,6 +2,7 @@ import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import type { IReqDateItem } from "@/components/types/dates";
+import { withWriteGuard } from "@/lib/withWriteGuard";
 import { pool } from "lib/database";
 
 const dates = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -59,4 +60,4 @@ const dates = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default dates;
+export default withWriteGuard(dates, "superadmin");

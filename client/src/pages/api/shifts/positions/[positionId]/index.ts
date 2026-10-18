@@ -5,6 +5,7 @@ import type {
   IReqShiftPositionItem,
   IResShiftPositionItem,
 } from "@/components/types/shifts/positions";
+import { withWriteGuard } from "@/lib/withWriteGuard";
 import { pool } from "lib/database";
 
 const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -133,4 +134,4 @@ const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default shiftPositions;
+export default withWriteGuard(shiftPositions, "superadmin");
