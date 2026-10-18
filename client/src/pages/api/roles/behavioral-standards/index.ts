@@ -3,9 +3,15 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import type { IReqRoleBehavioralStandardsItem } from "@/components/types/roles";
 import { ROLE_BEHAVIORAL_STANDARDS_ID } from "@/constants";
+import { isOwnerOrAdmin } from "@/lib/authz";
+import { withAuth } from "@/lib/withAuth";
 import { pool } from "lib/database";
 
-const contact = async (req: NextApiRequest, res: NextApiResponse) => {
+const contact = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  session: { shiftboardId: number }
+) => {
   switch (req.method) {
     // post
     // ------------------------------------------------------------
@@ -15,6 +21,10 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
         isBehavioralStandardsSigned,
         shiftboardId,
       }: IReqRoleBehavioralStandardsItem = JSON.parse(req.body);
+      // Only the volunteer themselves or an admin (#535).
+      if (!(await isOwnerOrAdmin(session, Number(shiftboardId)))) {
+        return res.status(403).json({ statusCode: 403, message: "Forbidden" });
+      }
       const [dbVolunteerRoleList] = await pool.query<RowDataPacket[]>(
         `SELECT shiftboard_id
         FROM op_volunteer_roles AS vr
@@ -74,4 +84,4 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default contact;
+export default withAuth(contact);
