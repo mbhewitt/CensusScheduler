@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import type { IResDateRowItem } from "@/components/types/dates";
 import { generateId } from "@/utils/generateId";
+import { withWriteGuard } from "@/lib/withWriteGuard";
 import { pool } from "lib/database";
 
 const calendar = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -74,4 +75,5 @@ const calendar = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default calendar;
+// Super admin only, like the setup pages' AuthGate (#535, #687).
+export default withWriteGuard(calendar, "superadmin");

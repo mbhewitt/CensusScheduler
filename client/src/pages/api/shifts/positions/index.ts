@@ -6,6 +6,7 @@ import type {
   IResShiftPositionRowItem,
 } from "@/components/types/shifts/positions";
 import { generateId } from "@/utils/generateId";
+import { withWriteGuard } from "@/lib/withWriteGuard";
 import { pool } from "lib/database";
 
 const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -90,4 +91,5 @@ const shiftPositions = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default shiftPositions;
+// Super admin only, like the setup pages' AuthGate (#535, #687).
+export default withWriteGuard(shiftPositions, "superadmin");
