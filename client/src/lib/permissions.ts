@@ -24,40 +24,22 @@ const idSet = async (sql: string, params: unknown[]): Promise<Set<number>> => {
   return new Set(rows.map((row) => Number(row.id)));
 };
 
-// Departments (op_shift_category.department) of the shift acted on, or, with
-// no shift, of every shift the subject volunteer is signed up for.
-const subjectDepartmentSet = async ({
-  shiftTimesId,
-  subjectShiftboardId,
-}: CanContext): Promise<Set<string>> => {
-  if (!shiftTimesId && !subjectShiftboardId) return new Set();
-  const [rows] = await pool.query<RowDataPacket[]>(
-    `SELECT DISTINCT c.department
-    FROM op_shift_times AS st
-    JOIN op_shift_name AS sn ON sn.shift_name_id = st.shift_name_id
-    JOIN op_shift_category AS c ON c.shift_category_id = sn.shift_category_id
-    WHERE st.shift_times_id = ?
-      OR st.shift_times_id IN (
-        SELECT stp.shift_times_id
-        FROM op_volunteer_shifts AS vs
-        JOIN op_shift_time_position AS stp
-          ON stp.time_position_id = vs.time_position_id
-        WHERE vs.shiftboard_id = ? AND vs.remove_shift = false
-      )`,
-    [shiftTimesId ?? -1, shiftTimesId ? -1 : (subjectShiftboardId ?? -1)]
-  );
-  return new Set(rows.map((row) => String(row.department)));
-};
+// Active signups on one shift, as position_type_id per volunteer.
+const ON_SHIFT = `
+  FROM op_volunteer_shifts AS vs
+  JOIN op_shift_time_position AS stp
+    ON stp.time_position_id = vs.time_position_id
+    AND stp.remove_time_position = false
+  WHERE vs.remove_shift = false AND stp.shift_times_id = ?`;
 
 // Which of `keys` are open right now. Shift times are stored playa-local, so
 // compare against CONVERT_TZ(NOW()) like the walk-up check-in window does.
-// A NULL anchor is open-ended. A shift anchor with no shift given, or a date
-// anchor whose op_dates row is gone, counts as closed (never as open).
-const BOUND = (side: "start" | "end", alias: string, open: string) =>
+// A NULL anchor is open-ended. With no shift given, a shift-anchored bound
+// counts as closed (never as open).
+const BOUND = (side: "start" | "end", open: string) =>
   `COALESCE(DATE_ADD(CASE w.${side}_anchor
       WHEN 'shift_start' THEN st.start_time
-      WHEN 'shift_end' THEN st.end_time
-      WHEN 'date' THEN ${alias}.date END,
+      WHEN 'shift_end' THEN st.end_time END,
     INTERVAL w.${side}_offset_min MINUTE), '${open}')`;
 const openWindowKeys = async (
   keys: string[],
@@ -68,17 +50,11 @@ const openWindowKeys = async (
     FROM op_time_window AS w
     LEFT JOIN op_shift_times AS st
       ON st.shift_times_id = ? AND st.remove_shift_time = false
-    LEFT JOIN op_dates AS sd ON sd.date_id = w.start_date_id
-    LEFT JOIN op_dates AS ed ON ed.date_id = w.end_date_id
     WHERE w.window_key IN (?)
-      AND (st.shift_times_id IS NOT NULL OR (
-        COALESCE(w.start_anchor, '') NOT LIKE 'shift%'
-        AND COALESCE(w.end_anchor, '') NOT LIKE 'shift%'))
-      AND (COALESCE(w.start_anchor, '') <> 'date' OR sd.date IS NOT NULL)
-      AND (COALESCE(w.end_anchor, '') <> 'date' OR ed.date IS NOT NULL)
+      AND (st.shift_times_id IS NOT NULL
+        OR (w.start_anchor IS NULL AND w.end_anchor IS NULL))
       AND CONVERT_TZ(NOW(), 'UTC', 'America/Los_Angeles') BETWEEN
-        ${BOUND("start", "sd", "1000-01-01")}
-        AND ${BOUND("end", "ed", "9999-12-31")}`,
+        ${BOUND("start", "1000-01-01")} AND ${BOUND("end", "9999-12-31")}`,
     [shiftTimesId ?? -1, keys]
   );
   return new Set(rows.map((row) => String(row.window_key)));
@@ -94,7 +70,7 @@ export async function can(
     session && session.shiftboardId > 0 ? session.shiftboardId : null;
   const [[grantRows], roleIds, positionIds] = await Promise.all([
     pool.query<RowDataPacket[]>(
-      `SELECT grantee_type, grantee_id, relationship, department, window_key, place
+      `SELECT grantee_type, grantee_id, relationship, window_key, place
       FROM op_permission_grant
       WHERE permission = ?`,
       [permission]
@@ -107,16 +83,12 @@ export async function can(
           [actorId]
         )
       : new Set<number>(),
-    // ponytail: op_ tables hold one season, so "signed up" = this year.
-    actorId
+    // Positions only count on the shift being acted on: leading Monday's
+    // shift gives no control over Tuesday's.
+    actorId && ctx.shiftTimesId
       ? idSet(
-          `SELECT DISTINCT stp.position_type_id AS id
-          FROM op_volunteer_shifts AS vs
-          JOIN op_shift_time_position AS stp
-            ON stp.time_position_id = vs.time_position_id
-            AND stp.remove_time_position = false
-          WHERE vs.shiftboard_id = ? AND vs.remove_shift = false`,
-          [actorId]
+          `SELECT stp.position_type_id AS id ${ON_SHIFT} AND vs.shiftboard_id = ?`,
+          [ctx.shiftTimesId, actorId]
         )
       : new Set<number>(),
   ]);
@@ -132,7 +104,6 @@ export async function can(
       granteeType: row.grantee_type,
       granteeId: row.grantee_id === null ? null : Number(row.grantee_id),
       relationship: row.relationship,
-      department: row.department,
       windowKey: row.window_key,
       place: row.place,
     }))
@@ -140,26 +111,24 @@ export async function can(
   if (grants.length === 0) return false;
 
   // Only query the facts some remaining grant actually depends on.
-  const needs = (relationship: Grant["relationship"]) =>
-    grants.some((grant) => grant.relationship === relationship);
   const windowKeys = [
     ...new Set(grants.flatMap((grant) => grant.windowKey ?? [])),
   ];
-  const [onShift, subjectDepartments, openWindows] = await Promise.all([
-    needs("shift") && actorId && ctx.shiftTimesId
+  const [onShift, openWindows] = await Promise.all([
+    grants.some((grant) => grant.relationship === "shift") &&
+    actorId &&
+    ctx.shiftTimesId
       ? idSet(
-          `SELECT 1 AS id
-          FROM op_volunteer_shifts AS vs
-          JOIN op_shift_time_position AS stp
-            ON stp.time_position_id = vs.time_position_id
-          WHERE vs.shiftboard_id = ?
-            AND vs.remove_shift = false
-            AND stp.shift_times_id = ?
-          LIMIT 1`,
-          [actorId, ctx.shiftTimesId]
-        ).then((rows) => rows.size > 0)
+          `SELECT DISTINCT vs.shiftboard_id AS id ${ON_SHIFT}
+            AND vs.shiftboard_id IN (?, ?)`,
+          [ctx.shiftTimesId, actorId, ctx.subjectShiftboardId ?? actorId]
+        ).then(
+          (ids) =>
+            ids.has(actorId) &&
+            (ctx.subjectShiftboardId === undefined ||
+              ids.has(ctx.subjectShiftboardId))
+        )
       : false,
-    needs("department") ? subjectDepartmentSet(ctx) : new Set<string>(),
     windowKeys.length > 0
       ? openWindowKeys(windowKeys, ctx.shiftTimesId)
       : new Set<string>(),
@@ -169,7 +138,6 @@ export async function can(
     ...base,
     isSelf: actorId !== null && ctx.subjectShiftboardId === actorId,
     onShift,
-    subjectDepartments,
     openWindows,
   });
 }

@@ -20,18 +20,20 @@ export const PERMISSIONS = [
   "shift_volunteers:remove",
   "shift_volunteers:check_in",
   "shift_volunteers:review",
+  "shift_volunteers:add_override", // ignore full slots + required role
+  "volunteer_notes:view", // past shift ratings/notes
+  "volunteer_passcode:reset",
 ] as const;
 export type Permission = (typeof PERMISSIONS)[number];
 
 export type GranteeType = "anyone" | "signed_in" | "role" | "position";
-export type Relationship = "everyone" | "self" | "shift" | "department";
+export type Relationship = "everyone" | "self" | "shift";
 export type Place = "any" | "on_playa" | "off_playa";
 
 export interface Grant {
   granteeType: GranteeType;
   granteeId: number | null;
   relationship: Relationship;
-  department: string | null; // for relationship "department"
   windowKey: string | null;
   place: Place;
 }
@@ -40,11 +42,10 @@ export interface Grant {
 export interface Facts {
   signedIn: boolean;
   roleIds: ReadonlySet<number>;
-  positionIds: ReadonlySet<number>; // positions the actor is signed up for
+  positionIds: ReadonlySet<number>; // positions the actor holds on this shift
   onPlaya: boolean;
   isSelf: boolean; // the subject volunteer is the actor
-  onShift: boolean; // the actor is signed up for the shift acted on
-  subjectDepartments: ReadonlySet<string>; // of the shift / subject's shifts
+  onShift: boolean; // the actor (and the subject, if any) is on the shift
   openWindows: ReadonlySet<string>;
 }
 
@@ -74,10 +75,7 @@ export const grantApplies = (g: Grant, f: Facts): boolean => {
   const related =
     g.relationship === "everyone" ||
     (g.relationship === "self" && f.isSelf) ||
-    (g.relationship === "shift" && f.onShift) ||
-    (g.relationship === "department" &&
-      g.department !== null &&
-      f.subjectDepartments.has(g.department));
+    (g.relationship === "shift" && f.onShift);
   return related && (g.windowKey === null || f.openWindows.has(g.windowKey));
 };
 

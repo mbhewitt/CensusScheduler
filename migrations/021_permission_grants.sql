@@ -3,16 +3,14 @@
 -- server-side checks exactly: role 1 = SuperAdmin (to be renamed App Admin),
 -- role 2 = Admin. Permission names live in client/src/lib/permissions.logic.ts.
 
--- Named time windows. Bounds are an anchor + offset in minutes. A NULL anchor
--- means open-ended. 'shift_*' anchors are relative to the shift being acted on.
--- 'date' anchors use op_dates (midnight, playa time).
+-- Named time windows. Bounds are an anchor + offset in minutes, relative to
+-- the shift being acted on. A NULL anchor means open-ended.
+-- ponytail: no event-date anchors yet; add a 'date' anchor when a grant needs one.
 CREATE TABLE op_time_window (
   window_key VARCHAR(32) NOT NULL,
-  start_anchor ENUM('shift_start','shift_end','date') NULL,
-  start_date_id BIGINT NULL,
+  start_anchor ENUM('shift_start','shift_end') NULL,
   start_offset_min INT NOT NULL DEFAULT 0,
-  end_anchor ENUM('shift_start','shift_end','date') NULL,
-  end_date_id BIGINT NULL,
+  end_anchor ENUM('shift_start','shift_end') NULL,
   end_offset_min INT NOT NULL DEFAULT 0,
   PRIMARY KEY (window_key)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -21,29 +19,22 @@ CREATE TABLE op_time_window (
 -- self-drop grace in components/api/shiftVolunteers.ts.
 INSERT INTO op_time_window
   (window_key, start_anchor, start_offset_min, end_anchor, end_offset_min) VALUES
-  ('shift_future',   NULL,          0,    'shift_start', -60),
-  ('shift_during',   'shift_start', -60,  'shift_end',   120),
-  ('shift_past',     'shift_end',   120,  NULL,          0),
   ('walkup_checkin', 'shift_start', -30,  'shift_start', 30),
   ('self_drop',      NULL,          0,    'shift_end',   1440);
 
--- One row = one grant. A user may do `permission` if ANY row matches.
+-- One row = one grant. A user may do `permission` if ANY row matches; grants
+-- only ever allow, so row order never matters. App Admin edits these (Mew).
 --   grantee:      anyone (signed out too) · signed_in · role (op_roles) ·
---                 position (actor is signed up for that op_position_type this
---                 season). Leads get access from the lead position they hold
---                 (Mew); VCs / area roles from a role (Chipper). Who may be
---                 assigned to a lead position is a separate question (#807).
---   relationship: everyone · self · shift (actor is on the shift) ·
---                 department (subject/shift is in `department`, an
---                 op_shift_category.department value; set it from the role,
---                 never from sign-ups, so access survives a year off — Chipper)
+--                 position (actor holds that op_position_type ON the shift
+--                 being acted on — how leads get control of their shift, Mew).
+--   relationship: everyone · self (the subject is the actor) · shift (actor,
+--                 and the subject if any, are both on the shift acted on).
 CREATE TABLE op_permission_grant (
   grant_id BIGINT NOT NULL AUTO_INCREMENT,
   grantee_type ENUM('anyone','signed_in','role','position') NOT NULL,
   grantee_id BIGINT NULL,
   permission VARCHAR(64) NOT NULL,
-  relationship ENUM('everyone','self','shift','department') NOT NULL DEFAULT 'everyone',
-  department VARCHAR(128) NULL,
+  relationship ENUM('everyone','self','shift') NOT NULL DEFAULT 'everyone',
   window_key VARCHAR(32) NULL,
   place ENUM('any','on_playa','off_playa') NOT NULL DEFAULT 'any',
   PRIMARY KEY (grant_id),
@@ -67,6 +58,8 @@ CROSS JOIN (
   UNION ALL SELECT 'volunteer_record:manage' UNION ALL SELECT 'email_bounced:update'
   UNION ALL SELECT 'shift_volunteers:add' UNION ALL SELECT 'shift_volunteers:remove'
   UNION ALL SELECT 'shift_volunteers:check_in' UNION ALL SELECT 'shift_volunteers:review'
+  UNION ALL SELECT 'shift_volunteers:add_override' UNION ALL SELECT 'volunteer_notes:view'
+  UNION ALL SELECT 'volunteer_passcode:reset'
 ) AS t;
 
 -- Baseline for everyone signed in (isOwnerOrAdmin's "own record" half, the
@@ -74,6 +67,7 @@ CROSS JOIN (
 INSERT INTO op_permission_grant
   (grantee_type, permission, relationship, window_key, place) VALUES
   ('signed_in', 'volunteer_record:manage',   'self',     NULL,        'any'),
+  ('signed_in', 'volunteer_passcode:reset',  'self',     NULL,        'any'),
   ('signed_in', 'shift_volunteers:add',      'self',     NULL,        'any'),
   ('signed_in', 'shift_volunteers:add',      'everyone', NULL,        'on_playa'),
   ('signed_in', 'shift_volunteers:remove',   'self',     'self_drop', 'any'),
