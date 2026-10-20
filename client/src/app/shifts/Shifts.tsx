@@ -373,7 +373,7 @@ export const Shifts = () => {
           backgroundImage: "url(/banners/databeast-volunteers-exiting.jpg)",
           backgroundSize: "cover",
         }}
-        text="Shifts"
+        text="Census Shifts"
       />
       <Container component="main">
         <Box component="section">
