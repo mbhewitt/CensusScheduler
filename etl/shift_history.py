@@ -2,20 +2,22 @@
 """Load the permanent shift history, op_shift_history (#759, Mew 2026-10-18).
 
 One row per volunteer per shift worked. Three loads, each idempotent (upsert on
-source + source_id + shiftboard_id), so re-running is safe:
+source + source_id + shiftboard_id), so re-running is safe, in any order:
 
-  legacy     the legacy Census `shiftboard2` table (2006-2025) plus its ratings
-             (`review_notes`). Reads from a LEGACY_MYSQL_* database, because
-             shiftboard2 is not on prod RDS. Skips unfilled slots (id 0).
-  sb-shifts  prod `sb_shifts` rows that shiftboard2 doesn't have (later
-             Shiftboard pulls). Same Shiftboard signup id, so no double count.
+  shiftboard every signup straight from Shiftboard (2013 on, live). The main
+             shift list. Never overwrites what `legacy` adds.
+  legacy     the legacy Census copy `shiftboard2` (frozen 2026-01) + its
+             `review_notes`: adds what Shiftboard doesn't keep, i.e. no-show
+             marks, ratings/notes, role and department, plus ~140 pre-2013 and
+             placeholder rows. Same Shiftboard signup ids, so one row per signup.
+             Reads LEGACY_MYSQL_*, because shiftboard2 is not on prod RDS.
   app        one season of the op_ tables (active signups), with ratings/notes.
              Run once the season is over, before the op_ tables move on.
 
 Run (target = MYSQL_* in secrets/etl.env, as for the other ETL scripts):
-    python shift_history.py legacy --dry-run
+    python shift_history.py shiftboard --dry-run
+    python shift_history.py shiftboard
     python shift_history.py legacy
-    python shift_history.py sb-shifts
     python shift_history.py app --year 2026
     python shift_history.py selftest
 """
@@ -35,6 +37,8 @@ from dotenv import load_dotenv
 HERE = Path(__file__).resolve().parent
 load_dotenv(HERE / "secrets" / "etl.env")
 
+from shiftboard_client import ShiftboardClient  # noqa: E402
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s: %(message)s")
 log = logging.getLogger("shift_history")
 
@@ -45,15 +49,18 @@ COLUMNS = (
     "source, source_id, shiftboard_id, year, start_time, end_time, shift_name, "
     "position, department, off_playa, noshow, rating, notes"
 )
-UPSERT = f"""
+INSERT = f"""
     INSERT INTO op_shift_history ({COLUMNS})
     VALUES ({", ".join(["%s"] * 13)})
     ON DUPLICATE KEY UPDATE
         year=VALUES(year), start_time=VALUES(start_time), end_time=VALUES(end_time),
-        shift_name=VALUES(shift_name), position=VALUES(position),
-        department=VALUES(department), off_playa=VALUES(off_playa),
-        noshow=VALUES(noshow), rating=VALUES(rating), notes=VALUES(notes)
-"""
+        shift_name=VALUES(shift_name)"""
+# legacy/app own the fields Shiftboard doesn't keep; the shiftboard load only
+# refreshes when/what (its no-show column is always blank).
+UPSERT = INSERT + """,
+        position=VALUES(position), department=VALUES(department),
+        off_playa=VALUES(off_playa), noshow=VALUES(noshow), rating=VALUES(rating),
+        notes=VALUES(notes)"""
 
 
 def connect(prefix: str, ssl: bool) -> pymysql.connections.Connection:
@@ -121,7 +128,7 @@ def load_legacy() -> list[tuple]:
         # dateshift years off their date.
         start, end = parse_span(r["date"], r["shift"])
         out.append((
-            "shiftboard2", r["id"], r["shiftboard_id"], r["date"].year, start, end,
+            "shiftboard", r["id"], r["shiftboard_id"], r["date"].year, start, end,
             r["subject"] or "?", r["role"],
             DEPARTMENT_MAP.get(r["category"], r["category"]),
             None if r["offPlaya"] is None else bool(int(r["offPlaya"] or 0)),
@@ -132,26 +139,30 @@ def load_legacy() -> list[tuple]:
     return out
 
 
-def load_sb_shifts(db) -> list[tuple]:
-    with db.cursor() as cur:
-        cur.execute(
-            """
-            SELECT sb_shift_id, shiftboard_id, `date`, shift, subject, noshow
-            FROM sb_shifts
-            WHERE shiftboard_id > 0
-              AND sb_shift_id NOT IN (
-                SELECT source_id FROM op_shift_history WHERE source = 'shiftboard2')
-            """
-        )
-        rows = cur.fetchall()
+def load_shiftboard() -> list[tuple]:
+    client = ShiftboardClient(
+        os.environ["SHIFTBOARD_USER"],
+        os.environ["SHIFTBOARD_PASSWORD"],
+        os.environ.get("SHIFTBOARD_SESSION_ID", "534228"),
+    )
+    if not client.authenticate():
+        raise SystemExit("Shiftboard auth failed")
     out = []
-    for r in rows:
-        start, end = parse_span(r["date"], r["shift"])
-        out.append((
-            "sb_shifts", r["sb_shift_id"], r["shiftboard_id"], r["date"].year, start, end,
-            r["subject"] or "?", None, None, None, r["noshow"] or "", None, None,
-        ))
-    log.info("sb-shifts: %d signups not already in shiftboard2", len(out))
+    # Shiftboard returns nothing before 2013. One request per year keeps each
+    # report small.
+    for year in range(2013, dt.date.today().year + 1):
+        for r in client.download_coverage(f"{year}-01-01", f"{year}-12-31"):
+            if not (r["shiftboard_id"].isdigit() and int(r["shiftboard_id"]) > 0
+                    and r["sb_shift_id"].isdigit()):
+                continue  # unfilled slot
+            day = dt.date.fromisoformat(r["date"])
+            start, end = parse_span(day, r["shift"])
+            out.append((
+                "shiftboard", int(r["sb_shift_id"]), int(r["shiftboard_id"]), day.year,
+                start, end, r["subject"] or "?", None, None, None, "", None, None,
+            ))
+    log.info("shiftboard: %d filled signups, %d people",
+             len(out), len({o[2] for o in out}))
     return out
 
 
@@ -204,7 +215,7 @@ def selftest() -> None:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("load", choices=["legacy", "sb-shifts", "app", "selftest"])
+    ap.add_argument("load", choices=["shiftboard", "legacy", "app", "selftest"])
     ap.add_argument("--year", type=int, help="season for `app`")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
@@ -217,17 +228,17 @@ def main() -> int:
 
     db = target()
     try:
-        if args.load == "legacy":
-            rows = load_legacy()
-        elif args.load == "sb-shifts":
-            rows = load_sb_shifts(db)
+        if args.load == "shiftboard":
+            rows, sql = load_shiftboard(), INSERT
+        elif args.load == "legacy":
+            rows, sql = load_legacy(), UPSERT
         else:
-            rows = load_app(db, args.year)
+            rows, sql = load_app(db, args.year), UPSERT
         if args.dry_run:
             log.info("DRY RUN: would upsert %d rows", len(rows))
             return 0
         with db.cursor() as cur:
-            cur.executemany(UPSERT, rows)
+            cur.executemany(sql, rows)
         db.commit()
         log.info("upserted %d rows", len(rows))
     finally:
