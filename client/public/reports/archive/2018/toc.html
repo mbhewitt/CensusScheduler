@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+
+<head>
+<script src="../patch.js"></script>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>BRC Census Population Analysis, 2013-2018</title>
+	<meta name="description" content="2013-2018 Burning Man Population Analysis by BRC Census" />
+	<meta name="author" content="DV8" />
+	<link rel="shortcut icon" href="favicon.ico">
+</head>
+
+<body>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="author" content="DV8" />
+
+<title>BRC Census Population Analysis, 2013-2018</title>
+
+<section id="page" style="font-family:'Open Sans', sans-serif">
+
+	<h1>2013-2018 Population Analysis</h1>
+
+	<h2>Table of Contents</h2>
+
+		<hr>
+		
+		<ul>
+		
+			<h3>Report Information</h3>
+			
+			<ul>
+			
+				<li><a href="index.html">Introduction</a></li>
+				
+				<ul style="list-style-type:circle">
+			
+					 <li><a href="index.html#whatis">What is the Census Project</a></li>
+					 <li><a href="index.html#contrib">Contributions and Acknowledgements</a></li>
+					 <li><a href="index.html#formore">For More Information</a></li>
+				</ul>
+				
+				<ul style="list-style-type:circle">
+			
+					 <li><a href="highlights.html">2018 Highlights</a></li>
+				</ul>
+				
+				<li><a href="methods.html">Method and Weighting Procedures</a></li>	
+				
+				<ul style="list-style-type:circle">
+			
+					 <li><a href="methods.html#methods">Methodology Overview</a></li>
+					 <li><a href="methods.html#vbls">Weighting Variables</a></li>
+					 <li><a href="methods.html#example">Weighted Results: an Example</a></li>
+					 <li><a href="methods.html#survey">Data Collection via Online Survey</a></li>
+					 
+				</ul>
+			
+				<li><a href="visualizations.html">Interpreting Visualizations</a></li>
+				
+				<ul style="list-style-type:circle">
+			
+					 <li><a href="visualizations.html#plotstables">Plots and Tables</a></li>
+					 <li><a href="visualizations.html#barsintervals">Error Bars and Confidence Intervals</a></li>
+					 <li><a href="visualizations.html#yeartoyear">Year-to-Year Changes</a></li>
+					 <li><a href="visualizations.html#yaxis">Y-Axis Breaks</a></li>
+					 
+				</ul>
+				
+			</ul>
+			
+			<h3>Sociodemographic Characteristics</h3>
+			
+			<ul>
+				
+				<ul style="list-style-type:circle">
+			
+					 <li><a href="sociodemo.html#pop">BRC Population</a></li>
+
+					<li><a href="sociodemo.html#burnsattended">Past Burning Man Experience</a></li>
+					
+						<ul>
+						
+							 <li><a href="sociodemo.html#burnsattended">Number of Burns Attended</a></li>
+							 <li><a href="sociodemo.html#sincefirst">Years Since First Burn</a></li>
+							 
+						</ul>
+				
+					<li><a href="sociodemo.html#age">Age</a></li>
+					
+					<li><a href="sociodemo.html#ethnicity">Ethnoracial Self-Identity</a></li>
+					
+						<ul>
+						
+							 <li><a href="sociodemo.html#ethnicity">Ethnicity</a></li>
+							 <li><a href="sociodemo.html#poc">Self-Identification as a Person of Color</a></li>
+							 
+						</ul>
+			
+					<li><a href="sociodemo.html#edu">Education</a></li>
+					
+					<li><a href="sociodemo.html#persinc">Income</a></li>
+					
+						<ul>
+						
+							 <li><a href="sociodemo.html#persinc">Personal Income</a></li>
+							 <li><a href="sociodemo.html#houseinc">Household Income</a></li>
+							 
+						</ul>
+						
+					<li><a href="sociodemo.html#creativeid">Creative Self-Identities</a></li>
+					
+						<ul>
+						
+							 <li><a href="sociodemo.html#creativeid">Self-Identity as an Artist, Maker, or Craftsperson</a></li>
+							 <li><a href="sociodemo.html#creativepaid">Financial Compensation for Creating/Making Art</a></li>
+							 
+						</ul>
+						
+					<li><a href="sociodemo2.html#resregion">Residence in the Default World</a></li>
+					
+						<ul>
+						
+							 <li><a href="sociodemo2.html#resregion">Region of Residence</a></li>
+							 <li><a href="sociodemo2.html#resstate">State of Residence (US Residents)</a></li>
+							 
+						</ul>
+						
+					<li><a href="sociodemo2.html#language">Native Language</a></li>
+					
+					<li><a href="sociodemo2.html#politid">Politics</a></li>
+					
+						<ul>
+						
+							 <li><a href="sociodemo2.html#politid">Primary Political Self-Identity</a></li>
+							 <li><a href="sociodemo2.html#uspolitparty">US Political Party</a></li>
+							 <li><a href="sociodemo2.html#usvote">US Voting History</a></li>
+							 
+						</ul>
+						
+					<li><a href="sociodemo2.html#spirituality">Spiritual Beliefs</a></li>
+					
+						<ul>
+						
+							 <li><a href="sociodemo2.html#spirituality">Spirituality</a></li>
+							 <li><a href="sociodemo2.html#religion">Religion or Religious Denomination</a></li>
+							 
+						</ul>
+					
+					<li><a href="sociodemo3.html#gendercurr">Gender Identities</a></li>
+					
+						<ul>
+						
+							 <li><a href="sociodemo3.html#gendercurr">Current Gender</a></li>
+							 <li><a href="sociodemo3.html#genderaddl">Additional Gender Identities</a></li>
+							 
+						</ul>
+						
+					<li><a href="sociodemo3.html#sexattract">Sexuality</a></li>
+					
+						<ul>
+						
+							 <li><a href="sociodemo3.html#sexattract">Sexual Attraction</a></li>
+							 <li><a href="sociodemo3.html#sexorient">Sexual Orientation</a></li>
+							 <li><a href="sociodemo3.html#sexorientbygen">Sexual Orientation by Gender</a></li>
+							 <li><a href="sociodemo3.html#sexaddl">Additional Sexual Identities</a></li>
+							 
+						</ul>
+						
+					<li><a href="sociodemo3.html#relstatus">Relationships</a></li>
+					
+						<ul>
+						
+							 <li><a href="sociodemo3.html#relstatus">Relationship Status</a></li>
+							 <li><a href="sociodemo3.html#relopen">Relationship Openness</a></li>
+							 
+						</ul>
+				
+				</ul>
+			
+			</ul>
+			
+			<h3>Before and After Black Rock City</h3>
+			
+			<ul>
+			
+				<ul style="list-style-type:circle">
+				
+				 <li><a href="volskills.html">Volunteerism Inspired</a></li>
+				
+					<ul>
+			
+						 <li><a href="volskills.html#volinspired">Volunteerism and/or Community Involvement Inspired by BRC</a></li>
+						 <li><a href="volskills.html#volpastyr">Volunteerism Over the Past Year</a></li>
+						 <li><a href="volskills.html#volpermonth">Volunteer Hours per Month</a></li>
+						 
+					</ul>
+					
+				<li><a href="volskills.html#skillslist">Skills Inspired</a></li>
+				
+					<ul>
+			
+						 <li><a href="volskills.html#skillslist">Skill Acquisition or Practice Inspired by BRC</a></li>
+						 <li><a href="volskills.html#skillsimpact">Impact of Skills Outside of BRC</a></li>
+						 <li><a href="volskills.html#skillsuseful">Usefulness of Skills Learned or Practiced After BRC</a></li>
+						 <li><a href="volskills.html#skillsusehow">Application of Skills Outside of BRC</a></li>
+						 
+					</ul>
+					
+				<li><a href="othersnature.html">Relationship with Others</a></li>
+				
+					<ul>
+			
+						 <li><a href="othersnature.html#othersintent">Others' Intentions</a></li>
+						 <li><a href="othersnature.html#timestranger">Helping a Stranger</a></li>
+						 <li><a href="othersnature.html#selfothers">Relationship Between Self and Others</a></li>
+						 
+					</ul>
+					
+				<li><a href="othersnature.html#skillslist">Relationship with Nature</a></li>
+				
+					<ul>
+			
+						 <li><a href="othersnature.html#selfnature">Relationship Between Self and Nature</a></li>
+						 <li><a href="othersnature.html#envgroup">Self-Identification with Group Labels</a></li>
+						 <li><a href="othersnature.html#envstateconsum">Environmental Perspectives</a></li>
+						 <li><a href="othersnature.html#humansnaturemodify">Humans and Nature</a></li>
+						 
+					</ul>
+					
+				<li><a href="beforeafter3.html#openmind">Increased Open-Mindedness</a></li>
+				
+				<li><a href="beforeafter3.html#smilefriendly">Comparing Settings</a></li>
+				
+					<ul>
+			
+						 <li><a href="beforeafter3.html#smilefriendly">Interpreting Smiles</a></li>
+						 <li><a href="beforeafter3.html#expressemot">Emotional Expression</a></li>
+						 <li><a href="beforeafter3.html#dwstatus">Importance of Default World Status</a></li>
+						 
+					</ul>
+					
+				<li><a href="transform.html#transfoyn">Transformative Experience</a></li>
+				
+					<ul>
+			
+						 <li><a href="transform.html#transfoyn">Self-Report of a Transformative Experience</a></li>
+						 <li><a href="transform.html#transfoexp">Degree of Expectation of a Transformative Experience</a></li>
+						 <li><a href="transform.html#transfodes">Degree of Desirability of a Transformative Experience</a></li>
+						 <li><a href="transform.html#transforpers">Persistence of Transformative Experience After Departure</a></li>
+						 <li><a href="transform.html#transfodurat">Duration of Transformative Experience After Departure</a></li>
+						 
+					</ul>
+					 
+				</ul>
+
+			</ul>
+			
+			<h3>Perspectives on Burning Man</h3>
+			
+			<ul>
+			
+				<ul style="list-style-type:circle">
+				
+				 <li><a href="principles.html">10 Principles</a></li>
+				
+					<ul>
+			
+						 <li><a href="principles.html#prinimport">Personal Importance</a></li>
+						 <li><a href="principles.html#prinessent">Essentialness to Burning Man</a></li>
+						 <li><a href="principles.html#prinfreq">Most Frequently Practiced</a></li>
+						 <li><a href="principles.html#prindiff">Most Difficult to Practice</a></li>
+						 <li><a href="principles.html#prinwork">Applications in the Workplace</a></li>
+						 
+					</ul>
+					
+				<li><a href="perspectives.html">Burning Man Attendance</a></li>
+				
+					<ul>
+			
+						 <li><a href="perspectives.html#brcreasons">Reasons for Going This Year</a></li>
+						 <li><a href="perspectives.html#brcreturn">Intent to Return in the Future</a></li>
+						 
+					</ul>
+
+				<li><a href="perspectives.html#burnerid">Self-Identification as a "Burner"</a></li>
+				 
+				 <li><a href="perspectives.html#regionalattend">Burning Man Year-Round</a></li>
+				
+					<ul>
+			
+						 <li><a href="perspectives.html#regionalattend">Attendance at Regional Events/Mixers/Gatherings</a></li>
+						 <li><a href="perspectives.html#regionalvol">Regional Event Involvement</a></li>
+						 <li><a href="perspectives.html#yearround">Burning Man Organization and Year-Round Involvement</a></li>
+						 <li><a href="perspectives.html#programs">Familiarity with Burning Man Programs and Affiliates</a></li>
+						 
+					</ul>
+					
+				<li><a href="perspectives.html#1ktodonate">Funding Priorities</a></li>
+					
+				</ul>
+				
+			</ul>
+			
+			<h3>Life in Black Rock City</h3>
+			
+			<ul>
+			
+				<ul style="list-style-type:circle">
+					
+				<li><a href="lifebrc.html#brcenjoy">Experiences in BRC</a></li>
+				
+					<ul>
+			
+						 <li><a href="lifebrc.html#brcenjoy">Enjoyment of Experience</a></li>
+						 <li><a href="lifebrc.html#feelsafe">Feelings of Safety</a></li>
+						 <li><a href="lifebrc.html#feelconnect">Feelings of Connectedness</a></li>
+						 
+					</ul>
+					
+				<li><a href="lifebrc.html#burnerfamily">Evaluation of Burning Man Community as Family</a></li>
+				
+				<li><a href="lifebrc.html#brcmoney">Money Handling While in BRC</a></li>
+				
+				<li><a href="lifebrc2.html#campassigned">Camp Location</a></li>
+				
+					<ul>
+			
+						 <li><a href="lifebrc2.html#campassigned">Camp Location Preassignment</a></li>
+						 <li><a href="lifebrc2.html#camplocfactors">Camp Location Factors</a></li>
+						 
+					</ul>
+					
+				<li><a href="lifebrc2.html#campnb">Camp Size</a></li>
+				
+				<li><a href="lifebrc2.html#famnb">Family Members in BRC</a></li>
+				
+				<li><a href="lifebrc2.html#campassigned">Minors in BRC</a></li>
+				
+					<ul>
+			
+						 <li><a href="lifebrc2.html#minorsbring">Perspectives on Bringing Minors</a></li>
+						 <li><a href="lifebrc2.html#minorsrestrict">Perspectives on Restricting Minors</a></li>
+						 
+					</ul>
+					
+				<li><a href="lifebrc2.html#rvyn">RV/Camper Use</a></li>
+				
+					<ul>
+			
+						 <li><a href="lifebrc2.html#rvyn">RV/Camper Use</a></li>
+						 <li><a href="lifebrc2.html#rvservice">RV/Camper Service</a></li>
+						 <li><a href="lifebrc2.html#rvadults">RV/Camper Occupancy</a></li>
+						 
+					</ul>
+					
+				<li><a href="lifebrc3.html#lntsort">Leave No Trace</a></li>
+				
+					<ul>
+			
+						 <li><a href="lifebrc3.html#lntsort">Waste Sorting at Camp</a></li>
+						 <li><a href="lifebrc3.html#lntsorttype">Types of Waste Sorted at Camp</a></li>
+						 <li><a href="lifebrc3.html#lntdisposal">Post-Event Disposal Strategies</a></li>
+						 
+					</ul>
+					
+				<li><a href="lifebrc3.html#powersrc">On-Playa Power</a></li>
+				
+					<ul>
+			
+						 <li><a href="lifebrc3.html#powersrc">Power Sources Used On-Playa</a></li>
+						 <li><a href="lifebrc3.html#powervehgenfuel">Vehicle Generator Fuel and Use</a></li>
+						 <li><a href="lifebrc3.html#powercampgenfuel">Camp Generator Fuel and Use</a></li>
+						 <li><a href="lifebrc3.html#powercampgenkw">Camp Generator Output</a></li>
+						 
+					</ul>
+				
+				</ul>
+				
+			</ul>
+			
+			<h3>Event Logistics and Planning</h3>
+			
+			<ul>
+			
+				<ul style="list-style-type:circle">
+				
+				 <li><a href="logistics.html#ticsrc">Ticket Source</a></li>
+				 
+				 <li><a href="logistics.html#ticcost">Participant Expenses</a></li>
+				
+					<ul>
+			
+						 <li><a href="logistics.html#ticcost">Ticket Cost</a></li>
+						 <li><a href="logistics.html#spendforbman">Spending for Burning Man</a></li>
+						 <li><a href="logistics.html#spendrange">Spending Ranges</a></li>
+						 
+					</ul>
+					
+				<li><a href="logistics.html#spendnvrange">Impacts on Nevada State</a></li>
+				
+					<ul>
+			
+						 <li><a href="logistics.html#spendnvrange">Spending Ranges in Nevada State</a></li>
+						 <li><a href="logistics.html#spendnvbytype">Spending in Nevada State, by Category (Average USD)</a></li>
+						 <li><a href="logistics.html#nvcities">NV Cities and Communities Visited en Route to/from BRC</a></li>
+						 <li><a href="logistics.html#brdreturn">Intent to Return to the Black Rock Desert</a></li>
+						 <li><a href="logistics.html#nvactivities">Recreational Activities on Public Lands Near BRC</a></li>
+						 
+					</ul>
+					
+				<li><a href="logistics.html#parkvisits">Other Park/Recreation Area Visits</a></li>
+				
+				<li><a href="transpo.html">Transportation</a></li>
+				
+					<ul>
+			
+						 <li><a href="transpo.html#arrival">Travel Dates</a></li>
+						 
+							<ul style="list-style-type:circle">
+						 
+								<li><a href="transpo.html#arrival">Date of Arrival</a></li>
+								<li><a href="transpo.html#departure">Date of Departure</a></li>
+								
+							</ul>
+							
+						<li><a href="transpo.html#lengthofstay">Length of Stay</a></li>
+						
+						<li><a href="transpo.html#arrival">Ports of Travel</a></li>
+						 
+							<ul style="list-style-type:circle">
+						 
+								<li><a href="transpo.html#flyairport">Common Airports Visited en Route to BRC</a></li>
+								<li><a href="transpo.html#entryport">Port of Entry into BRC</a></li>
+								<li><a href="transpo.html#departureport">Port of Departure from BRC</a></li>
+								
+							</ul>
+						 
+						 <li><a href="transpo2.html">Vehicle Logistics</a></li>
+						 
+							<ul style="list-style-type:circle">
+						 
+								<li><a href="transpo2.html#vehicletype">Vehicle Type</a></li>
+								
+								<li><a href="transpo2.html#towing">Trailer Towing</a></li>
+								
+								<li><a href="transpo2.html#nbvehicle">Vehicle Occupancy</a></li>
+								
+								<ul>
+								
+									<li><a href="transpo2.html#nbvehicle">Number of People in Vehicle</a></li>
+									<li><a href="transpo2.html#nbvehicle017">Number of Minors in Vehicle</a></li>
+									
+								</ul>
+									
+							</ul>
+							
+						<li><a href="transpobxb.html">Burner Express Bus Logistics</a></li>
+						 
+							<ul style="list-style-type:circle">
+							
+								<li><a href="transpobxb.html#bxbreason">Reasons for Choosing BxB</a></li>
+								<li><a href="transpobxb.html#bxbeval">Evaluation of Overall BxB Experience</a></li>
+								<li><a href="transpobxb.html#bxbpriceeval">Evaluation of BxB Ticket Price</a></li>
+								<li><a href="transpobxb.html#bxbticeval">Evaluation of BxB Ticket Purchasing Experience</a></li>
+								<li><a href="transpobxb.html#bxbroutes">BxB Routes Traveled</a></li>
+								<li><a href="transpobxb.html#bxbshuttle">Use of Burner Express Satellite Shuttle</a></li>
+								<li><a href="transpobxb.html#bxbcamp">Use of Burner Express Camping</a></li>
+							
+							</ul>
+						 
+					</ul>
+					
+					<li><a href="eventinfo.html">Event Information</a></li>
+				
+					<ul>
+			
+						 <li><a href="eventinfo.html#infotype">Valued Information Coming from Burning Man</a></li>
+						 <li><a href="eventinfo.html#infosrc">Use of Available Sources for News and Information</a></li>
+						 <li><a href="eventinfo.html#bmir">Participant Methods for Listening to BMIR</a></li>
+						 <li><a href="eventinfo.html#bmgr">Familiarity with Gate Advisory Radio Station</a></li>
+								
+					</ul>
+					
+				</ul>
+				
+			</ul>
+			
+		</ul>
+
+</section>
+
+</body>
+
+</html>
