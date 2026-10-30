@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+
+<head>
+<script src="../patch.js"></script>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>BRC Census Population Analysis, 2013-2019</title>
+	<meta name="description" content="2013-2019 Burning Man Population Analysis by BRC Census" />
+	<meta name="author" content="Murrs" />
+	<link rel="shortcut icon" href="favicon.ico">
+	<!-- demo styles -->
+	<link rel="stylesheet" type="text/css" href="css/demo.css" />
+	<!-- menu styles -->
+	<link rel="stylesheet" type="text/css" href="css/component.css" />
+	<script src="js/modernizr-custom.js"></script>
+	<!-- Menu design downloaded from https://tympanus.net/Blueprints/MultiLevelMenu/ -->
+	<!-- menu__blank_link was added to counteract an issue clicking the last link in
+		a sub-menu while on an iPhone, when the list is long enough to require scrolling -->
+</head>
+
+<body>
+	<!-- Main container -->
+	<div class="container">
+		<!-- Blueprint header -->
+		<header class="bp-header cf">
+			<div class="dummy-logo">
+				<img src="images/Logo.PNG" height="64" width="64">
+				<h2 class="dummy-heading"><a href="index.html", style="color: #000000">BRC Census</a></h2>
+			</div>
+		</header>
+		<button class="action action--open" aria-label="Open Menu"><span class="icon icon--menu"></span></button>
+		<nav id="ml-menu" class="menu">
+			<button class="action action--close" aria-label="Close Menu"><span class="icon icon--cross"></span></button>
+			<div class="menu__wrap">
+				<ul data-menu="main" class="menu__level" tabindex="-1" role="menu" aria-label="All">
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-1" aria-owns="submenu-1" href="#">Report Info</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-2" aria-owns="submenu-2" href="#">Sociodemographics</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-3" aria-owns="submenu-3" href="#">Before and After BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-4" aria-owns="submenu-4" href="#">Perspectives on Burning Man</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-5" aria-owns="submenu-5" href="#">Life in BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-6" aria-owns="submenu-6" href="#">Event Logistics</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="toc.html">Report ToC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="https://burningman.org/event/volunteering/teams/census/">Census Home</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 1 -->
+				<ul data-menu="submenu-1" id="submenu-1" class="menu__level" tabindex="-1" role="menu" aria-label="Report Info">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="index.html#whatis">Introduction</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="index.html#contrib">Acknowledgements</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="index.html#formore">For More Info</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="highlights.html">2019 Highlights</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-1-1" aria-owns="submenu-1-1" href="#">Methodology</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-1-2" aria-owns="submenu-1-2" href="#">Visualizations</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 1-1 -->
+				<ul data-menu="submenu-1-1" id="submenu-1-1" class="menu__level" tabindex="-1" role="menu" aria-label="Methodology">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="methods.html#methods">Methodology Overview</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="methods.html#vbls">Weighting Variables</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="methods.html#example">Weighted Results: an Example</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="methods.html#survey">Data Collection via Online Survey</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 1-2 -->
+				<ul data-menu="submenu-1-2" id="submenu-1-2" class="menu__level" tabindex="-1" role="menu" aria-label="Visualizations">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="visualizations.html#plotstables">Plots and Tables</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="visualizations.html#barsintervals">Error Bars and CIs</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="visualizations.html#yeartoyear">Year-to-Year Changes</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="visualizations.html#yaxis">Y-Axis Breaks</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 2 -->
+				<ul data-menu="submenu-2" id="submenu-2" class="menu__level" tabindex="-1" role="menu" aria-label="Sociodemo">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo.html#pop">Total BRC Population</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-2-1" aria-owns="submenu-2-1" href="#">Prior Burns</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo.html#age">Age</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-2-2" aria-owns="submenu-2-2" href="#">Ethnoracial ID</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo.html#edu">Education</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-2-3" aria-owns="submenu-2-3" href="#">Income</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-2-4" aria-owns="submenu-2-4" href="#">Creative Self-ID</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-2-5" aria-owns="submenu-2-5" href="#">Residence</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo2.html#language">Native Language</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-2-6" aria-owns="submenu-2-6" href="#">Politics</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-2-7" aria-owns="submenu-2-7" href="#">Spiritual Beliefs</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-2-8" aria-owns="submenu-2-8" href="#">Gender ID</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-2-9" aria-owns="submenu-2-9" href="#">Sexuality</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-2-10" aria-owns="submenu-2-10" href="#">Relationships</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 2-1 -->
+				<ul data-menu="submenu-2-1" id="submenu-2-1" class="menu__level" tabindex="-1" role="menu" aria-label="Prior Burns">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo.html#burnsattended">Number of Burns</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo.html#sincefirst">Years Since First</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 2-2 -->
+				<ul data-menu="submenu-2-2" id="submenu-2-2" class="menu__level" tabindex="-1" role="menu" aria-label="Ethnoracial ID">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo.html#ethnicity">Ethnicity</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo.html#poc">Person of Color Self-ID</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 2-3 -->
+				<ul data-menu="submenu-2-3" id="submenu-2-3" class="menu__level" tabindex="-1" role="menu" aria-label="Income">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo.html#persinc">Personal Income</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo.html#houseinc">Household Income</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 2-4 -->
+				<ul data-menu="submenu-2-4" id="submenu-2-4" class="menu__level" tabindex="-1" role="menu" aria-label="Creative Self-ID">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo.html#creativeid">Artist, Maker, etc.</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo.html#creativepaid">Financial Compensation</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 2-5 -->
+				<ul data-menu="submenu-2-5" id="submenu-2-5" class="menu__level" tabindex="-1" role="menu" aria-label="Residence">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo2.html#resregion">Global Region</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo2.html#resstate">US State</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 2-6 -->
+				<ul data-menu="submenu-2-6" id="submenu-2-6" class="menu__level" tabindex="-1" role="menu" aria-label="Politics">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo2.html#politid">Political Self-ID</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo2.html#uspolitparty">US Party</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo2.html#usvote">US Voting</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 2-7 -->
+				<ul data-menu="submenu-2-7" id="submenu-2-7" class="menu__level" tabindex="-1" role="menu" aria-label="Spiritual Beliefs">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo2.html#spirituality">Spirituality</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo2.html#religion">Religion</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 2-8 -->
+				<ul data-menu="submenu-2-8" id="submenu-2-8" class="menu__level" tabindex="-1" role="menu" aria-label="Gender ID">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo3.html#gendercurr">Current Gender</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo3.html#genderaddl">Add'l Gender IDs</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 2-9 -->
+				<ul data-menu="submenu-2-9" id="submenu-2-9" class="menu__level" tabindex="-1" role="menu" aria-label="Sexuality">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo3.html#sexattract">Sexual Attraction</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo3.html#sexorient">Sexual Orientation</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo3.html#sexorientbygen">Orientation by Gender</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo3.html#sexaddl">Add'l Sexual IDs</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 2-10 -->
+				<ul data-menu="submenu-2-10" id="submenu-2-10" class="menu__level" tabindex="-1" role="menu" aria-label="Relationships">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo3.html#relstatus">Relationship Status</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo3.html#relopen">Relationship Openness</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 3 -->
+				<ul data-menu="submenu-3" id="submenu-3" class="menu__level" tabindex="-1" role="menu" aria-label="Before and After BRC">
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-3-1" aria-owns="submenu-3-1" href="#">Volunteerism</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-3-2" aria-owns="submenu-3-2" href="#">Skills Inspired</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-3-3" aria-owns="submenu-3-3" href="#">Relationship with Others</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-3-4" aria-owns="submenu-3-4" href="#">Relationship with Nature</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="beforeafter3.html#openmind">Increased Open-Mindedness</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-3-5" aria-owns="submenu-3-5" href="#">Connection to Black Rock City</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-3-6" aria-owns="submenu-3-6" href="#">Transformative Experience</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 3-1 -->
+				<ul data-menu="submenu-3-1" id="submenu-3-1" class="menu__level" tabindex="-1" role="menu" aria-label="Volunteerism">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="volskills.html#volinspired">Volunteerism/Community Involvement Inspired by BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="volskills.html#volpastyr">Volunteerism Over the Past Year</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="volskills.html#volpermonth">Volunteer Hours per Month</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 3-2 -->
+				<ul data-menu="submenu-3-2" id="submenu-3-2" class="menu__level" tabindex="-1" role="menu" aria-label="Skills Inspired">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="volskills.html#skillslist">Skill Acquisition/Practice Inspired by BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="volskills.html#skillsimpact">Impact of Skills Outside of BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="volskills.html#skillsuseful">Usefulness of Skills Learned/Practiced</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="volskills.html#skillsusehow">Application of Skills Outside of BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 3-3 -->
+				<ul data-menu="submenu-3-3" id="submenu-3-3" class="menu__level" tabindex="-1" role="menu" aria-label="Relationship with Others">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="othersnature.html#othersintent">Others' Intentions</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="othersnature.html#timestranger">Helping a Stranger</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="othersnature.html#selfothers">Relationship Between Self and Others</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 3-4 -->
+				<ul data-menu="submenu-3-4" id="submenu-3-4" class="menu__level" tabindex="-1" role="menu" aria-label="Relationship with Nature">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="othersnature.html#selfnature">Relationship Between Self and Nature</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="othersnature.html#envgroup">Self-Identification with Group Labels</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="othersnature.html#envstateconsum">Environmental Perspectives</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="othersnature.html#humansnaturemodify">Humans and Nature</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 3-5 -->
+				<ul data-menu="submenu-3-5" id="submenu-3-5" class="menu__level" tabindex="-1" role="menu" aria-label="Connection to Black Rock City">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="beforeafter3.html#feelings-of-connection">Feelings of Connection to BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="beforeafter3.html#aspects-of-connection">Aspects of Connection to BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="beforeafter3.html#impact-elements">Impact of Natural Elements</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="beforeafter3.html#relocate">Relocate BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 3-6 -->
+				<ul data-menu="submenu-3-6" id="submenu-3-6" class="menu__level" tabindex="-1" role="menu" aria-label="Transformative Experience">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transform.html#transfoyn">Self-Report of a Transformative Experience</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transform.html#transfoexp">Degree of Expectation</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transform.html#transfodes">Degree of Desirability</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transform.html#transforpers">Persistence After Departure</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transform.html#transfodurat">Duration After Departure</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transform.html#transfomusic">Music Aided Transformation</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 4 -->
+				<ul data-menu="submenu-4" id="submenu-4" class="menu__level" tabindex="-1" role="menu" aria-label="Perspectives on Burning Man">
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-4-1" aria-owns="submenu-4-1" href="#">10 Principles</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-4-2" aria-owns="submenu-4-2" href="#">Burning Man Attendance</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="perspectives.html#burnerid">Self-Identification as a Burner</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-4-3" aria-owns="submenu-4-3" href="#">Burning Man Year-Round</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="perspectives.html#1ktodonate">Funding Priorities</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 4-1 -->
+				<ul data-menu="submenu-4-1" id="submenu-4-1" class="menu__level" tabindex="-1" role="menu" aria-label="10 Principles">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="principles.html#prinimport">Personal Importance</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="principles.html#prinessent">Essentialness to Burning Man</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="principles.html#prinfreq">Most Frequently Practiced</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="principles.html#prindiff">Most Difficult to Practice</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="principles.html#prinwork">Applications in the Workplace</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 4-2 -->
+				<ul data-menu="submenu-4-2" id="submenu-4-2" class="menu__level" tabindex="-1" role="menu" aria-label="Burning Man Attendance">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="perspectives.html#brcreasons">Reasons for Going</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="perspectives.html#brcreturn">Intent to Return</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 4-3 -->
+				<ul data-menu="submenu-4-3" id="submenu-4-3" class="menu__level" tabindex="-1" role="menu" aria-label="Burning Man Year-Round">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="perspectives.html#regionalattend">Regional Attendance</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="perspectives.html#regionalvol">Regional Involvement</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="perspectives.html#yearround">Burning Man Program Involvement</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="perspectives.html#programs">Burning Man Programs/Affiliates</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 5 -->
+				<ul data-menu="submenu-5" id="submenu-5" class="menu__level" tabindex="-1" role="menu" aria-label="Life in BRC">
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-5-1" aria-owns="submenu-5-1" href="#">Experiences in BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc.html#burnerfamily">Community as Family</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc.html#brcmoney">Money Handling</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-5-2" aria-owns="submenu-5-2" href="#">Camp Location</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc2.html#campnb">Camp Size</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc2.html#famnb">Family Members in BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-5-3" aria-owns="submenu-5-3" href="#">Minors in BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-5-4" aria-owns="submenu-5-4" href="#">RV/Camper Use</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-5-5" aria-owns="submenu-5-5" href="#">Leave No Trace</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-5-6" aria-owns="submenu-5-6" href="#">On-Playa Power</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 5-1 -->
+				<ul data-menu="submenu-5-1" id="submenu-5-1" class="menu__level" tabindex="-1" role="menu" aria-label="Experiences in BRC">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc.html#brcenjoy">Enjoyment of Experience</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc.html#feelsafe">Feelings of Safety</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc.html#feelconnect">Feelings of Connectedness</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc.html#feelfreedom">Feelings of Freedom</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc.html#musicparticipation">Participation in Musical Activities</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 5-2 -->
+				<ul data-menu="submenu-5-2" id="submenu-5-2" class="menu__level" tabindex="-1" role="menu" aria-label="Camp Location">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc2.html#campassigned">Preassignment</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc2.html#camplocfactors">Location Factors</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 5-3 -->
+				<ul data-menu="submenu-5-3" id="submenu-5-3" class="menu__level" tabindex="-1" role="menu" aria-label="Minors in BRC">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc2.html#minorsbring">Bringing Minors</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc2.html#minorsrestrict">Restricting Minors</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 5-4 -->
+				<ul data-menu="submenu-5-4" id="submenu-5-4" class="menu__level" tabindex="-1" role="menu" aria-label="RV/Camper Use">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc2.html#rvyn">RV/Camper Use</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc2.html#rvservice">RV/Camper Service</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc2.html#rvadults">RV/Camper Occupancy</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 5-5 -->
+				<ul data-menu="submenu-5-5" id="submenu-5-5" class="menu__level" tabindex="-1" role="menu" aria-label="Leave No Trace">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc3.html#lntsort">Waste Sorting at Camp</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc3.html#lntsorttype">Types of Waste Sorted</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc3.html#lntdisposal">Post-Event Disposal</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				
+				<!-- Submenu 5-6 -->
+				<ul data-menu="submenu-5-6" id="submenu-5-6" class="menu__level" tabindex="-1" role="menu" aria-label="On-Playa Power">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc3.html#powersrc">Power Sources Used</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc3.html#powervehgenfuel">Vehicle Generator</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc3.html#powercampgenfuel">Camp Generator</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 6 -->
+				<ul data-menu="submenu-6" id="submenu-6" class="menu__level" tabindex="-1" role="menu" aria-label="Event Logistics">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="logistics.html#ticsrc">Ticket Source</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="logistics.html#ticcost">Ticket Cost</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="logistics.html#spendforbman">Other Spending</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-6-1" aria-owns="submenu-6-1" href="#">Impacts on NV</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="logistics.html#parkvisits">Other Park Visits</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-6-2" aria-owns="submenu-6-2" href="#">Transportation</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-6-3" aria-owns="submenu-6-3" href="#">Event Information</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 6-1 -->
+				<ul data-menu="submenu-6-1" id="submenu-6-1" class="menu__level" tabindex="-1" role="menu" aria-label="Impacts on NV">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="logistics.html#spendnvrange">Spending Ranges</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="logistics.html#spendnvbytype">Spending Categories</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="logistics.html#nvcities">Cities and Communities</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="logistics.html#brdreturn">Black Rock Desert</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="logistics.html#nvactivities">Recreational Activities</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 6-2 -->
+				<ul data-menu="submenu-6-2" id="submenu-6-2" class="menu__level" tabindex="-1" role="menu" aria-label="Transportation">
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-6-2-1" aria-owns="submenu-6-2-1" href="#">Travel Dates</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpo.html#lengthofstay">Length of Stay</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-6-2-2" aria-owns="submenu-6-2-2" href="#">Ports of Travel</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-6-2-3" aria-owns="submenu-6-2-3" href="#">Vehicle Logistics</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-6-2-4" aria-owns="submenu-6-2-4" href="#">Burner Express Bus</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 6-2-1 -->
+				<ul data-menu="submenu-6-2-1" id="submenu-6-2-1" class="menu__level" tabindex="-1" role="menu" aria-label="Travel Dates">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpo.html#arrival">Arrival</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpo.html#departure">Departure</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 6-2-2 -->
+				<ul data-menu="submenu-6-2-2" id="submenu-6-2-2" class="menu__level" tabindex="-1" role="menu" aria-label="Ports of Travel">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpo.html#flyairport">Airports</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpo.html#entryport">Entry into BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpo.html#departureport">Departure from BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 6-2-3 -->
+				<ul data-menu="submenu-6-2-3" id="submenu-6-2-3" class="menu__level" tabindex="-1" role="menu" aria-label="Vehicle Logistics">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpo2.html#vehicletype">Vehicle Type</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpo2.html#towing">Trailer Towing</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-6-2-3-1" aria-owns="submenu-6-2-3-1" href="#">Vehicle Occupancy</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 6-2-3-1 -->
+				<ul data-menu="submenu-6-2-3-1" id="submenu-6-2-3-1" class="menu__level" tabindex="-1" role="menu" aria-label="Vehicle Occupancy">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpo2.html#nbvehicle">Number of People</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpo2.html#nbvehicle017">Number of Minors</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 6-2-4 -->
+				<ul data-menu="submenu-6-2-4" id="submenu-6-2-4" class="menu__level" tabindex="-1" role="menu" aria-label="Burner Express Bus">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpobxb.html#bxbreason">Reasons for Choosing</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpobxb.html#bxbeval">Overall Evaluation</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpobxb.html#bxbpriceeval">Ticket Price Evaluation</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpobxb.html#bxbticeval">Ticket Purchase Evaluation</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpobxb.html#bxbroutes">Routes Traveled</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpobxb.html#bxbshuttle">Satellite Shuttle Use</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpobxb.html#bxbcamp">Burner Express Camping</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 6-3 -->
+				<ul data-menu="submenu-6-3" id="submenu-6-3" class="menu__level" tabindex="-1" role="menu" aria-label="Event Information">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="eventinfo.html#infotype">Valued Information</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="eventinfo.html#infosrc">Use of Available Sources</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="eventinfo.html#bmir">Burning Man Information Radio (BMIR)</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="eventinfo.html#bmgr">Gate Advisory Radio Station (GARS)</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+			</div>
+		</nav>
+	
+	<div class="content">
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="author" content="DV8" />
+
+<title>BRC Census Population Analysis, 2013-2019</title>
+
+<section id="page" style="font-family:'Open Sans', sans-serif">
+
+	<h1>Methodology and Weighting Procedures</h1>
+
+	<h2>Methodology Overview, Weighting Variables, Weighted Results: an Example, Data Collection via Online Survey</h2>
+
+	<section id="methods">
+
+		<hr><h2>Methodology Overview</h2>
+
+		<section style="margin-left:2%">
+
+			<p>The Research Ethics Office (Institutional Review Board) at the Université du Québec à Montréal (previously at Denver University) has determined that the project meets the standards to protect respondents and their confidentiality.</p>
+			
+			<p>Since 2013, the BRC Census team has collected data in two phases: a random sample during the event and a more comprehensive online survey after the event. During the Burning Man event in Black Rock City, Census volunteers conduct the random sample by administering a short socio-demographic survey to randomly selected Burners who agree to participate.</p>
+			
+			<p>After the event, announcements about the online survey are sent out via email lists, social media, the Burning Man website, etc. Some Burners participate but others do not, which introduces a self-selection bias in the survey results. To correct for this bias, the online survey results are adjusted (or “weighted”) based on the results of the random sample.</p>
+
+		</section>
+
+	</section>
+	
+	<section id="vbls">
+
+		<hr><h2>Weighting Variables</h2>
+		
+		<section style="margin-left:2%">
+
+			<p>Eight variables are collected during the random sample. These are used later to weight the results of the online survey:</p>
+			
+			<ul style="margin-left:2%"> 
+					<li>Day of arrival</li>
+					<li>Age</li>
+					<li>Virgin Burner or not</li>
+					<li>English as a first language or not</li>
+					<li>Gender</li>
+					<li>US resident or not</li>
+					<li>Voting behavior (if eligible to vote in the US)</li>
+					<li>US party affiliation (if eligible to vote in the US)</li>
+			</ul>
+			
+			<p>It is the goal of the BRC Census team to randomly sample 5-10% of the incoming population each year.</p>
+
+		</section>
+
+	</section>
+	
+	<section id="example">
+
+		<hr><h2>Weighted Results: an Example</h2>
+		
+		<section style="margin-left:2%">
+
+			<p>In 2019, 71.9% of survey respondents were non-virgins (that is, 2018 was not their first time in BRC). This was lower than the percentage of non-virgins observed in the random sample (74.1%). This means that non-virgins were "under-represented” (and virgins "under-represented”) in the raw results of the online survey. </p>
+			
+			<p>In other words, the random sample results show that the raw survey results are not an accurate representation of the overall BRC population:</p>
+
+				<div id="burning-man-virgin-in-2019" class="section level1">
+				<h1>Burning Man Virgin in 2019?</h1>
+				<p><img src="data:image/png;base64,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" width="960" /></p>
+				<p>Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+				<table class="gmisc_table" style="border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;">
+				<thead>
+				<tr>
+				<th style="border-top: 2px solid grey;">
+				</th>
+				<th colspan="2" style="font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;">
+				Virgin
+				</th>
+				<th style="border-top: 2px solid grey;; border-bottom: hidden;">
+				 
+				</th>
+				<th colspan="2" style="font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;">
+				Non-virgin
+				</th>
+				</tr>
+				<tr>
+				<th style="border-bottom: 1px solid grey;">
+				</th>
+				<th style="border-bottom: 1px solid grey; text-align: center;">
+				Percent
+				</th>
+				<th style="border-bottom: 1px solid grey; text-align: center;">
+				MoE +/- %
+				</th>
+				<th style="border-bottom: 1px solid grey;" colspan="1">
+				 
+				</th>
+				<th style="border-bottom: 1px solid grey; text-align: center;">
+				Percent
+				</th>
+				<th style="border-bottom: 1px solid grey; text-align: center;">
+				MoE +/- %
+				</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr>
+				<td style="font-weight: bold; text-align: left;">
+				Unweighted
+				</td>
+				<td style="text-align: center;">
+				25.9
+				</td>
+				<td style="text-align: center;">
+				1.0
+				</td>
+				<td style colspan="1">
+				 
+				</td>
+				<td style="text-align: center;">
+				74.1
+				</td>
+				<td style="text-align: center;">
+				1.0
+				</td>
+				</tr>
+				<tr style="background-color: #ececec;">
+				<td style="font-weight: bold; background-color: #ececec; border-bottom: 2px solid grey; text-align: left;">
+				Weighted
+				</td>
+				<td style="background-color: #ececec; border-bottom: 2px solid grey; text-align: center;">
+				28.1
+				</td>
+				<td style="background-color: #ececec; border-bottom: 2px solid grey; text-align: center;">
+				1.0
+				</td>
+				<td style="background-color: #ececec; border-bottom: 2px solid grey;" colspan="1">
+				 
+				</td>
+				<td style="background-color: #ececec; border-bottom: 2px solid grey; text-align: center;">
+				71.9
+				</td>
+				<td style="background-color: #ececec; border-bottom: 2px solid grey; text-align: center;">
+				1.0
+				</td>
+				</tr>
+				</tbody>
+				</table>
+				</div>
+
+			
+		</section>
+		
+	</section>
+	
+	<section id="survey">
+
+		<hr><h2>Data Collection via Online Survey</h2>
+		
+		<section style="margin-left:2%">
+
+			<p>From 2013 to 2019, the number of submitted surveys (and the associated survey sampling rate) were:</p>
+			
+			<table style="border:1px solid #9FA1A8; vertical-align:middle;" rules=all cellpadding="10">
+			  <tr>
+				<td>&nbsp;</td>
+				<th>2013</th>
+				<th>2014</th>
+				<th>2015</th>
+				<th>2016</th>
+				<th>2017</th>
+				<th>2018</th>
+				<th>2019</th>
+			  </tr>
+			  <tr>
+				<th>Total Number of Surveys</th>
+				<td style="text-align:center">11,919</td>
+				<td style="text-align:center">11,676</td>
+				<td style="text-align:center">9,585</td>
+				<td style="text-align:center">7,137</td>
+				<td style="text-align:center">9,168</td>
+				<td style="text-align:center">8,745</td>
+				<td style="text-align:center">7,737</td>
+			  </tr>
+			  <tr>
+				<th>Survey Sampling Rate</th>
+				<td style="text-align:center">17%</td>
+				<td style="text-align:center">18%</td>
+				<td style="text-align:center">14%</td>
+				<td style="text-align:center">11%</td>
+				<td style="text-align:center">13%</td>
+				<td style="text-align:center">12%</td>
+				<td style="text-align:center">10%</td>
+			  </tr>
+			</table>
+			
+			<p>This "survey sampling rate" indicates the percentage of the BRC population who completed the online survey in a given year based on the population count reported in each annual Burning Man report.</p>
+			
+			<p>While the survey sampling rate has fluctuated over the years, the sampling rate is consistently high enough to allow for year-to-year comparisons using the methodology described here. As a comparison, the American Community Survey (the largest population survey in the USA) has a sampling rate of approximately 2.5% (<a href="https://www.nap.edu/catalog/11901/using-the-american-community-survey-benefits-and-challenges" target="_blank">National Research Council, 2007</a>).</p>
+			
+			<p>The actual “response rate” for the online survey (i.e., the number of participants divided by the number of participants who were aware of the survey) cannot be calculated, as there is no way to know how many BRC citizens were reached during our promotion of the online survey.</p>
+
+		</section>
+
+	</section>
+
+	<hr><p><strong>Next:</strong> <a href="visualizations.html">Interpreting Visualizations: Plots and Tables, Error Bars and Confidence Intervals, Year-to-Year Changes, Y-Axis Breaks</a><br></p>
+
+</section>
+
+	
+	<!-- Ajax loaded content here -->
+	</div>
+</div>
+	<!-- /view -->
+	<script src="js/classie.js"></script>
+	<script src="js/dummydata.js"></script>
+	<script src="js/main.js"></script>
+	<script>
+	(function() {
+		var menuEl = document.getElementById('ml-menu'),
+			mlmenu = new MLMenu(menuEl, {
+				// breadcrumbsCtrl : true, // show breadcrumbs
+				// initialBreadcrumb : 'all', // initial breadcrumb text
+				backCtrl : false, // show back button
+				// itemsDelayInterval : 60, // delay between each menu item sliding animation
+				// onItemClick: loadDummyData // callback: item that doesn´t have a submenu gets clicked - onItemClick([event], [inner HTML of the clicked item])
+			});
+
+		// mobile menu toggle
+		var openMenuCtrl = document.querySelector('.action--open'),
+			closeMenuCtrl = document.querySelector('.action--close');
+
+		openMenuCtrl.addEventListener('click', openMenu);
+		closeMenuCtrl.addEventListener('click', closeMenu);
+
+		function openMenu() {
+			classie.add(menuEl, 'menu--open');
+			closeMenuCtrl.focus();
+		}
+
+		function closeMenu() {
+			classie.remove(menuEl, 'menu--open');
+			openMenuCtrl.focus();
+		}
+
+		// simulate grid content loading
+		var gridWrapper = document.querySelector('.content');
+
+		function loadDummyData(ev, itemName) {
+			ev.preventDefault();
+
+			closeMenu();
+			gridWrapper.innerHTML = '';
+			classie.add(gridWrapper, 'content--loading');
+			setTimeout(function() {
+				classie.remove(gridWrapper, 'content--loading');
+				gridWrapper.innerHTML = '<ul class="products">' + dummyData[itemName] + '<ul>';
+			}, 700);
+		}
+	})();
+	</script>
+</body>
+
+</html>

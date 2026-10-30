@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+
+<head>
+<script>/* subdir-base */(function(p){if(!/\/$|\.[A-Za-z0-9]+$/.test(p))document.write('<base href="'+p+'/">');})(location.pathname);</script>
+<script src="../patch.js"></script>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>BRC Census Population Analysis, 2013-2018</title>
+	<meta name="description" content="2013-2018 Burning Man Population Analysis by BRC Census" />
+	<meta name="author" content="DV8" />
+	<link rel="shortcut icon" href="favicon.ico">
+	<!-- demo styles -->
+	<link rel="stylesheet" type="text/css" href="css/demo.css" />
+	<!-- menu styles -->
+	<link rel="stylesheet" type="text/css" href="css/component.css" />
+	<script src="js/modernizr-custom.js"></script>
+	<!-- Menu design downloaded from https://tympanus.net/Blueprints/MultiLevelMenu/ -->
+	<!-- menu__blank_link was added to counteract an issue clicking the last link in
+		a sub-menu while on an iPhone, when the list is long enough to require scrolling -->
+</head>
+
+<body>
+	<!-- Main container -->
+	<div class="container">
+		<!-- Blueprint header -->
+		<header class="bp-header cf">
+			<div class="dummy-logo">
+				<img src="images/Logo.PNG" height="64" width="64">
+				<h2 class="dummy-heading"><a href="index.html", style="color: #000000">BRC Census</a></h2>
+			</div>
+		</header>
+		<button class="action action--open" aria-label="Open Menu"><span class="icon icon--menu"></span></button>
+		<nav id="ml-menu" class="menu">
+			<button class="action action--close" aria-label="Close Menu"><span class="icon icon--cross"></span></button>
+			<div class="menu__wrap">
+				<ul data-menu="main" class="menu__level" tabindex="-1" role="menu" aria-label="All">
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-1" aria-owns="submenu-1" href="index.html#">Report Info</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-2" aria-owns="submenu-2" href="index.html#">Sociodemographics</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-3" aria-owns="submenu-3" href="index.html#">Before and After BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-4" aria-owns="submenu-4" href="index.html#">Perspectives on Burning Man</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-5" aria-owns="submenu-5" href="index.html#">Life in BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-6" aria-owns="submenu-6" href="index.html#">Event Logistics</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="toc.html">Report ToC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="https://burningman.org/event/volunteering/teams/census/">Census Home</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 1 -->
+				<ul data-menu="submenu-1" id="submenu-1" class="menu__level" tabindex="-1" role="menu" aria-label="Report Info">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="index.html#whatis">Introduction</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="index.html#contrib">Acknowledgements</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="index.html#formore">For More Info</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="highlights.html">2018 Highlights</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-1-1" aria-owns="submenu-1-1" href="index.html#">Methodology</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-1-2" aria-owns="submenu-1-2" href="index.html#">Visualizations</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 1-1 -->
+				<ul data-menu="submenu-1-1" id="submenu-1-1" class="menu__level" tabindex="-1" role="menu" aria-label="Methodology">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="methods.html#methods">Methodology Overview</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="methods.html#vbls">Weighting Variables</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="methods.html#example">Weighted Results: an Example</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="methods.html#survey">Data Collection via Online Survey</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 1-2 -->
+				<ul data-menu="submenu-1-2" id="submenu-1-2" class="menu__level" tabindex="-1" role="menu" aria-label="Visualizations">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="visualizations.html#plotstables">Plots and Tables</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="visualizations.html#barsintervals">Error Bars and CIs</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="visualizations.html#yeartoyear">Year-to-Year Changes</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="visualizations.html#yaxis">Y-Axis Breaks</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 2 -->
+				<ul data-menu="submenu-2" id="submenu-2" class="menu__level" tabindex="-1" role="menu" aria-label="Sociodemo">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo.html#pop">Total BRC Population</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-2-1" aria-owns="submenu-2-1" href="index.html#">Prior Burns</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo.html#age">Age</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-2-2" aria-owns="submenu-2-2" href="index.html#">Ethnoracial ID</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo.html#edu">Education</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-2-3" aria-owns="submenu-2-3" href="index.html#">Income</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-2-4" aria-owns="submenu-2-4" href="index.html#">Creative Self-ID</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-2-5" aria-owns="submenu-2-5" href="index.html#">Residence</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo2.html#language">Native Language</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-2-6" aria-owns="submenu-2-6" href="index.html#">Politics</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-2-7" aria-owns="submenu-2-7" href="index.html#">Spiritual Beliefs</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-2-8" aria-owns="submenu-2-8" href="index.html#">Gender ID</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-2-9" aria-owns="submenu-2-9" href="index.html#">Sexuality</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-2-10" aria-owns="submenu-2-10" href="index.html#">Relationships</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 2-1 -->
+				<ul data-menu="submenu-2-1" id="submenu-2-1" class="menu__level" tabindex="-1" role="menu" aria-label="Prior Burns">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo.html#burnsattended">Number of Burns</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo.html#sincefirst">Years Since First</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 2-2 -->
+				<ul data-menu="submenu-2-2" id="submenu-2-2" class="menu__level" tabindex="-1" role="menu" aria-label="Ethnoracial ID">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo.html#ethnicity">Ethnicity</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo.html#poc">Person of Color Self-ID</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 2-3 -->
+				<ul data-menu="submenu-2-3" id="submenu-2-3" class="menu__level" tabindex="-1" role="menu" aria-label="Income">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo.html#persinc">Personal Income</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo.html#houseinc">Household Income</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 2-4 -->
+				<ul data-menu="submenu-2-4" id="submenu-2-4" class="menu__level" tabindex="-1" role="menu" aria-label="Creative Self-ID">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo.html#creativeid">Artist, Maker, etc.</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo.html#creativepaid">Financial Compensation</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 2-5 -->
+				<ul data-menu="submenu-2-5" id="submenu-2-5" class="menu__level" tabindex="-1" role="menu" aria-label="Residence">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo2.html#resregion">Global Region</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo2.html#resstate">US State</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 2-6 -->
+				<ul data-menu="submenu-2-6" id="submenu-2-6" class="menu__level" tabindex="-1" role="menu" aria-label="Politics">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo2.html#politid">Political Self-ID</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo2.html#uspolitparty">US Party</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo2.html#usvote">US Voting</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 2-7 -->
+				<ul data-menu="submenu-2-7" id="submenu-2-7" class="menu__level" tabindex="-1" role="menu" aria-label="Spiritual Beliefs">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo2.html#spirituality">Spirituality</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo2.html#religion">Religion</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 2-8 -->
+				<ul data-menu="submenu-2-8" id="submenu-2-8" class="menu__level" tabindex="-1" role="menu" aria-label="Gender ID">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo3.html#gendercurr">Current Gender</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo3.html#genderaddl">Add'l Gender IDs</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 2-9 -->
+				<ul data-menu="submenu-2-9" id="submenu-2-9" class="menu__level" tabindex="-1" role="menu" aria-label="Sexuality">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo3.html#sexattract">Sexual Attraction</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo3.html#sexorient">Sexual Orientation</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo3.html#sexorientbygen">Orientation by Gender</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo3.html#sexaddl">Add'l Sexual IDs</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 2-10 -->
+				<ul data-menu="submenu-2-10" id="submenu-2-10" class="menu__level" tabindex="-1" role="menu" aria-label="Relationships">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo3.html#relstatus">Relationship Status</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="sociodemo3.html#relopen">Relationship Openness</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 3 -->
+				<ul data-menu="submenu-3" id="submenu-3" class="menu__level" tabindex="-1" role="menu" aria-label="Before and After BRC">
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-3-1" aria-owns="submenu-3-1" href="index.html#">Volunteerism</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-3-2" aria-owns="submenu-3-2" href="index.html#">Skills Inspired</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-3-3" aria-owns="submenu-3-3" href="index.html#">Relationship with Others</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-3-4" aria-owns="submenu-3-4" href="index.html#">Relationship with Nature</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="beforeafter3.html#openmind">Increased Open-Mindedness</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-3-5" aria-owns="submenu-3-5" href="index.html#">Comparing Settings</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-3-6" aria-owns="submenu-3-6" href="index.html#">Transformative Experience</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 3-1 -->
+				<ul data-menu="submenu-3-1" id="submenu-3-1" class="menu__level" tabindex="-1" role="menu" aria-label="Volunteerism">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="volskills.html#volinspired">Volunteerism/Community Involvement Inspired by BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="volskills.html#volpastyr">Volunteerism Over the Past Year</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="volskills.html#volpermonth">Volunteer Hours per Month</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 3-2 -->
+				<ul data-menu="submenu-3-2" id="submenu-3-2" class="menu__level" tabindex="-1" role="menu" aria-label="Skills Inspired">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="volskills.html#skillslist">Skill Acquisition/Practice Inspired by BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="volskills.html#skillsimpact">Impact of Skills Outside of BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="volskills.html#skillsuseful">Usefulness of Skills Learned/Practiced</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="volskills.html#skillsusehow">Application of Skills Outside of BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 3-3 -->
+				<ul data-menu="submenu-3-3" id="submenu-3-3" class="menu__level" tabindex="-1" role="menu" aria-label="Relationship with Others">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="othersnature.html#othersintent">Others' Intentions</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="othersnature.html#timestranger">Helping a Stranger</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="othersnature.html#selfothers">Relationship Between Self and Others</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 3-4 -->
+				<ul data-menu="submenu-3-4" id="submenu-3-4" class="menu__level" tabindex="-1" role="menu" aria-label="Relationship with Nature">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="othersnature.html#selfnature">Relationship Between Self and Nature</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="othersnature.html#envgroup">Self-Identification with Group Labels</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="othersnature.html#envstateconsum">Environmental Perspectives</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="othersnature.html#humansnaturemodify">Humans and Nature</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 3-5 -->
+				<ul data-menu="submenu-3-5" id="submenu-3-5" class="menu__level" tabindex="-1" role="menu" aria-label="Comparing Settings">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="beforeafter3.html#smilefriendly">Interpreting Smiles</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="beforeafter3.html#expressemot">Emotional Expression</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="beforeafter3.html#dwstatus">Importance of Default World Status</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 3-6 -->
+				<ul data-menu="submenu-3-6" id="submenu-3-6" class="menu__level" tabindex="-1" role="menu" aria-label="Transformative Experience">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transform.html#transfoyn">Self-Report of a Transformative Experience</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transform.html#transfoexp">Degree of Expectation</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transform.html#transfodes">Degree of Desirability</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transform.html#transforpers">Persistence After Departure</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transform.html#transfodurat">Duration After Departure</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 4 -->
+				<ul data-menu="submenu-4" id="submenu-4" class="menu__level" tabindex="-1" role="menu" aria-label="Perspectives on Burning Man">
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-4-1" aria-owns="submenu-4-1" href="index.html#">10 Principles</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-4-2" aria-owns="submenu-4-2" href="index.html#">Burning Man Attendance</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="perspectives.html#burnerid">Self-Identification as a Burner</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-4-3" aria-owns="submenu-4-3" href="index.html#">Burning Man Year-Round</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="perspectives.html#1ktodonate">Funding Priorities</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 4-1 -->
+				<ul data-menu="submenu-4-1" id="submenu-4-1" class="menu__level" tabindex="-1" role="menu" aria-label="10 Principles">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="principles.html#prinimport">Personal Importance</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="principles.html#prinessent">Essentialness to Burning Man</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="principles.html#prinfreq">Most Frequently Practiced</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="principles.html#prindiff">Most Difficult to Practice</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="principles.html#prinwork">Applications in the Workplace</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 4-2 -->
+				<ul data-menu="submenu-4-2" id="submenu-4-2" class="menu__level" tabindex="-1" role="menu" aria-label="Burning Man Attendance">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="perspectives.html#brcreasons">Reasons for Going</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="perspectives.html#brcreturn">Intent to Return</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 4-3 -->
+				<ul data-menu="submenu-4-3" id="submenu-4-3" class="menu__level" tabindex="-1" role="menu" aria-label="Burning Man Year-Round">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="perspectives.html#regionalattend">Regional Attendance</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="perspectives.html#regionalvol">Regional Involvement</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="perspectives.html#yearround">Burning Man Program Involvement</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="perspectives.html#programs">Burning Man Programs/Affiliates</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 5 -->
+				<ul data-menu="submenu-5" id="submenu-5" class="menu__level" tabindex="-1" role="menu" aria-label="Life in BRC">
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-5-1" aria-owns="submenu-5-1" href="index.html#">Experiences in BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc.html#burnerfamily">Community as Family</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc.html#brcmoney">Money Handling</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-5-2" aria-owns="submenu-5-2" href="index.html#">Camp Location</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc2.html#campnb">Camp Size</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc2.html#famnb">Family Members in BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-5-3" aria-owns="submenu-5-3" href="index.html#">Minors in BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-5-4" aria-owns="submenu-5-4" href="index.html#">RV/Camper Use</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-5-5" aria-owns="submenu-5-5" href="index.html#">Leave No Trace</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-5-6" aria-owns="submenu-5-6" href="index.html#">On-Playa Power</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 5-1 -->
+				<ul data-menu="submenu-5-1" id="submenu-5-1" class="menu__level" tabindex="-1" role="menu" aria-label="Experiences in BRC">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc.html#brcenjoy">Enjoyment of Experience</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc.html#feelsafe">Feelings of Safety</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc.html#feelconnect">Feelings of Connectedness</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 5-2 -->
+				<ul data-menu="submenu-5-2" id="submenu-5-2" class="menu__level" tabindex="-1" role="menu" aria-label="Camp Location">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc2.html#campassigned">Preassignment</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc2.html#camplocfactors">Location Factors</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 5-3 -->
+				<ul data-menu="submenu-5-3" id="submenu-5-3" class="menu__level" tabindex="-1" role="menu" aria-label="Minors in BRC">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc2.html#minorsbring">Bringing Minors</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc2.html#minorsrestrict">Restricting Minors</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 5-4 -->
+				<ul data-menu="submenu-5-4" id="submenu-5-4" class="menu__level" tabindex="-1" role="menu" aria-label="RV/Camper Use">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc2.html#rvyn">RV/Camper Use</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc2.html#rvservice">RV/Camper Service</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc2.html#rvadults">RV/Camper Occupancy</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 5-5 -->
+				<ul data-menu="submenu-5-5" id="submenu-5-5" class="menu__level" tabindex="-1" role="menu" aria-label="Leave No Trace">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc3.html#lntsort">Waste Sorting at Camp</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc3.html#lntsorttype">Types of Waste Sorted</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc3.html#lntdisposal">Post-Event Disposal</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				
+				<!-- Submenu 5-6 -->
+				<ul data-menu="submenu-5-6" id="submenu-5-6" class="menu__level" tabindex="-1" role="menu" aria-label="On-Playa Power">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc3.html#powersrc">Power Sources Used</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc3.html#powervehgenfuel">Vehicle Generator</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="lifebrc3.html#powercampgenfuel">Camp Generator</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 6 -->
+				<ul data-menu="submenu-6" id="submenu-6" class="menu__level" tabindex="-1" role="menu" aria-label="Event Logistics">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="logistics.html#ticsrc">Ticket Source</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="logistics.html#ticcost">Ticket Cost</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="logistics.html#spendforbman">Other Spending</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-6-1" aria-owns="submenu-6-1" href="index.html#">Impacts on NV</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="logistics.html#parkvisits">Other Park Visits</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-6-2" aria-owns="submenu-6-2" href="index.html#">Transportation</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-6-3" aria-owns="submenu-6-3" href="index.html#">Event Information</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 6-1 -->
+				<ul data-menu="submenu-6-1" id="submenu-6-1" class="menu__level" tabindex="-1" role="menu" aria-label="Impacts on NV">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="logistics.html#spendnvrange">Spending Ranges</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="logistics.html#spendnvbytype">Spending Categories</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="logistics.html#nvcities">Cities and Communities</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="logistics.html#brdreturn">Black Rock Desert</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="logistics.html#nvactivities">Recreational Activities</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 6-2 -->
+				<ul data-menu="submenu-6-2" id="submenu-6-2" class="menu__level" tabindex="-1" role="menu" aria-label="Transportation">
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-6-2-1" aria-owns="submenu-6-2-1" href="index.html#">Travel Dates</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpo.html#lengthofstay">Length of Stay</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-6-2-2" aria-owns="submenu-6-2-2" href="index.html#">Ports of Travel</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-6-2-3" aria-owns="submenu-6-2-3" href="index.html#">Vehicle Logistics</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-6-2-4" aria-owns="submenu-6-2-4" href="index.html#">Burner Express Bus</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 6-2-1 -->
+				<ul data-menu="submenu-6-2-1" id="submenu-6-2-1" class="menu__level" tabindex="-1" role="menu" aria-label="Travel Dates">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpo.html#arrival">Arrival</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpo.html#departure">Departure</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 6-2-2 -->
+				<ul data-menu="submenu-6-2-2" id="submenu-6-2-2" class="menu__level" tabindex="-1" role="menu" aria-label="Ports of Travel">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpo.html#flyairport">Airports</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpo.html#entryport">Entry into BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpo.html#departureport">Departure from BRC</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 6-2-3 -->
+				<ul data-menu="submenu-6-2-3" id="submenu-6-2-3" class="menu__level" tabindex="-1" role="menu" aria-label="Vehicle Logistics">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpo2.html#vehicletype">Vehicle Type</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpo2.html#towing">Trailer Towing</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" data-submenu="submenu-6-2-3-1" aria-owns="submenu-6-2-3-1" href="index.html#">Vehicle Occupancy</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 6-2-3-1 -->
+				<ul data-menu="submenu-6-2-3-1" id="submenu-6-2-3-1" class="menu__level" tabindex="-1" role="menu" aria-label="Vehicle Occupancy">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpo2.html#nbvehicle">Number of People</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpo2.html#nbvehicle017">Number of Minors</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 6-2-4 -->
+				<ul data-menu="submenu-6-2-4" id="submenu-6-2-4" class="menu__level" tabindex="-1" role="menu" aria-label="Burner Express Bus">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpobxb.html#bxbreason">Reasons for Choosing</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpobxb.html#bxbeval">Overall Evaluation</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpobxb.html#bxbpriceeval">Ticket Price Evaluation</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpobxb.html#bxbticeval">Ticket Purchase Evaluation</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpobxb.html#bxbroutes">Routes Traveled</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpobxb.html#bxbshuttle">Satellite Shuttle Use</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="transpobxb.html#bxbcamp">Burner Express Camping</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+				<!-- Submenu 6-3 -->
+				<ul data-menu="submenu-6-3" id="submenu-6-3" class="menu__level" tabindex="-1" role="menu" aria-label="Event Information">
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="eventinfo.html#infotype">Valued Information</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="eventinfo.html#infosrc">Use of Available Sources</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="eventinfo.html#bmir">Burning Man Information Radio (BMIR)</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__link" href="eventinfo.html#bmgr">Gate Advisory Radio Station (GARS)</a></li>
+					<li class="menu__item" role="menuitem"><a class="menu__blank_link">-</a></li>
+				</ul>
+			</div>
+		</nav>
+	
+	<div class="content">
+		
+	<meta charset="utf-8" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="generator" content="pandoc" />
+	<meta name="author" content="DV8" />
+
+	<title>BRC Census Population Analysis, 2013-2018</title>
+
+	<section id="page" style="font-family:'Open Sans', sans-serif">
+
+		<h1>2013-2018 Population Analysis</h1>
+
+		<h2>What is the Census Project, Contributions and Acknowledgements, and For More Information</h2>
+
+		<section id="whatis">
+
+			<hr><h2>What is the Census Project?</h2>
+			
+			<section style="margin-left:2%">
+
+				<p>The Census is a collaborative research project that started in 2002.</p>
+
+				<p>Although the Black Rock City (BRC) Census project is technically a survey and not a literal census (where data is collected from every member of a population), our methodology allows us to report on the entire population of Black Rock City (BRC), not just on the individuals who participate actively in our data collection efforts.</p>
+
+				<p>The results in this report are the most reliable estimates we have of the Black Rock City population. The true population values may differ slightly from the presented estimates due to random variation in the sampling process. This report contains data collected in 2018 and, when possible, comparable (weighted) data from 2013 through 2017.</p>
+
+				<p>While BRC Census has been producing reports since 2002, it is hard to compare recent data with reports from earlier years (before 2013) because of important differences in methodology — i.e., from a convenience sample of Census Lab visitors on-playa to a weighted online survey conducted post-event.</p>
+
+				<p>The BRC Census project is made possible through the extensive collective effort of volunteers, academic researchers, and Burning Man Project. Our thanks to everyone whose contributions went into the creation of this report!</p>
+				
+				<p>There are two ways to navigate this report. For a full review of all data collected we recommend reviewing the report page by page. The "Next" link at the bottom of each page leads to the next sequential page in the report. For information about specific data points, use the navigation menu (at the left on larger screens, and accessible on smaller screens by touching the menu icon at the top left of the screen.)</p>
+				
+				<p>If you would prefer to print this report for hardcopy review, a PDF version can be viewed and downloaded <a href="https://drive.google.com/file/d/1ZW9V_-NOG6ff_xFr4oB76Cz8RQFhBnBu/view?usp=sharing" target="_blank">here</a>.</p>
+			
+			</section>
+			
+		</section>
+
+		<section id="contrib">
+		
+			<hr><h2 style="font-family:'Open Sans', sans-serif">Contributions and Acknowledgements</h2>
+			
+			<section style="margin-left:2%">
+			
+				<p><strong>BRC Census General Coordination and Scientific Committee:</strong> Dana “DV8” DeVaul, Dominic “Hunter” Beaulieu-Prévost, and S. Megan “Countess” Heller </p>
+
+				<p><strong>Data Analysis:</strong> Dominic “Hunter” Beaulieu-Prévost, Aaron “Murrs” Shev, and Dana “DV8” DeVaul </p> 
+
+				<p><strong>Report Coordination and Visualizations:</strong> Dana “DV8” DeVaul</p>
+
+				<p><strong>Report Editing and Proofreading:</strong> Meredith Braden, Lisa Donchak, Karen "Sassafras" Goodwin, Netti "Butterfly" Johnston, and Bianca Ruffin</p>
+				
+				<p><strong>Technical Assistance:</strong> Mu, Yusuf</p>
+
+				<p><strong>The 2018 Census Lab:</strong> The project also involved more than 190 essential volunteers: research collaborators, volunteer coordinators, statisticians, camp builders, gate samplers, keypunchers, Census Lab hosts, graphic designers, and many more!</p>
+
+				<p>We would also like to thank the Burning Man Communications Department and the Burning Man Tech Team, especially Erika “Deputy” O’Connor and Mark “Markle” Levitt.</p>
+
+				<p>Additionally, we would like to extend our sincere thanks to all of the Burning Man participants who have taken the time to provide their data. This project would not exist without our respondents. </p>
+
+				<p>Finally, our thanks to Burning Man Project for the resources they provide both on playa and off playa and for believing in the project! </p>
+			
+			</section>
+			
+		</section>
+
+		<section id="formore">
+		
+			<hr><h2 style="font-family:'Open Sans', sans-serif">For More Information</h2>
+			
+			<section style="margin-left:2%">
+		
+				<p>To contact the Census Lab, email <a href="mailto:census@burningman.org">census@burningman.org</a></p>
+
+				<p>Census Lab Blog: <a href="https://journal.burningman.org/author/census/">https://journal.burningman.org/author/census/</a></p>
+
+				<p>Census Lab Data Archive: <a href="http://burningman.org/culture/history/brc-history/census-data/">http://burningman.org/culture/history/brc-history/census-data/</a></p>
+
+				<p>Citation: DeVaul, D.L., Beaulieu-Prévost, D., Heller, S.M., and the 2018 Census Lab. (2017). Black Rock City Census: 2013-2018 Population Analysis. Black Rock City Census. Copyright © 2019 DeVaul et al. </p>
+
+				<p>This is an open-access report distributed under the terms of Creative Commons Attribution License, which permits unrestricted use, distribution, and reproduction in any medium, provided the original authors and source are credited. </p>
+
+			</section>
+
+		</section>
+		
+		<hr><p>This report was built with a navigation menu, which should be visible at left on larger screens and available on smaller screens by touching the menu icon (three purple horizontal bars) at the top left of the screen. Alternately, the <a href="toc.html">Table of Contents</a> may be used for navigation.</p>
+
+		<hr><p><strong>Next:</strong> <a href="highlights.html">2018 Highlights</a><br></p>
+
+	</section>
+	
+	<!-- Ajax loaded content here -->
+	</div>
+</div>
+	<!-- /view -->
+	<script src="js/classie.js"></script>
+	<script src="js/dummydata.js"></script>
+	<script src="js/main.js"></script>
+	<script>
+	(function() {
+		var menuEl = document.getElementById('ml-menu'),
+			mlmenu = new MLMenu(menuEl, {
+				// breadcrumbsCtrl : true, // show breadcrumbs
+				// initialBreadcrumb : 'all', // initial breadcrumb text
+				backCtrl : false, // show back button
+				// itemsDelayInterval : 60, // delay between each menu item sliding animation
+				// onItemClick: loadDummyData // callback: item that doesn´t have a submenu gets clicked - onItemClick([event], [inner HTML of the clicked item])
+			});
+
+		// mobile menu toggle
+		var openMenuCtrl = document.querySelector('.action--open'),
+			closeMenuCtrl = document.querySelector('.action--close');
+
+		openMenuCtrl.addEventListener('click', openMenu);
+		closeMenuCtrl.addEventListener('click', closeMenu);
+
+		function openMenu() {
+			classie.add(menuEl, 'menu--open');
+			closeMenuCtrl.focus();
+		}
+
+		function closeMenu() {
+			classie.remove(menuEl, 'menu--open');
+			openMenuCtrl.focus();
+		}
+
+		// simulate grid content loading
+		var gridWrapper = document.querySelector('.content');
+
+		function loadDummyData(ev, itemName) {
+			ev.preventDefault();
+
+			closeMenu();
+			gridWrapper.innerHTML = '';
+			classie.add(gridWrapper, 'content--loading');
+			setTimeout(function() {
+				classie.remove(gridWrapper, 'content--loading');
+				gridWrapper.innerHTML = '<ul class="products">' + dummyData[itemName] + '<ul>';
+			}, 700);
+		}
+	})();
+	</script>
+</body>
+
+</html>

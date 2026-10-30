@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>/* subdir-base */(function(p){if(!/\/$|\.[A-Za-z0-9]+$/.test(p))document.write('<base href="'+p+'/">');})(location.pathname);</script>
+<link rel="icon" href="../favicon.ico"><link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Black Rock City Census 2013-2017 Population Analysis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,300;0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link href="../style.css" rel="stylesheet">
+</head>
+<body class="popanalysis">
+
+<nav class="sidebar">
+  <div class="sidebar-title">Black Rock City Census 2013-2017 Population Analysis</div>
+  <ul class="sections">
+    <li><a href="#report-info">Report Information</a>
+      <ul>
+        <li><a href="#what-is-the-census-project">What is the Census Project?</a></li>
+        <li><a href="#method-and-weighting-procedures">Method and Weighting Procedures</a></li>
+        <li><a href="#weighting-variables">Weighting Variables</a></li>
+        <li><a href="#weighted-results-an-example">Weighted Results: an Example</a></li>
+        <li><a href="#data-collection-via-online-survey">Data Collection via Online Survey</a></li>
+        <li><a href="#reading-this-report">Reading This Report</a></li>
+      </ul>
+    </li>
+    <li><a href="#sociodemographic-characteristics">Sociodemographic Characteristics</a>
+      <ul>
+        <li><a href="#black-rock-city-total-population">Black Rock City Total Population</a></li>
+        <li><a href="#prior-burning-man-experience">Prior Burning Man Experience</a></li>
+        <li><a href="#age-groups">Age Groups</a></li>
+        <li><a href="#education">Education</a></li>
+        <li><a href="#personal-income">Personal Income</a></li>
+        <li><a href="#household-income">Household Income</a></li>
+        <li><a href="#current-gender">Current Gender</a></li>
+        <li><a href="#sexuality">Sexuality</a></li>
+        <li><a href="#relationships">Relationships</a></li>
+        <li><a href="#religion-and-spirituality">Religion and Spirituality</a></li>
+        <li><a href="#current-residence">Current Residence</a></li>
+        <li><a href="#language">Language</a></li>
+        <li><a href="#political-self-identity">Political Self-Identity</a></li>
+        <li><a href="#us-politics">US Politics</a></li>
+      </ul>
+    </li>
+    <li><a href="#ethnoracial-characteristics">Ethnoracial Characteristics</a>
+      <ul>
+        <li><a href="#ethnoracial-characteristics-2">Ethnoracial Characteristics</a></li>
+      </ul>
+    </li>
+    <li><a href="#additional-population-characteristics">Additional Population Characteristics</a>
+      <ul>
+        <li><a href="#self-identity-as-an-artist">Self-Identity as an Artist</a></li>
+        <li><a href="#self-identity-as-a-burner">Self-Identity as a Burner</a></li>
+        <li><a href="#relationship-with-others">Relationship with Others</a></li>
+        <li><a href="#perception-of-others">Perception of Others</a></li>
+        <li><a href="#reasons-for-attending-burning-man">Reasons for Attending Burning Man</a></li>
+      </ul>
+    </li>
+    <li><a href="#volunteerism-and-skill-acquisition">Volunteerism and Skill Acquisition</a>
+      <ul>
+        <li><a href="#volunteerism-and-skill-acquisition-2">Volunteerism and Skill Acquisition</a></li>
+      </ul>
+    </li>
+    <li><a href="#burning-man-s-ten-principles">Burning Man’s Ten Principles</a>
+      <ul>
+        <li><a href="#ten-principles">Ten Principles</a></li>
+      </ul>
+    </li>
+    <li><a href="#burning-man-expenses-and-tickets">Burning Man Expenses and Tickets</a>
+      <ul>
+        <li><a href="#spending-for-burning-man">Spending for Burning Man</a></li>
+        <li><a href="#ticket-cost">Ticket Cost</a></li>
+        <li><a href="#ticket-source">Ticket Source</a></li>
+        <li><a href="#factors-for-non-attendance">Factors for Non-Attendance</a></li>
+      </ul>
+    </li>
+    <li><a href="#impacts-on-nevada">Impacts on Nevada</a>
+      <ul>
+        <li><a href="#economic-impact-on-nevada">Economic Impact on Nevada</a></li>
+        <li><a href="#impacted-cities-and-neighborhoods">Impacted Cities and Neighborhoods</a></li>
+        <li><a href="#other-recreational-stops">Other Recreational Stops</a></li>
+      </ul>
+    </li>
+    <li><a href="#benefits-to-participation">Benefits to Participation</a>
+      <ul>
+        <li><a href="#benefits-to-participation-2">Benefits to Participation</a></li>
+      </ul>
+    </li>
+    <li><a href="#impressions-of-black-rock-city">Impressions of Black Rock City</a>
+      <ul>
+        <li><a href="#feelings-of-enjoyment">Feelings of Enjoyment</a></li>
+        <li><a href="#feelings-of-safety">Feelings of Safety</a></li>
+        <li><a href="#feelings-of-connection">Feelings of Connection</a></li>
+        <li><a href="#feelings-of-family">Feelings of Family</a></li>
+        <li><a href="#intention-to-return">Intention to Return</a></li>
+        <li><a href="#new-activities">New Activities</a></li>
+        <li><a href="#new-friends">New Friends</a></li>
+        <li><a href="#perceptions-of-social-signals">Perceptions of Social Signals</a></li>
+        <li><a href="#emotions">Emotions</a></li>
+        <li><a href="#default-world-status">Default World Status</a></li>
+      </ul>
+    </li>
+    <li><a href="#living-in-black-rock-city">Living in Black Rock City</a>
+      <ul>
+        <li><a href="#money-handling">Money Handling</a></li>
+        <li><a href="#leave-no-trace">Leave No Trace</a></li>
+        <li><a href="#on-playa-power">On-Playa Power</a></li>
+        <li><a href="#camping-on-playa">Camping On-Playa</a></li>
+        <li><a href="#living-in-an-rv-or-camper-trailer">Living in an RV or Camper-Trailer</a></li>
+        <li><a href="#family-members-on-playa">Family Members On-Playa</a></li>
+        <li><a href="#minors-in-black-rock-city">Minors in Black Rock City</a></li>
+      </ul>
+    </li>
+    <li><a href="#transportation">Transportation</a>
+      <ul>
+        <li><a href="#arrival-date">Arrival Date</a></li>
+        <li><a href="#departure-date">Departure Date</a></li>
+        <li><a href="#port-of-entry">Port of Entry</a></li>
+        <li><a href="#gate-and-point-1-entries">Gate and Point 1 Entries</a></li>
+        <li><a href="#airport-usage">Airport Usage</a></li>
+        <li><a href="#burner-express-bus">Burner Express Bus</a></li>
+      </ul>
+    </li>
+    <li><a href="#connecting-to-burning-man">Connecting to Burning Man</a>
+      <ul>
+        <li><a href="#year-round-participation">Year-Round Participation</a></li>
+        <li><a href="#burning-man-information">Burning Man Information</a></li>
+        <li><a href="#burning-man-organization">Burning Man Organization</a></li>
+        <li><a href="#burning-man-information-2">Burning Man Information</a></li>
+      </ul>
+    </li>
+    <li><a href="#academic-research-topic-transformative-experience">Academic Research Topic Transformative Experience</a>
+      <ul>
+        <li><a href="#transformative-experience">Transformative Experience</a></li>
+      </ul>
+    </li>
+    <li><a href="#brc-census-team-information">BRC Census Team Information</a>
+      <ul>
+        <li><a href="#contributions-and-acknowledgements">Contributions and Acknowledgements</a></li>
+        <li><a href="#still-curious">Still Curious?</a></li>
+      </ul>
+    </li>
+  </ul>
+  <ul>
+    <li class="back"><a href="/reports" target="_top"><svg viewBox="0 0 16 16" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z"/></svg> Back</a></li>
+  </ul>
+</nav>
+
+<main>
+<h1>2013-2017 Population Analysis</h1>
+<section id="report-info">
+<h2>Report Information</h2>
+<h3 id="what-is-the-census-project">What is the Census Project?</h3>
+<!-- page 2 -->
+<p>The Census is a collaborative research project that started in 2002.</p>
+<p>Although the BRC Census project is technically a survey and not a literal census (where data is collected from every member of a population), our methodology allows us to report on the entire population of Black Rock City (BRC), not just on the individuals who participate actively in our data collection efforts.</p>
+<p>The results in this report are the most reliable estimates we have of the Black Rock City population. The true population values may differ slightly from the presented estimates due to random variation in the sampling process. This report contains data collected in 2017 and, when possible, comparable (weighted) data from 2013 through 2016.</p>
+<p>While BRC Census has been producing reports since 2002, it is hard to compare recent data with reports from earlier years (before 2013) because of important differences in methodology — i.e., from a convenience sample of Census Lab visitors on-playa to a weighted online survey conducted post-event.</p>
+<p>The BRC Census project is made possible through the extensive collective effort of volunteers, academic researchers, and Burning Man Project. Our thanks to everyone whose contributions went into the creation of this report!</p>
+<h3 id="method-and-weighting-procedures">Method and Weighting Procedures</h3>
+<!-- page 3 -->
+<p>A research ethics committee at Université du Québec à Montréal (previously at Denver University) has determined that the project meets the standards to protect respondents and their confidentiality.</p>
+<p>Since 2013, the BRC Census team has collected data in two phases: a random sample during the event and a more comprehensive online survey after the event. During Burning Man, Census volunteers conduct the random sample by administering a short socio-demographic survey to randomly selected Burners who agree to participate.</p>
+<p>After the event, announcements about the online survey are sent out via email lists, social media, the Burning Man website, etc. Some Burners participate but others do not, which introduces a self-selection bias in the survey results. To correct for this bias, the online survey results are adjusted (or “weighted”) based on the results of the random sample.</p>
+<h3 id="weighting-variables">Weighting Variables</h3>
+<!-- page 4 -->
+<p>Eight variables are collected during the random sample. These are used later to weight the results of the online survey:</p>
+<ul><li>Day of arrival</li><li>Gender</li><li>Age</li><li>Virgin Burner or not</li><li>US resident or not</li><li>English as a first language or not</li><li>US party affiliation (if eligible to vote in the US)</li><li>Voting behavior (if eligible to vote in the US)</li></ul>
+<p>It is the goal of the BRC Census team to randomly sample 5-10% of the incoming population each year.</p>
+<h3 id="weighted-results-an-example">Weighted Results: an Example</h3>
+<!-- page 5 -->
+<p>In 2017, 70.2% of survey respondents were non-virgins, which was higher than the percentage of non-virgins observed in the random sample (63.8%). This means that non-virgins were "over-represented" (and virgins "under-represented") in the raw results of the online survey.</p>
+
+<p>In other words, the random sample results show that the raw survey results are not an accurate representation of the overall BRC population:</p>
+
+<figure class="page"><a href="images/p005-chart.png"><img src="images/p005-chart.png" width="1057" height="537" alt="Bar chart and table: Burning Man Virgin in 2017? (Weighted and Un-Weighted Survey Responses). Virgin: un-weighted 29.8% (margin of error ±1.0), weighted 36.2% (±1.2). Non-Virgin: un-weighted 70.2% (±1.0), weighted 63.8% (±1.2). Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+
+<p>To correct for this known bias in the online survey data, random sample results are used to "weight" (or adjust) the online survey. These adjustments are applied throughout the entire online survey, giving more "weight" to the responses from under-represented groups and less "weight" to the responses from over-represented groups. The raw survey results only provide information about individuals who completed the online survey, but the weighted results represent the entire BRC population.</p>
+<h3 id="data-collection-via-online-survey">Data Collection via Online Survey</h3>
+<!-- page 6 -->
+<p>From 2013 to 2017, the number of submitted surveys (and the associated survey sampling rate) were:</p>
+<div class="table-scroll"><table class="data">
+<thead><tr><th></th><th>2013</th><th>2014</th><th>2015</th><th>2016</th><th>2017</th></tr></thead>
+<tbody>
+<tr><th>Total Number of Surveys</th><td>11,919</td><td>11,676</td><td>9,585</td><td>7,137</td><td>9,168</td></tr>
+<tr><th>Survey Sampling Rate</th><td>17%</td><td>18%</td><td>14%</td><td>11%</td><td>13%</td></tr>
+</tbody>
+</table></div>
+<p>This "survey sampling rate" indicates the percentage of the BRC population who completed the online survey in a given year based on the population count reported in each annual Burning Man report.</p>
+<p>While the survey sampling rate has fluctuated over the years, the sampling rate is consistently high enough to allow for year-to-year comparisons using the methodology described here. As a comparison, the American Community Survey (the largest population survey in the USA) has a sampling rate of approximately 2.5% (National Research Council, 2007).</p>
+<p>The actual “response rate” for the online survey (i.e., the number of participants divided by the number of participants who were aware of the survey) cannot be calculated, as there is no way to know how many BRC citizens were reached during our promotion of the online survey.</p>
+<h3 id="reading-this-report">Reading This Report</h3>
+<h4 id="reading-this-report-plots-and-tables">Plots and Tables</h4>
+<!-- page 7 -->
+<figure class="page"><a href="images/p007-002-page.png"><img src="images/p007-002-page.png" width="1336" height="876" alt="Line or bar plots are used to display the weighted (adjusted) percentage of the BRC population who have a particular characteristic in common. In most cases, the actual percentage values are not displayed within the plot. They can be found in the accompanying data table (below), along with the margin of error (labeled “MoE +/-%”). . All numbers are rounded to the nearest 0.1%, so in some cases the total percentage values do not add up to exactly 100.0%." loading="lazy" decoding="async"></a></figure>
+<h4 id="reading-this-report-error-bars-and-confidence-intervals">Error Bars and Confidence Intervals</h4>
+<!-- page 8 -->
+<figure class="page"><a href="images/p008-003-page.png"><img src="images/p008-003-page.png" width="1325" height="805" alt="Error bars are the black I-shaped markers that overlay each data point on a line or bar plot: While each data point shows a weighted percentage, there is always some degree of uncertainty when estimating the characteristics of a population based on a sample of that population - in this case, the entire BRC population in a given year from the BRC citizens who provided data to BRC Census. The 95% confidence intervals indicated by these error bars help to show the degree of that uncertainty: there is a 95% probability that the upper and lower bounds of the I-shape contain the true value. They are a visual representation of the margin of error (shown in the “MoE +/- %” column in the data table) which measures the amount of “error” or uncertainty in the results of a survey conducted via random sample. On rare occasions due to rounding, values in this report may not follow this rule precisely. In the plot and table above, 36.2% of the 2017 BRC population were estimated to be Burning Man virgins according to the weighted survey results. It can be said with 95% confidence that the true virgin proportion of the BRC population is contained within the range between 34.3% and 38.1% (95% confidence intervals); roughly 36.2% plus or minus 2% (margin of error)." loading="lazy" decoding="async"></a></figure>
+<h4 id="reading-this-report-year-to-year-changes">Year-to-Year Changes</h4>
+<!-- page 9 -->
+<figure class="page"><a href="images/p009-004-page.png"><img src="images/p009-004-page.png" width="1310" height="870" alt="A note about year-to-year changes: When reviewing changes in a population over time, it is extremely important to remember that some reported changes will be due to sampling methodology (using weighted Census data to report on the BRC population) or measurement error, rather than being indicative of a consistently occurring change in the population. As a general rule, smaller differences from one year to another are more likely to be due to chance, while larger differences are more likely to be indicative of genuine changes in the BRC population. Additional caution should be taken in situations with larger confidence intervals, as they indicate less certainty as to the exact population proportion. For example, in the plot (right): • The light pink line for 16+ year Burners is relatively flat, with relatively small confidence intervals. The proportion of 16+ year Burners does not seem to have changed much from 2013-2017. • The bright pink line for virgin Burners shows larger changes from 2013-2017, but the confidence intervals are also larger. In some cases where the data points look relatively far apart from one year to the next, the confidence intervals for those years overlap. It is difficult to know if these changes are due to random chance or to other, more significant population trends. • The gray line for 1-2 Year Burners shows larger changes from 2014 to 2015, even taking into account the height of the confidence intervals. It is more likely, though not certain, that these changes are not due to random factors." loading="lazy" decoding="async"></a></figure>
+<h4 id="reading-this-report-y-axis-breaks">Y-Axis Breaks</h4>
+<!-- page 10 -->
+<figure class="page"><a href="images/p010-005-page.png"><img src="images/p010-005-page.png" width="1326" height="909" alt="Sometimes, there is a large gap between responses from one category and responses from another category. For example, in the plot (right): • Over 85% of participants each year reported arriving at BRC through Gate. • The number of Burner Express Bus passengers has nearly doubled, but it is still between 6% and 12% for every year presented. • All other options have varied slightly from year to year, but they have all stayed below 2%. Displaying all of these results on a continuous percentage scale would be difficult. Without a very tall image, slanted lines would appear to be horizontal and the lines in the 0-2% range would overlap each other to such a degree as to become indistinguishable from one another. Dashed lines like the ones in the plot right indicate a “break” in the scale, to make these differences more visible to the eye. That means that while this plot shows the full range of responses from 0-100%, only the relevant ranges have been included. When viewing a plot with one or more y-axis breaks, it’s important to keep in mind that data displayed on either side of a break may represent different percentage ranges: while the gray line for Burner Express Bus and the purple line for BRC Airport are visually similar, they represent differently sized ranges: from 6% (+/- 0.6) to 10.7% (+/- 1.0) for the Burner Express Bus, and from 0.8% (+/- 0.2) to 1.6% (+/- 0.4) for BRC Airport." loading="lazy" decoding="async"></a></figure>
+</section>
+<section id="sociodemographic-characteristics">
+<h2>Sociodemographic Characteristics</h2>
+<h3 id="black-rock-city-total-population">Black Rock City Total Population</h3>
+<!-- page 12 -->
+<p class="chart-title">Total BRC Population</p>
+<figure style="width: 96.3%; margin-left: 1.8%"><a href="images/p012-006-fig.png"><img src="images/p012-006-fig.png" width="1401" height="582" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p>From <strong><a href="https://burningman.org/timeline/">https://burningman.org/timeline/</a></strong></p>
+<h3 id="prior-burning-man-experience">Prior Burning Man Experience</h3>
+<h4 id="prior-burning-man-experience-burns-attended">Burns Attended</h4>
+<!-- page 13 -->
+<figure class="page"><a href="images/p013-007-page.png"><img src="images/p013-007-page.png" width="1239" height="882" alt="Number of Burns Attended (Prior to Current Year) Percent Virgins: 2013: 38.6% 2014: 35.1% 2015: 35.8% 2016: 39.3% 2017: 36.2% Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h4 id="prior-burning-man-experience-years-since-first-burn">Years Since First Burn</h4>
+<!-- page 14 -->
+<p class="chart-title">Number of Years Since First Burn</p>
+<figure style="width: 86.7%; margin-left: 6.6%"><a href="images/p014-008-fig.png"><img src="images/p014-008-fig.png" width="1401" height="456" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 78.5%; margin-left: 21.5%"><a href="images/p014-009-fig.png"><img src="images/p014-009-fig.png" width="1401" height="407" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">Because many Burners attend repeatedly, but not every year, the random sampling form and online survey both ask respondents to indicate each of the year(s) they have attended Burning Man.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="age-groups">Age Groups</h3>
+<!-- page 15 -->
+<figure class="page"><a href="images/p015-010-page.png"><img src="images/p015-010-page.png" width="1254" height="900" alt="Age Ranges in BRC Median Age: 2013: 33 2014: 34 2015: 33 2016: 34 2017: 34 Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h3 id="education">Education</h3>
+<!-- page 16 -->
+<figure style="width: 86.5%; margin-left: 6.7%"><a href="images/p016-011-fig.png"><img src="images/p016-011-fig.png" width="1401" height="1050" alt="Chart: Highest Education Achieved The precise wording of this question in the online survey has changed several times to include or exclude questions about specific certifications, but these changes were not expected to have (and do not appear to have had) a material effect on participant responses." loading="lazy" decoding="async"></a></figure>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="personal-income">Personal Income</h3>
+<!-- page 17 -->
+<figure style="width: 88.2%; margin-left: 5.9%"><a href="images/p017-012-fig.png"><img src="images/p017-012-fig.png" width="1401" height="781" alt="Chart: Personal Income Before Taxes (for the Previous Calendar Year)*" loading="lazy" decoding="async"></a></figure>
+<p class="chart-title">Median Personal Income:</p>
+<p class="chart-subtitle">2013: $51,100</p>
+<p>2014: $53,900</p>
+<p>2015: $54,900</p>
+<p>2016: $60,000</p>
+<p>2017: $60,700</p>
+<p class="small">* In the 2015-17 surveys, explanatory text was added requesting that respondents not include their spouse's income as their own. While this explanatory text was missing in 2013-14, all four years' surveys explicitly asked for the respondent's personal income before taxes in the previous calendar year.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="household-income">Household Income</h3>
+<!-- page 18 -->
+<figure style="width: 89.0%; margin-left: 6.5%"><a href="images/p018-013-fig.png"><img src="images/p018-013-fig.png" width="1401" height="817" alt="Chart: Household Income Before Taxes (for the Previous Calendar Year)* Median Household Income:" loading="lazy" decoding="async"></a></figure>
+<p>2015: $89,400</p>
+<p>2016: $94,200</p>
+<p>2017: $94,900</p>
+<p class="note">The 2013 and 2014 online surveys did not include questions about household income, so data presented here are from 2015-17.</p>
+<p class="small">* This plot and table excludes a small number of participants who indicated being a member of a household but chose not to disclose their household income. For participants indicating no household membership, personal income and household income are identical values. Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="current-gender">Current Gender</h3>
+<h4 id="current-gender-male-female-or-fluid-both-neither">Male, Female, or Fluid/Both/Neither</h4>
+<!-- page 19 -->
+<p class="chart-title">Current Gender</p>
+<figure style="width: 96.0%; margin-left: 2.0%"><a href="images/p019-014-fig.png"><img src="images/p019-014-fig.png" width="1401" height="545" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 91.7%; margin-left: 4.1%"><a href="images/p019-015-fig.png"><img src="images/p019-015-fig.png" width="1401" height="242" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">Additional questions about gender identity were included in each year’s online survey. See next page for detailed analysis.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="current-gender-additional-identities">Additional Identities</h4>
+<!-- page 20 -->
+<figure style="width: 83.4%; margin-left: 8.3%"><a href="images/p020-016-fig.png"><img src="images/p020-016-fig.png" width="1401" height="1017" alt="Chart: Participants Selected All That Applied Do You Consider Yourself to Be…" loading="lazy" decoding="async"></a></figure>
+<p class="note">The 2013 and 2014 online surveys asked about gender identity differently, so direct comparison is impossible. Data presented here are from 2015-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="sexuality">Sexuality</h3>
+<h4 id="sexuality-attraction-to-others">Attraction to Others</h4>
+<!-- page 21 -->
+<figure style="width: 74.8%; margin-left: 11.7%"><a href="images/p021-017-fig.png"><img src="images/p021-017-fig.png" width="1401" height="1257" alt="Chart: Sexual Attraction Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h4 id="sexuality-sexual-orientation">Sexual Orientation</h4>
+<!-- page 22 -->
+<figure style="width: 83.4%; margin-left: 8.3%"><a href="images/p022-018-fig.png"><img src="images/p022-018-fig.png" width="1401" height="1099" alt="Chart: Sexual Orientation" loading="lazy" decoding="async"></a></figure>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="sexuality-gender-differences">Gender Differences</h4>
+<!-- page 23 -->
+<p class="chart-title">Sexual Orientation by Current Gender</p>
+<figure style="width: 78.9%; margin-left: 10.5%"><a href="images/p023-019-fig.png"><img src="images/p023-019-fig.png" width="1401" height="838" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">The data table corresponding to the plots above can be found on the next page of this report.</p>
+<p class="small">* The larger confidence intervals for participants in the “Fluid/Both/Neither” category compared to the “Male” and “Female” categories are mainly due to the substantially smaller number of individuals self-reporting this gender category.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<!-- page 24 -->
+<figure style="width: 80.2%; margin-left: 9.9%"><a href="images/p024-020-fig.png"><img src="images/p024-020-fig.png" width="1401" height="1007" alt="Chart: Sexual Orientation by Current Gender The plots corresponding to the data table above can be found on the previous page of this report." loading="lazy" decoding="async"></a></figure>
+<p class="note">For each gender category, sexual orientation options are listed in order from highest to lowest percentage in 2017.</p>
+<p class="small">* The larger confidence intervals for participants in the “Fluid/Both/Neither” category compared to the “Male” and “Female” categories are due to the substantially smaller number of individuals self-reporting this gender category. Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="sexuality-additional-identities">Additional Identities</h4>
+<!-- page 25 -->
+<figure class="page"><a href="images/p025-021-page.png"><img src="images/p025-021-page.png" width="1205" height="910" alt="Additional Sexual Identities (Participants Selected All That Applied) The 2013 and 2014 online surveys asked about these identities differently, so direct comparison is impossible. Data presented here are from 2015-17. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h3 id="relationships">Relationships</h3>
+<h4 id="relationships-partnerships-and-marital-status">Partnerships and Marital Status</h4>
+<!-- page 26 -->
+<p class="chart-title">Participant Responses to the Question, “In the Default World Do You Share Your Life with a Partner?”</p>
+<figure style="width: 95.5%; margin-left: 2.2%"><a href="images/p026-022-fig.png"><img src="images/p026-022-fig.png" width="1401" height="359" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 60.0%; margin-left: 20.9%"><a href="images/p026-023-fig.png"><img src="images/p026-023-fig.png" width="1366" height="407" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">The 2013 and 2014 online surveys asked about relationships differently, so direct comparison is impossible. Data presented here are from 2015-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="relationships-relationship-characteristics">Relationship Characteristics</h4>
+<!-- page 27 -->
+<p class="chart-title">Participant Responses to the Question, “Would You Describe Your Relationship as an Open Relationship?” (For Participants Reporting Sharing Life with a Partner)</p>
+<figure style="width: 85.9%; margin-left: 6.1%"><a href="images/p027-024-fig.png"><img src="images/p027-024-fig.png" width="1401" height="930" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was not included in the 2013 and 2014 online surveys, so data presented here are from 2015-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="religion-and-spirituality">Religion and Spirituality</h3>
+<h4 id="religion-and-spirituality-spiritual-identity">Spiritual Identity</h4>
+<!-- page 28 -->
+<figure class="page"><a href="images/p028-025-page.png"><img src="images/p028-025-page.png" width="1311" height="910" alt="Spirituality Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h4 id="religion-and-spirituality-religious-denomination">Religious Denomination</h4>
+<!-- page 29 -->
+<figure class="page"><a href="images/p029-026-page.png"><img src="images/p029-026-page.png" width="1346" height="910" alt="Religion or Religious Denomination * &quot;Muslim&quot; and &quot;Hindu&quot; were first added as options in the 2014 online survey, which may have resulted in differences between 2013 and 2014-17 responses. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h3 id="current-residence">Current Residence</h3>
+<h4 id="current-residence-by-region">By Region</h4>
+<!-- page 30 -->
+<figure class="page"><a href="images/p030-027-page.png"><img src="images/p030-027-page.png" width="1352" height="910" alt="Region of Residence * &quot;Latin America&quot; includes Central and South America, plus countries of North America that are south of the USA. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h4 id="current-residence-us-residents-by-state">US Residents by State</h4>
+<!-- page 31 -->
+<figure class="page"><a href="images/p031-028-page.png"><img src="images/p031-028-page.png" width="1330" height="914" alt="US State of Residence (for US Residents Only) Data presented here represent any state of residence reported by 1.5% or more of the BRC population who reported residing in the US in 2017. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h3 id="language">Language</h3>
+<!-- page 32 -->
+<figure class="page"><a href="images/p032-029-page.png"><img src="images/p032-029-page.png" width="1335" height="912" alt="Native Language* * &quot;Native language&quot; was defined in the online survey as the first language learned and still used. ** The plot (left) and table (above) report data for any language reported by 1.0% or more of BRC residents in at least one year from 2013-17, including &quot;Other&quot; for residents whose native language was not listed in the online survey options. The listed language options excluded from the plot and table here are: Arabic, Danish, Farsi, Hindi, Japanese, Norwegian, Polish, Portuguese, Punjabi, Romanian, Swedish, Tagalog, and Urdu. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h3 id="political-self-identity">Political Self-Identity</h3>
+<!-- page 33 -->
+<p class="chart-title">Participant Responses to the Question, “Generally, I Consider Myself to be Primarily:”</p>
+<figure style="width: 98.4%; margin-left: 0.8%"><a href="images/p033-030-fig.png"><img src="images/p033-030-fig.png" width="1401" height="625" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was first introduced in the 2017 online survey, so data presented here are from 2017 only.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="us-politics">US Politics</h3>
+<h4 id="us-politics-voting-behavior">Voting Behavior</h4>
+<!-- page 34 -->
+<p class="chart-title">US Voting History</p>
+<figure style="width: 91.2%; margin-left: 4.4%"><a href="images/p034-031-fig.png"><img src="images/p034-031-fig.png" width="1401" height="458" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 83.5%; margin-left: 8.2%"><a href="images/p034-032-fig.png"><img src="images/p034-032-fig.png" width="1401" height="250" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="small">* Eligible voters in the "Voted" population indicated voting in 1+ US federal elections over the four years prior to the year of the survey. Eligible participants in the "Did Not Vote“ population indicated voting in 0 US federal elections over the same time period.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="us-politics-party-affiliation">Party Affiliation</h4>
+<!-- page 35 -->
+<figure class="page"><a href="images/p035-033-page.png"><img src="images/p035-033-page.png" width="1334" height="910" alt="US Political Party Affiliation* * The plot and table above represent BRC participants who indicated eligibility to vote in the United States and selected one of the provided answer options. It excludes participants who indicated ineligibility to vote, or who indicated eligibility but declined to answer the online survey question about US political party affiliation. ** &quot;American Independent Party (formerly America's Party)&quot; was provided as an option in the 2013-16 online surveys but was removed in 2017, which may have impacted the frequency of other responses. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+</section>
+<section id="ethnoracial-characteristics">
+<h2>Ethnoracial Characteristics</h2>
+<h3 id="ethnoracial-characteristics-2">Ethnoracial Characteristics</h3>
+<h4 id="ethnoracial-characteristics-ethnoracial-background">Ethnoracial Background</h4>
+<!-- page 37 -->
+<figure style="width: 97.5%; margin-left: 1.3%"><a href="images/p037-034-fig.png"><img src="images/p037-034-fig.png" width="1401" height="880" alt="Chart: Ethnoracial Diversity in BRC" loading="lazy" decoding="async"></a></figure>
+<p class="small">* "Middle Eastern or North African" was added as an option in the 2017 online survey, which may have resulted in decreases in the "White/Caucasian" and "Other or Multiple" categories.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="ethnoracial-characteristics-self-identity">Self-Identity</h4>
+<!-- page 38 -->
+<p class="chart-title">Self-Identity as a Person of Color</p>
+<figure style="width: 81.0%; margin-left: 9.5%"><a href="images/p038-035-fig.png"><img src="images/p038-035-fig.png" width="1401" height="1083" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+</section>
+<section id="additional-population-characteristics">
+<h2>Additional Population Characteristics</h2>
+<h3 id="self-identity-as-an-artist">Self-Identity as an Artist</h3>
+<!-- page 40 -->
+<p class="chart-title">Participant Responses to the Question, “Do You Consider Yourself an Artist?”</p>
+<figure style="width: 97.6%; margin-left: 1.2%"><a href="images/p040-036-fig.png"><img src="images/p040-036-fig.png" width="1401" height="291" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 91.4%; margin-left: 4.3%"><a href="images/p040-037-fig.png"><img src="images/p040-037-fig.png" width="1401" height="239" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="self-identity-as-a-burner">Self-Identity as a Burner</h3>
+<!-- page 41 -->
+<p class="chart-title">Participant Responses to the Question, “Do You Identify as a Burner?”</p>
+<figure style="width: 92.9%; margin-left: 3.5%"><a href="images/p041-038-fig.png"><img src="images/p041-038-fig.png" width="1401" height="362" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 39.7%; margin-left: 30.1%"><a href="images/p041-039-fig.png"><img src="images/p041-039-fig.png" width="910" height="343" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was first introduced in the 2016 online survey, so data presented here are from 2016-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="relationship-with-others">Relationship with Others</h3>
+<!-- page 42 -->
+<figure class="page"><a href="images/p042-040-page.png"><img src="images/p042-040-page.png" width="1312" height="915" alt="Best Visual Description of Participants’ Relationship with Others This question was not included in the 2013 or 2014 online surveys, so data presented here are from 2015-17. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h3 id="perception-of-others">Perception of Others</h3>
+<!-- page 43 -->
+<p class="chart-title">Degree of Participants’ Agreement With the Statement, “I Assume That People Have Only the Best Intentions”</p>
+<figure style="width: 97.0%; margin-left: 1.5%"><a href="images/p043-041-fig.png"><img src="images/p043-041-fig.png" width="1401" height="557" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was not included in the 2013 or 2014 online surveys and asked differently in the 2015 and 2016 online surveys, so direct comparison is impossible. Data presented here are from 2017 only.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="reasons-for-attending-burning-man">Reasons for Attending Burning Man</h3>
+<!-- page 44 -->
+<figure class="page"><a href="images/p044-042-page.png"><img src="images/p044-042-page.png" width="1354" height="921" alt="Reasons for Attending Burning Man this Year (Participants Selected Up to Three Options) * In the online survey this option was worded as &quot;To be with friends or like- minded people / feel a sense of belonging.&quot; ** In the online survey this option was worded as &quot;To satisfy my curiosity / check it off my ‘bucket list.’” This question was not included in the 2013 or 2014 online surveys, so data presented here are from 2015-17. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+</section>
+<section id="volunteerism-and-skill-acquisition">
+<h2>Volunteerism and Skill Acquisition</h2>
+<h3 id="volunteerism-and-skill-acquisition-2">Volunteerism and Skill Acquisition</h3>
+<h4 id="volunteerism-and-skill-acquisition-volunteerism-in-the-prior-year">Volunteerism in the Prior Year</h4>
+<!-- page 46 -->
+<figure class="page"><a href="images/p046-043-page.png"><img src="images/p046-043-page.png" width="1191" height="915" alt="Volunteering Over the Past Year (Participants Selected All Options That Applied) This question was first introduced in the 2016 online survey, so data presented here are from 2016-17. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h4 id="volunteerism-and-skill-acquisition-volunteerism-inspired-by-burning-man">Volunteerism Inspired by Burning Man</h4>
+<!-- page 47 -->
+<p class="chart-title">Participant Responses to the Question, “After Going to BRC, Were You Inspired to do More Volunteering in General?”</p>
+<figure style="width: 64.5%; margin-left: 17.1%"><a href="images/p047-044-fig.png"><img src="images/p047-044-fig.png" width="1401" height="440" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 42.9%; margin-left: 27.9%"><a href="images/p047-045-fig.png"><img src="images/p047-045-fig.png" width="980" height="378" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was first introduced in the 2016 online survey, so data presented here are from 2016-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="volunteerism-and-skill-acquisition-learning-inspired-by-burning-man">Learning Inspired by Burning Man</h4>
+<!-- page 48 -->
+<p class="chart-title">Participant Responses to the Question, “After Going to BRC, Were You Inspired to Learn or Practice Any of the Following Skills?” (Participants Selected All Options That Applied)</p>
+<figure style="width: 94.4%; margin-left: 2.7%"><a href="images/p048-046-fig.png"><img src="images/p048-046-fig.png" width="1401" height="748" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was first introduced in the 2016 online survey, so data presented here are from 2016-17. See the next two pages for participants’ evaluation of the application of these skills in the default world.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="volunteerism-and-skill-acquisition-burning-man-inspired-skills-in-the-default-world">Burning Man-Inspired Skills in the Default World</h4>
+<!-- page 49 -->
+<p class="chart-title">Participant Evaluation of the Default World Usefulness of Skills Learned and/or Practiced After Going to BRC (for Participants Who Felt Inspired to Learn/Practice Skills)</p>
+<figure style="width: 96.9%; margin-left: 1.5%"><a href="images/p049-047-fig.png"><img src="images/p049-047-fig.png" width="1401" height="298" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 62.9%; margin-left: 18.5%"><a href="images/p049-048-fig.png"><img src="images/p049-048-fig.png" width="1401" height="408" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was first introduced in the 2016 online survey, so data presented here are from 2016-17.</p>
+<p class="note">See the previous page for examples of the types of skills learned and/or practiced, and the next page for default world application(s) of these skills.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="volunteerism-and-skill-acquisition-burning-man-inspired-skills-used-outside-of-brc">Burning Man-Inspired Skills Used Outside of BRC</h4>
+<!-- page 50 -->
+<p class="chart-title">Use of Skills Learned and/or Practiced After Going to BRC (for Participants Who Felt Inspired to Learn/Practice Skills, Participants Selected All Options That Applied)</p>
+<figure style="width: 93.0%; margin-left: 3.5%"><a href="images/p050-049-fig.png"><img src="images/p050-049-fig.png" width="1401" height="371" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 53.0%; margin-left: 23.5%"><a href="images/p050-050-fig.png"><img src="images/p050-050-fig.png" width="1208" height="320" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was first introduced in the 2017 online survey, so data presented here are from 2017 only.</p>
+<p class="note">See the previous page for examples of the types of skills, and the page before that for examples of the types of skills learned and/or practiced.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="volunteerism-and-skill-acquisition-certifications-earned-and-used">Certifications Earned and Used</h4>
+<!-- page 51 -->
+<figure class="page"><a href="images/p051-051-page.png"><img src="images/p051-051-page.png" width="1317" height="883" alt="Certifications Used or Earned as Part of Participants’ Burning Man Experiences This question was first introduced in the 2016 online survey, so data presented here are from 2016-17. The data table corresponding to the plot above can be found on the next page of this report. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<!-- page 52 -->
+<p class="chart-title">Certifications Used or Earned as Part of Participants’ Burning Man Experiences</p>
+<figure style="width: 97.5%; margin-left: 1.2%"><a href="images/p052-052-fig.png"><img src="images/p052-052-fig.png" width="1401" height="536" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was first introduced in the 2016 online survey, so data presented here are from 2016-17.</p>
+<p class="note">The plot corresponding to the data table above can be found on the previous page of this report.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+</section>
+<section id="burning-man-s-ten-principles">
+<h2>Burning Man’s Ten Principles</h2>
+<h3 id="ten-principles">Ten Principles</h3>
+<h4 id="ten-principles-practice-in-everyday-life">Practice in Everyday Life</h4>
+<!-- page 54 -->
+<figure class="page"><a href="images/p054-053-page.png"><img src="images/p054-053-page.png" width="1130" height="888" alt="Participants’ Observation of Changes in Their Neighborhood/ Community in Line with Any of the Ten Principles This question was first introduced in the 2016 online survey, so data presented here are from 2016-17. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<!-- page 55 -->
+<figure class="page"><a href="images/p055-054-page.png"><img src="images/p055-054-page.png" width="1130" height="888" alt="Participant Efforts to Incorporate Any of the Ten Principles in Their Workplace This question was first introduced in the 2016 online survey, so data presented here are from 2016-17. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<!-- page 56 -->
+<figure class="page"><a href="images/p056-055-page.png"><img src="images/p056-055-page.png" width="1313" height="915" alt="Ten Principles Practiced Most Frequently in Everyday Life (Participants Selected Up to Three Options) This question was first introduced in the 2016 online survey, so data presented here are from 2016-17. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<!-- page 57 -->
+<figure class="page"><a href="images/p057-056-page.png"><img src="images/p057-056-page.png" width="1309" height="915" alt="Ten Principles Most Difficult to Practice in Everyday Life (Participants Selected Up to Three Options) This question was first introduced in the 2016 online survey, so data presented here are from 2016-17. The decreased percentages across all principles in 2017 indicates that more participants selected only one or two principles, compared to 2016 data. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h4 id="ten-principles-participant-perceptions">Participant Perceptions</h4>
+<!-- page 58 -->
+<p class="chart-title">Participant Responses to the Question, “How Important Are the Ten Principles to You?”</p>
+<figure style="width: 91.6%; margin-left: 4.2%"><a href="images/p058-057-fig.png"><img src="images/p058-057-fig.png" width="1401" height="486" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 61.5%; margin-left: 19.2%"><a href="images/p058-058-fig.png"><img src="images/p058-058-fig.png" width="1400" height="454" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was not included in the 2013 or 2014 online surveys, so data presented here are from 2015-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<!-- page 59 -->
+<p class="chart-title">Participant Responses to the Question, “How Essential Are the Ten Principles to Creating An Authentic Burning Man Experience?”</p>
+<figure style="width: 91.3%; margin-left: 4.4%"><a href="images/p059-059-fig.png"><img src="images/p059-059-fig.png" width="1401" height="776" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was not included in the 2013 or 2014 online surveys, so data presented here are from 2015-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+</section>
+<section id="burning-man-expenses-and-tickets">
+<h2>Burning Man Expenses and Tickets</h2>
+<h3 id="spending-for-burning-man">Spending for Burning Man</h3>
+<!-- page 61 -->
+<figure class="page"><a href="images/p061-060-page.png"><img src="images/p061-060-page.png" width="1330" height="893" alt="Amount of Money (USD) Spent to Go to Burning Man (Excluding Ticket Price) This question was not included in the 2013 online survey, so data presented here are from 2014-17. Participants were asked to provide their best estimate (in US dollars) of how much they spent to go to Black Rock City and return, including fuel, food, lodging, airfare, supplies, etc., but excluding the cost of their Burning Man ticket. 80th Median: Percentile: 2014*: $1300 $2500 2015: $1500 $2600 2016: $1500 $3000 2017: $1500 $3000 * The 2014 online survey asked about spending ranges, but did not ask for total amount spent, so percentile data for 2014 was estimated differently than for 2015-17. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h3 id="ticket-cost">Ticket Cost</h3>
+<!-- page 62 -->
+<p class="chart-title">Burning Man Ticket Cost</p>
+<figure style="width: 89.6%; margin-left: 5.2%"><a href="images/p062-061-fig.png"><img src="images/p062-061-fig.png" width="1401" height="598" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 73.4%; margin-left: 24.1%"><a href="images/p062-062-fig.png"><img src="images/p062-062-fig.png" width="1401" height="404" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was not included in the 2013 online survey, so data presented here are from 2014-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="ticket-source">Ticket Source</h3>
+<h4 id="ticket-source-2017-ticket-data">2017 Ticket Data</h4>
+<!-- page 63 -->
+<p class="chart-title">2017 Burning Man Ticket Source</p>
+<figure style="width: 100.0%; margin-left: 0.0%"><a href="images/p063-063-fig.png"><img src="images/p063-063-fig.png" width="1401" height="748" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">The 2017 online survey listed these options differently than they have been listed in past years’ surveys, so data presented here are from 2017. For 2015-16 ticket source data, see the next page of this report.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="ticket-source-2015-2016-ticket-data">2015-2016 Ticket Data</h4>
+<!-- page 64 -->
+<figure class="page"><a href="images/p064-064-page.png"><img src="images/p064-064-page.png" width="1309" height="908" alt="2015-2016 Burning Man Ticket Source The 2013 online survey did not include this question and the 2014 survey used different wording, so data presented here are from 2015-16. For 2017 data (also worded differently), see the previous page of this report. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h3 id="factors-for-non-attendance">Factors for Non-Attendance</h3>
+<!-- page 65 -->
+<figure class="page"><a href="images/p065-065-page.png"><img src="images/p065-065-page.png" width="1289" height="911" alt="Think of Your Friends/Family Members Who Have Considered Going to Burning Man, But Have Not Gone. To the Best of Your Knowledge, What Were the Reasons They Did Not Attend? (Participants Selected Up to Three Options) This question was first introduced in the 2016 online survey, so data presented here are from 2016-17. * The option, &quot;Too expensive,&quot; was first introduced in the 2017 online survey. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+</section>
+<section id="impacts-on-nevada">
+<h2>Impacts on Nevada</h2>
+<h3 id="economic-impact-on-nevada">Economic Impact on Nevada</h3>
+<h4 id="economic-impact-on-nevada-spending-ranges">Spending Ranges</h4>
+<!-- page 67 -->
+<p class="chart-title">Spending Ranges for Total Expenses In Nevada</p>
+<figure style="width: 96.1%; margin-left: 2.0%"><a href="images/p067-066-fig.png"><img src="images/p067-066-fig.png" width="1401" height="886" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="economic-impact-on-nevada-spending-by-category">Spending by Category</h4>
+<!-- page 68 -->
+<figure class="page"><a href="images/p068-067-page.png"><img src="images/p068-067-page.png" width="1317" height="908" alt="Total Spent in Nevada (Average USD) The 2013 online survey did not include specific questions about spending patterns in Nevada, so data presented here are from 2014-17. Nevada Spending by Category (Average USD) Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h3 id="impacted-cities-and-neighborhoods">Impacted Cities and Neighborhoods</h3>
+<!-- page 69 -->
+<figure class="page"><a href="images/p069-068-page.png"><img src="images/p069-068-page.png" width="1354" height="915" alt="Number of Participants Reporting Stops in Nevada Cities or Communities on the Way to/from Burning Man* This question was first introduced in the 2017 online survey, so data displayed here are from 2017 only. * As this data is collected qualitatively (participants are asked to type community and city names into an open text box in the online survey) it is likely that these estimates are lower than the true number of visitors to each of the named cities or communities. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h3 id="other-recreational-stops">Other Recreational Stops</h3>
+<h4 id="other-recreational-stops-parks-and-recreation-areas">Parks and Recreation Areas</h4>
+<!-- page 70 -->
+<p class="chart-title">Visits to Parks and/or Recreation Areas This Year en Route to and/or from Black Rock City</p>
+<figure style="width: 94.8%; margin-left: 2.6%"><a href="images/p070-069-fig.png"><img src="images/p070-069-fig.png" width="1401" height="740" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">The 2013 and 2014 online surveys included differently worded questions about park visits, so direct comparison is impossible. Data presented here are from 2015-17. In 2013 and 2014 respectively, 68.8% (+/- 1.0) and 73.5% (+/- 0.9) of participants did not visit any parks or recreation areas, and 2.9% (+/- 0.4) and 1.7% (+/- 0.3) were not sure.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="other-recreational-stops-activities-at-public-lands">Activities at Public Lands</h4>
+<!-- page 71 -->
+<figure class="page"><a href="images/p071-070-page.png"><img src="images/p071-070-page.png" width="1131" height="865" alt="Recreational Visits to Public Lands Within 30 mi of BRC en Route to/from Burning Man (Participants Selected Any Options that Applied) This question was first introduced in the 2017 online survey, so data presented here are from 2017 only. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h4 id="other-recreational-stops-intent-to-return-to-the-black-rock-desert">Intent to Return to the Black Rock Desert</h4>
+<!-- page 72 -->
+<p class="chart-title">Participant Responses to the Question, “Do You Intend to Come Back to the Black Rock Desert Outside of Burning Man?”</p>
+<figure style="width: 85.5%; margin-left: 5.3%"><a href="images/p072-071-fig.png"><img src="images/p072-071-fig.png" width="1401" height="283" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 22.0%; margin-left: 39.0%"><a href="images/p072-072-fig.png"><img src="images/p072-072-fig.png" width="510" height="222" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was first introduced in the 2017 online survey, so data presented here are from 2017 only.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+</section>
+<section id="benefits-to-participation">
+<h2>Benefits to Participation</h2>
+<h3 id="benefits-to-participation-2">Benefits to Participation</h3>
+<h4 id="benefits-to-participation-project-description">Project Description</h4>
+<!-- page 74 -->
+<p>The online survey in 2017 introduced a set of new and exciting research questions related to the personal and environmental benefits that can be attained through the activities taking place in BRC, and with the factors contributing to these experiences and benefits.</p>
+<p>Questions in this set were duplicated, with permission, from surveys used by recreation researchers studying the benefits of recreation on public lands administered by the Bureau of Land Management (BLM). Duplicating these survey questions allows for the possibility of future research in which survey responses from Burning Man may be compared with survey responses from other public lands administered by the BLM.</p>
+<p>The first of these duplicated questions in the 2017 online survey was: <em>People attain benefits from</em> <em>participating in activities in Black Rock City. First, indicate how desirable each of the following benefits were to</em> <em>you as an outcome of your recent trip. Then, rate the degree to which you were able to attain each benefit as a</em> <em>result of the trip.</em></p>
+<p>Fifteen potential personal benefits were included, with five benefits displayed on each of the next three pages of this report. Potential benefits are listed in order from highest to lowest percentage of participants indicating a benefit as being "Very High" on the desirability scale.</p>
+<p>The second question was: <em>Environmental benefits may accrue to local or regional communities from activities</em> <em>occurring in Black Rock City. First, indicate how desirable it is to you that your local/regional communities realize</em> <em>each of the following benefits as a result of your experience in Black Rock City. Then, rate the degree to which you</em> <em>believe your local/regional communities actually attain/realize these benefits.</em></p>
+<p>Six potential environmental benefits were included, all presented on the fourth page of this section.</p>
+<p>The final question from this set was: <em>To what extent did each of the following contribute to your experience</em> <em>and benefits while visiting Black Rock City?</em></p>
+<p>Nine possible contributing factors are presented on the fifth, and final, page of this section of this report.</p>
+<h4 id="benefits-to-participation-personal-benefits-part-1">Personal Benefits, Part 1</h4>
+<!-- page 75 -->
+<figure class="page"><a href="images/p075-073-page.png"><img src="images/p075-073-page.png" width="1329" height="918" alt="Desirability and Attainment of Personal Benefits: Part 1 of 3 (15 Potential Personal Benefits, Ordered by Highest Desirability*) * Potential benefits are listed in order from highest to lowest percentage of participants indicating a benefit as being &quot;Very High&quot; on the desirability scale. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h4 id="benefits-to-participation-personal-benefits-part-2">Personal Benefits, Part 2</h4>
+<!-- page 76 -->
+<figure class="page"><a href="images/p076-074-page.png"><img src="images/p076-074-page.png" width="1325" height="918" alt="Desirability and Attainment of Personal Benefits: Part 2 of 3 (15 Potential Personal Benefits, Ordered by Highest Desirability*) * Potential benefits are listed in order from highest to lowest percentage of participants indicating a benefit as being &quot;Very High&quot; on the desirability scale. ** In the online survey this option was worded as &quot;Greater sensitivity to/awareness of outdoor aesthetics, nature’s art, and its elegance.&quot; Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h4 id="benefits-to-participation-personal-benefits-part-3">Personal Benefits, Part 3</h4>
+<!-- page 77 -->
+<figure class="page"><a href="images/p077-075-page.png"><img src="images/p077-075-page.png" width="1327" height="918" alt="Desirability and Attainment of Personal Benefits: Part 3 of 3 (15 Potential Personal Benefits, Ordered by Highest Desirability*) * Potential benefits are listed in order from highest to lowest percentage of participants indicating a benefit as being &quot;Very High&quot; on the desirability scale. ** In the online survey this option was worded as &quot;Enlarged understanding of personal responsibility to help care for community and keep it clean.&quot; Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h4 id="benefits-to-participation-environmental-benefits">Environmental Benefits</h4>
+<!-- page 78 -->
+<figure class="page"><a href="images/p078-076-page.png"><img src="images/p078-076-page.png" width="1342" height="919" alt="Desirability and Attainment of Environmental Benefits (Ordered by “Very High” Desirability Ranking) * In the online survey this option was worded as &quot;Greater community ownership and stewardship of public lands, recreation, and natural resources.” ** In the online survey this option was worded as &quot;Reduced negative human impacts such as litter, vegetative trampling, and unplanned trails.” Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h4 id="benefits-to-participation-contributing-factors">Contributing Factors</h4>
+<!-- page 79 -->
+<figure class="page"><a href="images/p079-077-page.png"><img src="images/p079-077-page.png" width="1247" height="915" alt="Contributing Factors to Experiences and Benefits (Ordered by “Very High” Contribution Rating) * In the online survey this option was worded as &quot;The opportunity to meet and interact with people not in my group.&quot; ** In the online survey this option was worded as &quot;The companionship of the people in my group.” Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+</section>
+<section id="impressions-of-black-rock-city">
+<h2>Impressions of Black Rock City</h2>
+<h3 id="feelings-of-enjoyment">Feelings of Enjoyment</h3>
+<!-- page 81 -->
+<p class="chart-title">Participant Responses to the Question, “How Much Did You Enjoy Your Experience This Year in Black Rock City?”</p>
+<figure style="width: 95.6%; margin-left: 2.2%"><a href="images/p081-078-fig.png"><img src="images/p081-078-fig.png" width="1401" height="448" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 85.9%; margin-left: 7.1%"><a href="images/p081-079-fig.png"><img src="images/p081-079-fig.png" width="1401" height="331" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="feelings-of-safety">Feelings of Safety</h3>
+<!-- page 82 -->
+<p class="chart-title">Participant Responses to the Question, “Did You Feel Safe in Black Rock City This Year?”</p>
+<figure style="width: 96.1%; margin-left: 2.0%"><a href="images/p082-080-fig.png"><img src="images/p082-080-fig.png" width="1401" height="826" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was not included in the 2013 or 2014 online surveys, so data presented here are from 2015-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="feelings-of-connection">Feelings of Connection</h3>
+<!-- page 83 -->
+<p class="chart-title">Participant Responses to the Question, “Did You Feel Connected to Others Around You in Black Rock City This Year?”</p>
+<figure style="width: 95.8%; margin-left: 2.1%"><a href="images/p083-081-fig.png"><img src="images/p083-081-fig.png" width="1401" height="451" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 74.3%; margin-left: 12.8%"><a href="images/p083-082-fig.png"><img src="images/p083-082-fig.png" width="1401" height="377" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was not included in the 2013 or 2014 online surveys, so data presented here are from 2015-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="feelings-of-family">Feelings of Family</h3>
+<!-- page 84 -->
+<p class="chart-title">Participant Responses to the Question, “Do You Consider the Burner Community a Family?”</p>
+<figure style="width: 96.5%; margin-left: 1.7%"><a href="images/p084-083-fig.png"><img src="images/p084-083-fig.png" width="1401" height="430" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 85.7%; margin-left: 7.1%"><a href="images/p084-084-fig.png"><img src="images/p084-084-fig.png" width="1401" height="332" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="intention-to-return">Intention to Return</h3>
+<!-- page 85 -->
+<p class="chart-title">Participant Responses to the Question, “Do You Intend to Come Back to Black Rock City in the Future?”</p>
+<figure style="width: 95.8%; margin-left: 2.1%"><a href="images/p085-085-fig.png"><img src="images/p085-085-fig.png" width="1401" height="448" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 88.1%; margin-left: 7.1%"><a href="images/p085-086-fig.png"><img src="images/p085-086-fig.png" width="1401" height="321" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="new-activities">New Activities</h3>
+<!-- page 86 -->
+<p class="chart-title">Participant Responses to the Question, “Do You Engage in New Playful Activities, After Going to BRC?”</p>
+<figure style="width: 94.3%; margin-left: 0.0%"><a href="images/p086-087-fig.png"><img src="images/p086-087-fig.png" width="1401" height="294" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 40.5%; margin-left: 28.5%"><a href="images/p086-088-fig.png"><img src="images/p086-088-fig.png" width="927" height="345" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was first introduced in the 2016 online survey, so data presented here are from 2016-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="new-friends">New Friends</h3>
+<!-- page 87 -->
+<p class="chart-title">Participant Responses to the Question, “Do You Have New Friends That You Interact With in the Default World, After Going to BRC?”</p>
+<figure style="width: 97.3%; margin-left: 1.4%"><a href="images/p087-089-fig.png"><img src="images/p087-089-fig.png" width="1401" height="283" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 42.2%; margin-left: 28.9%"><a href="images/p087-090-fig.png"><img src="images/p087-090-fig.png" width="965" height="358" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was first introduced in the 2016 online survey, so data presented here are from 2016-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="perceptions-of-social-signals">Perceptions of Social Signals</h3>
+<h4 id="perceptions-of-social-signals-interpreting-smiles-in-brc-and-in-the-default-world">Interpreting Smiles in BRC and in the Default World</h4>
+<!-- page 88 -->
+<figure style="width: 98.5%; margin-left: 1.1%"><a href="images/p088-091-fig.png"><img src="images/p088-091-fig.png" width="1401" height="889" alt="Chart: Approachable” Describes Participants in BRC and in the Default World Assume They Are Demonstrating That They Are Friendly and Degree to Which the Statement, “When People Smile at Me, I" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was first introduced in the 2017 online survey, so data presented here are from 2017 only.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<!-- page 89 -->
+<figure class="page"><a href="images/p089-092-page.png"><img src="images/p089-092-page.png" width="1331" height="915" alt="Degree to Which the Statement, “When People Smile at Me, I Assume They Are Happy About Something” Describes Participants in BRC and in the Default World This question was first introduced in the 2017 online survey, so data presented here are from 2017 only. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<!-- page 90 -->
+<figure style="width: 98.4%; margin-left: 1.0%"><a href="images/p090-093-fig.png"><img src="images/p090-093-fig.png" width="1401" height="891" alt="Chart: Participants in BRC and in the Default World They Are Trying to Control Me and Put Me in My Place” Describes Degree to Which the Statement, “When People Smile at Me, I Assume" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was first introduced in the 2017 online survey, so data presented here are from 2017 only.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="emotions">Emotions</h3>
+<h4 id="emotions-ease-of-expression-in-brc-and-in-the-default-world">Ease of Expression in BRC and in the Default World</h4>
+<!-- page 91 -->
+<figure class="page"><a href="images/p091-094-page.png"><img src="images/p091-094-page.png" width="1338" height="904" alt="Degree to Which the Statement, “When I Want to Express An Emotion, I Can Easily Do So” Describes Participants in BRC and in the Default World This question was first introduced in the 2017 online survey, so data presented here are from 2017 only. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h3 id="default-world-status">Default World Status</h3>
+<h4 id="default-world-status-impact-in-brc-and-in-the-default-world">Impact in BRC and in the Default World</h4>
+<!-- page 92 -->
+<figure class="page"><a href="images/p092-095-page.png"><img src="images/p092-095-page.png" width="1330" height="904" alt="Degree to Which the Statement, “I Feel That My Status in the Default World* Matters in My Relations with People I Meet” Describes Participants in BRC and in the Default World This question was first introduced in the 2017 online survey, so data presented here are from 2017 only. * In the online survey this statement was worded as &quot;I feel that my status in the Default World (education, job, social standing) matters in my relations with people I meet.&quot; Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+</section>
+<section id="living-in-black-rock-city">
+<h2>Living in Black Rock City</h2>
+<h3 id="money-handling">Money Handling</h3>
+<!-- page 94 -->
+<p class="chart-title">Participant Responses to the Question, “How Many Times Did You Handle Money While in Black Rock City?”</p>
+<figure style="width: 80.9%; margin-left: 9.5%"><a href="images/p094-096-fig.png"><img src="images/p094-096-fig.png" width="1401" height="498" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 22.9%; margin-left: 38.6%"><a href="images/p094-097-fig.png"><img src="images/p094-097-fig.png" width="528" height="342" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was not included in the 2013 or 2014 online surveys, and the 2015 and 2016 online surveys included differently-worded questions about money handling, so direct comparison is impossible. Data displayed here are from 2017 only.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="leave-no-trace">Leave No Trace</h3>
+<h4 id="leave-no-trace-waste-sorting">Waste Sorting</h4>
+<!-- page 95 -->
+<figure class="page"><a href="images/p095-098-page.png"><img src="images/p095-098-page.png" width="1198" height="913" alt="Participant Responses to the Question, “Did You Sort Your Waste at Your Camp During Burning Man?” This question was first introduced in the 2016 online survey, so data presented here are from 2016-17. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<!-- page 96 -->
+<figure class="page"><a href="images/p096-099-page.png"><img src="images/p096-099-page.png" width="1165" height="913" alt="Type(s) of Waste Sorted in Camp (for Participants Reporting in-Camp Waste Sorting During Burning Man) This question was first introduced in the 2016 online survey, so data presented here are from 2016-17. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<!-- page 97 -->
+<figure class="page"><a href="images/p097-100-page.png"><img src="images/p097-100-page.png" width="1338" height="914" alt="Participant Responses to the Question, “Where Did You Take Your Waste After Burning Man was Over?” This question was first introduced in the 2016 online survey, and the answer options were different in 2016 (left) and 2017 (right): 2017 Responses 2016 Responses * “GGID” stands for “Gerlach General Improvement District.” Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h3 id="on-playa-power">On-Playa Power</h3>
+<h4 id="on-playa-power-power-sources">Power Sources</h4>
+<!-- page 98 -->
+<p class="chart-title">Power Source(s) Used On-Playa (Participants Selected All Options That Applied)</p>
+<figure style="width: 80.0%; margin-left: 10.0%"><a href="images/p098-101-fig.png"><img src="images/p098-101-fig.png" width="1401" height="1100" alt="Chart: Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h4 id="on-playa-power-camp-generator-fuel">Camp Generator Fuel</h4>
+<!-- page 99 -->
+<figure class="page"><a href="images/p099-102-page.png"><img src="images/p099-102-page.png" width="1311" height="913" alt="Primary Fuel Used to Run Camp Generator (for Participants Indicating Camp Generator Use for Camp Power) In the 2016 and 2017 online surveys respectively, these participants indicated an average of 10.5 (+/- 0.4) and 11.4 (+/- 0.4) hours per day of camp generator use. This question was first introduced in the 2016 online survey, so data presented here are from 2016-17. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h4 id="on-playa-power-camp-generator-output">Camp Generator Output</h4>
+<!-- page 100 -->
+<figure class="page"><a href="images/p100-103-page.png"><img src="images/p100-103-page.png" width="1012" height="913" alt="Total Output of Camp Generator(s) (for Participants Indicating Camp Generator Use for Camp Power) This question was first introduced in the 2016 online survey, so data presented here are from 2016-17. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h4 id="on-playa-power-vehicle-generator-fuel">Vehicle Generator Fuel</h4>
+<!-- page 101 -->
+<p class="chart-title">Primary Fuel Used to Run Vehicle Generator (for Participants Indicating Vehicle Generator Use for Camp Power)</p>
+<figure style="width: 79.8%; margin-left: 11.5%"><a href="images/p101-104-fig.png"><img src="images/p101-104-fig.png" width="1401" height="887" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="chart-title">In the 2016 and 2017 online surveys respectively, these participants indicated an average of 3.0 (+/- 0.2) and 3.9 (+/- 0.3) hours per day of camp generator use.</p>
+<p class="note">This question was first introduced in the 2016 online survey, so data presented here are from 2016-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="camping-on-playa">Camping On-Playa</h3>
+<h4 id="camping-on-playa-camp-size">Camp Size</h4>
+<!-- page 102 -->
+<figure style="width: 74.3%; margin-left: 12.8%"><a href="images/p102-105-fig.png"><img src="images/p102-105-fig.png" width="1401" height="1230" alt="Chart: Many People Were in Your Camp (Including You)?” Participant Responses to the Question, “How" loading="lazy" decoding="async"></a></figure>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="camping-on-playa-placed-camps">Placed Camps</h4>
+<!-- page 103 -->
+<p class="chart-title">Participant Responses to the Question, “Was Your Camp Location Assigned by the Burning Man Placement Team Before Burning Man?”</p>
+<figure style="width: 97.6%; margin-left: 1.2%"><a href="images/p103-106-fig.png"><img src="images/p103-106-fig.png" width="1401" height="284" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 89.2%; margin-left: 5.4%"><a href="images/p103-107-fig.png"><img src="images/p103-107-fig.png" width="1401" height="256" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="camping-on-playa-non-placed-camps">Non-Placed Camps</h4>
+<!-- page 104 -->
+<p class="chart-title">Determining Factors for Camp Location Selection (for Participants with Camp Location Not Pre-Assigned by the Burning Man Placement Team, Participants Selected Up to Three Options)</p>
+<figure style="width: 98.4%; margin-left: 0.5%"><a href="images/p104-108-fig.png"><img src="images/p104-108-fig.png" width="1401" height="710" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was not included in the 2013 or 2014 online surveys, so data presented here are from 2015-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="living-in-an-rv-or-camper-trailer">Living in an RV or Camper-Trailer</h3>
+<h4 id="living-in-an-rv-or-camper-trailer-rv-or-camper-use">RV or Camper Use</h4>
+<!-- page 105 -->
+<p class="chart-title">Participant Responses to the Question, “Did You Stay in an RV or Camper-Trailer in Black Rock City This Year?”</p>
+<figure style="width: 97.8%; margin-left: 1.1%"><a href="images/p105-109-fig.png"><img src="images/p105-109-fig.png" width="1401" height="470" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 87.6%; margin-left: 6.2%"><a href="images/p105-110-fig.png"><img src="images/p105-110-fig.png" width="1401" height="256" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="living-in-an-rv-or-camper-trailer-rv-or-camper-service">RV or Camper Service</h4>
+<!-- page 106 -->
+<p class="chart-title">RV or Camper-Trailer Service On-Playa (for Participants Reporting RV or Camper-Trailer Use)</p>
+<figure style="width: 91.6%; margin-left: 6.3%"><a href="images/p106-111-fig.png"><img src="images/p106-111-fig.png" width="1401" height="301" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 54.5%; margin-left: 22.2%"><a href="images/p106-112-fig.png"><img src="images/p106-112-fig.png" width="1242" height="328" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was not included in the 2013 or 2014 online surveys, so data presented here are from 2015-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="living-in-an-rv-or-camper-trailer-rv-or-camper-use-2">RV or Camper Use</h4>
+<!-- page 107 -->
+<figure class="page"><a href="images/p107-113-page.png"><img src="images/p107-113-page.png" width="1312" height="913" alt="Number of Adults Residing in RV or Camper-Trailer (for Participants Reporting RV or Camper-Trailer Use) This question was not included in the 2013 or 2014 online surveys, so data presented here are from 2015-17. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h3 id="family-members-on-playa">Family Members On-Playa</h3>
+<!-- page 108 -->
+<figure class="page"><a href="images/p108-114-page.png"><img src="images/p108-114-page.png" width="1318" height="894" alt="Participant Responses to the Question, “How Many of Your Family Members Were in Black Rock City This Year?*” * The full wording of this question in the online survey was, “How many of your family members were in Black Rock City this year? (e.g. relatives, spouses, offsprings, in-laws) Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h3 id="minors-in-black-rock-city">Minors in Black Rock City</h3>
+<h4 id="minors-in-black-rock-city-bringing-minors">Bringing Minors</h4>
+<!-- page 109 -->
+<p class="chart-title">Participant Responses to the Question, “Have You Ever Brought Children Under 18 to BRC?”</p>
+<figure style="width: 95.4%; margin-left: 2.3%"><a href="images/p109-115-fig.png"><img src="images/p109-115-fig.png" width="1401" height="385" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 78.4%; margin-left: 10.8%"><a href="images/p109-116-fig.png"><img src="images/p109-116-fig.png" width="1401" height="318" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">The 2013 online survey did not include questions about minors, so data presented here are from 2014-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="minors-in-black-rock-city-allowing-minors">Allowing Minors</h4>
+<!-- page 110 -->
+<p class="chart-title">Participant Responses to the Question, “Do You Think That Burning Man Attendance Should be Restricted to Participants Aged 18 or Older?”</p>
+<figure style="width: 95.1%; margin-left: 2.4%"><a href="images/p110-117-fig.png"><img src="images/p110-117-fig.png" width="1401" height="462" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 39.8%; margin-left: 28.7%"><a href="images/p110-118-fig.png"><img src="images/p110-118-fig.png" width="911" height="349" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">Data presented above are from 2016-17. The 2013 online survey did not include questions about minors and the 2014 online survey asked different questions so direct comparison is impossible. While the wording in the 2015 online survey was also somewhat different, two answer options were the same: in 2015, 77.4% (+/- 1.0) did not believe Burning Man should be age-restricted, and 12.0% (+/- 0.8) had no opinion.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+</section>
+<section id="transportation">
+<h2>Transportation</h2>
+<h3 id="arrival-date">Arrival Date</h3>
+<!-- page 112 -->
+<figure style="width: 70.1%; margin-left: 14.9%"><a href="images/p112-119-fig.png"><img src="images/p112-119-fig.png" width="1401" height="805" alt="Chart: Arrival Date to BRC" loading="lazy" decoding="async"></a></figure>
+<p class="small">* Pre-event arrival data from the 2013 online survey have been removed because the survey question in 2013 was not as precise as in 2014-17 and the 2013 pre-event arrival results are therefore not comparable to other years’ data.</p>
+<figure style="width: 70.1%; margin-left: 1.9%"><a href="images/p112-120-fig.png"><img src="images/p112-120-fig.png" width="1401" height="504" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="small">** In 2013 and 2014 Burning Man’s official opening date fell on a Monday, so the first Sunday arrivals indicated here were pre-event arrivals. In 2015-17 Burning Man opened on a Sunday, so those arrivals occurred after the Gate had opened.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="departure-date">Departure Date</h3>
+<!-- page 113 -->
+<figure class="page"><a href="images/p113-121-page.png"><img src="images/p113-121-page.png" width="1321" height="915" alt="Departure Date from BRC * Post-event departure data from the 2013 online survey have been removed because the survey question in 2013 was not as precise as in 2014- 17 and the 2013 post-event departure results are therefore not comparable to other years’ data. ** In 2013 and 2014 Burning Man’s official opening date fell on a Monday, so the first Sunday departures indicated here were pre-event departures. In 2015-17 Burning Man opened on a Sunday, so those departures occurred after the Gate had opened. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h3 id="port-of-entry">Port of Entry</h3>
+<!-- page 114 -->
+<figure class="page"><a href="images/p114-122-page.png"><img src="images/p114-122-page.png" width="1308" height="912" alt="Port of Entry into BRC The 2013 and 2014 online surveys asked about transportation methods differently, so direct comparison is impossible. Overall trends include: • A relative decrease in Gate entry via vehicle (99.1% in 2013, 96.0% in 2014) • A relative increase in Burner Express Bus use (from 1.9% in 2014) • A relative increase in Airport traffic (0.5% in 2013, 0.8% in 2014) Data presented in the plot (left) and data table (below) are from 2015-17. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h3 id="gate-and-point-1-entries">Gate and Point 1 Entries</h3>
+<h4 id="gate-and-point-1-entries-vehicle-type">Vehicle Type</h4>
+<!-- page 115 -->
+<figure class="page"><a href="images/p115-123-page.png"><img src="images/p115-123-page.png" width="1216" height="912" alt="Vehicle Type (for Participants Entering BRC via Gate or Point 1) The 2013 and 2014 online surveys asked about transportation differently, so direct comparison is impossible. Data presented here are from 2015-17. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h4 id="gate-and-point-1-entries-vehicle-occupancy">Vehicle Occupancy</h4>
+<!-- page 116 -->
+<figure style="width: 79.2%; margin-left: 10.4%"><a href="images/p116-124-fig.png"><img src="images/p116-124-fig.png" width="1401" height="1154" alt="Chart: Number of People in Vehicle (for Participants Entering BRC via Gate or Point 1)" loading="lazy" decoding="async"></a></figure>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="gate-and-point-1-entries-minors-in-vehicle">Minors in Vehicle</h4>
+<!-- page 117 -->
+<p class="chart-title">Number of Minors 0-17 in Vehicle (for Participants Entering BRC via Gate or Point 1)</p>
+<figure style="width: 90.7%; margin-left: 4.7%"><a href="images/p117-125-fig.png"><img src="images/p117-125-fig.png" width="1401" height="382" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 82.0%; margin-left: 9.0%"><a href="images/p117-126-fig.png"><img src="images/p117-126-fig.png" width="1401" height="252" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="small">The larger confidence intervals for participants reporting 1 or 2+ compared to other datasets in this report are mainly due to the relatively small number of individuals entering BRC with minors in the vehicle. Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="airport-usage">Airport Usage</h3>
+<!-- page 118 -->
+<figure class="page"><a href="images/p118-127-page.png"><img src="images/p118-127-page.png" width="1207" height="912" alt="Common Airports Visited en Route to BRC The 2013 online survey did not ask about specific airports, so data presented here are from 2014-17. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h3 id="burner-express-bus">Burner Express Bus</h3>
+<h4 id="burner-express-bus-routes-traveled">Routes Traveled</h4>
+<!-- page 119 -->
+<figure class="page"><a href="images/p119-128-page.png"><img src="images/p119-128-page.png" width="1275" height="903" alt="BxB Route(s) Traveled (By Participants Arriving and/or Departing via Burner Express Bus) The 2013 online survey did not include questions about Burner Express Bus use, so data presented here are from 2014-17. Data presented here describe Burner Express Bus travel, but excludes data about Burner Express Air, which was introduced in 2016. The larger confidence intervals in the plot and table above compared to other datasets in this report are due to the relatively small proportion of the BRC population arriving and/or departing BRC via Burner Express Bus. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h4 id="burner-express-bus-reasons-for-taking-bxb">Reasons for Taking BxB</h4>
+<!-- page 120 -->
+<p class="chart-title">Reasons for Taking a Burner Express Bus (Responses from Participants Arriving and/or Departing via BxB, Participants Selected All That Applied)</p>
+<figure style="width: 87.6%; margin-left: 6.2%"><a href="images/p120-129-fig.png"><img src="images/p120-129-fig.png" width="1401" height="866" alt="Chart: The 2013 online survey did not include questions about Burner Express Bus use, so data presented here are from 2014-17. Data presented here describe Burner Express Bus travel, but excludes data about Burner Express Air, which was introduced in 2016." loading="lazy" decoding="async"></a></figure>
+<p class="small">* The option "I’ve used Burner Express in the past and wanted to do it again" was only included in the 2016 and 2017 online surveys. The larger confidence intervals in the plot and table above compared to other datasets in this report are due to the relatively small proportion of the BRC population arriving and/or departing BRC via Burner Express Bus.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="burner-express-bus-overall-experience">Overall Experience</h4>
+<!-- page 121 -->
+<figure class="page"><a href="images/p121-130-page.png"><img src="images/p121-130-page.png" width="1274" height="913" alt="Overall BxB Experience Rating (Responses from Participants Arriving and/or Departing via Burner Express Bus) The 2013 online survey did not include questions about Burner Express Bus use, so data presented here are from 2014-17. Data presented here describe Burner Express Bus travel, but excludes data about Burner Express Air, which was introduced in 2016. The larger confidence intervals in the plot and table above compared to other datasets in this report are due to the relatively small proportion of the BRC population arriving and/or departing BRC via Burner Express Bus. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h4 id="burner-express-bus-ticketing-experience">Ticketing Experience</h4>
+<!-- page 122 -->
+<figure class="page"><a href="images/p122-131-page.png"><img src="images/p122-131-page.png" width="1316" height="913" alt="Overall BxB Ticket Purchasing Experience Rating (Responses from Participants Arriving and/or Departing via Burner Express Bus) The 2013 online survey did not include questions about Burner Express Bus use, so data presented here are from 2014-17. Data presented here describe Burner Express Bus travel, but excludes data about Burner Express Air, which was introduced in 2016. The larger confidence intervals in the plot and table above compared to other datasets in this report are due to the relatively small proportion of the BRC population arriving and/or departing BRC via Burner Express Bus. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h4 id="burner-express-bus-ticket-price-evaluation">Ticket Price Evaluation</h4>
+<!-- page 123 -->
+<p class="chart-title">BxB Ticket Price Evaluation (Responses from Participants Arriving and/or Departing via Burner Express Bus)</p>
+<figure style="width: 93.2%; margin-left: 3.4%"><a href="images/p123-132-fig.png"><img src="images/p123-132-fig.png" width="1401" height="374" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 70.3%; margin-left: 14.8%"><a href="images/p123-133-fig.png"><img src="images/p123-133-fig.png" width="1401" height="299" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">The 2013 online survey did not include questions about Burner Express Bus use, so data presented here are from 2014-17. Data presented here describe Burner Express Bus travel, but excludes data about Burner Express Air, which was introduced in 2016.</p>
+<p class="small">The larger confidence intervals in the plot and table above compared to other datasets in this report are due to the relatively small proportion of the BRC population arriving and/or departing BRC via Burner Express Bus.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="burner-express-bus-satellite-shuttle-use">Satellite Shuttle Use</h4>
+<!-- page 124 -->
+<p class="chart-title">BxB Satellite Shuttle Use (Within BRC, Responses from Participants Arriving and/or Departing via Burner Express Bus)</p>
+<figure style="width: 91.8%; margin-left: 4.1%"><a href="images/p124-134-fig.png"><img src="images/p124-134-fig.png" width="1401" height="385" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 69.4%; margin-left: 15.3%"><a href="images/p124-135-fig.png"><img src="images/p124-135-fig.png" width="1401" height="297" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">The 2013 online survey did not include questions about Burner Express Bus use, so data presented here are from 2014-17. Data presented here describe Burner Express Bus travel, but excludes data about Burner Express Air, which was introduced in 2016.</p>
+<p class="small">The larger confidence intervals in the plot and table above compared to other datasets in this report are due to the relatively small proportion of the BRC population arriving and/or departing BRC via Burner Express Bus.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="burner-express-bus-bxb-camping-area-use">BxB Camping Area Use</h4>
+<!-- page 125 -->
+<figure style="width: 85.6%; margin-left: 7.2%"><a href="images/p125-136-fig.png"><img src="images/p125-136-fig.png" width="1401" height="1016" alt="Chart: Participants Arriving and/or Departing via Burner Express Bus) The 2013 online survey did not include questions about Burner Express Bus use, so data presented here are from 2014-17. Data presented here describe Burner Express Bus travel, but excludes data about Burner Express Air, which was introduced in 2016. BxB Camping Area Use (Within BRC, Responses from" loading="lazy" decoding="async"></a></figure>
+<p class="small">The larger confidence intervals in the plot and table above compared to other datasets in this report are due to the relatively small proportion of the BRC population arriving and/or departing BRC via Burner Express Bus. Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+</section>
+<section id="connecting-to-burning-man">
+<h2>Connecting to Burning Man</h2>
+<h3 id="year-round-participation">Year-Round Participation</h3>
+<h4 id="year-round-participation-the-burning-man-organization">The Burning Man Organization</h4>
+<!-- page 127 -->
+<p class="chart-title">Participant Responses to the Question, “Do You Think the Burning Man Organization Should be Involved in Facilitating and Producing Year Round Activities, and Not Just the Event in Black Rock City?”</p>
+<figure style="width: 95.4%; margin-left: 2.3%"><a href="images/p127-137-fig.png"><img src="images/p127-137-fig.png" width="1401" height="261" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 56.5%; margin-left: 21.8%"><a href="images/p127-138-fig.png"><img src="images/p127-138-fig.png" width="1287" height="352" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was not included in the 2013 or 2014 online surveys, so data presented here are from 2015-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="year-round-participation-regional-burns">Regional Burns</h4>
+<!-- page 128 -->
+<p class="chart-title">Participant Attendance at Regional Burning Man Events/Mixers/Gatherings</p>
+<figure style="width: 95.2%; margin-left: 2.4%"><a href="images/p128-139-fig.png"><img src="images/p128-139-fig.png" width="1401" height="375" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 91.6%; margin-left: 4.2%"><a href="images/p128-140-fig.png"><img src="images/p128-140-fig.png" width="1401" height="271" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was not included in the 2013 or 2014 online surveys, so data presented here are from 2015-17.</p>
+<p class="note">See the next page for detailed data from participants reporting volunteerism at regional Burning Man events.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<!-- page 129 -->
+<p class="chart-title">Volunteer Roles at Regional Burning Man Events/Mixers/Gatherings (for Participants Reporting Volunteerism at a Regional)</p>
+<figure style="width: 90.6%; margin-left: 4.7%"><a href="images/p129-141-fig.png"><img src="images/p129-141-fig.png" width="1401" height="513" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 54.4%; margin-left: 22.8%"><a href="images/p129-142-fig.png"><img src="images/p129-142-fig.png" width="1241" height="488" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was not included in the 2013 or 2014 online surveys, so data presented here are from 2015-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="burning-man-information">Burning Man Information</h3>
+<h4 id="burning-man-information-information-types">Information Types</h4>
+<!-- page 130 -->
+<p class="chart-title">Valued Information Types Coming from the Burning Man Project (Participants Selected Up to Three Options)</p>
+<figure style="width: 99.3%; margin-left: 0.7%"><a href="images/p130-143-fig.png"><img src="images/p130-143-fig.png" width="1401" height="813" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was not included in the 2013 online survey, so data presented here are from 2014-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="burning-man-information-preferred-information-sources">Preferred Information Sources</h4>
+<!-- page 131 -->
+<figure class="page"><a href="images/p131-144-page.png"><img src="images/p131-144-page.png" width="1310" height="919" alt="Frequency of Use of Available Sources for Burning Man News and Information This question was not included in the 2013 online survey, so data presented here are from 2014-17. See next page for corresponding data table. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<!-- page 132 -->
+<p class="chart-title">Frequency of Use of Available Sources for Burning Man News and Information</p>
+<figure style="width: 100.0%; margin-left: 0.0%"><a href="images/p132-145-fig.png"><img src="images/p132-145-fig.png" width="1401" height="655" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was not included in the 2013 online survey, so data presented here are from 2014-17. See previous page for corresponding plots.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="burning-man-information-project-affiliates">Project Affiliates</h4>
+<!-- page 133 -->
+<p class="chart-title">Participant Familiarity with Affiliates and Programs of the Non-Profit Burning Man Project</p>
+<figure style="width: 95.9%; margin-left: 2.0%"><a href="images/p133-146-fig.png"><img src="images/p133-146-fig.png" width="1401" height="879" alt="Chart: This question was not asked in the 2013 or 2014 online surveys, so data presented here are from 2015-17." loading="lazy" decoding="async"></a></figure>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h3 id="burning-man-organization">Burning Man Organization</h3>
+<h4 id="burning-man-organization-supported-efforts">Supported Efforts</h4>
+<!-- page 134 -->
+<figure class="page"><a href="images/p134-147-page.png"><img src="images/p134-147-page.png" width="1178" height="920" alt="Participant Responses to the Question, “If You Were Given $100 to Donate to the Burning Man Nonprofit, How Would You Want it to be Distributed?” This question was not asked in the 2013 or 2014 online surveys, so data presented here are from 2015-17. Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<h3 id="burning-man-information-2">Burning Man Information</h3>
+<h4 id="burning-man-information-radio-stations">Radio Stations</h4>
+<!-- page 135 -->
+<p class="chart-title">Participant Method(s) for Listening to BMIR in the Past Year</p>
+<figure style="width: 91.6%; margin-left: 4.2%"><a href="images/p135-148-fig.png"><img src="images/p135-148-fig.png" width="1401" height="845" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">The 2013 online survey asked different questions about BMIR, so direct comparison is impossible. Data presented here are from 2014-17.</p>
+<p class="small">* This question was asked identically in the 2014 and 2015 online surveys, but the option “I listened online” was left out of the 2016 online survey. Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<!-- page 136 -->
+<p class="chart-title">Participant Responses to the Question, “Have You Heard of Gate Radio (95.1)?”</p>
+<figure style="width: 97.1%; margin-left: 1.4%"><a href="images/p136-149-fig.png"><img src="images/p136-149-fig.png" width="1401" height="282" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 65.2%; margin-left: 17.4%"><a href="images/p136-150-fig.png"><img src="images/p136-150-fig.png" width="1401" height="335" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was not included in the 2013 or 2014 online surveys, so data presented here are from 2015-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+</section>
+<section id="academic-research-topic-transformative-experience">
+<h2>Academic Research Topic Transformative Experience</h2>
+<h3 id="transformative-experience">Transformative Experience</h3>
+<h4 id="transformative-experience-project-description">Project Description</h4>
+<!-- page 138 -->
+<p>Since 2015, a team of researchers have used the online survey to ask a series of questions about transformative experiences at Burning Man. They ask these questions in a variety of settings, studying the types of changes reported from participants in different environments.</p>
+<p>The first six pages of this section begin with, then build upon, the question: <em>Did you have a</em> <em>transformative experience in Black Rock City this year?</em> Participants are asked to report on the duration of any changes, and on whether these changes were desired or expected as a result of their coming to Black Rock City.</p>
+<p>The final five pages of this section begin with, then build upon, a more specific premise: <em>We are</em> <em>curious about a special kind of transformative experience: an experience that changes you so</em> <em>profoundly that you come out of the experience radically different than you were before the</em> <em>experience. This transformation may have been so profound that you could not have known what</em> <em>the experience or change would be like before going through it.</em></p>
+<p>Again, participants are asked to indicate the degree to which they feel they experienced this type of change, then reflect upon their feelings regarding this type of change. More information about the work conducted by this research team can be found at <a href="http://www.crockettlab.org/">http://www.crockettlab.org/</a>.</p>
+<h4 id="transformative-experience-general-transformation">General Transformation</h4>
+<!-- page 139 -->
+<figure class="page"><a href="images/p139-151-page.png"><img src="images/p139-151-page.png" width="1204" height="918" alt="Participant Responses to the Question, “Did You Have a Transformative Experience in BRC This Year?” This question was not included in the 2013 or 2014 online surveys, so data presented here are from 2015-17. * In the 2015 online survey the final answer option was &quot;Absolutely.&quot; In the 2016-17 online surveys, this option was &quot;Definitely.&quot; Error bars indicate the upper and lower bounds of the 95% confidence intervals." loading="lazy" decoding="async"></a></figure>
+<!-- page 140 -->
+<figure style="width: 86.2%; margin-left: 6.9%"><a href="images/p140-152-fig.png"><img src="images/p140-152-fig.png" width="1401" height="1025" alt="Chart: (for Participants Reporting a Transformative Experience in BRC This Year) Participant Responses to the Question, “What Was the Extent of This Transformation?”" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was first introduced in the 2016 online survey, so data presented here are from 2016-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<!-- page 141 -->
+<p class="chart-title">Participant Responses to the Question, “Did You Go to Burning Man Expecting Any of These Changes?” (for Participants Reporting a Transformative Experience in BRC This Year)</p>
+<figure style="width: 86.1%; margin-left: 8.5%"><a href="images/p141-153-fig.png"><img src="images/p141-153-fig.png" width="1401" height="955" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was first introduced in the 2016 online survey, so data presented here are from 2016-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<!-- page 142 -->
+<p class="chart-title">Participant Responses to the Question, “Did You Go to Burning Man Desiring Any of These Changes?” (for Participants Reporting a Transformative Experience in BRC This Year)</p>
+<figure style="width: 83.9%; margin-left: 9.6%"><a href="images/p142-154-fig.png"><img src="images/p142-154-fig.png" width="1401" height="964" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was first introduced in the 2016 online survey, so data presented here are from 2016-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<!-- page 143 -->
+<p class="chart-title">Participant Responses to the Question, “Did These Changes Persist After You Left BRC?” (for Participants Reporting a Transformative Experience in BRC This Year)</p>
+<figure style="width: 96.7%; margin-left: 1.6%"><a href="images/p143-155-fig.png"><img src="images/p143-155-fig.png" width="1401" height="308" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 90.4%; margin-left: 4.8%"><a href="images/p143-156-fig.png"><img src="images/p143-156-fig.png" width="1401" height="268" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was not included in the 2013 or 2014 online surveys, so data presented here are from 2015-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<!-- page 144 -->
+<figure style="width: 78.6%; margin-left: 10.7%"><a href="images/p144-157-fig.png"><img src="images/p144-157-fig.png" width="1400" height="1125" alt="Chart: in BRC This Year Which Did Not Last to the Time of Survey Submission) After You Left BRC?” (for Participants Reporting a Transformative Experience Participant Responses to the Question, “How Long Did The Changes Persist" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was not included in the 2013 or 2014 online surveys, so data presented here are from 2015-17.</p>
+<p class="small">Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<h4 id="transformative-experience-special-transformation">Special Transformation</h4>
+<!-- page 145 -->
+<figure style="width: 85.8%; margin-left: 7.1%"><a href="images/p145-158-fig.png"><img src="images/p145-158-fig.png" width="1401" height="951" alt="Chart: in BRC This Year?” (for Participants Reporting This Type of Experience in BRC This Year) Participant Responses to the Question, “Did You Have a Special* Type of Transformative Experience" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was not included in the 2013 or 2014 online surveys, so data presented here are from 2015-17.</p>
+<p class="small">* The nature of this special change is defined with the following paragraph: "We are curious about a special kind of transformative experience: an experience that changes you so profoundly that you come out of the experience radically different than you were before the experience. This transformation may have been so profound that you could not have known what the experience or change would be like before going through it." Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<!-- page 146 -->
+<p class="chart-title">Participant Responses to the Question, “Did This Special* Type of Transformative Experience Cause You to Change Your Moral Values?” (for Participants Reporting This Type of Experience in BRC This Year)</p>
+<figure style="width: 79.2%; margin-left: 11.9%"><a href="images/p146-159-fig.png"><img src="images/p146-159-fig.png" width="1401" height="942" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was not included in the 2013 or 2014 online surveys, so data presented here are from 2015-17.</p>
+<p class="small">* The nature of this special change is defined with the following paragraph: "We are curious about a special kind of transformative experience: an experience that changes you so profoundly that you come out of the experience radically different than you were before the experience. This transformation may have been so profound that you could not have known what the experience or change would be like before going through it." Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<!-- page 147 -->
+<p class="chart-title">Participant Responses to the Question, “Did You Go To Burning Man Expecting To Have This Special* Type of Transformative Experience?” (for Participants Reporting This Type of Experience in BRC This Year)</p>
+<figure style="width: 82.1%; margin-left: 8.9%"><a href="images/p147-160-fig.png"><img src="images/p147-160-fig.png" width="1401" height="917" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was first introduced in the 2016 online survey, so data presented here are from 2016-17.</p>
+<p class="small">* The nature of this special change is defined with the following paragraph: "We are curious about a special kind of transformative experience: an experience that changes you so profoundly that you come out of the experience radically different than you were before the experience. This transformation may have been so profound that you could not have known what the experience or change would be like before going through it." Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<!-- page 148 -->
+<p class="chart-title">Participant Responses to the Question, “Did You Go To Burning Man Desiring To Have This Special* Type of Transformative Experience?” (for Participants Reporting This Type of Experience in BRC This Year)</p>
+<figure style="width: 80.9%; margin-left: 8.9%"><a href="images/p148-161-fig.png"><img src="images/p148-161-fig.png" width="1400" height="563" alt="Chart" loading="lazy" decoding="async"></a></figure>
+<figure style="width: 83.3%; margin-left: 8.3%"><a href="images/p148-162-fig.png"><img src="images/p148-162-fig.png" width="1401" height="393" alt="Chart: This question was first introduced in the 2016 online survey, so data presented here are from 2016-17." loading="lazy" decoding="async"></a></figure>
+<p class="small">* The nature of this special change is defined with the following paragraph: "We are curious about a special kind of transformative experience: an experience that changes you so profoundly that you come out of the experience radically different than you were before the experience. This transformation may have been so profound that you could not have known what the experience or change would be like before going through it." Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+<!-- page 149 -->
+<figure style="width: 83.5%; margin-left: 8.2%"><a href="images/p149-163-fig.png"><img src="images/p149-163-fig.png" width="1401" height="974" alt="Chart: Transformative Experience?” (for Participants Reporting This Type of Experience in BRC This Year) Participant Responses to the Question, “Are You Glad to Have Had This Special* Type of" loading="lazy" decoding="async"></a></figure>
+<p class="note">This question was first introduced in the 2016 online survey, so data presented here are from 2016-17.</p>
+<p class="small">* The nature of this special change is defined with the following paragraph: "We are curious about a special kind of transformative experience: an experience that changes you so profoundly that you come out of the experience radically different than you were before the experience. This transformation may have been so profound that you could not have known what the experience or change would be like before going through it." Error bars indicate the upper and lower bounds of the 95% confidence intervals.</p>
+</section>
+<section id="brc-census-team-information">
+<h2>BRC Census Team Information</h2>
+<h3 id="contributions-and-acknowledgements">Contributions and Acknowledgements</h3>
+<!-- page 151 -->
+<p><strong>BRC Census General Coordination and Scientific Committee:</strong> Dana “DV8” DeVaul, Dominic “Hunter” Beaulieu-Prévost, and S. Megan “Countess” Heller</p>
+<p><strong>Data Analysis:</strong> Dominic “Hunter” Beaulieu-Prévost, Aaron “Murrs” Shev, and Dana “DV8” DeVaul</p>
+<p><strong>Report Coordination and Visualizations:</strong> Dana “DV8” DeVaul</p>
+<p><strong>Report Editing and Proofreading:</strong> Chris “Kindred” Adams, Sherry “Moonbeams” Beard, Joseph “JOBI” Buchman, Rich “Popeye” Ferry, Morgan “Morganism” Fleming, Elana “Mhysa” Ford, Joonas “Allfish” Iivonen, Netti “Butterfly” Johnston, Cameron “Stealth” Mitchell, Dorothy Morgan, Jaimee “Cali Green” Nix, Simone “Gridge” Pagan Griso, Aaron “Murrs” Shev, Ashley “Strange” Strange, and Sarah “Picky” Williamson</p>
+<p><strong>The 2017 Census Lab:</strong> The project also involved more than 175 essential volunteers: research collaborators, volunteer coordinators, statisticians, camp builders, gate samplers, keypunchers, Census Lab hosts, graphic designers, and many more</p>
+<p>We would also like to thank the Burning Man Communications Department and the Burning Man Tech Team, especially Erika “Deputy” O’Connor and Mark “Markle” Levitt.</p>
+<p>We would also like to thank all of the Burning Man participants who have taken the time to provide their data. This project would not exist without our respondents.</p>
+<p>Finally, our thanks to Burning Man Project for the resources they provide both on playa and off playa and for believing in the project!</p>
+<h3 id="still-curious">Still Curious?</h3>
+<!-- page 152 -->
+<p>To contact the Census Lab, email census@burningman.org</p>
+<p>Census Lab Blog: <a href="http://journal.burningman.org/census">http://journal.burningman.org/census</a></p>
+<p>Census Lab Data Archive: <a href="http://burningman.org/culture/history/brc-history/census-data/">http://burningman.org/culture/history/brc-history/census-data/</a></p>
+<p>Citation: DeVaul, D.L., Beaulieu-Prévost, D., Heller, S.M., and the 2017 Census Lab. (2017). Black Rock City Census: 2013-2017 Population Analysis. Black Rock City Census. Copyright © 2018 DeVaul et al.</p>
+<p>This is an open-access report distributed under the terms of Creative Commons Attribution License, which permits unrestricted use, distribution, and reproduction in any medium, provided the original authors and source are credited.</p>
+</section>
+</main>
+
+</body>
+</html>
