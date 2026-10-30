@@ -387,15 +387,8 @@ const shiftVolunteers = async (
     // patch
     // ------------------------------------------------------------
     case "PATCH": {
-      // Off-playa: checking a volunteer in (and review) is admin-only.
-      if (!isOnPlaya && !(await isAdmin(session.shiftboardId))) {
-        return res.status(403).json({
-          statusCode: 403,
-          message: "Check-in is restricted to admins.",
-        });
-      }
-      // check volunteer into shift
-      return shiftVolunteerUpdate(pool, req, res);
+      // check volunteer into shift (off-playa admin guard lives in the helper)
+      return shiftVolunteerUpdate(pool, req, res, session);
     }
 
     // delete
