@@ -325,7 +325,7 @@ export const Home = () => {
           </Card>
         </Box>
 
-        <Box component="section">
+        <Box component="section" id="volunteer-roles">
           <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
             Volunteer Roles
           </Typography>
