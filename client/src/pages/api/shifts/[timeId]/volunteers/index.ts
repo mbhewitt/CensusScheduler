@@ -261,6 +261,30 @@ const shiftVolunteers = async (
         });
       }
 
+      // #458: enforce the position's "Role required" server-side. The add
+      // dialog grays these positions out, but a stale tab / forged request
+      // would skip that. Admins can override, same as the dialog.
+      const [dbMissingRole] = await pool.query<RowDataPacket[]>(
+        `SELECT r.role
+         FROM op_shift_time_position stp
+         JOIN op_position_type pt ON pt.position_type_id = stp.position_type_id
+         JOIN op_roles r ON r.role_id = pt.role_id
+         LEFT JOIN op_volunteer_roles vr
+           ON vr.role_id = pt.role_id
+           AND vr.shiftboard_id = ?
+           AND vr.remove_role = false
+         WHERE stp.time_position_id = ?
+           AND vr.role_id IS NULL
+         LIMIT 1`,
+        [shiftboardId, timePositionId]
+      );
+      if (dbMissingRole[0] && !(await isAdmin(session.shiftboardId))) {
+        return res.status(403).json({
+          statusCode: 403,
+          message: `This position requires the ${dbMissingRole[0].role} role.`,
+        });
+      }
+
       const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT *
         FROM op_volunteer_shifts
