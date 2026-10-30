@@ -27,7 +27,21 @@ const TrainingCoursePage = async ({ params }: ITrainingCoursePageProps) => {
   // hands off to the existing /training/confirmation/[code] flow.
   const confirmationCode = slugToTrainingCode(slug);
 
-  return <TrainingCourse course={course} confirmationCode={confirmationCode} />;
+  // Role (position-specific) courses also point back to Basics, which comes
+  // after Welcome and before them.
+  const isRoleCourse = !["welcome", "basics"].includes(slug);
+  const basicsHiveUrl = isRoleCourse
+    ? (await getCourse("basics"))?.sourceUrl
+    : null;
+
+  return (
+    <TrainingCourse
+      course={course}
+      confirmationCode={confirmationCode}
+      basicsHiveUrl={basicsHiveUrl}
+      isRoleCourse={isRoleCourse}
+    />
+  );
 };
 
 export default TrainingCoursePage;

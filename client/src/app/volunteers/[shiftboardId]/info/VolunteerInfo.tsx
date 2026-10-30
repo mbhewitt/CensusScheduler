@@ -38,6 +38,7 @@ import {
 import { useTheme } from "@mui/material/styles";
 import Link from "next/link";
 
+import { useIsOnPlaya } from "@/hooks/useIsOnPlaya";
 import { trainingMaterialHref, WELCOME_HIVE_URL } from "@/lib/training";
 import { useSnackbar } from "notistack";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
@@ -157,10 +158,9 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   // dialog, just can't read existing values). Per Mew 2026-05-25.
   const isSelfView = shiftboardIdSession === shiftboardId;
 
-  // Off-playa only: the "Get more involved" sidebar links don't work on the
-  // offline on-playa tablets, and volunteers aren't signed into those
-  // accounts there (#335).
-  const isOnPlaya = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
+  // On-playa build OR a provisioned Lab tablet: Hive links don't load out
+  // there, so training links point at the bundled copies instead (#335).
+  const isOnPlaya = useIsOnPlaya() === true;
 
   // refs
   // ------------------------------------------------------------
@@ -872,7 +872,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
               {(() => {
                 // On-playa the Hive URL can't load, so point at the bundled
                 // copy of the course instead. Off-playa nothing changes.
-                const href = trainingMaterialHref(t.code, t.url || null);
+                const href = trainingMaterialHref(t.code, t.url || null, isOnPlaya);
                 if (!href) {
                   return <Typography variant="body2">{t.trainingName}</Typography>;
                 }

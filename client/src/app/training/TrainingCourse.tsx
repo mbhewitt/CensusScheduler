@@ -2,12 +2,14 @@
 
 import {
   ExpandMore as ExpandMoreIcon,
+  OpenInNew as OpenInNewIcon,
   PictureAsPdf as PictureAsPdfIcon,
 } from "@mui/icons-material";
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Alert,
   Box,
   Button,
   Card,
@@ -30,6 +32,7 @@ import NextLink from "next/link";
 import { useState } from "react";
 
 import { Hero } from "@/components/layout/Hero";
+import { useIsOnPlaya } from "@/hooks/useIsOnPlaya";
 
 // Renders a course exported from Burning Man Hive. Everything referenced here
 // lives under /training, so it renders with no network access.
@@ -294,12 +297,77 @@ const CompletionCta = ({ code, courseTitle }: { code: string; courseTitle: strin
   </Card>
 );
 
+// These pages are public and indexed, so someone can land on any course from a
+// search, and on playa a walk-up can pick any course at the Lab. Point them at
+// the order: Welcome, then Basics, then their shift's course (per Chipper
+// 2026-10-30). Off playa that's on Hive; on playa it's these offline copies.
+// A nudge only: nothing is hidden or blocked, since signed-in volunteers may
+// have done Basics already.
+const CourseOrderBanner = ({
+  hiveUrl,
+  basicsHiveUrl,
+  isRoleCourse,
+}: {
+  hiveUrl: string;
+  basicsHiveUrl?: string | null;
+  isRoleCourse: boolean;
+}) => {
+  const isOnPlaya = useIsOnPlaya();
+  if (isOnPlaya === undefined) return null;
+
+  return (
+    <Alert severity="info" sx={{ mb: 3 }}>
+      <Typography sx={{ mb: 1.5 }}>
+        <strong>Doing Census training?</strong>{" "}
+        {!isOnPlaya && "Please take it on Burning Man Hive. "}If you&apos;re new,
+        start with Census Welcome and Overview, then Basics, then the course for
+        the shifts you signed up for. Your account checklist shows which ones
+        you&apos;ve already done.
+      </Typography>
+      <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+        {!isOnPlaya && (
+          <Button
+            component="a"
+            endIcon={<OpenInNewIcon />}
+            href={hiveUrl}
+            rel="noopener noreferrer"
+            target="_blank"
+            variant="contained"
+          >
+            Open this course on Hive
+          </Button>
+        )}
+        {isRoleCourse && isOnPlaya && (
+          <Button component={NextLink} href="/training/basics" variant="outlined">
+            Start with Basics
+          </Button>
+        )}
+        {isRoleCourse && !isOnPlaya && basicsHiveUrl && (
+          <Button
+            component="a"
+            endIcon={<OpenInNewIcon />}
+            href={basicsHiveUrl}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Start with Basics on Hive
+          </Button>
+        )}
+      </Stack>
+    </Alert>
+  );
+};
+
 export const TrainingCourse = ({
   course,
   confirmationCode,
+  basicsHiveUrl,
+  isRoleCourse = false,
 }: {
   course: Course;
   confirmationCode?: string;
+  basicsHiveUrl?: string | null;
+  isRoleCourse?: boolean;
 }) => (
   <>
     <Hero
@@ -308,6 +376,14 @@ export const TrainingCourse = ({
     />
 
     <Container component="main">
+      {course.sourceUrl && (
+        <CourseOrderBanner
+          hiveUrl={course.sourceUrl}
+          basicsHiveUrl={basicsHiveUrl}
+          isRoleCourse={isRoleCourse}
+        />
+      )}
+
       {course.overview && (
         <Box component="section" sx={{ mb: 3 }}>
           <Card>
