@@ -23,7 +23,11 @@
       },
       {
         "type": "paragraph",
-        "text": "We are glad you made it here! The Census Basis Course continues where the Census Welcome and Overview left off. If you are New to Census or want a refresher, be sure to review the Census Welcome and Overview before starting the Census Basics Course.",
+        "text": "This is the app's offline copy of this course, from the Census Community on Burning Man Hive, for use at the Census Lab on playa. Off playa, please take it on Hive (hive.burningman.org)."
+      },
+      {
+        "type": "paragraph",
+        "text": "We are glad you made it here! The Census Basics Course continues where the Census Welcome and Overview left off. If you are New to Census or want a refresher, be sure to review the Census Welcome and Overview before starting the Census Basics Course.",
         "links": [
           {
             "text": "Census Welcome and Overview",
@@ -480,7 +484,7 @@
         },
         {
           "type": "paragraph",
-          "text": "We've worked hard to move our training materials to this space. Available courses are:"
+          "text": "Available courses (take them in the Census Community on Hive; offline copies for playa are on this app's Training page):"
         },
         {
           "type": "paragraph",

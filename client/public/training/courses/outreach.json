@@ -28,6 +28,10 @@
       },
       {
         "type": "paragraph",
+        "text": "This is the app's offline copy of this course, from the Census Community on Burning Man Hive, for use at the Census Lab on playa. Off playa, please take it on Hive (hive.burningman.org)."
+      },
+      {
+        "type": "paragraph",
         "text": "We are glad you made it here! The Census Outreach Course continues where the Census Basics Course left off. Make sure to complete the Census Basics Course before starting the Census Outreach Course.",
         "links": [
           {

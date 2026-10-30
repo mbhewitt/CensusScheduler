@@ -45,9 +45,13 @@ export const WELCOME_HIVE_URL = "https://hive.burningman.org/spaces/14264554";
  * Where a training's "review the material" link should point.
  * On playa: the bundled copy. Off playa: whatever the database says (Hive).
  */
-export const trainingMaterialHref = (code: string, dbUrl: string | null) => {
+export const trainingMaterialHref = (
+  code: string,
+  dbUrl: string | null,
+  onPlaya = isOnPlaya()
+) => {
   const slug = TRAINING_CODE_TO_SLUG[code];
-  if (isOnPlaya() && slug) return `/training/${slug}`;
+  if (onPlaya && slug) return `/training/${slug}`;
   return dbUrl;
 };
 

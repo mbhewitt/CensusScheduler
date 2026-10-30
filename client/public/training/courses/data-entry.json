@@ -18,6 +18,10 @@
     "blocks": [
       {
         "type": "paragraph",
+        "text": "This is the app's offline copy of this course, from the Census Community on Burning Man Hive, for use at the Census Lab on playa. Off playa, please take it on Hive (hive.burningman.org)."
+      },
+      {
+        "type": "paragraph",
         "text": "Thank you for volunteering your time as a Data Entry Wiz while on playa this year. We really appreciate your help!"
       },
       {
