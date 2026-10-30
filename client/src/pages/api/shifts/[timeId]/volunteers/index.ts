@@ -278,10 +278,35 @@ const shiftVolunteers = async (
          LIMIT 1`,
         [shiftboardId, timePositionId]
       );
-      if (dbMissingRole[0] && !(await isAdmin(session.shiftboardId))) {
+      // #401/#425: same for capacity — the dialog disables full positions.
+      // The volunteer being added isn't counted, so a re-add isn't blocked.
+      // ponytail: read-then-write; two adds racing for the last slot can both
+      // land. Add a row lock if that ever shows up.
+      const [[dbSlots]] = await pool.query<RowDataPacket[]>(
+        `SELECT
+           stp.slots,
+           (SELECT COUNT(*)
+            FROM op_volunteer_shifts vs
+            JOIN op_volunteers v
+              ON v.shiftboard_id = vs.shiftboard_id
+              AND v.delete_volunteer = false
+            WHERE vs.time_position_id = stp.time_position_id
+              AND vs.remove_shift = false
+              AND vs.shiftboard_id <> ?) AS filled
+         FROM op_shift_time_position stp
+         WHERE stp.time_position_id = ?`,
+        [shiftboardId, timePositionId]
+      );
+      const isFull = dbSlots && Number(dbSlots.filled) >= Number(dbSlots.slots);
+      if (
+        (dbMissingRole[0] || isFull) &&
+        !(await isAdmin(session.shiftboardId))
+      ) {
         return res.status(403).json({
           statusCode: 403,
-          message: `This position requires the ${dbMissingRole[0].role} role.`,
+          message: dbMissingRole[0]
+            ? `This position requires the ${dbMissingRole[0].role} role.`
+            : "This position is full.",
         });
       }
 
