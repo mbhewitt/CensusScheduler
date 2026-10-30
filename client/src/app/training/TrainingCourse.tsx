@@ -29,10 +29,14 @@ import {
 } from "@mui/material";
 
 import NextLink from "next/link";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import useSWR from "swr";
 
 import { Hero } from "@/components/layout/Hero";
 import { useIsOnPlaya } from "@/hooks/useIsOnPlaya";
+import { slugToTrainingCode } from "@/lib/training";
+import { SessionContext } from "@/state/session/context";
+import { fetcherGet } from "@/utils/fetcher";
 
 // Renders a course exported from Burning Man Hive. Everything referenced here
 // lives under /training, so it renders with no network access.
@@ -313,44 +317,63 @@ const CourseOrderBanner = ({
   isRoleCourse: boolean;
 }) => {
   const isOnPlaya = useIsOnPlaya();
-  if (isOnPlaya === undefined) return null;
+  const {
+    sessionState: {
+      settings: { isAuthenticated },
+    },
+  } = useContext(SessionContext);
+  // Signed in: skip the Basics nudge once they've completed it (same check the
+  // completion page uses). Signed out or on error, keep nudging.
+  const basicsCode = slugToTrainingCode("basics");
+  const { data: basics } = useSWR<{ alreadyConfirmed: boolean }>(
+    isRoleCourse && isAuthenticated && basicsCode
+      ? `/api/training/confirmation/${basicsCode}`
+      : null,
+    fetcherGet
+  );
+  const showBasics = isRoleCourse && !basics?.alreadyConfirmed;
+
+  if (isOnPlaya === undefined || (isOnPlaya && !showBasics)) return null;
 
   return (
     <Alert severity="info" sx={{ mb: 3 }}>
       <Typography sx={{ mb: 1.5 }}>
         <strong>Doing Census training?</strong>{" "}
-        {!isOnPlaya && "Please take it on Burning Man Hive. "}If you&apos;re new,
-        start with Census Welcome and Overview, then Basics, then the course for
-        the shifts you signed up for. Your account checklist shows which ones
-        you&apos;ve already done.
+        {!isOnPlaya && "Please take it on Burning Man Hive. "}
+        {(showBasics || !isRoleCourse) && (
+          <>
+            If you&apos;re new, start with Census Welcome and Overview, then
+            Basics, then the course for the shifts you signed up for. Your
+            account checklist shows which ones you&apos;ve already done.
+          </>
+        )}
       </Typography>
       <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+        {showBasics && (
+          <Button
+            component={isOnPlaya ? NextLink : "a"}
+            endIcon={isOnPlaya ? undefined : <OpenInNewIcon />}
+            href={isOnPlaya ? "/training/basics" : basicsHiveUrl ?? hiveUrl}
+            size="large"
+            variant="contained"
+            {...(isOnPlaya
+              ? {}
+              : { rel: "noopener noreferrer", target: "_blank" })}
+          >
+            {isOnPlaya ? "Start with Basics" : "Start with Basics on Hive"}
+          </Button>
+        )}
         {!isOnPlaya && (
           <Button
             component="a"
             endIcon={<OpenInNewIcon />}
             href={hiveUrl}
             rel="noopener noreferrer"
+            size={showBasics ? "medium" : "large"}
             target="_blank"
-            variant="contained"
+            variant={showBasics ? "outlined" : "contained"}
           >
             Open this course on Hive
-          </Button>
-        )}
-        {isRoleCourse && isOnPlaya && (
-          <Button component={NextLink} href="/training/basics" variant="outlined">
-            Start with Basics
-          </Button>
-        )}
-        {isRoleCourse && !isOnPlaya && basicsHiveUrl && (
-          <Button
-            component="a"
-            endIcon={<OpenInNewIcon />}
-            href={basicsHiveUrl}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Start with Basics on Hive
           </Button>
         )}
       </Stack>
