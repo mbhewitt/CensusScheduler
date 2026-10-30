@@ -49,8 +49,8 @@ export const reportList = [
 ];
 export const Reports = () => {
   // The report files below are bundled locally (/reports/...), so they work
-  // offline on playa. The external blackrockcitycensus.org pointer is dead
-  // offline, so hide it there (#629, Chipper).
+  // offline on playa. The external archive link is dead offline, so hide it
+  // there (#629, Chipper).
   const isOnPlaya = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
 
   // Reports open IN-APP in a full-screen dialog (iframe), not a new tab. The
@@ -77,13 +77,13 @@ export const Reports = () => {
           <CardContent>
             {!isOnPlaya && (
               <Typography sx={{ mb: 2 }}>
-                For the complete Black Rock City Census reports, visit{" "}
+                For every Black Rock City Census report back to 2001, visit the{" "}
                 <Link
-                  href="https://blackrockcitycensus.org"
+                  href="https://brc-census.github.io/reports/"
                   rel="noopener noreferrer"
                   target="_blank"
                 >
-                  blackrockcitycensus.org
+                  Census Report Archive
                 </Link>
                 .
               </Typography>
