@@ -118,7 +118,7 @@ const volunteerShifts = async (
     // ------------------------------------------------------------
     case "PATCH": {
       // update volunteer in shift
-      return shiftVolunteerUpdate(pool, req, res);
+      return shiftVolunteerUpdate(pool, req, res, session);
     }
 
     // delete
