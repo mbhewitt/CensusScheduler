@@ -23,6 +23,10 @@
       },
       {
         "type": "paragraph",
+        "text": "This is the app's offline copy of this course, from the Census Community on Burning Man Hive, for use at the Census Lab on playa. Off playa, please take it on Hive (hive.burningman.org)."
+      },
+      {
+        "type": "paragraph",
         "text": "We are glad you made it here! The Census Databeast Drivers Course continues where the Census Basics Course left off. Make sure to complete the Census Basics Course before starting the Census Databeast Drivers Course.",
         "links": [
           {
@@ -68,7 +72,7 @@
           "Be an excellent, safe & responsible driver with a good driving record.",
           "Have past experience successfully handling a large box truck.",
           "Have attended a minimum of one prior Burn in Black Rock City.",
-          "Complete PrePlaya, this HIVE Driver Course.",
+          "Complete this DataBeast Driver course before playa.",
           "Complete OnPlaya, Driver orientation before your first shift.",
           "Be comfortable with Burning Man (BM) radio and procedures",
           "Complete PrePlaya. BM Org-Wide Radio Training Video & Art of Radio Guide"
@@ -730,7 +734,7 @@
             },
             {
               "id": 6407798,
-              "text": "Complete the HIVE online Basics & DataBeast Driver Training.",
+              "text": "Complete the online Basics & DataBeast Driver Training.",
               "correct": false
             },
             {

@@ -71,4 +71,5 @@ export interface CourseIndexEntry {
   image: string | null;
   counts: ICourseCounts;
   file: string;
+  hiveUrl?: string | null;
 }

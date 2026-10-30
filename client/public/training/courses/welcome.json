@@ -26,61 +26,13 @@
         "text": "We are glad you made it here! The Census Welcome and Overview is the first step for orientation to the Census department and to figure out your next steps."
       },
       {
+        "type": "paragraph",
+        "text": "This is the app's offline copy of the Census Welcome course, from the Census Community on Burning Man Hive, for use at the Census Lab on playa. Off playa, please take it on Hive (hive.burningman.org)."
+      },
+      {
         "type": "image",
         "src": "/training/assets/ee4217df-Copy_of_Census_2018_Photo_by_Jeremy_D_arcy.jpg",
         "alt": ""
-      },
-      {
-        "type": "heading",
-        "level": 2,
-        "text": "What you'll get from the Black Rock City Census community"
-      },
-      {
-        "type": "paragraph",
-        "text": "As a member, you'll get a few great benefits:"
-      },
-      {
-        "type": "list",
-        "ordered": false,
-        "items": [
-          "Learn about Black Rock City Census: What we do, why we do it, and how to get involved!",
-          "Training Classes: We've moved our training classes here so you can complete them on your own time before arriving on playa.",
-          "Meet new people. Chat with other Census volunteers, learn about upcoming events, learn about the different volunteering roles at Census and how you can participate on and off-playa."
-        ]
-      },
-      {
-        "type": "heading",
-        "level": 2,
-        "text": "How to get the most out of the Black Rock City Census community"
-      },
-      {
-        "type": "paragraph",
-        "text": "We’re here to get results and we know you are too. Here’s the best way for each of us to get there:"
-      },
-      {
-        "type": "paragraph",
-        "text": "Be supportive. Encourage and support your fellow volunteers. No one here is looking for your criticism, cynicism, advice, or judgement. (We can get those things on the rest of the Internet)."
-      },
-      {
-        "type": "paragraph",
-        "text": "Share generously. Your stories and experiences may be exactly what another volunteer needs to hear today to solve a problem or seize an opportunity."
-      },
-      {
-        "type": "paragraph",
-        "text": "Be constructive. We’re here to push each other forward and lift each other up. Find ways to help each other think bigger, reframe challenges, and stay curious."
-      },
-      {
-        "type": "paragraph",
-        "text": "Don’t spam, promote, or troll.  The Black Rock City Census Community exists to help you learn. It’s not a place to spam, promote, or bully anyone else."
-      },
-      {
-        "type": "heading",
-        "level": 2,
-        "text": "You are part of something bigger"
-      },
-      {
-        "type": "paragraph",
-        "text": "By joining the Black Rock City Census community, you are also a member of Burning Man Hive, our overarching community.  You’ll be able to keep up with our Black Rock City Census community activity both here, and also in your main Burning Man Hive Activity Feed (think about it as our own Facebook newsfeed with courses and other activity all in one place)."
       },
       {
         "type": "paragraph",
@@ -132,8 +84,13 @@
           "text": "We're looking for:"
         },
         {
-          "type": "paragraph",
-          "text": "Collaborative partners: responsive, open to feedbackCreative problem solvers: resourceful, solution-oriented, committed to continuous improvementCommunity-driven members: friendly, welcoming, team players"
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "Collaborative partners: responsive, open to feedback",
+            "Creative problem solvers: resourceful, solution-oriented, committed to continuous improvement",
+            "Community-driven members: friendly, welcoming, team players"
+          ]
         },
         {
           "type": "heading",
@@ -253,7 +210,7 @@
             },
             {
               "type": "paragraph",
-              "text": "The Census began as a paper survey available to for participants to fill out in Center Camp, with the first archived report published in 2001. Because participation was self-selected (only people who chose to fill out the Census were included), it was unclear if respondents accurately represented the Burning Man population as a whole. For this reason, in 2012, the Census team began randomly sampling participants as they entered Black Rock City, asking a few simple demographic questions. Those random sample results are used to weight the full survey responses, making the final data more representative of the broader Black Rock City population."
+              "text": "The Census began as a paper survey available for participants to fill out in Center Camp, with the first archived report published in 2001. Because participation was self-selected (only people who chose to fill out the Census were included), it was unclear if respondents accurately represented the Burning Man population as a whole. For this reason, in 2012, the Census team began randomly sampling participants as they entered Black Rock City, asking a few simple demographic questions. Those random sample results are used to weight the full survey responses, making the final data more representative of the broader Black Rock City population."
             }
           ],
           "updatedAt": "2026-06-17T14:46:28Z"
@@ -453,7 +410,7 @@
             },
             {
               "type": "paragraph",
-              "text": "7. Data Disseminators hand-out preliminary Census results to the community on Friday."
+              "text": "7. Data Disseminators hand out preliminary Census results to the community on Friday."
             },
             {
               "type": "list",
@@ -468,9 +425,8 @@
               "text": "We hope one or more of these roles sounds right for you and we look forward to working with you!"
             },
             {
-              "type": "heading",
-              "level": 4,
-              "text": "Links to our Census HIVE Volunteer Training Courses, Manuals and Shift Lead resources will be available after your shift sign-ups."
+              "type": "paragraph",
+              "text": "Off playa, take your courses in the Census Community on Burning Man Hive (hive.burningman.org). Your account checklist links to the ones you need after you sign up for shifts. On playa, where Hive doesn't load, use the Training page in this app instead."
             }
           ],
           "updatedAt": "2026-06-28T04:18:44Z"
@@ -491,7 +447,7 @@
           "blocks": [
             {
               "type": "paragraph",
-              "text": "Go to https://volunteers.census.burningman.org and sign in with your Burning Man profile user name and password. (If you don't already have a Burning Man profile, create one at profiles.burningman.org)",
+              "text": "Sign in at https://volunteers.census.burningman.org with your Burner Profile (the same login you use for Burning Man tickets). If you don't have a Burner Profile yet, create one at profiles.burningman.org/signup, then come back and sign in.",
               "links": [
                 {
                   "text": "https://volunteers.census.burningman.org",
@@ -499,15 +455,15 @@
                   "kind": "external"
                 },
                 {
-                  "text": "profiles.burningman.org",
-                  "href": "http://profiles.burningman.org",
+                  "text": "profiles.burningman.org/signup",
+                  "href": "https://profiles.burningman.org/signup",
                   "kind": "external"
                 }
               ]
             },
             {
               "type": "paragraph",
-              "text": "Once there, it will have you create an account if you're a new volunteer. It will also prompt you to sign this year's Behavioral Standards agreement. You can then use the \"Shifts\" link at the bottom of the page to sign up for shifts. Your account will then update with links to any training courses you need to take before arriving on playa. The courses go live on July 1st."
+              "text": "The first time you sign in, your Census account is created automatically. Your account page has a checklist that walks you through the rest: sign this year's Behavioral Standards agreement, then sign up for shifts (\"View/Add Census shifts\" on the checklist, or Shifts in the menu). The checklist then shows any training courses you need to take before arriving on playa."
             },
             {
               "type": "paragraph",
@@ -1078,7 +1034,7 @@
         {
           "type": "heading",
           "level": 4,
-          "text": "Links to our Census HIVE Volunteer Training Courses, Manuals and Shift Lead will be available in June 2026!"
+          "text": "Off playa, take your courses in the Census Community on Burning Man Hive (hive.burningman.org). Your account checklist links to the ones you need after you sign up for shifts. On playa, where Hive doesn't load, use the Training page in this app instead."
         }
       ],
       "updatedAt": "2026-08-05T02:23:13Z",
@@ -1103,7 +1059,7 @@
             },
             {
               "type": "paragraph",
-              "text": "We've worked hard to move our training materials to this space. Click on the links below for available courses:"
+              "text": "The links below open the app's offline copies of each course (for use on playa). Off playa, take them on Hive."
             },
             {
               "type": "paragraph",
@@ -1169,7 +1125,7 @@
               "type": "list",
               "ordered": false,
               "items": [
-                "Most of our training will be conducted online through this HIVE space.",
+                "Most of our training is online, in the Census Community on Burning Man Hive (or on this app's Training page when you're on playa without internet).",
                 "For Sampling, Pop-Up, Lab Hosting, and Data Dissemination, a skills review will be provided 10 minutes before the shift starts and/or during transportation in our vehicle, the Data Beast.",
                 "Sampling and Lab Host Shift Leads will be provided information about additional on-playa Training."
               ]
@@ -1309,7 +1265,7 @@
       "blocks": [
         {
           "type": "paragraph",
-          "text": "Camping with CensusCensus has two areas for volunteers to camp – Census Lab and Counter Culture. The Lab is the main Census location, while Counter Culture is a placed support camp , usually close to the lab for an easy commute to shifts. Volunteers can apply to camp at either location (applications open in the spring) and will be notified of which location they’re assigned to after Census is given our lot sizes by the Placement team (usually in early June)."
+          "text": "Census has two areas for volunteers to camp – Census Lab and Counter Culture. The Lab is the main Census location, while Counter Culture is a placed support camp, usually close to the lab for an easy commute to shifts. Volunteers can apply to camp at either location (applications open in the spring) and will be notified of which location they’re assigned to after Census is given our lot sizes by the Placement team (usually in early June)."
         },
         {
           "type": "image",
@@ -1317,8 +1273,31 @@
           "alt": ""
         },
         {
+          "type": "heading",
+          "level": 3,
+          "text": "Census Lab"
+        },
+        {
           "type": "paragraph",
-          "text": "Census LabThe Lab is our public interactivity work camp. It houses a chill space where data talks are given, our data board display, and the office space for data entry. Amenities for campers vary from year to year, but typically include a communal kitchen, bikes, and a shower (bring your own water), and shade for tenters.  Camping space at the Lab is very limited. Counter CultureCounter Culture is our Census work support camp. Amenities for campers vary from year to year but usually include a chill space shade structure and access to the shower in the Census Lab (bring your own water). There is space for RV’s, however scheduled pump outs are not available.  Counter Culture has more space for campers and is a quieter camp.  Camper ResponsibilitiesAll campers are expected to sign up for shifts with Census totaling a minimum of 12 Census Shift Points (CSPs) for Counter Culture campers and 16 CSPs for Lab campers. (A Census Shift Point is equal to approximately 1 hour of work). In addition, if Census requires additional support to fill critical volunteer shifts on playa, they will call on Census campers to lend assistance. As a camper you are also expected to welcome all visitors to our camps and discuss Census (who we are and what we do, encourage them to fill out the online survey, etc)."
+          "text": "The Lab is our public interactivity work camp. It houses a chill space where data talks are given, our data board display, and the office space for data entry. Amenities for campers vary from year to year, but typically include a communal kitchen, bikes, and a shower (bring your own water), and shade for tenters.  Camping space at the Lab is very limited."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Counter Culture"
+        },
+        {
+          "type": "paragraph",
+          "text": "Counter Culture is our Census work support camp. Amenities for campers vary from year to year but usually include a chill space shade structure and access to the shower in the Census Lab (bring your own water). There is space for RV’s, however scheduled pump outs are not available.  Counter Culture has more space for campers and is a quieter camp."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Camper Responsibilities"
+        },
+        {
+          "type": "paragraph",
+          "text": "All campers are expected to sign up for shifts with Census totaling a minimum of 12 Census Shift Points (CSPs) for Counter Culture campers and 16 CSPs for Lab campers. (A Census Shift Point is equal to approximately 1 hour of work). In addition, if Census requires additional support to fill critical volunteer shifts on playa, they will call on Census campers to lend assistance. As a camper you are also expected to welcome all visitors to our camps and discuss Census (who we are and what we do, encourage them to fill out the online survey, etc)."
         },
         {
           "type": "paragraph",
@@ -1357,7 +1336,7 @@
         {
           "type": "heading",
           "level": 2,
-          "text": "PLEASE CLICK THIS BUTTON TO RECORD YOUR COMPLETION OF THIS COURSE:"
+          "text": "Click the button below to record that you've completed this course."
         },
         {
           "type": "image",

@@ -54,7 +54,15 @@ const readJson = async <T>(...segments: string[]): Promise<T | null> => {
 
 export const getCourseIndex = async () => {
   const data = await readJson<{ courses: CourseIndexEntry[] }>("index.json");
-  return data?.courses ?? [];
+  const courses = data?.courses ?? [];
+  // Hive is the training tool off playa (per Chipper 2026-10-30); each bundled
+  // course records the Hive space it was exported from.
+  return Promise.all(
+    courses.map(async (c) => {
+      const course = await getCourse(c.slug);
+      return { ...c, hiveUrl: course?.sourceUrl ?? null };
+    }),
+  );
 };
 
 export const getCourse = async (slug: string) => {

@@ -28,6 +28,10 @@
       },
       {
         "type": "paragraph",
+        "text": "This is the app's offline copy of this course, from the Census Community on Burning Man Hive, for use at the Census Lab on playa. Off playa, please take it on Hive (hive.burningman.org)."
+      },
+      {
+        "type": "paragraph",
         "text": "We are glad you made it here! The Census Random Sampling Course continues where the Census Basics Course left off. Make sure to review the Census Basics Course before starting the Census Random Sampling Course.",
         "links": [
           {
@@ -72,15 +76,6 @@
           "Ask Questions. Write down any questions you have as you go through the training. They may be answered in a later part of the training, and if not, you'll have a chance to ask them at the end. Your questions will be answered as soon as possible.",
           "Take the quizzes seriously! If you get something wrong, consider re-reading that section before re-taking the quiz."
         ]
-      },
-      {
-        "type": "heading",
-        "level": 2,
-        "text": "You're a Part of Something Bigger"
-      },
-      {
-        "type": "paragraph",
-        "text": "By joining our Census Community, you’re also a member of the Burning Man Hive, our overarching community. You’ll be able to keep up with our activity both here and also in your main Burning Man Hive Activity Feed. Think about it as our own Facebook newsfeed with Course work and other activities all in one place!"
       },
       {
         "type": "paragraph",
@@ -2645,7 +2640,7 @@
         },
         {
           "type": "paragraph",
-          "text": "A. The comments for the this section are open, so if you want, you can ask a question there, and we will respond as soon as we are able."
+          "text": "A. Ask your shift leads, or email the Census volunteer coordinators (below). We'll respond as soon as we are able."
         },
         {
           "type": "paragraph",
