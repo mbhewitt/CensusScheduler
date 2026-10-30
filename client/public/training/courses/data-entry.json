@@ -26,6 +26,17 @@
       },
       {
         "type": "paragraph",
+        "text": "The Census Data Entry Wiz Course continues where the Census Basics Course left off. Make sure to complete the Census Basics Course before starting the Census Data Entry Wiz Course.",
+        "links": [
+          {
+            "text": "Census Basics Course",
+            "href": "/training/basics",
+            "kind": "course"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
         "text": "Please arrive 10-15 minutes before your shift starts to allow time to check in and get settled so Data Entry can start on time. The shift will start with introductions. We know there’s no time to socialize during Data Entry but we want everyone to know who their co-workers are."
       },
       {

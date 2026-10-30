@@ -15,10 +15,14 @@ import {
 } from "@mui/material";
 
 import NextLink from "next/link";
+import { useContext } from "react";
 
 import { Hero } from "@/components/layout/Hero";
 import type { CourseIndexEntry } from "@/components/types/training";
 import { useIsOnPlaya } from "@/hooks/useIsOnPlaya";
+import { DeveloperModeContext } from "@/state/developer-mode/context";
+import { SessionContext } from "@/state/session/context";
+import { checkIsAuthenticated } from "@/utils/checkIsRoleExist";
 
 interface ITrainingProps {
   courses: CourseIndexEntry[];
@@ -26,6 +30,7 @@ interface ITrainingProps {
 
 // The welcome course was exported from the Census Community space itself.
 const COMMUNITY_SLUG = "welcome";
+const INTRO_SLUGS = ["welcome", "basics"];
 
 // Off playa, Hive is the training tool (per Chipper 2026-10-30): lead with the
 // Census Community and each course on Hive, and tuck the bundled copies into a
@@ -33,8 +38,25 @@ const COMMUNITY_SLUG = "welcome";
 // Hive doesn't load, so the bundled copies stay front and center.
 export const Training = ({ courses }: ITrainingProps) => {
   const isOnPlaya = useIsOnPlaya();
+  const {
+    developerModeState: { accountType },
+  } = useContext(DeveloperModeContext);
+  const {
+    sessionState: {
+      settings: { isAuthenticated: isAuthenticatedSession },
+    },
+  } = useContext(SessionContext);
+  const isAuthenticated = checkIsAuthenticated(
+    accountType,
+    isAuthenticatedSession
+  );
   const communityUrl = courses.find((c) => c.slug === COMMUNITY_SLUG)?.hiveUrl;
   const hiveFirst = isOnPlaya === false && Boolean(communityUrl);
+  // Signed out, only the intro courses are advertised; the role courses are
+  // still reachable by URL (public, indexed), just not linked here.
+  const offlineCourses = isAuthenticated
+    ? courses
+    : courses.filter((c) => INTRO_SLUGS.includes(c.slug));
 
   return (
     <>
@@ -47,7 +69,9 @@ export const Training = ({ courses }: ITrainingProps) => {
       />
 
       <Container component="main">
-        {hiveFirst ? (
+        {/* Hold off until the tablet check resolves, so off playa doesn't
+            flash the offline layout's course links first. */}
+        {isOnPlaya === undefined ? null : hiveFirst ? (
           <>
             <Box component="section" sx={{ mb: 3 }}>
               <Card>
@@ -76,45 +100,37 @@ export const Training = ({ courses }: ITrainingProps) => {
               </Card>
             </Box>
 
+            {/* Hive is the one call to action off playa; the course list is
+                just orientation, not links (per Chipper 2026-10-30). */}
             <Box component="section" sx={{ mb: 3 }}>
-              <Stack spacing={2}>
-                {courses.map((course) => (
-                  <Card key={course.slug}>
-                    <CardActionArea
-                      component="a"
-                      href={course.hiveUrl ?? `/training/${course.slug}`}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                    >
-                      <CardContent>
-                        <Typography
-                          component="h2"
-                          variant="h6"
-                          sx={{ fontWeight: 700, mb: 0.5 }}
-                        >
-                          {course.title}
-                        </Typography>
-                        {course.summary && (
-                          <Typography color="text.secondary" sx={{ mb: 1 }}>
-                            {course.summary}
-                          </Typography>
-                        )}
-                        <Chip
-                          icon={<OpenInNewIcon />}
-                          label="Opens on Hive"
-                          size="small"
-                        />
-                      </CardContent>
-                    </CardActionArea>
-                  </Card>
-                ))}
-              </Stack>
+              <Card>
+                <CardContent>
+                  <Typography component="h2" variant="h6" sx={{ mb: 1 }}>
+                    Which course do I need?
+                  </Typography>
+                  <Stack component="ul" spacing={1} sx={{ mt: 0, pl: 3 }}>
+                    {courses.map((course) => (
+                      <Typography component="li" key={course.slug}>
+                        <strong>{course.title}</strong>
+                        {course.summary && <>: {course.summary}</>}
+                      </Typography>
+                    ))}
+                  </Stack>
+                  <Typography color="text.secondary" sx={{ mt: 1 }}>
+                    Not sure which role fits you? Read about the{" "}
+                    <Link component={NextLink} href="/#volunteer-roles">
+                      volunteer roles
+                    </Link>
+                    .
+                  </Typography>
+                </CardContent>
+              </Card>
             </Box>
 
             <Box component="section" sx={{ mb: 4 }}>
               <Typography color="text.secondary" variant="body2">
                 On playa without internet? Offline copies:{" "}
-                {courses.map((course, i) => (
+                {offlineCourses.map((course, i) => (
                   <span key={course.slug}>
                     {i > 0 && " · "}
                     <Link component={NextLink} href={`/training/${course.slug}`}>
