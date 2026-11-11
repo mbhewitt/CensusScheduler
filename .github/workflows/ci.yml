@@ -18,7 +18,7 @@ concurrency:
 jobs:
   e2e:
     name: Playwright (chromium)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # Playwright has no Ubuntu 26.04 build yet (ubuntu-latest moved Oct 2026)
     timeout-minutes: 45
 
     services:
