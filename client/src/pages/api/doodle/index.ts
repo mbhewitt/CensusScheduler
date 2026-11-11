@@ -2,6 +2,7 @@ import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import type { IReqDoodle, IResDoodle } from "@/components/types/doodle";
+import { withAuth } from "@/lib/withAuth";
 import { pool } from "lib/database";
 
 const doodle = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -59,4 +60,4 @@ const doodle = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default doodle;
+export default withAuth(doodle);

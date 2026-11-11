@@ -6,6 +6,7 @@ import type {
   IResShiftCategoryItem,
 } from "@/components/types/shifts/categories";
 import { generateId } from "@/utils/generateId";
+import { withWriteGuard } from "@/lib/withWriteGuard";
 import { pool } from "lib/database";
 
 const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -81,4 +82,5 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default shiftCategories;
+// Super admin only, like the setup pages' AuthGate (#535, #687).
+export default withWriteGuard(shiftCategories, "superadmin");
