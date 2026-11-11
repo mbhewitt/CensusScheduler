@@ -5,6 +5,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import type { IReqReviewValues, IReqSwitchValues } from "@/components/types";
 import { UPDATE_TYPE_CHECK_IN, UPDATE_TYPE_REVIEW } from "@/constants";
 import { isAdmin, isOwnerOrAdmin } from "@/lib/authz";
+import { isOnPlayaRequest } from "@/lib/onPlaya";
 import { enqueueEmail } from "lib/mail";
 import {
   lookupActorDisplayName,
@@ -107,8 +108,22 @@ async function notifyCriticalDrop(
 export const shiftVolunteerUpdate = async (
   pool: Pool,
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
+  session: { shiftboardId: number }
 ) => {
+  // Off-playa: check-in and review are admin-only. Guarded here (not per-route)
+  // so both mounts are covered — /api/volunteers/[shiftboardId]/shifts only
+  // checks the URL's id, not the body's shiftboardId being written.
+  if (
+    !isOnPlayaRequest(req.cookies) &&
+    !(await isAdmin(session.shiftboardId))
+  ) {
+    return res.status(403).json({
+      statusCode: 403,
+      message: "Check-in is restricted to admins.",
+    });
+  }
+
   const { updateType } = JSON.parse(req.body);
 
   switch (updateType) {

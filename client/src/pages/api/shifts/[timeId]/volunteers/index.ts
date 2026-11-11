@@ -261,6 +261,55 @@ const shiftVolunteers = async (
         });
       }
 
+      // #458: enforce the position's "Role required" server-side. The add
+      // dialog grays these positions out, but a stale tab / forged request
+      // would skip that. Admins can override, same as the dialog.
+      const [dbMissingRole] = await pool.query<RowDataPacket[]>(
+        `SELECT r.role
+         FROM op_shift_time_position stp
+         JOIN op_position_type pt ON pt.position_type_id = stp.position_type_id
+         JOIN op_roles r ON r.role_id = pt.role_id
+         LEFT JOIN op_volunteer_roles vr
+           ON vr.role_id = pt.role_id
+           AND vr.shiftboard_id = ?
+           AND vr.remove_role = false
+         WHERE stp.time_position_id = ?
+           AND vr.role_id IS NULL
+         LIMIT 1`,
+        [shiftboardId, timePositionId]
+      );
+      // #401/#425: same for capacity — the dialog disables full positions.
+      // The volunteer being added isn't counted, so a re-add isn't blocked.
+      // ponytail: read-then-write; two adds racing for the last slot can both
+      // land. Add a row lock if that ever shows up.
+      const [[dbSlots]] = await pool.query<RowDataPacket[]>(
+        `SELECT
+           stp.slots,
+           (SELECT COUNT(*)
+            FROM op_volunteer_shifts vs
+            JOIN op_volunteers v
+              ON v.shiftboard_id = vs.shiftboard_id
+              AND v.delete_volunteer = false
+            WHERE vs.time_position_id = stp.time_position_id
+              AND vs.remove_shift = false
+              AND vs.shiftboard_id <> ?) AS filled
+         FROM op_shift_time_position stp
+         WHERE stp.time_position_id = ?`,
+        [shiftboardId, timePositionId]
+      );
+      const isFull = dbSlots && Number(dbSlots.filled) >= Number(dbSlots.slots);
+      if (
+        (dbMissingRole[0] || isFull) &&
+        !(await isAdmin(session.shiftboardId))
+      ) {
+        return res.status(403).json({
+          statusCode: 403,
+          message: dbMissingRole[0]
+            ? `This position requires the ${dbMissingRole[0].role} role.`
+            : "This position is full.",
+        });
+      }
+
       const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT *
         FROM op_volunteer_shifts
@@ -338,15 +387,8 @@ const shiftVolunteers = async (
     // patch
     // ------------------------------------------------------------
     case "PATCH": {
-      // Off-playa: checking a volunteer in (and review) is admin-only.
-      if (!isOnPlaya && !(await isAdmin(session.shiftboardId))) {
-        return res.status(403).json({
-          statusCode: 403,
-          message: "Check-in is restricted to admins.",
-        });
-      }
-      // check volunteer into shift
-      return shiftVolunteerUpdate(pool, req, res);
+      // check volunteer into shift (off-playa admin guard lives in the helper)
+      return shiftVolunteerUpdate(pool, req, res, session);
     }
 
     // delete
