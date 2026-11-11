@@ -6,6 +6,7 @@ import {
   Groups3 as Groups3Icon,
   ConfirmationNumber as ConfirmationNumberIcon,
   Help as HelpIcon,
+  Inventory2 as Inventory2Icon,
   Home as HomeIcon,
   Print as PrintIcon,
   QrCode2 as QrCode2Icon,
@@ -77,6 +78,12 @@ export const pageListSuperAdmin = [
     icon: <ConfirmationNumberIcon />,
     label: "SAPs",
     path: "/saps",
+  },
+  {
+    // opens the separate Census planning app, already signed in
+    icon: <Inventory2Icon />,
+    label: "Planning",
+    path: "/planning",
   },
   {
     // label + shift-roster PDF downloads live on this page
