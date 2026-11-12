@@ -173,19 +173,6 @@ export const Reports = () => {
       <Container component="main" sx={{ flex: 1 }}>
         <Card>
           <CardContent>
-            {!isOnPlaya && (
-              <Typography sx={{ mb: 2 }}>
-                For every Black Rock City Census report back to 2001, visit the{" "}
-                <Link
-                  href="https://brc-census.github.io/reports/"
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  Census Report Archive
-                </Link>
-                .
-              </Typography>
-            )}
             <List disablePadding>
               {reportList.map(({ id, text, url }) => {
                 return (
@@ -202,6 +189,19 @@ export const Reports = () => {
                 );
               })}
             </List>
+            {!isOnPlaya && (
+              <Typography sx={{ mt: 2 }}>
+                Looking for older reports? Visit the{" "}
+                <Link
+                  href="https://brc-census.github.io/reports/"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Census Report Archive
+                </Link>
+                .
+              </Typography>
+            )}
           </CardContent>
         </Card>
       </Container>
