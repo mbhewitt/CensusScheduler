@@ -64,10 +64,6 @@ export const Home = () => {
   // Build flag OR a provisioned tablet — a lab tablet gets the on-playa welcome
   // copy ("sign in with your passcode") even on the cloud/prod origin.
   const isOnPlaya = isPinEnabled || isProvisionedTablet === true;
-  // ponytail: set to false when the 2026 survey closes — that hides the
-  // survey and restores the 2027-shifts headline (per Chipper + Mew,
-  // 2026-10-17). Off-playa only: the survey is online.
-  const showSurvey = !isOnPlaya;
 
   // render
   // ------------------------------------------------------------
@@ -82,34 +78,9 @@ export const Home = () => {
       />
       <Container component="main">
         <Box component="section">
-          {showSurvey && (
-            <>
-              <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
-                Were you at Burning Man 2026? The Census survey is open.
-              </Typography>
-              <Stack alignItems="center" sx={{ mb: 4 }}>
-                <Button
-                  component="a"
-                  href="https://survey.alchemer.com/s3/8942700/d3a1cd3fde6a"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  size="large"
-                  variant="contained"
-                >
-                  Take the 2026 Census survey
-                </Button>
-              </Stack>
-            </>
-          )}
-          {showSurvey ? (
-            <Typography sx={{ mb: 2 }}>
-              2027 Black Rock City Census volunteer shifts will be released in June.
-            </Typography>
-          ) : (
-            <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
-              2027 Black Rock City Census volunteer shifts will be released in June.
-            </Typography>
-          )}
+          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
+            2027 Black Rock City Census volunteer shifts will be released in June.
+          </Typography>
 
           {isAuthenticated ? (
             <Typography sx={{ mb: 2 }}>
