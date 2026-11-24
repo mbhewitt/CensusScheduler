@@ -85,6 +85,16 @@ export const Volunteers = () => {
       },
     },
     {
+      name: "CSP",
+      options: {
+        filter: false,
+        setCellHeaderProps: setCellHeaderPropsCenter,
+        setCellProps: setCellPropsCenter,
+        sortCompare: sortCompareShiftCount,
+        sortThirdClickReset: true,
+      },
+    },
+    {
       name: "Absent",
       options: {
         customFilterListOptions: {
@@ -173,6 +183,7 @@ export const Volunteers = () => {
   const dataTable = data.map(
     ({
       attendedCount,
+      csp,
       isNotes,
       noShowCount,
       playaName,
@@ -186,6 +197,13 @@ export const Volunteers = () => {
         worldName,
         attendedCount > 0 ? (
           <Typography sx={{ fontSize: "14px" }}>{attendedCount}</Typography>
+        ) : (
+          <Typography sx={{ color: grey[500], fontSize: "14px" }}>0</Typography>
+        ),
+        csp > 0 ? (
+          <Typography sx={{ fontSize: "14px", fontWeight: 600 }}>
+            {csp}
+          </Typography>
         ) : (
           <Typography sx={{ color: grey[500], fontSize: "14px" }}>0</Typography>
         ),

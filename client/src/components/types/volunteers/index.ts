@@ -40,6 +40,7 @@ export interface IResVolunteerRoleItem {
 // ------------------------------------------------------------
 export interface IResVolunteerShiftCountItem {
   attendedCount: number;
+  csp: number;
   isNotes: boolean;
   noShowCount: number;
   playaName: string;
