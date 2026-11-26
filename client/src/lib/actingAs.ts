@@ -17,7 +17,8 @@
 //
 // Web Crypto only (no node "crypto") so the Edge middleware can import it.
 // The middleware checks signature + exp; the Node layer (session.ts) checks
-// method, path, body hash and burns the nonce.
+// method, path, body hash and burns the nonce. Both refuse a token on an
+// on-playa build, on /api/cron, and on any request that came through nginx.
 
 export const TOKEN_PREFIX = "pk1.";
 export const TOKEN_MAX_TTL_MS = 60 * 1000;
@@ -73,6 +74,24 @@ export function extractActingAsToken(
   if (!authorization) return null;
   const m = /^Bearer\s+(pk1\.\S+)$/.exec(authorization.trim());
   return m ? m[1] : null;
+}
+
+// Pumpkin is an off-playa (Okta-only) prod tool; on-playa builds never accept
+// a token. NEXT_PUBLIC_* is inlined at build time, so this is per build.
+export function actingAsAllowedBuild(): boolean {
+  return process.env.NEXT_PUBLIC_PIN_ENABLED === "false";
+}
+
+// Loopback only: the gate calls 127.0.0.1:3000 directly, so a request that
+// went through nginx is refused. Keyed on X-Real-IP, which the prod vhost
+// always sets (and overwrites, so a client can't remove it). NOT
+// X-Forwarded-For: Next.js itself fills X-Forwarded-For with the socket
+// address on every request (base-server.js), so it is present on direct
+// calls too.
+export function isProxiedRequest(
+  realIp: string | string[] | null | undefined
+): boolean {
+  return realIp !== undefined && realIp !== null;
 }
 
 export function isCronPath(path: string): boolean {
@@ -147,9 +166,13 @@ export async function mintActingAsToken(
 
 // Single-use nonces. In-process (one census-app container). A restart forgets
 // them, which reopens at most a TOKEN_MAX_TTL_MS replay window — accepted in
-// the design. ponytail: process-local Map, move to the DB if the app ever
-// runs more than one container.
-const seenNonces = new Map<string, number>();
+// the design. Kept on globalThis so every route bundle shares one store.
+// ponytail: process-local Map, move to the DB if the app ever runs more than
+// one container.
+const g = globalThis as typeof globalThis & {
+  __pumpkinNonces?: Map<string, number>;
+};
+const seenNonces = (g.__pumpkinNonces ??= new Map<string, number>());
 const MAX_NONCES = 10_000;
 
 export function consumeNonce(nonce: string, exp: number, now = Date.now()) {

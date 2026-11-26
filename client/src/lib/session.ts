@@ -3,9 +3,11 @@ import crypto from "crypto";
 import type { NextApiRequest } from "next";
 
 import {
+  actingAsAllowedBuild,
   consumeNonce,
   extractActingAsToken,
   isCronPath,
+  isProxiedRequest,
   sha256Hex,
   verifyActingAsToken,
 } from "@/lib/actingAs";
@@ -146,7 +148,13 @@ async function resolveRequestSession(
   if (!token) return readSessionFromCookies(req.cookies);
 
   const path = req.url ?? "";
-  if (isCronPath(path.split("?")[0])) return null;
+  if (
+    !actingAsAllowedBuild() ||
+    isProxiedRequest(req.headers["x-real-ip"]) ||
+    isCronPath(path.split("?")[0])
+  ) {
+    return null;
+  }
   const payload = await verifyActingAsToken(token, process.env.PUMPKIN_SECRET);
   if (!payload) return null;
   if (payload.method !== req.method || payload.path !== path) return null;

@@ -15,6 +15,7 @@ import { readSessionFromRequest } from "../../src/lib/session";
 const SECRET = "test-pumpkin-secret";
 process.env.PUMPKIN_SECRET = SECRET;
 process.env.SESSION_SECRET = "test-session-secret";
+process.env.NEXT_PUBLIC_PIN_ENABLED = "false"; // off-playa build
 
 let n = 0;
 async function payload(over: Partial<ActingAsPayload> = {}) {
@@ -31,15 +32,23 @@ async function payload(over: Partial<ActingAsPayload> = {}) {
 
 function req(
   token: string | null,
-  over: Partial<{ method: string; url: string; body: unknown }> = {}
+  over: Partial<{
+    method: string;
+    url: string;
+    body: unknown;
+    headers: Record<string, string>;
+  }> = {}
 ) {
   return {
     method: "GET",
     url: "/api/volunteers/42/info",
     body: "",
     cookies: {},
-    headers: token ? { authorization: `Bearer ${token}` } : {},
     ...over,
+    headers: {
+      ...(token ? { authorization: `Bearer ${token}` } : {}),
+      ...over.headers,
+    },
   } as unknown as NextApiRequest;
 }
 
@@ -155,4 +164,32 @@ test("request: no PUMPKIN_SECRET refuses every Bearer", async () => {
   } finally {
     process.env.PUMPKIN_SECRET = SECRET;
   }
+});
+
+test("request: refused on an on-playa build", async () => {
+  const t = await mintActingAsToken(await payload(), SECRET);
+  process.env.NEXT_PUBLIC_PIN_ENABLED = "true";
+  try {
+    assert.equal(await readSessionFromRequest(req(t)), null);
+  } finally {
+    process.env.NEXT_PUBLIC_PIN_ENABLED = "false";
+  }
+});
+
+test("request: loopback only — refused when nginx's X-Real-IP is present", async () => {
+  const t = await mintActingAsToken(await payload(), SECRET);
+  assert.equal(
+    await readSessionFromRequest(req(t, { headers: { "x-real-ip": "203.0.113.9" } })),
+    null
+  );
+  // Next.js adds X-Forwarded-For itself on direct calls, so it must NOT refuse.
+  const t2 = await mintActingAsToken(await payload(), SECRET);
+  assert.equal(
+    (
+      await readSessionFromRequest(
+        req(t2, { headers: { "x-forwarded-for": "127.0.0.1" } })
+      )
+    )?.shiftboardId,
+    42
+  );
 });

@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
+  actingAsAllowedBuild,
   extractActingAsToken,
   isCronPath,
+  isProxiedRequest,
   verifyActingAsToken,
 } from "@/lib/actingAs";
 import { isBlockedWrite, isReadOnly, readOnlyMessage } from "@/lib/readOnly";
@@ -186,11 +188,17 @@ export async function middleware(req: NextRequest) {
 
   // Pumpkin acting-as Bearer (lib/actingAs.ts): VERIFY signature + expiry here
   // (not just presence), so a forged Bearer can't reach handlers that rely on
-  // this gate. Never valid on /api/cron (those use CRON_SECRET) or on pages.
+  // this gate. Never valid on an on-playa build, through nginx (loopback
+  // only), on /api/cron (those use CRON_SECRET) or on pages.
   // The Node layer re-checks and binds method, path, body and the nonce.
   const actingAs = extractActingAsToken(req.headers.get("authorization"));
   if (actingAs) {
-    if (!pathname.startsWith("/api/") || isCronPath(pathname)) {
+    if (
+      !actingAsAllowedBuild() ||
+      isProxiedRequest(req.headers.get("x-real-ip")) ||
+      !pathname.startsWith("/api/") ||
+      isCronPath(pathname)
+    ) {
       return unauthorized();
     }
     if (!(await verifyActingAsToken(actingAs, process.env.PUMPKIN_SECRET))) {
