@@ -7,19 +7,25 @@ import type {
   IResShiftVolunteerInformation,
   IResShiftVolunteerRowItem,
 } from "@/components/types/shifts";
+import type { Server as IOServer } from "socket.io";
+
 import {
+  ADD_SHIFT_VOLUNTEER_RES,
   CHECK_IN_WINDOW_AFTER_MIN,
   CHECK_IN_WINDOW_BEFORE_MIN,
   UPDATE_TYPE_CHECK_IN,
 } from "@/constants";
 import { extractActingAsToken } from "@/lib/actingAs";
-import { isAdmin } from "@/lib/authz";
 import { isProvisionedDevice } from "@/lib/device";
 import { isOnPlayaRequest } from "@/lib/onPlaya";
 import { readSessionFromRequest } from "@/lib/session";
 import { pool } from "lib/database";
 import { notifyAssignment } from "@/components/api/assignmentNotify";
 import { autoSetArrival } from "@/components/api/arrivalAutoSet";
+import {
+  checkShiftAdd,
+  type IShiftAddCheck,
+} from "@/components/api/shiftAddRules";
 import {
   shiftVolunteerRemove,
   shiftVolunteerUpdate,
@@ -210,10 +216,14 @@ const shiftVolunteers = async (
           date: resShiftPositionFirst.date,
           dateName: resShiftPositionFirst.datename ?? "",
           details: resShiftPositionFirst.shift_details,
-          endTime: resShiftPositionFirst.end_time ?? resShiftPositionFirst.end_time_text,
+          endTime:
+            resShiftPositionFirst.end_time ??
+            resShiftPositionFirst.end_time_text,
           meal: resShiftPositionFirst.meal,
           notes: resShiftPositionFirst.notes,
-          startTime: resShiftPositionFirst.start_time ?? resShiftPositionFirst.start_time_text,
+          startTime:
+            resShiftPositionFirst.start_time ??
+            resShiftPositionFirst.start_time_text,
           typeName: resShiftPositionFirst.shift_name,
         },
         volunteerList: resShiftVolunteerList,
@@ -225,119 +235,66 @@ const shiftVolunteers = async (
     // post
     // ------------------------------------------------------------
     case "POST": {
-      // add volunteer to shift
-      const { noShow, shiftboardId, timePositionId }: IReqShiftVolunteerItem =
-        JSON.parse(req.body);
-
-      // Off-playa: adding *another* volunteer is admin-only (walk-up adds are
-      // an on-playa affordance). Authenticated self-signup stays open.
+      // add volunteer to shift. Every rule lives in checkShiftAdd (C-863 A2),
+      // shared with …/volunteers/preflight; noShow comes from the server
+      // clock, never the body.
+      const body: IReqShiftVolunteerItem = JSON.parse(req.body);
+      const shiftboardId = Number(body.shiftboardId);
+      const timePositionId = Number(body.timePositionId);
       if (
-        !isOnPlaya &&
-        shiftboardId !== session.shiftboardId &&
-        !(await isAdmin(session.shiftboardId))
+        !Number.isInteger(shiftboardId) ||
+        shiftboardId <= 0 ||
+        !Number.isInteger(timePositionId) ||
+        timePositionId <= 0
       ) {
-        return res.status(403).json({
-          statusCode: 403,
-          message: "Adding another volunteer is restricted to admins.",
-        });
+        return res.status(400).json({ statusCode: 400, message: "Bad ids" });
       }
-
-      // Block adds on canceled shifts. Server-side enforcement —
-      // the UI hides the Add button but a stale tab / forged request
-      // would still reach this handler. Self-removes (DELETE) are
-      // intentionally NOT blocked: an already-assigned volunteer
-      // can still drop themselves and trigger the cancellation .ics.
-      const [dbShiftCanceledCheck] = await pool.query<RowDataPacket[]>(
-        `SELECT st.canceled
-         FROM op_shift_time_position stp
-         JOIN op_shift_times st ON st.shift_times_id = stp.shift_times_id
-         WHERE stp.time_position_id = ?
-         LIMIT 1`,
-        [timePositionId]
+      const viaPumpkin = Boolean(
+        extractActingAsToken(req.headers.authorization)
       );
-      if (dbShiftCanceledCheck[0]?.canceled) {
-        return res.status(409).json({
-          statusCode: 409,
-          message: "Shift is canceled; cannot add volunteers.",
-        });
-      }
 
-      // #458: enforce the position's "Role required" server-side. The add
-      // dialog grays these positions out, but a stale tab / forged request
-      // would skip that. Admins can override, same as the dialog.
-      const [dbMissingRole] = await pool.query<RowDataPacket[]>(
-        `SELECT r.role
-         FROM op_shift_time_position stp
-         JOIN op_position_type pt ON pt.position_type_id = stp.position_type_id
-         JOIN op_roles r ON r.role_id = pt.role_id
-         LEFT JOIN op_volunteer_roles vr
-           ON vr.role_id = pt.role_id
-           AND vr.shiftboard_id = ?
-           AND vr.remove_role = false
-         WHERE stp.time_position_id = ?
-           AND vr.role_id IS NULL
-         LIMIT 1`,
-        [shiftboardId, timePositionId]
-      );
-      // #401/#425: same for capacity — the dialog disables full positions.
-      // The volunteer being added isn't counted, so a re-add isn't blocked.
-      // ponytail: read-then-write; two adds racing for the last slot can both
-      // land. Add a row lock if that ever shows up.
-      const [[dbSlots]] = await pool.query<RowDataPacket[]>(
-        `SELECT
-           stp.slots,
-           (SELECT COUNT(*)
-            FROM op_volunteer_shifts vs
-            JOIN op_volunteers v
-              ON v.shiftboard_id = vs.shiftboard_id
-              AND v.delete_volunteer = false
-            WHERE vs.time_position_id = stp.time_position_id
-              AND vs.remove_shift = false
-              AND vs.shiftboard_id <> ?) AS filled
-         FROM op_shift_time_position stp
-         WHERE stp.time_position_id = ?`,
-        [shiftboardId, timePositionId]
-      );
-      const isFull = dbSlots && Number(dbSlots.filled) >= Number(dbSlots.slots);
-      if (
-        (dbMissingRole[0] || isFull) &&
-        !(await isAdmin(session.shiftboardId))
-      ) {
-        return res.status(403).json({
-          statusCode: 403,
-          message: dbMissingRole[0]
-            ? `This position requires the ${dbMissingRole[0].role} role.`
-            : "This position is full.",
-        });
-      }
-
-      const [dbShiftVolunteerList] = await pool.query<RowDataPacket[]>(
-        `SELECT *
-        FROM op_volunteer_shifts
-        WHERE shiftboard_id=?
-        AND time_position_id=?`,
-        [shiftboardId, timePositionId]
-      );
-      const [dbShiftVolunteerFirst] = dbShiftVolunteerList;
-
-      // if volunteer exists in shift already
-      // then update add_shift and remove_shift fields
-      if (dbShiftVolunteerFirst) {
-        await pool.query<RowDataPacket[]>(
-          `UPDATE op_volunteer_shifts
-          SET
-            noshow=?,
-            add_shift=true,
-            remove_shift=false,
-            removed_at=NULL,
-            signed_up_at=NOW()
-          WHERE shiftboard_id=?
-          AND time_position_id=?`,
-          [noShow, shiftboardId, timePositionId]
+      // Capacity lock: lock the position row FIRST (so the count below reads
+      // after any racing add has committed), then check, then write.
+      // ponytail: per-position lock; two adds of the SAME person into two
+      // different overlapping shifts can still race. Named lock per person if
+      // that ever shows up.
+      const conn = await pool.getConnection();
+      let check: IShiftAddCheck;
+      try {
+        await conn.beginTransaction();
+        await conn.query(
+          `SELECT time_position_id
+           FROM op_shift_time_position
+           WHERE time_position_id=?
+           FOR UPDATE`,
+          [timePositionId]
         );
-        // else insert them into the table
-      } else {
-        await pool.query<RowDataPacket[]>(
+        check = await checkShiftAdd(conn, {
+          actorShiftboardId: session.shiftboardId,
+          isOnPlaya,
+          shiftboardId,
+          timePositionId,
+        });
+        if (check.notFound || check.blockers.length) {
+          await conn.rollback();
+          if (check.notFound) {
+            return res.status(404).json({
+              statusCode: 404,
+              message: `Unknown ${check.notFound}.`,
+            });
+          }
+          const [blocker] = check.blockers;
+          const statusCode = blocker.code === "canceled" ? 409 : 403;
+          return res.status(statusCode).json({
+            statusCode,
+            message: blocker.message,
+            blockers: check.blockers,
+            warnings: check.warnings,
+          });
+        }
+
+        // re-add flips the old row back on; otherwise insert
+        await conn.query(
           `INSERT INTO op_volunteer_shifts (
             add_shift,
             signed_up_at,
@@ -345,14 +302,29 @@ const shiftVolunteers = async (
             shiftboard_id,
             time_position_id
           )
-          VALUES (true, NOW(), ?, ?, ?)`,
-          [noShow, shiftboardId, timePositionId]
+          VALUES (true, NOW(), ?, ?, ?)
+          ON DUPLICATE KEY UPDATE
+            noshow=VALUES(noshow),
+            add_shift=true,
+            remove_shift=false,
+            removed_at=NULL,
+            signed_up_at=NOW()`,
+          [check.noShow, shiftboardId, timePositionId]
         );
+        await conn.commit();
+      } catch (err) {
+        await conn.rollback();
+        throw err;
+      } finally {
+        conn.release();
       }
+
+      // Side effects are best-effort, but a failure is reported back in
+      // warnings[] (A4) so callers can say "added, but …" instead of success.
+      const warnings = [...check.warnings];
 
       // Auto-set arrival date from this (possibly SAP-eligible) signup so the
       // SAP fires without the volunteer having to fill the arrival form.
-      // Best-effort — a failure here must not fail the assignment.
       try {
         await autoSetArrival(pool, shiftboardId);
       } catch (err) {
@@ -360,28 +332,47 @@ const shiftVolunteers = async (
           `[arrival-auto-set] autoSetArrival failed for shiftboard_id=${shiftboardId}:`,
           err
         );
+        warnings.push("Added, but the arrival date could not be set.");
       }
 
       // #309: notify the assigned volunteer with the shift details
-      // and an .ics calendar attachment. Best-effort — a notify
-      // failure doesn't fail the assignment itself.
+      // and an .ics calendar attachment.
       try {
         await notifyAssignment(
           pool,
           shiftboardId,
           timePositionId,
-          session.shiftboardId
+          session.shiftboardId,
+          viaPumpkin
         );
       } catch (err) {
         console.error(
           `[assign-notify] notifyAssignment failed for shiftboard_id=${shiftboardId} time_position_id=${timePositionId}:`,
           err
         );
+        warnings.push("Added, but the assignment email could not be queued.");
       }
+
+      // Live refresh for open shift pages, emitted here so every caller
+      // (dialog, pumpkin) gets it. No io yet = no page has connected.
+      (
+        res.socket as unknown as { server?: { io?: IOServer } }
+      ).server?.io?.emit(ADD_SHIFT_VOLUNTEER_RES, {
+        isCheckedIn: check.noShow,
+        notes: "",
+        playaName: check.playaName,
+        positionName: check.positionName,
+        rating: null,
+        shiftboardId,
+        timeId: check.shiftTimesId,
+        timePositionId,
+        worldName: check.worldName,
+      });
 
       return res.status(201).json({
         statusCode: 201,
         message: "Created",
+        warnings,
       });
     }
 

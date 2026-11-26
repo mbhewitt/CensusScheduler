@@ -4,6 +4,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import type { IReqReviewValues, IReqSwitchValues } from "@/components/types";
 import { UPDATE_TYPE_CHECK_IN, UPDATE_TYPE_REVIEW } from "@/constants";
+import { extractActingAsToken } from "@/lib/actingAs";
 import { isAdmin, isOwnerOrAdmin } from "@/lib/authz";
 import { isOnPlayaRequest } from "@/lib/onPlaya";
 import { enqueueEmail } from "lib/mail";
@@ -37,7 +38,8 @@ async function notifyCriticalDrop(
   pool: Pool,
   shiftboardId: number,
   timePositionId: number,
-  actorShiftboardId: number | null
+  actorShiftboardId: number | null,
+  viaPumpkin = false
 ): Promise<void> {
   const [rows] = await pool.query<CriticalDropContext[]>(
     `SELECT
@@ -87,6 +89,9 @@ async function notifyCriticalDrop(
   const removedByLabel = isSelfDrop
     ? "themselves (self-drop)"
     : (actorName ?? "an administrator");
+  const removedBy = viaPumpkin
+    ? `${removedByLabel} (via pumpkin)`
+    : removedByLabel;
 
   await enqueueEmail({
     to: VC_LIST_EMAIL,
@@ -97,7 +102,7 @@ async function notifyCriticalDrop(
       `Position: ${ctx.position}`,
       `Shift: ${dayLabel}${timeLabel}`,
       `Volunteer: ${volunteerLabel}`,
-      `Removed by: ${removedByLabel}`,
+      `Removed by: ${removedBy}`,
       "",
       `Manage this shift's volunteers: ${APP_BASE_URL}/shifts/${ctx.shift_times_id}/volunteers`,
     ].join("\n"),
@@ -230,6 +235,10 @@ export const shiftVolunteerRemove = async (
     [shiftboardId, timePositionId]
   );
 
+  const viaPumpkin = Boolean(extractActingAsToken(req.headers.authorization));
+  // C-863 A4: failures are reported in warnings[] instead of plain success.
+  const warnings: string[] = [];
+
   // Best-effort notifications. Wrapped so an enqueue failure doesn't
   // bubble up and 500 the remove request — the DB write is the
   // canonical action; the emails are courtesy on top.
@@ -249,9 +258,13 @@ export const shiftVolunteerRemove = async (
       pool,
       shiftboardId,
       timePositionId,
-      session.shiftboardId
+      session.shiftboardId,
+      viaPumpkin
     );
   } catch (err) {
+    warnings.push(
+      "Removed, but the critical-opening email could not be queued."
+    );
     console.error(
       `[critical-drop] notifyCriticalDrop failed for shiftboard_id=${shiftboardId} time_position_id=${timePositionId}:`,
       err
@@ -262,8 +275,9 @@ export const shiftVolunteerRemove = async (
       session.shiftboardId === shiftboardId
         ? { kind: "self" }
         : { kind: "by-other", actorShiftboardId: session.shiftboardId };
-    await notifyRemoval(pool, shiftboardId, timePositionId, cause);
+    await notifyRemoval(pool, shiftboardId, timePositionId, cause, viaPumpkin);
   } catch (err) {
+    warnings.push("Removed, but the removal email could not be queued.");
     console.error(
       `[removal-notify] notifyRemoval failed for shiftboard_id=${shiftboardId} time_position_id=${timePositionId}:`,
       err
@@ -273,5 +287,6 @@ export const shiftVolunteerRemove = async (
   return res.status(200).json({
     statusCode: 200,
     message: "OK",
+    warnings,
   });
 };
