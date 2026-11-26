@@ -1,5 +1,17 @@
 import crypto from "crypto";
 
+import type { NextApiRequest } from "next";
+
+import {
+  actingAsAllowedBuild,
+  consumeNonce,
+  extractActingAsToken,
+  isCronPath,
+  isProxiedRequest,
+  sha256Hex,
+  verifyActingAsToken,
+} from "@/lib/actingAs";
+
 const COOKIE_NAME = "census-session";
 // Session lifetime differs by deployment (per Mew 2026-07-02):
 //   - On-playa lab tablets are SHARED — keep the window short so a set-down
@@ -109,6 +121,62 @@ export function readSessionFromCookies(
   const value = cookies[COOKIE_NAME];
   if (!value) return null;
   return verify(value);
+}
+
+// The session for an API request: the census-session cookie, OR a pumpkin
+// acting-as Bearer (see lib/actingAs.ts). A request carrying a pumpkin Bearer
+// is judged on the Bearer alone — a bad one is a 401 even with a valid cookie.
+// Memoized per request: the nonce is single-use, so a second read in the same
+// request must not re-burn it.
+const requestSessions = new WeakMap<object, Promise<SessionPayload | null>>();
+
+export function readSessionFromRequest(
+  req: NextApiRequest
+): Promise<SessionPayload | null> {
+  let p = requestSessions.get(req);
+  if (!p) {
+    p = resolveRequestSession(req);
+    requestSessions.set(req, p);
+  }
+  return p;
+}
+
+async function resolveRequestSession(
+  req: NextApiRequest
+): Promise<SessionPayload | null> {
+  const token = extractActingAsToken(req.headers.authorization);
+  if (!token) return readSessionFromCookies(req.cookies);
+
+  const path = req.url ?? "";
+  if (
+    !actingAsAllowedBuild() ||
+    isProxiedRequest(req.headers["x-real-ip"]) ||
+    isCronPath(path.split("?")[0])
+  ) {
+    return null;
+  }
+  const payload = await verifyActingAsToken(token, process.env.PUMPKIN_SECRET);
+  if (!payload) return null;
+  if (payload.method !== req.method || payload.path !== path) return null;
+
+  // Bind the body. Clients send JSON as a text/plain string and handlers
+  // JSON.parse(req.body), so the raw string is what we hash. A parsed object
+  // (application/json) or an unread stream (bodyParser: false uploads) can't
+  // be bound to the token, so refuse those.
+  let body: string;
+  if (req.body === undefined || req.body === null || req.body === "") {
+    const len = Number(req.headers["content-length"] ?? 0);
+    if (len > 0) return null;
+    body = "";
+  } else if (typeof req.body === "string") {
+    body = req.body;
+  } else {
+    return null;
+  }
+  if ((await sha256Hex(body)) !== payload.bodySha256) return null;
+
+  if (!consumeNonce(payload.nonce, payload.exp)) return null;
+  return { shiftboardId: payload.shiftboardId, expires: payload.exp };
 }
 
 export const SESSION_COOKIE_NAME = COOKIE_NAME;

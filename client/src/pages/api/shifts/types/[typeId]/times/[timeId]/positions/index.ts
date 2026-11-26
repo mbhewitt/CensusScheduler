@@ -2,6 +2,7 @@ import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import type { IResShiftTypeTimePositionItem } from "@/components/types/shifts/types";
+import { withAuth } from "@/lib/withAuth";
 import { pool } from "lib/database";
 
 const shiftTypeTimePositions = async (
@@ -60,4 +61,4 @@ const shiftTypeTimePositions = async (
   }
 };
 
-export default shiftTypeTimePositions;
+export default withAuth(shiftTypeTimePositions);

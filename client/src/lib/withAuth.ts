@@ -1,8 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { readSessionFromCookies } from "@/lib/session";
+import { readSessionFromRequest } from "@/lib/session";
 
-// Wrap an API handler so it requires a valid (HMAC-verified) session cookie.
+// Wrap an API handler so it requires a valid (HMAC-verified) session cookie
+// or a pumpkin acting-as Bearer (lib/actingAs.ts).
 // Belt-and-suspenders for the middleware, which only checks cookie presence
 // in the Edge runtime. This catches forged cookies.
 //
@@ -22,7 +23,7 @@ export interface ApiHandlerWithSession {
 
 export function withAuth(handler: ApiHandlerWithSession) {
   return async (req: NextApiRequest, res: NextApiResponse) => {
-    const session = readSessionFromCookies(req.cookies);
+    const session = await readSessionFromRequest(req);
     if (!session) {
       return res.status(401).json({
         statusCode: 401,

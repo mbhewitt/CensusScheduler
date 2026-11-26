@@ -6,6 +6,7 @@ import {
   IResShiftPositionRoleItem,
   IResShiftPositionRowItem,
 } from "@/components/types/shifts/positions";
+import { withAuth } from "@/lib/withAuth";
 import { pool } from "lib/database";
 
 const shiftPositionDefaults = async (
@@ -89,4 +90,4 @@ const shiftPositionDefaults = async (
   }
 };
 
-export default shiftPositionDefaults;
+export default withAuth(shiftPositionDefaults);

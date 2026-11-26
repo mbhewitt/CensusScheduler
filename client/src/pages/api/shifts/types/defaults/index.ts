@@ -6,6 +6,7 @@ import {
   IResShiftTypeItem,
   IResShiftTypePositionItem,
 } from "@/components/types/shifts/types";
+import { withAuth } from "@/lib/withAuth";
 import { pool } from "lib/database";
 
 const shiftTypeDefaults = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -113,4 +114,4 @@ const shiftTypeDefaults = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default shiftTypeDefaults;
+export default withAuth(shiftTypeDefaults);

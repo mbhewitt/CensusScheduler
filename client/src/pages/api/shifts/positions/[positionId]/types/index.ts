@@ -2,6 +2,7 @@ import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import type { IResShiftPositionTypeItem } from "@/components/types/shifts/positions";
+import { withAuth } from "@/lib/withAuth";
 import { pool } from "lib/database";
 
 const shiftPositionTypes = async (
@@ -53,4 +54,4 @@ const shiftPositionTypes = async (
   }
 };
 
-export default shiftPositionTypes;
+export default withAuth(shiftPositionTypes);

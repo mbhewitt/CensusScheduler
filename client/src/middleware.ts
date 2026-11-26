@@ -1,11 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import {
+  actingAsAllowedBuild,
+  extractActingAsToken,
+  isCronPath,
+  isProxiedRequest,
+  verifyActingAsToken,
+} from "@/lib/actingAs";
 import { isBlockedWrite, isReadOnly, readOnlyMessage } from "@/lib/readOnly";
 
 // Inlined deliberately — Next.js middleware runs in the Edge runtime which
 // does not have access to Node's `crypto` module. The session module uses
 // `import crypto from "crypto"` so importing from it would break the build.
-// Cryptographic verification happens at the API layer (Node runtime).
+// Cookie verification happens at the API layer (Node runtime). The pumpkin
+// acting-as Bearer is the exception: lib/actingAs.ts is Web-Crypto-only, so it
+// is verified here too (see below).
 const SESSION_COOKIE_NAME = "census-session";
 // Same reasoning: inline the device-cookie name rather than import lib/device
 // (which pulls in node crypto). A provisioned tablet carries this cookie; we
@@ -157,7 +166,13 @@ function isAllowlisted(pathname: string, onPlaya: boolean): boolean {
   return false;
 }
 
-export function middleware(req: NextRequest) {
+const unauthorized = () =>
+  new NextResponse(
+    JSON.stringify({ statusCode: 401, message: "Authentication required" }),
+    { status: 401, headers: { "content-type": "application/json" } }
+  );
+
+export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
 
   // Read-only mode: freeze data mutations site-wide (even for admins), but let
@@ -169,6 +184,27 @@ export function middleware(req: NextRequest) {
       JSON.stringify({ statusCode: 423, message: readOnlyMessage() }),
       { status: 423, headers: { "content-type": "application/json" } }
     );
+  }
+
+  // Pumpkin acting-as Bearer (lib/actingAs.ts): VERIFY signature + expiry here
+  // (not just presence), so a forged Bearer can't reach handlers that rely on
+  // this gate. Never valid on an on-playa build, through nginx (loopback
+  // only), on /api/cron (those use CRON_SECRET) or on pages.
+  // The Node layer re-checks and binds method, path, body and the nonce.
+  const actingAs = extractActingAsToken(req.headers.get("authorization"));
+  if (actingAs) {
+    if (
+      !actingAsAllowedBuild() ||
+      isProxiedRequest(req.headers.get("x-real-ip")) ||
+      !pathname.startsWith("/api/") ||
+      isCronPath(pathname)
+    ) {
+      return unauthorized();
+    }
+    if (!(await verifyActingAsToken(actingAs, process.env.PUMPKIN_SECRET))) {
+      return unauthorized();
+    }
+    return NextResponse.next();
   }
 
   // Effective on-playa: build flag OR a provisioned-tablet cookie (presence
@@ -187,13 +223,7 @@ export function middleware(req: NextRequest) {
 
   // API requests get a 401 instead of a redirect so callers see the error
   if (pathname.startsWith("/api/")) {
-    return new NextResponse(
-      JSON.stringify({
-        statusCode: 401,
-        message: "Authentication required",
-      }),
-      { status: 401, headers: { "content-type": "application/json" } }
-    );
+    return unauthorized();
   }
 
   // Page requests redirect to /sign-in with a returnTo so the user lands
