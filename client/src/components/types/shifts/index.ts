@@ -23,9 +23,13 @@ export interface IResShiftRowItem {
 }
 export interface IReqShiftVolunteerItem {
   id: number;
-  noShow: string;
   shiftboardId: number;
   timePositionId: number | string;
+}
+// POST /api/shifts/[timeId]/volunteers/preflight (C-863 A2)
+export interface IResShiftAddPreflight {
+  blockers: { code: string; message: string }[];
+  warnings: string[];
 }
 
 // details

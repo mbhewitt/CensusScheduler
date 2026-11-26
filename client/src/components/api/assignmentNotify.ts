@@ -132,7 +132,11 @@ function buildIcs(args: {
   sequence?: number;
 }): string {
   const escape = (s: string) =>
-    s.replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\\;");
+    s
+      .replace(/\\/g, "\\\\")
+      .replace(/\n/g, "\\n")
+      .replace(/,/g, "\\,")
+      .replace(/;/g, "\\;");
   const status = args.method === "CANCEL" ? "CANCELLED" : "CONFIRMED";
   const lines = [
     "BEGIN:VCALENDAR",
@@ -244,7 +248,9 @@ export async function notifyAssignment(
   pool: Pool,
   shiftboardId: number,
   timePositionId: number | string,
-  actorShiftboardId: number | null = null
+  actorShiftboardId: number | null = null,
+  // C-863 A4: the add came through the pumpkin ops bot.
+  viaPumpkin = false
 ): Promise<void> {
   const [rows] = await pool.query<ShiftContext[]>(SHIFT_CONTEXT_QUERY, [
     shiftboardId,
@@ -268,8 +274,12 @@ export async function notifyAssignment(
     : await lookupActorDisplayName(pool, actorShiftboardId);
 
   const opener = isSelfAction
-    ? "You're assigned to the following Census shift:"
-    : `You were assigned to the following Census shift by ${actorName ?? "an administrator"}:`;
+    ? viaPumpkin
+      ? "You're assigned to the following Census shift (added via pumpkin at your request):"
+      : "You're assigned to the following Census shift:"
+    : viaPumpkin
+      ? `You were assigned to the following Census shift via pumpkin for ${actorName ?? "an administrator"}:`
+      : `You were assigned to the following Census shift by ${actorName ?? "an administrator"}:`;
 
   const bodyText = [
     greetingFor(ctx),
@@ -332,7 +342,9 @@ export async function notifyRemoval(
   pool: Pool,
   shiftboardId: number,
   timePositionId: number | string,
-  cause: RemovalCause
+  cause: RemovalCause,
+  // C-863 A4: the removal came through the pumpkin ops bot.
+  viaPumpkin = false
 ): Promise<void> {
   const [rows] = await pool.query<ShiftContext[]>(SHIFT_CONTEXT_QUERY, [
     shiftboardId,
@@ -354,7 +366,9 @@ export async function notifyRemoval(
   let subject: string;
   let calendarLine: string;
   if (cause.kind === "self") {
-    opener = "You've removed yourself from the following Census shift:";
+    opener = viaPumpkin
+      ? "You've removed yourself (via pumpkin) from the following Census shift:"
+      : "You've removed yourself from the following Census shift:";
     subject = `Census: you dropped ${ctx.position} on ${dayLabel}`;
     calendarLine =
       "A calendar cancellation is attached — your calendar should drop the event automatically.";
@@ -368,7 +382,7 @@ export async function notifyRemoval(
       pool,
       cause.actorShiftboardId
     );
-    opener = `You were removed from the following Census shift by ${actorName ?? "an administrator"}:`;
+    opener = `You were removed from the following Census shift ${viaPumpkin ? "via pumpkin for" : "by"} ${actorName ?? "an administrator"}:`;
     subject = `Census: removed from ${ctx.position} on ${dayLabel}`;
     calendarLine =
       "A calendar cancellation is attached — your calendar should drop the event automatically.";
@@ -418,8 +432,7 @@ export async function notifyRemoval(
           content: Buffer.from(icsContent, "utf8"),
         }
       : undefined,
-    category:
-      cause.kind === "shift-canceled" ? "shift-canceled" : "removal",
+    category: cause.kind === "shift-canceled" ? "shift-canceled" : "removal",
   });
 }
 

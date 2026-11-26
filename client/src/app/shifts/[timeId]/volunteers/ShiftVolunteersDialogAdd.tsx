@@ -22,7 +22,6 @@ import isBetween from "dayjs/plugin/isBetween";
 import { useSnackbar } from "notistack";
 import { useContext, useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { io } from "socket.io-client";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
@@ -34,6 +33,7 @@ import { SnackbarText } from "@/components/general/SnackbarText";
 import type { IVolunteerOption, TCheckInTypes } from "@/components/types";
 import type {
   IReqShiftVolunteerItem,
+  IResShiftAddPreflight,
   IResShiftPositionCountItem,
   IResShiftRowItem,
   IResShiftVolunteerInformation,
@@ -43,19 +43,13 @@ import type {
   IResVolunteerDefaultItem,
   IResVolunteerShiftItem,
 } from "@/components/types/volunteers";
-import {
-  ADD_SHIFT_VOLUNTEER_REQ,
-  SHIFT_DURING,
-  SHIFT_FUTURE,
-  SHIFT_PAST,
-} from "@/constants";
+import { SHIFT_DURING, SHIFT_FUTURE, SHIFT_PAST } from "@/constants";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
 import { checkIsAdmin, checkIsAuthenticated } from "@/utils/checkIsRoleExist";
 import { ensure } from "@/utils/ensure";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
-import { getCheckInType } from "@/utils/getCheckInType";
 
 interface IFormValues {
   timeIdTraining: number | "";
@@ -82,7 +76,6 @@ interface IShiftVolunteersDialogAddProps {
   };
 }
 
-const socket = io();
 const defaultValues: IFormValues = {
   timeIdTraining: "",
   timePositionIdShift: "",
@@ -216,124 +209,39 @@ export const ShiftVolunteersDialogAdd = ({
     worldName,
   ]);
 
+  // Signup rules live on the server (C-863 A2): ask preflight what POST would
+  // say for this volunteer + position, and show it. Orange on selection;
+  // the POST itself enforces the blockers (red on submit).
   useEffect(() => {
-    if (dataVolunteerShiftList) {
-      const isVolunteerSlotAvailable = volunteerList.every((volunteer) => {
-        return volunteer.shiftboardId !== Number(shiftboardId);
-      });
-      const isVolunteerShiftAvailable = dataVolunteerShiftList.every(
-        (volunteerShiftItem) => {
-          return !dayjs(startTime).isBetween(
-            dayjs(volunteerShiftItem.shift.startTime),
-            dayjs(volunteerShiftItem.shift.endTime),
-            null,
-            "[]"
-          );
-        }
-      );
-
-      // if slot is available and shift causes time conflict
-      // then display warning notification
-      if (isVolunteerSlotAvailable && !isVolunteerShiftAvailable) {
-        enqueueSnackbar(
-          <SnackbarText>
-            Adding{" "}
-            <strong>{`${formatDateName(date, dateName)}, ${formatTime(
-              startTime,
-              endTime
-            )}, ${typeName}`}</strong>{" "}
-            shift will cause a time conflict for{" "}
-            <strong>
-              {volunteerSelected?.playaName} &quot;
-              {volunteerSelected?.worldName}
-              &quot;
-            </strong>
-          </SnackbarText>,
-          {
+    const volunteerId = volunteerWatch?.shiftboardId;
+    if (!volunteerId || !timePositionIdShiftWatch) return;
+    let isCurrent = true;
+    fetch(`/api/shifts/${timeIdShift}/volunteers/preflight`, {
+      method: "POST",
+      body: JSON.stringify({
+        shiftboardId: volunteerId,
+        timePositionId: timePositionIdShiftWatch,
+      }),
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: IResShiftAddPreflight | null) => {
+        if (!isCurrent || !data) return;
+        [
+          ...data.blockers.map(({ message }) => message),
+          ...data.warnings,
+        ].forEach((message) =>
+          enqueueSnackbar(<SnackbarText>{message}</SnackbarText>, {
             variant: "warning",
-          }
+          })
         );
-      }
-    }
-  }, [
-    dataVolunteerShiftList,
-    dateName,
-    endTime,
-    enqueueSnackbar,
-    shiftboardId,
-    typeName,
-    startTime,
-    volunteerList,
-    volunteerSelected,
-  ]);
-
-  // Config-driven signup-rule warnings (#436 art tour / #429 stewardship).
-  // When a position carrying a rule is selected, warn (allow-proceed) if the
-  // candidate would exceed max_per_volunteer for that position, or falls short
-  // of min_scheduled_csp. Mirrors the time-conflict warning above —
-  // informational only, never blocks; admins see it too but are never gated.
-  useEffect(() => {
-    if (!dataVolunteerShiftList || !timePositionIdShiftWatch) return;
-    const selectedPosition = positionList.find(
-      (positionItem) =>
-        positionItem.timePositionId === timePositionIdShiftWatch
-    );
-    if (!selectedPosition) return;
-    const { maxPerVolunteer, minScheduledCsp, positionId, positionName } =
-      selectedPosition;
-    const volunteerLabel = `${volunteerSelected?.playaName} "${volunteerSelected?.worldName}"`;
-
-    // candidate's current active (non-canceled) signups
-    const activeShifts = dataVolunteerShiftList.filter(
-      ({ shift }) => !shift.canceled
-    );
-
-    // max_per_volunteer: count existing holdings of this position, excluding
-    // the slot being added so a re-add isn't double-counted.
-    if (maxPerVolunteer != null) {
-      const heldCount = activeShifts.filter(
-        ({ shift }) =>
-          shift.positionId === positionId &&
-          shift.timePositionId !== timePositionIdShiftWatch
-      ).length;
-      if (heldCount >= maxPerVolunteer) {
-        enqueueSnackbar(
-          <SnackbarText>
-            <strong>{volunteerLabel}</strong> already has {heldCount}{" "}
-            <strong>{positionName}</strong>{" "}
-            {heldCount === 1 ? "signup" : "signups"} — volunteers are asked to
-            take at most {maxPerVolunteer}.
-          </SnackbarText>,
-          { variant: "warning" }
-        );
-      }
-    }
-
-    // min_scheduled_csp: total scheduled CSP must meet the threshold.
-    if (minScheduledCsp != null) {
-      const scheduledCsp = activeShifts.reduce(
-        (sum, { shift }) => sum + (shift.csp ?? 0),
-        0
-      );
-      if (scheduledCsp < minScheduledCsp) {
-        enqueueSnackbar(
-          <SnackbarText>
-            <strong>{positionName}</strong> is for active volunteers —{" "}
-            <strong>{volunteerLabel}</strong> has {scheduledCsp} CSP scheduled
-            but needs at least {minScheduledCsp}. Sign up for a work shift
-            first.
-          </SnackbarText>,
-          { variant: "warning" }
-        );
-      }
-    }
-  }, [
-    dataVolunteerShiftList,
-    enqueueSnackbar,
-    positionList,
-    timePositionIdShiftWatch,
-    volunteerSelected,
-  ]);
+      })
+      .catch(() => {
+        /* advisory only; POST re-checks */
+      });
+    return () => {
+      isCurrent = false;
+    };
+  }, [enqueueSnackbar, timeIdShift, timePositionIdShiftWatch, volunteerWatch]);
 
   // logic
   // ------------------------------------------------------------
@@ -411,13 +319,9 @@ export const ShiftVolunteersDialogAdd = ({
   );
   let trainingListDisplay: React.JSX.Element[] = [];
   let trainingPositionListDisplay: React.JSX.Element[] = [];
-  let noShowShift: string;
 
   switch (checkInType) {
     case SHIFT_FUTURE: {
-      // evaluate check-in value
-      noShowShift = "X";
-
       // display volunteer list
       if (isAdmin) {
         volunteerListDisplay = dataVolunteerList.map(
@@ -532,9 +436,6 @@ export const ShiftVolunteersDialogAdd = ({
     }
     case SHIFT_DURING:
     case SHIFT_PAST: {
-      // evaluate check-in value
-      noShowShift = "";
-
       // display volunteer list
       volunteerListDisplay = dataVolunteerList.map(
         ({ playaName, shiftboardId, worldName }) => ({
@@ -608,87 +509,6 @@ export const ShiftVolunteersDialogAdd = ({
   // form submission
   // ------------------------------------------------------------
   const onSubmit: SubmitHandler<IFormValues> = async (formValues) => {
-    // Non-admin signup blocks (#424 double-booking, #438 over-limit positions
-    // like a 2nd art tour, #436 art-tour CSP gate). One check here on submit:
-    // if a rule is violated, pop a red error snackbar and stop — the add does
-    // not happen. Admins are exempt (they still get the orange warnings on
-    // selection and can override). Client-side gate, consistent with the
-    // existing full-shift/slot gating; server unchanged.
-    if (!isAdmin) {
-      // Fail closed: if the volunteer's current shifts haven't loaded yet we
-      // can't verify the rules, so don't let the signup through unchecked.
-      if (!dataVolunteerShiftList) {
-        enqueueSnackbar(
-          <SnackbarText>
-            <strong>
-              Still checking your current shifts — please try again in a moment.
-            </strong>
-          </SnackbarText>,
-          { variant: "error" }
-        );
-        return;
-      }
-      const activeShifts = dataVolunteerShiftList.filter(
-        ({ shift }) => !shift.canceled
-      );
-      const selectedPosition = positionList.find(
-        (positionItem) =>
-          positionItem.timePositionId === formValues.timePositionIdShift
-      );
-
-      // #424 — overlapping shift times. Strict overlap (isBefore, not
-      // isBetween) so back-to-back shifts that only touch endpoints are fine.
-      const hasTimeConflict = activeShifts.some(
-        ({ shift }) =>
-          dayjs(shift.startTime).isBefore(dayjs(endTime)) &&
-          dayjs(startTime).isBefore(dayjs(shift.endTime))
-      );
-
-      let blockMessage: string | null = null;
-      if (hasTimeConflict) {
-        blockMessage =
-          "This shift overlaps a shift you’re already signed up for — you can’t be in two places at once. Please remove the other shift first if you’d like to take this one.";
-      } else if (selectedPosition?.maxPerVolunteer != null) {
-        // #438 — at most maxPerVolunteer of this position across all shifts.
-        const heldCount = activeShifts.filter(
-          ({ shift }) =>
-            shift.positionId === selectedPosition.positionId &&
-            shift.timePositionId !== formValues.timePositionIdShift
-        ).length;
-        if (heldCount >= selectedPosition.maxPerVolunteer) {
-          blockMessage = `You’re already signed up for the most ${
-            selectedPosition.positionName
-          } ${
-            selectedPosition.maxPerVolunteer === 1 ? "shift" : "shifts"
-          } allowed (${
-            selectedPosition.maxPerVolunteer
-          }). Please remove one first if you’d like to change it.`;
-        }
-      }
-
-      // #436 — art-tour CSP gate: must already have at least minScheduledCsp of
-      // scheduled CSP (a real work shift) to take the seat.
-      if (!blockMessage && selectedPosition?.minScheduledCsp != null) {
-        const scheduledCsp = activeShifts.reduce(
-          (sum, { shift }) => sum + (shift.csp ?? 0),
-          0
-        );
-        if (scheduledCsp < selectedPosition.minScheduledCsp) {
-          blockMessage = `${selectedPosition.positionName} is a thank-you for active volunteers — please sign up for at least one work shift before adding it.`;
-        }
-      }
-
-      if (blockMessage) {
-        enqueueSnackbar(
-          <SnackbarText>
-            <strong>{blockMessage}</strong>
-          </SnackbarText>,
-          { variant: "error" }
-        );
-        return;
-      }
-    }
-
     try {
       const volunteerAdd = ensure(
         dataVolunteerList.find(
@@ -710,79 +530,34 @@ export const ShiftVolunteersDialogAdd = ({
           ({ timePositionId: timePositionIdTraining }) =>
             timePositionIdTraining === formValues.timePositionIdTraining
         );
-      let noShowTraining: string | undefined;
-
-      // evaluate the check-in type and value for training
-      if (trainingAdd) {
-        const checkInTypeTraining = getCheckInType({
-          dateTime: dayjs(dateTimeValue),
-          endTime: dayjs(trainingAdd.endTime),
-          startTime: dayjs(trainingAdd.startTime),
-        });
-
-        switch (checkInTypeTraining) {
-          case SHIFT_FUTURE:
-            noShowTraining = "X";
-            break;
-          case SHIFT_DURING:
-          case SHIFT_PAST: {
-            noShowTraining = "";
-            break;
-          }
-          default: {
-            throw new Error(`Unknown check-in type: ${checkInTypeTraining}`);
-          }
-        }
-      }
-
       // add position
       const body: IReqShiftVolunteerItem = {
         id: ensure(timeIdShift),
-        noShow: noShowShift,
         shiftboardId: ensure(formValues.volunteer?.shiftboardId),
         timePositionId: formValues.timePositionIdShift,
       };
 
-      // update database
-      await trigger({
+      // update database (the server emits the live-refresh event)
+      const resAdd: { warnings?: string[] } = await trigger({
         body,
         method: "POST",
       });
-      // emit event
-      socket.emit(ADD_SHIFT_VOLUNTEER_REQ, {
-        noShow: noShowShift,
-        playaName: volunteerAdd.playaName,
-        positionName: shiftPositionAdd.positionName,
-        shiftboardId: formValues.volunteer?.shiftboardId,
-        timeId: timeIdShift,
-        timePositionId: formValues.timePositionIdShift,
-        worldName: volunteerAdd.worldName,
-      });
+      const warningList = [...(resAdd?.warnings ?? [])];
 
       // add training
       if (trainingAdd) {
         const body: IReqShiftVolunteerItem = {
           id: ensure(timeIdShift),
-          noShow: noShowShift,
           shiftboardId: ensure(formValues.volunteer?.shiftboardId),
           timePositionId: formValues.timePositionIdTraining,
         };
 
         // update database
-        await trigger({
+        const resTraining: { warnings?: string[] } = await trigger({
           body,
           method: "POST",
         });
-        // emit event
-        socket.emit(ADD_SHIFT_VOLUNTEER_REQ, {
-          noShow: noShowTraining,
-          playaName: volunteerAdd.playaName,
-          positionName: trainingPositionAdd?.positionName,
-          shiftboardId: formValues.volunteer?.shiftboardId,
-          timeId: formValues.timeIdTraining,
-          timePositionId: formValues.timePositionIdTraining,
-          worldName: volunteerAdd.worldName,
-        });
+        warningList.push(...(resTraining?.warnings ?? []));
       }
 
       enqueueSnackbar(
@@ -795,6 +570,11 @@ export const ShiftVolunteersDialogAdd = ({
         {
           variant: "success",
         }
+      );
+      warningList.forEach((message) =>
+        enqueueSnackbar(<SnackbarText>{message}</SnackbarText>, {
+          variant: "warning",
+        })
       );
       handleDialogClose();
     } catch (error) {
