@@ -105,7 +105,10 @@ test("request: same request read twice keeps its session", async () => {
 
 test("request: method, path, query and body are bound", async () => {
   const t1 = await mintActingAsToken(await payload(), SECRET);
-  assert.equal(await readSessionFromRequest(req(t1, { method: "DELETE" })), null);
+  assert.equal(
+    await readSessionFromRequest(req(t1, { method: "DELETE" })),
+    null
+  );
   const t2 = await mintActingAsToken(await payload(), SECRET);
   assert.equal(
     await readSessionFromRequest(req(t2, { url: "/api/volunteers/43/info" })),
@@ -113,7 +116,9 @@ test("request: method, path, query and body are bound", async () => {
   );
   const t3 = await mintActingAsToken(await payload(), SECRET);
   assert.equal(
-    await readSessionFromRequest(req(t3, { url: "/api/volunteers/42/info?x=1" })),
+    await readSessionFromRequest(
+      req(t3, { url: "/api/volunteers/42/info?x=1" })
+    ),
     null
   );
 
@@ -131,7 +136,10 @@ test("request: method, path, query and body are bound", async () => {
     ),
     null
   );
-  const t5 = await mintActingAsToken({ ...post, nonce: post.nonce + "b" }, SECRET);
+  const t5 = await mintActingAsToken(
+    { ...post, nonce: post.nonce + "b" },
+    SECRET
+  );
   assert.equal(
     (
       await readSessionFromRequest(
@@ -141,7 +149,10 @@ test("request: method, path, query and body are bound", async () => {
     42
   );
   // A pre-parsed (application/json) body can't be bound → refused.
-  const t6 = await mintActingAsToken({ ...post, nonce: post.nonce + "c" }, SECRET);
+  const t6 = await mintActingAsToken(
+    { ...post, nonce: post.nonce + "c" },
+    SECRET
+  );
   assert.equal(
     await readSessionFromRequest(
       req(t6, { method: "POST", url: post.path, body: JSON.parse(body) })
@@ -179,7 +190,9 @@ test("request: refused on an on-playa build", async () => {
 test("request: loopback only — refused when nginx's X-Real-IP is present", async () => {
   const t = await mintActingAsToken(await payload(), SECRET);
   assert.equal(
-    await readSessionFromRequest(req(t, { headers: { "x-real-ip": "203.0.113.9" } })),
+    await readSessionFromRequest(
+      req(t, { headers: { "x-real-ip": "203.0.113.9" } })
+    ),
     null
   );
   // Next.js adds X-Forwarded-For itself on direct calls, so it must NOT refuse.

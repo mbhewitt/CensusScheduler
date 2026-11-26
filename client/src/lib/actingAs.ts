@@ -62,7 +62,9 @@ async function hmacKey(secret: string, usage: "sign" | "verify") {
 }
 
 export async function sha256Hex(s: string): Promise<string> {
-  const d = new Uint8Array(await crypto.subtle.digest("SHA-256", enc.encode(s)));
+  const d = new Uint8Array(
+    await crypto.subtle.digest("SHA-256", enc.encode(s))
+  );
   return Array.from(d, (b) => b.toString(16).padStart(2, "0")).join("");
 }
 
