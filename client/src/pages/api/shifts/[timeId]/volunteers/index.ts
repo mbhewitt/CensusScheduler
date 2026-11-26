@@ -12,10 +12,11 @@ import {
   CHECK_IN_WINDOW_BEFORE_MIN,
   UPDATE_TYPE_CHECK_IN,
 } from "@/constants";
+import { extractActingAsToken } from "@/lib/actingAs";
 import { isAdmin } from "@/lib/authz";
 import { isProvisionedDevice } from "@/lib/device";
 import { isOnPlayaRequest } from "@/lib/onPlaya";
-import { readSessionFromCookies } from "@/lib/session";
+import { readSessionFromRequest } from "@/lib/session";
 import { pool } from "lib/database";
 import { notifyAssignment } from "@/components/api/assignmentNotify";
 import { autoSetArrival } from "@/components/api/arrivalAutoSet";
@@ -450,11 +451,16 @@ const isCheckInWindowOpenForPosition = async (
 const GUEST_SESSION = { shiftboardId: -1 };
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = readSessionFromCookies(req.cookies);
+  const session = await readSessionFromRequest(req);
   if (session) {
     return shiftVolunteers(req, res, session);
   }
-  if (!isProvisionedDevice(req.cookies)) {
+  // A pumpkin Bearer that failed verification never falls back to the guest
+  // (device-cookie) path.
+  if (
+    extractActingAsToken(req.headers.authorization) ||
+    !isProvisionedDevice(req.cookies)
+  ) {
     return res
       .status(401)
       .json({ statusCode: 401, message: "Authentication required" });

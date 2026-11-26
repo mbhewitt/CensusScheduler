@@ -2,6 +2,7 @@ import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import type { IResDateShiftTimeRowItem } from "@/components/types/dates/shift-times";
+import { withAuth } from "@/lib/withAuth";
 import { pool } from "lib/database";
 
 const calendar = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -52,4 +53,4 @@ const calendar = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default calendar;
+export default withAuth(calendar);

@@ -2,6 +2,7 @@ import { RowDataPacket } from "mysql2";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import type { IResShiftCategoryTypeItem } from "@/components/types/shifts/categories";
+import { withAuth } from "@/lib/withAuth";
 import { pool } from "lib/database";
 
 const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -48,4 +49,4 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default shiftCategories;
+export default withAuth(shiftCategories);

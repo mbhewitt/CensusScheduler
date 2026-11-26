@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import type { IResShiftTypePositionTimeItem } from "@/components/types/shifts/types";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
+import { withAuth } from "@/lib/withAuth";
 import { pool } from "lib/database";
 
 const shiftTypePositionTimes = async (
@@ -73,4 +74,4 @@ const shiftTypePositionTimes = async (
   }
 };
 
-export default shiftTypePositionTimes;
+export default withAuth(shiftTypePositionTimes);
