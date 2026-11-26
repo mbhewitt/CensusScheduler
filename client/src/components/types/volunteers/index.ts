@@ -18,6 +18,7 @@ export interface IResVolunteerAccount {
   email: string;
   emailBouncedAt?: string | null;
   isCreated: boolean;
+  isDiscordLinked?: boolean;
   location: string;
   notes: string;
   playaName: string;

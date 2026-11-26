@@ -41,6 +41,7 @@ const volunteers = async (
       const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT
           create_volunteer,
+          discord_user_id,
           email,
           email_bounced_at,
           location,
@@ -67,6 +68,7 @@ const volunteers = async (
       }
       const resVolunteerItem: IResVolunteerAccount = {
         email: dbVolunteerFirst.email ?? "",
+        isDiscordLinked: Boolean(dbVolunteerFirst.discord_user_id),
         emailBouncedAt: dbVolunteerFirst.email_bounced_at ?? null,
         isCreated: Boolean(dbVolunteerFirst.create_volunteer),
         location: dbVolunteerFirst.location ?? "",
