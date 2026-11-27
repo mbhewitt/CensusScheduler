@@ -13,6 +13,7 @@ import {
   ADD_SHIFT_VOLUNTEER_RES,
   CHECK_IN_WINDOW_AFTER_MIN,
   CHECK_IN_WINDOW_BEFORE_MIN,
+  ROLE_BEHAVIORAL_STANDARDS_ID,
   UPDATE_TYPE_CHECK_IN,
 } from "@/constants";
 import { extractActingAsToken } from "@/lib/actingAs";
@@ -110,7 +111,14 @@ const shiftVolunteers = async (
           vs.notes,
           vs.rating,
           vs.shiftboard_id,
-          vs.time_position_id
+          vs.time_position_id,
+          EXISTS(
+            SELECT 1
+            FROM op_volunteer_roles AS bs
+            WHERE bs.shiftboard_id=vs.shiftboard_id
+            AND bs.role_id=?
+            AND bs.remove_role=false
+          ) AS bs_signed
         FROM op_volunteer_shifts AS vs
         JOIN op_shift_time_position AS stp
         ON stp.remove_time_position=false
@@ -131,7 +139,7 @@ const shiftVolunteers = async (
           END,
           v.playa_name COLLATE utf8mb4_general_ci,
           v.world_name COLLATE utf8mb4_general_ci`,
-        [timeId]
+        [ROLE_BEHAVIORAL_STANDARDS_ID, timeId]
       );
       const [resShiftPositionFirst] = dbShiftPositionList;
       // A shift with no position rows (unknown/removed timeId) has no metadata
@@ -175,6 +183,7 @@ const shiftVolunteers = async (
       );
       const resShiftVolunteerList = dbShiftVolunteerList.map(
         ({
+          bs_signed,
           critical,
           noshow,
           notes,
@@ -186,6 +195,7 @@ const shiftVolunteers = async (
           world_name,
         }) => {
           const resShiftVolunteerItem: IResShiftVolunteerRowItem = {
+            bsSigned: Boolean(bs_signed),
             critical: Boolean(critical),
             isCheckedIn: noshow,
             notes: notes ?? "",
@@ -358,6 +368,8 @@ const shiftVolunteers = async (
       (
         res.socket as unknown as { server?: { io?: IOServer } }
       ).server?.io?.emit(ADD_SHIFT_VOLUNTEER_RES, {
+        // placeholder; clients revalidate right after (true = show nothing)
+        bsSigned: true,
         isCheckedIn: check.noShow,
         notes: "",
         playaName: check.playaName,

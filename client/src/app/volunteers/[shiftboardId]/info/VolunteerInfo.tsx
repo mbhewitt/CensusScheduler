@@ -490,6 +490,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     burnerProfileUpdated,
     dates,
     emailUnsubscribed,
+    hasPasscode,
     roles,
     roleThresholds,
     sapStatus,
@@ -708,6 +709,30 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
           }
           label="I have reviewed and updated my Burner Profile"
         />
+      </Box>
+    ),
+  });
+
+  // Passcode — tablets on-playa sign in with it; done once one is set (the info
+  // API exposes only the boolean, never the passcode).
+  checklistItems.push({
+    id: "passcode",
+    label: "Record your passcode for on-playa access",
+    done: hasPasscode,
+    content: (
+      <Box>
+        <Typography sx={{ mb: 1 }}>
+          You sign in on tablets on-playa with a passcode. Set one and write it
+          down. Don&apos;t use a passcode you use anywhere else.
+        </Typography>
+        <Button
+          onClick={() => setIsPasscodeDialogOpen(true)}
+          startIcon={<LockResetIcon />}
+          type="button"
+          variant="contained"
+        >
+          {hasPasscode ? "Update passcode" : "Set passcode"}
+        </Button>
       </Box>
     ),
   });

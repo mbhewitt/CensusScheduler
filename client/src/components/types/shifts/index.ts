@@ -54,6 +54,8 @@ export interface IResShiftPositionCountItem {
   timePositionId: number;
 }
 export interface IResShiftVolunteerRowItem {
+  // signed the Behavioral Standards; the UI shows it to admins/leads only
+  bsSigned: boolean;
   // position is critical=1 — drives the #308 acknowledge-the-gap warning
   critical: boolean;
   isCheckedIn: string;

@@ -51,7 +51,8 @@ const volunteerInfo = async (
           email,
           location,
           arrival_date_id,
-          arrival_auto_set
+          arrival_auto_set,
+          (passcode IS NOT NULL AND passcode<>'') AS has_passcode
         FROM op_volunteers
         WHERE delete_volunteer=false
         AND shiftboard_id=?`,
@@ -394,6 +395,7 @@ const volunteerInfo = async (
         welcomeComplete,
         behavioralStandardsSigned,
         emailUnsubscribed,
+        hasPasscode: Boolean(dbVolunteer.has_passcode),
       };
 
       return res.status(200).json(resVolunteerInfo);

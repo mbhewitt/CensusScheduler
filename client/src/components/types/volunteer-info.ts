@@ -91,4 +91,6 @@ export interface IResVolunteerInfo {
   welcomeComplete: boolean;
   behavioralStandardsSigned: boolean;
   emailUnsubscribed: boolean;
+  // whether a passcode is set (never the passcode itself)
+  hasPasscode: boolean;
 }

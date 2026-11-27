@@ -2,7 +2,7 @@ import {
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
 } from "@mui/icons-material";
-import { IconButton, Stack, TextField } from "@mui/material";
+import { Alert, IconButton, Stack, TextField } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
 import {
   Control,
@@ -37,6 +37,9 @@ export const PasscodeForm = ({
   // ------------------------------------------------------------
   return (
     <>
+      <Alert severity="warning">
+        Don&apos;t use a passcode you use anywhere else.
+      </Alert>
       <Stack alignItems="center" direction="row">
         <Controller
           control={control}

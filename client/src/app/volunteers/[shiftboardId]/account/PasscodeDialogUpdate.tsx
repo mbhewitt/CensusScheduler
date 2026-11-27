@@ -13,6 +13,7 @@ import {
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useSWRConfig } from "swr";
 import useSWRMutation from "swr/mutation";
 
 import { PasscodeForm } from "@/app/volunteers/account/PasscodeForm";
@@ -57,6 +58,7 @@ export const PasscodeDialogUpdate = ({
 
   // other hooks
   // ------------------------------------------------------------
+  const { mutate } = useSWRConfig();
   const {
     clearErrors,
     control,
@@ -95,6 +97,8 @@ export const PasscodeDialogUpdate = ({
         body,
         method: "PATCH",
       });
+      // refresh the info page's "passcode recorded" checklist item
+      mutate(`/api/volunteers/${shiftboardId}/info`);
 
       enqueueSnackbar(
         <SnackbarText>

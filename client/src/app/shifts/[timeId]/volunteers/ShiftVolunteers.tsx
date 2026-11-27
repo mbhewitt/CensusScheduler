@@ -103,6 +103,8 @@ interface IDialogCurrentState {
   };
 }
 
+const BS_UNSIGNED_TEXT = "Has not signed Behavioral Standards";
+
 const socket = io();
 export const ShiftVolunteers = ({
   timeId: timeIdParam,
@@ -182,6 +184,7 @@ export const ShiftVolunteers = ({
         socket.on(
           ADD_SHIFT_VOLUNTEER_RES,
           ({
+            bsSigned,
             isCheckedIn,
             notes,
             playaName,
@@ -194,6 +197,7 @@ export const ShiftVolunteers = ({
             if (dataShiftVolunteersItem) {
               const dataMutate = structuredClone(dataShiftVolunteersItem);
               dataMutate.volunteerList.push({
+                bsSigned,
                 // socket payload has no critical flag; mutate() revalidates
                 // right after, which fills in the real value
                 critical: false,
@@ -508,6 +512,10 @@ export const ShiftVolunteers = ({
   ];
   if (isAdmin) {
     columnListVolunteers.push({
+      name: "Behavioral Standards",
+      options: { filter: false, sortThirdClickReset: true },
+    });
+    columnListVolunteers.push({
       name: "Admin review",
       options: {
         filter: false,
@@ -538,6 +546,7 @@ export const ShiftVolunteers = ({
   }
   const dataTableVolunteers = dataShiftVolunteersItem.volunteerList.map(
     ({
+      bsSigned,
       critical,
       isCheckedIn,
       notes,
@@ -581,6 +590,7 @@ export const ShiftVolunteers = ({
         ),
       ];
       if (isAdmin) {
+        row.push(bsSigned ? "" : BS_UNSIGNED_TEXT);
         // Reviews are available to admins/leads AT ANY TIME — especially AFTER
         // the shift, which is exactly when the lead nudge email asks for them.
         // NOT tied to isCheckInAvailable / the check-in clock: a stale or frozen
@@ -906,6 +916,7 @@ export const ShiftVolunteers = ({
             <Stack spacing={1}>
               {dataShiftVolunteersItem.volunteerList.map(
                 ({
+                  bsSigned,
                   critical,
                   isCheckedIn,
                   notes,
@@ -940,6 +951,11 @@ export const ShiftVolunteers = ({
                         </Typography>
                       )}
                     </Typography>
+                    {isAdmin && !bsSigned && (
+                      <Typography color="warning.main" variant="caption">
+                        {BS_UNSIGNED_TEXT}
+                      </Typography>
+                    )}
                     {/* line 2: position (secondary) + inline controls */}
                     <Stack
                       alignItems="center"
