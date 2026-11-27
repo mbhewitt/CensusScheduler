@@ -6,24 +6,19 @@ import { CONTACT_APP_FEEDBACK_LABEL, CONTACT_RECIPIENTS } from "@/constants";
 import { enqueueEmail } from "lib/mail";
 import { pool } from "lib/database";
 
-// App Help/Feedback submissions post to Discord channel webhook(s) (URLs are
-// secrets — env only, never committed): #app-feedback so the app-feedback group
-// sees them live, and CENSUS_FEEDBACK_PING_WEBHOOK — a triage channel so the dev
-// bot is prompted to triage each one (per Chipper 2026-09-01). Redacted: header
-// + a "Tablet app feedback ID" (= op_messages.id) + the message only — never the
-// sender's name/contact.
-const FEEDBACK_WEBHOOKS = [
-  process.env.APP_FEEDBACK_DISCORD_WEBHOOK,
-  process.env.CENSUS_FEEDBACK_PING_WEBHOOK,
-].filter((w): w is string => Boolean(w));
-
-const postAppFeedbackToDiscord = async (
-  feedbackId: number,
-  message: string
+// Every contact-form message is posted to the private ops channel #census-prod
+// (Mew 2026-11-27, #623/#724), including the sender's name and email, which
+// is allowed there and only there. The webhook URL is a secret: env only,
+// never committed. Not configured = skip with a warning; the op_messages row
+// and the email below are the canonical record either way.
+const postContactToDiscord = async (
+  messageId: number,
+  { email, isReplyWanted, message, name, to }: IReqContact
 ): Promise<void> => {
-  if (FEEDBACK_WEBHOOKS.length === 0) {
+  const url = process.env.CENSUS_PROD_CONTACT_WEBHOOK;
+  if (!url) {
     console.warn(
-      `[contact] no feedback webhook configured; skipping Discord post for feedback #${feedbackId}`
+      `[contact] CENSUS_PROD_CONTACT_WEBHOOK not set; skipping Discord post for op_messages.id=${messageId}`
     );
     return;
   }
@@ -35,33 +30,32 @@ const postAppFeedbackToDiscord = async (
     timeStyle: "short",
   });
   const header =
-    `App feedback sent from the Contact form ${env} at ${when}.\n` +
-    `Tablet app feedback ID #${feedbackId}\n\n`;
-  // Discord hard-caps content at 2000 chars — truncate the message if needed.
+    `Contact form (${to}) sent ${env} at ${when}, message #${messageId}\n` +
+    `From: ${name || "Anonymous"} <${email}>, wants reply: ${isReplyWanted ? "yes" : "no"}\n\n`;
+  // Discord hard-caps content at 2000 chars, so truncate the message if needed.
   const room = 2000 - header.length - 3;
   const body = message.length > room ? `${message.slice(0, room)}...` : message;
-  const content = header + body;
-  await Promise.all(
-    FEEDBACK_WEBHOOKS.map(async (url) => {
-      try {
-        const res = await fetch(url, {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ content }),
-        });
-        if (!res.ok) {
-          console.error(
-            `[contact] Discord webhook ${res.status} for feedback #${feedbackId}`
-          );
-        }
-      } catch (err) {
-        console.error(
-          `[contact] Discord webhook post failed for feedback #${feedbackId}:`,
-          err
-        );
-      }
-    })
-  );
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      // No pings, whatever the message contains.
+      body: JSON.stringify({
+        content: header + body,
+        allowed_mentions: { parse: [] },
+      }),
+    });
+    if (!res.ok) {
+      console.error(
+        `[contact] Discord webhook ${res.status} for #${messageId}`
+      );
+    }
+  } catch (err) {
+    console.error(
+      `[contact] Discord webhook post failed for #${messageId}:`,
+      err
+    );
+  }
 };
 
 // #312: the form was a black hole — `op_messages` row written, no email
@@ -91,7 +85,13 @@ const buildBody = (
   if (to === CONTACT_APP_FEEDBACK_LABEL) {
     lines.push(`Tablet app feedback ID #${messageId}`);
   }
-  lines.push("", "--- Message ---", message, "", `Stored as op_messages.id = ${messageId}`);
+  lines.push(
+    "",
+    "--- Message ---",
+    message,
+    "",
+    `Stored as op_messages.id = ${messageId}`
+  );
   return lines.join("\n");
 };
 
@@ -110,11 +110,8 @@ const contact = async (req: NextApiRequest, res: NextApiResponse) => {
         [email, message, name, to, isReplyWanted]
       );
 
-      // App feedback also posts to the #app-feedback Discord webhook (redacted).
-      // Best-effort — a webhook failure must not fail the form submission.
-      if (to === CONTACT_APP_FEEDBACK_LABEL) {
-        await postAppFeedbackToDiscord(result.insertId, message);
-      }
+      // Best-effort: a webhook failure must not fail the form submission.
+      await postContactToDiscord(result.insertId, body);
 
       // Best-effort send. Per #312 acceptance: enqueue failure does
       // NOT fail the form submission — the row write above is the
