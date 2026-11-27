@@ -1541,9 +1541,10 @@ export const VolunteerInfo = ({
               </CardContent>
             </Card>
 
-            {securitySection}
-
-            {settingsSection}
+            {/* yours are in the My profile / App settings pop-ups (Chipper);
+                admins still reset passcodes and email settings here */}
+            {!isSelfView && securitySection}
+            {!isSelfView && settingsSection}
 
             {/* admin sections */}
             {isAdmin && accountData && (
