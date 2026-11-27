@@ -135,12 +135,10 @@ test.describe("VIP Page", () => {
 
     await page.goto(`/volunteers/${vipVolunteer.shiftboardId}/info`);
 
-    // Volunteer name should appear in the hero heading
     // Longer timeout for first page load (cold start)
     await expect(
-      page
-        .getByRole("heading", { name: new RegExp(vipVolunteer.playaName) })
-        .first()
+      // own page is Home = the checklist (#814)
+      page.getByRole("heading", { name: /Pre-playa Checklist/ })
     ).toBeVisible({ timeout: 20_000 });
   });
 
@@ -386,9 +384,8 @@ test.describe("VIP Page", () => {
 
     // Wait for page to load
     await expect(
-      page
-        .getByRole("heading", { name: new RegExp(vipVolunteer.playaName) })
-        .first()
+      // own page is Home = the checklist (#814)
+      page.getByRole("heading", { name: /Pre-playa Checklist/ })
     ).toBeVisible({ timeout: 10_000 });
 
     // Admin-only sections should NOT be visible
