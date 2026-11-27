@@ -332,16 +332,26 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
   // which are yours — that's the whole point (Chipper 2026-07-09). When the
   // "My Shifts" toggle is ON the main list is restricted to your own shifts
   // (still narrowed by the other filters), and the bottom section is dropped.
+  //
+  // Type/Availability describe *open (browse) shifts* and never hide a shift
+  // you're already signed up for: a "mine" item has no shift-type (its `type`
+  // is a department-name fallback, so a Type filter can't match it) and its
+  // state is "mine" (never "open"/"full", so an Availability filter can't
+  // match it either). Applying those two to your own shifts silently dropped
+  // them from the top list — the bug Chipper hit (2026-07-15). So they're
+  // exempt; only Timeline/Date (real properties of a mine item) narrow it.
   const mainDays = useMemo(
     () =>
       groupByDay(
         items.filter((i) => {
           if (myShiftsOnly && i.state !== "mine") return false;
           if (!inTimeline(i)) return false;
-          if (types.length > 0 && !types.includes(i.type)) return false;
           if (dates.length > 0 && !dates.includes(i.dateName)) return false;
-          if (availability.length > 0 && !availability.includes(i.state))
-            return false;
+          if (i.state !== "mine") {
+            if (types.length > 0 && !types.includes(i.type)) return false;
+            if (availability.length > 0 && !availability.includes(i.state))
+              return false;
+          }
           return true;
         })
       ),
@@ -349,12 +359,13 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
   );
 
   // Bottom "My Shifts" section: the volunteer's full schedule for this time
-  // scope (Timeline only, never narrowed). Shown ONLY when a narrowing filter
-  // is active, so filtering can't hide your commitments — but no redundant
-  // double-listing when the main already shows everything, and suppressed
-  // entirely when the My Shifts toggle already restricts the main to yours.
-  const anyNarrowing =
-    types.length > 0 || dates.length > 0 || availability.length > 0;
+  // scope (Timeline only, never narrowed) — a safety net so filtering can't
+  // hide your commitments. Now that the main list keeps your own shifts under
+  // Type/Availability filters (above), the only narrowing that can still drop
+  // a mine item from the top is a Date filter — so that's the sole case where
+  // this extra section earns its place (otherwise it just double-lists).
+  // Suppressed when the My Shifts toggle already restricts the main to yours.
+  const dateFilterActive = dates.length > 0;
   const mineDays = useMemo(
     () => groupByDay(items.filter((i) => i.state === "mine" && inTimeline(i))),
     [items, timeline]
@@ -902,7 +913,7 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
         {/* My Shifts — your complete schedule, shown when a filter is active so
             filtering can't hide your commitments. Suppressed when the My Shifts
             toggle already restricts the main list to yours (redundant). */}
-        {isSignedIn && !myShiftsOnly && mineCount > 0 && anyNarrowing && (
+        {isSignedIn && !myShiftsOnly && mineCount > 0 && dateFilterActive && (
           <>
             <Typography
               component="h3"
