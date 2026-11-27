@@ -5,6 +5,7 @@ import {
   Close as CloseIcon,
   EventBusy as EventBusyIcon,
   FilterList as FilterListIcon,
+  ViewAgenda as ViewAgendaIcon,
 } from "@mui/icons-material";
 import {
   Box,
@@ -22,6 +23,8 @@ import {
   Select,
   Stack,
   Switch,
+  ToggleButton,
+  ToggleButtonGroup,
   Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -31,6 +34,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import useSWR from "swr";
 
 import { VolunteerShiftsDialogRemove } from "@/app/volunteers/[shiftboardId]/account/VolunteerShiftsDialogRemove";
+import { ScheduleCalendar } from "@/app/volunteers/[shiftboardId]/schedule/ScheduleCalendar";
 import { ErrorAlert } from "@/components/general/ErrorAlert";
 import { Loading } from "@/components/general/Loading";
 import { Hero } from "@/components/layout/Hero";
@@ -210,6 +214,26 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
   const [availability, setAvailability] = useState<string[]>([]); // "open" | "full"
   const [myShiftsOnly, setMyShiftsOnly] = useState(false);
 
+  // Agenda | Calendar (#742). Remembered per browser; restored after mount.
+  const [view, setView] = useState<"agenda" | "calendar">("agenda");
+  useEffect(() => {
+    try {
+      if (localStorage.getItem("scheduleView") === "calendar")
+        setView("calendar");
+    } catch {
+      /* storage disabled */
+    }
+  }, []);
+  const chooseView = (next: "agenda" | "calendar") => {
+    setView(next);
+    try {
+      localStorage.setItem("scheduleView", next);
+    } catch {
+      /* storage disabled */
+    }
+  };
+  const calendarView = isSignedIn && view === "calendar";
+
   // "mine" card whose Remove button was clicked; null = dialog closed.
   const [removeDialogItem, setRemoveDialogItem] = useState<IAgendaItem | null>(
     null
@@ -238,8 +262,10 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
         if (Array.isArray(saved.timeline)) setTimeline(saved.timeline);
         if (Array.isArray(saved.types)) setTypes(saved.types);
         if (Array.isArray(saved.dates)) setDates(saved.dates);
-        if (Array.isArray(saved.availability)) setAvailability(saved.availability);
-        if (typeof saved.myShiftsOnly === "boolean") setMyShiftsOnly(saved.myShiftsOnly);
+        if (Array.isArray(saved.availability))
+          setAvailability(saved.availability);
+        if (typeof saved.myShiftsOnly === "boolean")
+          setMyShiftsOnly(saved.myShiftsOnly);
       }
     } catch {
       /* ignore malformed / storage disabled */
@@ -640,307 +666,348 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
     <>
       {hero}
       <Container maxWidth="md" component="main">
-        {/* funnel toggle (single title lives in the Hero, #470 item 5) */}
-        <Stack direction="row" justifyContent="flex-end" sx={{ mt: 1, mb: 1 }}>
-          <IconButton
-            aria-label="Filter"
-            onClick={() => setShowFilters((v) => !v)}
-            color={showFilters ? "primary" : "default"}
-          >
-            <FilterListIcon />
-          </IconButton>
-        </Stack>
-
-        {/* filter panel (#470) — bounded, full-width so it fits mobile with a
-            header row (Filters + remove-all + close) matching /shifts */}
-        <Collapse in={showFilters}>
-          <Box
-            sx={{
-              mb: 2,
-              p: 2,
-              border: `1px solid ${theme.palette.divider}`,
-              borderRadius: 1,
-            }}
-          >
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="space-between"
-              sx={{ mb: 2 }}
-            >
-              <Typography sx={{ fontWeight: 800 }}>Filters</Typography>
-              <Stack direction="row" alignItems="center" spacing={0.5}>
-                <Button size="small" onClick={removeAllFilters}>
-                  Reset all filters
-                </Button>
-                <IconButton
-                  aria-label="Close filters"
-                  size="small"
-                  onClick={() => setShowFilters(false)}
-                >
-                  <CloseIcon fontSize="small" />
-                </IconButton>
-              </Stack>
-            </Stack>
-
-            <Stack spacing={2}>
-              <FormControl size="small" fullWidth>
-                <InputLabel id="timeline-label" shrink>
-                  Timeline
-                </InputLabel>
-                <Select
-                  labelId="timeline-label"
-                  label="Timeline"
-                  multiple
-                  displayEmpty
-                  value={timeline}
-                  MenuProps={menuProps}
-                  onChange={(e) =>
-                    onMultiChange(
-                      e.target.value,
-                      timeline,
-                      ["future", "past"],
-                      setTimeline
-                    )
-                  }
-                  renderValue={(selected) =>
-                    selected.length === 0
-                      ? "All"
-                      : selected
-                          .map((v) =>
-                            v === "past" ? "Past" : "Present / Future"
-                          )
-                          .join(", ")
-                  }
-                >
-                  <MenuItem value={SELECT_ALL}>Select all</MenuItem>
-                  <MenuItem value="future">Present / Future</MenuItem>
-                  <MenuItem value="past">Past</MenuItem>
-                </Select>
-              </FormControl>
-
-              <FormControl size="small" fullWidth>
-                <InputLabel id="type-label" shrink>
-                  Type
-                </InputLabel>
-                <Select
-                  labelId="type-label"
-                  label="Type"
-                  multiple
-                  displayEmpty
-                  value={types}
-                  MenuProps={menuProps}
-                  onChange={(e) =>
-                    onMultiChange(e.target.value, types, typeOptions, setTypes)
-                  }
-                  renderValue={(selected) =>
-                    selected.length === 0 ? "All" : selected.join(", ")
-                  }
-                >
-                  <MenuItem value={SELECT_ALL}>Select all</MenuItem>
-                  {typeOptions.map((t) => (
-                    <MenuItem key={t} value={t}>
-                      {t}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <FormControl size="small" fullWidth>
-                <InputLabel id="date-label" shrink>
-                  Date
-                </InputLabel>
-                <Select
-                  labelId="date-label"
-                  label="Date"
-                  multiple
-                  displayEmpty
-                  value={dates}
-                  MenuProps={menuProps}
-                  onChange={(e) =>
-                    onMultiChange(
-                      e.target.value,
-                      dates,
-                      dateOptions.map((d) => d.dateName),
-                      setDates
-                    )
-                  }
-                  renderValue={(selected) =>
-                    selected.length === 0 ? "All" : selected.join(", ")
-                  }
-                >
-                  <MenuItem value={SELECT_ALL}>Select all</MenuItem>
-                  {dateOptions.map((d) => (
-                    <MenuItem key={d.dateName} value={d.dateName}>
-                      {d.dateName}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <FormControl size="small" fullWidth>
-                <InputLabel id="availability-label" shrink>
-                  Availability
-                </InputLabel>
-                <Select
-                  labelId="availability-label"
-                  label="Availability"
-                  multiple
-                  displayEmpty
-                  value={availability}
-                  MenuProps={menuProps}
-                  onChange={(e) =>
-                    onMultiChange(
-                      e.target.value,
-                      availability,
-                      ["open", "full"],
-                      setAvailability
-                    )
-                  }
-                  renderValue={(selected) =>
-                    selected.length === 0
-                      ? "All"
-                      : selected
-                          .map((v) => (v === "open" ? "Open" : "Full"))
-                          .join(", ")
-                  }
-                >
-                  <MenuItem value={SELECT_ALL}>Select all</MenuItem>
-                  <MenuItem value="open">Open</MenuItem>
-                  <MenuItem value="full">Full</MenuItem>
-                </Select>
-              </FormControl>
-
-              {isSignedIn && (
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={myShiftsOnly}
-                      onChange={(e) => setMyShiftsOnly(e.target.checked)}
-                    />
-                  }
-                  label="My Shifts"
-                />
-              )}
-            </Stack>
-          </Box>
-        </Collapse>
-
-        {/* active-filter chips (each ✕ removes just that value) */}
+        {/* view toggle (#742) + funnel toggle (single title lives in the
+            Hero, #470 item 5) */}
         <Stack
           direction="row"
+          justifyContent="flex-end"
+          alignItems="center"
           spacing={1}
-          flexWrap="wrap"
-          useFlexGap
-          sx={{ mb: 2 }}
-        >
-          {timeline.map((t) => (
-            <Chip
-              key={`chip-timeline-${t}`}
-              label={t === "past" ? "Past" : "Present / Future"}
-              size="small"
-              onDelete={() => setTimeline(timeline.filter((x) => x !== t))}
-            />
-          ))}
-          {types.map((t) => (
-            <Chip
-              key={`chip-type-${t}`}
-              label={t}
-              size="small"
-              onDelete={() => setTypes(types.filter((x) => x !== t))}
-            />
-          ))}
-          {dates.map((d) => (
-            <Chip
-              key={`chip-date-${d}`}
-              label={d}
-              size="small"
-              onDelete={() => setDates(dates.filter((x) => x !== d))}
-            />
-          ))}
-          {availability.map((a) => (
-            <Chip
-              key={`chip-availability-${a}`}
-              label={a === "open" ? "Open" : "Full"}
-              size="small"
-              onDelete={() =>
-                setAvailability(availability.filter((x) => x !== a))
-              }
-            />
-          ))}
-        </Stack>
-
-        {/* legend */}
-        <Stack
-          direction="row"
-          spacing={2}
-          sx={{ mb: 3 }}
-          flexWrap="wrap"
-          useFlexGap
+          sx={{ mt: 1, mb: 1 }}
         >
           {isSignedIn && (
-            <Typography color="text.secondary" variant="body2">
-              {swatch(theme.palette.success.main)}You&apos;re signed up
-            </Typography>
+            <ToggleButtonGroup
+              exclusive
+              size="small"
+              value={view}
+              onChange={(_, v) => v && chooseView(v)}
+              aria-label="Schedule view"
+            >
+              <ToggleButton value="agenda">
+                <ViewAgendaIcon fontSize="small" sx={{ mr: 0.5 }} />
+                Agenda
+              </ToggleButton>
+              <ToggleButton value="calendar">
+                <CalendarMonthIcon fontSize="small" sx={{ mr: 0.5 }} />
+                Calendar
+              </ToggleButton>
+            </ToggleButtonGroup>
           )}
-          <Typography color="text.secondary" variant="body2">
-            {/* For signed-in volunteers this swatch only marks shifts they can
+          {!calendarView && (
+            <IconButton
+              aria-label="Filter"
+              onClick={() => setShowFilters((v) => !v)}
+              color={showFilters ? "primary" : "default"}
+            >
+              <FilterListIcon />
+            </IconButton>
+          )}
+        </Stack>
+
+        {calendarView ? (
+          <ScheduleCalendar shifts={items.filter((i) => i.state === "mine")} />
+        ) : (
+          <>
+            {/* filter panel (#470) — bounded, full-width so it fits mobile with a
+            header row (Filters + remove-all + close) matching /shifts */}
+            <Collapse in={showFilters}>
+              <Box
+                sx={{
+                  mb: 2,
+                  p: 2,
+                  border: `1px solid ${theme.palette.divider}`,
+                  borderRadius: 1,
+                }}
+              >
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  sx={{ mb: 2 }}
+                >
+                  <Typography sx={{ fontWeight: 800 }}>Filters</Typography>
+                  <Stack direction="row" alignItems="center" spacing={0.5}>
+                    <Button size="small" onClick={removeAllFilters}>
+                      Reset all filters
+                    </Button>
+                    <IconButton
+                      aria-label="Close filters"
+                      size="small"
+                      onClick={() => setShowFilters(false)}
+                    >
+                      <CloseIcon fontSize="small" />
+                    </IconButton>
+                  </Stack>
+                </Stack>
+
+                <Stack spacing={2}>
+                  <FormControl size="small" fullWidth>
+                    <InputLabel id="timeline-label" shrink>
+                      Timeline
+                    </InputLabel>
+                    <Select
+                      labelId="timeline-label"
+                      label="Timeline"
+                      multiple
+                      displayEmpty
+                      value={timeline}
+                      MenuProps={menuProps}
+                      onChange={(e) =>
+                        onMultiChange(
+                          e.target.value,
+                          timeline,
+                          ["future", "past"],
+                          setTimeline
+                        )
+                      }
+                      renderValue={(selected) =>
+                        selected.length === 0
+                          ? "All"
+                          : selected
+                              .map((v) =>
+                                v === "past" ? "Past" : "Present / Future"
+                              )
+                              .join(", ")
+                      }
+                    >
+                      <MenuItem value={SELECT_ALL}>Select all</MenuItem>
+                      <MenuItem value="future">Present / Future</MenuItem>
+                      <MenuItem value="past">Past</MenuItem>
+                    </Select>
+                  </FormControl>
+
+                  <FormControl size="small" fullWidth>
+                    <InputLabel id="type-label" shrink>
+                      Type
+                    </InputLabel>
+                    <Select
+                      labelId="type-label"
+                      label="Type"
+                      multiple
+                      displayEmpty
+                      value={types}
+                      MenuProps={menuProps}
+                      onChange={(e) =>
+                        onMultiChange(
+                          e.target.value,
+                          types,
+                          typeOptions,
+                          setTypes
+                        )
+                      }
+                      renderValue={(selected) =>
+                        selected.length === 0 ? "All" : selected.join(", ")
+                      }
+                    >
+                      <MenuItem value={SELECT_ALL}>Select all</MenuItem>
+                      {typeOptions.map((t) => (
+                        <MenuItem key={t} value={t}>
+                          {t}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                  <FormControl size="small" fullWidth>
+                    <InputLabel id="date-label" shrink>
+                      Date
+                    </InputLabel>
+                    <Select
+                      labelId="date-label"
+                      label="Date"
+                      multiple
+                      displayEmpty
+                      value={dates}
+                      MenuProps={menuProps}
+                      onChange={(e) =>
+                        onMultiChange(
+                          e.target.value,
+                          dates,
+                          dateOptions.map((d) => d.dateName),
+                          setDates
+                        )
+                      }
+                      renderValue={(selected) =>
+                        selected.length === 0 ? "All" : selected.join(", ")
+                      }
+                    >
+                      <MenuItem value={SELECT_ALL}>Select all</MenuItem>
+                      {dateOptions.map((d) => (
+                        <MenuItem key={d.dateName} value={d.dateName}>
+                          {d.dateName}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                  <FormControl size="small" fullWidth>
+                    <InputLabel id="availability-label" shrink>
+                      Availability
+                    </InputLabel>
+                    <Select
+                      labelId="availability-label"
+                      label="Availability"
+                      multiple
+                      displayEmpty
+                      value={availability}
+                      MenuProps={menuProps}
+                      onChange={(e) =>
+                        onMultiChange(
+                          e.target.value,
+                          availability,
+                          ["open", "full"],
+                          setAvailability
+                        )
+                      }
+                      renderValue={(selected) =>
+                        selected.length === 0
+                          ? "All"
+                          : selected
+                              .map((v) => (v === "open" ? "Open" : "Full"))
+                              .join(", ")
+                      }
+                    >
+                      <MenuItem value={SELECT_ALL}>Select all</MenuItem>
+                      <MenuItem value="open">Open</MenuItem>
+                      <MenuItem value="full">Full</MenuItem>
+                    </Select>
+                  </FormControl>
+
+                  {isSignedIn && (
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={myShiftsOnly}
+                          onChange={(e) => setMyShiftsOnly(e.target.checked)}
+                        />
+                      }
+                      label="My Shifts"
+                    />
+                  )}
+                </Stack>
+              </Box>
+            </Collapse>
+
+            {/* active-filter chips (each ✕ removes just that value) */}
+            <Stack
+              direction="row"
+              spacing={1}
+              flexWrap="wrap"
+              useFlexGap
+              sx={{ mb: 2 }}
+            >
+              {timeline.map((t) => (
+                <Chip
+                  key={`chip-timeline-${t}`}
+                  label={t === "past" ? "Past" : "Present / Future"}
+                  size="small"
+                  onDelete={() => setTimeline(timeline.filter((x) => x !== t))}
+                />
+              ))}
+              {types.map((t) => (
+                <Chip
+                  key={`chip-type-${t}`}
+                  label={t}
+                  size="small"
+                  onDelete={() => setTypes(types.filter((x) => x !== t))}
+                />
+              ))}
+              {dates.map((d) => (
+                <Chip
+                  key={`chip-date-${d}`}
+                  label={d}
+                  size="small"
+                  onDelete={() => setDates(dates.filter((x) => x !== d))}
+                />
+              ))}
+              {availability.map((a) => (
+                <Chip
+                  key={`chip-availability-${a}`}
+                  label={a === "open" ? "Open" : "Full"}
+                  size="small"
+                  onDelete={() =>
+                    setAvailability(availability.filter((x) => x !== a))
+                  }
+                />
+              ))}
+            </Stack>
+
+            {/* legend */}
+            <Stack
+              direction="row"
+              spacing={2}
+              sx={{ mb: 3 }}
+              flexWrap="wrap"
+              useFlexGap
+            >
+              {isSignedIn && (
+                <Typography color="text.secondary" variant="body2">
+                  {swatch(theme.palette.success.main)}You&apos;re signed up
+                </Typography>
+              )}
+              <Typography color="text.secondary" variant="body2">
+                {/* For signed-in volunteers this swatch only marks shifts they can
                 actually take — role-ineligible ones render as Unavailable (the
                 eligibility check runs only when signed in). Unauthenticated
                 viewers (e.g. on-playa walk-ups) have no eligibility computed, so
                 role-gated shifts also show here; for them label the state
                 ("Open") instead of "You can sign up", which would overpromise.
                 (Chipper) */}
-            {swatch(theme.palette.secondary.main)}
-            {isSignedIn ? "You can sign up" : "Open"}
-          </Typography>
-          <Typography color="text.secondary" variant="body2">
-            {swatch(theme.palette.divider)}Unavailable
-          </Typography>
-        </Stack>
+                {swatch(theme.palette.secondary.main)}
+                {isSignedIn ? "You can sign up" : "Open"}
+              </Typography>
+              <Typography color="text.secondary" variant="body2">
+                {swatch(theme.palette.divider)}Unavailable
+              </Typography>
+            </Stack>
 
-        {/* Main list: ALL shifts (open + your assigned), mixed by date */}
-        {mainDays.length === 0 ? (
-          <Card sx={{ mb: 4 }}>
-            <CardContent>
-              <Typography>No shifts match your filters.</Typography>
-            </CardContent>
-          </Card>
-        ) : (
-          <Box sx={{ mb: 4 }}>{mainDays.map(renderDay)}</Box>
-        )}
-
-        {/* My Shifts — your complete schedule, shown when a filter is active so
-            filtering can't hide your commitments. Suppressed when the My Shifts
-            toggle already restricts the main list to yours (redundant). */}
-        {isSignedIn && !myShiftsOnly && mineCount > 0 && dateFilterActive && (
-          <>
-            <Typography
-              component="h3"
-              variant="h6"
-              sx={{ fontWeight: 800, mb: 1 }}
-            >
-              My Shifts
-            </Typography>
-            {mineDays.length === 0 ? (
-              <Card>
+            {/* Main list: ALL shifts (open + your assigned), mixed by date */}
+            {mainDays.length === 0 ? (
+              <Card sx={{ mb: 4 }}>
                 <CardContent>
-                  <Typography sx={{ mb: 2 }}>
-                    You have no shifts in this time range.
-                  </Typography>
-                  <Button
-                    component={Link}
-                    href="/shifts"
-                    startIcon={<CalendarMonthIcon />}
-                    variant="contained"
-                  >
-                    Browse and sign up for shifts
-                  </Button>
+                  <Typography>No shifts match your filters.</Typography>
                 </CardContent>
               </Card>
             ) : (
-              mineDays.map(renderDay)
+              <Box sx={{ mb: 4 }}>{mainDays.map(renderDay)}</Box>
             )}
+
+            {/* My Shifts — your complete schedule, shown when a filter is active so
+            filtering can't hide your commitments. Suppressed when the My Shifts
+            toggle already restricts the main list to yours (redundant). */}
+            {isSignedIn &&
+              !myShiftsOnly &&
+              mineCount > 0 &&
+              dateFilterActive && (
+                <>
+                  <Typography
+                    component="h3"
+                    variant="h6"
+                    sx={{ fontWeight: 800, mb: 1 }}
+                  >
+                    My Shifts
+                  </Typography>
+                  {mineDays.length === 0 ? (
+                    <Card>
+                      <CardContent>
+                        <Typography sx={{ mb: 2 }}>
+                          You have no shifts in this time range.
+                        </Typography>
+                        <Button
+                          component={Link}
+                          href="/shifts"
+                          startIcon={<CalendarMonthIcon />}
+                          variant="contained"
+                        >
+                          Browse and sign up for shifts
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ) : (
+                    mineDays.map(renderDay)
+                  )}
+                </>
+              )}
           </>
         )}
 
