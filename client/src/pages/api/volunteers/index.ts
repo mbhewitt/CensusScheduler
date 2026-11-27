@@ -29,7 +29,8 @@ const volunteers = async (
           v.playa_name,
           v.shiftboard_id,
           v.world_name,
-          vs.noshow
+          vs.noshow,
+          stp.sap_points
         FROM op_volunteers AS v
         LEFT JOIN op_volunteer_shifts AS vs
         ON vs.shiftboard_id=v.shiftboard_id
@@ -37,6 +38,10 @@ const volunteers = async (
         -- Attended/Absent/Remaining counts (kept in the ON clause to
         -- preserve the LEFT JOIN for volunteers with no shifts).
         AND vs.remove_shift=false
+        -- CSP: same rule as the volunteer info page (every kept signup)
+        LEFT JOIN op_shift_time_position AS stp
+        ON stp.time_position_id=vs.time_position_id
+        AND stp.remove_time_position=false
         ORDER BY
           v.playa_name COLLATE utf8mb4_general_ci,
           v.world_name COLLATE utf8mb4_general_ci`
@@ -44,7 +49,14 @@ const volunteers = async (
       const resVolunteerList: IResVolunteerShiftCountItem[] = [];
 
       dbVolunteerList.forEach(
-        ({ noshow, notes, playa_name, shiftboard_id, world_name }) => {
+        ({
+          noshow,
+          notes,
+          playa_name,
+          sap_points,
+          shiftboard_id,
+          world_name,
+        }) => {
           const resVolunteerLast = resVolunteerList.at(-1);
 
           // if volunteer in last row is same as this row
@@ -53,6 +65,7 @@ const volunteers = async (
             resVolunteerLast &&
             resVolunteerLast.shiftboardId === shiftboard_id
           ) {
+            resVolunteerLast.csp += Number(sap_points ?? 0);
             switch (noshow) {
               case "":
                 resVolunteerLast.attendedCount += 1;
@@ -69,6 +82,7 @@ const volunteers = async (
           } else {
             const resVolunteerNew = {
               attendedCount: 0,
+              csp: Number(sap_points ?? 0),
               isNotes: Boolean(notes),
               noShowCount: 0,
               playaName: playa_name,
