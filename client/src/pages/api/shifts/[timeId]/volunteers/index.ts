@@ -17,6 +17,7 @@ import {
   UPDATE_TYPE_CHECK_IN,
 } from "@/constants";
 import { extractActingAsToken } from "@/lib/actingAs";
+import { isAdmin } from "@/lib/authz";
 import { isProvisionedDevice } from "@/lib/device";
 import { isOnPlayaRequest } from "@/lib/onPlaya";
 import { readSessionFromRequest } from "@/lib/session";
@@ -50,6 +51,10 @@ const shiftVolunteers = async (
     case "GET": {
       // get all shift volunteers
       const { timeId } = req.query;
+      // Behavioral Standards status is admin-only (#632): everyone else gets
+      // bsSigned=true, which the roster renders as nothing.
+      const sessionGet = await readSessionFromRequest(req);
+      const showBs = sessionGet ? await isAdmin(sessionGet.shiftboardId) : false;
       // Include canceled shifts in the detail response — the page
       // shows them with a banner and disables Add, but volunteers
       // still need to reach the page so they can self-remove and
@@ -195,7 +200,7 @@ const shiftVolunteers = async (
           world_name,
         }) => {
           const resShiftVolunteerItem: IResShiftVolunteerRowItem = {
-            bsSigned: Boolean(bs_signed),
+            bsSigned: !showBs || Boolean(bs_signed),
             critical: Boolean(critical),
             isCheckedIn: noshow,
             notes: notes ?? "",
