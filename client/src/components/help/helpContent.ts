@@ -428,11 +428,11 @@ export const helpSettings: IHelpPage = {
         },
         {
           name: "Emails that stop when it is unchecked",
-          text: 'Shift emails and calendar invites: when you are assigned to a shift, when you drop or are removed from a shift, when a shift is canceled, and when a canceled shift comes back. Also the "email me this link" messages that the Census Lab tablets send when you ask them to. Emails that would have been sent while you are unsubscribed are skipped, not saved, so you will not get them later.',
+          text: "Shift emails and calendar invites: when you are assigned to a shift, when you drop or are removed from a shift, when a shift is canceled, and when a canceled shift comes back. Emails that would have been sent while you are unsubscribed are skipped, not saved, so you will not get them later.",
         },
         {
           name: "Emails that still arrive",
-          text: "Your Setup Access Pass, if Census emails it to you, is always sent because it is something you need for entry. Messages that the volunteer coordinators or other people send you directly, and Census mailing lists you joined separately, are not controlled by this checkbox.",
+          text: 'Your Setup Access Pass, if Census emails it to you, is always sent because it is something you need for entry. So is an "email me this link" message from a Census Lab tablet, because you asked for it. Messages that the volunteer coordinators or other people send you directly, and Census mailing lists you joined separately, are not controlled by this checkbox.',
         },
         {
           name: "Unsubscribe link in emails",

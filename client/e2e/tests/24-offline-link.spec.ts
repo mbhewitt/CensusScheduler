@@ -36,6 +36,8 @@ test.describe("Offline link (email this to me)", () => {
     // On-playa mode force-redirects volunteers who haven't signed behavioral
     // standards to the BS page, which would hide the /info GetInvolved links.
     await assignRole(volunteer.shiftboardId, ROLE_BEHAVIORAL_STANDARDS_ID);
+    // Unsubscribed on purpose: a link they asked for still sends (2026-11-27).
+    await assignRole(volunteer.shiftboardId, 2000020); // EmailUnsubscribed
   });
 
   test.afterAll(async () => {

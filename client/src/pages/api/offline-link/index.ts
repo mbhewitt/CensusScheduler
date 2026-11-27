@@ -57,7 +57,8 @@ const offlineLink = async (
 
   const { id } = await enqueueEmail({
     to: email,
-    recipientShiftboardId: session.shiftboardId,
+    // no recipientShiftboardId: the volunteer asked for this one email, so it
+    // sends even when they've unsubscribed (Chipper 2026-11-27)
     subject: `Census: ${linkLabel}`,
     bodyText:
       `You asked the Census Lab tablet to send you this link:\n\n` +
