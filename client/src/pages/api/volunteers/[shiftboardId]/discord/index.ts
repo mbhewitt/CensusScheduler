@@ -6,9 +6,10 @@ import { isAdmin } from "@/lib/authz";
 import { withAuth } from "@/lib/withAuth";
 
 // PUT /api/volunteers/[shiftboardId]/discord  {discordUserId: string | null}
-// Sets or clears a volunteer's Discord link (C-863 A7). Admin only for now:
-// the pumpkin registration card calls this as the owner. A self-service
-// "Connect Discord" (verified via Discord OAuth) writes this same column.
+// Sets or clears a volunteer's Discord link (C-863 A7). Setting is admin only
+// (the pumpkin registration card calls this as the owner); a volunteer may
+// clear their own ("Disconnect" on the volunteer info page). Self-service linking goes
+// through Discord OAuth (/api/auth/discord), which writes this same column.
 // ponytail: no history yet; the #620 change log records link changes when it lands.
 const volunteerDiscord = async (
   req: NextApiRequest,
@@ -26,15 +27,17 @@ const volunteerDiscord = async (
       .status(400)
       .json({ statusCode: 400, message: "Bad shiftboardId" });
   }
-  if (!(await isAdmin(session.shiftboardId))) {
-    return res.status(403).json({ statusCode: 403, message: "Forbidden" });
-  }
 
   let discordUserId: unknown;
   try {
     ({ discordUserId } = JSON.parse(req.body));
   } catch {
     return res.status(400).json({ statusCode: 400, message: "Bad body" });
+  }
+  const isSelfUnlink =
+    discordUserId === null && session.shiftboardId === shiftboardId;
+  if (!isSelfUnlink && !(await isAdmin(session.shiftboardId))) {
+    return res.status(403).json({ statusCode: 403, message: "Forbidden" });
   }
   if (
     discordUserId !== null &&

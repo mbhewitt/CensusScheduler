@@ -5,6 +5,8 @@ import {
   CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon,
   Download as DownloadIcon,
   ExpandMore as ExpandMoreIcon,
+  Link as LinkIcon,
+  LinkOff as LinkOffIcon,
   LockReset as LockResetIcon,
   OpenInNew as OpenInNewIcon,
   RateReview as RateReviewIcon,
@@ -62,10 +64,7 @@ import type {
   IResVolunteerAccount,
   IResVolunteerRoleItem,
 } from "@/components/types/volunteers";
-import {
-  ROLE_ADMIN_ID,
-  ROLE_SUPER_ADMIN_ID,
-} from "@/constants";
+import { ROLE_ADMIN_ID, ROLE_SUPER_ADMIN_ID } from "@/constants";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
 import { checkIsAdmin } from "@/utils/checkIsRoleExist";
@@ -145,10 +144,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   } = useContext(DeveloperModeContext);
   const {
     sessionState: {
-      user: {
-        roleList: roleListSession,
-        shiftboardId: shiftboardIdSession,
-      },
+      user: { roleList: roleListSession, shiftboardId: shiftboardIdSession },
     },
   } = useContext(SessionContext);
 
@@ -210,10 +206,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     mutate: any;
   } = useSWR(`/api/volunteers/${shiftboardId}/account`, fetcherGet);
   const { isMutating: isAccountMutating, trigger: triggerAccount } =
-    useSWRMutation(
-      `/api/volunteers/${shiftboardId}/account`,
-      fetcherTrigger
-    );
+    useSWRMutation(`/api/volunteers/${shiftboardId}/account`, fetcherTrigger);
 
   // all roles (for admin role toggle)
   const {
@@ -237,9 +230,45 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
       reset({ notes: accountData.notes ?? "" });
     }
   }, [accountData, reset]);
+  // result of "Connect Discord" (?discord= set by /api/auth/discord/callback)
+  useEffect(() => {
+    const result = new URLSearchParams(window.location.search).get("discord");
+    if (!result) return;
+    const [text, variant] =
+      result === "linked"
+        ? ["Discord account connected", "success"]
+        : result === "taken"
+          ? [
+              "That Discord account is already connected to another Census account",
+              "error",
+            ]
+          : [
+              "Discord account could not be connected. Please try again.",
+              "error",
+            ];
+    enqueueSnackbar(<SnackbarText>{text}</SnackbarText>, {
+      variant: variant as "success" | "error",
+    });
+    window.history.replaceState(null, "", window.location.pathname);
+  }, [enqueueSnackbar]);
 
   // handlers
   // ------------------------------------------------------------
+  const handleDiscordDisconnect = async () => {
+    const res = await fetch(`/api/volunteers/${shiftboardId}/discord`, {
+      method: "PUT",
+      body: JSON.stringify({ discordUserId: null }),
+    });
+    enqueueSnackbar(
+      <SnackbarText>
+        {res.ok
+          ? "Discord account disconnected"
+          : "Discord account could not be disconnected"}
+      </SnackbarText>,
+      { variant: res.ok ? "success" : "error" }
+    );
+    mutateAccount();
+  };
   const handleArrivalDateChange = useCallback(
     async (dateId: number | string) => {
       try {
@@ -423,7 +452,9 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   );
 
   // notes form submission
-  const onNotesSubmit: SubmitHandler<{ notes: string }> = async (formValues) => {
+  const onNotesSubmit: SubmitHandler<{ notes: string }> = async (
+    formValues
+  ) => {
     try {
       await triggerAccount({
         body: { ...accountData, notes: formValues.notes },
@@ -618,8 +649,8 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     content: (
       <Box>
         <Typography sx={{ mb: 1 }}>
-          All volunteers must review and agree to the Census Behavioral Standards
-          before participating.
+          All volunteers must review and agree to the Census Behavioral
+          Standards before participating.
         </Typography>
         <Link
           href={`/roles/behavioral-standards/${shiftboardId}`}
@@ -721,9 +752,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                     fontSize="small"
                   />
                 )}
-                <Typography variant="body2">
-                  Shift on {day.label}
-                </Typography>
+                <Typography variant="body2">Shift on {day.label}</Typography>
                 <Typography color="text.secondary" variant="body2">
                   {day.fulfilled ? "Fulfilled" : "Still needed"}
                 </Typography>
@@ -769,7 +798,10 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
       });
       continue;
     }
-    const pct = Math.min(100, Math.round((rt.currentCsp / rt.requiredCsp) * 100));
+    const pct = Math.min(
+      100,
+      Math.round((rt.currentCsp / rt.requiredCsp) * 100)
+    );
     checklistItems.push({
       id: `role-${rt.role}`,
       label: rt.fulfilled
@@ -872,9 +904,15 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
               {(() => {
                 // On-playa the Hive URL can't load, so point at the bundled
                 // copy of the course instead. Off-playa nothing changes.
-                const href = trainingMaterialHref(t.code, t.url || null, isOnPlaya);
+                const href = trainingMaterialHref(
+                  t.code,
+                  t.url || null,
+                  isOnPlaya
+                );
                 if (!href) {
-                  return <Typography variant="body2">{t.trainingName}</Typography>;
+                  return (
+                    <Typography variant="body2">{t.trainingName}</Typography>
+                  );
                 }
                 const isLocal = href.startsWith("/");
                 return (
@@ -882,7 +920,9 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                     component={isLocal ? Link : "a"}
                     href={href}
                     variant="body2"
-                    {...(isLocal ? {} : { rel: "noopener noreferrer", target: "_blank" })}
+                    {...(isLocal
+                      ? {}
+                      : { rel: "noopener noreferrer", target: "_blank" })}
                     sx={{
                       color: theme.palette.secondary.main,
                       fontWeight: 500,
@@ -893,10 +933,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                   </Typography>
                 );
               })()}
-              <Typography
-                color="text.secondary"
-                variant="body2"
-              >
+              <Typography color="text.secondary" variant="body2">
                 {t.completed ? "Completed" : "Not yet completed"}
               </Typography>
             </Stack>
@@ -927,7 +964,11 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
               Review the Census Welcome and Overview course
             </Link>
           ) : (
-            <a href={WELCOME_HIVE_URL} rel="noopener noreferrer" target="_blank">
+            <a
+              href={WELCOME_HIVE_URL}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
               Review the Census community on Hive
             </a>
           )}
@@ -986,6 +1027,52 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     checklistItems.unshift(welcomeItem);
   }
 
+  // Connect Discord (optional): Discord's own sign-in proves the account is
+  // theirs, then pumpkin and other Census Discord helpers can recognize them.
+  // Self connects; self or admin can disconnect. Hidden on playa, where
+  // Discord's sign-in has no internet.
+  if (!isOnPlaya && accountData) {
+    const isDiscordLinked = Boolean(accountData.isDiscordLinked);
+    checklistItems.push({
+      id: "discord",
+      label: isDiscordLinked
+        ? "Discord \u2014 Connected"
+        : "Connect your Discord account (optional)",
+      done: isDiscordLinked,
+      content: isDiscordLinked ? (
+        <Box>
+          <Typography sx={{ mb: 1 }}>
+            Your Discord account is connected.
+          </Typography>
+          <Button
+            onClick={handleDiscordDisconnect}
+            startIcon={<LinkOffIcon />}
+            type="button"
+            variant="outlined"
+          >
+            Disconnect Discord
+          </Button>
+        </Box>
+      ) : (
+        <Box>
+          <Typography sx={{ mb: 1 }}>
+            Already on the Census Discord? Connect your account so Census can
+            recognize you there.
+          </Typography>
+          {isSelfView && (
+            <Button
+              href="/api/auth/discord"
+              startIcon={<LinkIcon />}
+              variant="contained"
+            >
+              Connect Discord
+            </Button>
+          )}
+        </Box>
+      ),
+    });
+  }
+
   const incompleteItems = checklistItems.filter((item) => !item.done);
   const completedItems = checklistItems.filter((item) => item.done);
 
@@ -994,8 +1081,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   // so the global gauge should not appear at all for them — even if they
   // happen to have a role threshold attached.
   const showCspBar =
-    !isStaff &&
-    ((isPreOpen && !hasOtherSap) || roleThresholds.length > 0);
+    !isStaff && ((isPreOpen && !hasOtherSap) || roleThresholds.length > 0);
 
   // render
   // ------------------------------------------------------------
@@ -1035,8 +1121,8 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
               Welcome, {volunteer.playaName}!
             </Typography>
             <Typography color="text.secondary" sx={{ mb: 2 }}>
-              Review your account and complete the checklist items below to
-              get ready for the event.
+              Review your account and complete the checklist items below to get
+              ready for the event.
             </Typography>
             <Stack direction="row" spacing={3}>
               <Box>
@@ -1085,415 +1171,415 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
             the get-involved sidebar, so the sidebar starts at the checklist */}
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, md: 8 }}>
-        {/* checklist */}
-        <Card sx={{ mb: 3 }}>
-          <CardContent>
-            <Typography component="h2" sx={{ mb: 1 }} variant="h5">
-              Census Volunteer Pre-playa Checklist
-            </Typography>
-
-            {/* color/status legend */}
-            <Stack
-              direction="row"
-              spacing={3}
-              sx={{
-                mb: 2,
-                py: 1,
-                px: 2,
-                bgcolor: "rgba(0,0,0,0.02)",
-                borderRadius: 1,
-                fontSize: "0.875rem",
-                color: "text.secondary",
-              }}
-            >
-              <Stack alignItems="center" direction="row" spacing={0.5}>
-                <CheckBoxOutlineBlankIcon
-                  sx={{ color: theme.palette.secondary.main }}
-                  fontSize="small"
-                />
-                <Typography variant="caption">Action needed</Typography>
-              </Stack>
-              <Stack alignItems="center" direction="row" spacing={0.5}>
-                <CheckBoxIcon color="success" fontSize="small" />
-                <Typography variant="caption">Completed</Typography>
-              </Stack>
-            </Stack>
-
-            {/* CSP bar */}
-            {showCspBar && (
-              <Alert severity="info" sx={{ mb: 2 }}>
-                Your current total:{" "}
-                <strong>{sapStatus.totalCsp}</strong> Census Shift Points (CSP)
-                scheduled
-              </Alert>
-            )}
-
-            {/* SAP status — its own box, only once earned or assigned, never
-                buried in the completed-items accordion (per Mew 2026-07-27). */}
-            {sapStatus.earnedSapDate && (
-              <Alert severity="success" sx={{ mb: 2 }}>
-                {sapStatus.sapFile ? (
-                  <Stack spacing={1} alignItems="flex-start">
-                    <span>
-                      Your <strong>Setup Access Pass (SAP)</strong> for{" "}
-                      <strong>{sapDateLabel}</strong> is ready.
-                    </span>
-                    <Button
-                      href={`/api/volunteers/${shiftboardId}/sap/${sapStatus.sapFile.sapId}`}
-                      startIcon={<DownloadIcon />}
-                      variant="contained"
-                      size="small"
-                    >
-                      Download your SAP for {sapDateLabel}
-                    </Button>
-                  </Stack>
-                ) : (
-                  <span>
-                    You have <strong>earned a SAP</strong> for{" "}
-                    <strong>{sapDateLabel}</strong>.
-                  </span>
-                )}
-              </Alert>
-            )}
-
-            {/* incomplete items */}
-            {incompleteItems.length === 0 ? (
-              <Alert severity="success" sx={{ mb: 2 }}>
-                All items complete!
-              </Alert>
-            ) : (
-              incompleteItems.map((item) => (
-                <Accordion
-                  key={item.id}
-                  defaultExpanded
-                  sx={{
-                    "&:before": { display: "none" },
-                    boxShadow: "none",
-                    border: `1px solid ${theme.palette.divider}`,
-                    mb: 1,
-                  }}
-                >
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Stack alignItems="center" direction="row" spacing={1}>
-                      <CheckBoxOutlineBlankIcon
-                        sx={{ color: theme.palette.secondary.main }}
-                        fontSize="small"
-                      />
-                      <Typography>{item.label}</Typography>
-                    </Stack>
-                  </AccordionSummary>
-                  <AccordionDetails>{item.content}</AccordionDetails>
-                </Accordion>
-              ))
-            )}
-
-            {/* completed items toggle */}
-            {completedItems.length > 0 && (
-              <Box sx={{ mt: 1 }}>
-                <Accordion
-                  onChange={() => setShowCompleted(!showCompleted)}
-                  expanded={showCompleted}
-                  sx={{
-                    "&:before": { display: "none" },
-                    boxShadow: "none",
-                    border: `1px solid ${theme.palette.divider}`,
-                    mb: 1,
-                  }}
-                >
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Stack alignItems="center" direction="row" spacing={1}>
-                      <CheckBoxIcon color="success" fontSize="small" />
-                      <Typography>
-                        View {completedItems.length} completed item
-                        {completedItems.length > 1 ? "s" : ""}
-                      </Typography>
-                    </Stack>
-                  </AccordionSummary>
-                  <AccordionDetails sx={{ p: 0 }}>
-                    {completedItems.map((item) => (
-                      <Accordion
-                        key={item.id}
-                        sx={{
-                          "&:before": { display: "none" },
-                          boxShadow: "none",
-                          borderTop: `1px solid ${theme.palette.divider}`,
-                        }}
-                      >
-                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                          <Stack
-                            alignItems="center"
-                            direction="row"
-                            spacing={1}
-                          >
-                            <CheckBoxIcon color="success" fontSize="small" />
-                            <Typography>{item.label}</Typography>
-                          </Stack>
-                        </AccordionSummary>
-                        <AccordionDetails>{item.content}</AccordionDetails>
-                      </Accordion>
-                    ))}
-                  </AccordionDetails>
-                </Accordion>
-              </Box>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* shifts — reuse existing VolunteerShifts component */}
-        <Box component="section" ref={passcodeRef}>
-          <VolunteerShifts shiftboardId={shiftboardId} />
-        </Box>
-
-        {/* security — available to all users */}
-        <Box component="section" sx={{ mt: 3 }}>
-          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
-            Security
-          </Typography>
-          <Card>
-            <CardContent>
-              <Grid container alignItems="center">
-                <Grid size={4}>
-                  <Typography component="h3" variant="h6">
-                    Passcode
-                  </Typography>
-                  <Typography color="text.secondary" variant="body2">
-                    This passcode is for signing in on tablets on-playa
-                    only.
-                  </Typography>
-                </Grid>
-                <Grid size={8}>
-                  <Stack
-                    direction="row"
-                    justifyContent="flex-end"
-                    spacing={1}
-                  >
-                    {/* Reveal is self-only — admins can reset (below) but not
-                        see existing values. */}
-                    {isSelfView && (
-                      <PasscodeReveal shiftboardId={shiftboardId} />
-                    )}
-                    <Button
-                      onClick={() => setIsPasscodeDialogOpen(true)}
-                      startIcon={<LockResetIcon />}
-                      type="button"
-                      variant="contained"
-                    >
-                      Update passcode
-                    </Button>
-                  </Stack>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-        </Box>
-
-        {/* settings — available to all users (email-footer #settings anchor) */}
-        <Box component="section" id="settings" sx={{ mt: 3 }}>
-          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
-            Settings
-          </Typography>
-          <Card>
-            <CardContent>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={!emailUnsubscribed}
-                    onChange={(e) =>
-                      handleEmailUnsubscribedToggle(!e.target.checked)
-                    }
-                  />
-                }
-                label={
-                  <Box>
-                    <Typography component="span" variant="body1">
-                      Receive emails from Census
-                    </Typography>
-                    <Typography
-                      color="text.secondary"
-                      component="div"
-                      variant="body2"
-                    >
-                      Uncheck to stop receiving automated emails (shift
-                      assignments, cancellations, calendar invites). You can
-                      re-subscribe here at any time.
-                    </Typography>
-                  </Box>
-                }
-                sx={{ alignItems: "flex-start", m: 0 }}
-              />
-            </CardContent>
-          </Card>
-        </Box>
-
-        {/* admin sections */}
-        {isAdmin && accountData && (
-          <Box component="section" sx={{ mt: 3 }}>
-            <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
-              Admin
-            </Typography>
-
-            {/* roles */}
-            <Card sx={{ mb: 2 }}>
+            {/* checklist */}
+            <Card sx={{ mb: 3 }}>
               <CardContent>
-                <Typography component="h3" variant="h6" sx={{ mb: 2 }}>
-                  Roles
+                <Typography component="h2" sx={{ mb: 1 }} variant="h5">
+                  Census Volunteer Pre-playa Checklist
                 </Typography>
-                {(() => {
-                  const activeRoleIds = new Set(
-                    accountData.roleList.map(
-                      (r: IResVolunteerRoleItem) => r.id
-                    )
-                  );
-                  const protectedRoleIds = new Set([
-                    ROLE_ADMIN_ID,
-                    ROLE_SUPER_ADMIN_ID,
-                  ]);
-                  const displayRoles = (allRolesData ?? []).filter(
-                    (r: IResRoleRowItem) => r.display
-                  );
-                  const activeRoles = displayRoles.filter(
-                    (r: IResRoleRowItem) => activeRoleIds.has(r.id)
-                  );
-                  const inactiveRoles = displayRoles.filter(
-                    (r: IResRoleRowItem) => !activeRoleIds.has(r.id)
-                  );
 
-                  return (
-                    <>
-                      {/* active roles */}
-                      <List disablePadding>
-                        {activeRoles.map((r: IResRoleRowItem) => {
-                          const isProtected = protectedRoleIds.has(r.id);
-                          return (
-                            <ListItem
-                              disablePadding
-                              key={r.id}
-                              sx={{
-                                cursor: isProtected
-                                  ? "default"
-                                  : "pointer",
-                                py: 0.5,
-                                "&:hover": isProtected
-                                  ? {}
-                                  : {
-                                      backgroundColor:
-                                        theme.palette.action.hover,
-                                    },
-                              }}
-                              onClick={() => {
-                                if (!isProtected) {
-                                  handleRoleToggle(r.id, r.name, true);
-                                }
-                              }}
-                            >
-                              <ListItemIcon sx={{ minWidth: 36 }}>
-                                <VerifiedUserIcon color="secondary" />
-                              </ListItemIcon>
-                              <ListItemText>
-                                {ROLE_DISPLAY_NAMES[r.name] ?? r.name}
-                              </ListItemText>
-                              {isProtected && (
-                                <Typography
-                                  color="text.secondary"
-                                  variant="caption"
-                                >
-                                  protected
-                                </Typography>
-                              )}
-                            </ListItem>
-                          );
-                        })}
-                      </List>
+                {/* color/status legend */}
+                <Stack
+                  direction="row"
+                  spacing={3}
+                  sx={{
+                    mb: 2,
+                    py: 1,
+                    px: 2,
+                    bgcolor: "rgba(0,0,0,0.02)",
+                    borderRadius: 1,
+                    fontSize: "0.875rem",
+                    color: "text.secondary",
+                  }}
+                >
+                  <Stack alignItems="center" direction="row" spacing={0.5}>
+                    <CheckBoxOutlineBlankIcon
+                      sx={{ color: theme.palette.secondary.main }}
+                      fontSize="small"
+                    />
+                    <Typography variant="caption">Action needed</Typography>
+                  </Stack>
+                  <Stack alignItems="center" direction="row" spacing={0.5}>
+                    <CheckBoxIcon color="success" fontSize="small" />
+                    <Typography variant="caption">Completed</Typography>
+                  </Stack>
+                </Stack>
 
-                      {/* inactive roles */}
-                      {inactiveRoles.length > 0 && (
-                        <List disablePadding sx={{ mt: 1 }}>
-                          {inactiveRoles.map((r: IResRoleRowItem) => (
-                            <ListItem
-                              disablePadding
-                              key={r.id}
-                              sx={{
-                                cursor: "pointer",
-                                py: 0.5,
-                                opacity: 0.5,
-                                "&:hover": {
-                                  backgroundColor:
-                                    theme.palette.action.hover,
-                                  opacity: 1,
-                                },
-                              }}
-                              onClick={() =>
-                                handleRoleToggle(r.id, r.name, false)
-                              }
-                            >
-                              <ListItemIcon sx={{ minWidth: 36 }}>
-                                <VerifiedUserIcon color="disabled" />
-                              </ListItemIcon>
-                              <ListItemText>
-                                <Typography color="text.secondary">
-                                  {ROLE_DISPLAY_NAMES[r.name] ?? r.name}
-                                </Typography>
-                              </ListItemText>
-                            </ListItem>
-                          ))}
-                        </List>
-                      )}
-                    </>
-                  );
-                })()}
-              </CardContent>
-            </Card>
+                {/* CSP bar */}
+                {showCspBar && (
+                  <Alert severity="info" sx={{ mb: 2 }}>
+                    Your current total: <strong>{sapStatus.totalCsp}</strong>{" "}
+                    Census Shift Points (CSP) scheduled
+                  </Alert>
+                )}
 
-            {/* notes */}
-            <Card sx={{ mb: 2 }}>
-              <CardContent>
-                <Grid container>
-                  <Grid size={4}>
-                    <Typography component="h3" variant="h6">
-                      Notes
-                    </Typography>
-                  </Grid>
-                  <Grid size={8}>
-                    <form
-                      autoComplete="off"
-                      onSubmit={handleSubmit(onNotesSubmit)}
-                    >
-                      <Controller
-                        control={control}
-                        name="notes"
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            fullWidth
-                            multiline
-                            variant="standard"
-                          />
-                        )}
-                      />
-                      <Stack direction="row" justifyContent="flex-end">
+                {/* SAP status — its own box, only once earned or assigned, never
+                buried in the completed-items accordion (per Mew 2026-07-27). */}
+                {sapStatus.earnedSapDate && (
+                  <Alert severity="success" sx={{ mb: 2 }}>
+                    {sapStatus.sapFile ? (
+                      <Stack spacing={1} alignItems="flex-start">
+                        <span>
+                          Your <strong>Setup Access Pass (SAP)</strong> for{" "}
+                          <strong>{sapDateLabel}</strong> is ready.
+                        </span>
                         <Button
-                          disabled={isAccountMutating}
-                          startIcon={
-                            isAccountMutating ? (
-                              <CircularProgress size="1rem" />
-                            ) : (
-                              <RateReviewIcon />
-                            )
-                          }
-                          sx={{ mt: 2 }}
-                          type="submit"
+                          href={`/api/volunteers/${shiftboardId}/sap/${sapStatus.sapFile.sapId}`}
+                          startIcon={<DownloadIcon />}
                           variant="contained"
+                          size="small"
                         >
-                          Update notes
+                          Download your SAP for {sapDateLabel}
                         </Button>
                       </Stack>
-                    </form>
-                  </Grid>
-                </Grid>
+                    ) : (
+                      <span>
+                        You have <strong>earned a SAP</strong> for{" "}
+                        <strong>{sapDateLabel}</strong>.
+                      </span>
+                    )}
+                  </Alert>
+                )}
+
+                {/* incomplete items */}
+                {incompleteItems.length === 0 ? (
+                  <Alert severity="success" sx={{ mb: 2 }}>
+                    All items complete!
+                  </Alert>
+                ) : (
+                  incompleteItems.map((item) => (
+                    <Accordion
+                      key={item.id}
+                      defaultExpanded
+                      sx={{
+                        "&:before": { display: "none" },
+                        boxShadow: "none",
+                        border: `1px solid ${theme.palette.divider}`,
+                        mb: 1,
+                      }}
+                    >
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Stack alignItems="center" direction="row" spacing={1}>
+                          <CheckBoxOutlineBlankIcon
+                            sx={{ color: theme.palette.secondary.main }}
+                            fontSize="small"
+                          />
+                          <Typography>{item.label}</Typography>
+                        </Stack>
+                      </AccordionSummary>
+                      <AccordionDetails>{item.content}</AccordionDetails>
+                    </Accordion>
+                  ))
+                )}
+
+                {/* completed items toggle */}
+                {completedItems.length > 0 && (
+                  <Box sx={{ mt: 1 }}>
+                    <Accordion
+                      onChange={() => setShowCompleted(!showCompleted)}
+                      expanded={showCompleted}
+                      sx={{
+                        "&:before": { display: "none" },
+                        boxShadow: "none",
+                        border: `1px solid ${theme.palette.divider}`,
+                        mb: 1,
+                      }}
+                    >
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Stack alignItems="center" direction="row" spacing={1}>
+                          <CheckBoxIcon color="success" fontSize="small" />
+                          <Typography>
+                            View {completedItems.length} completed item
+                            {completedItems.length > 1 ? "s" : ""}
+                          </Typography>
+                        </Stack>
+                      </AccordionSummary>
+                      <AccordionDetails sx={{ p: 0 }}>
+                        {completedItems.map((item) => (
+                          <Accordion
+                            key={item.id}
+                            sx={{
+                              "&:before": { display: "none" },
+                              boxShadow: "none",
+                              borderTop: `1px solid ${theme.palette.divider}`,
+                            }}
+                          >
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                              <Stack
+                                alignItems="center"
+                                direction="row"
+                                spacing={1}
+                              >
+                                <CheckBoxIcon
+                                  color="success"
+                                  fontSize="small"
+                                />
+                                <Typography>{item.label}</Typography>
+                              </Stack>
+                            </AccordionSummary>
+                            <AccordionDetails>{item.content}</AccordionDetails>
+                          </Accordion>
+                        ))}
+                      </AccordionDetails>
+                    </Accordion>
+                  </Box>
+                )}
               </CardContent>
             </Card>
-          </Box>
-        )}
+
+            {/* shifts — reuse existing VolunteerShifts component */}
+            <Box component="section" ref={passcodeRef}>
+              <VolunteerShifts shiftboardId={shiftboardId} />
+            </Box>
+
+            {/* security — available to all users */}
+            <Box component="section" sx={{ mt: 3 }}>
+              <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
+                Security
+              </Typography>
+              <Card>
+                <CardContent>
+                  <Grid container alignItems="center">
+                    <Grid size={4}>
+                      <Typography component="h3" variant="h6">
+                        Passcode
+                      </Typography>
+                      <Typography color="text.secondary" variant="body2">
+                        This passcode is for signing in on tablets on-playa
+                        only.
+                      </Typography>
+                    </Grid>
+                    <Grid size={8}>
+                      <Stack
+                        direction="row"
+                        justifyContent="flex-end"
+                        spacing={1}
+                      >
+                        {/* Reveal is self-only — admins can reset (below) but not
+                        see existing values. */}
+                        {isSelfView && (
+                          <PasscodeReveal shiftboardId={shiftboardId} />
+                        )}
+                        <Button
+                          onClick={() => setIsPasscodeDialogOpen(true)}
+                          startIcon={<LockResetIcon />}
+                          type="button"
+                          variant="contained"
+                        >
+                          Update passcode
+                        </Button>
+                      </Stack>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Box>
+
+            {/* settings — available to all users (email-footer #settings anchor) */}
+            <Box component="section" id="settings" sx={{ mt: 3 }}>
+              <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
+                Settings
+              </Typography>
+              <Card>
+                <CardContent>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={!emailUnsubscribed}
+                        onChange={(e) =>
+                          handleEmailUnsubscribedToggle(!e.target.checked)
+                        }
+                      />
+                    }
+                    label={
+                      <Box>
+                        <Typography component="span" variant="body1">
+                          Receive emails from Census
+                        </Typography>
+                        <Typography
+                          color="text.secondary"
+                          component="div"
+                          variant="body2"
+                        >
+                          Uncheck to stop receiving automated emails (shift
+                          assignments, cancellations, calendar invites). You can
+                          re-subscribe here at any time.
+                        </Typography>
+                      </Box>
+                    }
+                    sx={{ alignItems: "flex-start", m: 0 }}
+                  />
+                </CardContent>
+              </Card>
+            </Box>
+
+            {/* admin sections */}
+            {isAdmin && accountData && (
+              <Box component="section" sx={{ mt: 3 }}>
+                <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
+                  Admin
+                </Typography>
+
+                {/* roles */}
+                <Card sx={{ mb: 2 }}>
+                  <CardContent>
+                    <Typography component="h3" variant="h6" sx={{ mb: 2 }}>
+                      Roles
+                    </Typography>
+                    {(() => {
+                      const activeRoleIds = new Set(
+                        accountData.roleList.map(
+                          (r: IResVolunteerRoleItem) => r.id
+                        )
+                      );
+                      const protectedRoleIds = new Set([
+                        ROLE_ADMIN_ID,
+                        ROLE_SUPER_ADMIN_ID,
+                      ]);
+                      const displayRoles = (allRolesData ?? []).filter(
+                        (r: IResRoleRowItem) => r.display
+                      );
+                      const activeRoles = displayRoles.filter(
+                        (r: IResRoleRowItem) => activeRoleIds.has(r.id)
+                      );
+                      const inactiveRoles = displayRoles.filter(
+                        (r: IResRoleRowItem) => !activeRoleIds.has(r.id)
+                      );
+
+                      return (
+                        <>
+                          {/* active roles */}
+                          <List disablePadding>
+                            {activeRoles.map((r: IResRoleRowItem) => {
+                              const isProtected = protectedRoleIds.has(r.id);
+                              return (
+                                <ListItem
+                                  disablePadding
+                                  key={r.id}
+                                  sx={{
+                                    cursor: isProtected ? "default" : "pointer",
+                                    py: 0.5,
+                                    "&:hover": isProtected
+                                      ? {}
+                                      : {
+                                          backgroundColor:
+                                            theme.palette.action.hover,
+                                        },
+                                  }}
+                                  onClick={() => {
+                                    if (!isProtected) {
+                                      handleRoleToggle(r.id, r.name, true);
+                                    }
+                                  }}
+                                >
+                                  <ListItemIcon sx={{ minWidth: 36 }}>
+                                    <VerifiedUserIcon color="secondary" />
+                                  </ListItemIcon>
+                                  <ListItemText>
+                                    {ROLE_DISPLAY_NAMES[r.name] ?? r.name}
+                                  </ListItemText>
+                                  {isProtected && (
+                                    <Typography
+                                      color="text.secondary"
+                                      variant="caption"
+                                    >
+                                      protected
+                                    </Typography>
+                                  )}
+                                </ListItem>
+                              );
+                            })}
+                          </List>
+
+                          {/* inactive roles */}
+                          {inactiveRoles.length > 0 && (
+                            <List disablePadding sx={{ mt: 1 }}>
+                              {inactiveRoles.map((r: IResRoleRowItem) => (
+                                <ListItem
+                                  disablePadding
+                                  key={r.id}
+                                  sx={{
+                                    cursor: "pointer",
+                                    py: 0.5,
+                                    opacity: 0.5,
+                                    "&:hover": {
+                                      backgroundColor:
+                                        theme.palette.action.hover,
+                                      opacity: 1,
+                                    },
+                                  }}
+                                  onClick={() =>
+                                    handleRoleToggle(r.id, r.name, false)
+                                  }
+                                >
+                                  <ListItemIcon sx={{ minWidth: 36 }}>
+                                    <VerifiedUserIcon color="disabled" />
+                                  </ListItemIcon>
+                                  <ListItemText>
+                                    <Typography color="text.secondary">
+                                      {ROLE_DISPLAY_NAMES[r.name] ?? r.name}
+                                    </Typography>
+                                  </ListItemText>
+                                </ListItem>
+                              ))}
+                            </List>
+                          )}
+                        </>
+                      );
+                    })()}
+                  </CardContent>
+                </Card>
+
+                {/* notes */}
+                <Card sx={{ mb: 2 }}>
+                  <CardContent>
+                    <Grid container>
+                      <Grid size={4}>
+                        <Typography component="h3" variant="h6">
+                          Notes
+                        </Typography>
+                      </Grid>
+                      <Grid size={8}>
+                        <form
+                          autoComplete="off"
+                          onSubmit={handleSubmit(onNotesSubmit)}
+                        >
+                          <Controller
+                            control={control}
+                            name="notes"
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                fullWidth
+                                multiline
+                                variant="standard"
+                              />
+                            )}
+                          />
+                          <Stack direction="row" justifyContent="flex-end">
+                            <Button
+                              disabled={isAccountMutating}
+                              startIcon={
+                                isAccountMutating ? (
+                                  <CircularProgress size="1rem" />
+                                ) : (
+                                  <RateReviewIcon />
+                                )
+                              }
+                              sx={{ mt: 2 }}
+                              type="submit"
+                              variant="contained"
+                            >
+                              Update notes
+                            </Button>
+                          </Stack>
+                        </form>
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                </Card>
+              </Box>
+            )}
           </Grid>
           {/* GetInvolved links are dead offline, but OfflineLink turns them
               into "email this to me" actions, so the sidebar now shows
