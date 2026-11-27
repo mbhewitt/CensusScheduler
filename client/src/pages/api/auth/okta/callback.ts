@@ -1,8 +1,8 @@
 import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import { generateNewUserShiftboardId } from "@/lib/newUserId";
 import { buildSessionCookie } from "@/lib/session";
-import { generateId } from "@/utils/generateId";
 import { generatePasscode } from "@/utils/generatePasscode";
 import { pool } from "lib/database";
 
@@ -384,11 +384,8 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // 4. create new volunteer with a generated id
     if (!shiftboardId) {
-      const newId = generateId(`
-        SELECT shiftboard_id
-        FROM op_volunteers
-        WHERE shiftboard_id=?
-      `);
+      // 10M+ range: never a real Shiftboard id (#226).
+      const newId = await generateNewUserShiftboardId();
       // Auto-generate a 4-digit passcode so the volunteer can sign in
       // on-playa via the tablet PIN UI without an admin having to set
       // one for them. The volunteer can see and update it from /info.
