@@ -1027,6 +1027,52 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     checklistItems.unshift(welcomeItem);
   }
 
+  // Connect Discord (optional): Discord's own sign-in proves the account is
+  // theirs, then pumpkin and other Census Discord helpers can recognize them.
+  // Self connects; self or admin can disconnect. Hidden on playa, where
+  // Discord's sign-in has no internet.
+  if (!isOnPlaya && accountData) {
+    const isDiscordLinked = Boolean(accountData.isDiscordLinked);
+    checklistItems.push({
+      id: "discord",
+      label: isDiscordLinked
+        ? "Discord \u2014 Connected"
+        : "Connect your Discord account (optional)",
+      done: isDiscordLinked,
+      content: isDiscordLinked ? (
+        <Box>
+          <Typography sx={{ mb: 1 }}>
+            Your Discord account is connected.
+          </Typography>
+          <Button
+            onClick={handleDiscordDisconnect}
+            startIcon={<LinkOffIcon />}
+            type="button"
+            variant="outlined"
+          >
+            Disconnect Discord
+          </Button>
+        </Box>
+      ) : (
+        <Box>
+          <Typography sx={{ mb: 1 }}>
+            Already on the Census Discord? Connect your account so Census can
+            recognize you there.
+          </Typography>
+          {isSelfView && (
+            <Button
+              href="/api/auth/discord"
+              startIcon={<LinkIcon />}
+              variant="contained"
+            >
+              Connect Discord
+            </Button>
+          )}
+        </Box>
+      ),
+    });
+  }
+
   const incompleteItems = checklistItems.filter((item) => !item.done);
   const completedItems = checklistItems.filter((item) => item.done);
 
@@ -1327,50 +1373,6 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                   </Grid>
                 </CardContent>
               </Card>
-              {/* discord — self connects via Discord OAuth; self or admin can
-                disconnect. pumpkin looks volunteers up by this link. */}
-              {(isSelfView || isAdmin) && accountData && (
-                <Card sx={{ mt: 2 }}>
-                  <CardContent>
-                    <Grid container alignItems="center">
-                      <Grid size={4}>
-                        <Typography component="h3" variant="h6">
-                          Discord
-                        </Typography>
-                        <Typography color="text.secondary" variant="body2">
-                          {accountData.isDiscordLinked
-                            ? "Connected"
-                            : "Not connected"}
-                        </Typography>
-                      </Grid>
-                      <Grid size={8}>
-                        <Stack direction="row" justifyContent="flex-end">
-                          {accountData.isDiscordLinked ? (
-                            <Button
-                              onClick={handleDiscordDisconnect}
-                              startIcon={<LinkOffIcon />}
-                              type="button"
-                              variant="outlined"
-                            >
-                              Disconnect Discord
-                            </Button>
-                          ) : (
-                            isSelfView && (
-                              <Button
-                                href="/api/auth/discord"
-                                startIcon={<LinkIcon />}
-                                variant="contained"
-                              >
-                                Connect Discord
-                              </Button>
-                            )
-                          )}
-                        </Stack>
-                      </Grid>
-                    </Grid>
-                  </CardContent>
-                </Card>
-              )}
             </Box>
 
             {/* settings — available to all users (email-footer #settings anchor) */}
