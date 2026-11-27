@@ -30,10 +30,10 @@ const ROLE_OTHER_SAP_ID = 2000007;
 const DATE_ID_PRE_WED = 8;
 const DATE_ID_MON = 13; // post-opening
 
-// Blank location so the "on-playa plans" checklist item stays INCOMPLETE and
-// therefore expanded by default (plansDone = arrivalDate && location). That
-// keeps the arrival-date / early-entry fields visible without having to open
-// the "completed items" accordion in every UI test.
+// Blank location so the "plans" checklist item stays INCOMPLETE and
+// therefore expanded by default (plansDone needs a location). That keeps its
+// fields visible without having to open the "completed items" accordion in
+// every UI test.
 const vipVolunteer = makeTestVolunteer({
   shiftboardId: IDS.vipVolunteer,
   playaName: "E2E VipVol",
@@ -145,9 +145,28 @@ test.describe("VIP Page", () => {
     ).toBeVisible({ timeout: 20_000 });
   });
 
-  test("VIP page shows on-playa plans (arrival + early entry)", async ({
-    page,
-  }) => {
+  // The e2e build runs on-playa (NEXT_PUBLIC_PIN_ENABLED defaults to "true"),
+  // where the plans item is camping-only (#646). Arrival/early-entry UI exists
+  // only off-playa, so those tests skip on-playa.
+  const isOnPlayaBuild = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
+
+  test("on-playa plans item is camping only", async ({ page }) => {
+    test.skip(!isOnPlayaBuild, "off-playa build shows arrival + early entry");
+    await signInAs(page, vipVolunteer);
+
+    await page.goto(`/volunteers/${vipVolunteer.shiftboardId}/info`);
+
+    await expect(
+      page.getByText(/Tell us about where you will be camping/i).first()
+    ).toBeVisible({ timeout: 10_000 });
+    await expect(
+      page.getByText(/Desired \/ Expected Arrival Date/i)
+    ).toHaveCount(0);
+    await expect(page.getByText(/^Early Entry$/)).toHaveCount(0);
+  });
+
+  test("VIP page shows plans (arrival + early entry)", async ({ page }) => {
+    test.skip(isOnPlayaBuild, "on-playa plans item is camping only (#646)");
     await signInAs(page, vipVolunteer);
 
     await page.goto(`/volunteers/${vipVolunteer.shiftboardId}/info`);
@@ -164,6 +183,7 @@ test.describe("VIP Page", () => {
   // ── Arrival date ─────────────────────────────────────────
 
   test("arrival date dropdown shows selected date", async ({ page }) => {
+    test.skip(isOnPlayaBuild, "arrival UI is off-playa only (#646)");
     await signInAs(page, vipVolunteer);
 
     await page.goto(`/volunteers/${vipVolunteer.shiftboardId}/info`);
@@ -209,6 +229,7 @@ test.describe("VIP Page", () => {
   // ── Early entry question ─────────────────────────────────
 
   test("early entry dropdown defaults to Census", async ({ page }) => {
+    test.skip(isOnPlayaBuild, "early entry UI is off-playa only (#646)");
     await signInAs(page, vipVolunteer);
 
     await page.goto(`/volunteers/${vipVolunteer.shiftboardId}/info`);
@@ -222,6 +243,7 @@ test.describe("VIP Page", () => {
   test("toggling Other SAP updates the early entry dropdown", async ({
     page,
   }) => {
+    test.skip(isOnPlayaBuild, "early entry UI is off-playa only (#646)");
     // Reset OtherSAP state via API first
     await removeRole(vipVolunteer.shiftboardId, ROLE_OTHER_SAP_ID);
 
