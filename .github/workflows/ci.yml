@@ -118,9 +118,11 @@ jobs:
         working-directory: client
         run: yarn install --frozen-lockfile
 
-      # NOTE: lint is intentionally omitted. The `yarn lint` script invokes
-      # `next lint`, which Next.js 16 removed. Repairing the lint pipeline is
-      # out of scope for this PR — see issue #294 follow-ups.
+      # Flat config in client/eslint.config.mjs. Pre-existing violations are
+      # warnings (see the `downgraded` list there); only new errors fail CI.
+      - name: Lint
+        working-directory: client
+        run: yarn lint
 
       - name: Install Playwright browsers (chromium)
         working-directory: client
