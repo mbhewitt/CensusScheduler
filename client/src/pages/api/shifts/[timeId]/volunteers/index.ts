@@ -51,10 +51,13 @@ const shiftVolunteers = async (
     case "GET": {
       // get all shift volunteers
       const { timeId } = req.query;
-      // Behavioral Standards status is admin-only (#632): everyone else gets
-      // bsSigned=true, which the roster renders as nothing.
+      // Behavioral Standards status and reviews are admin-only (#632, #852):
+      // everyone else gets bsSigned=true (renders as nothing) and no
+      // rating/notes. Only admins see or write reviews in the roster UI.
       const sessionGet = await readSessionFromRequest(req);
-      const showBs = sessionGet ? await isAdmin(sessionGet.shiftboardId) : false;
+      const isAdminViewer = sessionGet
+        ? await isAdmin(sessionGet.shiftboardId)
+        : false;
       // Include canceled shifts in the detail response — the page
       // shows them with a banner and disables Add, but volunteers
       // still need to reach the page so they can self-remove and
@@ -200,13 +203,13 @@ const shiftVolunteers = async (
           world_name,
         }) => {
           const resShiftVolunteerItem: IResShiftVolunteerRowItem = {
-            bsSigned: !showBs || Boolean(bs_signed),
+            bsSigned: !isAdminViewer || Boolean(bs_signed),
             critical: Boolean(critical),
             isCheckedIn: noshow,
-            notes: notes ?? "",
+            notes: isAdminViewer ? (notes ?? "") : "",
             playaName: playa_name,
             positionName: position,
-            rating,
+            rating: isAdminViewer ? rating : null,
             shiftboardId: shiftboard_id,
             timePositionId: time_position_id,
             worldName: world_name,

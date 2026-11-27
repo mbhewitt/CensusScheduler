@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, request } from "@playwright/test";
 import {
   insertVolunteer,
   insertFullShift,
@@ -88,5 +88,17 @@ test.describe("Shift review (comments)", () => {
     await expect(page.getByText(/has been updated/i)).toBeVisible({
       timeout: 10_000,
     });
+
+    // The note is saved, but the roster API only returns reviews to admins
+    // (#852): a signed-out caller gets no rating/notes.
+    const anon = await request.newContext({
+      baseURL: "http://localhost:3000",
+    });
+    const res = await anon.get(
+      `/api/shifts/${FUTURE_SHIFT.shiftTimesId}/volunteers`
+    );
+    const body = JSON.stringify(await res.json());
+    await anon.dispose();
+    expect(body).not.toContain("E2E regression");
   });
 });
