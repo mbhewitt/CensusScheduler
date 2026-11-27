@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 
 import { classifyError } from "./classify";
+import { MAN_BURN_MARKER, manBurnLineHtml, manBurnLineText } from "./manBurn";
 import type { EmailRow, MailConfig, SendResult, Transport } from "./types";
 
 // Pull the METHOD value out of an .ics payload so we can hand the
@@ -92,14 +93,24 @@ export function createSmtpTransport(config: MailConfig): Transport {
               bodyText: row.bodyText,
               bodyHtml: row.bodyHtml,
             };
+        // Every outgoing email leads with the Man-burn countdown (Mew
+        // 2026-09-11), unless the body already includes the line (e.g. the nudge
+        // email renders its own styled header) — so it's never duplicated.
+        const bodyText = headers.bodyText.includes(MAN_BURN_MARKER)
+          ? headers.bodyText
+          : manBurnLineText() + headers.bodyText;
+        const bodyHtml =
+          headers.bodyHtml && !headers.bodyHtml.includes(MAN_BURN_MARKER)
+            ? manBurnLineHtml() + headers.bodyHtml
+            : headers.bodyHtml;
         await transporter.sendMail({
           from: row.from,
           to: headers.to,
           cc: headers.cc ?? undefined,
           replyTo: row.replyTo,
           subject: row.subject,
-          text: headers.bodyText,
-          html: headers.bodyHtml ?? undefined,
+          text: bodyText,
+          html: bodyHtml ?? undefined,
           // Use nodemailer's `icalEvent` so the calendar payload lives
           // inside a multipart/alternative as text/calendar. Outlook
           // renders that as a native event banner ("Add to calendar")
