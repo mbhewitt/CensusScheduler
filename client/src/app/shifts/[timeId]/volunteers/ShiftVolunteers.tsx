@@ -69,6 +69,7 @@ import { useIsOnPlaya } from "@/hooks/useIsOnPlaya";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
 import { checkIsAdmin, checkIsAuthenticated } from "@/utils/checkIsRoleExist";
+import { confirmUncheckIn } from "@/utils/confirmUncheckIn";
 import { fetcherGet, fetcherTrigger } from "@/utils/fetcher";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
 import { getCheckInType, isCheckInWindowOpen } from "@/utils/getCheckInType";
@@ -302,6 +303,9 @@ export const ShiftVolunteers = ({
     shift: { positionName, timePositionId },
     volunteer: { isCheckedIn, playaName, shiftboardId, worldName },
   }: ISwitchValues) => {
+    if (!confirmUncheckIn(isCheckedIn, playaName, worldName, positionName)) {
+      return;
+    }
     const body: IReqSwitchValues = {
       isCheckedIn,
       shiftboardId,
