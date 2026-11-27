@@ -6,7 +6,8 @@
     "dev": "open http://localhost:3000 && next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint --fix",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "test:e2e": "npx playwright test --config=e2e/playwright.config.ts",
     "test:e2e:ui": "npx playwright test --config=e2e/playwright.config.ts --ui",
     "test:e2e:headed": "npx playwright test --config=e2e/playwright.config.ts --headed",
@@ -18,7 +19,7 @@
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.2",
     "@mui/material": "^7.3.2",
-    "@mui/material-nextjs": "^7.3.2",
+    "@mui/material-nextjs": "^7.3.5",
     "@mui/x-date-pickers": "^8.11.3",
     "axios": "^1.12.2",
     "cacheable-lookup": "^7.0.0",
@@ -56,18 +57,24 @@
     "@types/react": "^19.1.13",
     "@types/react-color": "^3.0.13",
     "@types/react-dom": "^19.1.9",
-    "@typescript-eslint/eslint-plugin": "^8.44.1",
-    "@typescript-eslint/parser": "^8.44.1",
     "eslint": "^9.36.0",
-    "eslint-config-airbnb": "^19.0.4",
-    "eslint-config-airbnb-typescript": "^18.0.0",
     "eslint-config-next": "^16.1.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-react": "^7.37.5",
+    "globals": "^16.0.0",
     "prettier": "^3.6.2",
     "tsx": "^4.22.3",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.44.1"
+  },
+  "overrides": {
+    "mui-datatables": {
+      "@mui/material": "$@mui/material",
+      "@mui/icons-material": "$@mui/icons-material",
+      "react": "$react",
+      "react-dom": "$react-dom"
+    }
   }
 }
