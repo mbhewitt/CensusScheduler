@@ -47,9 +47,10 @@ test.describe("Volunteer Account Update", () => {
   }) => {
     await signInAs(page, volunteer);
 
-    // The info page greets the signed-in volunteer by their playa name.
+    // Signed in, Home is the checklist; the profile pop-up shows the account.
+    await page.goto("/#profile");
     await expect(
-      page.getByRole("heading", { name: "Welcome, E2E UpdateMe!" })
+      page.getByRole("dialog").getByText("E2E UpdateMe").first()
     ).toBeVisible({ timeout: 10_000 });
   });
 

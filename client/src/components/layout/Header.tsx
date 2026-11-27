@@ -1,15 +1,19 @@
 import {
+  Close as CloseIcon,
   ExpandLess as ExpandLessIcon,
   ExpandMore as ExpandMoreIcon,
   Login as LoginIcon,
   Logout as LogoutIcon,
-  ManageAccounts as ManageAccountsIcon,
   Menu as MenuIcon,
 } from "@mui/icons-material";
 import {
   AppBar,
+  Avatar,
   Box,
+  Button,
   Collapse,
+  Dialog,
+  DialogContent,
   Divider,
   Drawer,
   IconButton,
@@ -19,6 +23,8 @@ import {
   ListItemIcon,
   ListItemText,
   ListSubheader,
+  Menu,
+  MenuItem,
   Stack,
   Toolbar,
 } from "@mui/material";
@@ -30,6 +36,9 @@ import { useSnackbar } from "notistack";
 import { Fragment, useContext, useEffect, useState } from "react";
 import { useIdleTimer } from "react-idle-timer";
 
+import { VolunteerInfo } from "@/app/volunteers/[shiftboardId]/info/VolunteerInfo";
+import { HelpButton } from "@/components/help/HelpButton";
+import { helpProfile, helpSettings } from "@/components/help/helpContent";
 import {
   pageListAdmin,
   pageListDefault,
@@ -68,6 +77,10 @@ export const Header = () => {
   // state
   // ------------------------------------------------------------
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [avatarAnchorEl, setAvatarAnchorEl] = useState<HTMLElement | null>(
+    null
+  );
+  const [popup, setPopup] = useState<"profile" | "settings" | null>(null);
   // per-group open state for collapsible nav sections (Shifts, Labels, ...);
   // groups default to open
   const [collapseNavOpen, setCollapseNavOpen] = useState<
@@ -162,6 +175,40 @@ export const Header = () => {
       [label]: !(prev[label] ?? true),
     }));
   };
+  // Avatar: first letter of the playa name, else world-name initials (Chipper).
+  const worldNameParts = worldName.trim().split(/\s+/);
+  const avatarInitials = (
+    playaName.trim().charAt(0) ||
+    `${worldNameParts[0].charAt(0)}${
+      worldNameParts.length > 1 ? worldNameParts.at(-1)!.charAt(0) : ""
+    }` ||
+    "?"
+  ).toUpperCase();
+
+  // The pop-ups follow the URL hash (#profile / #settings), so any link or
+  // button can open one over the current page.
+  useEffect(() => {
+    const syncPopup = () => {
+      const hash = window.location.hash.slice(1);
+      setPopup(hash === "profile" || hash === "settings" ? hash : null);
+    };
+    syncPopup();
+    window.addEventListener("hashchange", syncPopup);
+    return () => window.removeEventListener("hashchange", syncPopup);
+  }, [pathname]);
+  const openPopup = (name: "profile" | "settings") => {
+    setAvatarAnchorEl(null);
+    window.location.hash = name;
+  };
+  const closePopup = () => {
+    setPopup(null);
+    window.history.replaceState(
+      window.history.state,
+      "",
+      window.location.pathname + window.location.search
+    );
+  };
+
   const handleDrawerOpen = () => {
     setIsDrawerOpen(true);
   };
@@ -181,13 +228,13 @@ export const Header = () => {
               width: 1,
             }}
           >
-            <IconButton onClick={handleDrawerOpen}>
+            <IconButton aria-label="Open menu" onClick={handleDrawerOpen}>
               <MenuIcon sx={{ color: theme.palette.common.white }} />
             </IconButton>
             <Box
               sx={{
                 height: theme.spacing(5),
-                mr: theme.spacing(5),
+                mx: theme.spacing(2),
                 position: "relative",
                 width: 1,
               }}
@@ -199,9 +246,90 @@ export const Header = () => {
                 src="/general/logo-header.svg"
               />
             </Box>
+            {isAuthenticated ? (
+              <IconButton
+                aria-label="Account menu"
+                onClick={(event) => setAvatarAnchorEl(event.currentTarget)}
+                size="small"
+              >
+                <Avatar
+                  sx={{
+                    bgcolor: theme.palette.common.white,
+                    color: theme.palette.text.primary,
+                    height: theme.spacing(4.5),
+                    width: theme.spacing(4.5),
+                  }}
+                >
+                  {avatarInitials}
+                </Avatar>
+              </IconButton>
+            ) : (
+              <Button
+                color="inherit"
+                component={Link}
+                href="/sign-in"
+                sx={{ flexShrink: 0 }}
+                variant="outlined"
+              >
+                Sign in
+              </Button>
+            )}
           </Stack>
         </Toolbar>
       </AppBar>
+
+      {/* avatar menu (signed in) */}
+      <Menu
+        anchorEl={avatarAnchorEl}
+        onClose={() => setAvatarAnchorEl(null)}
+        open={Boolean(avatarAnchorEl)}
+      >
+        <MenuItem onClick={() => openPopup("profile")}>My profile</MenuItem>
+        <MenuItem
+          component={Link}
+          href={`/volunteers/${shiftboardId}/schedule`}
+          onClick={() => setAvatarAnchorEl(null)}
+        >
+          My shifts
+        </MenuItem>
+        <MenuItem onClick={() => openPopup("settings")}>App settings</MenuItem>
+        <MenuItem
+          onClick={() => {
+            setAvatarAnchorEl(null);
+            handleSignOut();
+          }}
+        >
+          Sign out
+        </MenuItem>
+      </Menu>
+
+      {/* My profile / App settings pop-ups, over whatever page you're on */}
+      <Dialog
+        fullWidth
+        maxWidth="lg"
+        onClose={closePopup}
+        open={isAuthenticated && popup !== null}
+        sx={{ "& .MuiDialog-paper": { minHeight: "80vh" } }}
+      >
+        <IconButton
+          aria-label="Close"
+          onClick={closePopup}
+          sx={{ position: "absolute", right: 8, top: 8, zIndex: 1 }}
+        >
+          <CloseIcon />
+        </IconButton>
+        {popup && (
+          <HelpButton
+            help={popup === "profile" ? helpProfile : helpSettings}
+            sx={{ position: "absolute", right: 52, top: 8, zIndex: 1 }}
+          />
+        )}
+        <DialogContent>
+          {popup && (
+            <VolunteerInfo section={popup} shiftboardId={shiftboardId} />
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* drawer */}
       <Drawer anchor="left" onClose={handleDrawerClose} open={isDrawerOpen}>
@@ -231,38 +359,17 @@ export const Header = () => {
                   return true;
                 })
                 .map(({ icon, label, path }) => (
-                <Fragment key={path}>
-                  <ListItem disablePadding>
-                    <Link href={path} onClick={handleDrawerClose}>
-                      <ListItemButton selected={pathname === path}>
-                        <ListItemIcon>{icon}</ListItemIcon>
-                        <ListItemText primary={label} />
-                      </ListItemButton>
-                    </Link>
-                  </ListItem>
-                  {/* Account sits directly under Home — Home is always the top
-                      (Chipper). Only shown when signed in (needs shiftboardId). */}
-                  {path === "/" && isAuthenticated && (
+                  <Fragment key={path}>
                     <ListItem disablePadding>
-                      <Link
-                        href={`/volunteers/${shiftboardId}/info`}
-                        onClick={handleDrawerClose}
-                      >
-                        <ListItemButton
-                          selected={
-                            pathname === `/volunteers/${shiftboardId}/info`
-                          }
-                        >
-                          <ListItemIcon>
-                            <ManageAccountsIcon />
-                          </ListItemIcon>
-                          <ListItemText primary="Account" />
+                      <Link href={path} onClick={handleDrawerClose}>
+                        <ListItemButton selected={pathname === path}>
+                          <ListItemIcon>{icon}</ListItemIcon>
+                          <ListItemText primary={label} />
                         </ListItemButton>
                       </Link>
                     </ListItem>
-                  )}
-                </Fragment>
-              ))}
+                  </Fragment>
+                ))}
             </List>
             {/* admin nav */}
             {isAdmin && (

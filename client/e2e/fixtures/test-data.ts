@@ -52,6 +52,9 @@ export const IDS = {
   // Suite 14: behavioral standards
   behavioralVolunteer: BASE + 50,
 
+  // Suite 26: avatar nav
+  navVolunteer: BASE + 70,
+
   // Suite 18: VIP page
   vipVolunteer: BASE + 60,
   vipShiftCategory: BASE + 300,
