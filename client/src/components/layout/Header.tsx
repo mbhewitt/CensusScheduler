@@ -1,14 +1,13 @@
 import {
   ExpandLess as ExpandLessIcon,
   ExpandMore as ExpandMoreIcon,
-  Login as LoginIcon,
-  Logout as LogoutIcon,
-  ManageAccounts as ManageAccountsIcon,
   Menu as MenuIcon,
 } from "@mui/icons-material";
 import {
   AppBar,
+  Avatar,
   Box,
+  Button,
   Collapse,
   Divider,
   Drawer,
@@ -19,8 +18,11 @@ import {
   ListItemIcon,
   ListItemText,
   ListSubheader,
+  Menu,
+  MenuItem,
   Stack,
   Toolbar,
+  Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import Image from "next/image";
@@ -68,6 +70,9 @@ export const Header = () => {
   // state
   // ------------------------------------------------------------
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [avatarAnchorEl, setAvatarAnchorEl] = useState<HTMLElement | null>(
+    null
+  );
   // per-group open state for collapsible nav sections (Shifts, Labels, ...);
   // groups default to open
   const [collapseNavOpen, setCollapseNavOpen] = useState<
@@ -168,6 +173,9 @@ export const Header = () => {
   const handleDrawerClose = () => {
     setIsDrawerOpen(false);
   };
+  const handleAvatarMenuClose = () => {
+    setAvatarAnchorEl(null);
+  };
 
   return (
     <>
@@ -181,13 +189,13 @@ export const Header = () => {
               width: 1,
             }}
           >
-            <IconButton onClick={handleDrawerOpen}>
+            <IconButton aria-label="Open menu" onClick={handleDrawerOpen}>
               <MenuIcon sx={{ color: theme.palette.common.white }} />
             </IconButton>
             <Box
               sx={{
                 height: theme.spacing(5),
-                mr: theme.spacing(5),
+                mx: theme.spacing(2),
                 position: "relative",
                 width: 1,
               }}
@@ -199,9 +207,78 @@ export const Header = () => {
                 src="/general/logo-header.svg"
               />
             </Box>
+            {isAuthenticated ? (
+              <IconButton
+                aria-label="Account menu"
+                onClick={(event) => setAvatarAnchorEl(event.currentTarget)}
+                size="small"
+              >
+                <Avatar
+                  sx={{
+                    bgcolor: theme.palette.common.white,
+                    color: theme.palette.text.primary,
+                    height: theme.spacing(4.5),
+                    width: theme.spacing(4.5),
+                  }}
+                >
+                  {(playaName || "?").charAt(0).toUpperCase()}
+                </Avatar>
+              </IconButton>
+            ) : (
+              <Button
+                color="inherit"
+                component={Link}
+                href="/sign-in"
+                sx={{ flexShrink: 0 }}
+                variant="outlined"
+              >
+                Sign in
+              </Button>
+            )}
           </Stack>
         </Toolbar>
       </AppBar>
+
+      {/* avatar menu (signed in) */}
+      <Menu
+        anchorEl={avatarAnchorEl}
+        onClose={handleAvatarMenuClose}
+        open={Boolean(avatarAnchorEl)}
+      >
+        <Box sx={{ maxWidth: theme.spacing(40), px: 2, py: 1 }}>
+          <Typography noWrap variant="subtitle1">
+            {playaName}
+          </Typography>
+          {roleList.length > 0 && (
+            <Typography color="text.secondary" variant="body2">
+              {roleList.map(({ name }) => name).join(", ")}
+            </Typography>
+          )}
+        </Box>
+        <Divider />
+        <MenuItem
+          component={Link}
+          href={`/volunteers/${shiftboardId}/info`}
+          onClick={handleAvatarMenuClose}
+        >
+          My account
+        </MenuItem>
+        <MenuItem
+          component={Link}
+          href={`/volunteers/${shiftboardId}/schedule`}
+          onClick={handleAvatarMenuClose}
+        >
+          My shifts
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleAvatarMenuClose();
+            handleSignOut();
+          }}
+        >
+          Sign out
+        </MenuItem>
+      </Menu>
 
       {/* drawer */}
       <Drawer anchor="left" onClose={handleDrawerClose} open={isDrawerOpen}>
@@ -220,6 +297,11 @@ export const Header = () => {
             <List>
               {pageListDefault
                 .filter(({ path }) => {
+                  // Signed in: no Home entry (avatar menu has My account).
+                  // Signed out: Home stays.
+                  if (path === "/" && isAuthenticated) {
+                    return false;
+                  }
                   // Off-playa /shifts requires auth (middleware redirects
                   // to sign-in). Hide the menu entry for unauthenticated
                   // users so it doesn't appear to "go nowhere". On-playa
@@ -231,38 +313,17 @@ export const Header = () => {
                   return true;
                 })
                 .map(({ icon, label, path }) => (
-                <Fragment key={path}>
-                  <ListItem disablePadding>
-                    <Link href={path} onClick={handleDrawerClose}>
-                      <ListItemButton selected={pathname === path}>
-                        <ListItemIcon>{icon}</ListItemIcon>
-                        <ListItemText primary={label} />
-                      </ListItemButton>
-                    </Link>
-                  </ListItem>
-                  {/* Account sits directly under Home — Home is always the top
-                      (Chipper). Only shown when signed in (needs shiftboardId). */}
-                  {path === "/" && isAuthenticated && (
+                  <Fragment key={path}>
                     <ListItem disablePadding>
-                      <Link
-                        href={`/volunteers/${shiftboardId}/info`}
-                        onClick={handleDrawerClose}
-                      >
-                        <ListItemButton
-                          selected={
-                            pathname === `/volunteers/${shiftboardId}/info`
-                          }
-                        >
-                          <ListItemIcon>
-                            <ManageAccountsIcon />
-                          </ListItemIcon>
-                          <ListItemText primary="Account" />
+                      <Link href={path} onClick={handleDrawerClose}>
+                        <ListItemButton selected={pathname === path}>
+                          <ListItemIcon>{icon}</ListItemIcon>
+                          <ListItemText primary={label} />
                         </ListItemButton>
                       </Link>
                     </ListItem>
-                  )}
-                </Fragment>
-              ))}
+                  </Fragment>
+                ))}
             </List>
             {/* admin nav */}
             {isAdmin && (
@@ -343,49 +404,6 @@ export const Header = () => {
                   })}
                 </List>
               </>
-            )}
-          </Box>
-          <Box>
-            <Divider />
-            {/* authenticated nav */}
-            {isAuthenticated ? (
-              <List
-                subheader={
-                  <ListSubheader>
-                    {playaName} &quot;{worldName}&quot;
-                  </ListSubheader>
-                }
-              >
-                <ListItem disablePadding>
-                  <Link href="/sign-in">
-                    <ListItemButton
-                      onClick={() => {
-                        handleSignOut();
-                        handleDrawerClose();
-                      }}
-                    >
-                      <ListItemIcon>
-                        <LogoutIcon />
-                      </ListItemIcon>
-                      <ListItemText>Sign out</ListItemText>
-                    </ListItemButton>
-                  </Link>
-                </ListItem>
-              </List>
-            ) : (
-              // unauthenticated nav
-              <List>
-                <ListItem disablePadding>
-                  <Link href="/sign-in" onClick={handleDrawerClose}>
-                    <ListItemButton selected={pathname === "/sign-in"}>
-                      <ListItemIcon>
-                        <LoginIcon />
-                      </ListItemIcon>
-                      <ListItemText>Sign in</ListItemText>
-                    </ListItemButton>
-                  </Link>
-                </ListItem>
-              </List>
             )}
           </Box>
         </Box>

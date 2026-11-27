@@ -1164,6 +1164,10 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
         text="Account"
       />
       <Container maxWidth="lg">
+        {/* moved here from Home (#814) */}
+        <Alert severity="info" sx={{ mb: 3 }}>
+          2027 Black Rock City Census volunteer shifts will be released in June.
+        </Alert>
         {/* Header (breadcrumbs + welcome + on-playa/SAP) spans full width.
             The two-column split with the "get more involved" sidebar
             begins lower, at the checklist, so the sidebar aligns with the

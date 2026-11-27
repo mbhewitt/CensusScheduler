@@ -78,10 +78,6 @@ export const Home = () => {
       />
       <Container component="main">
         <Box component="section">
-          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
-            2027 Black Rock City Census volunteer shifts will be released in June.
-          </Typography>
-
           {isAuthenticated ? (
             <Typography sx={{ mb: 2 }}>
               You&apos;re signed in. View your account below, or head to the{" "}
