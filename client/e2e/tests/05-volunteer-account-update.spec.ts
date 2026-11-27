@@ -25,6 +25,9 @@ const volunteer = makeTestVolunteer({
   worldName: "Update Tester",
   email: "e2e-update@test.local",
   passcode: "2222",
+  // No camping location yet: on playa the plans item is camping-only (#646),
+  // so a location would mark it done and fold it into "completed items".
+  location: "",
 });
 
 test.describe("Volunteer Account Update", () => {
@@ -60,8 +63,8 @@ test.describe("Volunteer Account Update", () => {
     await locationField.fill("New Camp at 7:00 & G");
     await locationField.blur();
 
-    await expect(
-      page.getByText(/camping location.*updated/i)
-    ).toBeVisible({ timeout: 5_000 });
+    await expect(page.getByText(/camping location.*updated/i)).toBeVisible({
+      timeout: 5_000,
+    });
   });
 });

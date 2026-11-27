@@ -598,6 +598,7 @@ export const ShiftVolunteers = ({
         // walk-up window the way check-in does. See #749.
         row.push(
           <IconButton
+            aria-label="Review"
             onClick={() => {
               setDialogCurrent({
                 dialogItem: DialogList.Review,
@@ -993,6 +994,7 @@ export const ShiftVolunteers = ({
                             shift / when the clock is stale. */}
                         {isAdmin && (
                           <IconButton
+                            aria-label="Review"
                             onClick={() => {
                               setDialogCurrent({
                                 dialogItem: DialogList.Review,

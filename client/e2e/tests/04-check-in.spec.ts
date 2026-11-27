@@ -26,7 +26,10 @@ test.describe("Check-In", () => {
   test.beforeAll(async () => {
     await cleanupAllTestData();
     await insertVolunteer(SHIFT_VOLUNTEER);
-    await assignRole(SHIFT_VOLUNTEER.shiftboardId, ROLE_BEHAVIORAL_STANDARDS_ID);
+    await assignRole(
+      SHIFT_VOLUNTEER.shiftboardId,
+      ROLE_BEHAVIORAL_STANDARDS_ID
+    );
     await insertVolunteer(ADMIN_VOLUNTEER);
     await assignRole(ADMIN_VOLUNTEER.shiftboardId, ROLE_ADMIN_ID);
     await assignRole(ADMIN_VOLUNTEER.shiftboardId, ROLE_SUPER_ADMIN_ID);
@@ -60,9 +63,7 @@ test.describe("Check-In", () => {
   }) => {
     await signInAsBuiltinAdmin(page);
 
-    await page.goto(
-      `/shifts/${CURRENT_SHIFT.shiftTimesId}/volunteers`
-    );
+    await page.goto(`/shifts/${CURRENT_SHIFT.shiftTimesId}/volunteers`);
 
     // Wait for volunteer list to load
     await expect(page.getByText("E2E Shifty")).toBeVisible({
@@ -80,9 +81,9 @@ test.describe("Check-In", () => {
     await checkInSwitch.click();
 
     // Verify the snackbar confirms check-in
-    await expect(
-      page.getByText(/has checked in/i)
-    ).toBeVisible({ timeout: 5_000 });
+    await expect(page.getByText(/has checked in/i)).toBeVisible({
+      timeout: 5_000,
+    });
   });
 
   test("should check out a previously checked-in volunteer", async ({
@@ -90,9 +91,7 @@ test.describe("Check-In", () => {
   }) => {
     await signInAsBuiltinAdmin(page);
 
-    await page.goto(
-      `/shifts/${CURRENT_SHIFT.shiftTimesId}/volunteers`
-    );
+    await page.goto(`/shifts/${CURRENT_SHIFT.shiftTimesId}/volunteers`);
 
     await expect(page.getByText("E2E Shifty")).toBeVisible({
       timeout: 15_000,
@@ -101,21 +100,20 @@ test.describe("Check-In", () => {
     const row = page.getByRole("row").filter({ hasText: "E2E Shifty" });
     const checkInSwitch = row.getByRole("switch");
 
-    // Toggle check-out
+    // Toggle check-out. Unchecking asks for confirmation first (#853).
+    page.once("dialog", (dialog) => dialog.accept());
     await checkInSwitch.click();
 
     // Verify the snackbar confirms check-out
-    await expect(
-      page.getByText(/has checked out/i)
-    ).toBeVisible({ timeout: 5_000 });
+    await expect(page.getByText(/has checked out/i)).toBeVisible({
+      timeout: 5_000,
+    });
   });
 
   test("check-in should be unavailable for future shifts", async ({ page }) => {
     await signInAsBuiltinAdmin(page);
 
-    await page.goto(
-      `/shifts/${FUTURE_SHIFT.shiftTimesId}/volunteers`
-    );
+    await page.goto(`/shifts/${FUTURE_SHIFT.shiftTimesId}/volunteers`);
 
     await expect(page.getByText("E2E Shifty")).toBeVisible({
       timeout: 15_000,
@@ -169,9 +167,7 @@ test.describe("Check-In", () => {
     await expect(checkInSwitch).toBeEnabled({ timeout: 10_000 });
   });
 
-  test("volunteer can see their shifts on account page", async ({
-    page,
-  }) => {
+  test("volunteer can see their shifts on account page", async ({ page }) => {
     // Sign in as the volunteer
     await signInAs(page, SHIFT_VOLUNTEER);
 
