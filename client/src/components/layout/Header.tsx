@@ -37,7 +37,7 @@ import {
   pageListDefault,
   pageListSuperAdmin,
 } from "@/components/layout/pageList";
-import { IDLE_MINUTES } from "@/constants";
+import { IDLE_MINUTES, ROLE_BEHAVIORAL_STANDARDS_ID } from "@/constants";
 import { useDeviceProvisioned } from "@/hooks/useDeviceProvisioned";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
@@ -159,6 +159,11 @@ export const Header = () => {
   // logic
   // ------------------------------------------------------------
   const isAdmin = checkIsAdmin(accountType, roleList);
+  // The Behavioral Standards sign-off is stored as a role but isn't one.
+  const displayRoleNames = roleList
+    .filter(({ id }) => id !== ROLE_BEHAVIORAL_STANDARDS_ID)
+    .map(({ name }) => name)
+    .join(", ");
   const isSuperAdmin = checkIsSuperAdmin(accountType, roleList);
 
   const handleCollapseNavClick = (label: string) => {
@@ -249,9 +254,9 @@ export const Header = () => {
           <Typography noWrap variant="subtitle1">
             {playaName}
           </Typography>
-          {roleList.length > 0 && (
+          {displayRoleNames && (
             <Typography color="text.secondary" variant="body2">
-              {roleList.map(({ name }) => name).join(", ")}
+              {displayRoleNames}
             </Typography>
           )}
         </Box>
