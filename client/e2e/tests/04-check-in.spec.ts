@@ -7,6 +7,7 @@ import {
   assignRole,
   closePool,
   cleanupAllTestData,
+  getPool,
 } from "../helpers/db";
 import {
   IDS,
@@ -185,5 +186,44 @@ test.describe("Check-In", () => {
     await expect(page.getByText("E2E Tester Position").first()).toBeVisible({
       timeout: 10_000,
     });
+  });
+
+  // Regression guard for the canceled-shift check-in block. A shift can be
+  // canceled after volunteers have already travelled to it, and the lead still
+  // needs to record who turned up — a canceled shift awards CSP only to those
+  // marked as having shown up (Mew 2026-10-02), so a blocked toggle makes that
+  // credit unreachable. The server has always allowed this: only the POST add
+  // path consults st.canceled, never the PATCH check-in path. Adds must STAY
+  // blocked, which is why both halves are asserted together.
+  test("check-in stays available on a canceled shift, but adds do not", async ({
+    page,
+  }) => {
+    const pool = getPool();
+    await pool.query(
+      "UPDATE op_shift_times SET canceled = true WHERE shift_times_id = ?",
+      [CURRENT_SHIFT.shiftTimesId]
+    );
+
+    try {
+      await signInAsBuiltinAdmin(page);
+      await page.goto(`/shifts/${CURRENT_SHIFT.shiftTimesId}/volunteers`);
+
+      // The canceled banner confirms the page sees the flag at all, so a
+      // passing check-in assertion can't be a false negative from a stale read.
+      await expect(page.getByText(/CANCELED/)).toBeVisible({ timeout: 15_000 });
+
+      const row = page.getByRole("row").filter({ hasText: "E2E Shifty" });
+      await expect(row.getByRole("switch")).toBeEnabled({ timeout: 10_000 });
+
+      // ...while adding anyone new remains blocked.
+      await expect(
+        page.getByRole("button", { name: /add volunteer/i })
+      ).toHaveCount(0);
+    } finally {
+      await pool.query(
+        "UPDATE op_shift_times SET canceled = false WHERE shift_times_id = ?",
+        [CURRENT_SHIFT.shiftTimesId]
+      );
+    }
   });
 });
