@@ -39,7 +39,7 @@ const roles = async (req: NextApiRequest, res: NextApiResponse) => {
     case "POST": {
       // create role
       const { name } = JSON.parse(req.body);
-      const roleIdNew = generateId(
+      const roleIdNew = await generateId(
         `SELECT role_id
         FROM op_roles
         WHERE role_id=?`
