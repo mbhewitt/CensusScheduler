@@ -57,7 +57,11 @@ export const AuthComplete = () => {
       );
 
       // Guard against landing on another volunteer's page (see safeReturnTo).
-      router.replace(safeReturnTo(returnTo, account.shiftboardId));
+      const target = safeReturnTo(returnTo, account.shiftboardId);
+      // API routes (e.g. the Dust connect hop) need a real browser
+      // navigation; the client router can't render them.
+      if (target.startsWith("/api/")) window.location.replace(target);
+      else router.replace(target);
     } catch {
       router.replace("/sign-in?error=invalid_data");
     }
