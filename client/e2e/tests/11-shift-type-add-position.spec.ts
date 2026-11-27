@@ -74,7 +74,7 @@ test.describe("Shift-type editor: adding a position (#533)", () => {
     await firstOption.click();
 
     await dialog.getByLabel("Slots").fill("2");
-    await dialog.getByLabel("SAP points").fill("4");
+    await dialog.getByLabel("CSP").fill("4");
 
     // add it to the form (dialog's own "Add position" submit button)
     await dialog.getByRole("button", { name: "Add position" }).click();

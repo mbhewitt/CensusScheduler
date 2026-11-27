@@ -259,10 +259,10 @@ export const BehavioralStandards = ({
                 report of concerning behavior is received, and about available
                 resources for communicating with members of BRC Census
                 leadership. It is required for each member of the BRC Census
-                Team to agree to the terms and sign this document prior to their
+                team to agree to the terms and sign this document prior to their
                 first volunteer shift. Concerns or questions that need to be
                 resolved prior to signing should be sent to
-                censusvolunteercoordinators@burningman.org
+                censusvolunteercoordinators@burningman.org.
               </Typography>
             </CardContent>
           </Card>
@@ -289,11 +289,11 @@ export const BehavioralStandards = ({
                 Burning Man email addresses to enable communication in the
                 off-season. The Census Management group alias
                 census@burningman.org can always be used to bring issues to the
-                attention of BRC Census leadership. (As of Jun 2026, the members
+                attention of BRC Census leadership. (As of June 2026, the members
                 of this group alias are Random-Census Manager, Rescue-Asst.
                 Manager, Captain Mew-Scheduling Coordinator. They are also
                 reachable at random@burningman.org, ann.norton@burningman.org,
-                and mu@burningman.org) If direct
+                and mu@burningman.org). If direct
                 communication with another member of BRC Census leadership is
                 preferred, the group alias can be used to request contact
                 information.
@@ -394,7 +394,7 @@ export const BehavioralStandards = ({
                 Black Rock City, there is an additional level of responsibility
                 taken on by all BRC Census volunteers any time they are actively
                 representing their team (e.g., wearing a BRC Census lab coat,
-                BRC Census hoodie, etc.) When a person has a negative
+                BRC Census hoodie, etc.). When a person has a negative
                 interaction with someone wearing Census regalia, there are risks
                 of long-lasting impacts for the entire team.
               </Typography>
@@ -402,7 +402,7 @@ export const BehavioralStandards = ({
                 Members of the BRC Census team regularly ask Black Rock City
                 residents (including members of other Burning Man staff and
                 volunteer departments) to participate in or enable our research,
-                or to conduct outreach on our behalf. That data is critical to
+                or to conduct outreach on our behalf. Those data are critical to
                 our team&apos;s overall reason for existing, and one of the best
                 ways to encourage participation is by generating positive
                 associations with the BRC Census team and its members. Whenever
@@ -465,7 +465,7 @@ export const BehavioralStandards = ({
               <Typography>
                 In some cases, the environment or situation may preclude
                 immediate resolution to an issue between team members. In some
-                cases BRC Census team members may be asked to hold off on
+                cases, BRC Census team members may be asked to hold off on
                 further discussion or action until a safer and more appropriate
                 setting can be arranged and all participants have had time for
                 any necessary self-care. In these cases, team members may be

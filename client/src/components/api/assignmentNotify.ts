@@ -191,6 +191,25 @@ function notBlank(s: string | null | undefined): s is string {
   return typeof s === "string" && s.trim().length > 0;
 }
 
+// #406 — the description columns are editor HTML; the email body is
+// plaintext, so flatten tags to readable text (ponytail: regex, not a
+// full HTML parser; the editor only emits simple p/br/li/inline tags).
+function htmlToText(html: string): string {
+  return html
+    .replace(/<\s*br\s*\/?>/gi, "\n")
+    .replace(/<\s*li[^>]*>/gi, "- ")
+    .replace(/<\/\s*(p|div|li|h[1-6]|ul|ol)\s*>/gi, "\n")
+    .replace(/<[^>]*>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, "&")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 // Renders the shared "what's the shift" body section used by both
 // assignment and removal emails. Empty source columns are dropped
 // entirely rather than rendering as bare labels.
@@ -211,13 +230,21 @@ function renderShiftBody(
     );
   }
   if (notBlank(ctx.shift_details)) {
-    lines.push("", "About this shift type:", `  ${ctx.shift_details.trim()}`);
+    lines.push(
+      "",
+      "About this shift type:",
+      `  ${htmlToText(ctx.shift_details)}`
+    );
   }
   if (notBlank(ctx.position_details)) {
-    lines.push("", "About this position:", `  ${ctx.position_details.trim()}`);
+    lines.push(
+      "",
+      "About this position:",
+      `  ${htmlToText(ctx.position_details)}`
+    );
   }
   if (notBlank(ctx.shift_notes)) {
-    lines.push("", "Shift notes:", `  ${ctx.shift_notes.trim()}`);
+    lines.push("", "Shift notes:", `  ${htmlToText(ctx.shift_notes)}`);
   }
   if (notBlank(ctx.meal)) {
     lines.push("", `Meal: ${ctx.meal.trim()}`);

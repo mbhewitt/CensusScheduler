@@ -12,6 +12,7 @@ import localFont from "next/font/local";
 import { SnackbarProvider } from "notistack";
 
 import { PwaSetup } from "@/components/general/PwaSetup";
+import { ScrollToTop } from "@/components/general/ScrollToTop";
 import SnackbarButtonClose from "@/components/general/SnackbarButtonClose";
 import { Layout } from "@/components/layout/Layout";
 import { COLOR_BURNING_MAN_BROWN, COLOR_CENSUS_PINK } from "@/constants";
@@ -232,6 +233,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
     <html lang="en">
       <body>
         <PwaSetup />
+        <ScrollToTop />
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
             <CssBaseline />
