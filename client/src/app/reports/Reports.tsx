@@ -24,6 +24,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { Hero } from "@/components/layout/Hero";
+import { useIsOnPlaya } from "@/hooks/useIsOnPlaya";
 
 export const reportList = [
   {
@@ -146,9 +147,10 @@ export const reportList = [
 ];
 export const Reports = () => {
   // The report files below are bundled locally (/reports/...), so they work
-  // offline on playa. The external archive link is dead offline, so hide it
-  // there (#629, Chipper).
-  const isOnPlaya = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
+  // offline on playa. The external archive link is dead offline, so show it
+  // only when definitively off-playa: useIsOnPlaya, not the build flag, so
+  // provisioned prod tablets hide it too (#629, #735).
+  const isOnPlaya = useIsOnPlaya() !== false;
 
   // Reports open IN-APP in a full-screen dialog (iframe), not a new tab. The
   // provisioned tablets block pop-ups / new tabs, so target="_blank" links did

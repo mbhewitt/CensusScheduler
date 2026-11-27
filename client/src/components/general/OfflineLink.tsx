@@ -18,10 +18,7 @@ import { useSnackbar } from "notistack";
 import { ReactNode, useState } from "react";
 
 import { SnackbarText } from "@/components/general/SnackbarText";
-
-// NEXT_PUBLIC_PIN_ENABLED is the on-playa signal (same convention as
-// ShareButton / VolunteerInfo / Home). It's inlined at build time.
-const isOnPlaya = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
+import { useIsOnPlaya } from "@/hooks/useIsOnPlaya";
 
 interface IOfflineLinkProps {
   // Absolute external URL (Hive, Discord, Burner Profile, Google Groups…).
@@ -67,9 +64,16 @@ export const OfflineLink = ({
   const { enqueueSnackbar } = useSnackbar();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSending, setIsSending] = useState(false);
+  // Effective on-playa incl. a provisioned tablet on the cloud/prod origin. The
+  // build flag alone (NEXT_PUBLIC_PIN_ENABLED) is "false" on prod, so tablets
+  // rendered LIVE external links on the offline tablet network (Chipper
+  // 2026-09-05). Treat "unknown" (device check in flight) as on-playa so a
+  // tablet never flashes a live link before the check resolves; only a
+  // *definitively* off-playa browser gets the plain external link.
+  const onPlaya = useIsOnPlaya();
 
   // off-playa: plain external link, unchanged behavior
-  if (!isOnPlaya) {
+  if (onPlaya === false) {
     if (asMuiLink) {
       return (
         <MuiLink

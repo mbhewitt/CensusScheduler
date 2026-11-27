@@ -5,11 +5,7 @@ import { Button } from "@mui/material";
 import { useSnackbar } from "notistack";
 
 import { SnackbarText } from "@/components/general/SnackbarText";
-
-// The on-playa build is offline and runs on shared check-in tablets — sharing
-// a link is pointless/broken there, so the button is baked out entirely.
-// NEXT_PUBLIC_PIN_ENABLED is set at build time (see Header.tsx / middleware.ts).
-const isOnPlaya = process.env.NEXT_PUBLIC_PIN_ENABLED !== "false";
+import { useIsOnPlaya } from "@/hooks/useIsOnPlaya";
 
 interface IShareButtonProps {
   title: string;
@@ -37,7 +33,11 @@ export const ShareButton = ({
 }: IShareButtonProps) => {
   const { enqueueSnackbar } = useSnackbar();
 
-  if (isOnPlaya) return null;
+  // Sharing is pointless/broken on the offline tablets. Hide on a provisioned
+  // tablet too (build flag is "false" on the prod origin), and while the device
+  // check is in flight, so it never flashes on a tablet (Chipper 2026-09-05).
+  const onPlaya = useIsOnPlaya();
+  if (onPlaya !== false) return null;
 
   const handleShare = async () => {
     const url = new URL(path, window.location.origin).href;
