@@ -29,7 +29,10 @@ test.describe("Shift review (comments)", () => {
     await cleanupAllTestData();
 
     await insertVolunteer(SHIFT_VOLUNTEER);
-    await assignRole(SHIFT_VOLUNTEER.shiftboardId, ROLE_BEHAVIORAL_STANDARDS_ID);
+    await assignRole(
+      SHIFT_VOLUNTEER.shiftboardId,
+      ROLE_BEHAVIORAL_STANDARDS_ID
+    );
 
     await insertVolunteer(ADMIN_VOLUNTEER);
     await assignRole(ADMIN_VOLUNTEER.shiftboardId, ROLE_ADMIN_ID);
@@ -66,12 +69,12 @@ test.describe("Shift review (comments)", () => {
 
     // The regression: the review control must still be present even though
     // check-in isn't. It was previously hidden alongside the check-in switch.
-    const reviewButton = row.locator('button:has([data-testid="ChatIcon"])');
+    const reviewButton = row.getByRole("button", { name: "Review" });
     await expect(reviewButton).toBeVisible({ timeout: 10_000 });
     await reviewButton.click();
 
     // The review dialog opens.
-    await expect(page.getByText("Update review")).toBeVisible({
+    await expect(page.getByRole("dialog")).toBeVisible({
       timeout: 10_000,
     });
 
