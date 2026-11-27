@@ -10,7 +10,7 @@ interface IAccountPageProps {
 
 const AccountPage = async ({ params }: IAccountPageProps) => {
   const { shiftboardId } = await params;
-  redirect(`/volunteers/${shiftboardId}/info`);
+  redirect(`/volunteers/${shiftboardId}/info#profile`);
 };
 
 export default AccountPage;

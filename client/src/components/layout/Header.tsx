@@ -1,6 +1,9 @@
 import {
+  Close as CloseIcon,
   ExpandLess as ExpandLessIcon,
   ExpandMore as ExpandMoreIcon,
+  Login as LoginIcon,
+  Logout as LogoutIcon,
   Menu as MenuIcon,
 } from "@mui/icons-material";
 import {
@@ -9,6 +12,8 @@ import {
   Box,
   Button,
   Collapse,
+  Dialog,
+  DialogContent,
   Divider,
   Drawer,
   IconButton,
@@ -22,7 +27,6 @@ import {
   MenuItem,
   Stack,
   Toolbar,
-  Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import Image from "next/image";
@@ -32,12 +36,13 @@ import { useSnackbar } from "notistack";
 import { Fragment, useContext, useEffect, useState } from "react";
 import { useIdleTimer } from "react-idle-timer";
 
+import { VolunteerInfo } from "@/app/volunteers/[shiftboardId]/info/VolunteerInfo";
 import {
   pageListAdmin,
   pageListDefault,
   pageListSuperAdmin,
 } from "@/components/layout/pageList";
-import { IDLE_MINUTES, ROLE_BEHAVIORAL_STANDARDS_ID } from "@/constants";
+import { IDLE_MINUTES } from "@/constants";
 import { useDeviceProvisioned } from "@/hooks/useDeviceProvisioned";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
@@ -73,6 +78,7 @@ export const Header = () => {
   const [avatarAnchorEl, setAvatarAnchorEl] = useState<HTMLElement | null>(
     null
   );
+  const [popup, setPopup] = useState<"profile" | "settings" | null>(null);
   // per-group open state for collapsible nav sections (Shifts, Labels, ...);
   // groups default to open
   const [collapseNavOpen, setCollapseNavOpen] = useState<
@@ -159,11 +165,6 @@ export const Header = () => {
   // logic
   // ------------------------------------------------------------
   const isAdmin = checkIsAdmin(accountType, roleList);
-  // The Behavioral Standards sign-off is stored as a role but isn't one.
-  const displayRoleNames = roleList
-    .filter(({ id }) => id !== ROLE_BEHAVIORAL_STANDARDS_ID)
-    .map(({ name }) => name)
-    .join(", ");
   const isSuperAdmin = checkIsSuperAdmin(accountType, roleList);
 
   const handleCollapseNavClick = (label: string) => {
@@ -172,14 +173,45 @@ export const Header = () => {
       [label]: !(prev[label] ?? true),
     }));
   };
+  // Avatar: first letter of the playa name, else world-name initials (Chipper).
+  const worldNameParts = worldName.trim().split(/\s+/);
+  const avatarInitials = (
+    playaName.trim().charAt(0) ||
+    `${worldNameParts[0].charAt(0)}${
+      worldNameParts.length > 1 ? worldNameParts.at(-1)!.charAt(0) : ""
+    }` ||
+    "?"
+  ).toUpperCase();
+
+  // The pop-ups follow the URL hash (#profile / #settings), so any link or
+  // button can open one over the current page.
+  useEffect(() => {
+    const syncPopup = () => {
+      const hash = window.location.hash.slice(1);
+      setPopup(hash === "profile" || hash === "settings" ? hash : null);
+    };
+    syncPopup();
+    window.addEventListener("hashchange", syncPopup);
+    return () => window.removeEventListener("hashchange", syncPopup);
+  }, [pathname]);
+  const openPopup = (name: "profile" | "settings") => {
+    setAvatarAnchorEl(null);
+    window.location.hash = name;
+  };
+  const closePopup = () => {
+    setPopup(null);
+    window.history.replaceState(
+      window.history.state,
+      "",
+      window.location.pathname + window.location.search
+    );
+  };
+
   const handleDrawerOpen = () => {
     setIsDrawerOpen(true);
   };
   const handleDrawerClose = () => {
     setIsDrawerOpen(false);
-  };
-  const handleAvatarMenuClose = () => {
-    setAvatarAnchorEl(null);
   };
 
   return (
@@ -226,7 +258,7 @@ export const Header = () => {
                     width: theme.spacing(4.5),
                   }}
                 >
-                  {(playaName || "?").charAt(0).toUpperCase()}
+                  {avatarInitials}
                 </Avatar>
               </IconButton>
             ) : (
@@ -247,43 +279,49 @@ export const Header = () => {
       {/* avatar menu (signed in) */}
       <Menu
         anchorEl={avatarAnchorEl}
-        onClose={handleAvatarMenuClose}
+        onClose={() => setAvatarAnchorEl(null)}
         open={Boolean(avatarAnchorEl)}
       >
-        <Box sx={{ maxWidth: theme.spacing(40), px: 2, py: 1 }}>
-          <Typography noWrap variant="subtitle1">
-            {playaName}
-          </Typography>
-          {displayRoleNames && (
-            <Typography color="text.secondary" variant="body2">
-              {displayRoleNames}
-            </Typography>
-          )}
-        </Box>
-        <Divider />
-        <MenuItem
-          component={Link}
-          href={`/volunteers/${shiftboardId}/info`}
-          onClick={handleAvatarMenuClose}
-        >
-          My account
-        </MenuItem>
+        <MenuItem onClick={() => openPopup("profile")}>My profile</MenuItem>
+        <MenuItem onClick={() => openPopup("settings")}>App settings</MenuItem>
         <MenuItem
           component={Link}
           href={`/volunteers/${shiftboardId}/schedule`}
-          onClick={handleAvatarMenuClose}
+          onClick={() => setAvatarAnchorEl(null)}
         >
           My shifts
         </MenuItem>
         <MenuItem
           onClick={() => {
-            handleAvatarMenuClose();
+            setAvatarAnchorEl(null);
             handleSignOut();
           }}
         >
           Sign out
         </MenuItem>
       </Menu>
+
+      {/* My profile / App settings pop-ups, over whatever page you're on */}
+      <Dialog
+        fullWidth
+        maxWidth="lg"
+        onClose={closePopup}
+        open={isAuthenticated && popup !== null}
+        sx={{ "& .MuiDialog-paper": { minHeight: "80vh" } }}
+      >
+        <IconButton
+          aria-label="Close"
+          onClick={closePopup}
+          sx={{ position: "absolute", right: 8, top: 8, zIndex: 1 }}
+        >
+          <CloseIcon />
+        </IconButton>
+        <DialogContent>
+          {popup && (
+            <VolunteerInfo section={popup} shiftboardId={shiftboardId} />
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* drawer */}
       <Drawer anchor="left" onClose={handleDrawerClose} open={isDrawerOpen}>
@@ -302,11 +340,6 @@ export const Header = () => {
             <List>
               {pageListDefault
                 .filter(({ path }) => {
-                  // Signed in: no Home entry (avatar menu has My account).
-                  // Signed out: Home stays.
-                  if (path === "/" && isAuthenticated) {
-                    return false;
-                  }
                   // Off-playa /shifts requires auth (middleware redirects
                   // to sign-in). Hide the menu entry for unauthenticated
                   // users so it doesn't appear to "go nowhere". On-playa
@@ -409,6 +442,49 @@ export const Header = () => {
                   })}
                 </List>
               </>
+            )}
+          </Box>
+          <Box>
+            <Divider />
+            {/* authenticated nav */}
+            {isAuthenticated ? (
+              <List
+                subheader={
+                  <ListSubheader>
+                    {playaName} &quot;{worldName}&quot;
+                  </ListSubheader>
+                }
+              >
+                <ListItem disablePadding>
+                  <Link href="/sign-in">
+                    <ListItemButton
+                      onClick={() => {
+                        handleSignOut();
+                        handleDrawerClose();
+                      }}
+                    >
+                      <ListItemIcon>
+                        <LogoutIcon />
+                      </ListItemIcon>
+                      <ListItemText>Sign out</ListItemText>
+                    </ListItemButton>
+                  </Link>
+                </ListItem>
+              </List>
+            ) : (
+              // unauthenticated nav
+              <List>
+                <ListItem disablePadding>
+                  <Link href="/sign-in" onClick={handleDrawerClose}>
+                    <ListItemButton selected={pathname === "/sign-in"}>
+                      <ListItemIcon>
+                        <LoginIcon />
+                      </ListItemIcon>
+                      <ListItemText>Sign in</ListItemText>
+                    </ListItemButton>
+                  </Link>
+                </ListItem>
+              </List>
             )}
           </Box>
         </Box>

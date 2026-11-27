@@ -20,7 +20,7 @@ const volunteer = makeTestVolunteer({
   passcode: "2468",
 });
 
-test.describe("Avatar menu + trimmed drawer (#814, #631)", () => {
+test.describe("Avatar menu + profile pop-ups (#814, #631)", () => {
   test.beforeAll(async () => {
     await cleanupAllTestData();
     await insertVolunteer(volunteer);
@@ -33,65 +33,85 @@ test.describe("Avatar menu + trimmed drawer (#814, #631)", () => {
     await closePool();
   });
 
-  test("signed out: Sign in button, Home + Shifts in drawer", async ({
+  test("signed out: Sign in button, same drawer, June banner on Home", async ({
     page,
   }) => {
     await page.goto("/");
-    await expect(page.getByRole("link", { name: "Sign in" })).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Sign in" }).first()
+    ).toBeVisible();
+    await expect(
+      page.getByText(/shifts will be released in June/)
+    ).toBeVisible();
     await page.getByRole("button", { name: "Open menu" }).click();
     const nav = page.getByRole("navigation");
-    for (const name of [
-      "Home",
-      "Shifts",
-      "Training",
-      "Reports",
-      "Help",
-      "Contact",
-    ]) {
+    for (const name of ["Home", "Training", "Reports", "Help", "Contact"]) {
       await expect(nav.getByRole("link", { name })).toBeVisible();
     }
-    await expect(nav.getByRole("link", { name: "Account" })).toHaveCount(0);
+    await expect(nav.getByText("Sign in")).toBeVisible();
   });
 
-  test("signed in: avatar menu, trimmed drawer, banner on Account", async ({
+  test("signed in: avatar initial, Home is the checklist, profile + settings pop-ups", async ({
     page,
   }) => {
     await signInAs(page, volunteer);
 
-    // banner moved from Home to the Account page
+    // own /info lands on Home, which is the checklist page
+    await page.goto(`/volunteers/${volunteer.shiftboardId}/info`);
+    await page.waitForURL((url) => url.pathname === "/");
+    await expect(page.getByText(/Pre-playa Checklist/)).toBeVisible();
     await expect(
       page.getByText(/shifts will be released in June/)
     ).toBeVisible();
 
-    await page.getByRole("button", { name: "Account menu" }).click();
-    await expect(
-      page.getByRole("menuitem", { name: "My account" })
-    ).toBeVisible();
-    await expect(
-      page.getByRole("menuitem", { name: "My shifts" })
-    ).toBeVisible();
-    await expect(
-      page.getByRole("menuitem", { name: "Sign out" })
-    ).toBeVisible();
-    await page.getByRole("menuitem", { name: "My shifts" }).click();
-    await page.waitForURL(/\/volunteers\/\d+\/schedule/);
+    const avatar = page.getByRole("button", { name: "Account menu" });
+    await expect(avatar).toHaveText("E");
 
+    // My profile opens over the current page
+    await page.goto("/training");
+    await avatar.click();
+    await page.getByRole("menuitem", { name: "My profile" }).click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog.getByText("My profile")).toBeVisible();
+    await expect(dialog.getByText("Nav Tester")).toBeVisible();
+    await expect(
+      dialog.getByRole("button", { name: "Update passcode" })
+    ).toBeVisible();
+    await expect(page).toHaveURL(/\/training#profile$/);
+    await dialog.getByRole("button", { name: "Close" }).click();
+    await expect(dialog).toHaveCount(0);
+    await expect(page).toHaveURL(/\/training$/);
+
+    await avatar.click();
+    await page.getByRole("menuitem", { name: "App settings" }).click();
+    await expect(
+      page.getByRole("dialog").getByText("Receive emails from Census")
+    ).toBeVisible();
+    await page
+      .getByRole("dialog")
+      .getByRole("button", { name: "Close" })
+      .click();
+
+    // old account links open the profile pop-up
+    await page.goto(`/volunteers/${volunteer.shiftboardId}/account`);
+    await expect(
+      page.getByRole("dialog").getByText("My profile")
+    ).toBeVisible();
+    await page
+      .getByRole("dialog")
+      .getByRole("button", { name: "Close" })
+      .click();
+
+    // drawer is the same signed in: Home stays, Sign out at the bottom
     await page.getByRole("button", { name: "Open menu" }).click();
     const nav = page.getByRole("navigation");
-    await expect(nav.getByRole("link", { name: "Training" })).toBeVisible();
-    await expect(nav.getByRole("link", { name: "Home" })).toHaveCount(0);
+    await expect(nav.getByRole("link", { name: "Home" })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Account" })).toHaveCount(0);
-    await expect(nav.getByText("Sign out")).toHaveCount(0);
+    await expect(nav.getByText("Sign out")).toBeVisible();
     await page.keyboard.press("Escape");
 
-    await page.goto("/");
-    await expect(page.getByText(/shifts will be released in June/)).toHaveCount(
-      0
-    );
-
-    await page.getByRole("button", { name: "Account menu" }).click();
+    await avatar.click();
     await page.getByRole("menuitem", { name: "Sign out" }).click();
     await page.waitForURL(/\/sign-in/);
-    await expect(page.getByRole("link", { name: "Sign in" })).toBeVisible();
   });
 });

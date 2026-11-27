@@ -17,6 +17,7 @@ import {
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 
+import { VolunteerInfo } from "@/app/volunteers/[shiftboardId]/info/VolunteerInfo";
 import { OfflineLink } from "@/components/general/OfflineLink";
 import { Hero } from "@/components/layout/Hero";
 import { useDeviceProvisioned } from "@/hooks/useDeviceProvisioned";
@@ -65,6 +66,12 @@ export const Home = () => {
   // copy ("sign in with your passcode") even on the cloud/prod origin.
   const isOnPlaya = isPinEnabled || isProvisionedTablet === true;
 
+  // Signed in, Home is your checklist page (#814, Chipper 2026-11-27).
+  // ponytail: the signed-in copy below is now unreachable; #856 rewrites it.
+  if (isAuthenticated && shiftboardId) {
+    return <VolunteerInfo shiftboardId={shiftboardId} />;
+  }
+
   // render
   // ------------------------------------------------------------
   return (
@@ -78,21 +85,26 @@ export const Home = () => {
       />
       <Container component="main">
         <Box component="section">
+          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
+            2027 Black Rock City Census volunteer shifts will be released in
+            June.
+          </Typography>
+
           {isAuthenticated ? (
             <Typography sx={{ mb: 2 }}>
               You&apos;re signed in. View your account below, or head to the{" "}
-              <Link href="/shifts">Shifts</Link> page to see requirements and sign
-              up.
+              <Link href="/shifts">Shifts</Link> page to see requirements and
+              sign up.
             </Typography>
           ) : isOnPlaya ? (
             <Typography sx={{ mb: 2 }}>
-              Welcome to the Census Lab! Sign in below with your passcode to view
-              your shifts and schedule.
+              Welcome to the Census Lab! Sign in below with your passcode to
+              view your shifts and schedule.
             </Typography>
           ) : (
             <Typography sx={{ mb: 2 }}>
-              Sign in below with your Burner Profile to view shift requirements and
-              sign up. Don&apos;t have a Burner Profile yet? Create one at{" "}
+              Sign in below with your Burner Profile to view shift requirements
+              and sign up. Don&apos;t have a Burner Profile yet? Create one at{" "}
               <a
                 href="https://profiles.burningman.org"
                 target="_blank"
@@ -165,7 +177,6 @@ export const Home = () => {
             ) : null}
           </Stack>
 
-
           <Card>
             <CardContent>
               <Typography component="h3" variant="h5" sx={{ mb: 1 }}>
@@ -177,8 +188,8 @@ export const Home = () => {
                 make up Black Rock City. We conduct a random sample of Burners
                 entering the event, then collect online survey responses after
                 the Burn. We combine these two data sources to get more
-                statistically accurate data about the people who attended Burning
-                Man that year.
+                statistically accurate data about the people who attended
+                Burning Man that year.
               </Typography>
               {/* External data site — dead offline (#629). */}
               {!isOnPlaya && (
@@ -244,124 +255,127 @@ export const Home = () => {
             OfflineLink so behavior is identical off-playa. */}
         {!isOnPlaya && (
           <>
-        <Box component="section">
-          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
-            How to Volunteer
-          </Typography>
-          <Card>
-            <CardContent>
-              <Typography>
-                We&apos;re glad you&apos;re interested in the Black Rock City
-                Census! Each year the Census gathers data that serves a vital
-                purpose for Burning Man, in addition to just being interesting to
-                know. It&apos;s an all-volunteer effort, and we would love to
-                welcome you to our happy crew!
+            <Box component="section">
+              <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
+                How to Volunteer
               </Typography>
-              <Typography>
-                {isAuthenticated ? (
-                  <>
-                    You&apos;re all set — use the{" "}
-                    <Link href="/shifts">Shifts</Link> page above to view shift
-                    requirements and sign up.
-                  </>
-                ) : (
-                  <>
-                    Are you ready to become a Census volunteer?{" "}
-                    <a href={isOAuthConfigured ? oktaHref : "/sign-in"}>
-                      Sign in
+              <Card>
+                <CardContent>
+                  <Typography>
+                    We&apos;re glad you&apos;re interested in the Black Rock
+                    City Census! Each year the Census gathers data that serves a
+                    vital purpose for Burning Man, in addition to just being
+                    interesting to know. It&apos;s an all-volunteer effort, and
+                    we would love to welcome you to our happy crew!
+                  </Typography>
+                  <Typography>
+                    {isAuthenticated ? (
+                      <>
+                        You&apos;re all set — use the{" "}
+                        <Link href="/shifts">Shifts</Link> page above to view
+                        shift requirements and sign up.
+                      </>
+                    ) : (
+                      <>
+                        Are you ready to become a Census volunteer?{" "}
+                        <a href={isOAuthConfigured ? oktaHref : "/sign-in"}>
+                          Sign in
+                        </a>{" "}
+                        above with your Burner Profile to view shift
+                        requirements and sign up.
+                      </>
+                    )}{" "}
+                    If you still have questions after reviewing our information,
+                    or if you would like to share your ideas about how to make
+                    an impact some other way, contact{" "}
+                    <a href="mailto:censusvolunteercoordinators@burningman.org">
+                      censusvolunteercoordinators@burningman.org
                     </a>{" "}
-                    above with your Burner Profile to view shift requirements and
-                    sign up.
-                  </>
-                )}{" "}
-                If you still have questions after reviewing our information, or if
-                you would like to share your ideas about how to make an impact
-                some other way, contact{" "}
-                <a href="mailto:censusvolunteercoordinators@burningman.org">
-                  censusvolunteercoordinators@burningman.org
-                </a>{" "}
-                and let us know how you want to participate! You&apos;re also more
-                than welcome to meet and chat with the team on our{" "}
-                <OfflineLink
-                  href="https://discord.gg/jcWuyYDGcn"
-                  label="Census Discord server"
-                />
-                .
-              </Typography>
-            </CardContent>
-          </Card>
-        </Box>
+                    and let us know how you want to participate! You&apos;re
+                    also more than welcome to meet and chat with the team on our{" "}
+                    <OfflineLink
+                      href="https://discord.gg/jcWuyYDGcn"
+                      label="Census Discord server"
+                    />
+                    .
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Box>
 
-        <Box component="section" id="volunteer-roles">
-          <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
-            Volunteer Roles
-          </Typography>
-          <Card>
-            <CardContent>
-              <Typography>
-                Brief descriptions of the various volunteer roles are below.
-                More information about roles and the training necessary for each
-                can be found in our Census Community on Hive, linked above.
+            <Box component="section" id="volunteer-roles">
+              <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
+                Volunteer Roles
               </Typography>
-              <Typography>
-                <strong>Random Samplers</strong> are stationed on Gate Road or
-                BRC Airport as Burners arrive on playa. They collect basic
-                demographic information from randomly selected participants. Good
-                mobility, punctuality, enthusiasm, and communication skills are
-                essential!
-              </Typography>
-              <Typography>
-                <strong>Traffic Tamers</strong> team up with Random Samplers on
-                Gate Road to work the lanes of traffic ahead of the sampling
-                point, getting participants excited about filling out the brief
-                sampling form. Mobility, punctuality, and enthusiasm are all
-                important traits!
-              </Typography>
-              <Typography>
-                <strong>Census Lab Hosts</strong> welcome visitors to the Census
-                Lab. They answer participants&apos; questions about the Census
-                and invite them to participate in a variety of ways.
-              </Typography>
-              <Typography>
-                <strong>Pop-up Lab Hosts</strong> travel on our Census transport
-                vehicle, the Data Beast, to a random location on playa to
-                educate participants about Census and invite them to write in the
-                Field Notes Journals.
-              </Typography>
-              <Typography>
-                <strong>Data Entry</strong> volunteers assist on playa, entering
-                the data collected during random sampling shifts. This role calls
-                for quick and accurate typists with good attention to detail!
-              </Typography>
-              <Typography>
-                <strong>Data Disseminators</strong> assist with on-playa
-                outreach, distributing our Friday preliminary report out to major
-                areas within BRC and encouraging participants to fill out the
-                online survey at the end of the event. These volunteers must be
-                friendly, mobile and clear communicators.
-              </Typography>
-              <Typography>
-                A core team of dedicated Census volunteers work year-round to
-                help with data analysis and visualization, blog post writing and
-                editing, pre-Burn planning, and other tasks.
-              </Typography>
-              <Typography>
-                If any of these sound like good fits for you or if you would like
-                to make an impact some other way, contact{" "}
-                <a href="mailto:censusvolunteercoordinators@burningman.org">
-                  censusvolunteercoordinators@burningman.org
-                </a>{" "}
-                and let us know how you want to participate! We suggest reading
-                through the{" "}
-                <OfflineLink
-                  href="https://hive.burningman.org/spaces/14264554/content"
-                  label="Black Rock City Census Community on Hive"
-                />{" "}
-                first.
-              </Typography>
-            </CardContent>
-          </Card>
-        </Box>
+              <Card>
+                <CardContent>
+                  <Typography>
+                    Brief descriptions of the various volunteer roles are below.
+                    More information about roles and the training necessary for
+                    each can be found in our Census Community on Hive, linked
+                    above.
+                  </Typography>
+                  <Typography>
+                    <strong>Random Samplers</strong> are stationed on Gate Road
+                    or BRC Airport as Burners arrive on playa. They collect
+                    basic demographic information from randomly selected
+                    participants. Good mobility, punctuality, enthusiasm, and
+                    communication skills are essential!
+                  </Typography>
+                  <Typography>
+                    <strong>Traffic Tamers</strong> team up with Random Samplers
+                    on Gate Road to work the lanes of traffic ahead of the
+                    sampling point, getting participants excited about filling
+                    out the brief sampling form. Mobility, punctuality, and
+                    enthusiasm are all important traits!
+                  </Typography>
+                  <Typography>
+                    <strong>Census Lab Hosts</strong> welcome visitors to the
+                    Census Lab. They answer participants&apos; questions about
+                    the Census and invite them to participate in a variety of
+                    ways.
+                  </Typography>
+                  <Typography>
+                    <strong>Pop-up Lab Hosts</strong> travel on our Census
+                    transport vehicle, the Data Beast, to a random location on
+                    playa to educate participants about Census and invite them
+                    to write in the Field Notes Journals.
+                  </Typography>
+                  <Typography>
+                    <strong>Data Entry</strong> volunteers assist on playa,
+                    entering the data collected during random sampling shifts.
+                    This role calls for quick and accurate typists with good
+                    attention to detail!
+                  </Typography>
+                  <Typography>
+                    <strong>Data Disseminators</strong> assist with on-playa
+                    outreach, distributing our Friday preliminary report out to
+                    major areas within BRC and encouraging participants to fill
+                    out the online survey at the end of the event. These
+                    volunteers must be friendly, mobile and clear communicators.
+                  </Typography>
+                  <Typography>
+                    A core team of dedicated Census volunteers work year-round
+                    to help with data analysis and visualization, blog post
+                    writing and editing, pre-Burn planning, and other tasks.
+                  </Typography>
+                  <Typography>
+                    If any of these sound like good fits for you or if you would
+                    like to make an impact some other way, contact{" "}
+                    <a href="mailto:censusvolunteercoordinators@burningman.org">
+                      censusvolunteercoordinators@burningman.org
+                    </a>{" "}
+                    and let us know how you want to participate! We suggest
+                    reading through the{" "}
+                    <OfflineLink
+                      href="https://hive.burningman.org/spaces/14264554/content"
+                      label="Black Rock City Census Community on Hive"
+                    />{" "}
+                    first.
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Box>
           </>
         )}
       </Container>
