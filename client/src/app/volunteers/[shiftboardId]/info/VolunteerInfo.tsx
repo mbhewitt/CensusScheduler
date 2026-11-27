@@ -39,12 +39,11 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
 
 import { useIsOnPlaya } from "@/hooks/useIsOnPlaya";
 import { trainingMaterialHref, WELCOME_HIVE_URL } from "@/lib/training";
 import { useSnackbar } from "notistack";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
@@ -164,23 +163,9 @@ export const VolunteerInfo = ({
   // dialog, just can't read existing values). Per Mew 2026-05-25.
   const isSelfView = shiftboardIdSession === shiftboardId;
 
-  // Your own page is Home now (#814): old /volunteers/<you>/info links land
-  // there, keeping ?discord= and #settings/#profile (Header opens the pop-up).
-  const router = useRouter();
-  const pathname = usePathname();
-  useEffect(() => {
-    if (!section && isSelfView && pathname !== "/") {
-      router.replace(`/${window.location.search}${window.location.hash}`);
-    }
-  }, [isSelfView, pathname, router, section]);
-
   // On-playa build OR a provisioned Lab tablet: Hive links don't load out
   // there, so training links point at the bundled copies instead (#335).
   const isOnPlaya = useIsOnPlaya() === true;
-
-  // refs
-  // ------------------------------------------------------------
-  const passcodeRef = useRef<HTMLDivElement>(null);
 
   // state
   // ------------------------------------------------------------
@@ -1058,6 +1043,15 @@ export const VolunteerInfo = ({
   // item — a standing prompt to view/add shifts no matter the volunteer's
   // role or dates. Checks off once they've signed up for 6+ CSP (per Mew
   // 2026-08-21). unshift() so it leads the list.
+  // Your shifts, as their own item (Chipper 2026-11-27): never checks off,
+  // since you come back to them for other reasons (calendar export, etc.).
+  checklistItems.unshift({
+    id: "view-my-shifts",
+    label: "View my current shifts",
+    done: false,
+    content: <VolunteerShifts shiftboardId={shiftboardId} />,
+  });
+
   checklistItems.unshift({
     id: "view-add-census-shifts",
     label: "View/Add Census shifts",
@@ -1546,11 +1540,6 @@ export const VolunteerInfo = ({
                 )}
               </CardContent>
             </Card>
-
-            {/* shifts — reuse existing VolunteerShifts component */}
-            <Box component="section" ref={passcodeRef}>
-              <VolunteerShifts shiftboardId={shiftboardId} />
-            </Box>
 
             {securitySection}
 

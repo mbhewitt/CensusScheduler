@@ -56,9 +56,8 @@ test.describe("Avatar menu + profile pop-ups (#814, #631)", () => {
   }) => {
     await signInAs(page, volunteer);
 
-    // own /info lands on Home, which is the checklist page
-    await page.goto(`/volunteers/${volunteer.shiftboardId}/info`);
-    await page.waitForURL((url) => url.pathname === "/");
+    // Home is the checklist page (old /info links show the same page)
+    await page.goto("/");
     await expect(page.getByText(/Pre-playa Checklist/)).toBeVisible();
     await expect(
       page.getByText(/shifts will be released in June/)

@@ -1,16 +1,17 @@
-import { redirect } from "next/navigation";
+"use client";
 
-// /volunteers/[id]/account is the legacy URL — the canonical page is now
-// /volunteers/[id]/info (the VIP page). Server-side redirect preserves
-// bookmarks and external links. Per @mbhewitt 2026-05-23.
+import { useParams } from "next/navigation";
+import { useEffect } from "react";
 
-interface IAccountPageProps {
-  params: Promise<{ shiftboardId: string }>;
-}
-
-const AccountPage = async ({ params }: IAccountPageProps) => {
-  const { shiftboardId } = await params;
-  redirect(`/volunteers/${shiftboardId}/info#profile`);
+// /volunteers/[id]/account is the legacy URL. It now opens the My profile
+// pop-up (#814) over the checklist page. Client-side because a server
+// redirect drops the #profile hash.
+const AccountPage = () => {
+  const shiftboardId = useParams<{ shiftboardId: string }>()?.shiftboardId;
+  useEffect(() => {
+    window.location.replace(`/volunteers/${shiftboardId}/info#profile`);
+  }, [shiftboardId]);
+  return null;
 };
 
 export default AccountPage;

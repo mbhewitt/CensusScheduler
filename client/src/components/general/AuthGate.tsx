@@ -69,7 +69,10 @@ export const AuthGate = ({ accountTypeToCheck, children }: IAuthGateProps) => {
   useEffect(() => {
     if (!isAuthorized && !hasSession) {
       if (pathname) {
-        const returnTo = encodeURIComponent(pathname);
+        // keep ?query and #hash (e.g. #profile opens the pop-up, #814)
+        const returnTo = encodeURIComponent(
+          pathname + window.location.search + window.location.hash
+        );
         router.replace(`/sign-in?returnTo=${returnTo}`);
       } else {
         router.replace("/sign-in");
