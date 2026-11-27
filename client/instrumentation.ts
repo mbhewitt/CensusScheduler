@@ -10,3 +10,12 @@ export async function register() {
   const { startDbHealthCheck } = await import("./lib/dbHealth");
   startDbHealthCheck();
 }
+
+// Log every unhandled server error with its route (#105). Clients only ever
+// see Next's generic "Internal Server Error"; the real error stays in the logs.
+export function onRequestError(
+  err: unknown,
+  request: { method: string; path: string }
+) {
+  console.error(`[api-error] ${request.method} ${request.path}:`, err);
+}

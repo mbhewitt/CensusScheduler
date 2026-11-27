@@ -47,6 +47,7 @@ import type {
   IResVolunteerRoleItem,
 } from "@/components/types/volunteers";
 import { HELPER_TEXT_LOCATION } from "@/constants";
+import { useUnsavedChangesWarning } from "@/hooks/useUnsavedChangesWarning";
 import { DeveloperModeContext } from "@/state/developer-mode/context";
 import { SessionContext } from "@/state/session/context";
 import { checkIsAdmin } from "@/utils/checkIsRoleExist";
@@ -104,10 +105,16 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
 
   // other hooks
   // ------------------------------------------------------------
-  const { control, handleSubmit, reset } = useForm({
+  const {
+    control,
+    formState: { isDirty },
+    handleSubmit,
+    reset,
+  } = useForm({
     defaultValues,
   });
   const { enqueueSnackbar } = useSnackbar();
+  useUnsavedChangesWarning(isDirty);
 
   // side effects
   // ------------------------------------------------------------
@@ -142,6 +149,8 @@ export const Account = ({ shiftboardId }: IAccountProps) => {
       const body: IReqVolunteerAccount = formValues;
 
       await trigger({ body, method: "PATCH" });
+      // saved: make these values the new baseline so the unsaved warning clears
+      reset(formValues);
 
       enqueueSnackbar(
         <SnackbarText>

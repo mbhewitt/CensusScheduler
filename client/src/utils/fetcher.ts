@@ -1,3 +1,29 @@
+// Set by Layout when the signed-in user is an admin: errors then carry the raw
+// server response text too (#105). Server never sends DB details to anyone.
+export const errorDetail = { show: false };
+
+// One place that turns a failed response into an Error for the toasts (#105):
+// the server's JSON `message` if there is one, else "Database error" for a
+// 5xx / non-JSON body (e.g. Next's plain "Internal Server Error"), else a
+// generic status line. Admins also get the raw response text appended.
+const throwApiError = async (res: Response): Promise<never> => {
+  const text = await res.text().catch(() => "");
+  let message: string | undefined;
+  try {
+    message = JSON.parse(text)?.message;
+  } catch {
+    // not JSON
+  }
+  const friendly =
+    message ??
+    (res.status >= 500 ? "Database error" : `Request failed (${res.status})`);
+  const detail =
+    !message && errorDetail.show
+      ? ` (${res.status}${text.trim() ? `: ${text.trim().slice(0, 300)}` : ""})`
+      : "";
+  throw new Error(friendly + detail);
+};
+
 export const fetcherGet = async (url: string) => {
   const res = await fetch(url);
   // Throw on non-2xx so SWR sets `error` (and retries) instead of handing the
@@ -6,8 +32,7 @@ export const fetcherGet = async (url: string) => {
   // as if it were a real payload and white-screened the page. Callers already
   // guard with `if (error) return <ErrorPage/>`.
   if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    throw new Error(body?.message ?? `Request failed (${res.status})`);
+    await throwApiError(res);
   }
   return res.json();
 };
@@ -23,8 +48,7 @@ export const fetcherTrigger = async (url: string, { arg }: { arg: any }) => {
   // in read-only mode, or a 500) resolved silently and the caller ran its
   // success path — dialog says "updated" while the DB was untouched.
   if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    throw new Error(body?.message ?? `Request failed (${res.status})`);
+    await throwApiError(res);
   }
   return res.json();
 };

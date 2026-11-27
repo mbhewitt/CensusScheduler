@@ -26,6 +26,7 @@ import { SnackbarText } from "@/components/general/SnackbarText";
 import { Hero } from "@/components/layout/Hero";
 import type { IReqContact } from "@/components/types/contact";
 import { CONTACT_RECIPIENT_LABELS } from "@/constants";
+import { useUnsavedChangesWarning } from "@/hooks/useUnsavedChangesWarning";
 import { SessionContext } from "@/state/session/context";
 import { fetcherTrigger } from "@/utils/fetcher";
 
@@ -65,7 +66,7 @@ export const Contact = () => {
   // ------------------------------------------------------------
   const {
     control,
-    formState: { errors },
+    formState: { errors, isDirty },
     handleSubmit,
     reset,
   } = useForm({
@@ -73,6 +74,7 @@ export const Contact = () => {
     mode: "onBlur",
   });
   const { enqueueSnackbar } = useSnackbar();
+  useUnsavedChangesWarning(isDirty);
 
   // side effects
   // ------------------------------------------------------------
