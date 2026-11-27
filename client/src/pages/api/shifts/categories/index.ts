@@ -47,7 +47,7 @@ const shiftCategories = async (req: NextApiRequest, res: NextApiResponse) => {
         department: { name: departmentName },
         name: categoryName,
       }: IReqShiftCategoryItem = JSON.parse(req.body);
-      const shiftCategoryIdNew = generateId(
+      const shiftCategoryIdNew = await generateId(
         `SELECT shift_category_id
         FROM op_shift_category
         WHERE shift_category_id=?`

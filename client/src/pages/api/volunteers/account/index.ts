@@ -13,6 +13,24 @@ const account = async (req: NextApiRequest, res: NextApiResponse) => {
       // create volunteer account
       const { email, location, passcodeCreate, playaName, worldName } =
         JSON.parse(req.body);
+
+      // #207: refuse a second account for the same email (case-insensitive)
+      const [dbEmailList] = await pool.query<RowDataPacket[]>(
+        `SELECT shiftboard_id
+        FROM op_volunteers
+        WHERE LOWER(email)=LOWER(?)
+          AND (delete_volunteer IS NULL OR delete_volunteer=false)
+        LIMIT 1`,
+        [String(email ?? "").trim()]
+      );
+      if (dbEmailList.length > 0) {
+        return res.status(409).json({
+          statusCode: 409,
+          message:
+            "An account with this email already exists. Try signing in instead.",
+        });
+      }
+
       const shiftboardIdNew = await generateNewUserShiftboardId();
 
       // insert new account row

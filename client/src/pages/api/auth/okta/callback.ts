@@ -433,12 +433,22 @@ const oktaCallback = async (req: NextApiRequest, res: NextApiResponse) => {
         [email]
       );
       for (const { role_id } of rosterRows) {
-        await pool.query(
-          `INSERT INTO op_volunteer_roles (shiftboard_id, role_id, add_role, remove_role)
-           VALUES (?, ?, true, false)
-           ON DUPLICATE KEY UPDATE add_role=true, remove_role=false`,
-          [shiftboardId, role_id]
-        );
+        // per-row: one bad roster row (e.g. a role_id missing from op_roles)
+        // only skips itself, not the user's remaining roles (#454)
+        try {
+          await pool.query(
+            `INSERT INTO op_volunteer_roles (shiftboard_id, role_id, add_role, remove_role)
+             VALUES (?, ?, true, false)
+             ON DUPLICATE KEY UPDATE add_role=true, remove_role=false`,
+            [shiftboardId, role_id]
+          );
+        } catch (rowErr) {
+          console.warn(
+            "roster role grant skipped for role",
+            role_id,
+            rowErr instanceof Error ? rowErr.message : rowErr
+          );
+        }
       }
     } catch (rosterErr) {
       console.warn(
