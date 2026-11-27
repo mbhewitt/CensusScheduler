@@ -26,7 +26,9 @@ const signIn = async (req: NextApiRequest, res: NextApiResponse) => {
     // ------------------------------------------------------------
     case "POST": {
       // check email and passcode credentials
-      const { passcode, shiftboardId }: IReqSignIn = JSON.parse(req.body);
+      const body =
+        typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body ?? {};
+      const { passcode, shiftboardId }: IReqSignIn = body;
       const [dbVolunteerList] = await pool.query<RowDataPacket[]>(
         `SELECT
           core_crew,
