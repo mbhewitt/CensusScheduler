@@ -513,6 +513,18 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   const hasOtherSap = roles.includes("OtherSAP");
   const isStaff = roles.includes("Staff");
 
+  // SAP download, shared by the SAP box and the SAP checklist item (#656).
+  const sapDownloadButton = sapStatus.sapFile && (
+    <Button
+      href={`/api/volunteers/${shiftboardId}/sap/${sapStatus.sapFile.sapId}`}
+      startIcon={<DownloadIcon />}
+      variant="contained"
+      size="small"
+    >
+      Download your SAP for {sapDateLabel}
+    </Button>
+  );
+
   // determine which checklist items are complete vs incomplete
   const checklistItems: {
     id: string;
@@ -531,40 +543,42 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   // back up. Fields save on change; the item is expanded by default.
   const onPlayaFields = (
     <Box>
-      {/* arrival date */}
-      <Box sx={{ mb: 2 }}>
-        <Typography sx={{ mb: 0.5 }} variant="subtitle2">
-          Desired / Expected Arrival Date
-        </Typography>
-        {arrivalAutoSet && (
-          <Alert severity="info" sx={{ mb: 1, fontWeight: "bold" }}>
-            We set your arrival to the day before your first shift &mdash;
-            change it below if you&rsquo;re arriving earlier.
-          </Alert>
-        )}
-        <Select
-          aria-label="Desired / Expected Arrival Date"
-          displayEmpty
-          onChange={(e) => handleArrivalDateChange(e.target.value)}
-          size="small"
-          sx={{ minWidth: { xs: "100%", sm: 300 } }}
-          value={arrivalDate?.dateId ?? ""}
-        >
-          <MenuItem value="">
-            <em>&mdash; Select &mdash;</em>
-          </MenuItem>
-          {dates
-            .filter((d) => ARRIVAL_DATENAMES.includes(d.datename))
-            .map((d) => (
-              <MenuItem key={d.dateId} value={d.dateId}>
-                {d.datename} &mdash; {formatDateDisplay(d.date)}
-              </MenuItem>
-            ))}
-        </Select>
-      </Box>
+      {/* arrival date (off-playa only: moot once you're on playa, #646) */}
+      {!isOnPlaya && (
+        <Box sx={{ mb: 2 }}>
+          <Typography sx={{ mb: 0.5 }} variant="subtitle2">
+            Desired / Expected Arrival Date
+          </Typography>
+          {arrivalAutoSet && (
+            <Alert severity="info" sx={{ mb: 1, fontWeight: "bold" }}>
+              We set your arrival to the day before your first shift &mdash;
+              change it below if you&rsquo;re arriving earlier.
+            </Alert>
+          )}
+          <Select
+            aria-label="Desired / Expected Arrival Date"
+            displayEmpty
+            onChange={(e) => handleArrivalDateChange(e.target.value)}
+            size="small"
+            sx={{ minWidth: { xs: "100%", sm: 300 } }}
+            value={arrivalDate?.dateId ?? ""}
+          >
+            <MenuItem value="">
+              <em>&mdash; Select &mdash;</em>
+            </MenuItem>
+            {dates
+              .filter((d) => ARRIVAL_DATENAMES.includes(d.datename))
+              .map((d) => (
+                <MenuItem key={d.dateId} value={d.dateId}>
+                  {d.datename} &mdash; {formatDateDisplay(d.date)}
+                </MenuItem>
+              ))}
+          </Select>
+        </Box>
+      )}
 
-      {/* early entry question (only for pre-open dates) */}
-      {isPreOpen && (
+      {/* early entry question (only for pre-open dates, off-playa only) */}
+      {!isOnPlaya && isPreOpen && (
         <Box
           sx={{
             backgroundColor: theme.palette.action.hover,
@@ -619,20 +633,20 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
       </Box>
     </Box>
   );
-  const plansDone =
-    arrivalDate !== null && (volunteer.location ?? "").trim().length > 0;
+  const hasLocation = (volunteer.location ?? "").trim().length > 0;
+  const plansDone = isOnPlaya
+    ? hasLocation
+    : arrivalDate !== null && hasLocation;
   checklistItems.push({
     id: "plans",
-    label: plansDone
-      ? "On-playa plans provided"
-      : "Tell us your plans for this year\u2019s event",
+    label: "Tell us your plans for this year\u2019s event",
     done: plansDone,
     content: (
       <Box>
         <Typography color="text.secondary" sx={{ mb: 2 }}>
-          As a Census volunteer, you may be eligible for early entry to the
-          event. Tell us your arrival date, early-entry needs, and where
-          you&apos;ll be camping.
+          {isOnPlaya
+            ? "Tell us where you\u2019ll be camping."
+            : "As a Census volunteer, you may be eligible for early entry to the event. Tell us your arrival date, early-entry needs, and where you\u2019ll be camping."}
         </Typography>
         {onPlayaFields}
       </Box>
@@ -642,9 +656,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   // Behavioral Standards
   checklistItems.push({
     id: "behavioral-standards",
-    label: behavioralStandardsSigned
-      ? "Behavioral Standards Agreement \u2014 Signed"
-      : "Review and sign the Behavioral Standards Agreement",
+    label: "Review and sign the Behavioral Standards Agreement",
     done: behavioralStandardsSigned,
     content: (
       <Box>
@@ -672,9 +684,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
   // hiding the step (#643, folds in #630; was #628 hide-behavior).
   checklistItems.push({
     id: "burner-profile",
-    label: burnerProfileUpdated
-      ? "Burner Profile \u2014 Updated"
-      : "Review and update your Burner Profile",
+    label: "Review and update your Burner Profile",
     done: burnerProfileUpdated,
     content: (
       <Box>
@@ -708,9 +718,8 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     const sapDone = sapStatus.cspFulfilled && allDaysFulfilled;
     checklistItems.push({
       id: "sap-requirements",
-      label: sapDone
-        ? "SAP shift requirements met"
-        : "Sign up for pre-event shifts to earn a Census SAP for early entry",
+      label:
+        "Sign up for pre-event shifts to earn a Census SAP for early entry",
       done: sapDone,
       content: (
         <Box>
@@ -720,6 +729,14 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
             also need one Census shift per day beginning the day after your
             planned arrival.
           </Typography>
+          {sapDownloadButton && (
+            <Stack alignItems="flex-start" spacing={1} sx={{ mb: 2 }}>
+              <Typography>
+                Your SAP is ready. Please print it before you come to playa.
+              </Typography>
+              {sapDownloadButton}
+            </Stack>
+          )}
           <Stack spacing={0.5}>
             <Stack alignItems="center" direction="row" spacing={1}>
               {sapStatus.cspFulfilled ? (
@@ -784,86 +801,88 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     });
   }
 
+  // Census Lab campers are expected to take a Census Lab Steward shift (#429).
+  // It is part of the "Camping with Census Lab" item below, so camping isn't
+  // met until the shift is signed up for (#612). ("Camp Steward" is the
+  // front-facing wording per Chipper; the underlying position is Census Lab
+  // Steward.)
+  const hasLabStewardShift = shifts.some(
+    (shiftItem) => shiftItem.position === "Census Lab Steward"
+  );
+  const stewardContent = (
+    <Box sx={{ mt: 2 }}>
+      <Typography sx={{ mb: 1 }}>
+        As a Census Lab camper, please sign up for one or two{" "}
+        <strong>Census Lab Steward</strong> shifts (your Camp Steward shifts) to
+        help keep the Lab running during the event.
+      </Typography>
+      <Link
+        href="/shifts"
+        style={{
+          color: theme.palette.primary.main,
+          fontWeight: 500,
+          textDecoration: "underline",
+        }}
+      >
+        Browse and sign up for shifts
+      </Link>
+    </Box>
+  );
+
   // Role-based thresholds (Counter Culture, Census Lab, Census Ticket).
-  // Staff short-circuit: emit a "Requirements met" item with the no-CSP
-  // copy, regardless of actual currentCsp/requiredCsp.
+  // Staff short-circuit: the CSP gauge is replaced by the no-CSP copy,
+  // regardless of actual currentCsp/requiredCsp.
   for (const rt of roleThresholds) {
     const displayRole = ROLE_DISPLAY_NAMES[rt.role] ?? rt.role;
-    if (isStaff) {
-      checklistItems.push({
-        id: `role-${rt.role}`,
-        label: `${displayRole} \u2014 Requirements met`,
-        done: true,
-        content: staffNoCspCopy,
-      });
-      continue;
-    }
+    const withSteward = rt.role === "CensusLabCamp";
     const pct = Math.min(
       100,
       Math.round((rt.currentCsp / rt.requiredCsp) * 100)
     );
     checklistItems.push({
       id: `role-${rt.role}`,
-      label: rt.fulfilled
-        ? `${displayRole} \u2014 Requirements met`
-        : `Meet shift requirements for ${displayRole}`,
-      done: rt.fulfilled,
+      label: `Meet shift requirements for ${displayRole}`,
+      done: (isStaff || rt.fulfilled) && (!withSteward || hasLabStewardShift),
       content: (
         <Box>
-          <Typography sx={{ mb: 1 }}>
-            Sign up for shifts worth at least {rt.requiredCsp} CSP.
-          </Typography>
-          <Stack alignItems="center" direction="row" spacing={2}>
-            <LinearProgress
-              sx={{ flexGrow: 1, height: 8, borderRadius: 4 }}
-              value={pct}
-              variant="determinate"
-            />
-            <Typography variant="body2">
-              {rt.fulfilled
-                ? "Requirement fulfilled"
-                : `${rt.currentCsp} / ${rt.requiredCsp} CSP`}
-            </Typography>
-          </Stack>
+          {isStaff ? (
+            staffNoCspCopy
+          ) : (
+            <>
+              <Typography sx={{ mb: 1 }}>
+                Sign up for shifts worth at least {rt.requiredCsp} CSP.
+              </Typography>
+              <Stack alignItems="center" direction="row" spacing={2}>
+                <LinearProgress
+                  sx={{ flexGrow: 1, height: 8, borderRadius: 4 }}
+                  value={pct}
+                  variant="determinate"
+                />
+                <Typography variant="body2">
+                  {rt.fulfilled
+                    ? "Requirement fulfilled"
+                    : `${rt.currentCsp} / ${rt.requiredCsp} CSP`}
+                </Typography>
+              </Stack>
+            </>
+          )}
+          {withSteward && stewardContent}
         </Box>
       ),
     });
   }
 
-  // Census Lab campers are expected to take a Census Lab Steward shift (#429).
-  // Only shown to volunteers carrying the CensusLabCamp role; complete once
-  // they hold an active Census Lab Steward shift. ("Camp Steward" is the
-  // front-facing wording per Chipper; the underlying position is Census Lab
-  // Steward.)
-  if (roles.includes("CensusLabCamp")) {
-    const hasLabStewardShift = shifts.some(
-      (shiftItem) => shiftItem.position === "Census Lab Steward"
-    );
+  // Fallback: a Lab camper with no CSP threshold row has no item above to
+  // carry the steward requirement, so keep it as its own item.
+  if (
+    roles.includes("CensusLabCamp") &&
+    !roleThresholds.some((rt) => rt.role === "CensusLabCamp")
+  ) {
     checklistItems.push({
       id: "camp-steward-shift",
-      label: hasLabStewardShift
-        ? "Camp Steward shift — done"
-        : "Sign up for one or two Camp Steward shifts",
+      label: "Sign up for one or two Camp Steward shifts",
       done: hasLabStewardShift,
-      content: (
-        <Box>
-          <Typography sx={{ mb: 1 }}>
-            As a Census Lab camper, please sign up for one or two{" "}
-            <strong>Census Lab Steward</strong> shifts (your Camp Steward
-            shifts) to help keep the Lab running during the event.
-          </Typography>
-          <Link
-            href="/shifts"
-            style={{
-              color: theme.palette.primary.main,
-              fontWeight: 500,
-              textDecoration: "underline",
-            }}
-          >
-            Browse and sign up for shifts
-          </Link>
-        </Box>
-      ),
+      content: stewardContent,
     });
   }
 
@@ -874,9 +893,7 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
     const allTrainingDone = trainings.every((t) => t.completed);
     checklistItems.push({
       id: "training",
-      label: allTrainingDone
-        ? "Required training courses completed"
-        : "Complete required training courses",
+      label: "Complete required training courses",
       done: allTrainingDone,
       content: (
         <Box>
@@ -1085,8 +1102,31 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
 
   // render
   // ------------------------------------------------------------
+  // Admin viewing someone else's page: hard-to-miss colored top border plus a
+  // banner, so edits don't land on the wrong account (#331). Deliberately no
+  // link back to the admin's own account (tablet handoff to non-admins).
+  const isAdminViewingOther = isAdmin && !isSelfView;
   return (
-    <>
+    <Box
+      sx={
+        isAdminViewingOther
+          ? { borderTop: `8px solid ${theme.palette.warning.main}` }
+          : undefined
+      }
+    >
+      {isAdminViewingOther && (
+        <Container maxWidth="lg" sx={{ mt: 2 }}>
+          <Alert severity="warning">
+            <strong>Admin view</strong> &mdash; you are viewing and editing the
+            profile of{" "}
+            <strong>
+              {volunteer.playaName}
+              {volunteer.worldName ? ` "${volunteer.worldName}"` : ""}
+            </strong>
+            . Changes you make here affect their account, not yours.
+          </Alert>
+        </Container>
+      )}
       {/* hero — reuse the account-page banner since the info page is now
           the canonical volunteer page (per @mbhewitt 2026-05-23). The
           previous `banner-volunteers.jpg` reference didn't resolve to a
@@ -1221,16 +1261,10 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
                       <Stack spacing={1} alignItems="flex-start">
                         <span>
                           Your <strong>Setup Access Pass (SAP)</strong> for{" "}
-                          <strong>{sapDateLabel}</strong> is ready.
+                          <strong>{sapDateLabel}</strong> is ready. Please print
+                          it before you come to playa.
                         </span>
-                        <Button
-                          href={`/api/volunteers/${shiftboardId}/sap/${sapStatus.sapFile.sapId}`}
-                          startIcon={<DownloadIcon />}
-                          variant="contained"
-                          size="small"
-                        >
-                          Download your SAP for {sapDateLabel}
-                        </Button>
+                        {sapDownloadButton}
                       </Stack>
                     ) : (
                       <span>
@@ -1598,6 +1632,6 @@ export const VolunteerInfo = ({ shiftboardId }: IVolunteerInfoProps) => {
         shiftboardId={shiftboardId}
         worldName={volunteer.worldName}
       />
-    </>
+    </Box>
   );
 };
