@@ -112,10 +112,7 @@ test.describe("VIP Page", () => {
     // Set up VIP volunteer with pre-event arrival and a shift
     await insertVolunteer(vipVolunteer);
     await setArrivalDate(vipVolunteer.shiftboardId, DATE_ID_PRE_WED);
-    await assignRole(
-      vipVolunteer.shiftboardId,
-      ROLE_BEHAVIORAL_STANDARDS_ID
-    );
+    await assignRole(vipVolunteer.shiftboardId, ROLE_BEHAVIORAL_STANDARDS_ID);
     // Ensure OtherSAP is not set (clean state)
     await removeRole(vipVolunteer.shiftboardId, ROLE_OTHER_SAP_ID);
     await insertFullShift(VIP_SHIFT);
@@ -141,7 +138,9 @@ test.describe("VIP Page", () => {
     // Volunteer name should appear in the hero heading
     // Longer timeout for first page load (cold start)
     await expect(
-      page.getByRole("heading", { name: new RegExp(vipVolunteer.playaName) }).first()
+      page
+        .getByRole("heading", { name: new RegExp(vipVolunteer.playaName) })
+        .first()
     ).toBeVisible({ timeout: 20_000 });
   });
 
@@ -196,9 +195,7 @@ test.describe("VIP Page", () => {
 
   // ── Checklist ────────────────────────────────────────────
 
-  test("checklist shows behavioral standards as complete", async ({
-    page,
-  }) => {
+  test("checklist shows behavioral standards as complete", async ({ page }) => {
     await signInAs(page, vipVolunteer);
 
     await page.goto(`/volunteers/${vipVolunteer.shiftboardId}/info`);
@@ -208,9 +205,7 @@ test.describe("VIP Page", () => {
     const completedAccordion = page.getByText(/view \d+ completed item/i);
     await expect(completedAccordion).toBeVisible({ timeout: 10_000 });
     await completedAccordion.click();
-    await expect(
-      page.getByText(/behavioral standards/i).first()
-    ).toBeVisible();
+    await expect(page.getByText(/behavioral standards/i).first()).toBeVisible();
   });
 
   test("checklist shows SAP requirements for pre-event arrival", async ({
@@ -287,13 +282,14 @@ test.describe("VIP Page", () => {
   test("Burner Profile link is present", async ({ page }) => {
     await signInAs(page, vipVolunteer);
 
-    await page.goto(`/volunteers/${vipVolunteer.shiftboardId}/info`);
+    // lives in the My profile pop-up (#814)
+    await page.goto(`/volunteers/${vipVolunteer.shiftboardId}/info#profile`);
 
     // On the offline on-playa build (NEXT_PUBLIC_PIN_ENABLED="true", the mode
     // these e2e tests run in), external links become an OfflineLink — a button
     // that opens the "email this to me" dialog instead of a dead <a href>
     // (#643, #630). So the Burner Profile step is a button, not a link.
-    const burnerProfile = page.getByRole("button", {
+    const burnerProfile = page.getByRole("dialog").getByRole("button", {
       name: /burner profile/i,
     });
     await expect(burnerProfile.first()).toBeVisible({ timeout: 10_000 });
@@ -304,9 +300,7 @@ test.describe("VIP Page", () => {
     await expect(
       page.getByText("These tablets have no internet")
     ).toBeVisible();
-    await expect(
-      page.getByText(/profiles\.burningman\.org/)
-    ).toBeVisible();
+    await expect(page.getByText(/profiles\.burningman\.org/)).toBeVisible();
   });
 
   // ── Shifts section ───────────────────────────────────────
@@ -317,9 +311,9 @@ test.describe("VIP Page", () => {
     await page.goto(`/volunteers/${vipVolunteer.shiftboardId}/info`);
 
     // The shift we assigned should appear
-    await expect(
-      page.getByText("E2E VIP Position").first()
-    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText("E2E VIP Position").first()).toBeVisible({
+      timeout: 10_000,
+    });
   });
 
   // ── Admin sections ───────────────────────────────────────
@@ -330,9 +324,9 @@ test.describe("VIP Page", () => {
     await page.goto(`/volunteers/${vipVolunteer.shiftboardId}/info`);
 
     // Admin sections should be visible
-    await expect(
-      page.getByText(/^Roles$/i).first()
-    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText(/^Roles$/i).first()).toBeVisible({
+      timeout: 10_000,
+    });
 
     // Should see the behavioral standards role as active
     await expect(
@@ -346,9 +340,9 @@ test.describe("VIP Page", () => {
     await page.goto(`/volunteers/${vipVolunteer.shiftboardId}/info`);
 
     // Wait for roles to load
-    await expect(
-      page.getByText(/^Roles$/i).first()
-    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText(/^Roles$/i).first()).toBeVisible({
+      timeout: 10_000,
+    });
 
     // Find an inactive role and click to add it
     const coreCrewText = page.getByText("Core Crew");
@@ -356,16 +350,16 @@ test.describe("VIP Page", () => {
     await coreCrewText.first().click();
 
     // Should see success snackbar
-    await expect(
-      page.getByText(/has been added/i)
-    ).toBeVisible({ timeout: 5_000 });
+    await expect(page.getByText(/has been added/i)).toBeVisible({
+      timeout: 5_000,
+    });
 
     // Now remove it
     await page.getByText("Core Crew").first().click();
 
-    await expect(
-      page.getByText(/has been removed/i)
-    ).toBeVisible({ timeout: 5_000 });
+    await expect(page.getByText(/has been removed/i)).toBeVisible({
+      timeout: 5_000,
+    });
   });
 
   test("admin cannot remove Admin or SuperAdmin roles", async ({ page }) => {
@@ -375,14 +369,12 @@ test.describe("VIP Page", () => {
     await page.goto("/volunteers/1/info");
 
     // Wait for roles to load
-    await expect(
-      page.getByText(/^Roles$/i).first()
-    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText(/^Roles$/i).first()).toBeVisible({
+      timeout: 10_000,
+    });
 
     // Admin and SuperAdmin should show "protected" label
-    await expect(
-      page.getByText("protected").first()
-    ).toBeVisible();
+    await expect(page.getByText("protected").first()).toBeVisible();
   });
 
   // ── Non-admin restrictions ───────────────────────────────
@@ -394,7 +386,9 @@ test.describe("VIP Page", () => {
 
     // Wait for page to load
     await expect(
-      page.getByRole("heading", { name: new RegExp(vipVolunteer.playaName) }).first()
+      page
+        .getByRole("heading", { name: new RegExp(vipVolunteer.playaName) })
+        .first()
     ).toBeVisible({ timeout: 10_000 });
 
     // Admin-only sections should NOT be visible
@@ -457,12 +451,9 @@ test.describe("VIP Page", () => {
     expect(body.sapStatus.bypassReason).toBe("post_opening");
 
     // Reset arrival date back
-    await ctx.patch(
-      `/api/volunteers/${vipVolunteer.shiftboardId}/info`,
-      {
-        data: JSON.stringify({ arrivalDateId: DATE_ID_PRE_WED }),
-      }
-    );
+    await ctx.patch(`/api/volunteers/${vipVolunteer.shiftboardId}/info`, {
+      data: JSON.stringify({ arrivalDateId: DATE_ID_PRE_WED }),
+    });
     await ctx.dispose();
   });
 
@@ -524,9 +515,7 @@ test.describe("VIP Page", () => {
     // updated:false DELETEs the role row and returns 200 (not 201).
     expect(offRes.status()).toBe(200);
 
-    getRes = await ctx.get(
-      `/api/volunteers/${vipVolunteer.shiftboardId}/info`
-    );
+    getRes = await ctx.get(`/api/volunteers/${vipVolunteer.shiftboardId}/info`);
     body = await getRes.json();
     expect(body.burnerProfileUpdated).toBe(false);
 
@@ -558,9 +547,7 @@ test.describe("VIP Page", () => {
       { data: JSON.stringify({ hasOtherSap: false }) }
     );
 
-    getRes = await ctx.get(
-      `/api/volunteers/${vipVolunteer.shiftboardId}/info`
-    );
+    getRes = await ctx.get(`/api/volunteers/${vipVolunteer.shiftboardId}/info`);
     body = await getRes.json();
     expect(body.sapStatus.bypass).toBe(false);
 

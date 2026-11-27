@@ -1166,58 +1166,62 @@ export const VolunteerInfo = ({
           </Typography>
           {section !== "profile" && (
             <Typography color="text.secondary" sx={{ mb: 2 }}>
-              Review your account and complete the checklist items below to get
-              ready for the event.
+              Complete the checklist items below to get ready for the event.
             </Typography>
           )}
-          <Stack direction="row" flexWrap="wrap" spacing={3} useFlexGap>
-            <Box>
-              <Typography color="text.secondary" variant="body2">
-                Playa Name
-              </Typography>
-              <Typography>{volunteer.playaName || "\u2014"}</Typography>
-            </Box>
-            <Box>
-              <Typography color="text.secondary" variant="body2">
-                World Name
-              </Typography>
-              <Typography>{volunteer.worldName || "\u2014"}</Typography>
-            </Box>
-            <Box>
-              <Typography color="text.secondary" variant="body2">
-                Email
-              </Typography>
-              <Typography>{volunteer.email || "\u2014"}</Typography>
-            </Box>
-            {isSelfView && selfRoleNames && (
-              <Box>
-                <Typography color="text.secondary" variant="body2">
-                  Roles
-                </Typography>
-                <Typography>{selfRoleNames}</Typography>
-              </Box>
-            )}
-          </Stack>
-          {/* Burner Profile link — dead offline on playa, so OfflineLink
+          {/* on your own Home these live in the My profile pop-up (Chipper) */}
+          {(section === "profile" || !isSelfView) && (
+            <>
+              <Stack direction="row" flexWrap="wrap" spacing={3} useFlexGap>
+                <Box>
+                  <Typography color="text.secondary" variant="body2">
+                    Playa Name
+                  </Typography>
+                  <Typography>{volunteer.playaName || "\u2014"}</Typography>
+                </Box>
+                <Box>
+                  <Typography color="text.secondary" variant="body2">
+                    World Name
+                  </Typography>
+                  <Typography>{volunteer.worldName || "\u2014"}</Typography>
+                </Box>
+                <Box>
+                  <Typography color="text.secondary" variant="body2">
+                    Email
+                  </Typography>
+                  <Typography>{volunteer.email || "\u2014"}</Typography>
+                </Box>
+                {isSelfView && selfRoleNames && (
+                  <Box>
+                    <Typography color="text.secondary" variant="body2">
+                      Roles
+                    </Typography>
+                    <Typography>{selfRoleNames}</Typography>
+                  </Box>
+                )}
+              </Stack>
+              {/* Burner Profile link — dead offline on playa, so OfflineLink
                 offers to email it instead of hiding it (#643, #630; was #628
                 hide-behavior). */}
-          <Typography color="text.secondary" sx={{ mt: 1 }} variant="body2">
-            Need to update your info?{" "}
-            {/* De-emphasized on purpose (Chipper 2026-07-02): reads as
+              <Typography color="text.secondary" sx={{ mt: 1 }} variant="body2">
+                Need to update your info?{" "}
+                {/* De-emphasized on purpose (Chipper 2026-07-02): reads as
                   supporting subtext, not a primary action — the primary
                   "update your Burner Profile" step lives in the checklist
                   below. Still a working link, just not blue/underlined. */}
-            <OfflineLink
-              href="https://profiles.burningman.org/my-profile"
-              label="Visit your Burner Profile"
-              style={{
-                color: "inherit",
-                textDecoration: "none",
-                fontStyle: "italic",
-              }}
-            />
-            .
-          </Typography>
+                <OfflineLink
+                  href="https://profiles.burningman.org/my-profile"
+                  label="Visit your Burner Profile"
+                  style={{
+                    color: "inherit",
+                    textDecoration: "none",
+                    fontStyle: "italic",
+                  }}
+                />
+                .
+              </Typography>
+            </>
+          )}
         </CardContent>
       </Card>
     </>
@@ -1363,7 +1367,7 @@ export const VolunteerInfo = ({
           backgroundImage: "url(/banners/man-at-night.jpg)",
           backgroundSize: "cover",
         }}
-        text={isSelfView ? "Home" : "Account"}
+        text={isSelfView ? "Checklist" : "Account"}
       />
       <Container maxWidth="lg">
         {/* your own page is Home (#814), so it carries Home's banner */}

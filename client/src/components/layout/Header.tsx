@@ -283,7 +283,6 @@ export const Header = () => {
         open={Boolean(avatarAnchorEl)}
       >
         <MenuItem onClick={() => openPopup("profile")}>My profile</MenuItem>
-        <MenuItem onClick={() => openPopup("settings")}>App settings</MenuItem>
         <MenuItem
           component={Link}
           href={`/volunteers/${shiftboardId}/schedule`}
@@ -291,6 +290,7 @@ export const Header = () => {
         >
           My shifts
         </MenuItem>
+        <MenuItem onClick={() => openPopup("settings")}>App settings</MenuItem>
         <MenuItem
           onClick={() => {
             setAvatarAnchorEl(null);
