@@ -57,6 +57,7 @@ import { BreadcrumbsNav } from "@/components/general/BreadcrumbsNav";
 import { ErrorPage } from "@/components/general/ErrorPage";
 import { Loading } from "@/components/general/Loading";
 import { SnackbarText } from "@/components/general/SnackbarText";
+import { helpChecklistPage } from "@/components/help/helpContent";
 import { Hero } from "@/components/layout/Hero";
 import type { IResVolunteerInfo } from "@/components/types/volunteer-info";
 import type { IResRoleRowItem } from "@/components/types/roles";
@@ -1357,6 +1358,7 @@ export const VolunteerInfo = ({
           backgroundImage: "url(/banners/man-at-night.jpg)",
           backgroundSize: "cover",
         }}
+        help={isSelfView ? helpChecklistPage : undefined}
         text={isSelfView ? "Census Volunteer Checklist" : "Account"}
       />
       <Container maxWidth="lg">

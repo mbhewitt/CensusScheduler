@@ -77,7 +77,17 @@ test.describe("Avatar menu + profile pop-ups (#814, #631)", () => {
       dialog.getByRole("button", { name: "Update passcode" })
     ).toBeVisible();
     await expect(page).toHaveURL(/\/training#profile$/);
-    await dialog.getByRole("button", { name: "Close" }).click();
+
+    // "?" opens the help for the pop-up (#814)
+    await dialog.getByRole("button", { name: "Help: My profile" }).click();
+    await expect(
+      page.getByRole("dialog").getByText("Help: My profile")
+    ).toBeVisible();
+    await page.getByRole("button", { name: "Close help" }).click();
+    await expect(page.getByRole("button", { name: "Close help" })).toHaveCount(
+      0
+    );
+    await dialog.getByRole("button", { name: "Close", exact: true }).click();
     await expect(dialog).toHaveCount(0);
     await expect(page).toHaveURL(/\/training$/);
 
@@ -88,7 +98,7 @@ test.describe("Avatar menu + profile pop-ups (#814, #631)", () => {
     ).toBeVisible();
     await page
       .getByRole("dialog")
-      .getByRole("button", { name: "Close" })
+      .getByRole("button", { name: "Close", exact: true })
       .click();
 
     // old account links open the profile pop-up
@@ -98,7 +108,7 @@ test.describe("Avatar menu + profile pop-ups (#814, #631)", () => {
     ).toBeVisible();
     await page
       .getByRole("dialog")
-      .getByRole("button", { name: "Close" })
+      .getByRole("button", { name: "Close", exact: true })
       .click();
 
     // drawer is the same signed in: Home stays, Sign out at the bottom

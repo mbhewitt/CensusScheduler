@@ -1,12 +1,16 @@
 import { Box, Container, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
+import { HelpButton } from "@/components/help/HelpButton";
+import type { IHelpPage } from "@/components/help/helpContent";
+
 interface IHeroProps {
+  help?: IHelpPage;
   imageStyles: { [key: string]: string };
   text: string;
 }
 
-export const Hero = ({ imageStyles, text }: IHeroProps) => {
+export const Hero = ({ help, imageStyles, text }: IHeroProps) => {
   // other hooks
   // ------------------------------------------------------------
   const theme = useTheme();
@@ -24,6 +28,19 @@ export const Hero = ({ imageStyles, text }: IHeroProps) => {
         width: 1,
       }}
     >
+      {help && (
+        <HelpButton
+          help={help}
+          sx={{
+            bgcolor: "rgba(47,47,47,0.6)",
+            color: theme.palette.common.white,
+            position: "absolute",
+            right: 8,
+            top: 8,
+            "&:hover": { bgcolor: "rgba(47,47,47,0.8)" },
+          }}
+        />
+      )}
       <Box
         sx={{
           backgroundColor: "rgba(47,47,47,0.6)",

@@ -37,6 +37,8 @@ import { Fragment, useContext, useEffect, useState } from "react";
 import { useIdleTimer } from "react-idle-timer";
 
 import { VolunteerInfo } from "@/app/volunteers/[shiftboardId]/info/VolunteerInfo";
+import { HelpButton } from "@/components/help/HelpButton";
+import { helpProfile, helpSettings } from "@/components/help/helpContent";
 import {
   pageListAdmin,
   pageListDefault,
@@ -316,6 +318,12 @@ export const Header = () => {
         >
           <CloseIcon />
         </IconButton>
+        {popup && (
+          <HelpButton
+            help={popup === "profile" ? helpProfile : helpSettings}
+            sx={{ position: "absolute", right: 52, top: 8, zIndex: 1 }}
+          />
+        )}
         <DialogContent>
           {popup && (
             <VolunteerInfo section={popup} shiftboardId={shiftboardId} />
