@@ -30,7 +30,7 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import { enqueueSnackbar } from "notistack";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useSWR, { useSWRConfig } from "swr";
 
 import { Hero } from "@/components/layout/Hero";
@@ -45,6 +45,8 @@ import { fetcherGet } from "@/utils/fetcher";
 
 const PEOPLE_URL = "/api/saps/people";
 const POOL_URL = "/api/saps";
+// #582: how often to pick up other admins' changes while the page is open.
+const REFRESH_MS = 150_000;
 
 // Stable key for per-row UI state (volunteers keyed by id, off-book by email).
 const rowKey = (p: ISapPerson) =>
@@ -89,6 +91,28 @@ export const Saps = () => {
   // a per-row debounce timer so we save-as-you-type without a request/keystroke.
   const [notesDraft, setNotesDraft] = useState<Record<string, string>>({});
   const notesTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
+
+  // #582: poll so admins see each other's notes/dates, but skip a tick while
+  // someone is typing/choosing (focus in any field or open menu), a note save
+  // is pending, or an upload is running — never yank a value mid-edit.
+  const notesFocusKey = useRef<string | null>(null);
+  useEffect(() => {
+    const id = setInterval(() => {
+      const isEditing = document.activeElement?.closest(
+        'input, textarea, select, [role="combobox"], [role="listbox"], [role="menu"]',
+      );
+      if (
+        document.hidden ||
+        uploading ||
+        isEditing ||
+        Object.keys(notesTimers.current).length
+      )
+        return;
+      mutate(PEOPLE_URL);
+      mutate(POOL_URL);
+    }, REFRESH_MS);
+    return () => clearInterval(id);
+  }, [mutate, uploading]);
 
   if (peopleError) return <ErrorPage />;
   if (!peopleData) return <Loading />;
@@ -172,6 +196,16 @@ export const Saps = () => {
     mutate(PEOPLE_URL);
   };
 
+  // Once a note is saved and the field is unfocused, refetch and drop the
+  // local draft so later refreshes can show other admins' edits (#582).
+  const settleNotes = async (key: string) => {
+    await mutate(PEOPLE_URL);
+    setNotesDraft((d) => {
+      const { [key]: _drop, ...rest } = d;
+      return rest;
+    });
+  };
+
   // Per-person note, saved as you type (debounced). No SWR refetch on save so
   // the field keeps focus/cursor; the local draft is the source of truth while
   // editing.
@@ -179,15 +213,19 @@ export const Saps = () => {
     const key = rowKey(p);
     setNotesDraft((d) => ({ ...d, [key]: value }));
     clearTimeout(notesTimers.current[key]);
-    notesTimers.current[key] = setTimeout(async () => {
+    const timer = setTimeout(async () => {
       const res = await fetch("/api/saps/notes", {
         method: "POST",
         body: JSON.stringify({ ...targetBody(p), notes: value }),
       });
+      if (notesTimers.current[key] === timer) delete notesTimers.current[key];
       if (!res.ok) {
         enqueueSnackbar(await readError(res), { variant: "error" });
+      } else if (notesFocusKey.current !== key) {
+        settleNotes(key);
       }
     }, 600);
+    notesTimers.current[key] = timer;
   };
 
   // download (issue) — POST flips to received + streams the PDF -----------
@@ -513,6 +551,13 @@ export const Saps = () => {
                         placeholder="Note / exception…"
                         value={notesDraft[key] ?? p.notes ?? ""}
                         onChange={(e) => handleNotesChange(p, e.target.value)}
+                        onFocus={() => {
+                          notesFocusKey.current = key;
+                        }}
+                        onBlur={() => {
+                          notesFocusKey.current = null;
+                          if (!notesTimers.current[key]) settleNotes(key);
+                        }}
                         sx={{ minWidth: 200 }}
                       />
                     </TableCell>
