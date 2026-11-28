@@ -36,6 +36,7 @@ import { Loading } from "@/components/general/Loading";
 import { Hero } from "@/components/layout/Hero";
 import type { IResShiftRowItem } from "@/components/types/shifts";
 import type { IResVolunteerShiftItem } from "@/components/types/volunteers";
+import { useIsOnPlaya } from "@/hooks/useIsOnPlaya";
 import { fetcherGet } from "@/utils/fetcher";
 import { formatDateName, formatTime } from "@/utils/formatDateTime";
 
@@ -84,6 +85,7 @@ const overlaps = (aStart: string, aEnd: string, bStart: string, bEnd: string) =>
 
 export const Schedule = ({ shiftboardId }: IScheduleProps) => {
   const theme = useTheme();
+  const isOnPlaya = useIsOnPlaya();
 
   // Logged-out browse mode (on-playa walk-ups, shiftboardId <= 0): show the
   // open-shift list only — no personal "your shifts", conflicts, or
@@ -101,7 +103,14 @@ export const Schedule = ({ shiftboardId }: IScheduleProps) => {
     data: dataOpen,
     error: errorOpen,
   }: { data: IResShiftRowItem[]; error: Error | undefined } = useSWR(
-    "/api/shifts",
+    // off-playa meetings list on the web app so people can sign up (#768,
+    // Mew 2026-11-28 "a"); tablets keep the playa-only list. null while the
+    // device check is in flight.
+    isOnPlaya === undefined
+      ? null
+      : isOnPlaya
+        ? "/api/shifts"
+        : "/api/shifts?filter=all",
     fetcherGet
   );
   // timeId -> required role name(s) for shifts this volunteer can't take.
