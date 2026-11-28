@@ -35,7 +35,8 @@ export const handleTimeListAdd = async ({
   } of timeList) {
       const timeIdNew = await generateId(
         `SELECT shift_times_id
-        FROM op_shift_times`
+        FROM op_shift_times
+        WHERE shift_times_id=?`
       );
 
       // start_date_id / end_date_id are FK lookups into op_dates by the
@@ -88,7 +89,8 @@ export const handleTimeListAdd = async ({
       for (const { alias, positionId, sapPoints, slots } of positionList) {
         const timePositionIdNew = await generateId(
           `SELECT time_position_id
-          FROM op_shift_time_position`
+          FROM op_shift_time_position
+          WHERE time_position_id=?`
         );
 
         await pool.query(
@@ -156,7 +158,8 @@ const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {
       }: IReqShiftTypeItem = JSON.parse(req.body);
       const typeIdNew = await generateId(
         `SELECT shift_name_id
-        FROM op_shift_name`
+        FROM op_shift_name
+        WHERE shift_name_id=?`
       );
 
       // insert new shift name row

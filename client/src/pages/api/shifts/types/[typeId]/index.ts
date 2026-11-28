@@ -526,7 +526,8 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
           } else {
             const timePositionIdNew = await generateId(
               `SELECT time_position_id
-              FROM op_shift_time_position`
+              FROM op_shift_time_position
+              WHERE time_position_id=?`
             );
 
             await pool.query(
