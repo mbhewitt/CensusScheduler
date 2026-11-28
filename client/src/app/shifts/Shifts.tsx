@@ -280,6 +280,7 @@ export const Shifts = () => {
       date,
       dateName,
       department: { name: departmentName },
+      embargoedUntil,
       endTime,
       id,
       slotsFilled,
@@ -306,6 +307,20 @@ export const Shifts = () => {
             sx={{ color: "error.main", fontWeight: 700 }}
           >
             CANCELED
+          </Typography>
+        </Box>
+      ) : embargoedUntil ? (
+        // #869: only admins get embargoed rows
+        <Box
+          key={`${id}-type`}
+          sx={{ alignItems: "center", display: "flex", gap: 1 }}
+        >
+          <Chip
+            label={type}
+            sx={{ backgroundColor: colorMapDisplay[departmentName] }}
+          />
+          <Typography component="span" sx={{ fontStyle: "italic" }}>
+            Opens {embargoedUntil.slice(0, 16)}
           </Typography>
         </Box>
       ) : (

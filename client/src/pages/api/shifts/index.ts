@@ -1,6 +1,9 @@
 import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import { isAdmin } from "@/lib/authz";
+import { readSessionFromRequest } from "@/lib/session";
+import { EMBARGOED_UNTIL_SQL } from "@/lib/shiftRelease";
 import { getShiftList } from "@/utils/getShiftList";
 import { pool } from "lib/database";
 
@@ -12,6 +15,12 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
     // ------------------------------------------------------------
     case "GET": {
       let dbShiftList = [];
+      // #869: embargoed shifts (release date not reached) are admin-only
+      const session = await readSessionFromRequest(req);
+      const embargoFilter =
+        session && (await isAdmin(session.shiftboardId))
+          ? ""
+          : `AND ${EMBARGOED_UNTIL_SQL} IS NULL`;
 
       // get all training shifts
       if (filter === "trainings") {
@@ -22,6 +31,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
             sc.department,
             sc.shift_category_id,
             sn.shift_name,
+            ${EMBARGOED_UNTIL_SQL} AS embargoed_until,
             st.end_time,
             st.end_time_text,
             st.shift_times_id,
@@ -51,6 +61,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
           WHERE st.remove_shift_time=false
           AND st.canceled=false
           AND sc.department="Training"
+          ${embargoFilter}
           ORDER BY d.date, st.start_time_text`
         );
       } else {
@@ -68,6 +79,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
             sc.shift_category_id,
             sn.off_playa,
             sn.shift_name,
+            ${EMBARGOED_UNTIL_SQL} AS embargoed_until,
             st.canceled,
             st.end_time,
             st.end_time_text,
@@ -95,6 +107,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
           ON vs.remove_shift=false
           AND vs.time_position_id=stp.time_position_id
           WHERE st.remove_shift_time=false
+          ${embargoFilter}
           ORDER BY d.date, st.start_time_text`
         );
       }

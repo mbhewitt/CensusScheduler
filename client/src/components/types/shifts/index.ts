@@ -14,6 +14,8 @@ export interface IResShiftRowItem {
   department: {
     name: string;
   };
+  // #869: set (Pacific) only for admins, when the shift is still embargoed
+  embargoedUntil: string | null;
   endTime: string;
   id: number;
   isOffPlaya: boolean;

@@ -3,6 +3,7 @@ import type { Pool, PoolConnection } from "mysql2/promise";
 
 import { CHECK_IN_BEFORE_HOURS } from "@/constants";
 import { isAdmin } from "@/lib/authz";
+import { EMBARGOED_UNTIL_SQL } from "@/lib/shiftRelease";
 
 // The ONE copy of the "can this volunteer take this position" rules (C-863 A2).
 // POST /api/shifts/[timeId]/volunteers runs it inside its capacity lock, and
@@ -22,7 +23,8 @@ export interface IShiftAddBlocker {
     | "full"
     | "time-conflict"
     | "max-per-volunteer"
-    | "min-csp";
+    | "min-csp"
+    | "embargoed";
   message: string;
 }
 export interface IShiftAddCheck {
@@ -104,11 +106,14 @@ export async function checkShiftAdd(
            AND vr.shiftboard_id = ?
            AND vr.remove_role = false)) AS missing_role,
        (CONVERT_TZ(NOW(), 'UTC', 'America/Los_Angeles')
-         < DATE_SUB(st.start_time, INTERVAL ? HOUR)) AS is_future
+         < DATE_SUB(st.start_time, INTERVAL ? HOUR)) AS is_future,
+       ${EMBARGOED_UNTIL_SQL} AS embargoed_until
      FROM op_shift_time_position stp
      JOIN op_shift_times st
        ON st.shift_times_id = stp.shift_times_id
        AND st.remove_shift_time = false
+     JOIN op_shift_name sn
+       ON sn.shift_name_id = st.shift_name_id
      JOIN op_position_type pt
        ON pt.position_type_id = stp.position_type_id
      LEFT JOIN op_roles r
@@ -148,6 +153,12 @@ export async function checkShiftAdd(
 
   // Findings that block a non-admin and only warn an admin.
   const findings: IShiftAddBlocker[] = [];
+  if (position.embargoed_until) {
+    findings.push({
+      code: "embargoed",
+      message: `These shifts open for sign-up on ${String(position.embargoed_until).slice(0, 16)} (Pacific).`,
+    });
+  }
   if (position.missing_role) {
     findings.push({
       code: "role-required",
