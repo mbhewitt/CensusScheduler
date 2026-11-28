@@ -42,6 +42,13 @@ interface ShiftContext extends RowDataPacket {
   world_name: string | null;
 }
 
+// Mew 2026-10-01 (#768): changes to a shift whose date has passed (recording
+// meeting attendance after the fact, cleanup) email nobody. Every assignment,
+// removal, cancel and restore notice reads its context through a query with
+// this clause, so a past shift returns no row and nothing is sent.
+// op_dates.date is playa-local; the DB clock is UTC.
+export const SHIFT_NOT_PAST_SQL = `(d.date IS NULL OR d.date >= DATE(CONVERT_TZ(NOW(), 'UTC', 'America/Los_Angeles')))`;
+
 const SHIFT_CONTEXT_QUERY = `
   SELECT
     pt.position,
@@ -76,6 +83,7 @@ const SHIFT_CONTEXT_QUERY = `
     ON v.shiftboard_id = vs.shiftboard_id
   WHERE vs.shiftboard_id = ?
     AND vs.time_position_id = ?
+    AND ${SHIFT_NOT_PAST_SQL}
   LIMIT 1
 `;
 
