@@ -92,6 +92,7 @@ export const VolunteerShiftsDialogRemove = ({
       // the open-shift list's slot counts include this signup — revalidate it
       // so the agenda doesn't render the dropped shift with a stale count
       mutate("/api/shifts");
+      mutate("/api/shifts?filter=all");
 
       enqueueSnackbar(
         <SnackbarText>

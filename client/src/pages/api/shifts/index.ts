@@ -54,6 +54,9 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
           ORDER BY d.date, st.start_time_text`
         );
       } else {
+        // filter=all (C-914) also returns off-playa shift types (meetings),
+        // flagged isOffPlaya; the plain call stays playa-only
+        const offPlayaFilter = filter === "all" ? "" : "AND sn.off_playa=false";
         // get all shifts (including canceled — UI strikes them through
         // and prevents adds; volunteers still need to see them so they
         // know they were canceled and can self-remove)
@@ -63,6 +66,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
             d.datename,
             sc.department,
             sc.shift_category_id,
+            sn.off_playa,
             sn.shift_name,
             st.canceled,
             st.end_time,
@@ -77,7 +81,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
           FROM op_shift_times AS st
           JOIN op_shift_name AS sn
           ON sn.delete_shift=false
-          AND sn.off_playa=false
+          ${offPlayaFilter}
           AND sn.shift_name_id=st.shift_name_id
           LEFT JOIN op_shift_category AS sc
           ON sc.delete_category=false

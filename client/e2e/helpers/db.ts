@@ -169,6 +169,7 @@ export interface TestShiftSetup {
   positionName: string;
   timePositionId: number;
   slots: number;
+  offPlaya?: boolean;
 }
 
 export async function insertFullShift(s: TestShiftSetup): Promise<void> {
@@ -194,8 +195,8 @@ export async function insertFullShift(s: TestShiftSetup): Promise<void> {
   await db.execute(
     `INSERT IGNORE INTO op_shift_name
        (shift_name_id, shift_name, shift_category_id, off_playa, delete_shift, create_shift)
-     VALUES (?, ?, ?, 0, 0, 1)`,
-    [s.shiftNameId, s.shiftName, s.categoryId]
+     VALUES (?, ?, ?, ?, 0, 1)`,
+    [s.shiftNameId, s.shiftName, s.categoryId, s.offPlaya ? 1 : 0]
   );
 
   // Shift time (remove_shift_time must be false)

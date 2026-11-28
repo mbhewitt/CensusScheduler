@@ -16,6 +16,7 @@ export interface IResShiftRowItem {
   };
   endTime: string;
   id: number;
+  isOffPlaya: boolean;
   slotsFilled: number;
   slotsTotal: number;
   startTime: string;
