@@ -50,9 +50,9 @@ export const ShiftRelease = () => {
         Shift release
       </Typography>
       <Typography sx={{ mb: 2 }} variant="body2">
-        Volunteers can't see or sign up for shifts on or after the first date
+        Volunteers can&apos;t see or sign up for shifts on or after the first date
         until the release time (Pacific). Admins see them early. Meetings
-        aren't affected. At release, an announcement goes to Discord and the
+        aren&apos;t affected. At release, an announcement goes to Discord and the
         mailing list.
       </Typography>
       {data?.map((r) => (
