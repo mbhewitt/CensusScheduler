@@ -24,6 +24,7 @@ import { Hero } from "@/components/layout/Hero";
 import { DatesDialogCreate } from "@/app/dates/DatesDialogCreate";
 import { DatesDialogDelete } from "@/app/dates/DatesDialogDelete";
 import { DatesDialogUpdate } from "@/app/dates/DatesDialogUpdate";
+import { ShiftRelease } from "@/app/dates/ShiftRelease";
 import { DataTable } from "@/components/general/DataTable";
 import { ErrorPage } from "@/components/general/ErrorPage";
 import { Loading } from "@/components/general/Loading";
@@ -232,6 +233,7 @@ export const Dates = () => {
             dateList={data}
           />
         </Box>
+        <ShiftRelease />
       </Container>
     </>
   );

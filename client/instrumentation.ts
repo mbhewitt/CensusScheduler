@@ -1,5 +1,6 @@
 // Next.js calls this once per process at server boot. We use it to
-// start the email queue worker (#307) and the DB wedge heartbeat. The
+// start the email queue worker (#307), the DB wedge heartbeat and the
+// shift-release announcer (#869). The
 // Edge runtime is skipped — only the Node runtime can reach MySQL and
 // Node SMTP.
 
@@ -9,6 +10,8 @@ export async function register() {
   bootstrapMailWorker();
   const { startDbHealthCheck } = await import("./lib/dbHealth");
   startDbHealthCheck();
+  const { startShiftReleaseAnnouncer } = await import("./src/lib/shiftRelease");
+  startShiftReleaseAnnouncer();
 }
 
 // Log every unhandled server error with its route (#105). Clients only ever
