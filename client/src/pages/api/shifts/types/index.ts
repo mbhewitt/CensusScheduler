@@ -18,7 +18,8 @@ interface IHandleTimeListAdd {
 export const handleTimeListAdd = async ({
   timeList,
   typeId,
-}: IHandleTimeListAdd) => {
+}: IHandleTimeListAdd): Promise<number[]> => {
+  const timeIdList: number[] = [];
   // insert new shift time rows. NOTE: sequential for-of (not forEach) so every
   // INSERT is actually awaited before the caller's handler responds — a bare
   // forEach(async ...) fires-and-forgets, so the "add shift/position" write
@@ -86,6 +87,8 @@ export const handleTimeListAdd = async ({
         ]
       );
 
+      timeIdList.push(timeIdNew);
+
       for (const { alias, positionId, sapPoints, slots } of positionList) {
         const timePositionIdNew = await generateId(
           `SELECT time_position_id
@@ -108,6 +111,7 @@ export const handleTimeListAdd = async ({
         );
       }
   }
+  return timeIdList;
 };
 
 const shiftTypes = async (req: NextApiRequest, res: NextApiResponse) => {

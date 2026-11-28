@@ -547,3 +547,48 @@ export async function notifyRestoration(
     category: "shift-restored",
   });
 }
+
+// A shift time flipped canceled (true) or back (false): email every volunteer
+// still on it. Shared by the shift-type form save and the single-time PATCH
+// (/api/shifts/types/[typeId]/times/[timeId]). Best-effort: enqueue failures
+// log and the caller still succeeds. Past shifts send nothing
+// (SHIFT_NOT_PAST_SQL).
+export async function notifyCancelFlip(
+  pool: Pool,
+  timeId: number,
+  isCanceled: boolean
+): Promise<void> {
+  const tag = isCanceled ? "shift-canceled" : "shift-restored";
+  try {
+    const [rows] = await pool.query<RowDataPacket[]>(
+      `SELECT DISTINCT vs.shiftboard_id, vs.time_position_id
+       FROM op_volunteer_shifts vs
+       JOIN op_shift_time_position stp
+         ON stp.time_position_id = vs.time_position_id
+       WHERE stp.shift_times_id = ?
+         AND vs.remove_shift = false`,
+      [timeId]
+    );
+    for (const v of rows) {
+      try {
+        if (isCanceled) {
+          await notifyRemoval(pool, v.shiftboard_id, v.time_position_id, {
+            kind: "shift-canceled",
+          });
+        } else {
+          await notifyRestoration(pool, v.shiftboard_id, v.time_position_id);
+        }
+      } catch (err) {
+        console.error(
+          `[${tag}-notify] enqueue failed for shiftboard_id=${v.shiftboard_id} time_position_id=${v.time_position_id}:`,
+          err
+        );
+      }
+    }
+  } catch (err) {
+    console.error(
+      `[${tag}-notify] fan-out failed for shift_times_id=${timeId}:`,
+      err
+    );
+  }
+}
