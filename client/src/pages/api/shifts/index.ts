@@ -1,6 +1,7 @@
 import { RowDataPacket } from "mysql2";
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import { isOnPlayaRequest } from "@/lib/onPlaya";
 import { getShiftList } from "@/utils/getShiftList";
 import { pool } from "lib/database";
 
@@ -54,6 +55,11 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
           ORDER BY d.date, st.start_time_text`
         );
       } else {
+        // off-playa shifts (monthly meetings) list on the web app so people
+        // can see and sign up for them (#768); tablets keep the playa-only list
+        const offPlayaFilter = isOnPlayaRequest(req.cookies)
+          ? "AND sn.off_playa=false"
+          : "";
         // get all shifts (including canceled — UI strikes them through
         // and prevents adds; volunteers still need to see them so they
         // know they were canceled and can self-remove)
@@ -77,7 +83,7 @@ const shifts = async (req: NextApiRequest, res: NextApiResponse) => {
           FROM op_shift_times AS st
           JOIN op_shift_name AS sn
           ON sn.delete_shift=false
-          AND sn.off_playa=false
+          ${offPlayaFilter}
           AND sn.shift_name_id=st.shift_name_id
           LEFT JOIN op_shift_category AS sc
           ON sc.delete_category=false
