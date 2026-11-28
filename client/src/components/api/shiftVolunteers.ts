@@ -11,6 +11,7 @@ import { enqueueEmail } from "lib/mail";
 import {
   lookupActorDisplayName,
   notifyRemoval,
+  SHIFT_NOT_PAST_SQL,
   type RemovalCause,
 } from "@/components/api/assignmentNotify";
 
@@ -64,6 +65,7 @@ async function notifyCriticalDrop(
        ON v.shiftboard_id = vs.shiftboard_id
      WHERE vs.shiftboard_id = ?
        AND vs.time_position_id = ?
+       AND ${SHIFT_NOT_PAST_SQL}
      LIMIT 1`,
     [shiftboardId, timePositionId]
   );
