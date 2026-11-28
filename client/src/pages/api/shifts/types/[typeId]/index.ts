@@ -11,10 +11,7 @@ import {
 import { withWriteGuard } from "@/lib/withWriteGuard";
 import { generateId } from "@/utils/generateId";
 import { pool } from "lib/database";
-import {
-  notifyRemoval,
-  notifyRestoration,
-} from "@/components/api/assignmentNotify";
+import { notifyCancelFlip } from "@/components/api/assignmentNotify";
 import { handleTimeListAdd } from "@/pages/api/shifts/types";
 
 const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -332,46 +329,8 @@ const shiftTypeUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
       for (const t of timeListUpdate) {
         const wasCanceled = wasCanceledMap.get(t.timeId) ?? false;
         const isCanceled = Boolean(t.canceled);
-        if (wasCanceled === isCanceled) continue;
-        const tag = isCanceled ? "shift-canceled" : "shift-restored";
-        try {
-          const [rows] = await pool.query<RowDataPacket[]>(
-            `SELECT DISTINCT vs.shiftboard_id, vs.time_position_id
-             FROM op_volunteer_shifts vs
-             JOIN op_shift_time_position stp
-               ON stp.time_position_id = vs.time_position_id
-             WHERE stp.shift_times_id = ?
-               AND vs.remove_shift = false`,
-            [t.timeId]
-          );
-          for (const v of rows) {
-            try {
-              if (isCanceled) {
-                await notifyRemoval(
-                  pool,
-                  v.shiftboard_id,
-                  v.time_position_id,
-                  { kind: "shift-canceled" }
-                );
-              } else {
-                await notifyRestoration(
-                  pool,
-                  v.shiftboard_id,
-                  v.time_position_id
-                );
-              }
-            } catch (err) {
-              console.error(
-                `[${tag}-notify] enqueue failed for shiftboard_id=${v.shiftboard_id} time_position_id=${v.time_position_id}:`,
-                err
-              );
-            }
-          }
-        } catch (err) {
-          console.error(
-            `[${tag}-notify] fan-out failed for shift_times_id=${t.timeId}:`,
-            err
-          );
+        if (wasCanceled !== isCanceled) {
+          await notifyCancelFlip(pool, t.timeId, isCanceled);
         }
       }
       // Sequential for-of so each write is awaited before the handler responds
