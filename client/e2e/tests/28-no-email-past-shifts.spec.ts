@@ -29,10 +29,12 @@ const PAST_DATE_ID = 9_000_425;
 const PAST_SHIFT = {
   ...FUTURE_SHIFT,
   categoryId: 9_000_420,
+  categoryName: "E2E Past Category",
   shiftNameId: 9_000_421,
   shiftName: "E2E Past Meeting",
   shiftTimesId: 9_000_422,
   positionTypeId: 9_000_423,
+  positionName: "E2E Past Position",
   timePositionId: 9_000_424,
   startTime: "2001-01-01 10:00",
   endTime: "2001-01-01 11:00",
