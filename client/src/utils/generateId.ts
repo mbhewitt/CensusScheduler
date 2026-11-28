@@ -15,6 +15,11 @@ const checkIsIdExists = async (query: string, id: number) => {
 // ponytail: still check-then-insert, so two concurrent requests can pick the
 // same free id; a DB AUTO_INCREMENT would close that (needs a migration).
 export const generateId = async (query: string) => {
+  // the query is called with the candidate id, so it must filter on it — an
+  // unfiltered SELECT always finds a row and this would never return
+  if (!query.includes("?")) {
+    throw new Error("generateId: query needs WHERE <id column>=?");
+  }
   let idNew = randomNum();
 
   while (await checkIsIdExists(query, idNew)) idNew = randomNum();
